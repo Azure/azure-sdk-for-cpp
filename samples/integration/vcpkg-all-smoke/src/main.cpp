@@ -9,6 +9,7 @@
 #include "get_env.hpp"
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
 #include <azure/keyvault/keys.hpp>
@@ -30,11 +31,16 @@ using namespace Azure::Security::Attestation;
 
 int main()
 {
-  const std::string tenantId = "tenant";
-  const std::string clientId = "client";
-  const std::string clientSecret = "secret";
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
+  // Creating an attestation service instance requires contacting the attestation service (to
+  // retrieve validation collateral). Use the West US Shared client (which should always be
+  // available) as an anonymous service instance.
+  const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
+
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
@@ -43,9 +49,9 @@ int main()
   {
     std::cout << "Creating Keyvault Clients" << std::endl;
     // keyvault
-    KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-    SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-    CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    KeyClient keyClient(smokeUrl, credential);
+    SecretClient secretClient(smokeUrl, credential);
+    CertificateClient certificateClient(smokeUrl, credential);
 
     std::cout << "Creating Storage Clients" << std::endl;
     // Storage
@@ -69,9 +75,11 @@ int main()
 
     // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
-    AttestationClient attestationClient(AttestationClient::Create(smokeUrl));
+
     AttestationAdministrationClient attestationAdminClient(
-        AttestationAdministrationClient::Create(smokeUrl, credential));
+        AttestationAdministrationClient::Create(attestationUrl, credential));
+
+    AttestationClient attestationClient(AttestationClient::Create(attestationUrl));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

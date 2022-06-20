@@ -1,3 +1,7 @@
+---
+# cspell:words opentelemetry
+---
+
 # Azure Attestation Package client library for C++
 
 Microsoft Azure Attestation is a unified solution for remotely verifying the trustworthiness of a platform and integrity of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
@@ -210,18 +214,17 @@ The `AttestationClient::Create` method is used to create instances of the attest
 
 ```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    return Azure::Security::Attestation::AttestationClient::CreatePointer(m_endpoint);
+    Azure::Security::Attestation::AttestationClient client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
 ```
 
-If the attestation APIs require authentication, use the following (note that unlike the previous example, 
-which returns a pointer to the client, this returns the client by value):
+If the attestation APIs require authentication, use the following:
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
     = std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-return Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
+auto client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
@@ -236,7 +239,7 @@ attestation service, however the APIs are provided for completeness and to facil
 attestation results.
 
 ```cpp
-auto validationCertificates = attestationClient->GetTokenValidationCertificates();
+auto validationCertificates = attestationClient.GetTokenValidationCertificates();
 // Enumerate the signers.
 for (const auto& signer : validationCertificates.Value.Signers)
 {
@@ -267,7 +270,7 @@ std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(
           std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-AttestationAdministrationClient adminClient(m_endpoint, credential);
+AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(m_endpoint, credential));
 ```
 
 #### Retrieve current attestation policy for OpenEnclave
@@ -275,9 +278,6 @@ AttestationAdministrationClient adminClient(m_endpoint, credential);
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
 ```cpp
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
     // Retrieve the SGX Attestation Policy from this attestation service instance.
     Azure::Response<AttestationToken<std::string>> const sgxPolicy
         = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
@@ -291,9 +291,6 @@ When an attestation instance is in AAD mode, the caller can use a convenience me
 policy on the instance.
 
 ```cpp
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy
     // being set.
@@ -368,9 +365,6 @@ the policy management tokens. This interaction ensures that the client is in pos
 one of the policy management certificates and is thus authorized to perform the operation.
 
 ```cpp
-// Retrieve attestation response validation collateral before calling into the service.
-adminClient.RetrieveResponseValidationCollateral();
-
 // Retrieve the SGX Attestation Policy from this attestation service instance.
 Azure::Response<AttestationToken<IsolatedModeCertificateListResult>> const policyCertificates
         = adminClient.GetIsolatedModeCertificates();
@@ -395,9 +389,6 @@ ignored (this possibly surprising behavior is there because retries could cause 
     std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
 
     AttestationSigningKey const requestSigner{pemSigningKey, pemSigningCert};
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
 
     // We start this sample by adding a new certificate to the set of policy management
     // certificates.

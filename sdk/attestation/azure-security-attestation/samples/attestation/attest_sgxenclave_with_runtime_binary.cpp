@@ -45,13 +45,13 @@ int main()
     // create client
     std::string endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
     std::shared_ptr<AttestationClient> attestationClient(
-        AttestationClient::CreatePointer(endpoint));
+        std::make_shared<AttestationClient>(AttestationClient::Create(endpoint)));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     // Set the RunTimeData in the request to the service. Ask the service to interpret the
     // RunTimeData as a JSON object when it is returned in the resulting token.
-    AttestEnclaveOptions attestOptions;
+    AttestSgxEnclaveOptions attestOptions;
 
     attestOptions.RunTimeData
         = AttestationData{AttestationCollateral::RunTimeData(), AttestationDataType::Binary};
