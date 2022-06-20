@@ -13,6 +13,7 @@ project (azure-core-tracing-opentelemetry-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+include(AzureBuildTargetForCI)
 include(GoogleTest)
 
 add_executable (
@@ -51,9 +52,9 @@ target_link_libraries(azure-core-tracing-opentelemetry-test PRIVATE azure-core-t
 create_per_service_target_build(core azure-core-tracing-opentelemetry-test)
 create_map_file(azure-core-tracing-opentelemetry-test azure-core-tracing-opentelemetry-test.map)
 
-# gtest_discover_tests will scan the test from azure-core-opentelemetry-test and call add_test
+# gtest_discover_tests will scan the test from azure-core-tracing-opentelemetry-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-tracing-opentelemetry-test
-     TEST_PREFIX azure-core-opentelemetry.
+     TEST_PREFIX azure-core-tracing-opentelemetry.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)

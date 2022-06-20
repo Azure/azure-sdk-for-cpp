@@ -21,7 +21,7 @@ std::string RedactedPlaceholder = "REDACTED";
 
 inline void AppendHeaders(
     std::ostringstream& log,
-    Azure::Core::_internal::InputSanitizer const& inputSanitizer,
+    Azure::Core::Http::_internal::HttpSanitizer const& httpSanitizer,
     Azure::Core::CaseInsensitiveMap const& headers)
 {
   for (auto const& header : headers)
@@ -30,27 +30,27 @@ inline void AppendHeaders(
 
     if (!header.second.empty())
     {
-      log << inputSanitizer.SanitizeHeader(header.first, header.second);
+      log << httpSanitizer.SanitizeHeader(header.first, header.second);
     }
   }
 }
 
 inline std::string GetRequestLogMessage(
-    Azure::Core::_internal::InputSanitizer const& inputSanitizer,
+    Azure::Core::Http::_internal::HttpSanitizer const& httpSanitizer,
     Request const& request)
 {
   std::ostringstream log;
   log << "HTTP Request : " << request.GetMethod().ToString() << " ";
 
-  Azure::Core::Url urlToLog(inputSanitizer.SanitizeUrl(request.GetUrl()));
+  Azure::Core::Url urlToLog(httpSanitizer.SanitizeUrl(request.GetUrl()));
   log << urlToLog.GetAbsoluteUrl();
 
-  AppendHeaders(log, inputSanitizer, request.GetHeaders());
+  AppendHeaders(log, httpSanitizer, request.GetHeaders());
   return log.str();
 }
 
 inline std::string GetResponseLogMessage(
-    Azure::Core::_internal::InputSanitizer const& inputSanitizer,
+    Azure::Core::Http::_internal::HttpSanitizer const& httpSanitizer,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
 {
@@ -61,38 +61,40 @@ inline std::string GetResponseLogMessage(
       << "ms) : " << static_cast<int>(response.GetStatusCode()) << " "
       << response.GetReasonPhrase();
 
-  AppendHeaders(log, inputSanitizer, response.GetHeaders());
+  AppendHeaders(log, httpSanitizer, response.GetHeaders());
   return log.str();
 }
 } // namespace
 
-Azure::Core::CaseInsensitiveSet const
-    Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
-    = {
-        "Accept",
-        "Cache-Control",
-        "Connection",
-        "Content-Length",
-        "Content-Type",
-        "Date",
-        "ETag",
-        "Expires",
-        "If-Match",
-        "If-Modified-Since",
-        "If-None-Match",
-        "If-Unmodified-Since",
-        "Last-Modified",
-        "Pragma",
-        "Request-Id",
-        "Retry-After",
-        "Server",
-        "traceparent",
-        "tracestate",
-        "Transfer-Encoding",
-        "User-Agent"
-        "x-ms-client-request-id",
-        "x-ms-request-id",
-        "x-ms-return-client-request-id",
+std::set<std::string> const Policies::_detail::g_defaultAllowedHttpQueryParameters = {
+    "api-version",
+};
+
+CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders = {
+    "Accept",
+    "Cache-Control",
+    "Connection",
+    "Content-Length",
+    "Content-Type",
+    "Date",
+    "ETag",
+    "Expires",
+    "If-Match",
+    "If-Modified-Since",
+    "If-None-Match",
+    "If-Unmodified-Since",
+    "Last-Modified",
+    "Pragma",
+    "Request-Id",
+    "Retry-After",
+    "Server",
+    "traceparent",
+    "tracestate",
+    "Transfer-Encoding",
+    "User-Agent",
+    "x-ms-client-request-id",
+    "x-ms-request-id",
+    "x-ms-return-client-request-id",
 };
 
 std::unique_ptr<RawResponse> LogPolicy::Send(
@@ -105,7 +107,7 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {
-    Log::Write(Logger::Level::Informational, GetRequestLogMessage(m_inputSanitizer, request));
+    Log::Write(Logger::Level::Informational, GetRequestLogMessage(m_httpSanitizer, request));
   }
   else
   {
@@ -117,8 +119,7 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
   auto const end = std::chrono::system_clock::now();
 
   Log::Write(
-      Logger::Level::Informational,
-      GetResponseLogMessage(m_inputSanitizer, *response, end - start));
+      Logger::Level::Informational, GetResponseLogMessage(m_httpSanitizer, *response, end - start));
 
   return response;
 }

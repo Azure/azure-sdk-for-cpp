@@ -21,6 +21,7 @@ using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Security::Attestation::_detail;
 using namespace Azure::Security::Attestation::Models::_detail;
+using namespace Azure::Core::Tracing::_internal;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
@@ -31,7 +32,8 @@ AttestationClient::AttestationClient(
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options)
     : m_endpoint(endpoint), m_credentials(credential),
-      m_tokenValidationOptions(options.TokenValidationOptions)
+      m_tokenValidationOptions(options.TokenValidationOptions),
+      m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
@@ -47,39 +49,58 @@ AttestationClient::AttestationClient(
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options,
-      "Attestation",
-      PackageVersion::ToString(),
-      std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      options, std::move(perRetrypolicies), std::move(perCallpolicies));
 }
 
 Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
     Azure::Core::Context const& context) const
 {
-  auto request = AttestationCommonRequest::CreateRequest(
-      m_endpoint, HttpMethod::Get, {".well-known/openid-configuration"}, nullptr);
+  auto tracingContext(m_tracingFactory.CreateTracingContext("GetOpenIdMetadata", context));
+  try
+  {
+    auto request = AttestationCommonRequest::CreateRequest(
+        m_endpoint, HttpMethod::Get, {".well-known/openid-configuration"}, nullptr);
 
-  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
-  auto openIdMetadata(OpenIdMetadataSerializer::Deserialize(response));
-  return Response<OpenIdMetadata>(std::move(openIdMetadata), std::move(response));
+    auto response
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+    auto openIdMetadata(OpenIdMetadataSerializer::Deserialize(response));
+
+    return Response<OpenIdMetadata>(std::move(openIdMetadata), std::move(response));
+  }
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
+  }
 }
 
 Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenValidationCertificates(
     Azure::Core::Context const& context) const
 {
-  auto request
-      = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
-
-  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
-  auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
-  TokenValidationCertificateResult returnValue;
-  for (const auto& jwk : jsonWebKeySet.Keys)
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("GetTokenValidationCertificates", context));
+  try
   {
-    AttestationSignerInternal internalSigner(jwk);
-    returnValue.Signers.push_back(internalSigner);
+
+    auto request
+        = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
+
+    auto response
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+    auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
+    TokenValidationCertificateResult returnValue;
+    for (const auto& jwk : jsonWebKeySet.Keys)
+    {
+      AttestationSignerInternal internalSigner(jwk);
+      returnValue.Signers.push_back(internalSigner);
+    }
+    return Response<TokenValidationCertificateResult>(returnValue, std::move(response));
   }
-  return Response<TokenValidationCertificateResult>(returnValue, std::move(response));
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
+  }
 }
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
@@ -87,41 +108,53 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
     AttestSgxEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  AttestSgxEnclaveRequest attestRequest{
-      sgxQuote,
-      options.InitTimeData,
-      options.RunTimeData,
-      options.DraftPolicyForAttestation,
-      options.Nonce};
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestSgxEnclave", context));
+  try
+  {
 
-  const std::string serializedRequest(AttestSgxEnclaveRequestSerializer::Serialize(attestRequest));
+    AttestSgxEnclaveRequest attestRequest{
+        sgxQuote,
+        options.InitTimeData,
+        options.RunTimeData,
+        options.DraftPolicyForAttestation,
+        options.Nonce};
 
-  const auto encodedVector
-      = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
-  Azure::Core::IO::MemoryBodyStream stream(encodedVector);
-  auto request = AttestationCommonRequest::CreateRequest(
-      m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/SgxEnclave"}, &stream);
+    const std::string serializedRequest(
+        AttestSgxEnclaveRequestSerializer::Serialize(attestRequest));
 
-  // Send the request to the service.
-  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+    const auto encodedVector
+        = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
+    Azure::Core::IO::MemoryBodyStream stream(encodedVector);
+    auto request = AttestationCommonRequest::CreateRequest(
+        m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/SgxEnclave"}, &stream);
 
-  // Deserialize the Service response token and return the JSON web token returned by the service.
-  std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
+    // Send the request to the service.
+    auto response
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
 
-  // Parse the JWT returned by the attestation service.
-  auto const token
-      = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
+    // Deserialize the Service response token and return the JSON web token returned by the service.
+    std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
 
-  // Validate the token returned by the service. Use the cached attestation signers in the
-  // validation.
-  token.ValidateToken(
-      options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
-                                             : this->m_tokenValidationOptions,
-      m_attestationSigners);
+    // Parse the JWT returned by the attestation service.
+    auto const token
+        = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
 
-  // And return the attestation result to the caller.
-  auto returnedToken = AttestationToken<AttestationResult>(token);
-  return Response<AttestationToken<AttestationResult>>(returnedToken, std::move(response));
+    // Validate the token returned by the service. Use the cached attestation signers in the
+    // validation.
+    token.ValidateToken(
+        options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
+                                               : this->m_tokenValidationOptions,
+        m_attestationSigners);
+
+    // And return the attestation result to the caller.
+    auto returnedToken = AttestationToken<AttestationResult>(token);
+    return Response<AttestationToken<AttestationResult>>(returnedToken, std::move(response));
+  }
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
+  }
 }
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOpenEnclave(
@@ -129,46 +162,66 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
     AttestOpenEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  AttestOpenEnclaveRequest attestRequest{
-      openEnclaveReport,
-      options.InitTimeData,
-      options.RunTimeData,
-      options.DraftPolicyForAttestation,
-      options.Nonce};
-  std::string serializedRequest(AttestOpenEnclaveRequestSerializer::Serialize(attestRequest));
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestOpenEnclave", context));
+  try
+  {
+    AttestOpenEnclaveRequest attestRequest{
+        openEnclaveReport,
+        options.InitTimeData,
+        options.RunTimeData,
+        options.DraftPolicyForAttestation,
+        options.Nonce};
+    std::string serializedRequest(AttestOpenEnclaveRequestSerializer::Serialize(attestRequest));
 
-  auto encodedVector = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
-  Azure::Core::IO::MemoryBodyStream stream(encodedVector);
-  auto request = AttestationCommonRequest::CreateRequest(
-      m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/OpenEnclave"}, &stream);
+    auto encodedVector = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
+    Azure::Core::IO::MemoryBodyStream stream(encodedVector);
+    auto request = AttestationCommonRequest::CreateRequest(
+        m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/OpenEnclave"}, &stream);
 
-  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
-  std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
-  auto token
-      = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
-  token.ValidateToken(
-      options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
-                                             : this->m_tokenValidationOptions,
-      m_attestationSigners);
+    auto response
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+    std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
+    auto token
+        = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
+    token.ValidateToken(
+        options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
+                                               : this->m_tokenValidationOptions,
+        m_attestationSigners);
 
-  return Response<AttestationToken<AttestationResult>>(token, std::move(response));
+    return Response<AttestationToken<AttestationResult>>(token, std::move(response));
+  }
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
+  }
 }
 
 Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     AttestTpmOptions const& attestTpmOptions,
     Azure::Core::Context const& context) const
 {
-  std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
-  auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
-  Azure::Core::IO::MemoryBodyStream stream(encodedVector);
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));
+  try
+  {
+    std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
+    auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
+    Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 
-  auto request = AttestationCommonRequest::CreateRequest(
-      m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Tpm"}, &stream);
+    auto request = AttestationCommonRequest::CreateRequest(
+        m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Tpm"}, &stream);
 
-  // Send the request to the service.
-  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
-  std::string returnedBody(TpmDataSerializer::Deserialize(response));
-  return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
+    // Send the request to the service.
+    auto response
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+    std::string returnedBody(TpmDataSerializer::Deserialize(response));
+    return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
+  }
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
+  }
 }
 
 namespace {
@@ -186,27 +239,38 @@ std::shared_timed_mutex SharedStateLock;
  */
 void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Context const& context)
 {
-  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
-
-  if (m_attestationSigners.empty())
+  auto tracingContext(m_tracingFactory.CreateTracingContext("Create", context));
+  try
   {
-    stateLock.unlock();
-    auto request
-        = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
-    auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
-    auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
-    TokenValidationCertificateResult returnValue;
-    std::vector<AttestationSigner> newValue;
-    for (const auto& jwk : jsonWebKeySet.Keys)
-    {
-      AttestationSignerInternal internalSigner(jwk);
-      newValue.push_back(internalSigner);
-    }
-    stateLock.lock();
+    std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+
     if (m_attestationSigners.empty())
     {
-      m_attestationSigners = newValue;
+      stateLock.unlock();
+      auto request = AttestationCommonRequest::CreateRequest(
+          m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
+      auto response
+          = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+      auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
+      TokenValidationCertificateResult returnValue;
+      std::vector<AttestationSigner> newValue;
+      for (const auto& jwk : jsonWebKeySet.Keys)
+      {
+        AttestationSignerInternal internalSigner(jwk);
+        newValue.push_back(internalSigner);
+      }
+      stateLock.lock();
+      if (m_attestationSigners.empty())
+      {
+        m_attestationSigners = newValue;
+      }
+      tracingContext.Span.SetStatus(SpanStatus::Ok);
     }
+  }
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
   }
 }
 

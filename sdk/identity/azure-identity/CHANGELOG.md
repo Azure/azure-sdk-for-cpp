@@ -1,14 +1,23 @@
 # Release History
 
-## 1.3.0-beta.3 (Unreleased)
+## 1.4.0-beta.1 (Unreleased)
 
 ### Features Added
+
+- Added Azure App Service API version `2019-08-01` support for `ManagedIdentityCredential`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0 (2022-06-07)
+
+### Features Added
+
+- Added `ClientCertificateCredential`, and updated `EnvironmentCredential` to support client certificate authentication.
+- Added `ChainedTokenCredential`.
 
 ## 1.3.0-beta.2 (2022-05-10)
 

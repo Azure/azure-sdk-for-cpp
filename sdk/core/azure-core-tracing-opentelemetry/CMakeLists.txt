@@ -10,6 +10,10 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.12)
 project(azure-core-tracing-opentelemetry LANGUAGES CXX)
 
+if (NOT VCPKG_TARGET_TRIPLET MATCHES "windows" OR VCPKG_TARGET_TRIPLET MATCHES "static" OR NOT WIN32)
+    set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY ON)
+endif()
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -23,66 +27,69 @@ include(AzureConfigRTTI)
 # Add create_map_file function
 include(CreateMapFile)
 
-find_package(Threads REQUIRED)
+if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
+    find_package(Threads REQUIRED)
 
-if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.5.0" CONFIG QUIET)
-  if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.5.0" REQUIRED)
-  endif()
+    if(NOT AZ_ALL_LIBRARIES)
+      find_package(azure-core-cpp CONFIG QUIET)
+      if(NOT azure-core-cpp_FOUND)
+        find_package(azure-core-cpp REQUIRED)
+      endif()
+    endif()
+    find_package(opentelemetry-cpp "1.3.0" CONFIG REQUIRED)
+
+    set(
+      AZURE_CORE_OPENTELEMETRY_HEADER
+        inc/azure/core/tracing/opentelemetry/opentelemetry.hpp
+    )
+
+    set(
+      AZURE_CORE_OPENTELEMETRY_SOURCE
+      src/opentelemetry.cpp
+    )
+
+    add_library(azure-core-tracing-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})
+
+    target_include_directories(
+      azure-core-tracing-opentelemetry
+        PUBLIC
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+          $<INSTALL_INTERFACE:include>
+    )
+
+    # make sure that users can consume the project as a library.
+    add_library(Azure::azure-core-tracing-opentelemetry ALIAS azure-core-tracing-opentelemetry)
+
+    # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+    create_code_coverage(core azure-core-tracing-opentelemetry azure-core-tracing-opentelemetry-test "tests?/*;samples?/*")
+
+    target_link_libraries(azure-core-tracing-opentelemetry INTERFACE Threads::Threads)
+
+    target_link_libraries(azure-core-tracing-opentelemetry PRIVATE azure-core
+        opentelemetry-cpp::api
+        opentelemetry-cpp::ext 
+        opentelemetry-cpp::sdk 
+        opentelemetry-cpp::trace)
 endif()
-find_package(opentelemetry-cpp "1.3.0" CONFIG REQUIRED)
-
-set(
-  AZURE_CORE_OPENTELEMETRY_HEADER
-    inc/azure/core/tracing/opentelemetry/opentelemetry.hpp
-)
-
-set(
-  AZURE_CORE_OPENTELEMETRY_SOURCE
-  src/opentelemetry.cpp
-)
-
-add_library(azure-core-tracing-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})
-
-target_include_directories(
-  azure-core-tracing-opentelemetry
-    PUBLIC
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<INSTALL_INTERFACE:include>
-)
-
-# make sure that users can consume the project as a library.
-add_library(Azure::azure-core-tracing-opentelemetry ALIAS azure-core-tracing-opentelemetry)
-
-# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core azure-core-tracing-opentelemetry azure-core-tracing-opentelemetry-test "tests?/*;samples?/*")
-
-target_link_libraries(azure-core-tracing-opentelemetry INTERFACE Threads::Threads)
-
-target_link_libraries(azure-core-tracing-opentelemetry PRIVATE azure-core
-    opentelemetry-cpp::api
-    opentelemetry-cpp::ext 
-    opentelemetry-cpp::sdk 
-    opentelemetry-cpp::trace)
-
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
-generate_documentation(azure-core-opentelemetry ${AZ_LIBRARY_VERSION})
+generate_documentation(azure-core-tracing-opentelemetry ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(
+if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
+  az_vcpkg_export(
     azure-core-tracing-opentelemetry
     CORE_TRACING_OPENTELEMETRY
     "azure/core/tracing/opentelemetry/dll_import_export.hpp"
   )
 
-az_rtti_setup(
-  azure-core-tracing-opentelemetry
-  CORE_TRACING_OPENTELEMETRY
-  "azure/core/tracing/opentelemetry/rtti.hpp"
-)
+  az_rtti_setup(
+    azure-core-tracing-opentelemetry
+    CORE_TRACING_OPENTELEMETRY
+    "azure/core/tracing/opentelemetry/rtti.hpp"
+  )
+endif()
 
-if(BUILD_TESTING)
+if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY AND BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
   

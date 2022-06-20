@@ -133,7 +133,7 @@ There are two steps needed to integrate Distributed Tracing with a Service Clien
 To add a new `DiagnosticTracingFactory` to the client, simply add the class as a member:
 
 ```c++
-  Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_tracingFactory;
+  Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 
 ```
 
@@ -158,11 +158,10 @@ And construct the new tracing factory in the service constructor:
       Azure::Core::Context const& context = Azure::Core::Context{})
   {
     // Create a new context and span for this request.
-    auto contextAndSpan = m_tracingFactory.CreateSpan(
-        "ServiceMethod", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
+    auto contextAndSpan = m_tracingFactory.CreateSpan("ServiceMethod", context);
 
-    // contextAndSpan.first is the new context for the operation.
-    // contextAndSpan.second is the new span for the operation.
+    // contextAndSpan.Context is the new context for the operation.
+    // contextAndSpan.Span is the new span for the operation.
 
     try
     {
@@ -171,15 +170,14 @@ And construct the new tracing factory in the service constructor:
           HttpMethod::Get, Azure::Core::Url("<Service URL>"));
 
       std::unique_ptr<Azure::Core::Http::RawResponse> response
-          = m_pipeline->Send(requestToSend, contextAndSpan.first);
-      contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok);
+          = m_pipeline->Send(requestToSend, contextAndSpan.Context);
+      contextAndSpan.Span.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok);
       return Azure::Response<std::string>("", std::move(response));
     }
     catch (std::exception const& ex)
     {
       // Register that the exception has happened and that the span is now in error.
-      contextAndSpan.second.AddEvent(ex);
-      contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
+      contextAndSpan.Span.AddEvent(ex);
       throw;
     }
 
@@ -247,4 +245,4 @@ Generated traces have the following attributes:
 | `http.status_code` | HTTP status code returned by the service | HTTP Spans.
 | `http.user_agent` | The value of the `User-Agent` HTTP header sent to the service | HTTP Spans.
 | `requestId` | The value of the `x-ms-client-request-id` header sent by the client | HTTP Spans.
-| `serviceRequestId` | The value -f the `x-ms-request-id` sent by the server | HTTP Spans.
+| `serviceRequestId` | The value of the `x-ms-request-id` sent by the server | HTTP Spans.

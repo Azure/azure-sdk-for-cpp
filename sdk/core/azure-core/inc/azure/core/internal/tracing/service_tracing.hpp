@@ -3,6 +3,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/internal/client_options.hpp"
+#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/tracing/tracing.hpp"
 
 #pragma once
@@ -29,7 +30,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::shared_ptr<Span> m_span;
 
-    friend class DiagnosticTracingFactory;
+    friend class TracingContextFactory;
     ServiceSpan() = default;
     explicit ServiceSpan(std::shared_ptr<Span> span) : m_span(span) {}
 
@@ -49,11 +50,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       }
     }
 
-    void End(Azure::Nullable<Azure::DateTime> = Azure::Nullable<Azure::DateTime>{}) override
+    void End(Azure::Nullable<Azure::DateTime> endTime = Azure::Nullable<Azure::DateTime>{}) override
     {
       if (m_span)
       {
-        m_span->End();
+        m_span->End(endTime);
       }
     }
     void SetStatus(
@@ -128,7 +129,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
 
     /**
-     * @brief Records an exception occurring in the span.
+     * @brief Records an exception occurring in the span. Also marks the status of the span as
+     * SpanStatus::Error
      *
      * @param exception Exception which has occurred.
      */
@@ -137,6 +139,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddEvent(exception);
+        m_span->SetStatus(SpanStatus::Error);
       }
     }
 
@@ -161,10 +164,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
    * @details Each service implementation SHOULD have a member variable which aids in managing
    * the distributed tracing for the service.
    */
-  class DiagnosticTracingFactory final {
+  class TracingContextFactory final {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
+    std::string m_userAgent;
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
 
     /** @brief The key used to retrieve the span and tracer associated with a context object.
@@ -177,21 +181,17 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      */
     static Azure::Core::Context::Key ContextSpanKey;
     static Azure::Core::Context::Key TracingFactoryContextKey;
-    //    using TracingContext = std::pair<std::shared_ptr<Span>, std::shared_ptr<Tracer>>;
-    using TracingContext = std::shared_ptr<Span>;
-
-    static DiagnosticTracingFactory* DiagnosticFactoryFromContext(
-        Azure::Core::Context const& context);
-
-    static Azure::Nullable<TracingContext> TracingContextFromContext(
-        Azure::Core::Context const& context);
 
   public:
-    DiagnosticTracingFactory(
+    TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
         std::string serviceVersion)
         : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
+          m_userAgent(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+              serviceName,
+              serviceVersion,
+              options.Telemetry.ApplicationId)),
           m_serviceTracer(
               options.Telemetry.TracingProvider
                   ? options.Telemetry.TracingProvider->CreateTracer(serviceName, serviceVersion)
@@ -199,24 +199,68 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     {
     }
 
-    DiagnosticTracingFactory() = default;
+    TracingContextFactory() = default;
+    TracingContextFactory(TracingContextFactory const&) = default;
 
-    /** @brief A ContextAndSpan provides an updated Context object and a new span object
+    /** @brief A TracingContext provides an updated Context object and a new span object
      * which can be used to add events and attributes to the span.
      */
-    using ContextAndSpan = std::pair<Azure::Core::Context, ServiceSpan>;
+    struct TracingContext
+    {
+      /**
+       * @brief New Context to be used for subsequent methods which take a Context parameter.
+       */
+      Azure::Core::Context Context;
+      /**
+       * @brief Distributed Tracing Span which can be used to update status if the API succeeds or
+       * fails.
+       */
+      ServiceSpan Span;
+    };
 
-    ContextAndSpan CreateSpan(
+    /**
+     * @brief Create a span with the specified span name.
+     *
+     * @details This method is a convenience method intended for use by service clients, it creates
+     * a SpanKind::Internal span and context.
+     *
+     * @param spanName Name for the span to be created.
+     * @param context parent context object for the newly created span.
+     *
+     * @returns Newly allocated context and Span object.
+     *
+     */
+    TracingContext CreateTracingContext(
         std::string const& spanName,
-        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
-        Azure::Core::Context const& clientContext);
+        Azure::Core::Context const& context) const;
 
-    static ContextAndSpan CreateSpanFromContext(
+    /**
+     * @brief Create a span with the specified span name and create options.
+     *
+     * @param spanName Name for the span to be created.
+     * @param spanOptions Options for the newly created span.
+     * @param context parent context object for the newly created span.
+     *
+     * @returns Newly allocated context and Span object.
+     *
+     */
+    TracingContext CreateTracingContext(
         std::string const& spanName,
-        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
-        Azure::Core::Context const& clientContext);
+        Azure::Core::Tracing::_internal::CreateSpanOptions& spanOptions,
+        Azure::Core::Context const& context) const;
 
-    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
+    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
+
+    /** @brief Retrieves the User-Agent header value for this tracing context factory.
+     */
+    std::string const& GetUserAgent() const { return m_userAgent; }
+
+    /** @brief Returns true if this TracingContextFactory is connected to a service tracer.
+     */
+    bool HasTracer() const { return static_cast<bool>(m_serviceTracer); }
+
+    static std::unique_ptr<TracingContextFactory> CreateFromContext(
+        Azure::Core::Context const& context);
   };
 
   /**
