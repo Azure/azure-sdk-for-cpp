@@ -216,9 +216,45 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationDataType DataType;
   };
 
-  /** @brief Parameters sent to the attestation service to be consumed in an attestation operation.
+  /** @brief Parameters sent to the attestation service for the AttestationClient::AttestSgxEnclave
+   * API.
    */
-  struct AttestEnclaveOptions final
+  struct AttestSgxEnclaveOptions final
+  {
+    /**
+     * @brief Data created dynamically within the enclave
+     */
+    Azure::Nullable<AttestationData> RunTimeData{};
+
+    /**
+     * @brief Data created when the enclave was created. Not supported on Coffeelake processors.
+     */
+    Azure::Nullable<AttestationData> InitTimeData{};
+
+    /**
+     * @brief Nonce which is sent to the attestation service to allow a caller to prevent replay
+     * attacks.
+     */
+    Azure::Nullable<std::string> Nonce{};
+
+    /**
+     * @brief A test hook which allows developers to test attestation policies before they commit
+     * them to the service.
+     */
+    Azure::Nullable<std::string> DraftPolicyForAttestation{};
+
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service. Overrides the value specified in the AttestationClient.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
+  };
+
+  /** @brief Parameters sent to the attestation service for the AttestationClient::AttestOpenEnclave
+   * API.
+   */
+  struct AttestOpenEnclaveOptions final
   {
     /**
      * @brief Data created dynamically within the enclave
@@ -259,7 +295,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @details The TPM attestation protocol is defined
      * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      */
-    std::string ValueToSend;
+    std::string Payload;
   };
 
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key
@@ -327,7 +363,7 @@ namespace Azure { namespace Security { namespace Attestation {
   /** @brief Parameters sent to the attestation service when adding a new policy
    * management certificate.
    */
-  struct AddIsolatedModeCertificatesOptions final
+  struct AddIsolatedModeCertificateOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
      * by the attestation service. Overrides the value specified in the AttestationClient.
@@ -340,7 +376,7 @@ namespace Azure { namespace Security { namespace Attestation {
   /** @brief Parameters sent to the attestation service when removing a policy
    * management certificate.
    */
-  struct RemoveIsolatedModeCertificatesOptions final
+  struct RemoveIsolatedModeCertificateOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
      * by the attestation service. Overrides the value specified in the AttestationClient.

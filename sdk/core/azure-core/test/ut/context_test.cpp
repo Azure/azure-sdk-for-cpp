@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
+#include <azure/core/tracing/tracing.hpp>
 
 #include <chrono>
 #include <memory>
@@ -30,7 +31,7 @@ TEST(Context, BasicBool)
 
   // New context from previous
   auto c2 = context.WithValue(key, true);
-  bool value;
+  bool value{};
   EXPECT_TRUE(c2.TryGetValue<bool>(key, value));
   EXPECT_TRUE(value == true);
 
@@ -512,4 +513,27 @@ TEST(Context, KeyTypePairPrecondition)
 
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
   EXPECT_TRUE(strValue == s);
+}
+
+TEST(Context, SetTracingProvider)
+{
+  class TestTracingProvider final : public Azure::Core::Tracing::TracerProvider {
+  public:
+    TestTracingProvider() : TracerProvider() {}
+    ~TestTracingProvider() {}
+    std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
+        std::string const&,
+        std::string const&) const override
+    {
+      throw std::runtime_error("Not implemented");
+    };
+  };
+
+  Context context;
+  context.SetTracerProvider(nullptr);
+
+  // Verify we can round trip a tracing provider through the context.
+  auto testProvider = std::make_shared<TestTracingProvider>();
+  context.SetTracerProvider(testProvider);
+  EXPECT_EQ(testProvider, context.GetTracerProvider());
 }

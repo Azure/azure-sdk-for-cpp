@@ -85,7 +85,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationAdministrationClient> CreateClient()
+    AttestationAdministrationClient CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
@@ -96,11 +96,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return AttestationAdministrationClient::CreatePointer(m_endpoint, credential, options);
+      return AttestationAdministrationClient::Create(m_endpoint, credential, options);
     }
 
     bool ValidateSetPolicyResponse(
-        std::unique_ptr<AttestationAdministrationClient> const& client,
+        AttestationAdministrationClient const& client,
         Response<AttestationToken<PolicyResult>> const& result,
         Azure::Nullable<std::string> policyToValidate,
         Azure::Nullable<AttestationSigningKey> const& signingKey = {})
@@ -147,7 +147,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         if (!m_testContext.IsPlaybackMode())
         {
           AttestationToken<void> sentToken
-              = client->CreateAttestationPolicyToken(policyToValidate, signingKey);
+              = client.CreateAttestationPolicyToken(policyToValidate, signingKey);
 
           Azure::Core::Cryptography::_internal::Sha256Hash hasher;
           std::vector<uint8_t> rawTokenHash = hasher.Final(
@@ -172,13 +172,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       SetPolicyOptions setOptions;
       setOptions.SigningKey = signingKey;
       auto setResponse
-          = adminClient->SetAttestationPolicy(GetParam().TeeType, policyToSet, setOptions);
+          = adminClient.SetAttestationPolicy(GetParam().TeeType, policyToSet, setOptions);
 
       EXPECT_TRUE(ValidateSetPolicyResponse(adminClient, setResponse, policyToSet, signingKey));
 
       // Make sure that the policy we set can be retrieved (we've checked the hash in
       // ValidateSetPolicyResponse, but this doesn't hurt)
-      auto getResponse = adminClient->GetAttestationPolicy(
+      auto getResponse = adminClient.GetAttestationPolicy(
           GetParam().TeeType, GetPolicyOptions{GetTokenValidationOptions()});
       EXPECT_EQ(policyToSet, getResponse.Value.Body);
     }
@@ -191,13 +191,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       setOptions.SigningKey = signingKey;
       setOptions.TokenValidationOptionsOverride = GetTokenValidationOptions();
 
-      auto setResponse = adminClient->ResetAttestationPolicy(GetParam().TeeType, setOptions);
+      auto setResponse = adminClient.ResetAttestationPolicy(GetParam().TeeType, setOptions);
 
       EXPECT_TRUE(ValidateSetPolicyResponse(
           adminClient, setResponse, Azure::Nullable<std::string>(), signingKey));
 
       // The policy had better not be the minimal policy after we've reset it.
-      auto getResponse = adminClient->GetAttestationPolicy(GetParam().TeeType);
+      auto getResponse = adminClient.GetAttestationPolicy(GetParam().TeeType);
       EXPECT_NE(AttestationCollateral::GetMinimalPolicy(), getResponse.Value.Body);
     }
 
@@ -218,11 +218,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
-      EXPECT_FALSE(adminClient->Endpoint().empty());
-
       AttestationType attestationType(GetParam().TeeType);
       {
-        auto policy = adminClient->GetAttestationPolicy(attestationType);
+        auto policy = adminClient.GetAttestationPolicy(attestationType);
 
         // The policy should have a value, and the token should have been issued by the service.
         // Note that if the policy *doesn't* have a body, then the attestation type must be TPM
@@ -385,6 +383,23 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         ASSERT_FALSE(true) << "Unknown test parameter";
     }
   } // namespace Test
+
+  TEST_P(PolicyTests, CreateAdministrationClients)
+  {
+    // `InitTestClient` takes care of setting up Record&Playback.
+    auto options
+        = InitClientOptions<Azure::Security::Attestation::AttestationAdministrationClientOptions>();
+    {
+      AttestationAdministrationClient client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      AttestationAdministrationClient const client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+  }
 
   namespace {
     std::string GetTestName(testing::TestParamInfo<PolicyTests::ParamType> const& testInfo)

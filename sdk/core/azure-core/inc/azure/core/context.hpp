@@ -12,13 +12,17 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/rtti.hpp"
-
 #include <atomic>
 #include <chrono>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+
+// Forward declare TracerProvider to resolve an include file dependency ordering problem.
+namespace Azure { namespace Core { namespace Tracing {
+  class TracerProvider;
+}}} // namespace Azure::Core::Tracing
 
 namespace Azure { namespace Core {
 
@@ -76,6 +80,7 @@ namespace Azure { namespace Core {
     {
       std::shared_ptr<ContextSharedState> Parent;
       std::atomic<DateTime::rep> Deadline;
+      std::shared_ptr<Azure::Core::Tracing::TracerProvider> TraceProvider;
       Context::Key Key;
       std::shared_ptr<void> Value;
 #if defined(AZ_CORE_RTTI)
@@ -246,6 +251,22 @@ namespace Azure { namespace Core {
       {
         throw OperationCancelledException("Request was cancelled by context.");
       }
+    }
+
+    /**
+     * @brief Returns the tracer provider for the current context.
+     */
+    std::shared_ptr<Tracing::TracerProvider> GetTracerProvider()
+    {
+      return m_contextSharedState->TraceProvider;
+    }
+
+    /**
+     * @brief Sets the tracer provider for the current context.
+     */
+    void SetTracerProvider(std::shared_ptr<Tracing::TracerProvider> tracerProvider)
+    {
+      m_contextSharedState->TraceProvider = tracerProvider;
     }
 
     /**

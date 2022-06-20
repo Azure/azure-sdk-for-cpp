@@ -55,21 +55,31 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   #
   # 5. We "replace with empty string" (i.e. remove) first, then add, so that '/MT'
   # will be present (and present once) even if '/MD' was not.
-
+  message(STATUS "Configuring Static Runtime Library.")
+  if(${CMAKE_CXX_FLAGS} MATCHES ".*/MD.*")
   string(REGEX REPLACE "/MD" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
+  endif()
   
+  if(${CMAKE_CXX_FLAGS_RELEASE} MATCHES ".*/MD.*")
   string(REGEX REPLACE "/MD" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-
+  endif()
+  
+  if(${CMAKE_CXX_FLAGS_RELWITHDEBINFO} MATCHES ".*/MD.*")
   string(REGEX REPLACE "/MD" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
+  endif()
 
+  if(${CMAKE_CXX_FLAGS_MINSIZEREL} MATCHES ".*/MD.*")
   string(REGEX REPLACE "/MD" "" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
+  endif()
   
+  if(${CMAKE_CXX_FLAGS_DEBUG} MATCHES ".*/MD.*")
   string(REGEX REPLACE "/MDd" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+  endif()
 endif()
 
 if(BUILD_TESTING)
@@ -103,6 +113,5 @@ add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template)
 
 if(BUILD_SAMPLES)
-  add_subdirectory(samples/integration/vcpkg-keyvault)
   add_subdirectory(samples/integration/vcpkg-all-smoke)
 endif()
