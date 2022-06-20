@@ -158,8 +158,7 @@ And construct the new tracing factory in the service constructor:
       Azure::Core::Context const& context = Azure::Core::Context{})
   {
     // Create a new context and span for this request.
-    auto contextAndSpan = m_tracingFactory.CreateSpan(
-        "ServiceMethod", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
+    auto contextAndSpan = m_tracingFactory.CreateSpan("ServiceMethod", context);
 
     // contextAndSpan.Context is the new context for the operation.
     // contextAndSpan.Span is the new span for the operation.
@@ -179,7 +178,6 @@ And construct the new tracing factory in the service constructor:
     {
       // Register that the exception has happened and that the span is now in error.
       contextAndSpan.Span.AddEvent(ex);
-      contextAndSpan.Span.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
       throw;
     }
 
@@ -247,4 +245,4 @@ Generated traces have the following attributes:
 | `http.status_code` | HTTP status code returned by the service | HTTP Spans.
 | `http.user_agent` | The value of the `User-Agent` HTTP header sent to the service | HTTP Spans.
 | `requestId` | The value of the `x-ms-client-request-id` header sent by the client | HTTP Spans.
-| `serviceRequestId` | The value -f the `x-ms-request-id` sent by the server | HTTP Spans.
+| `serviceRequestId` | The value of the `x-ms-request-id` sent by the server | HTTP Spans.

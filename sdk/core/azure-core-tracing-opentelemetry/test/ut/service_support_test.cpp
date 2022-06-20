@@ -590,14 +590,12 @@ public:
       : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<TelemetryPolicy>(
-        "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2", clientOptions.Telemetry));
     policies.emplace_back(std::make_unique<RequestIdPolicy>());
     policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
 
     // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
     policies.emplace_back(
-        std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
+        std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
 
     // Final policy - functions as the HTTP transport policy.
     policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request& request) {

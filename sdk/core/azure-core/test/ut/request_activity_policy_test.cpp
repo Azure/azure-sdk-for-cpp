@@ -170,11 +170,12 @@ TEST(RequestActivityPolicy, Basic)
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
       policies.emplace_back(
-          std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
+          std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
       // Final policy - equivalent to HTTP policy.
       policies.emplace_back(std::make_unique<NoOpPolicy>());
 
-      Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, callContext);
+      auto response
+          = Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, callContext);
     }
 
     EXPECT_EQ(1ul, testTracer->GetTracers().size());
@@ -192,22 +193,24 @@ TEST(RequestActivityPolicy, Basic)
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "my-service-cpp", "1.0.0.beta-2");
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
+    Azure::Nullable<std::string> userAgent;
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
       policies.emplace_back(std::make_unique<RequestIdPolicy>());
-      policies.emplace_back(
-          std::make_unique<TelemetryPolicy>("my-service-cpp", "1.0b2", clientOptions.Telemetry));
       policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
       policies.emplace_back(
-          std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
+          std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
       // Final policy - equivalent to HTTP policy.
-      policies.emplace_back(std::make_unique<NoOpPolicy>());
+      policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request& request) {
+        userAgent = request.GetHeader("user-agent"); // Return success.
+        return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+      }));
 
       Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, callContext);
     }
@@ -218,6 +221,8 @@ TEST(RequestActivityPolicy, Basic)
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
     EXPECT_EQ("HTTP GET", tracer->GetSpans()[1]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
+    std::string expectedUserAgentPrefix{"azsdk-cpp-my-service-cpp/1.0.0.beta-2 ("};
+    EXPECT_EQ(expectedUserAgentPrefix, userAgent.Value().substr(0, expectedUserAgentPrefix.size()));
   }
 }
 
@@ -243,7 +248,7 @@ TEST(RequestActivityPolicy, TryRetries)
 
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
       policies.emplace_back(
-          std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
+          std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
       // Final policy - equivalent to HTTP policy.
       int retryCount = 0;
       policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request&) {

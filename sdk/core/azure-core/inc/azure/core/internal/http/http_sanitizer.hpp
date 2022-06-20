@@ -6,8 +6,8 @@
 #include "azure/core/url.hpp"
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal {
-  class InputSanitizer final {
+namespace Azure { namespace Core { namespace Http { namespace _internal {
+  class HttpSanitizer final {
     /**
      * @brief HTTP header names that are allowed to be logged.
      */
@@ -18,12 +18,9 @@ namespace Azure { namespace Core { namespace _internal {
      */
     std::set<std::string> m_allowedHttpQueryParameters;
 
-    // Manifest constant indicating a field was redacted.
-    static const char* m_RedactedPlaceholder;
-
   public:
-    InputSanitizer() = default;
-    InputSanitizer(
+    HttpSanitizer() = default;
+    HttpSanitizer(
         std::set<std::string> const& allowedHttpQueryParameters,
         Azure::Core::CaseInsensitiveSet const& allowedHttpHeaders)
         : m_allowedHttpHeaders(allowedHttpHeaders),
@@ -47,4 +44,4 @@ namespace Azure { namespace Core { namespace _internal {
      */
     std::string SanitizeHeader(std::string const& headerName, std::string const& headerValue) const;
   };
-}}} // namespace Azure::Core::_internal
+}}}} // namespace Azure::Core::Http::_internal

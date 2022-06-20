@@ -6,6 +6,7 @@
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
 #include <azure/core/context.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/url.hpp>
 #include <string>
 
@@ -68,10 +69,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param attestationClient An existing attestation client.
      */
     AttestationAdministrationClient(AttestationAdministrationClient const& attestationClient)
-        : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
-          m_pipeline(attestationClient.m_pipeline),
-          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions),
-          m_attestationSigners(attestationClient.m_attestationSigners){};
+        = default;
 
     /**
      * @brief Destructor.
@@ -258,6 +256,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
+    Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 
     std::vector<Models::AttestationSigner> m_attestationSigners;
 
