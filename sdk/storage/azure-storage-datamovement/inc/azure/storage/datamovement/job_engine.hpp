@@ -64,6 +64,11 @@ namespace Azure { namespace Storage {
       friend class _detail::JobEngine;
     };
 
+    /**
+     * @brief On-disk data representation of a job. It connsists of absolute paths of source and
+     * destination. Credentials are not stored here, so it needs to be used in conjunction with
+     * HydrationParameters after being loaded into memory.
+     */
     struct JobModel final
     {
       TransferEnd Source;
@@ -80,6 +85,10 @@ namespace Azure { namespace Storage {
   } // namespace _internal
 
   namespace _detail {
+    /**
+     * On-disk data respsentation of a task. Only relatvie paths of source and destination are
+     * stored so it needs to be used in conjunction with JobModel.
+     */
     struct TaskModel final
     {
       int32_t NumSubtasks = 0;
@@ -93,16 +102,26 @@ namespace Azure { namespace Storage {
       static TaskModel FromString(const std::string& str);
     };
 
-    struct PartGenerator final
+    /**
+     * On-disk data representation of a task generator. Only relative paths of source and
+     * destination are stored so it needs to be used in conjunction with JobModel.
+     */
+    struct PartGeneratorModel final
     {
       std::string Source;
       std::string Destination;
       std::string ContinuationToken;
 
       std::string ToString() const;
-      static PartGenerator FromString(const std::string& str);
+      static PartGeneratorModel FromString(const std::string& str);
     };
 
+    /**
+     * @brief JobPart struct manages status of a job part file.
+     *
+     * It's responsible for loading tasks from part file and mapping the bitmap region into memory
+     * so that transfer engine can update the status of tasks.
+     */
     struct JobPart final
     {
       JobPart() = default;
@@ -110,11 +129,6 @@ namespace Azure { namespace Storage {
       ~JobPart();
 
       static std::pair<JobPart, std::vector<TaskModel>> LoadTasks(JobPlan* plan, uint32_t id);
-
-      static void CreateJobPart(
-          uint32_t id,
-          const std::string& jobPlanDir,
-          const std::vector<TaskModel>& tasks);
 
       _internal::MovablePtr<JobPlan> m_jobPlan;
       uint32_t m_id = 0;
@@ -125,6 +139,18 @@ namespace Azure { namespace Storage {
       bool* m_doneBitmap = nullptr;
     };
 
+    /**
+     * @brief JobPlan struct manages plan files for one job.
+     *
+     * Plan files include:
+     *   1. job_info, which records information of the job.
+     *   2. part files, each of which consists of certain amount of tasks and a bitmap marking
+     * status of these tasks.
+     *   3. part_gen, which consists of several part generatos. Each generator can generates some
+     * tasks and maybe some more generators.
+     *
+     * All plan-level and part-level operations are handled by this struct.
+     */
     struct JobPlan final
     {
       JobPlan() = default;
@@ -136,13 +162,17 @@ namespace Azure { namespace Storage {
           _internal::HydrationParameters hydrateParameters,
           const std::string& jobPlanDir);
 
-      void AppendPartGenerators(const std::vector<PartGenerator>& gens);
+      void AppendPartGenerators(const std::vector<PartGeneratorModel>& gens);
       void GenerateParts();
       std::vector<_internal::Task> HydrateTasks(
           std::shared_ptr<JobPart>& jobPart,
           const std::vector<TaskModel>& taskModels);
 
-      void GeneratePartImpl(const PartGenerator& gen);
+      void GeneratePartImpl(const PartGeneratorModel& gen);
+      static void CreateJobPart(
+          uint32_t id,
+          const std::string& jobPlanDir,
+          const std::vector<TaskModel>& tasks);
       void RemoveDonePart(uint32_t id);
       void TaskFinishCallback(
           const JournalContext& context,
@@ -180,6 +210,11 @@ namespace Azure { namespace Storage {
       uint32_t m_maxPartId = 0;
     };
 
+    /**
+     * @brief JobEngine keeps track of all running jobs. It's responsible for creating new jobs,
+     * pausing running jobs, resuming paused jobs and removing finished jobs. It also adds new tasks
+     * to transfer engine when transfer engine is running low on tasks.
+     */
     class JobEngine final {
     public:
       explicit JobEngine(const std::string& plansDir, _internal::TransferEngine* transferEngine);

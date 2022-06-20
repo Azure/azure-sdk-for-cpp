@@ -280,7 +280,7 @@ namespace Azure { namespace Storage {
       return ret;
     }
 
-    std::string PartGenerator::ToString() const
+    std::string PartGeneratorModel::ToString() const
     {
       Core::Json::_internal::json object;
       object["source"] = Source;
@@ -292,10 +292,10 @@ namespace Azure { namespace Storage {
       return object.dump();
     }
 
-    PartGenerator PartGenerator::FromString(const std::string& str)
+    PartGeneratorModel PartGeneratorModel::FromString(const std::string& str)
     {
       auto object = Core::Json::_internal::json::parse(str);
-      PartGenerator ret;
+      PartGeneratorModel ret;
       ret.Source = object["source"].get<std::string>();
       ret.Destination = object["destination"].get<std::string>();
       if (object.count("continuation_token") != 0)
@@ -367,31 +367,6 @@ namespace Azure { namespace Storage {
       return std::make_pair(std::move(jobPart), std::move(tasks));
     }
 
-    void JobPart::CreateJobPart(
-        uint32_t id,
-        const std::string& jobPlanDir,
-        const std::vector<TaskModel>& tasks)
-    {
-      const std::string partFilename = _internal::JoinPath(jobPlanDir, PartIdToString(id));
-      std::fstream fOut(
-          partFilename + ".tmp", std::fstream::out | std::fstream::trunc | std::fstream::binary);
-      fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
-      WriteFixedInt(fOut, g_PlanFileVersion);
-      int32_t numDoneBits
-          = std::accumulate(tasks.begin(), tasks.end(), 0, [](int32_t s, const TaskModel& t) {
-              return s + t.NumSubtasks;
-            });
-      WriteFixedInt(fOut, numDoneBits);
-      WriteZeros(fOut, numDoneBits);
-      for (const auto& t : tasks)
-      {
-        WriteVarInt(fOut, t.NumSubtasks);
-        WriteString(fOut, t.ToString());
-      }
-      fOut.close();
-      _internal::Rename(partFilename + ".tmp", partFilename);
-    }
-
     void JobPlan::CreateJobPlan(const _internal::JobModel& model, const std::string& jobPlanDir)
     {
       AZURE_ASSERT(!_internal::PathExists(jobPlanDir));
@@ -403,7 +378,7 @@ namespace Azure { namespace Storage {
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
         fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
         WriteFixedInt(fOut, g_PlanFileVersion);
-        PartGenerator rootGenerator;
+        PartGeneratorModel rootGenerator;
         std::string serializedGenerator = rootGenerator.ToString();
         WriteFixedInt(fOut, int8_t(0));
         WriteString(fOut, serializedGenerator);
@@ -527,7 +502,7 @@ namespace Azure { namespace Storage {
       return jobPlan;
     }
 
-    void JobPlan::AppendPartGenerators(const std::vector<PartGenerator>& gens)
+    void JobPlan::AppendPartGenerators(const std::vector<PartGeneratorModel>& gens)
     {
       if (gens.empty())
       {
@@ -567,7 +542,7 @@ namespace Azure { namespace Storage {
         }
         else
         {
-          auto partGen = PartGenerator::FromString(ReadString(m_partGens));
+          auto partGen = PartGeneratorModel::FromString(ReadString(m_partGens));
           m_generatorFileInOffset = static_cast<size_t>(m_partGens.tellg());
           GeneratePartImpl(partGen);
           m_partGens.seekp(doneBitOffset);
@@ -575,6 +550,31 @@ namespace Azure { namespace Storage {
           m_partGens.flush();
         }
       }
+    }
+
+    void JobPlan::CreateJobPart(
+        uint32_t id,
+        const std::string& jobPlanDir,
+        const std::vector<TaskModel>& tasks)
+    {
+      const std::string partFilename = _internal::JoinPath(jobPlanDir, PartIdToString(id));
+      std::fstream fOut(
+          partFilename + ".tmp", std::fstream::out | std::fstream::trunc | std::fstream::binary);
+      fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
+      WriteFixedInt(fOut, g_PlanFileVersion);
+      int32_t numDoneBits
+          = std::accumulate(tasks.begin(), tasks.end(), 0, [](int32_t s, const TaskModel& t) {
+              return s + t.NumSubtasks;
+            });
+      WriteFixedInt(fOut, numDoneBits);
+      WriteZeros(fOut, numDoneBits);
+      for (const auto& t : tasks)
+      {
+        WriteVarInt(fOut, t.NumSubtasks);
+        WriteString(fOut, t.ToString());
+      }
+      fOut.close();
+      _internal::Rename(partFilename + ".tmp", partFilename);
     }
 
     void JobPlan::RemoveDonePart(uint32_t id)

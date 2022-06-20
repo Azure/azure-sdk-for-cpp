@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace _detail {
     constexpr size_t g_MaxTasksGenerated = 1000000;
   } // namespace
 
-  void JobPlan::GeneratePartImpl(const PartGenerator& gen)
+  void JobPlan::GeneratePartImpl(const PartGeneratorModel& gen)
   {
     std::vector<TaskModel> newTasks;
     size_t numNewSubtasks = 0;
@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace _detail {
         return;
       }
       const uint32_t partId = ++m_maxPartId;
-      JobPart::CreateJobPart(partId, m_jobPlanDir, newTasks);
+      JobPlan::CreateJobPart(partId, m_jobPlanDir, newTasks);
       m_jobParts[partId] = nullptr;
       newTasks.clear();
       numNewSubtasks = 0;
@@ -47,7 +47,7 @@ namespace Azure { namespace Storage { namespace _detail {
         flushNewTasks();
       }
     };
-    std::vector<PartGenerator> partGens;
+    std::vector<PartGeneratorModel> partGens;
 
     if (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile)
     {
@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace _detail {
       partGens.push_back(gen);
       do
       {
-        PartGenerator currGen = std::move(partGens.back());
+        PartGeneratorModel currGen = std::move(partGens.back());
         partGens.pop_back();
 
         _internal::DirectoryIterator dirIterator(_internal::JoinPath(jobRootPath, currGen.Source));
@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace _detail {
           }
           else
           {
-            PartGenerator newGen;
+            PartGeneratorModel newGen;
             newGen.Source = _internal::JoinPath(currGen.Source, entry.Name);
             newGen.Destination = _internal::JoinPath(currGen.Destination, entry.Name);
             partGens.push_back(std::move(newGen));
