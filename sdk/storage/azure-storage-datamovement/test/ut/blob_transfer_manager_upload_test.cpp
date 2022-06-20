@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <azure/storage/datamovement/blob_transfer_manager.hpp>
-#include <azure/storage/datamovement/directory_iterator.hpp>
+#include <azure/storage/datamovement/filesystem.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -43,13 +43,41 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobTransferManagerTest, SingleUploadPauseResume_LIVEONLY_)
+  TEST_F(BlobTransferManagerTest, SingleUploadFailed_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);
     auto containerClient = blobServiceClient.GetBlobContainerClient(GetContainerValidName());
     containerClient.CreateIfNotExists();
     auto blobClient = containerClient.GetBlobClient(testName);
+    auto blobClientWithoutAuth = Blobs::BlobClient(blobClient.GetUrl());
+
+    const std::string tempFilename = "localfile" + testName;
+    constexpr size_t fileSize = static_cast<size_t>(1_KB);
+    WriteFile(tempFilename, RandomBuffer(fileSize));
+
+    Blobs::BlobTransferManager m;
+    auto job = m.ScheduleUpload(tempFilename, blobClientWithoutAuth);
+
+    EXPECT_EQ(job.WaitHandle.get(), JobStatus::Failed);
+  }
+
+  TEST_F(BlobTransferManagerTest, SingleUploadPauseResume_LIVEONLY_)
+  {
+    const auto testName = GetTestNameLowerCase();
+    auto blobServiceClient = GetClientForTest(testName);
+    const auto containerName = GetContainerValidName();
+    auto containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+    containerClient.CreateIfNotExists();
+    auto blobClient = containerClient.GetBlobClient(testName);
+
+    ResumeJobOptions resumeOptions;
+    {
+      auto parsedConnectionString
+          = _internal::ParseConnectionString(StandardStorageConnectionString());
+      resumeOptions.DestinationCredential.SharedKeyCredential
+          = parsedConnectionString.KeyCredential;
+    }
 
     const std::string tempFilename = "localfile" + testName;
     constexpr size_t fileSize = static_cast<size_t>(256_MB);
@@ -57,26 +85,50 @@ namespace Azure { namespace Storage { namespace Test {
 
     StorageTransferManagerOptions options;
     options.NumThreads = 2;
-    Blobs::BlobTransferManager m(options);
-    auto job = m.ScheduleUpload(tempFilename, blobClient);
+    std::unique_ptr<Blobs::BlobTransferManager> m
+        = std::make_unique<Blobs::BlobTransferManager>(options);
+    auto job = m->ScheduleUpload(tempFilename, blobClient);
 
-    for (int i = 0; i < 6; ++i)
+    bool atLeasePausedOnce = false;
+    bool atLeaseDestructedOnce = false;
+    for (int i = 0; i < 10; ++i)
     {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
-      try
+      std::this_thread::sleep_for(std::chrono::milliseconds(10) * (2 << i));
+      if (i % 2 == 0)
       {
-        m.PauseJob(job.Id);
+        m.reset();
+        m = std::make_unique<Blobs::BlobTransferManager>(options);
+        atLeaseDestructedOnce = true;
       }
-      catch (std::exception&)
+      else
+      {
+        try
+        {
+          m->PauseJob(job.Id);
+          atLeasePausedOnce = true;
+        }
+        catch (std::exception&)
+        {
+          break;
+        }
+      }
+      auto status = job.WaitHandle.get();
+      EXPECT_TRUE(status == JobStatus::Succeeded || status == JobStatus::Paused);
+      if (status == JobStatus::Succeeded)
       {
         break;
       }
+
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
-      m.ResumeJob(job.Id);
+
+      job = m->ResumeJob(job.Id, resumeOptions);
     }
+    EXPECT_TRUE(atLeasePausedOnce);
+    EXPECT_TRUE(atLeaseDestructedOnce);
 
     auto jobStatus = job.WaitHandle.get();
     EXPECT_EQ(jobStatus, JobStatus::Succeeded);
+    EXPECT_THROW(m->PauseJob(job.Id), std::exception);
 
     const std::string tempDownloadFile = "localfiledownloadtemp" + testName;
     {

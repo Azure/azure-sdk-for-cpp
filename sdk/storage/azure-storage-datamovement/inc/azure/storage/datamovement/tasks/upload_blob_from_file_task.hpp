@@ -5,6 +5,7 @@
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include <azure/storage/blobs.hpp>
@@ -20,9 +21,19 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         _internal::TaskType type,
         const std::string& source,
         const Blobs::BlobClient& destination) noexcept
-        : TaskBase(type), Context(std::make_shared<TaskContext>(source, destination))
+        : TaskBase(type), Source(source), Destination(destination)
     {
     }
+
+    std::string Source;
+    Blobs::BlobClient Destination;
+
+    void Execute() noexcept override;
+  };
+
+  struct ReadFileRangeToMemoryTask final : public Storage::_internal::TaskBase
+  {
+    using TaskBase::TaskBase;
 
     struct TaskContext final
     {
@@ -32,22 +43,15 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       }
       std::string Source;
       Blobs::BlobClient Destination;
+      std::mutex FileReaderMutex; // TODO: optimize this if it becomes a bottleneck
       std::unique_ptr<Storage::_internal::FileReader> FileReader;
       uint64_t FileSize{0};
       int NumBlocks{0};
       std::atomic<int> NumStagedBlocks{0};
       std::atomic<bool> Failed{false};
     };
+
     std::shared_ptr<TaskContext> Context;
-
-    void Execute() noexcept override;
-  };
-
-  struct ReadFileRangeToMemoryTask final : public Storage::_internal::TaskBase
-  {
-    using TaskBase::TaskBase;
-
-    std::shared_ptr<UploadBlobFromFileTask::TaskContext> Context;
     int BlockId;
     int64_t Offset;
     size_t Length;
@@ -59,7 +63,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   {
     using TaskBase::TaskBase;
 
-    std::shared_ptr<UploadBlobFromFileTask::TaskContext> Context;
+    std::shared_ptr<ReadFileRangeToMemoryTask::TaskContext> Context;
     int BlockId;
     size_t Length;
     std::unique_ptr<uint8_t[]> Buffer;

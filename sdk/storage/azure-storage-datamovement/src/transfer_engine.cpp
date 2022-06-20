@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/datamovement/scheduler.hpp"
+#include "azure/storage/datamovement/transfer_engine.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -15,6 +15,7 @@
 #include <azure/core/azure_assert.hpp>
 
 #include "azure/storage/datamovement/job_properties.hpp"
+#include "azure/storage/datamovement/task_shared_status.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(disable : 26110 26117)
@@ -22,7 +23,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  Scheduler::Scheduler(const SchedulerOptions& options) : m_options(options)
+  TransferEngine::TransferEngine(const TransferEngineOptions& options) : m_options(options)
   {
     int numThreads = options.NumThreads.HasValue()
         ? options.NumThreads.Value()
@@ -36,7 +37,7 @@ namespace Azure { namespace Storage { namespace _internal {
     m_memoryLeft = m_options.MaxMemorySize.Value();
 
     auto workerFunc = [this](TaskQueue& q, std::mutex& m, std::condition_variable& cv) {
-      // Deadlock prevention: readyQueueLock, pausedQueueLock
+      // Deadlock prevention: readyQueueLock
       while (true)
       {
         std::unique_lock<std::mutex> guard(m);
@@ -50,36 +51,24 @@ namespace Azure { namespace Storage { namespace _internal {
         q.pop();
         guard.unlock();
 
-        while (true)
+        auto jobStatus = task->SharedStatus->Status.load(std::memory_order_relaxed);
+        if (jobStatus == JobStatus::Paused || jobStatus == JobStatus::Cancelled
+            || jobStatus == JobStatus::Failed)
         {
-          auto jobStatus = task->SharedStatus->Status.load(std::memory_order_relaxed);
-          if (jobStatus == JobStatus::Paused)
-          {
-            std::lock_guard<std::mutex> pausedTasksGuard(m_pausedTasksMutex);
-            if (task->SharedStatus->Status.load(std::memory_order_relaxed) != JobStatus::Paused)
-            {
-              continue;
-            }
-            ReclaimProvisionedResource(task);
-            m_pausedTasks.push(std::move(task));
-            task.reset(); // to suppress compiler warning
-          }
-          else if (jobStatus == JobStatus::Cancelled || jobStatus == JobStatus::Failed)
-          {
-            ReclaimProvisionedResource(task);
-          }
-          else if (jobStatus == JobStatus::InProgress)
-          {
-            task->MemoryGiveBack += task->MemoryCost;
-            task->Execute();
-          }
-          else
-          {
-            AZURE_UNREACHABLE_CODE();
-          }
-          break;
+          ReclaimProvisionedResource(task);
         }
+        else if (jobStatus == JobStatus::InProgress)
+        {
+          task->MemoryGiveBack += task->MemoryCost;
+          task->Execute();
+        }
+        else
+        {
+          AZURE_UNREACHABLE_CODE();
+        }
+
         ReclaimAllocatedResource(task);
+        m_numTasks.fetch_sub(1, std::memory_order_relaxed);
       }
     };
 
@@ -102,7 +91,6 @@ namespace Azure { namespace Storage { namespace _internal {
 
     auto schedulerFunc = [this]() {
       // Deadlock prevention: pendingQueueLock, readyQueueLock
-      // Deadlock prevention: pendingQueueLock, pausedQueueLock
       std::unique_lock<std::mutex> guard(m_pendingTasksMutex);
       while (true)
       {
@@ -110,24 +98,20 @@ namespace Azure { namespace Storage { namespace _internal {
         {
           break;
         }
-        std::vector<Task> pausedTasks;
         std::vector<Task> readyTasks;
         auto scheduleTasksInPendingQueue
-            = [this, &pausedTasks, &readyTasks](
-                  TaskQueue& pendingQueue, std::function<bool(const Task&)> predicate) {
+            = [this,
+               &readyTasks](TaskQueue& pendingQueue, std::function<bool(const Task&)> predicate) {
                 while (!pendingQueue.empty())
                 {
                   Task& task = pendingQueue.front();
                   auto jobStatus = task->SharedStatus->Status.load(std::memory_order_relaxed);
-                  if (jobStatus == JobStatus::Paused)
-                  {
-                    pausedTasks.push_back(std::move(task));
-                    pendingQueue.pop();
-                  }
-                  else if (jobStatus == JobStatus::Cancelled || jobStatus == JobStatus::Failed)
+                  if (jobStatus == JobStatus::Paused || jobStatus == JobStatus::Cancelled
+                      || jobStatus == JobStatus::Failed)
                   {
                     ReclaimAllocatedResource(task);
                     pendingQueue.pop();
+                    m_numTasks.fetch_sub(1, std::memory_order_relaxed);
                   }
                   else if (jobStatus == JobStatus::InProgress)
                   {
@@ -153,7 +137,8 @@ namespace Azure { namespace Storage { namespace _internal {
         {
           // schedule disk IO tasks
           scheduleTasksInPendingQueue(m_pendingDiskIOTasks, [this](const Task& t) {
-            return t->MemoryCost <= m_memoryLeft.load(std::memory_order_relaxed);
+            return static_cast<int64_t>(t->MemoryCost)
+                <= m_memoryLeft.load(std::memory_order_relaxed);
           });
           if (!readyTasks.empty())
           {
@@ -171,11 +156,15 @@ namespace Azure { namespace Storage { namespace _internal {
 
         {
           // schedule network tasks
-          scheduleTasksInPendingQueue(
-              m_pendingNetworkUploadTasks, [](const Task&) { return true; });
+          scheduleTasksInPendingQueue(m_pendingNetworkUploadTasks, [this](const Task& t) {
+            return static_cast<int64_t>(t->MemoryCost)
+                <= m_memoryLeft.load(std::memory_order_relaxed);
+          });
           size_t n1 = readyTasks.size();
-          scheduleTasksInPendingQueue(
-              m_pendingNetworkDownloadTasks, [](const Task&) { return true; });
+          scheduleTasksInPendingQueue(m_pendingNetworkDownloadTasks, [this](const Task& t) {
+            return static_cast<int64_t>(t->MemoryCost)
+                <= m_memoryLeft.load(std::memory_order_relaxed);
+          });
           size_t n2 = readyTasks.size();
 
           if (!readyTasks.empty())
@@ -206,30 +195,6 @@ namespace Azure { namespace Storage { namespace _internal {
           }
           readyTasks.clear();
         }
-        if (!pausedTasks.empty())
-        {
-          {
-            std::lock_guard<std::mutex> pausedTasksGuard(m_pausedTasksMutex);
-            for (auto& i : pausedTasks)
-            {
-              if (i->SharedStatus->Status.load(std::memory_order_relaxed) == JobStatus::Paused)
-              {
-                m_pausedTasks.push(std::move(i));
-                i.reset(); // to suppress compiler warning
-              }
-            }
-          }
-          auto ite = std::remove_if(
-              pausedTasks.begin(), pausedTasks.end(), [](const auto& i) { return !i; });
-          pausedTasks.erase(ite, pausedTasks.end());
-          if (!pausedTasks.empty())
-          {
-            guard.unlock();
-            AddTasks(std::move(pausedTasks));
-            guard.lock();
-            continue;
-          }
-        }
 
         m_pendingTasksCv.wait_for(guard, std::chrono::milliseconds(100));
       }
@@ -238,17 +203,29 @@ namespace Azure { namespace Storage { namespace _internal {
     m_schedulerThread = std::thread(schedulerFunc);
   }
 
-  Scheduler::~Scheduler()
+  void TransferEngine::Stop()
   {
-    m_stopped.store(true, std::memory_order_relaxed);
-    m_pendingTasksCv.notify_one();
-    m_readyDiskIOTasksCv.notify_all();
-    m_readyTasksCv.notify_all();
-    m_schedulerThread.join();
-    for (auto& th : m_workerThreads)
+    bool oldValue = m_stopped.exchange(true, std::memory_order_relaxed);
+    if (!oldValue)
     {
-      th.join();
+      m_pendingTasksCv.notify_one();
+      m_readyDiskIOTasksCv.notify_all();
+      m_readyTasksCv.notify_all();
+      m_schedulerThread.join();
+      for (auto& th : m_workerThreads)
+      {
+        th.join();
+      }
     }
+  }
+
+  TransferEngine::~TransferEngine()
+  {
+    Stop();
+    m_numTasks.fetch_sub(
+        m_readyTasks.size() + m_readyDiskIOTasks.size() + m_pendingDiskIOTasks.size()
+            + m_pendingNetworkUploadTasks.size() + m_pendingNetworkDownloadTasks.size(),
+        std::memory_order_relaxed);
     {
       std::lock_guard<std::mutex> guard(m_readyTasksMutex);
       while (!m_readyTasks.empty())
@@ -263,16 +240,8 @@ namespace Azure { namespace Storage { namespace _internal {
       while (!m_readyDiskIOTasks.empty())
       {
         ReclaimProvisionedResource(m_readyDiskIOTasks.front());
-        ReclaimAllocatedResource(m_readyTasks.front());
+        ReclaimAllocatedResource(m_readyDiskIOTasks.front());
         m_readyDiskIOTasks.pop();
-      }
-    }
-    {
-      std::lock_guard<std::mutex> guard(m_pausedTasksMutex);
-      while (!m_pausedTasks.empty())
-      {
-        ReclaimAllocatedResource(m_pausedTasks.front());
-        m_pausedTasks.pop();
       }
     }
     {
@@ -293,10 +262,11 @@ namespace Azure { namespace Storage { namespace _internal {
         m_pendingNetworkDownloadTasks.pop();
       }
     }
-    AZURE_ASSERT(m_memoryLeft == m_options.MaxMemorySize.Value());
+    AZURE_ASSERT(m_memoryLeft == static_cast<int64_t>(m_options.MaxMemorySize.Value()));
+    AZURE_ASSERT(m_numTasks == 0);
   }
 
-  void Scheduler::AddTask(Task&& task)
+  void TransferEngine::AddTask(Task&& task)
   {
     if (task->Type == TaskType::DiskIO)
     {
@@ -327,9 +297,10 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       AZURE_UNREACHABLE_CODE();
     }
+    m_numTasks.fetch_add(1, std::memory_order_relaxed);
   }
 
-  void Scheduler::AddTasks(std::vector<Task>&& tasks)
+  void TransferEngine::AddTasks(std::vector<Task>&& tasks)
   {
     {
       std::unique_lock<std::mutex> guard(m_pendingTasksMutex, std::defer_lock);
@@ -403,31 +374,7 @@ namespace Azure { namespace Storage { namespace _internal {
         }
       }
     }
-  }
-
-  void Scheduler::ResumePausedTasks()
-  {
-    TaskQueue stillPausedTasks;
-    std::vector<Task> resumedTasks;
-    {
-      std::lock_guard<std::mutex> guard(m_pausedTasksMutex);
-      while (!m_pausedTasks.empty())
-      {
-        auto t = std::move(m_pausedTasks.front());
-        m_pausedTasks.pop();
-
-        if (t->SharedStatus->Status.load(std::memory_order_relaxed) == JobStatus::Paused)
-        {
-          stillPausedTasks.push(std::move(t));
-        }
-        else
-        {
-          resumedTasks.push_back(std::move(t));
-        }
-      }
-      m_pausedTasks.swap(stillPausedTasks);
-    }
-    AddTasks(std::move(resumedTasks));
+    m_numTasks.fetch_add(tasks.size(), std::memory_order_relaxed);
   }
 
 }}} // namespace Azure::Storage::_internal

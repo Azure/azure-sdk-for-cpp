@@ -5,7 +5,6 @@
 
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
-#include "azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -15,22 +14,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClient& destinationBlob,
       const ScheduleUploadBlobOptions& options)
   {
-    (void)options;
+    // TODO: verify source and destination
+    _internal::JobModel jobModel;
+    jobModel.Source = _internal::TransferEnd::CreateFromLocalFile(sourceLocalPath);
+    jobModel.Destination = _internal::TransferEnd::CreateFromAzureBlob(destinationBlob);
 
-    // TODO: remove SAS credential from url
-    auto pair = CreateJob(
-        TransferType::SingleUpload,
-        _internal::GetFileUrl(sourceLocalPath),
-        destinationBlob.GetUrl());
-    auto& jobProperties = pair.first;
-    auto& rootTask = pair.second;
-
-    auto task = rootTask->CreateTask<_detail::UploadBlobFromFileTask>(
-        _internal::TaskType::NetworkUpload, sourceLocalPath, destinationBlob);
-
-    m_scheduler.AddTask(std::move(task));
-
-    return std::move(jobProperties);
+    _internal::HydrationParameters hydrateOptions;
+    hydrateOptions.ErrorHandler = options.ErrorHandler;
+    hydrateOptions.ProgressHandler = options.ProgressHandler;
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
   JobProperties BlobTransferManager::ScheduleUploadDirectory(
@@ -38,21 +30,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobFolder& destinationBlobFolder,
       const ScheduleUploadBlobOptions& options)
   {
-    (void)options;
+    _internal::JobModel jobModel;
+    jobModel.Source = _internal::TransferEnd::CreateFromLocalDirectory(sourceLocalPath);
+    jobModel.Destination = _internal::TransferEnd::CreateFromAzureBlobFolder(destinationBlobFolder);
 
-    auto pair = CreateJob(
-        TransferType::DirectoryUpload,
-        _internal::GetFileUrl(sourceLocalPath),
-        destinationBlobFolder.GetUrl());
-    auto& jobProperties = pair.first;
-    auto& rootTask = pair.second;
-
-    auto task = rootTask->CreateTask<_detail::UploadBlobsFromDirectoryTask>(
-        _internal::TaskType::NetworkUpload, sourceLocalPath, destinationBlobFolder);
-
-    m_scheduler.AddTask(std::move(task));
-
-    return std::move(jobProperties);
+    _internal::HydrationParameters hydrateOptions;
+    hydrateOptions.ErrorHandler = options.ErrorHandler;
+    hydrateOptions.ProgressHandler = options.ProgressHandler;
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
   JobProperties BlobTransferManager::ScheduleDownload(
@@ -60,21 +45,30 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& destinationLocalPath,
       const ScheduleDownloadBlobOptions& options)
   {
-    (void)options;
+    // TODO: check destination is dir or file
+    _internal::JobModel jobModel;
+    jobModel.Source = _internal::TransferEnd::CreateFromAzureBlob(sourceBlob);
+    jobModel.Destination = _internal::TransferEnd::CreateFromLocalFile(destinationLocalPath);
 
-    auto pair = CreateJob(
-        TransferType::SingleDownload,
-        sourceBlob.GetUrl(),
-        _internal::GetFileUrl(destinationLocalPath));
-    auto& jobProperties = pair.first;
-    auto& rootTask = pair.second;
+    _internal::HydrationParameters hydrateOptions;
+    hydrateOptions.ErrorHandler = options.ErrorHandler;
+    hydrateOptions.ProgressHandler = options.ProgressHandler;
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
+  }
 
-    auto task = rootTask->CreateTask<_detail::DownloadBlobToFileTask>(
-        _internal::TaskType::NetworkDownload, sourceBlob, destinationLocalPath);
+  JobProperties BlobTransferManager::ScheduleDownloadDirectory(
+      const BlobFolder& sourceBlobFolder,
+      const std::string& destinationLocalPath,
+      const ScheduleDownloadBlobOptions& options)
+  {
+    _internal::JobModel jobModel;
+    jobModel.Source = _internal::TransferEnd::CreateFromAzureBlobFolder(sourceBlobFolder);
+    jobModel.Destination = _internal::TransferEnd::CreateFromLocalDirectory(destinationLocalPath);
 
-    m_scheduler.AddTask(std::move(task));
-
-    return std::move(jobProperties);
+    _internal::HydrationParameters hydrateOptions;
+    hydrateOptions.ErrorHandler = options.ErrorHandler;
+    hydrateOptions.ProgressHandler = options.ProgressHandler;
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
 }}} // namespace Azure::Storage::Blobs

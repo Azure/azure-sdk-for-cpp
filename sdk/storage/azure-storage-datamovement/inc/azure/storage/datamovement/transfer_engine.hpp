@@ -19,24 +19,28 @@ namespace Azure { namespace Storage { namespace _internal {
 
   using TaskQueue = std::queue<Task>;
 
-  struct SchedulerOptions final
+  struct TransferEngineOptions final
   {
     Nullable<int> NumThreads; // default: num cpus, minimum 5
     Nullable<size_t> MaxMemorySize; // default: 128MB * num threads
   };
 
-  class Scheduler final {
+  class TransferEngine final {
   public:
-    explicit Scheduler(const SchedulerOptions& options);
-    ~Scheduler();
+    explicit TransferEngine(const TransferEngineOptions& options);
+    ~TransferEngine();
 
-    Scheduler(const Scheduler&) = delete;
-    Scheduler& operator=(const Scheduler&) = delete;
+    TransferEngine(const TransferEngine&) = delete;
+    TransferEngine& operator=(const TransferEngine&) = delete;
 
     void AddTask(Task&& task);
     void AddTasks(std::vector<Task>&& tasks);
 
-    void ResumePausedTasks();
+    void Stop();
+
+    // status and counters
+    std::atomic<bool> m_stopped{false};
+    std::atomic<size_t> m_numTasks{0};
 
   private:
     void ReclaimProvisionedResource(const Task& t)
@@ -66,16 +70,10 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
   private:
-    SchedulerOptions m_options;
-
-    std::atomic<bool> m_stopped{false};
+    TransferEngineOptions m_options;
 
     // resource left
-    std::atomic<size_t> m_memoryLeft;
-
-    // tasks for paused jobs
-    TaskQueue m_pausedTasks;
-    std::mutex m_pausedTasksMutex;
+    std::atomic<int64_t> m_memoryLeft;
 
     // pending tasks
     TaskQueue m_pendingDiskIOTasks;
