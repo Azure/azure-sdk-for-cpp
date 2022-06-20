@@ -7,26 +7,29 @@
 
 #include <azure/storage/blobs.hpp>
 
-namespace Azure { namespace Storage { namespace Blobs {
-  namespace _detail {
-    struct DownloadBlobDirectoryTask;
+namespace Azure { namespace Storage {
+
+  namespace _internal {
+    class TransferEnd;
   }
+  namespace Blobs {
 
-  class BlobFolder final {
-  public:
-    explicit BlobFolder(BlobContainerClient blobContainerClient, std::string folderPath);
+    class BlobFolder final {
+    public:
+      explicit BlobFolder(BlobContainerClient blobContainerClient, std::string folderPath);
 
-    std::string GetUrl() const;
+      std::string GetUrl() const;
 
-    BlobFolder GetBlobFolder(const std::string& folderName) const;
+      BlobFolder GetBlobFolder(const std::string& folderName) const;
 
-    BlobClient GetBlobClient(const std::string& blobName) const;
+      BlobClient GetBlobClient(const std::string& blobName) const;
 
-  private:
-    BlobContainerClient m_blobContainerClient;
-    std::string m_folderPath;
+    private:
+      BlobContainerClient m_blobContainerClient;
+      std::string m_folderPath;
 
-    friend struct _detail::DownloadBlobDirectoryTask;
-  };
+      friend class _internal::TransferEnd;
+    };
 
-}}} // namespace Azure::Storage::Blobs
+  } // namespace Blobs
+}} // namespace Azure::Storage
