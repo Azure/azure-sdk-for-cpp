@@ -32,7 +32,7 @@ namespace Azure {
     m_signer.KeyId = jwk.Kid;
     if (jwk.X5c)
     {
-      m_signer.CertificateChain = std::vector<std::string>();
+      m_signer.CertificateChain = std::vector<std::string>{};
       for (const auto& X5c : *jwk.X5c)
       {
         m_signer.CertificateChain->push_back(Cryptography::PemFromBase64(X5c, "CERTIFICATE"));

@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   template <class T> class EmptyDeserializer {
   public:
-    static T Deserialize(Azure::Core::Json::_internal::json const&) { return T(); }
+    static T Deserialize(Azure::Core::Json::_internal::json const&) { return T{}; }
   };
 
   template <class T, class TDeserializer = EmptyDeserializer<T>> class AttestationTokenInternal {
@@ -170,7 +170,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
             pemEncodedChain.push_back(_detail::Cryptography::PemFromBase64(X5c, "CERTIFICATE"));
           }
           returnValue.push_back(
-              Models::AttestationSigner{Azure::Nullable<std::string>(), pemEncodedChain});
+              Models::AttestationSigner{Azure::Nullable<std::string>{}, pemEncodedChain});
         }
       }
       return returnValue;
@@ -201,7 +201,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           return signer;
         }
       }
-      return Azure::Nullable<Models::AttestationSigner>();
+      return Azure::Nullable<Models::AttestationSigner>{};
     }
 
     // Set the token body based on the bodyToSet parameter provided.

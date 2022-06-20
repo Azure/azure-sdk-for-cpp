@@ -1,0 +1,135 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "34530d0a-1ebb-4c9b-5ba3-8fa5df36b8ad",
+        "x-ms-version": "2020-10-02"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 16 May 2022 02:05:01 GMT",
+        "etag": "\"0x8DA36E07CE8971C\"",
+        "last-modified": "Mon, 16 May 2022 02:05:02 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "34530d0a-1ebb-4c9b-5ba3-8fa5df36b8ad",
+        "x-ms-request-id": "d7f9d950-b01e-001e-74c9-68361a000000",
+        "x-ms-version": "2020-10-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestlistblobsdeletedwithactiveversions?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "5e3c0bdc-9018-4c50-6e26-eec118c34b35",
+        "x-ms-version": "2020-10-02"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 16 May 2022 02:05:01 GMT",
+        "etag": "\"0x8DA36E07D1B2448\"",
+        "last-modified": "Mon, 16 May 2022 02:05:02 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "5e3c0bdc-9018-4c50-6e26-eec118c34b35",
+        "x-ms-request-id": "d7f9da01-b01e-001e-18c9-68361a000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-10-02",
+        "x-ms-version-id": "2022-05-16T02:05:02.5861463Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestlistblobsdeletedwithactiveversions/blobblobcontainerclienttestlistblobsdeletedwithactiveversions"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "ff54697b-8d1a-4358-7067-e137517b491a",
+        "x-ms-version": "2020-10-02"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://euap.blob.core.windows.net/\" ContainerName=\"blobcontainerclienttestlistblobsdeletedwithactiveversions\"><Prefix>blobblobcontainerclienttestlistblobsdeletedwithactiveversions</Prefix><Blobs><Blob><Name>blobblobcontainerclienttestlistblobsdeletedwithactiveversions</Name><VersionId>2022-05-16T02:05:02.5861463Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Mon, 16 May 2022 02:05:02 GMT</Creation-Time><Last-Modified>Mon, 16 May 2022 02:05:02 GMT</Last-Modified><Etag>0x8DA36E07D1B2448</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Mon, 16 May 2022 02:05:01 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "vary": "Origin",
+        "x-ms-client-request-id": "ff54697b-8d1a-4358-7067-e137517b491a",
+        "x-ms-request-id": "d7f9dae8-b01e-001e-6fc9-68361a000000",
+        "x-ms-version": "2020-10-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestlistblobsdeletedwithactiveversions?comp=list&include=deletedwithversions&prefix=blobblobcontainerclienttestlistblobsdeletedwithactiveversions&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "57212c10-680b-408d-772d-a4209c2d9aaf",
+        "x-ms-version": "2020-10-02"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Mon, 16 May 2022 02:05:02 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "57212c10-680b-408d-772d-a4209c2d9aaf",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-request-id": "d7f9dbb7-b01e-001e-2dc9-68361a000000",
+        "x-ms-version": "2020-10-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestlistblobsdeletedwithactiveversions/blobblobcontainerclienttestlistblobsdeletedwithactiveversions"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "072dc394-f953-4f03-45b9-562e379ac7f2",
+        "x-ms-version": "2020-10-02"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://euap.blob.core.windows.net/\" ContainerName=\"blobcontainerclienttestlistblobsdeletedwithactiveversions\"><Prefix>blobblobcontainerclienttestlistblobsdeletedwithactiveversions</Prefix><Blobs><Blob><Name>blobblobcontainerclienttestlistblobsdeletedwithactiveversions</Name><HasVersionsOnly>true</HasVersionsOnly><Properties><Creation-Time>Mon, 16 May 2022 02:05:02 GMT</Creation-Time><Last-Modified>Mon, 16 May 2022 02:05:02 GMT</Last-Modified><Etag>0x8DA36E07D1B2448</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Mon, 16 May 2022 02:05:02 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "vary": "Origin",
+        "x-ms-client-request-id": "072dc394-f953-4f03-45b9-562e379ac7f2",
+        "x-ms-request-id": "d7f9dcbd-b01e-001e-1fc9-68361a000000",
+        "x-ms-version": "2020-10-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestlistblobsdeletedwithactiveversions?comp=list&include=deletedwithversions&prefix=blobblobcontainerclienttestlistblobsdeletedwithactiveversions&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "f342e63c-21d5-4a16-5017-616ea9f7798c",
+        "x-ms-version": "2020-10-02"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Mon, 16 May 2022 02:05:03 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f342e63c-21d5-4a16-5017-616ea9f7798c",
+        "x-ms-request-id": "d7f9dd35-b01e-001e-0bc9-68361a000000",
+        "x-ms-version": "2020-10-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestlistblobsdeletedwithactiveversions?restype=container"
+    }
+  ]
+}

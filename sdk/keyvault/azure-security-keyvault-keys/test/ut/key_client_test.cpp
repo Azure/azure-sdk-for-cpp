@@ -5,7 +5,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
+#include <azure/keyvault/keys.hpp>
 
 #include <exception>
 #include <memory>

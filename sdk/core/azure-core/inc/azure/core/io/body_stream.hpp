@@ -162,8 +162,8 @@ namespace Azure { namespace Core { namespace IO {
 
   namespace _internal {
     /**
-     * @brief A concrete implementation of  #Azure::Core::IO::BodyStream used for reading data from
-     * a file from any offset and length within it.
+     * @brief A concrete implementation of  #Azure::Core::IO::BodyStream used for reading data
+     * from a file from any offset and length within it.
      */
     class RandomAccessFileBodyStream final : public BodyStream {
     private:
@@ -284,8 +284,8 @@ namespace Azure { namespace Core { namespace IO {
   };
 
   /**
-   * @brief A concrete implementation of #Azure::Core::IO::BodyStream that wraps another stream and
-   * reports progress
+   * @brief A concrete implementation of #Azure::Core::IO::BodyStream that wraps another stream
+   * and reports progress
    */
   class ProgressBodyStream : public BodyStream {
   private:

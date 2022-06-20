@@ -25,6 +25,7 @@
 #include "azure/core/paged_response.hpp"
 #include "azure/core/platform.hpp"
 #include "azure/core/response.hpp"
+#include "azure/core/rtti.hpp"
 #include "azure/core/url.hpp"
 #include "azure/core/uuid.hpp"
 
@@ -49,3 +50,6 @@
 
 // azure/core/io
 #include "azure/core/io/body_stream.hpp"
+
+// azure/core/tracing
+#include "azure/core/tracing/tracing.hpp"

@@ -32,9 +32,9 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.3" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.2.4" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.3" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.4" REQUIRED)
   endif()
 endif()
 
@@ -52,7 +52,9 @@ set(
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
+    inc/azure/storage/blobs/rtti.hpp
     inc/azure/storage/blobs.hpp
+    src/private/avro_parser.hpp
     src/private/package_version.hpp
 )
 
@@ -62,11 +64,13 @@ set(
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_lease_client.cpp
+    src/blob_options.cpp
     src/blob_responses.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp
     src/block_blob_client.cpp
     src/page_blob_client.cpp
+    src/private/avro_parser.cpp
     src/rest_client.cpp
 )
 
