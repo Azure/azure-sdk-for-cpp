@@ -212,14 +212,13 @@ to use the same mechanisms that the Storage API uses.
 
 The core requirements for the Batch pattern are:
 
-<<<<<<< Updated upstream
-* The batch pattern should enable aggregating multiple operations into a single REST API call
-  * The batch client will operate on the aggregated operations in a client specific fashion.
-* The batch pattern must support operations which are authored from different azure identities
-  * This requirement comes from the storage team.
-* The batch pattern needs to be able to return objects which cannot be copied (objects
- with a deleted copy constructor and assignment operator).
-* The batch pattern should feel like a native C++ pattern.
+- The batch pattern should enable aggregating multiple operations into a single REST API call
+  - The batch client will operate on the aggregated operations in a client specific fashion.
+- The batch pattern must support operations which are authored from different azure identities
+  - This requirement comes from the storage team.
+- The batch pattern needs to be able to return objects which cannot be copied (objects
+  with a deleted copy constructor and assignment operator).
+- The batch pattern should feel like a native C++ pattern.
 
 ## Existing batch API patterns
 
@@ -363,110 +362,3 @@ returned a `Response<T>` object directly.
 
 And finally, the `Later<T>` proposal
 
-### Proposed batched API design pattern
-
-As an alternate to the original `Later<T>` design, Larry Osterman proposes the following
-pattern for Batch operations.
-
-```cpp
-namespace Azure { namespace Core {
-/**
- * \brief A DeferredOperation represents an operation which will be deferred
- * until after a call to the `SubmitBatch` API.
- */
-template<typename T>
-class DeferredOperation{
-public:
-    /**
-     * \brief Retrieve the Response corresponding to this deferred operation.
-     */
-    virtual Response<T> GetResponse() = 0;
-};
-
-/**
- * \brief A BatchFactor creates DeferredOperation objects which are created from
- * an HTTP request to be sent to the service.
- */
-class DeferredOperationFactory {
-public:
-    /***
-     * \brief Creates a deferred operation from the supplied HTTP request object.
-     *
-     * The DeferredOperationProcesor is responsible for converting the requestToDefer
-     * parameter to a Response<T>.
-     */
-    template<typename T>
-    DeferredOperation<T> CreateDeferredOperation(Azure::Core::Http::Request requestToDefer);
-
-    /***
-     * \brief Creates a deferred operation from the supplied HTTP request object, specifying
-     * a post-processing function.
-     *
-     * Create a deferred response for the specified request, and execute the processRawResponse
-     * function to convert the response from the service to a Response object.
-     * NOTE: If the processRawResponse parameter is implemented as a lambda, the lambda
-     * MUST NOT capture any local variables by reference. Local variables will have
-     * moved out of scope by the time the processRawResponse lambda is executed.
-     */
-    template<typename T>
-    DeferredOperation<T> CreateDeferredOperation(Azure::Core::Http::Request requestToDefer,
-        std::function<Response<T>(std::shared_ptr<RawResponse> rawResponse)> const& processRawResponse);
-
-    /***
-     * \brief Creates a deferred operation from the supplied HTTP request object, specifying
-     * a post-processing function and specifying specific credentials to be used in the
-     * operation.
-     *
-     * Create a deferred response for the specified request, and execute the processRawResponse
-     * function to convert the response from the service to a Response object.
-     * NOTE: If the processRawResponse parameter is implemented as a lambda, the lambda
-     * MUST NOT capture any local variables by reference. Local variables will have
-     * moved out of scope by the time the processRawResponse lambda is executed.
-     */
-    template<typename T>
-    DeferredOperation<T> CreateDeferredOperation(Azure::Core::Http::Request requestToDefer,
-        std::shared_ptr<TokenCredential const> clientCredentials,
-        std::function<Response<T>(std::shared_ptr<RawResponse> rawResponse)> const& processRawResponse);
-};
-
-class DeferredOperationProcessor {
-public:
-    DeferredOperationFactory& CreateDeferredOperationFactory() = 0;
-    Response<void> SubmitBatch(DeferredOperationFactory const& factory, Azure::Context context = Azure::Context{});
-};
-}}
-```
-
-Here is how this pattern would be used for Storage (note that for maintain consistency
-with Java and .Net, the name of the objects changed from DeferredOperation to Batch):
-
-```cpp
-// "batch" derives from Azure::Core::BatchFactory.
-// Note that GetBatchFactory returns a reference to a `batch` object. This is because
-// while the batch object is logically independent of the batch client object,
-// in practice their lifetime is closely tied.
-//
-// Note: This restriction comes because the BatchFactory needs to be able to
-Azure::Storage::Blobs::BlobBatchFactory& batchFactory= blobBatchClient.GetBatchFactory();
-DeferredOperation<void> delete1 = batch.DeleteBlob("sample1");
-DeferredOperation<void> delete2 = batch.DeleteBlob("sample2");
-
-Azure::Response<void> blobBatchClient.SubmitBatch(batchFactory, context);
-
-// GetResponse may throw an exception if processing the response.
-Azure::Response<void> delete1.GetResponse();
-
-// If the client wants to handle and process the storage result.
-try {
-    auto deleteResponse2 = delete2.GetResponse();
-    // successful
-} except (Azure::Storage::Exception& e) {
-    // error
-}
-```
-
-This proposal is functionally identical to the original .Net pattern. This pattern
-is somewhat confusing because the BatchFactory is also an aggregation of operations.
-It would be better if the factory was an actual factory which allows the caller to aggregate
-operations separately, however that cannot work because you cannot aggregate different
-types in a C++ collection.

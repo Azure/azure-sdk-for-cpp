@@ -336,7 +336,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         client, setOp.GetResponse(), AttestationCollateral::GetMinimalPolicy());
     auto response = resetOp.GetResponse();
 
-    ValidateSetPolicyResponse(client, resetOp.GetResponse(), Azure::Nullable<std::string>());
+    ValidateSetPolicyResponse(client, response, Azure::Nullable<std::string>());
   }
 
   namespace {

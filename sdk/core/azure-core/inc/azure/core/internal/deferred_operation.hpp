@@ -6,28 +6,30 @@
 #include <functional>
 
 namespace Azure { namespace Core {
-  template <typename T> class DeferredOperation;
+  template <typename T> class DeferredResponse;
 
   namespace _internal {
 
     /**
      * @brief Base class for deferred operation shared state. Wraps the outgoing request.
      *
-     * This class exists to allow DeferredOperationSharedWithCallback objects to be aggregated
-     * where the specialization of the DeferredOperationSharedWithCallback has different
+     * This class exists to allow DeferredResponseSharedWithCallback objects to be aggregated
+     * where the specialization of the DeferredResponseSharedWithCallback has different
      * specialization types.
      *
      */
-    class DeferredOperationSharedBase {
-      friend class DeferredOperationFactory;
+    class DeferredResponseSharedBase {
+      friend class DeferredResponseFactory;
 
-    protected:
+    public:
       Azure::Core::Http::Request m_request;
+
+      virtual Azure::Core::Http::Request Request() { return m_request; }
       /**
        * @brief Process a raw response received from the service and save it for later
        * retrieval.
        *
-       * Called from the DeferredOperationProcessor when processing deferred operations.
+       * Called from the DeferredResponseProcessor when processing deferred operations.
        *
        * @param response Response returned by the service.
        */
@@ -35,37 +37,37 @@ namespace Azure { namespace Core {
           = 0;
 
       /**
-       * @brief Creates a new DeferredOperationSharedBase for the specified request.
+       * @brief Creates a new DeferredResponseSharedBase for the specified request.
        *
        * @param request Request to send to the server eventually.
        */
-      explicit DeferredOperationSharedBase(Azure::Core::Http::Request request) : m_request(request)
+      explicit DeferredResponseSharedBase(Azure::Core::Http::Request request) : m_request(request)
       {
       }
     };
 
     /**
-     * @brief Shared state for a DeferredOperation.
+     * @brief Shared state for a DeferredResponse.
      *
      * This class implements a deferred operation For deferred operations which have a
      * post-processing callback defined.
      */
-    template <typename T> class DeferredOperationShared : public DeferredOperationSharedBase {
+    template <typename T> class DeferredResponseShared : public DeferredResponseSharedBase {
     private:
       std::function<Azure::Response<T>(std::unique_ptr<Azure::Core::Http::RawResponse>&)>
           m_completeProcessing;
       std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse;
 
     public:
-      explicit DeferredOperationShared(Azure::Core::Http::Request request)
-          : DeferredOperationShared(request, nullptr)
+      explicit DeferredResponseShared(Azure::Core::Http::Request request)
+          : DeferredResponseShared(request, nullptr)
       {
       }
-      explicit DeferredOperationShared(
+      explicit DeferredResponseShared(
           Azure::Core::Http::Request request,
           std::function<Azure::Response<T>(std::unique_ptr<Azure::Core::Http::RawResponse>&)>
               completeProcessing)
-          : DeferredOperationSharedBase(request), m_completeProcessing(completeProcessing)
+          : DeferredResponseSharedBase(request), m_completeProcessing(completeProcessing)
       {
       }
       void ProcessRawResponse(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
@@ -77,16 +79,21 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * \brief A BatchFactor creates DeferredOperation objects which are created from
+     * \brief A BatchFactor creates DeferredResponse objects which are created from
      * an HTTP request to be sent to the service.
      */
-    class DeferredOperationFactory {
-      std::vector<std::shared_ptr<DeferredOperationSharedBase>> m_deferredOperations;
+    class DeferredResponseFactory {
+      std::vector<std::shared_ptr<DeferredResponseSharedBase>> m_deferredOperations;
 
+    protected:
+      virtual std::vector<std::shared_ptr<DeferredResponseSharedBase>> const& DeferredOperations()
+      {
+        return m_deferredOperations;
+      }
     public:
       /***
        * @brief Creates a deferred operation from a customer supplied shared object derived from
-       * DeferredOperationSharedBase.
+       * DeferredResponseSharedBase.
        *
        * This overload allows a customer to derive their own DeferredOperationSharedBase derived
        * class which allows them to process deferred operations without providing a lambda (thus
@@ -94,11 +101,11 @@ namespace Azure { namespace Core {
        *
        */
       template <typename T>
-      DeferredOperation<T> CreateDeferredOperation(
-          std::shared_ptr<DeferredOperationSharedBase> deferredOperationShared)
+      DeferredResponse<T> CreateDeferredResponse(
+          std::shared_ptr<DeferredResponseSharedBase> deferredOperationShared)
       {
         m_deferredOperations.push_back(deferredOperationShared);
-        return DeferredOperation<T>(deferredOperationShared);
+        return DeferredResponse<T>(deferredOperationShared);
       }
 
       /***
@@ -112,26 +119,26 @@ namespace Azure { namespace Core {
        * lambda was created.
        */
       template <typename T>
-      DeferredOperation<T> CreateDeferredOperation(
+      DeferredResponse<T> CreateDeferredOperation(
           Azure::Core::Http::Request requestToDefer,
           std::function<Azure::Response<T>(std::unique_ptr<Azure::Core::Http::RawResponse>&)>
               completeProcessing)
       {
-        std::shared_ptr<DeferredOperationSharedBase> deferredOperation(
-            std::make_shared<DeferredOperationShared<T>>(requestToDefer, completeProcessing));
-        m_deferredOperations.push_back(deferredOperation);
-        return DeferredOperation<T>(deferredOperation);
+        std::shared_ptr<DeferredResponseSharedBase> deferredResponse(
+            std::make_shared<DeferredResponseShared<T>>(requestToDefer, completeProcessing));
+        m_deferredOperations.push_back(deferredResponse);
+        return DeferredResponse<T>(deferredResponse);
       }
     };
 
   } // namespace _internal
 
-  template <typename T> class DeferredOperation {
+  template <typename T> class DeferredResponse {
   private:
-    std::shared_ptr<_internal::DeferredOperationSharedBase> m_sharedState;
+    std::shared_ptr<_internal::DeferredResponseSharedBase> m_sharedState;
 
-    friend class _internal::DeferredOperationFactory;
-    DeferredOperation(std::shared_ptr<_internal::DeferredOperationSharedBase> sharedState)
+    friend class _internal::DeferredResponseFactory;
+    DeferredResponse(std::shared_ptr<_internal::DeferredResponseSharedBase> sharedState)
         : m_sharedState(sharedState)
     {
     }
@@ -139,7 +146,7 @@ namespace Azure { namespace Core {
   public:
     Response<T> GetResponse() const
     {
-      auto sharedState = static_cast<_internal::DeferredOperationShared<T>*>(m_sharedState.get());
+      auto sharedState = static_cast<_internal::DeferredResponseShared<T>*>(m_sharedState.get());
       return sharedState->GetResponse();
     }
   };
