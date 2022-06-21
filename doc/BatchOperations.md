@@ -4,8 +4,6 @@ TL;DR: The batch pattern for storage is highly specific to storage's scenarios a
 does not match the patterns used for other Azure APIs. So batch operations should NOT
 be a part of the Azure Core API surface.
 
-<<<<<<< Updated upstream
-=======
 The rest of this document discusses the pattern that the storage team should use to implement
 batched operations. It is roughly based on the existing batch pattern proposed by the storage team.
 
@@ -18,6 +16,24 @@ The following is the proposed solution to the storage batch client.
 required for the design, but are examples of how the "batch" pattern operates.
 
 The only customer facing construct is the `DeferredResponse<T>` type.
+
+Note that a working example of this pattern can be found [on GitHub](https://github.com/LarryOsterman/azure-sdk-for-cpp/tree/larryo/batchprototype).
+
+
+There are three major components of this design:
+
+1. `DeferredResponse<T>` - A `DeferredResponse` represents an `Aure::Response`
+which has not yet been executed.
+1. `DeferredResponseFactory` - A `DeferredResponseFactory` (or "Batch Factory")
+is a factory for creating `DeferredResponse` objects - it exposes service methods
+which are deferrable.
+1. `DeferredResponseProcessor` - The `DeferredResponseProcessor` has two methods,
+one of which returns a "Batch Factory" and the other which takes a
+"Batch Factory" and processes all the deferred operations associated with the factory.
+Note that `DeferredResponseProcessor` is a role in the pattern, it is not expected
+to be a concrete implementation.
+
+The following is a concrete representation of the pattern:
 
 ```cpp
 
@@ -41,6 +57,10 @@ namespace Azure { namespace Storage { namespace Blob { namespace Batch {
 * call to `GetResponse` should behave as close as possible to the original API
 * operation.
 *
+* Note that the template argument for `DeferredResponse` does NOT include `Response`.
+* That is because a DeferredResponse IS a response, so including `Response` in
+* the template argument is redundant.
+*
 */
 template<typename T>
 class DeferredResponse {
@@ -57,6 +77,7 @@ namespace _internal {
 /**
  * @brief A DeferredResponseFactory creates DeferredResponse objects
  * which are created from an HTTP request to be sent to the service.
+ *
  * @details
  * A `DeferredResponseFactory` functions as a factory for `DeferredResponse`s
  * and aggregator of deferred operations. It is intended to be used as a base
@@ -64,19 +85,16 @@ namespace _internal {
  * values used for the batch pattern. Typically a class derived from this class
  * will be the `Batch` aggregator reflected in the other batched API implementations.
  * The `DeferredResponseFactory` collects the parameters for each service method and 
- * returns a `DeferredResponse` object which corresponds to those aggregated service
+ * returns a `DeferredResponse` object which corresponds to those aggregated service.
  */
 class DeferredResponseFactory {
 public:
     /***
-     * @brief Creates a deferred operation from the supplied HTTP request object.
-     *
-     * The DeferredResponseProcessor is responsible for converting the requestToDefer
-     * parameter to a Response<T>.
+     * @brief Creates a deferred operation with explicit shared state.
      */
-    template<typename T>
-    DeferredResponse<T> CreateDeferredResponse(Azure::Core::Http::Request requestToDefer);
-
+      template <typename T>
+      DeferredResponse<T> CreateDeferredResponse(
+          std::shared_ptr<DeferredResponseSharedBase> deferredOperationShared);
     /***
      * @brief Creates a deferred operation from the supplied HTTP request object, specifying
      * a post-processing function.
@@ -86,118 +104,162 @@ public:
      * NOTE: If the processRawResponse parameter is implemented as a lambda, the lambda
      * MUST NOT capture any local variables by reference. Local variables will have
      * moved out of scope by the time the processRawResponse lambda is executed.
-     */
-    template<typename T>
-    DeferredResponse<T> CreateDeferredResponse(Azure::Core::Http::Request requestToDefer,
-        std::function<Response<T>(std::shared_ptr<RawResponse> rawResponse)> const& processRawResponse);
-
-    /***
-     * \brief Creates a deferred operation from the supplied HTTP request object, specifying
-     * a post-processing function and specifying specific credentials to be used in the
-     * operation.
      *
-     * Create a deferred response for the specified request, and execute the processRawResponse
-     * function to convert the response from the service to a Response object.
-     * NOTE: If the processRawResponse parameter is implemented as a lambda, the lambda
-     * MUST NOT capture any local variables by reference. Local variables will have
-     * moved out of scope by the time the processRawResponse lambda is executed.
+     * @param requestToDefer 
+     * @details Note that it is the callers responsibility to ensure that any state
+     * captured in requestToDefer remains valid throughtout the lifetime of the
+     * DeferredResponse<T>.
      */
     template<typename T>
     DeferredResponse<T> CreateDeferredResponse(Azure::Core::Http::Request requestToDefer,
-        std::shared_ptr<TokenCredential const> clientCredentials,
         std::function<Response<T>(std::shared_ptr<RawResponse> rawResponse)> const& processRawResponse);
 };
 
+/**
+ * @brief In the preferred implementation of this pattern, a DeferredResponseProcessor is 
+ * normally not a discrete class, but instead is simply two methods on a service
+ * client.
+ */
 class DeferredResponseProcessor {
 public:
+    /**
+     * Returns a Batch object which will create deferred responses for service methods.
+     */
     DeferredResponseFactory& CreateDeferredResponseFactory() = 0;
+
+    /**
+     * Submit a set of batched operations to the service
+     */
     Response SubmitBatch(DeferredResponseFactory const& factory, Azure::Context context = Azure::Context{});
 };
 }}}
 ```
 
+## Using the Batch pattern
+
+The following is an example of a client using the Batch pattern.
+
+In this example, the client creates a service client, then creates a Batch factory
+from the client.
+
+It then creates two `DeferredResponse` objects, one for a call to `SetAttestationPolicy`,
+the next for a call to `ResetAttestPolicy`.
+
+It then calls the `SubmitBatch` method on the service client which is responsible
+for serializing the batch operation to the service and processing the response
+from the service.
+
+For each `DeferredResponse` object, the client may call the `GetResponse()` method
+which will process the response from the service and return the response as if
+the operation had been executed.
+
+> [!NOTE] The `GetResponse()` method may (will) throw an exception if the service
+failed the operation. In general, the `SubmitBatch` call will only fail if there
+is a transport error communicating with the service.
+
+```cpp
+auto client = CreateClient();
+
+AttestationBatchFactory batch = client->GetBatchFactory();
+auto setOp = batch.SetAttestationPolicy(GetParam().TeeType,
+    AttestationCollateral::GetMinimalPolicy());
+auto resetOp = batch.ResetAttestationPolicy(GetParam().TeeType);
+
+client->SubmitBatch(batch);
+
+ValidateSetPolicyResponse(client, setOp.GetResponse(), AttestationCollateral::GetMinimalPolicy());
+
+auto response = resetOp.GetResponse();
+ValidateSetPolicyResponse(client, response, Azure::Nullable<std::string>());
+```
+
 ### Proposed Pattern details
 
 This proposal is functionally identical to the original .Net pattern and is largely consistent with the
-"Batch" pattern implemented in other services.
+"Batch" pattern implemented for Storage in other languages.
 
 The pattern described above was intended as an abstract representation of the pattern - the actual apis implemented
 by storage are likely to have a similar shape, but likely different names for the `_internal` types.
 
-
-
-> [!NOTE:]
+> [!NOTE]
 > A batched operation should NOT take a `Context` object - a batched operation is not an actual network operation.
 
-This API surface is likely to be somewhat confusing to C++ developers because C++ classes don't normally function as both aggregations AND
-factories. For C++ developers, it would be better if the factory was an actual factory which allows the caller to aggregate
-operations separately, however that solution cannot meet the requirements for the pattern because you cannot aggregate different
-types in a C++ collection using C++14 semantics (it would be possible with std::variant or using RTTI, but unfortunately those options are not
-available).
+#### `BatchFactory` Class
 
-#### Internal: `DeferredResponseFactory`
-
-The `DeferredResponseFactory` class as described above is *not* a strict requirement
-of the pattern.
-
-One possible implementation of this pattern derives the `Batch` object from a `DeferredResponseFactory`:
+A concrete example of a "Batch" factory is:
 
 ```c++
-  class StorageBatch : Azure::Core::_internal::DeferredResponseFactory {
 
+class AttestationBatchFactory : public Azure::Core::_internal::DeferredResponseFactory {
+public:
+  Azure::Core::DeferredResponse<Models::AttestationToken<Models::PolicyResult>>
+  SetAttestationPolicy(
+      Models::AttestationType const& attestationType,
+      std::string const& policyToSet,
+      SetPolicyOptions const& options = SetPolicyOptions());
 
-  private:
-    StorageBatch() : Azure::Core::_internal::DeferredResponseFactory()
-    {
-    }
-
-```
-
-Another possible implementation has the `DeferredResponseFactory` as a member of the class:
-
-```c++
-  class StorageBatch {
-
-
-  private:
-    Azure::Core::_internal::DeferredResponseFactory deferredFactory;
-
-
-    StorageBatch() : Azure::Core::_internal::DeferredResponseFactory()
-    {
-    }
-
-```
-
-The `Batch` objects service methods will return the value of the `DeferredResponseFactory`'s `CreateDeferredResponse` method:
-
-```c++
-Azure::Core::DeferredResponse<Models::ModelTemplate<Models::ModelType>>
-StorageBatch::PerformServiceMethod(
-    std::string const& serviceParameter,
-    SetPolicyOptions const& options)
-{
-  Azure::Core::Http::Request request = CreateServiceMethodRequest(serviceParameter, options);
-
-  // Create a deferred operation executing the specified lambda when the request completes.
-  // Note that the lambda capture needs to be careful to ensure that the lifetime of all the captured
-  // fields is equal to or greater than the lifetime of the `Batch` object.
-  return deferredFactory.CreateDeferredResponse<Models::ModelTemplate<Models::ModelType>>(
-      request, [](std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse) {
-        auto result = ProcessSetPolicyResponse(rawResponse);
-        return result;
-      });
+  Azure::Core::DeferredResponse<Models::AttestationToken<Models::PolicyResult>>
+  ResetAttestationPolicy(
+      Models::AttestationType const& attestationType,
+      SetPolicyOptions const& options = SetPolicyOptions());
+      :
+      :
 }
 ```
 
+One possible implementation of the `SetAttestationPolicy` API above could be:
 
-#### Internal: `DeferredResponseProcessor`
+```cpp
 
-The `DeferredResponseProcessor` is a role in the pattern, not typically a concrete class. It exists to complete the pattern. The `DeferredResponseProcessor`
-implements the `SubmitBatch` API which formats a request to the service aggregating the service requests in the provided `DeferredResponseFactory` object. It
-is responsible for ensuring that when a client calls `GetResponse<T>` on the `DeferredResponse` object that the response will function correctly.
+Azure::Core::DeferredResponse<Models::AttestationToken<Models::PolicyResult>>
+AttestationBatchFactory::SetAttestationPolicy(
+    Models::AttestationType const& attestationType,
+    std::string const& policyToSet,
+    SetPolicyOptions const& options)
+{
+  // Calculate a signed (or unsigned) attestation policy token to send to the service.
+  Models::AttestationToken<void> const tokenToSend(
+      m_parentClient->CreateAttestationPolicyToken(policyToSet, options.SigningKey));
+  auto sharedContext = std::make_shared<
+      AttestationBatchShared<Models::AttestationToken<Models::PolicyResult>>::SharedContext>(
+      tokenToSend.RawToken);
 
->>>>>>> Stashed changes
+  Azure::Core::Http::Request request
+      = m_parentClient->CreateSetPolicyRequest(attestationType, sharedContext->BodyStream);
+
+  AttestationTokenValidationOptions tokenOptions = options.TokenValidationOptionsOverride
+      ? *options.TokenValidationOptionsOverride
+      : m_parentClient->m_tokenValidationOptions;
+
+  auto deferredShared(
+      std::make_shared<AttestationBatchShared<Models::AttestationToken<Models::PolicyResult>>>(
+          request,
+          [this, tokenOptions](std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse) {
+            switch (rawResponse->GetStatusCode())
+            {
+              // 200, 201, 202, 204 are accepted responses
+              case Azure::Core::Http::HttpStatusCode::Ok:
+              case Azure::Core::Http::HttpStatusCode::Created:
+              case Azure::Core::Http::HttpStatusCode::Accepted:
+              case Azure::Core::Http::HttpStatusCode::NoContent:
+                break;
+              default:
+                throw Azure::Core::RequestFailedException(rawResponse);
+            }
+            return m_parentClient->ProcessSetPolicyResponse(tokenOptions, rawResponse);
+          },
+          sharedContext));
+
+  std::shared_ptr<DeferredResponseSharedBase> sharedBase(deferredShared);
+  return CreateDeferredResponse<Models::AttestationToken<Models::PolicyResult>>(sharedBase);
+}
+
+```
+
+In this example, the `request` object depends on additional state (a `std::string` and
+`BodyStream` object). To handle this case, the code creates a `AttestationBatchShared` object which
+is shared between the `DeferredResponse<T>` object and the `DeferredResponseFactory`.
+
 ## Discussion
 
 Azure Blob Storage implements a concept called "batched operations" - the
@@ -223,10 +285,9 @@ The core requirements for the Batch pattern are:
 ## Existing batch API patterns
 
 =======
+
 - The batch pattern should enable aggregating multiple operations into a single REST API call
   - The batch client will operate on the aggregated operations in a client specific fashion.
-- The batch pattern must support operations which are authored from different azure identities
-  - This requirement comes from the storage team.
 - The batch pattern needs to be able to return objects which cannot be copied (objects
   with a deleted copy constructor and assignment operator).
 - The batch pattern should feel like a native C++ pattern.
@@ -278,7 +339,7 @@ object as an input and submits each of the requests associated with the batch op
 After that API has completed, the developer can then inspect the `Result` objects returned
 from the `Batch` object to determine the ultimate return from the API.
 
-Note that the pattern described above does _not_ support the requirement that operations be authored
+Note that the pattern described above does *not* support the requirement that operations be authored
 from different azure identities (because the Batch object returned by the StorageBatchClient has no
 mechanism to accept requests from different Azure identities).
 
@@ -361,4 +422,3 @@ which requires double nesting of objects, which is unpleasent - for Java and .Ne
 returned a `Response<T>` object directly.
 
 And finally, the `Later<T>` proposal
-
