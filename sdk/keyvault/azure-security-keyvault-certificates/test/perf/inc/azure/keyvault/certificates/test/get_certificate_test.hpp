@@ -11,15 +11,21 @@
 
 #include <azure/perf.hpp>
 
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
-
 #include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Certificates { namespace Test {
+using namespace Azure::Core::_internal;
+
+namespace Azure {
+  namespace Security {
+    namespace KeyVault {
+      namespace Certificates {
+        namespace Test {
 
   /**
    * @brief A test to measure getting a key performance.
@@ -42,23 +48,28 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     void Setup() override
     {
-      m_vaultUrl = m_options.GetMandatoryOption<std::string>("vaultUrl");
-      m_tenantId = m_options.GetMandatoryOption<std::string>("TenantId");
-      m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
-      m_secret = m_options.GetMandatoryOption<std::string>("Secret");
+      m_vaultUrl = m_options.GetOptionOrDefault<std::string>(
+          "vaultUrl", Environment::GetVariable("AZURE_KEYVAULT_URL"));
+      m_tenantId = m_options.GetOptionOrDefault<std::string>(
+          "TenantId", Environment::GetVariable("AZURE_TENANT_ID"));
+      m_clientId = m_options.GetOptionOrDefault<std::string>(
+          "ClientId", Environment::GetVariable("AZURE_CLIENT_ID"));
+      m_secret = m_options.GetOptionOrDefault<std::string>(
+          "Secret", Environment::GetVariable("AZURE_CLIENT_SECRET"));
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           m_tenantId, m_clientId, m_secret);
       m_client = std::make_unique<Azure::Security::KeyVault::Certificates::CertificateClient>(
           m_vaultUrl,
           m_credential,
           InitClientOptions<Azure::Security::KeyVault::Certificates::CertificateClientOptions>());
+      this->CreateRandomNameCertificate();
     }
 
     /**
      * @brief Create a random named certificate.
      *
      */
-    void PostSetUp() override
+    void CreateRandomNameCertificate()
     {
       std::string name("perf");
       int suffixLen = 10;
@@ -72,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         suffix += alphanum[rand() % (sizeof(alphanum) - 1)];
       }
 
-      m_certificateName = name+suffix;
+      m_certificateName = name + suffix;
       CertificateCreateOptions options;
       options.Policy.Subject = "CN=xyz";
       options.Policy.ValidityInMonths = 12;
@@ -87,8 +98,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       action.LifetimePercentage = 80;
       action.Action = CertificatePolicyAction::AutoRenew;
       options.Policy.LifetimeActions.emplace_back(action);
-
-      auto response = m_client->StartCreateCertificate(m_certificateName, options);
+      auto duration = std::chrono::minutes(5);
+      auto deadline = std::chrono::system_clock::now() + duration;
+      Azure::Core::Context context;
+      auto response = m_client->StartCreateCertificate(
+          m_certificateName, options, context.WithDeadline(deadline));
       auto pollResult = response.PollUntilDone(std::chrono::milliseconds(2000));
     }
 
@@ -116,10 +130,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"vaultUrl", {"--vaultUrl"}, "The Key Vault Account.", 1, true},
-          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, true},
-          {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, true},
-          {"Secret", {"--secret"}, "The secret for authentication.", 1, true, true}};
+          {"vaultUrl", {"--vaultUrl"}, "The Key Vault Account.", 1, false},
+          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, false},
+          {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, false},
+          {"Secret", {"--secret"}, "The secret for authentication.", 1, false, true}};
     }
 
     /**

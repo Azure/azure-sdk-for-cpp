@@ -70,7 +70,7 @@ namespace Azure { namespace Perf {
      * or any other configuration to happen after a test set up definition.
      *
      */
-    virtual void PostSetUp();
+    void PostSetUp();
 
     /**
      * @brief Define actions to run after each test run.
@@ -79,7 +79,7 @@ namespace Azure { namespace Perf {
      * letting test do clean up.
      *
      */
-    virtual void PreCleanUp();
+    void PreCleanUp();
 
     void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
 
