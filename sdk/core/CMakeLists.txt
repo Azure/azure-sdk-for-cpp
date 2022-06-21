@@ -9,6 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-core)
+if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
+  add_subdirectory(azure-core-tracing-opentelemetry)
+endif()
+
 if (BUILD_PERFORMANCE_TESTS) 
   add_subdirectory(perf)
 endif()
@@ -17,3 +21,4 @@ endif()
 if (BUILD_TESTING)
   add_subdirectory(azure-core-test)
 endif()
+

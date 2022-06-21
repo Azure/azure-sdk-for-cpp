@@ -429,10 +429,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Metadata = GetMetadata();
 
     std::string tempFilename(m_testName);
-    {
-      Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-      fileWriter.Write(fileContent.data(), static_cast<size_t>(p.FileSize), 0);
-    }
+    WriteFile(tempFilename, fileContent);
 
     auto res = fileClient.UploadFrom(tempFilename, options);
 
@@ -538,32 +535,31 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> expectedData = m_fileContent;
     int64_t fileSize = m_fileContent.size();
     int64_t actualDownloadSize = std::min(p.DownloadSize, fileSize);
-    auto offset = p.Offset;
     auto length = p.Length;
     auto chunkSize = p.ChunkSize;
     auto concurrency = p.Concurrency;
     auto initialChunkSize = p.InitialChunkSize;
-    if (offset.HasValue() && length.HasValue())
+    if (p.Offset.HasValue() && length.HasValue())
     {
-      actualDownloadSize = std::min(length.Value(), fileSize - offset.Value());
+      actualDownloadSize = std::min(length.Value(), fileSize - p.Offset.Value());
       if (actualDownloadSize >= 0)
       {
         expectedData.assign(
-            m_fileContent.begin() + static_cast<ptrdiff_t>(offset.Value()),
-            m_fileContent.begin() + static_cast<ptrdiff_t>(offset.Value() + actualDownloadSize));
+            m_fileContent.begin() + static_cast<ptrdiff_t>(p.Offset.Value()),
+            m_fileContent.begin() + static_cast<ptrdiff_t>(p.Offset.Value() + actualDownloadSize));
       }
       else
       {
         expectedData.clear();
       }
     }
-    else if (offset.HasValue())
+    else if (p.Offset.HasValue())
     {
-      actualDownloadSize = fileSize - offset.Value();
+      actualDownloadSize = fileSize - p.Offset.Value();
       if (actualDownloadSize >= 0)
       {
         expectedData.assign(
-            m_fileContent.begin() + static_cast<ptrdiff_t>(offset.Value()), m_fileContent.end());
+            m_fileContent.begin() + static_cast<ptrdiff_t>(p.Offset.Value()), m_fileContent.end());
       }
       else
       {
@@ -573,10 +569,10 @@ namespace Azure { namespace Storage { namespace Test {
     downloadBuffer.resize(static_cast<size_t>(p.DownloadSize), '\x00');
     Files::Shares::DownloadFileToOptions options;
     options.TransferOptions.Concurrency = concurrency;
-    if (offset.HasValue())
+    if (p.Offset.HasValue())
     {
       options.Range = Core::Http::HttpRange();
-      options.Range.Value().Offset = offset.Value();
+      options.Range.Value().Offset = p.Offset.Value();
       options.Range.Value().Length = length;
     }
 

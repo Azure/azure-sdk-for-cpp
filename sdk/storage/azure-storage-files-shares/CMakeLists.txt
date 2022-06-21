@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-files-shares LANGUAGES CXX)
 
@@ -9,9 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
@@ -20,13 +22,11 @@ include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
 
-az_vcpkg_integrate()
-
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
-    SetCompileOptions(STORAGE_SHARES)
-    GetFolderList(STORAGE_SHARES)
+    SetCompileOptions(STORAGE_FILES_SHARES)
+    GetFolderList(STORAGE_FILES_SHARES)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
@@ -42,6 +42,7 @@ set(
   AZURE_STORAGE_FILES_SHARES_HEADER
     inc/azure/storage/files/shares/dll_import_export.hpp
     inc/azure/storage/files/shares/rest_client.hpp
+    inc/azure/storage/files/shares/rtti.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp

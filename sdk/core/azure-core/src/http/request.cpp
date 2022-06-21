@@ -22,6 +22,24 @@ static Azure::Core::CaseInsensitiveMap MergeMaps(
 }
 } // namespace
 
+Azure::Nullable<std::string> Request::GetHeader(std::string const& name)
+{
+  std::vector<std::string> returnedHeaders;
+  auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
+
+  auto retryHeader = this->m_retryHeaders.find(headerNameLowerCase);
+  if (retryHeader != this->m_retryHeaders.end())
+  {
+    return retryHeader->second;
+  }
+  auto header = this->m_headers.find(headerNameLowerCase);
+  if (header != this->m_headers.end())
+  {
+    return header->second;
+  }
+  return Azure::Nullable<std::string>{};
+}
+
 void Request::SetHeader(std::string const& name, std::string const& value)
 {
   auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
@@ -50,7 +68,7 @@ void Request::StartTry()
   }
 }
 
-HttpMethod Request::GetMethod() const { return this->m_method; }
+HttpMethod const& Request::GetMethod() const { return this->m_method; }
 
 Azure::Core::CaseInsensitiveMap Request::GetHeaders() const
 {

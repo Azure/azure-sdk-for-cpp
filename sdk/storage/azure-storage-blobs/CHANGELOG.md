@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.1 (Unreleased)
+## 12.5.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.5.0-beta.1 (2022-06-07)
+
+### Features Added
+
+- Bumped up API version to `2020-10-02`.
+- Added new API: `BlockBlobClient::Query()`.
+- Added `ContinuationToken` and `PageSizeHint` in `GetPageRangesOptions`.
+- Added support for listing system containers.
+- Added support for listing deleted root blob with active versions.
 
 ## 12.4.0 (2022-04-06)
 

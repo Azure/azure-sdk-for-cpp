@@ -12,7 +12,7 @@
 #include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
+#include <azure/keyvault/keys.hpp>
 #include <private/key_constants.hpp>
 #include <string>
 
@@ -253,7 +253,7 @@ std::string BinaryToHexString(std::vector<uint8_t> const& src)
 
 // temporary while i get the live tests working
 TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
-{
+{ /*
 #if __GNUC__ == 5
   EXPECT_TRUE(true);
 #else
@@ -272,16 +272,14 @@ TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
   auto decodedGeneratedToken = Base64Url::Base64UrlDecode(Base64UrlEncodedGeneratedQuote);
 
   AttestationClientOptions attestationOptions;
-  attestationOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+  attestationOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
-  Azure::Security::Attestation::AttestationClient attestationClient(
-      AttestationServiceUrl(), attestationOptions);
-  attestationClient.RetrieveResponseValidationCollateral();
-  AttestationData attestData;
-  attestData.Data = std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end());
-  attestData.DataType = AttestationDataType::Binary;
-  AttestOptions attestOptions;
-  attestOptions.RuntimeData = attestData;
+  Azure::Security::Attestation::AttestationClient attestationClient = AttestationClient::Create(
+      Azure::Security::KeyVault::Keys::Test::AttestationServiceUrl(), m_credential,
+attestationOptions); attestationClient.RetrieveResponseValidationCollateral(); AttestationData
+attestData = attestationClient.AttestTpm; attestData.Data =
+std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end()); attestData.DataType =
+AttestationDataType::Binary; AttestOptions attestOptions; attestOptions.RuntimeData = attestData;
 
   auto attestResponse = attestationClient.AttestOpenEnclave(decodedGeneratedToken, attestOptions);
 
@@ -314,7 +312,7 @@ TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
   auto result2 = client.ReleaseKey(keyName, keyResponse.Value.Properties.Version, relOpt);
   EXPECT_NE(result2.Value.Value.length(), size_t(0));
   EXPECT_EQ(result2.RawResponse->GetStatusCode(), HttpStatusCode::Ok);
-#endif
+#endif*/
 }
 
 TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)

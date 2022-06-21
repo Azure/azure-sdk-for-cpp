@@ -28,24 +28,83 @@ namespace Azure { namespace Identity { namespace _detail {
     }
   };
 
-  class AppServiceManagedIdentitySource final : public ManagedIdentitySource {
+  class AppServiceManagedIdentitySource : public ManagedIdentitySource {
   private:
     Core::Http::Request m_request;
 
+  protected:
     explicit AppServiceManagedIdentitySource(
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl,
-        std::string const& secret);
+        std::string const& secret,
+        std::string const& apiVersion,
+        std::string const& secretHeaderName,
+        std::string const& clientIdHeaderName);
+
+    template <typename T>
+    static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& clientId,
+        Core::Credentials::TokenCredentialOptions const& options,
+        const char* endpointVarName,
+        const char* secretVarName);
+
+  public:
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override final;
+  };
+
+  class AppServiceV2017ManagedIdentitySource final : public AppServiceManagedIdentitySource {
+    friend class AppServiceManagedIdentitySource;
+
+  private:
+    explicit AppServiceV2017ManagedIdentitySource(
+        std::string const& clientId,
+        Core::Credentials::TokenCredentialOptions const& options,
+        Core::Url endpointUrl,
+        std::string const& secret)
+        : AppServiceManagedIdentitySource(
+            clientId,
+            options,
+            endpointUrl,
+            secret,
+            "2017-09-01",
+            "secret",
+            "clientid")
+    {
+    }
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
+  };
 
-    Core::Credentials::AccessToken GetToken(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const override;
+  class AppServiceV2019ManagedIdentitySource final : public AppServiceManagedIdentitySource {
+    friend class AppServiceManagedIdentitySource;
+
+  private:
+    explicit AppServiceV2019ManagedIdentitySource(
+        std::string const& clientId,
+        Core::Credentials::TokenCredentialOptions const& options,
+        Core::Url endpointUrl,
+        std::string const& secret)
+        : AppServiceManagedIdentitySource(
+            clientId,
+            options,
+            endpointUrl,
+            secret,
+            "2019-08-01",
+            "X-IDENTITY-HEADER",
+            "client_id")
+    {
+    }
+
+  public:
+    static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& clientId,
+        Core::Credentials::TokenCredentialOptions const& options);
   };
 
   class CloudShellManagedIdentitySource final : public ManagedIdentitySource {

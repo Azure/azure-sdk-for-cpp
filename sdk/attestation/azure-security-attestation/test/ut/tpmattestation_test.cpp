@@ -29,7 +29,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::unique_ptr<AttestationAdministrationClient> m_adminClient;
-
     // Create
     virtual void SetUp() override
     {
@@ -37,9 +36,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         // TPM attestation requires a policy document be set. For simplicity, we only run the
         // test against an AAD attestation service instance.
-        m_adminClient = CreateAdminClient(InstanceType::AAD);
-        // Retrieve the validation collateral needed when setting TPM attestation policies.
-        m_adminClient->RetrieveResponseValidationCollateral();
+        m_adminClient = std::make_unique<AttestationAdministrationClient>(
+            CreateAdminClient(InstanceType::AAD));
+
         // Set a minimal policy, which will make the TPM attestation code happy.
         m_adminClient->SetAttestationPolicy(
             AttestationType::Tpm,
@@ -49,10 +48,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     virtual void TearDown() override
     {
-      {
-        // Reset the attestation policy for this instance back to the default.
-        m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
-      }
+      // Reset the attestation policy for this instance back to the default.
+      m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
 
       // Make sure you call the base classes TearDown method to ensure recordings are made.
       TestBase::TearDown();
@@ -87,36 +84,32 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       else
       {
-        returnValue.ValidationTimeSlack = 10s;
+        returnValue.TimeValidationSlack = 10s;
       }
       return returnValue;
     }
 
-    std::unique_ptr<AttestationClient> CreateClient(InstanceType instanceType)
+    AttestationClient CreateClient(InstanceType instanceType)
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
-      AttestationClientOptions options;
+      AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-
-      return InitTestClient<AttestationClient, AttestationClientOptions>(
-          GetInstanceUri(instanceType), credential, options);
+      return AttestationClient::Create(GetInstanceUri(instanceType), credential, options);
     }
 
-    std::unique_ptr<AttestationAdministrationClient> CreateAdminClient(InstanceType instanceType)
+    AttestationAdministrationClient CreateAdminClient(InstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
-      AttestationAdministrationClientOptions options;
+      AttestationAdministrationClientOptions options
+          = InitClientOptions<AttestationAdministrationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-
-      return InitTestClient<
-          Azure::Security::Attestation::AttestationAdministrationClient,
-          Azure::Security::Attestation::AttestationAdministrationClientOptions>(
+      return AttestationAdministrationClient::Create(
           GetInstanceUri(instanceType), credential, options);
     }
   };
@@ -125,10 +118,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto client(CreateClient(InstanceType::AAD));
 
-    auto response(client->AttestTpm(R"({"payload": { "type": "aikcert" } })"));
+    auto response(client.AttestTpm(AttestTpmOptions{R"({"payload": { "type": "aikcert" } })"}));
 
     Azure::Core::Json::_internal::json parsedResponse(
-        Azure::Core::Json::_internal::json::parse(response.Value));
+        Azure::Core::Json::_internal::json::parse(response.Value.TpmResult));
     EXPECT_TRUE(parsedResponse.contains("payload"));
     EXPECT_TRUE(parsedResponse["payload"].is_object());
     EXPECT_TRUE(parsedResponse["payload"].contains("challenge"));

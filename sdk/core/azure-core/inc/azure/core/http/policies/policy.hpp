@@ -14,8 +14,11 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/http/http_sanitizer.hpp"
+#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/uuid.hpp"
 
+#include <atomic>
 #include <chrono>
 #include <cstddef>
 #include <map>
@@ -39,7 +42,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
-    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
+    AZ_CORE_DLLEXPORT extern std::set<std::string> const g_defaultAllowedHttpQueryParameters;
+    AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
   /**
@@ -56,6 +60,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      */
     std::string ApplicationId;
+
+    /**
+     * @brief Specifies the default distributed tracing provider to use for this client. By default,
+     * this will be the tracing provider specified in the application context.
+     */
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider{
+        Context::ApplicationContext.GetTracerProvider()};
   };
 
   /**
@@ -110,13 +121,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief HTTP query parameter names that are allowed to be logged.
      *
      */
-    std::set<std::string> AllowedHttpQueryParameters;
+    std::set<std::string> AllowedHttpQueryParameters = _detail::g_defaultAllowedHttpQueryParameters;
 
     /**
      * @brief HTTP header names that are allowed to be logged.
      *
      */
-    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
+    CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
   };
 
   /**
@@ -375,20 +386,60 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
+     * @brief HTTP Request Activity policy.
+     *
+     * @details Registers an HTTP request with the distributed tracing infrastructure, adding
+     * the traceparent header to the request if necessary.
+     *
+     * This policy is intended to be inserted into the HTTP pipeline *after* the retry policy.
+     */
+    class RequestActivityPolicy final : public HttpPolicy {
+    private:
+      Azure::Core::Http::_internal::HttpSanitizer m_httpSanitizer;
+
+    public:
+      /**
+       * @brief Constructs HTTP Request Activity policy.
+       */
+      //      explicit RequestActivityPolicy() = default;
+      /**
+       * @brief Constructs HTTP Request Activity policy.
+       *
+       * @param httpSanitizer for sanitizing data before it is logged.
+       */
+      explicit RequestActivityPolicy(
+          Azure::Core::Http::_internal::HttpSanitizer const& httpSanitizer)
+          : m_httpSanitizer(httpSanitizer)
+      {
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<RequestActivityPolicy>(*this);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy nextPolicy,
+          Context const& context) const override;
+    };
+
+    /**
      * @brief HTTP telemetry policy.
      *
      * @details Applies an HTTP header with a component name and version to each HTTP request,
      * includes Azure SDK version information, and operating system information.
      * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
+     *
+     * @remark Note that for clients which are using distributed tracing, this functionality is
+     * merged into the RequestActivityPolicy policy.
+     *
+     * Eventually, when all service have converted to using distributed tracing, this policy can be
+     * deprecated.
      */
     class TelemetryPolicy final : public HttpPolicy {
     private:
       std::string const m_telemetryId;
-
-      static std::string BuildTelemetryId(
-          std::string const& componentName,
-          std::string const& componentVersion,
-          std::string const& applicationId);
 
     public:
       /**
@@ -402,7 +453,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& componentName,
           std::string const& componentVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
+          : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+              componentName,
+              componentVersion,
+              options.ApplicationId))
       {
       }
 
@@ -467,13 +521,18 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class LogPolicy final : public HttpPolicy {
       LogOptions m_options;
+      Azure::Core::Http::_internal::HttpSanitizer m_httpSanitizer;
 
     public:
       /**
        * @brief Constructs HTTP logging policy.
        *
        */
-      explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
+      explicit LogPolicy(LogOptions options)
+          : m_options(std::move(options)),
+            m_httpSanitizer(m_options.AllowedHttpQueryParameters, m_options.AllowedHttpHeaders)
+      {
+      }
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {

@@ -241,6 +241,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetBlockListOptions& options = GetBlockListOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Returns the result of a query against the blob.
+     *
+     * @param querySqlExpression The query expression in SQL.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A QueryBlobResult describing the query result.
+     */
+    Azure::Response<Models::QueryBlobResult> Query(
+        const std::string& querySqlExpression,
+        const QueryBlobOptions& options = QueryBlobOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     explicit BlockBlobClient(BlobClient blobClient);
     friend class BlobClient;

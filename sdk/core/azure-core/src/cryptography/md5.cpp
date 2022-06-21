@@ -10,7 +10,7 @@
 
 #include <bcrypt.h>
 #elif defined(AZ_PLATFORM_POSIX)
-#include <openssl/md5.h>
+#include <openssl/evp.h>
 #endif
 
 #include <stdexcept>
@@ -161,24 +161,45 @@ Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_uniqu
 
 class Md5OpenSSL final : public Azure::Core::Cryptography::Hash {
 private:
-  std::unique_ptr<MD5_CTX> m_context;
+  EVP_MD_CTX* m_context;
 
-  void OnAppend(const uint8_t* data, size_t length) { MD5_Update(m_context.get(), data, length); }
+  void OnAppend(const uint8_t* data, size_t length) override
+  {
+    if (1 != EVP_DigestUpdate(m_context, data, length))
+    {
+      throw std::runtime_error("Crypto error while updating Md5Hash.");
+    }
+  }
 
-  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length)
+  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
   {
     OnAppend(data, length);
-    unsigned char hash[MD5_DIGEST_LENGTH];
-    MD5_Final(hash, m_context.get());
-    return std::vector<uint8_t>(std::begin(hash), std::end(hash));
+    unsigned int size;
+    unsigned char hash[EVP_MAX_MD_SIZE];
+    if (1 != EVP_DigestFinal(m_context, hash, &size))
+    {
+      throw std::runtime_error("Crypto error while computing Md5Hash.");
+    }
+
+    return std::vector<uint8_t>(std::begin(hash), std::begin(hash) + size);
   }
 
 public:
   Md5OpenSSL()
   {
-    m_context = std::make_unique<MD5_CTX>();
-    MD5_Init(m_context.get());
+    m_context = EVP_MD_CTX_new();
+    if (m_context == NULL)
+    {
+      throw std::runtime_error("Crypto error while creating EVP context.");
+    }
+    if (1 != EVP_DigestInit_ex(m_context, EVP_md5(), NULL))
+    {
+      EVP_MD_CTX_free(m_context);
+      throw std::runtime_error("Crypto error while init Md5Hash.");
+    }
   }
+
+  ~Md5OpenSSL() { EVP_MD_CTX_free(m_context); }
 };
 
 } // namespace

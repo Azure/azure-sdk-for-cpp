@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0-beta.1 (Unreleased)
+## 1.7.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,38 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.7.0-beta.1 (2022-06-02)
+
+### Features Added
+
+- Added prototypes and initial service support for Distributed Tracing.
+
+### Breaking Changes
+
+- Removed `noexcept` specification from `Azure::Core::Context::IsCancelled()`.
+
+## 1.6.0 (2022-05-05)
+
+### Features Added
+
+- Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response.
+
+### Bugs Fixed
+
+- [[#3537]](https://github.com/Azure/azure-sdk-for-cpp/issues/3537) Updated field type `CurlTransportOptions.Proxy` from `std::string` to `Azure::Nullable<std::string>`. This allows libcurl to ignore the proxy settings from the environment when the string is empty.
+- [[#3548]](https://github.com/Azure/azure-sdk-for-cpp/issues/3548), [[#1098]](https://github.com/Azure/azure-sdk-for-cpp/issues/1098) Improve performance of the Http transport on Windows by reusing the same session handle across all requests.
+
+### Other Changes
+
+- [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
+- Updated the MD5 Hash implementation to work on top of OpenSSL 3.0. (A community contribution, courtesy of _[jepio](https://github.com/jepio)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jeremi Piotrowski _([GitHub](https://github.com/jepio))_
 
 ## 1.5.0 (2022-03-31)
 

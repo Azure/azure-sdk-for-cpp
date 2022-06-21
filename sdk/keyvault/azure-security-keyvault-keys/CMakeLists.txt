@@ -47,18 +47,22 @@ endif()
 
 set(
   AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_models.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
-    inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
+    inc/azure/keyvault/keys/dll_import_export.hpp
     inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/key_client_models.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
+    inc/azure/keyvault/keys/rtti.hpp
+    inc/azure/keyvault/keys.hpp
+    inc/azure/keyvault/keyvault_keys.hpp
 )
 
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
-    src/cryptography/cryptography_client_options.cpp
     src/cryptography/cryptography_client.cpp
+    src/cryptography/cryptography_client_options.cpp
     src/cryptography/decrypt_parameters.cpp
     src/cryptography/decrypt_result.cpp
     src/cryptography/encrypt_parameters.cpp
@@ -70,9 +74,9 @@ set(
     src/cryptography/key_wrap_parameters.cpp
     src/cryptography/sign_result.cpp
     src/cryptography/signature_algorithm.cpp
-    src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
+    src/cryptography/wrap_result.cpp
     src/private/cryptography_internal_access.hpp
     src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp
@@ -90,8 +94,8 @@ set(
     src/import_key_options.cpp
     src/json_web_key.cpp
     src/key_backup.cpp
-    src/key_client_options.cpp
     src/key_client.cpp
+    src/key_client_options.cpp
     src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp
@@ -117,8 +121,6 @@ target_include_directories(
   azure-security-keyvault-keys
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 

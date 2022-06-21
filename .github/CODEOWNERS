@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                @AlexGhiondea @jsquire @rickwinter
+/.github/                @jsquire @rickwinter
 
 ###########
 # SDK
@@ -23,20 +23,20 @@
 /sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama
+/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama @LarryOsterman
 
 ###########
 # Client SDKs
 ###########
 
 # PRLabel: %Attestation
-/sdk/attestation/        @LarryOsterman @gkostal @anilba06 @kroshkina-ms
+/sdk/attestation/        @LarryOsterman @gkostal @anilba06 @kroshkina-ms @ahmadmsft @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
 
 # PRLabel: %KeyVault
 /sdk/keyvault/           @vhvb1989 @gearama @antkmsft @rickwinter
 
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @vhvb1989 @gearama @LarryOsterman
+/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard

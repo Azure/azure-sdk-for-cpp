@@ -45,11 +45,16 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
       <td>authenticates a service principal using a secret</td>
       <td><a href="https://docs.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals">Service principal authentication</a></td>
     </tr>
+    <tr>
+      <td><code>ClientCertificateCredential</code></td>
+      <td>authenticates a service principal using a certificate</td>
+      <td><a href="https://docs.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals">Service principal authentication</a></td>
+    </tr>
   </tbody>
 </table>
 
 ## Environment Variables
-`EnvironmentCredential` can be configured with environment variables.
+`EnvironmentCredential` can be configured with environment variables. Each type of authentication requires values for specific variables:
 
 #### Service principal with secret
 <table border="1" width="100%">
@@ -74,6 +79,32 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
     </tr>
   </tbody>
 </table>
+
+#### Service principal with certificate
+<table border="1" width="100%">
+  <thead>
+    <tr>
+      <th>variable name</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>AZURE_CLIENT_ID</code></td>
+      <td>id of an Azure Active Directory application</td>
+    </tr>
+    <tr>
+      <td><code>AZURE_TENANT_ID</code></td>
+      <td>id of the application's Azure Active Directory tenant</td>
+    </tr>
+    <tr>
+      <td><code>AZURE_CLIENT_CERTIFICATE_PATH</code></td>
+      <td>path to a PEM-encoded certificate file including private key (without password protection)</td>
+    </tr>
+  </tbody>
+</table>
+
+Configuration is attempted in the above order. For example, if values for a client secret and certificate are both present, the client secret will be used.
 
 ## Managed Identity Support
 The [Managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via the `ManagedIdentityCredential` for the following Azure Services:
