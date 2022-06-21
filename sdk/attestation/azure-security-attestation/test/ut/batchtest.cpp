@@ -325,18 +325,35 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto client = CreateClient();
 
     AttestationBatchFactory batch = client->GetBatchFactory();
+    SetPolicyOptions setOptions;
 
-    auto setOp
-        = batch.SetAttestationPolicy(GetParam().TeeType, AttestationCollateral::GetMinimalPolicy());
-    auto resetOp = batch.ResetAttestationPolicy(GetParam().TeeType);
+    if (GetParam().InstanceType == ServiceInstanceType::Isolated)
+    {
+      std::string isolatedCertificate(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+      std::string isolatedKey(GetEnv("ISOLATED_SIGNING_KEY"));
+
+      AttestationSigningKey signingKey;
+      signingKey.PemEncodedPrivateKey = Cryptography::PemFromBase64(isolatedKey, "PRIVATE KEY");
+      signingKey.PemEncodedX509Certificate
+          = Cryptography::PemFromBase64(isolatedCertificate, "CERTIFICATE");
+      setOptions.SigningKey = signingKey;
+    }
+
+    auto setOp = batch.SetAttestationPolicy(
+        GetParam().TeeType, AttestationCollateral::GetMinimalPolicy(), setOptions);
+    auto resetOp = batch.ResetAttestationPolicy(GetParam().TeeType, setOptions);
 
     client->SubmitBatch(batch);
 
     ValidateSetPolicyResponse(
-        client, setOp.GetResponse(), AttestationCollateral::GetMinimalPolicy());
+        client,
+        setOp.GetResponse(),
+        AttestationCollateral::GetMinimalPolicy(),
+        setOptions.SigningKey);
     auto response = resetOp.GetResponse();
 
-    ValidateSetPolicyResponse(client, response, Azure::Nullable<std::string>());
+    ValidateSetPolicyResponse(
+        client, response, Azure::Nullable<std::string>(), setOptions.SigningKey);
   }
 
   namespace {
