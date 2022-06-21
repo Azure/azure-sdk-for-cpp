@@ -6,6 +6,7 @@
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
 #include <azure/core/context.hpp>
+#include <azure/core/internal/deferred_operation.hpp>
 #include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/url.hpp>
 #include <string>
@@ -18,7 +19,6 @@ namespace Azure { namespace Security { namespace Attestation {
 
   class AttestationBatchFactory : public Azure::Core::_internal::DeferredOperationFactory {
     friend class AttestationAdministrationClient;
-
   private:
     const AttestationAdministrationClient* m_parentClient;
     Azure::Core::_internal::DeferredOperationFactory deferredFactory;
@@ -108,7 +108,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AddIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{});
+        AddIsolatedModeCertificateOptions const& options = AddIsolatedModeCertificateOptions{});
 
     /**
      * @brief Removes a certificate from the list of policy management certificates for the
@@ -136,7 +136,7 @@ namespace Azure { namespace Security { namespace Attestation {
     RemoveIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{});
+        AddIsolatedModeCertificateOptions const& options = AddIsolatedModeCertificateOptions{});
   };
 
   /**
@@ -169,6 +169,7 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   class AttestationAdministrationClient final {
     friend AttestationBatchFactory;
+    friend class DeferredResetPolicyOperation;
 
   public:
     /**
@@ -387,6 +388,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
+    AttestationBatchFactory m_batchFactory;
 
     std::vector<Models::AttestationSigner> m_attestationSigners;
 
@@ -411,6 +413,22 @@ namespace Azure { namespace Security { namespace Attestation {
     ProcessIsolatedModeModificationResult(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& serverResponse,
         AttestationTokenValidationOptions const& tokenValidationOptions) const;
+
+    Azure::Core::Http::Request CreateSetPolicyRequest(
+        Models::AttestationType const& attestationType,
+        std::string const& policyToSet,
+        SetPolicyOptions const& options) const;
+
+    Response<Models::AttestationToken<Models::PolicyResult>> ProcessSetPolicyResponse(
+        AttestationTokenValidationOptions const& tokenOptions,
+        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse) const;
+
+    Azure::Core::Http::Request CreateResetPolicyRequest(
+        Models::AttestationType const& attestationType,
+        SetPolicyOptions const& options) const;
+    Response<Models::AttestationToken<Models::PolicyResult>> ProcessResetPolicyResponse(
+        AttestationTokenValidationOptions const& tokenOptions,
+        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse) const;
 
     /**
      * @brief Retrieves the information needed to validate the response returned from the
