@@ -275,13 +275,11 @@ TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
   attestationOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
   Azure::Security::Attestation::AttestationClient attestationClient = AttestationClient::Create(
-      Azure::Security::KeyVault::Keys::Test::AttestationServiceUrl(), m_credential, attestationOptions);
-  attestationClient.RetrieveResponseValidationCollateral();
-  AttestationData attestData = attestationClient.AttestTpm;
-  attestData.Data = std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end());
-  attestData.DataType = AttestationDataType::Binary;
-  AttestOptions attestOptions;
-  attestOptions.RuntimeData = attestData;
+      Azure::Security::KeyVault::Keys::Test::AttestationServiceUrl(), m_credential,
+attestationOptions); attestationClient.RetrieveResponseValidationCollateral(); AttestationData
+attestData = attestationClient.AttestTpm; attestData.Data =
+std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end()); attestData.DataType =
+AttestationDataType::Binary; AttestOptions attestOptions; attestOptions.RuntimeData = attestData;
 
   auto attestResponse = attestationClient.AttestOpenEnclave(decodedGeneratedToken, attestOptions);
 
