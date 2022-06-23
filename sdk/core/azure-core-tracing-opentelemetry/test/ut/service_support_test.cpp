@@ -304,8 +304,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
         Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     Azure::Core::Context rootContext;
-    rootContext.SetTracerProvider(
-        std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(provider));
+    rootContext.SetTracerProvider(provider);
     EXPECT_EQ(provider, rootContext.GetTracerProvider());
   }
 
@@ -353,8 +352,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
     auto provider(
         Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
-    Azure::Core::Context::ApplicationContext.SetTracerProvider(
-        std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(provider));
+    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
 
     {
       Azure::Core::_internal::ClientOptions clientOptions;

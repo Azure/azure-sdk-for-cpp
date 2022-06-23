@@ -201,8 +201,7 @@ TEST_F(OpenTelemetryTests, CreateSpanSimple)
   {
     auto otProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
         CreateOpenTelemetryProvider());
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(otProvider);
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider(otProvider);
 
     auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
                       ->CreateTracer("TracerName", {});
@@ -406,8 +405,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     {
       auto otProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
           CreateOpenTelemetryProvider());
-      std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-          = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(otProvider);
+      std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider(otProvider);
 
       auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
                         ->CreateTracer("TracerName", {});
@@ -445,9 +443,8 @@ TEST_F(OpenTelemetryTests, NestSpans)
 
   {
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(
-            Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
-                CreateOpenTelemetryProvider()));
+        = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+            CreateOpenTelemetryProvider());
 
     auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
                       ->CreateTracer("TracerName", {});
@@ -518,9 +515,8 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
   {
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(
-            Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
-                CreateOpenTelemetryProvider()));
+        = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+            CreateOpenTelemetryProvider());
 
     auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
                       ->CreateTracer("TracerName", {});
