@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <utility>
 #include "azure/core/context.hpp"
 #include "azure/core/internal/client_options.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
-#include "azure/core/tracing/tracing.hpp"
+#include "azure/core/internal/tracing/tracing_impl.hpp"
 
 #pragma once
 
@@ -50,16 +51,22 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       }
     }
 
-    void End(Azure::Nullable<Azure::DateTime> endTime = Azure::Nullable<Azure::DateTime>{}) override
+    void End() { End({}); }
+
+    void End(Azure::Nullable<Azure::DateTime> endTime) override
     {
       if (m_span)
       {
         m_span->End(endTime);
       }
     }
+    void SetStatus(Azure::Core::Tracing::_internal::SpanStatus const& status)
+    {
+      SetStatus(status, {});
+    }
     void SetStatus(
         Azure::Core::Tracing::_internal::SpanStatus const& status,
-        std::string const& description = "") override
+        std::string const& description) override
     {
       if (m_span)
       {
@@ -72,7 +79,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      *
      * @param attributeToAdd Attributes to be added to the span.
      */
-    virtual void AddAttributes(AttributeSet const& attributeToAdd) override
+    void AddAttributes(AttributeSet const& attributeToAdd) override
     {
       if (m_span)
       {
@@ -86,8 +93,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @param attributeName Name of the attribute to be added.
      * @param attributeValue Value of the attribute to be added.
      */
-    virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
-        override
+    void AddAttribute(std::string const& attributeName, std::string const& attributeValue) override
     {
       if (m_span)
       {
@@ -104,8 +110,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @param eventName Name of the event to add.
      * @param eventAttributes Attributes associated with the event.
      */
-    virtual void AddEvent(std::string const& eventName, AttributeSet const& eventAttributes)
-        override
+    void AddEvent(std::string const& eventName, AttributeSet const& eventAttributes) override
     {
       if (m_span)
       {
@@ -120,7 +125,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      *
      * @param eventName Name of the event to add.
      */
-    virtual void AddEvent(std::string const& eventName) override
+    void AddEvent(std::string const& eventName) override
     {
       if (m_span)
       {
@@ -134,12 +139,12 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      *
      * @param exception Exception which has occurred.
      */
-    virtual void AddEvent(std::exception const& exception) override
+    void AddEvent(std::exception const& exception) override
     {
       if (m_span)
       {
         m_span->AddEvent(exception);
-        m_span->SetStatus(SpanStatus::Error);
+        m_span->SetStatus(SpanStatus::Error, "");
       }
     }
 
@@ -149,7 +154,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @param request HTTP Request to the service. If there is an active tracing span, this will
      * add required headers to the HTTP Request.
      */
-    virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override
+    void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override
     {
       if (m_span)
       {
@@ -194,7 +199,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
               options.Telemetry.ApplicationId)),
           m_serviceTracer(
               options.Telemetry.TracingProvider
-                  ? options.Telemetry.TracingProvider->CreateTracer(serviceName, serviceVersion)
+                  ? Azure::Core::Tracing::_internal::TracerImplFromTracer(options.Telemetry.TracingProvider)->CreateTracer(serviceName, serviceVersion)
                   : nullptr)
     {
     }

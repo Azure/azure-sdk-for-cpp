@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+#include "opentelemetry_impl.hpp"
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/tracing/tracing_impl.hpp>
 #include <azure/core/nullable.hpp>
-#include <azure/core/tracing/tracing.hpp>
 #include <memory>
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
@@ -29,9 +30,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
   {
   }
 
-  OpenTelemetryProvider::OpenTelemetryProvider()
-      : m_tracerProvider(opentelemetry::trace::Provider::GetTracerProvider())
+  std::shared_ptr<OpenTelemetryProvider> OpenTelemetryProvider::Create(
+      opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider)
   {
+    auto rv = std::shared_ptr<OpenTelemetryProvider>(new OpenTelemetryProvider(tracerProvider));
+    return {rv, rv.get()};
   }
 
   std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> OpenTelemetryProvider::CreateTracer(
@@ -44,6 +47,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         returnTracer);
   }
   namespace _detail {
+
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
     OpenTelemetryTracer::CreateAttributeSet() const
     {
@@ -251,6 +255,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         opentelemetry::trace::propagation::HttpTraceContext().Inject(propagator, currentContext);
       }
     }
-
   } // namespace _detail
+
 }}}} // namespace Azure::Core::Tracing::OpenTelemetry

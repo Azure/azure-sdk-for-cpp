@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/tracing/tracing.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
+#include "azure/core/internal/tracing/tracing_impl.hpp"
 #include <cctype>
 #include <sstream>
 
@@ -29,6 +29,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   const TracingAttributes TracingAttributes::HttpStatusCode("http.status_code");
 
   using Azure::Core::Context;
+
+  std::shared_ptr<TracerProviderImpl> TracerImplFromTracer(
+      std::shared_ptr<TracerProvider> const& provider)
+  {
+    const auto pointer = static_cast<TracerProvider*>(provider.get());
+    return std::shared_ptr<TracerProviderImpl>(provider, pointer);
+  }
 
   TracingContextFactory::TracingContext TracingContextFactory::CreateTracingContext(
       std::string const& methodName,

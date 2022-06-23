@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #define USE_MEMORY_EXPORTER 1
+#include "..\src\opentelemetry_impl.hpp"
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
 #include <azure/core/test/test_base.hpp>
 
@@ -137,18 +138,23 @@ protected:
 
 TEST_F(OpenTelemetryTests, Basic)
 {
-  // Simple create an OTel telemetry provider as a static member variable.
+  // Simple create an OTel telemetry provider and call a method on the concrete implementation.
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider provider;
-    auto tracer = provider.CreateTracer("TracerName", "1.0");
+    auto provider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create();
+
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(provider)->CreateTracer(
+        "TracerName", "1.0");
     EXPECT_TRUE(tracer);
   }
 
-  // Create a shared provider using the tracing abstract classes.
+  // Create a provider using the tracing abstract classes.
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> provider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>();
-    auto tracer = provider->CreateTracer("TracerName", "1.0");
+    auto otProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create();
+    auto provider = otProvider;
+
+    std::shared_ptr<Azure::Core::Tracing::_internal::TracerProviderImpl> providerImpl
+        = Azure::Core::Tracing::_internal::TracerImplFromTracer(provider);
+    auto tracer = providerImpl->CreateTracer("TracerName", "1.0");
     EXPECT_TRUE(tracer);
   }
 
@@ -157,9 +163,10 @@ TEST_F(OpenTelemetryTests, Basic)
     auto rawTracer(opentelemetry::trace::Provider::GetTracerProvider());
 
     auto traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(rawTracer);
+        = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(rawTracer);
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "1.0");
     EXPECT_TRUE(tracer);
   }
 
@@ -168,10 +175,10 @@ TEST_F(OpenTelemetryTests, Basic)
   {
     auto otelProvider(CreateOpenTelemetryProvider());
     auto traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            otelProvider);
+        = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(otelProvider);
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", {});
   }
 }
 
@@ -179,10 +186,11 @@ TEST_F(OpenTelemetryTests, CreateSpanSimple)
 {
   // Simple create an OTel telemetry provider as a static member variable.
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider provider;
-    auto tracer = provider.CreateTracer("TracerName", "1.0");
+    auto provider(Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create());
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(provider)->CreateTracer(
+        "TracerName", "1.0");
     EXPECT_TRUE(tracer);
-    auto span = tracer->CreateSpan("My Span");
+    auto span = tracer->CreateSpan("My Span", {});
     EXPECT_TRUE(span);
 
     span->End();
@@ -191,13 +199,15 @@ TEST_F(OpenTelemetryTests, CreateSpanSimple)
   // Create a provider using the OpenTelemetry reference provider (this will be a working provider
   // using the ostream logger).
   {
+    auto otProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+        = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(otProvider);
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", {});
     {
-      auto span = tracer->CreateSpan("My Span2");
+      auto span = tracer->CreateSpan("My Span2", {});
       EXPECT_TRUE(span);
 
       span->End();
@@ -307,8 +317,10 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
 {
   // Simple create an OTel telemetry provider as a static member variable.
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider provider;
-    auto tracer = provider.CreateTracer("TracerName", "1.0");
+    auto provider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        opentelemetry::trace::Provider::GetTracerProvider());
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(provider)->CreateTracer(
+        "TracerName", "1.0");
     EXPECT_TRUE(tracer);
     Azure::Core::Tracing::_internal::CreateSpanOptions options;
     auto span = tracer->CreateSpan("My Span", options);
@@ -320,11 +332,13 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
   // Create a provider using the OpenTelemetry reference provider (this will be a working provider
   // using the ostream logger).
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
+    std::shared_ptr<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider> traceProvider
+        = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
             CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
+    auto tracerImpl = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider);
+
+    auto tracer = tracerImpl->CreateTracer("TracerName", "");
     {
       Azure::Core::Tracing::_internal::CreateSpanOptions options;
       options.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
@@ -390,11 +404,13 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     // Create a provider using the OpenTelemetry reference provider (this will be a working provider
     // using the ostream logger).
     {
+      auto otProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+          CreateOpenTelemetryProvider());
       std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-          = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-              CreateOpenTelemetryProvider());
+          = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(otProvider);
 
-      auto tracer = traceProvider->CreateTracer("TracerName");
+      auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                        ->CreateTracer("TracerName", {});
       {
         Azure::Core::Tracing::_internal::CreateSpanOptions options;
         options.Attributes = std::make_unique<
@@ -429,11 +445,13 @@ TEST_F(OpenTelemetryTests, NestSpans)
 
   {
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+        = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(
+            Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+                CreateOpenTelemetryProvider()));
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("SpanOuter");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", {});
+    auto span = tracer->CreateSpan("SpanOuter", {});
     EXPECT_TRUE(span);
     {
       Azure::Core::Tracing::_internal::CreateSpanOptions so;
@@ -500,15 +518,17 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
   {
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+        = std::static_pointer_cast<Azure::Core::Tracing::TracerProvider>(
+            Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+                CreateOpenTelemetryProvider()));
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("StatusSpan");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", {});
+    auto span = tracer->CreateSpan("StatusSpan", {});
     EXPECT_TRUE(span);
 
-    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
-    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok);
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error, "");
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok, "");
 
     span->End();
 
@@ -520,12 +540,12 @@ TEST_F(OpenTelemetryTests, SetStatus)
   }
 
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+    auto traceProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("StatusSpan");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "");
+    auto span = tracer->CreateSpan("StatusSpan", {});
     EXPECT_TRUE(span);
 
     span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error, "Something went wrong.");
@@ -542,15 +562,15 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
   // Set to Unset.
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+    auto traceProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("StatusSpan");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "");
+    auto span = tracer->CreateSpan("StatusSpan", {});
     EXPECT_TRUE(span);
 
-    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Unset);
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Unset, "");
 
     span->End();
 
@@ -563,12 +583,12 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
   // Not set.
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+    auto traceProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("StatusSpan");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "");
+    auto span = tracer->CreateSpan("StatusSpan", {});
     EXPECT_TRUE(span);
 
     span->End();
@@ -582,16 +602,17 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
   // Invalid status.
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+    auto traceProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("StatusSpan");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "");
+    auto span = tracer->CreateSpan("StatusSpan", {});
     EXPECT_TRUE(span);
 
     EXPECT_THROW(
-        span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus("Bogus")), std::runtime_error);
+        span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus("Bogus"), ""),
+        std::runtime_error);
 
     // Return the collected spans.
     auto spans = m_spanData->GetSpans();
@@ -603,12 +624,12 @@ TEST_F(OpenTelemetryTests, AddSpanAttributes)
 {
 
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+    auto traceProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("AttributeSpan");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "");
+    auto span = tracer->CreateSpan("AttributeSpan", {});
     EXPECT_TRUE(span);
 
     Azure::Core::Tracing::OpenTelemetry::_detail::OpenTelemetryAttributeSet attributeSet;
@@ -643,12 +664,12 @@ TEST_F(OpenTelemetryTests, AddSpanAttributes)
 TEST_F(OpenTelemetryTests, AddSpanEvents)
 {
   {
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-            CreateOpenTelemetryProvider());
+    auto traceProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(
+        CreateOpenTelemetryProvider());
 
-    auto tracer = traceProvider->CreateTracer("TracerName");
-    auto span = tracer->CreateSpan("SpanWithEvents");
+    auto tracer = Azure::Core::Tracing::_internal::TracerImplFromTracer(traceProvider)
+                      ->CreateTracer("TracerName", "");
+    auto span = tracer->CreateSpan("SpanWithEvents", {});
     EXPECT_TRUE(span);
 
     span->AddEvent("String Event");

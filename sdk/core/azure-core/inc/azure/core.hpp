@@ -50,6 +50,3 @@
 
 // azure/core/io
 #include "azure/core/io/body_stream.hpp"
-
-// azure/core/tracing
-#include "azure/core/tracing/tracing.hpp"
