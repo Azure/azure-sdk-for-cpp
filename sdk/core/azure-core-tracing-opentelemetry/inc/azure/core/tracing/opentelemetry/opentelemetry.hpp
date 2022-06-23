@@ -45,6 +45,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     static std::shared_ptr<OpenTelemetryProvider> Create(
         opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider
         = opentelemetry::trace::Provider::GetTracerProvider());
+
+    virtual ~OpenTelemetryProvider() = default;
   };
 
 }}}} // namespace Azure::Core::Tracing::OpenTelemetry

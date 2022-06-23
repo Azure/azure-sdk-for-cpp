@@ -525,7 +525,7 @@ TEST(Context, SetTracingProvider)
         std::string const&,
         std::string const&) const override
     {
-      throw std::runtime_error("Not Implemented");
+      throw std::runtime_error("Not implemented");
     }
   };
 

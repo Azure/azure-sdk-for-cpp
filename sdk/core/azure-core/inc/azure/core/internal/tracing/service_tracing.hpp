@@ -144,7 +144,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddEvent(exception);
-        m_span->SetStatus(SpanStatus::Error, "");
+        m_span->SetStatus(SpanStatus::Error, {});
       }
     }
 
