@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <utility>
 #include "azure/core/context.hpp"
 #include "azure/core/internal/client_options.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/internal/tracing/tracing_impl.hpp"
+#include <utility>
 
 #pragma once
 
@@ -199,7 +199,9 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
               options.Telemetry.ApplicationId)),
           m_serviceTracer(
               options.Telemetry.TracingProvider
-                  ? Azure::Core::Tracing::_internal::TracerImplFromTracer(options.Telemetry.TracingProvider)->CreateTracer(serviceName, serviceVersion)
+                  ? Azure::Core::Tracing::_internal::TracerImplFromTracer(
+                        options.Telemetry.TracingProvider)
+                        ->CreateTracer(serviceName, serviceVersion)
                   : nullptr)
     {
     }
