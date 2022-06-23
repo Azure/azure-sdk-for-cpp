@@ -91,6 +91,7 @@ jobs:
               pwsh: true
               workingDirectory: $(Pipeline.Workspace)
             displayName: Create API Review for ${{ artifact.name }}
+            continueOnError: true
             condition: >-
               and(
                 succeeded(),
