@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto srcContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
     srcContainerClient.CreateIfNotExists();
 
-    constexpr size_t blobSize = 1_GB + 900_MB;
+    constexpr size_t blobSize = static_cast<size_t>(1_GB);
 
     const auto srcBlobName = "BigBlobSingleCopySrc";
     auto srcBlobClient = srcContainerClient.GetBlockBlobClient(srcBlobName);
