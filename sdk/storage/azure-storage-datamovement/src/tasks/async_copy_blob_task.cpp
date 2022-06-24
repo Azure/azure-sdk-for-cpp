@@ -18,10 +18,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     };
     auto action = Action::StartCopy;
 
-    Models::BlobProperties destinationProperties;
     try
     {
-      destinationProperties = Destination.GetProperties().Value;
+      Models::BlobProperties destinationProperties = Destination.GetProperties().Value;
       if (destinationProperties.CopySource.HasValue()
           && _internal::RemoveSasToken(destinationProperties.CopySource.Value())
               == _internal::RemoveSasToken(Source.GetUrl())

@@ -35,7 +35,7 @@ namespace Azure { namespace Storage {
       return lhs.time > rhs.time;
     }
 
-    struct TimedWaitTaskQueue : std::priority_queue<TimedWaitTask>
+    struct TimedWaitTaskQueue : public std::priority_queue<TimedWaitTask>
     {
       _internal::Task& front() { return this->c.front().task; }
       int64_t front_counter() const { return this->c.front().time; }

@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto srcContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
     srcContainerClient.CreateIfNotExists();
 
-    constexpr size_t blobSize = 2_GB;
+    constexpr size_t blobSize = 1_GB + 900_MB;
 
     const auto srcBlobName = "BigBlobSingleCopySrc";
     auto srcBlobClient = srcContainerClient.GetBlockBlobClient(srcBlobName);
@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace Test {
     try
     {
       int64_t currSize = srcBlobClient.GetProperties().Value.BlobSize;
-      needUpload = currSize < blobSize;
+      needUpload = static_cast<size_t>(currSize) < blobSize;
     }
     catch (std::exception&)
     {
