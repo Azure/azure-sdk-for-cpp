@@ -6,7 +6,19 @@
 
 ### Breaking Changes
 
+- The `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` type can only
+be instantiated via a factory method: `OpenTelemetryProvider::Create`:
+
+```cpp
+
+auto otProvider = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create();
+
+```
+
 ### Bugs Fixed
+
+- Removed `_internal` APIs from the public API surface. Also removed most of the
+`_internal` APIs from the public `opentelemetry.hpp` and `tracing.hpp` headers.
 
 ### Other Changes
 
