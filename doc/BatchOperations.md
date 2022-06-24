@@ -22,7 +22,7 @@ Note that a working example of this pattern can be found [on GitHub](https://git
 
 There are three major components of this design:
 
-1. `DeferredResponse<T>` - A `DeferredResponse` represents an `Aure::Response`
+1. `DeferredResponse<T>` - A `DeferredResponse` represents an `Azure::Response`
 which has not yet been executed.
 1. `DeferredResponseFactory` - A `DeferredResponseFactory` (or "Batch Factory")
 is a factory for creating `DeferredResponse` objects - it exposes service methods
