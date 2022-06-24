@@ -16,11 +16,19 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 }}}} // namespace Azure::Core::Http::_internal
 
 namespace Azure { namespace Security { namespace Attestation {
+  class AttestationAdministrationClient;
 
   /**
    * @brief An AttestationBatchFactory object implements the `Batch` pattern for
    * attestation service policy APIs.
    *
+   * @note This implementation of the AttestationBatchFactory is a singleton with
+   * respect to an attestation client. This is an implementation detail because the
+   * batch factory implementation depends on calling methods on the associated service client.
+   *
+   * This is a restriction of this particular implementation, a fully functional
+   * implementation would enable creating multiple batch factories from a single
+   * client.
    */
   class AttestationBatchFactory : public Azure::Core::_internal::DeferredResponseFactory {
     friend class AttestationAdministrationClient;
@@ -31,13 +39,27 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Construct a new Attestation Batch Factory object
      *
-     * @param parentClient
+     * @param parentClient Client which hosts the batch factory.
      */
     explicit AttestationBatchFactory(const AttestationAdministrationClient* parentClient)
         : Azure::Core::_internal::DeferredResponseFactory(), m_parentClient(parentClient)
     {
     }
 
+    /**
+     * @brief Shared state for AttestationBatch operations.
+     *
+     * @tparam T Result type for DeferredResponse<T>.
+     *
+     * @note The AttestationBatchShared class exists because the BodyStream field in
+     * the `Azure::Core::Request` type simply references the memory encapsulated
+     * in the stream. The data referenced by the BodyStream field  needs to be
+     * captured in the AttestationBatchShared so it can be referenced in the
+     * SubmitBatch API.
+     *
+     * If the client provided the BodyStream, then this implementation detail is
+     * not required.
+     */
     template <typename T>
     class AttestationBatchShared : public Azure::Core::_internal::DeferredResponseShared<T> {
     public:
@@ -90,7 +112,6 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param attestationType Sets the policy on the specified AttestationType.
      * @param policyToSet The policy document to set.
      * @param options Options used when setting the policy, including signer.
-     * @param context User defined context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the set
      * policy operation.
      *
@@ -109,7 +130,6 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param attestationType Sets the policy on the specified AttestationType.
      * @param options Options used when setting the policy, including signer.
-     * @param context User defined context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the reset
      * policy operation.
      *
@@ -137,7 +157,6 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param signerForRequest Private key and certificate pair to be used to sign the request to
      * the service.
      * @param options Options to be set when adding the new certificate.
-     * @param context Call context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return
      * value from the operation.
      */
@@ -165,7 +184,6 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param signerForRequest Private key and certificate pair to be used to sign the request to
      * the service.
      * @param options Options to be set when adding the new certificate.
-     * @param context Call context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return
      * value from the operation.
      */
@@ -238,15 +256,15 @@ namespace Azure { namespace Security { namespace Attestation {
      * @brief Moves a an Attestation Administration Client object from another attestation
      * administration client.
      *
-     * @param attestationClient An existing attestation client.
+     * @param that An existing attestation client.
      */
     AttestationAdministrationClient(AttestationAdministrationClient&& that)
-        : m_apiVersion(std::move(that.m_apiVersion)),
-          m_attestationSigners(std::move(that.m_attestationSigners)), m_batchFactory(this),
-          m_credentials(std::move(that.m_credentials)), m_endpoint(std::move(that.m_endpoint)),
+        : m_endpoint(std::move(that.m_endpoint)), m_apiVersion(std::move(that.m_apiVersion)),
+          m_credentials(std::move(that.m_credentials)),
+          m_attestationSigners(std::move(that.m_attestationSigners)),
           m_pipeline(std::move(that.m_pipeline)),
           m_tokenValidationOptions(std::move(that.m_tokenValidationOptions)),
-          m_tracingFactory(std::move(that.m_tracingFactory))
+          m_tracingFactory(std::move(that.m_tracingFactory)), m_batchFactory(this)
     {
     }
 
@@ -440,12 +458,11 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
+    std::vector<Models::AttestationSigner> m_attestationSigners;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
     AttestationBatchFactory m_batchFactory;
-
-    std::vector<Models::AttestationSigner> m_attestationSigners;
 
     /**
      * @brief Construct a new Attestation Administration Client object.

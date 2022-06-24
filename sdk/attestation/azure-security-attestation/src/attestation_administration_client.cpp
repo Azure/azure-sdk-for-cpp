@@ -47,21 +47,21 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       m_tracingFactory(options, "security.attestation", PackageVersion::ToString()),
       m_batchFactory(this)
 {
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
   if (credential)
   {
     m_credentials = credential;
     Azure::Core::Credentials::TokenRequestContext const tokenContext
         = {{"https://attest.azure.net/.default"}};
 
-    perRetrypolicies.emplace_back(
+    perRetryPolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
   m_apiVersion = options.Version.ToString();
-  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options, std::move(perRetrypolicies), std::move(perCallpolicies));
+      options, std::move(perRetryPolicies), std::move(perCallPolicies));
 }
 
 AttestationAdministrationClient AttestationAdministrationClient::Create(
@@ -657,7 +657,6 @@ AttestationBatchFactory::SetAttestationPolicy(
  *
  * @param attestationType Sets the policy on the specified AttestationType.
  * @param options Options used when setting the policy, including signer.
- * @param context User defined context for the operation.
  * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the reset
  * policy operation.
  *
@@ -709,67 +708,22 @@ AttestationBatchFactory::ResetAttestationPolicy(
   return CreateDeferredResponse<Models::AttestationToken<Models::PolicyResult>>(sharedBase);
 }
 
-/**
- * @brief Adds a new certificate to the list of policy management certificates.
- *
- * @details When the attestation service is running in "Isolated" mode, the service maintains a
- * set of X.509 certificates which must be used to sign all policy operations. The
- * AddIsolatedModeCertificates API adds a new certificate to the list of certificates which
- * are used for this attestation service instance.
- *
- * @note The signerForRequest certificate MUST be one of the policy management certificates
- * returned by #GetIsolatedModeCertificates.
- *
- * @param pemEncodedCertificateToAdd The X.509 certificate to add to the service.
- * @param signerForRequest Private key and certificate pair to be used to sign the request to
- * the service.
- * @param options Options to be set when adding the new certificate.
- * @param context Call context for the operation.
- * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
- * from the operation.
- */
 Azure::Core::DeferredResponse<
     Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
 AttestationBatchFactory::AddIsolatedModeCertificate(
-    std::string const& pemEncodedCertificateToAdd,
-    AttestationSigningKey const& signerForRequest,
-    AddIsolatedModeCertificateOptions const& options)
+    std::string const&,
+    AttestationSigningKey const&,
+    AddIsolatedModeCertificateOptions const&)
 {
-  pemEncodedCertificateToAdd;
-  signerForRequest;
-  options;
   throw std::runtime_error("Not implemented");
 }
 
-/**
- * @brief Removes a certificate from the list of policy management certificates for the
- * instance.
- *
- * @details When the attestation service is running in "Isolated" mode, the service maintains a
- * set of X.509 certificates which must be used to sign all policy operations. The
- * #RemoveIsolatedModeCertificates API removes a certificate from the list of certificates
- * which are used for this attestation service instance.
- *
- * @note The signerForRequest certificate MUST be one of the policy management certificates
- * returned by #GetIsolatedModeCertificates.
- *
- * @param pemEncodedCertificateToAdd The X.509 certificate to remove from the service instance.
- * @param signerForRequest Private key and certificate pair to be used to sign the request to
- * the service.
- * @param options Options to be set when adding the new certificate.
- * @param context Call context for the operation.
- * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
- * from the operation.
- */
 Azure::Core::DeferredResponse<
     Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
 AttestationBatchFactory::RemoveIsolatedModeCertificate(
-    std::string const& pemEncodedCertificateToAdd,
-    AttestationSigningKey const& signerForRequest,
-    AddIsolatedModeCertificateOptions const& options)
+    std::string const&,
+    AttestationSigningKey const&,
+    AddIsolatedModeCertificateOptions const&)
 {
-  pemEncodedCertificateToAdd;
-  signerForRequest;
-  options;
   throw std::runtime_error("Not implemented");
 }
