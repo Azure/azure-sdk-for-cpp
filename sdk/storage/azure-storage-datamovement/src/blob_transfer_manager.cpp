@@ -71,4 +71,34 @@ namespace Azure { namespace Storage { namespace Blobs {
     return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
+  JobProperties BlobTransferManager::ScheduleCopy(
+      const BlobClient& sourceBlob,
+      const BlobClient& destinationBlob,
+      const ScheduleCopyBlobOptions& options)
+  {
+    _internal::JobModel jobModel;
+    jobModel.Source = _internal::TransferEnd::CreateFromAzureBlob(sourceBlob);
+    jobModel.Destination = _internal::TransferEnd::CreateFromAzureBlob(destinationBlob);
+
+    _internal::HydrationParameters hydrateOptions;
+    hydrateOptions.ErrorHandler = options.ErrorHandler;
+    hydrateOptions.ProgressHandler = options.ProgressHandler;
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
+  }
+
+  JobProperties BlobTransferManager::ScheduleCopyDirectory(
+      const BlobFolder& sourceBlobFolder,
+      const BlobFolder& destinationBlobFolder,
+      const ScheduleCopyBlobOptions& options)
+  {
+    _internal::JobModel jobModel;
+    jobModel.Source = _internal::TransferEnd::CreateFromAzureBlobFolder(sourceBlobFolder);
+    jobModel.Destination = _internal::TransferEnd::CreateFromAzureBlobFolder(destinationBlobFolder);
+
+    _internal::HydrationParameters hydrateOptions;
+    hydrateOptions.ErrorHandler = options.ErrorHandler;
+    hydrateOptions.ProgressHandler = options.ProgressHandler;
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
+  }
+
 }}} // namespace Azure::Storage::Blobs

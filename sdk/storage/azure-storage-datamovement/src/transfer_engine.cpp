@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <climits>
 #include <condition_variable>
 #include <functional>
 #include <memory>
@@ -23,6 +24,17 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
+  namespace {
+    constexpr int64_t g_SchedulerMaxSleepTimeMs = 100;
+  }
+
+  int64_t TransferEngine::GetTimeCounter()
+  {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+               std::chrono::steady_clock().now().time_since_epoch())
+        .count();
+  }
+
   TransferEngine::TransferEngine(const TransferEngineOptions& options) : m_options(options)
   {
     int numThreads = options.NumThreads.HasValue()
@@ -36,7 +48,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
     m_memoryLeft = m_options.MaxMemorySize.Value();
 
-    auto workerFunc = [this](TaskQueue& q, std::mutex& m, std::condition_variable& cv) {
+    auto workerFunc = [this](_detail::TaskQueue& q, std::mutex& m, std::condition_variable& cv) {
       // Deadlock prevention: readyQueueLock
       while (true)
       {
@@ -100,8 +112,7 @@ namespace Azure { namespace Storage { namespace _internal {
         }
         std::vector<Task> readyTasks;
         auto scheduleTasksInPendingQueue
-            = [this,
-               &readyTasks](TaskQueue& pendingQueue, std::function<bool(const Task&)> predicate) {
+            = [this, &readyTasks](auto& pendingQueue, std::function<bool(const Task&)> predicate) {
                 while (!pendingQueue.empty())
                 {
                   Task& task = pendingQueue.front();
@@ -196,7 +207,47 @@ namespace Azure { namespace Storage { namespace _internal {
           readyTasks.clear();
         }
 
-        m_pendingTasksCv.wait_for(guard, std::chrono::milliseconds(100));
+        int64_t sleepTimeMs = std::numeric_limits<int64_t>::max();
+        {
+          // schedule timed wait tasks
+          scheduleTasksInPendingQueue(m_timedWaitTasks, [this, &sleepTimeMs](const Task& t) {
+            int64_t currTimeCounter = GetTimeCounter();
+            int64_t taskTimeCounter = m_timedWaitTasks.front_counter();
+            if (taskTimeCounter > currTimeCounter)
+            {
+              sleepTimeMs = std::min(sleepTimeMs, taskTimeCounter - currTimeCounter);
+              return false;
+            }
+            else
+            {
+              return static_cast<int64_t>(t->MemoryCost)
+                  <= m_memoryLeft.load(std::memory_order_relaxed);
+            }
+          });
+          if (!readyTasks.empty())
+          {
+            std::lock_guard<std::mutex> readyTasksGuard(m_readyTasksMutex);
+            for (size_t i = 0; i < readyTasks.size(); ++i)
+            {
+              m_readyTasks.push(std::move(readyTasks[i]));
+            }
+          }
+          if (static_cast<int>(readyTasks.size()) >= m_options.NumThreads.Value())
+          {
+            m_readyTasksCv.notify_all();
+          }
+          else if (readyTasks.size() > 0)
+          {
+            for (size_t i = 0; i < readyTasks.size(); ++i)
+            {
+              m_readyTasksCv.notify_one();
+            }
+          }
+          readyTasks.clear();
+        }
+
+        sleepTimeMs = std::min<int64_t>(sleepTimeMs, g_SchedulerMaxSleepTimeMs);
+        m_pendingTasksCv.wait_for(guard, std::chrono::milliseconds(sleepTimeMs));
       }
     };
 
@@ -224,7 +275,8 @@ namespace Azure { namespace Storage { namespace _internal {
     Stop();
     m_numTasks.fetch_sub(
         m_readyTasks.size() + m_readyDiskIOTasks.size() + m_pendingDiskIOTasks.size()
-            + m_pendingNetworkUploadTasks.size() + m_pendingNetworkDownloadTasks.size(),
+            + m_pendingNetworkUploadTasks.size() + m_pendingNetworkDownloadTasks.size()
+            + m_timedWaitTasks.size(),
         std::memory_order_relaxed);
     {
       std::lock_guard<std::mutex> guard(m_readyTasksMutex);
@@ -261,6 +313,11 @@ namespace Azure { namespace Storage { namespace _internal {
         ReclaimAllocatedResource(m_pendingNetworkDownloadTasks.front());
         m_pendingNetworkDownloadTasks.pop();
       }
+      while (!m_timedWaitTasks.empty())
+      {
+        ReclaimAllocatedResource(m_timedWaitTasks.front());
+        m_timedWaitTasks.pop();
+      }
     }
     AZURE_ASSERT(m_memoryLeft == static_cast<int64_t>(m_options.MaxMemorySize.Value()));
     AZURE_ASSERT(m_numTasks == 0);
@@ -296,6 +353,20 @@ namespace Azure { namespace Storage { namespace _internal {
     else
     {
       AZURE_UNREACHABLE_CODE();
+    }
+    m_numTasks.fetch_add(1, std::memory_order_relaxed);
+  }
+
+  void TransferEngine::AddTimedWaitTask(int64_t delayInMs, Task&& task)
+  {
+    AZURE_ASSERT(task->Type == TaskType::NetworkUpload || task->Type == TaskType::NetworkDownload);
+    {
+      std::lock_guard<std::mutex> guard(m_pendingTasksMutex);
+      m_timedWaitTasks.push(_detail::TimedWaitTask{GetTimeCounter() + delayInMs, std::move(task)});
+      if (delayInMs < g_SchedulerMaxSleepTimeMs)
+      {
+        m_pendingTasksCv.notify_one();
+      }
     }
     m_numTasks.fetch_add(1, std::memory_order_relaxed);
   }

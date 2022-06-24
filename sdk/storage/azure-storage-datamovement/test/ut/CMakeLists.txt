@@ -15,6 +15,7 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 add_executable (
   azure-storage-datamovement-test
     blob_folder_test.cpp
+    blob_transfer_manager_async_copy_test.cpp
     blob_transfer_manager_download_test.cpp
     blob_transfer_manager_test.hpp
     blob_transfer_manager_test.cpp

@@ -60,5 +60,11 @@ namespace Azure { namespace Storage {
       std::function<void(const TransferProgress&)> ProgressHandler;
       std::function<void(TransferError&)> ErrorHandler;
     };
+
+    struct ScheduleCopyBlobOptions final
+    {
+      std::function<void(const TransferProgress&)> ProgressHandler;
+      std::function<void(TransferError&)> ErrorHandler;
+    };
   } // namespace Blobs
 }} // namespace Azure::Storage

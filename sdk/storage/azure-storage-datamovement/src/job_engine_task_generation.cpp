@@ -8,6 +8,7 @@
 
 #include <azure/core/azure_assert.hpp>
 
+#include "azure/storage/datamovement/tasks/async_copy_blob_task.hpp"
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
@@ -49,7 +50,8 @@ namespace Azure { namespace Storage { namespace _detail {
     };
     std::vector<PartGeneratorModel> partGens;
 
-    if (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile)
+    const auto transferType = _internal::JobModel::DeduceTransferType(m_model);
+    if (transferType == TransferType::SingleUpload)
     {
       AZURE_ASSERT(gen.Source.empty());
       AZURE_ASSERT(gen.Destination.empty());
@@ -65,7 +67,7 @@ namespace Azure { namespace Storage { namespace _detail {
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
       taskGenerated(std::move(task));
     }
-    else if (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalDirectory)
+    else if (transferType == TransferType::DirectoryUpload)
     {
       AZURE_ASSERT(gen.ContinuationToken.empty());
       const std::string jobRootPath = _internal::PathFromUrl(m_model.Source.m_url);
@@ -107,7 +109,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
       } while (!partGens.empty() && totalNumNewSubtasks < g_MaxTasksGenerated);
     }
-    else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob)
+    else if (transferType == TransferType::SingleDownload)
     {
       AZURE_ASSERT(gen.Source.empty());
       AZURE_ASSERT(gen.Destination.empty());
@@ -125,7 +127,19 @@ namespace Azure { namespace Storage { namespace _detail {
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
       taskGenerated(std::move(task));
     }
-    else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlobFolder)
+    else if (transferType == TransferType::SingleCopy)
+    {
+      AZURE_ASSERT(gen.Source.empty());
+      AZURE_ASSERT(gen.Destination.empty());
+      AZURE_ASSERT(gen.ContinuationToken.empty());
+
+      TaskModel task;
+      task.NumSubtasks = 1;
+      taskGenerated(std::move(task));
+    }
+    else if (
+        transferType == TransferType::DirectoryDownload
+        || transferType == TransferType::DirectoryCopy)
     {
       AZURE_NOT_IMPLEMENTED();
     }
@@ -146,16 +160,14 @@ namespace Azure { namespace Storage { namespace _detail {
     size_t bitmapOffset = 0;
     std::vector<_internal::Task> tasks;
 
-    if ((m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile
-         && m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlob)
-        || (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalDirectory
-            && m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlobFolder))
+    const auto transferType = _internal::JobModel::DeduceTransferType(m_model);
+    if (transferType == TransferType::SingleUpload || transferType == TransferType::DirectoryUpload)
     {
       for (auto& taskModel : taskModels)
       {
         std::string source
             = _internal::JoinPath(_internal::PathFromUrl(m_model.Source.m_url), taskModel.Source);
-        auto destination = m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlob
+        auto destination = transferType == TransferType::SingleUpload
             ? m_model.Destination.m_blobClient.Value()
             : m_model.Destination.m_blobFolder.Value().GetBlobClient(taskModel.Destination);
         if (taskModel.NumSubtasks == 1)
@@ -205,14 +217,12 @@ namespace Azure { namespace Storage { namespace _detail {
       }
     }
     else if (
-        (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob
-         && m_model.Destination.m_type == _internal::TransferEnd::EndType::LocalFile)
-        || (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlobFolder
-            && m_model.Destination.m_type == _internal::TransferEnd::EndType::LocalDirectory))
+        transferType == TransferType::SingleDownload
+        || transferType == TransferType::DirectoryDownload)
     {
       for (auto& taskModel : taskModels)
       {
-        auto source = m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob
+        auto source = transferType == TransferType::SingleDownload
             ? m_model.Source.m_blobClient.Value()
             : m_model.Source.m_blobFolder.Value().GetBlobClient(taskModel.Source);
         std::string destination = _internal::JoinPath(
@@ -251,6 +261,26 @@ namespace Azure { namespace Storage { namespace _detail {
           tasks.emplace_back(std::move(task));
           ++bitmapOffset;
         }
+      }
+    }
+    else if (
+        transferType == TransferType::SingleCopy || transferType == TransferType::DirectoryCopy)
+    {
+      for (auto& taskModel : taskModels)
+      {
+        auto source = transferType == TransferType::SingleCopy
+            ? m_model.Source.m_blobClient.Value()
+            : m_model.Source.m_blobFolder.Value().GetBlobClient(taskModel.Source);
+        auto destination = transferType == TransferType::SingleCopy
+            ? m_model.Destination.m_blobClient.Value()
+            : m_model.Destination.m_blobFolder.Value().GetBlobClient(taskModel.Destination);
+
+        AZURE_ASSERT(taskModel.NumSubtasks == 1);
+        auto task = m_rootTask->CreateTask<Blobs::_detail::AsyncCopyBlobTask>(
+            _internal::TaskType::NetworkUpload, source, destination);
+        task->JournalContext = JournalContext{jobPart, bitmapOffset};
+        tasks.emplace_back(std::move(task));
+        ++bitmapOffset;
       }
     }
     else
