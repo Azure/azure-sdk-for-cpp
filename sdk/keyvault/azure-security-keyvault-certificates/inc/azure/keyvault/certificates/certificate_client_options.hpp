@@ -24,7 +24,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    */
   struct CertificateClientOptions final : public Azure::Core::_internal::ClientOptions
   {
-    std::string Version;
+    /**
+     * @brief Service Version used.
+     *
+     */
+    const std::string Version;
 
     /**
      * @brief Construct a new Certificate Client Options object.

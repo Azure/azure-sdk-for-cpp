@@ -49,7 +49,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct KeyClientOptions final : public Azure::Core::_internal::ClientOptions
   {
-    std::string Version;
+    /**
+     * @brief Service Version used.
+     *
+     */
+    const std::string Version;
 
     /**
      * @brief Construct a new Key Client Options object.
