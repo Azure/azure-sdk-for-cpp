@@ -329,6 +329,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     if (GetParam().InstanceType == ServiceInstanceType::Isolated)
     {
+      if (!m_testContext.IsLiveMode())
+      {
+        return;
+      }
       std::string isolatedCertificate(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
       std::string isolatedKey(GetEnv("ISOLATED_SIGNING_KEY"));
 
