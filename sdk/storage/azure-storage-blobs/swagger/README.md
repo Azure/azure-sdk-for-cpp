@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json
 ```
 
 ## ModelFour Options
@@ -102,7 +102,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-10-02"],
+        "enum": ["2021-04-10"],
         "description": "The version used for the operations to Azure storage services."
       };
 ```
@@ -116,6 +116,7 @@ directive:
     transform: >
       $["/?comp=list"].get.operationId = "Service_ListBlobContainers";
       $["/?comp=blobs"].get.operationId = "Service_FindBlobsByTags";
+      $["/{containerName}?restype=container&comp=blobs"].get.operationId = "BlobContainer_FindBlobsByTags";
       $["/{containerName}/{blob}?comp=incrementalcopy"].put.operationId = "PageBlob_StartCopyIncremental";
       $["/{containerName}?restype=container&comp=list&flat"].get.operationId = "BlobContainer_ListBlobs";
       $["/{containerName}?restype=container&comp=list&hierarchy"].get.operationId = "BlobContainer_ListBlobsByHierarchy";
@@ -279,6 +280,7 @@ directive:
       delete $.EncryptionAlgorithm["enum"];
       delete $.EncryptionAlgorithm["x-ms-enum"];
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
+      $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -745,7 +747,12 @@ directive:
       delete $.ListBlobsFlatSegmentResponse.required;
       $.ListBlobsFlatSegmentResponse.properties["NextMarker"]["x-nullable"] = true;
 
+      $.BlobName["x-namespace"] = "_detail";
+      delete $.BlobName.properties["content"]["xml"];
+      $.BlobName["xml"] = {"name": "Name"};
+      $.BlobName.properties["content"]["x-ms-xml"] = {"name": "."};
       $.BlobItemInternal["x-ms-client-name"] = "BlobItem";
+      $.BlobItemInternal["x-namespace"] = "_detail";
       $.BlobItemInternal.properties["Deleted"]["x-ms-client-name"] = "IsDeleted";
       $.BlobItemInternal.properties["Properties"]["x-ms-client-name"] = "Details";
       $.BlobItemInternal.properties["BlobSize"] = $.BlobPropertiesInternal.properties["Content-Length"];
@@ -835,7 +842,7 @@ directive:
       $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
       $.ListBlobsHierarchySegmentResponse.properties["Blobs"] = $.ListBlobsFlatSegmentResponse.properties["Blobs"];
       $.ListBlobsHierarchySegmentResponse.properties["Blobs"]["x-ms-client-name"] = "Items";
-      $.ListBlobsHierarchySegmentResponse.properties["BlobPrefixes"] = {"type": "array", "items": {"type": "string", "xml": {"name": "Name"}}, "x-ms-xml": {"wrapped": true, "name": "Blobs/BlobPrefix"}};
+      $.ListBlobsHierarchySegmentResponse.properties["BlobPrefixes"] = {"type": "array", "items": {"$ref": "#/definitions/BlobName"}, "x-ms-xml": {"wrapped": true, "name": "Blobs/BlobPrefix"}};
       delete $.ListBlobsHierarchySegmentResponse.properties["Marker"];
       delete $.ListBlobsHierarchySegmentResponse.properties["MaxResults"];
       delete $.ListBlobsHierarchySegmentResponse.properties["Segment"];
@@ -1163,6 +1170,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
 ### QueryBlobContent

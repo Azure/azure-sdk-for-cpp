@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2020-08-04";
+    constexpr static const char* SasVersion = "2021-04-10";
   }
 
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)
@@ -31,6 +31,11 @@ namespace Azure { namespace Storage { namespace Sas {
         == AccountSasPermissions::DeleteVersion)
     {
       Permissions += "x";
+    }
+    if ((permissions & AccountSasPermissions::PermanentDelete)
+        == AccountSasPermissions::PermanentDelete)
+    {
+      Permissions += "y";
     }
     if ((permissions & AccountSasPermissions::List) == AccountSasPermissions::List)
     {
@@ -108,7 +113,8 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
         + resourceTypes + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
-        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n";
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + EncryptionScope + "\n";
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -130,6 +136,10 @@ namespace Azure { namespace Storage { namespace Sas {
     }
     builder.AppendQueryParameter("spr", _internal::UrlEncodeQueryParameter(protocol));
     builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));
+    if (!EncryptionScope.empty())
+    {
+      builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
+    }
 
     return builder.GetAbsoluteUrl();
   }

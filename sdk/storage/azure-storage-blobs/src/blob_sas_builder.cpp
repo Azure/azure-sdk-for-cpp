@@ -67,6 +67,11 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       Permissions += "x";
     }
+    if ((permissions & BlobContainerSasPermissions::PermanentDelete)
+        == BlobContainerSasPermissions::PermanentDelete)
+    {
+      Permissions += "y";
+    }
     if ((permissions & BlobContainerSasPermissions::List) == BlobContainerSasPermissions::List)
     {
       Permissions += "l";
@@ -109,6 +114,10 @@ namespace Azure { namespace Storage { namespace Sas {
     if ((permissions & BlobSasPermissions::DeleteVersion) == BlobSasPermissions::DeleteVersion)
     {
       Permissions += "x";
+    }
+    if ((permissions & BlobSasPermissions::PermanentDelete) == BlobSasPermissions::PermanentDelete)
+    {
+      Permissions += "y";
     }
     if ((permissions & BlobSasPermissions::Tags) == BlobSasPermissions::Tags)
     {
@@ -154,8 +163,8 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
         + "\n" + protocol + "\n" + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+        + EncryptionScope + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
+        + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -206,6 +215,10 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
     }
+    if (!EncryptionScope.empty())
+    {
+      builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
+    }
 
     return builder.GetAbsoluteUrl();
   }
@@ -249,8 +262,9 @@ namespace Azure { namespace Storage { namespace Sas {
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion
         + "\n\n\n\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
-        + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n" + CacheControl + "\n"
-        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -299,6 +313,10 @@ namespace Azure { namespace Storage { namespace Sas {
     if (!ContentType.empty())
     {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
+    }
+    if (!EncryptionScope.empty())
+    {
+      builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
     }
     builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));
 
