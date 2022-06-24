@@ -19,7 +19,7 @@ One of the more interesting features of the Azure SDK for C++ is that a customer
 
 ## Libcurl Transport Adapter
 
-The azure-core-cpp library provides a transport adapter implemented with libcurl. The next paragraphs mentions some of the limitations of libcurl and the code that is part of the LibcurlTransportAdatper  (LTA) that satisfy the expectations for an SDK client.
+The azure-core-cpp library provides a transport adapter implemented with libcurl. The next paragraphs mentions some of the limitations of libcurl and the code that is part of the LibcurlTransportAdapter  (LTA) that satisfy the expectations for an SDK client.
 
 ### Easy handle
 
