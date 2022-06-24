@@ -66,9 +66,9 @@ CertificateClient::CertificateClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     CertificateClientOptions options)
-    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version.ToString())
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version)
 {
-  auto apiVersion = options.Version.ToString();
+  auto apiVersion = options.Version;
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
@@ -493,6 +493,3 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
   auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
-
-const ServiceVersion ServiceVersion::V7_3("7.3");
-const ServiceVersion ServiceVersion::V7_2("7.2");
