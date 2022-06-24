@@ -31,9 +31,12 @@ $cmdLine = & $PSScriptRoot/Get-ApiViewCommandLine.ps1 $gitroot $ArtifactName
 Write-Host "Executing clang++ command:"
 Write-Host $cmdLine
 $cmd, $cmdArgs = $cmdLine -split ' '
-& $cmd $cmdArgs > artifact
+# Get-ApiViewCommandLine.ps1 returns a string representing a clang++ command that needs to be run, e.g.
+# clang++ <space separated list of header files> -Xclang -ast-dump -I <space separated list of header files>
+# ApiView expects a zip of this ast as the format for a C++ language artifact.
+& $cmd $cmdArgs > clangAstOutput
 
-Compress-Archive -Path artifact -DestinationPath $OutPath/$ArtifactName/$ArtifactName
+Compress-Archive -Path clangAstOutput -DestinationPath $OutPath/$ArtifactName/$ArtifactName
 Rename-Item $OutPath/$ArtifactName/$ArtifactName.zip -NewName "$ArtifactName.cppast"
 
 Write-Host "Send request to APIView to create review for $ArtifactName"
