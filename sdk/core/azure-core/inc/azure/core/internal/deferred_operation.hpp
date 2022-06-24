@@ -91,12 +91,12 @@ namespace Azure { namespace Core {
      * to the batched operation. This avoids the limitations associated with the BodyStream
      * member of the Result operation (BodyStream references the body data which means
      * that body data needs to be stabilized across batch operations via some other mechanism).
-     * 
+     *
      * Capturing the parameters to the batched operation also avoids a potential issue
      * associated with the lifetime of authentication tokens - if the lifetime of the
      * authentication token is short (15 minutes or so), it is possible that the token
      * will expire between when the DeferredResponse object is created and when the
-     * batched operation is submitted to the server. 
+     * batched operation is submitted to the server.
      */
     class DeferredResponseFactory {
       std::vector<std::shared_ptr<DeferredResponseSharedBase>> m_deferredOperations;
