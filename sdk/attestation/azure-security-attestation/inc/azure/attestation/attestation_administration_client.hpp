@@ -17,12 +17,22 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
 namespace Azure { namespace Security { namespace Attestation {
 
+/**
+ * @brief An AttestationBatchFactory object implements the `Batch` pattern for
+ * attestation service policy APIs.
+ * 
+ */
   class AttestationBatchFactory : public Azure::Core::_internal::DeferredResponseFactory {
     friend class AttestationAdministrationClient;
 
   private:
     const AttestationAdministrationClient* m_parentClient;
 
+/**
+ * @brief Construct a new Attestation Batch Factory object
+ * 
+ * @param parentClient 
+ */
     explicit AttestationBatchFactory(const AttestationAdministrationClient* parentClient)
         : Azure::Core::_internal::DeferredResponseFactory(), m_parentClient(parentClient)
     {

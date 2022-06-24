@@ -79,8 +79,24 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * \brief A BatchFactor creates DeferredResponse objects which are created from
+     * \brief A BatchFactory creates DeferredResponse objects which are created from
      * an HTTP request to be sent to the service.
+     *
+     * A Batch class can derive from a DeferredResponseFactory to simplify the
+     * creation of DeferredResponse<T> objects.
+     *
+     * @note This implementation of DeferredResponseFactory is derived off of
+     * an Azure::Core::Http::Request object. An alternate implementation could take
+     * a std::shared_ptr<Xxx> where a specialization of Xxx captures the parameters
+     * to the batched operation. This avoids the limitations associated with the BodyStream
+     * member of the Result operation (BodyStream references the body data which means
+     * that body data needs to be stabilized across batch operations via some other mechanism).
+     * 
+     * Capturing the parameters to the batched operation also avoids a potential issue
+     * associated with the lifetime of authentication tokens - if the lifetime of the
+     * authentication token is short (15 minutes or so), it is possible that the token
+     * will expire between when the DeferredResponse object is created and when the
+     * batched operation is submitted to the server. 
      */
     class DeferredResponseFactory {
       std::vector<std::shared_ptr<DeferredResponseSharedBase>> m_deferredOperations;
@@ -90,6 +106,7 @@ namespace Azure { namespace Core {
       {
         return m_deferredOperations;
       }
+
     public:
       /***
        * @brief Creates a deferred operation from a customer supplied shared object derived from
@@ -117,9 +134,10 @@ namespace Azure { namespace Core {
        * NOTE: If the callback function is a C++ lambda, the lambda cannot capture any values by
        * reference - it absolutely will be called in a context outside the function in which the
        * lambda was created.
+       *
        */
       template <typename T>
-      DeferredResponse<T> CreateDeferredOperation(
+      DeferredResponse<T> CreateDeferredResponse(
           Azure::Core::Http::Request requestToDefer,
           std::function<Azure::Response<T>(std::unique_ptr<Azure::Core::Http::RawResponse>&)>
               completeProcessing)

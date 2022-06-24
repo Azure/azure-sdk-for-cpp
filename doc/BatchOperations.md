@@ -39,29 +39,32 @@ The following is a concrete representation of the pattern:
 
 namespace Azure { namespace Storage { namespace Blob { namespace Batch {
 /**
-* \brief A DeferredResponse represents an operation which will be deferred
-* until after a call to the `SubmitBatch` API.
-*
-* @details A `DeferredResponse<T>` object represents a service method which has
-* not yet completed. The name was chosen * to reflect the .Net and Java 
-* implementations, which return `Response<T>` objects, but the `DeferredResponse`
-* name reflects that this is NOT an * * actual response, but instead a "proxy object"
-* which can be used to retrieve the actual response after the request has completed.
-*
-* Calling the `GetResponse` API before the `SubmitBatch` method on the *
-* `DeferredResponseProcessor` has been called is * an error and SHOULD throw a
-* descriptive exception (especially if the alternative is throwing an access violation).
-*
-* Calling the `GetResponse` API _after_ calling the `SubmitBatch` method may
-* throw for the same reasons that any other service method might throw - the
-* call to `GetResponse` should behave as close as possible to the original API
-* operation.
-*
-* Note that the template argument for `DeferredResponse` does NOT include `Response`.
-* That is because a DeferredResponse IS a response, so including `Response` in
-* the template argument is redundant.
-*
-*/
+ * \brief A DeferredResponse represents an operation which will be deferred
+ * until after a call to the `SubmitBatch` API.
+ *
+ * @details A `DeferredResponse<T>` object represents a service method which has
+ * not yet completed. The name was chosen * to reflect the .Net and Java 
+ * implementations, which return `Response<T>` objects, but the `DeferredResponse`
+ * name reflects that this is NOT an * * actual response, but instead a "proxy object"
+ * which can be used to retrieve the actual response after the request has completed.
+ *
+ * Calling the `GetResponse` API before the `SubmitBatch` method on the *
+ * `DeferredResponseProcessor` has been called is * an error and SHOULD throw a
+ * descriptive exception (especially if the alternative is throwing an access violation).
+ *
+ * Calling the `GetResponse` API _after_ calling the `SubmitBatch` method may
+ * throw for the same reasons that any other service method might throw - the
+ * call to `GetResponse` should behave as close as possible to the original API
+ * operation.
+ *
+ * Note that the template argument for `DeferredResponse` does NOT include `Response`.
+ * That is because a DeferredResponse IS a response, so including `Response` in
+ * the template argument is redundant.
+ *
+ * > Note that calls to `GetResponse` are *not* idempotent. This is because a `Response<T>`
+ * contains a unique pointer to the `RawResponse` object. Implementations need to guard
+ * against multiple calls to `GetResponse`.
+ */
 template<typename T>
 class DeferredResponse {
 public:
@@ -69,6 +72,11 @@ public:
      * @brief Retrieve the Response corresponding to this deferred operation.
      *
      * Note that this MAY throw an exception if the corresponding service method fails.
+	 *
+	 * @returns The Response corresponding to this deferred operation.
+	 *
+     * @throws std::exception if the corresponding service method fails.
+	 *
      */
     virtual Response<T> GetResponse() = 0;
 };
@@ -184,6 +192,16 @@ by storage are likely to have a similar shape, but likely different names for th
 > [!NOTE]
 > A batched operation should NOT take a `Context` object - a batched operation is not an actual network operation.
 
+#### Shared State
+
+Note that in this model, the `DeferredResponseFactory` MUST aggregate each of the
+deferred responses returned by the various "Batch Factory" methods (because the
+lifetime of the Batch Factory is independent from the lifetime of the returned
+`DeferredResponse` objects). To implement this, the pattern implementation should
+maintain state which is shared between the `DeferredResponse` objects and the
+`DeferredResponseFactory`. The shared state should contain all that is needed to
+send a request to the server and process the response received from the server.
+
 #### `BatchFactory` Class
 
 A concrete example of a "Batch" factory is:
@@ -258,7 +276,9 @@ AttestationBatchFactory::SetAttestationPolicy(
 
 In this example, the `request` object depends on additional state (a `std::string` and
 `BodyStream` object). To handle this case, the code creates a `AttestationBatchShared` object which
-is shared between the `DeferredResponse<T>` object and the `DeferredResponseFactory`.
+is shared between the `DeferredResponse<T>` object and the `DeferredResponseFactory`. This
+object ensures that the data needed for the `request` is not freed until after the
+batched request is processed.
 
 ## Discussion
 
@@ -319,10 +339,8 @@ Based on the survey results, there are three patterns implemented.
    1. The batched operation simulates a non-batched operation. The batch aggregator returns a `Response<T>` and when the client
       attempts to retrieve the `Value` of the response, the API processes the result of the operation and behaves as if it were an
       un-batched API. This pattern is only used by the Blob Storage Batch API.
-
 ### Storage Blob Batch Client implementation (cross language)
 
->>>>>>> Stashed changes
 Each languages implementation of the Blob Storage batch functionality is slightly
 different, based on the requirements of each language, but most of the languages
 share a common development paradigm.
@@ -339,86 +357,3 @@ object as an input and submits each of the requests associated with the batch op
 After that API has completed, the developer can then inspect the `Result` objects returned
 from the `Batch` object to determine the ultimate return from the API.
 
-Note that the pattern described above does *not* support the requirement that operations be authored
-from different azure identities (because the Batch object returned by the StorageBatchClient has no
-mechanism to accept requests from different Azure identities).
-
-## Proposed Azure Core API for supporting Batch operations
-
-### Original Proposal
-
-The original proposal for Batch was modeled after the C# and Java solutions for batch processing.
-
-The client creates a `Batch` object, calls into "operation" methods to create batched operations,
-collecting results for those operations. The "operation" methods return a `Later<T>` where `T` is the
-nominal return value from the operation.
-
-The client then passes the `Batch` object to a `SubmitBatch` method on the `BatchClient` object which
-executes the batched operations remotely.
-
-The client can call the `get` method on the `Later<T>` to retrieve the `T` object
-corresponding to the returned call.
-
-It is an error to call the `get` method before calling the `SubmitBatch` method.
-
-Here is an example (from the original `Later<T>` spec) of how a developer might
-use the original Batch API proposal:
-
-```c++
-int main() {
-  Batch batch;
-  auto laterResult = batch.SomeOperation();
-  auto laterResult2 = batch.AnotherOperation();
-
-  BatchClient().SubmitBatch(batch);
-
-  try {
-    auto result = laterResult.get();
-    std::cout << result << std::endl;
-  } catch (std::exception &e) {
-    std::cout << e.what() << std::endl;
-  }
-  auto result2 = laterResult2.get();
-  std::cout << result2.m_a << std::endl;
-}
-```
-
-The Storage team provided the following as a concrete example of how the pattern would be used in C++:
-
-```c++
-auto batch = blobBatchClient.CreateBatch();
-
-auto laterResponse1 = batch.DeleteBlob("sample1");
-auto laterResponse2 = batch.DeleteBlob("sample2");
-
-blobBatchClient.SubmitBatch(batch);
-
-auto deleteResponse1 = laterResponse1.Get();
-
-try {
-    auto deleteResponse2 = laterResponse2.Get();
-    // successful
-} except (Azure::Storage::Exception& e) {
-    // error
-}
-```
-
-#### Commentary on the original `Later<T>` Design
-
-##### Advantages
-
-This design is almost identical to the original .Net and Java design. That means that it is extremely
-familiar to developers who are used to using the .Net and Java pattern.
-
-##### Disadvantages
-
-There are a couple of challenges with this design - the first is that the original pattern for
-the batch object is independently creatable - that runs counter to many of the azure design
-guidelines, but is simple to fix - add a `CreateBatch` method to the `BatchClient` (that is
-what .Net and Java do as well).
-
-The second issue is that the `T` object in the original proposal needs to be a `Response<T>` object
-which requires double nesting of objects, which is unpleasent - for Java and .Net, the `Batch` object
-returned a `Response<T>` object directly.
-
-And finally, the `Later<T>` proposal
