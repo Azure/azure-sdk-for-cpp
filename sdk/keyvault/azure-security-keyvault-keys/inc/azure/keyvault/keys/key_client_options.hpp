@@ -407,10 +407,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<std::string> Nonce;
 
     /**
-     * @brief The encryption algorithm to use to protected the exported key material
+     * @brief The encryption algorithm to use to protected the exported key material.
      *
      */
     Azure::Nullable<KeyEncryptionAlgorithm> Encryption;
+
+    /**
+     * @brief The version of the key to release.
+     *
+     */
+    Azure::Nullable<std::string> Version;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

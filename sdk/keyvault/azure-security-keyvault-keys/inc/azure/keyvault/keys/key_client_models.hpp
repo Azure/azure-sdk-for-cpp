@@ -453,7 +453,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark Format: base64url
      */
-    std::string Data;
+    std::string EncodedPolicy;
   };
 
   /**

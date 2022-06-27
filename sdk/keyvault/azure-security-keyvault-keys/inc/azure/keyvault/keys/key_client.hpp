@@ -246,14 +246,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * marked exportable. This operation requires the keys/release permission.
      *
      * @param name The name of the key.
-     * @param version The key version.
      * @param options The options for the key release operation.
      * @param context A cancellation token controlling the request lifetime.
      * @return ReleaseKeyResult object.
      */
     Azure::Response<ReleaseKeyResult> ReleaseKey(
         std::string const& name,
-        std::string const& version,
         KeyReleaseOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

@@ -237,7 +237,6 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
 
 Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
     std::string const& name,
-    std::string const& version,
     KeyReleaseOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -247,7 +246,10 @@ Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
 
   // Request and settings
   auto request = CreateRequest(
-      HttpMethod::Post, {_detail::KeysPath, name, version, _detail::ReleaseValue}, &payloadStream);
+      HttpMethod::Post,
+      {_detail::KeysPath, name, options.Version.ValueOr(""), _detail::ReleaseValue},
+      &payloadStream);
+
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
