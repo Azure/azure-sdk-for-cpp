@@ -19,6 +19,18 @@ The only customer facing construct is the `DeferredResponse<T>` type.
 
 Note that a working example of this pattern can be found [on GitHub](https://github.com/LarryOsterman/azure-sdk-for-cpp/tree/larryo/batchprototype).
 
+> NOTE:
+> The following are the required elements of this pattern:
+>
+> 1. The `DeferredResponse<T>` type with a public GetResponse() method;
+> 1. A `CreateBatchFactory()` method on the client class and
+> 1. A `SubmitBatch()` method on the client class which takes a BatchFactory object as a parameter.
+>     1. The SubmitBatch() throws all network layer exceptions,
+>     1. The GetResponse() method throws any exceptions returned by the service.
+
+Everything else below describes a possible implementation of the pattern. It is
+understood that adjustments to the implementation may have to be made to meet the
+implementation details of service client implementations.
 
 There are three major components of this design:
 
@@ -72,11 +84,11 @@ public:
      * @brief Retrieve the Response corresponding to this deferred operation.
      *
      * Note that this MAY throw an exception if the corresponding service method fails.
-	 *
-	 * @returns The Response corresponding to this deferred operation.
-	 *
+     *
+     * @returns The Response corresponding to this deferred operation.
+     *
      * @throws std::exception if the corresponding service method fails.
-	 *
+     *
      */
     virtual Response<T> GetResponse() = 0;
 };
@@ -339,6 +351,7 @@ Based on the survey results, there are three patterns implemented.
    1. The batched operation simulates a non-batched operation. The batch aggregator returns a `Response<T>` and when the client
       attempts to retrieve the `Value` of the response, the API processes the result of the operation and behaves as if it were an
       un-batched API. This pattern is only used by the Blob Storage Batch API.
+
 ### Storage Blob Batch Client implementation (cross language)
 
 Each languages implementation of the Blob Storage batch functionality is slightly
@@ -356,4 +369,3 @@ object as an input and submits each of the requests associated with the batch op
 
 After that API has completed, the developer can then inspect the `Result` objects returned
 from the `Batch` object to determine the ultimate return from the API.
-

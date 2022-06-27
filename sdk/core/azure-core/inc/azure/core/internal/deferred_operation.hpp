@@ -166,7 +166,7 @@ namespace Azure { namespace Core {
   public:
     Response<T> GetResponse() const
     {
-      auto sharedState = static_cast<_internal::DeferredResponseShared<T>*>(m_sharedState.get());
+      auto sharedState = std::static_pointer_cast<_internal::DeferredResponseShared<T>>(m_sharedState);
       return sharedState->GetResponse();
     }
   };
