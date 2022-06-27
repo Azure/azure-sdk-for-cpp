@@ -43,61 +43,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<std::string> NextPageToken;
   };
 
-  class ServiceVersion final {
-  private:
-    std::string m_version;
-
-  public:
-    /**
-     * @brief Construct a new Service Version object
-     *
-     * @param version The string version for the Key Vault keys service.
-     */
-    ServiceVersion(std::string version) : m_version(std::move(version)) {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #ServiceVersion to be compared.
-     */
-    bool operator==(ServiceVersion const& other) const { return m_version == other.m_version; }
-
-    /**
-     * @brief Return the #ServiceVersion string representation.
-     *
-     */
-    std::string const& ToString() const { return m_version; }
-
-    /**
-     * @brief Use to send request to the 7.2 version of Key Vault service.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_2;
-
-    /**
-     * @brief Use to send request to the 7.3 version of Key Vault service.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_3;
-  };
-
   /**
    * @brief Define the options to create an SDK Keys client.
    *
    */
   struct KeyClientOptions final : public Azure::Core::_internal::ClientOptions
   {
-    ServiceVersion Version;
+    /**
+     * @brief Service Version used.
+     *
+     */
+    std::string Version;
 
     /**
      * @brief Construct a new Key Client Options object.
      *
-     * @param version Optional version for the client.
      */
-    KeyClientOptions(ServiceVersion version = ServiceVersion::V7_3)
-        : Azure::Core::_internal::ClientOptions(), Version(version)
-    {
-    }
+    KeyClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
   };
 
   /**
