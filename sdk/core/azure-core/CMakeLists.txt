@@ -102,7 +102,8 @@ set(
     inc/azure/core/tracing/tracing.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    )
+    inc/azure/core.hpp
+ "inc/azure/core/internal/deferred_operation.hpp")
 
 set(
   AZURE_CORE_SOURCE
