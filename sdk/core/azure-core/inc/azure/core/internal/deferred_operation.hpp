@@ -72,7 +72,7 @@ namespace Azure { namespace Core {
       {
       }
       virtual ~DeferredResponseShared() {}
-      void ProcessRawResponse(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
+      void ProcessRawResponse(std::unique_ptr<Azure::Core::Http::RawResponse>& response) override
       {
         m_rawResponse = std::move(response);
       }
