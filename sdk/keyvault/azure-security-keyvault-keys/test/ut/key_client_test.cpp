@@ -34,13 +34,13 @@ TEST(KeyVaultKeyClientUnitTest, ServiceVersion)
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
   {
     // 7.3
-    EXPECT_NO_THROW(auto options = KeyClientOptions("7.3");
+    EXPECT_NO_THROW(auto options = KeyClientOptions();
                     KeyClient keyClient("http://account.vault.azure.net", credential, options);
                     EXPECT_EQ(options.Version, "7.3"););
   }
   {
     // arbitrary version
-    EXPECT_NO_THROW(auto options = KeyClientOptions("1.0");
+    EXPECT_NO_THROW(auto options = KeyClientOptions(); options.Version = "1.0";
                     KeyClient keyClient("http://account.vault.azure.net", credential, options);
                     EXPECT_EQ(options.Version, "1.0"););
   }

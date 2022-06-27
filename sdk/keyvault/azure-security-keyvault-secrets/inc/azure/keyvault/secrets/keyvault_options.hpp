@@ -21,17 +21,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Service Version used.
      *
      */
-    const std::string Version;
+    std::string Version;
 
     /**
      * @brief Construct a new Secret Client Options object.
      *
-     * @param version Optional version for the client.
      */
-    SecretClientOptions(std::string version = "7.3")
-        : Azure::Core::_internal::ClientOptions(), Version(version)
-    {
-    }
+    SecretClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
   };
 
   /**
