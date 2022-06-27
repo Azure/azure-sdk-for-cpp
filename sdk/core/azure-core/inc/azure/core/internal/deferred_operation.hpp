@@ -71,7 +71,7 @@ namespace Azure { namespace Core {
           : DeferredResponseSharedBase(request), m_completeProcessing(completeProcessing)
       {
       }
-      virtual ~DeferredResponseShared() {}
+      ~DeferredResponseShared() override {}
       void ProcessRawResponse(std::unique_ptr<Azure::Core::Http::RawResponse>& response) override
       {
         m_rawResponse = std::move(response);
