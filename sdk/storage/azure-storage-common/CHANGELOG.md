@@ -10,6 +10,12 @@
 
 ### Other Changes
 
+## 12.2.4 (2022-06-07)
+
+### Bugs Fixed
+
+- Fixed a bug where text of XML element cannot be empty.
+
 ## 12.2.3 (2022-04-06)
 
 ### Bugs Fixed

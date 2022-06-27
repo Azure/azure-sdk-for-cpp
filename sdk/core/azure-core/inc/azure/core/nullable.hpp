@@ -59,7 +59,7 @@ public:
    * @param other Another `%Nullable` instance to copy.
    */
   Nullable(const Nullable& other) noexcept(std::is_nothrow_copy_constructible<T>::value)
-      : m_hasValue(other.m_hasValue)
+      : m_disengaged{}, m_hasValue(other.m_hasValue)
   {
     if (m_hasValue)
     {
@@ -73,7 +73,7 @@ public:
    * @param other A `%Nullable` instance to move into the instance being constructed.
    */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
-      : m_hasValue(other.m_hasValue)
+      : m_disengaged{}, m_hasValue(other.m_hasValue)
   {
     if (m_hasValue)
     {

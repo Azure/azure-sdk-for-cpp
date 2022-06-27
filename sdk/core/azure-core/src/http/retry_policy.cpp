@@ -214,10 +214,10 @@ bool RetryPolicy::ShouldRetryOnResponse(
     auto const sc = response.GetStatusCode();
     if (statusCodes.find(sc) == statusCodes.end())
     {
-      if (Log::ShouldWrite(Logger::Level::Warning))
+      if (Log::ShouldWrite(Logger::Level::Informational))
       {
         Log::Write(
-            Logger::Level::Warning,
+            Logger::Level::Informational,
             std::string("HTTP status code ") + std::to_string(static_cast<int>(sc))
                 + " won't be retried.");
       }

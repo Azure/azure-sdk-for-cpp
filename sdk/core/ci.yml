@@ -38,7 +38,7 @@ stages:
       # In the case of changes to core we want to re-run all CI tests for all
       # libraries to check for potential regressions everywhere.
       CtestRegex: .*
-      LiveTestCtestRegex: '"azure-core.|json-test"'
+      LiveTestCtestRegex: azure-core.|json-test
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
@@ -46,6 +46,9 @@ stages:
         - Name: azure-core
           Path: azure-core
           VcpkgPortName: azure-core-cpp
+        - Name: azure-core-tracing-opentelemetry
+          Path: azure-core-tracing-opentelemetry
+          VcpkgPortName: azure-core-tracing-opentelemetry-cpp
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services          
       TestEnv:
 # Key Vault

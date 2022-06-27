@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Jinming-Hu/azure-storage-api-specs/main/Microsoft.BlobStorage/preview/2020-08-04/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
 ```
 
 ## ModelFour Options
@@ -72,12 +72,9 @@ directive:
     transform: >
       delete $["/{containerName}?restype=account&comp=properties"];
       delete $["/{containerName}/{blob}?restype=account&comp=properties"];
-      delete $["/?comp=batch"];
-      delete $["/{containerName}?restype=container&comp=batch"];
       delete $["/{filesystem}/{path}?action=setAccessControl&blob"];
       delete $["/{filesystem}/{path}?action=getAccessControl&blob"];
       delete $["/{filesystem}/{path}?FileRename"];
-      delete $["/{containerName}/{blob}?comp=query"];
       
       for (const operation in $) {
         for (const verb in $[operation]) {
@@ -105,7 +102,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-08-04"],
+        "enum": ["2020-10-02"],
         "description": "The version used for the operations to Azure storage services."
       };
 ```
@@ -125,7 +122,7 @@ directive:
       $["/{containerName}?restype=container&comp=undelete"].put.operationId = "BlobContainer_Undelete";
       $["/{containerName}/{blob}?comp=copy"].put.operationId = "Blob_StartCopyFromUri";
       $["/{containerName}/{blob}?comp=copy&sync"].put.operationId = "Blob_CopyFromUri";
-      $["/{containerName}/{blob}?comp=copy&copyid={CopyId}"].put.operationId = "Blob_AbortCopyFromUri";
+      $["/{containerName}/{blob}?comp=copy&copyid"].put.operationId = "Blob_AbortCopyFromUri";
       $["/{containerName}/{blob}?comp=block&fromURL"].put.operationId = "BlockBlob_StageBlockFromUri";
       $["/{containerName}/{blob}?comp=page&update&fromUrl"].put.operationId = "PageBlob_UploadPagesFromUri";
       $["/{containerName}/{blob}?comp=appendblock&fromUrl"].put.operationId = "AppendBlob_AppendBlockFromUri";
@@ -272,7 +269,8 @@ directive:
           {"value": "versions", "name": "Versions"},
           {"value": "tags", "name": "Tags"},
           {"value": "immutabilitypolicy", "name": "ImmutabilityPolicy"},
-          {"value": "legalhold", "name": "LegalHold"}
+          {"value": "legalhold", "name": "LegalHold"},
+          {"value": "deletedwithversions", "name": "DeletedWithVersions"}
       ];
       $.DeleteSnapshots["x-ms-enum"]["name"] = "DeleteSnapshotsOption";
       $.DeleteSnapshots["x-ms-enum"]["values"] = [{"value": "include", "name": "IncludeSnapshots"},{"value":"only", "name": "OnlySnapshots"}];
@@ -354,6 +352,9 @@ directive:
         }
         if (h === "x-ms-meta") {
           $[h]["x-ms-format"] = "caseinsensitivemap";
+        }
+        if (h === "x-ms-lease-id" && $[h].description === "Uniquely identifies a blobs' lease") {
+          $[h].description = "Uniquely identifies a blob's lease";
         }
       }
   - from: swagger-document
@@ -554,8 +555,6 @@ directive:
       delete $.ContainerItem.properties["Metadata"];
       $.ContainerProperties.properties["Metadata"]["x-ms-xml"] = {"name": "../Metadata"};
       $.ContainerProperties.properties["DeletedTime"]["x-ms-client-name"] = "DeletedOn";
-      $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"] = $.ContainerProperties.properties["VersionLevelWormEnabled"];
-      delete $.ContainerProperties.properties["VersionLevelWormEnabled"];
       $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning ";
       $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-default"] = false;
       delete $.ContainerProperties.required;
@@ -660,8 +659,6 @@ directive:
       $["x-ms-deny-encryption-scope-override"]["x-nullable"] = true;
       $["x-ms-deny-encryption-scope-override"]["x-ms-client-default"] = "false";
       $["x-ms-meta"].description = "A set of name-value pair associated with this blob container.";
-      $["x-ms-immutable-storage-with-versioning-enabled"] = $["x-ms-version-level-worm-enabled"];
-      delete $["x-ms-version-level-worm-enabled"];
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning";
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-default"] = false;
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-nullable"] = true;
@@ -764,6 +761,7 @@ directive:
       $.BlobItemInternal.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
       $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
       $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
+      $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
 
       $.BlobPropertiesInternal.properties["Etag"]["x-ms-client-name"] = "ETag";
       $.BlobPropertiesInternal["x-ms-client-name"] = "BlobItemDetails";
@@ -1174,8 +1172,70 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
+      $.BlobQueryArrowFieldType = {
+        "type": "string",
+        "enum": ["Int64", "Bool", "Timestamp", "String", "Double", "Decimal"],
+        "x-ms-enum": {
+          "name": "BlobQueryArrowFieldType",
+          "modelAsString": false,
+          "values": [
+            {"value": "int64", "name": "Int64"},
+            {"value": "bool", "name": "Bool"},
+            {"value": "timestamp[ms]", "name": "Timestamp"},
+            {"value": "string", "name": "String"},
+            {"value": "double", "name": "Double"},
+            {"value": "decimal", "name": "Decimal"}
+          ]
+        },
+        "description": "Type of blob query arrow field."
+      };
       if ($.ParquetConfiguration) {
         $.ParquetConfiguration.properties = {"__placeHolder" : { "type": "integer"}};
+      }
+      $.QuerySerialization["x-namespace"] = "_detail";
+      $.QueryFormat["x-namespace"] = "_detail";
+      $.QueryType["x-namespace"] = "_detail";
+      $.DelimitedTextConfiguration["x-namespace"] = "_detail";
+      $.JsonTextConfiguration["x-namespace"] = "_detail";
+      $.ArrowConfiguration["x-namespace"] = "_detail";
+      $.ParquetConfiguration["x-namespace"] = "_detail";
+      $.QueryRequest["x-namespace"] = "_detail";
+      $.QueryRequest.properties["QueryType"]["x-namespace"] = "_detail";
+      $.ArrowField["x-ms-client-name"] = "BlobQueryArrowField";
+      $.ArrowField.properties["Type"] = {"$ref": "#/definitions/BlobQueryArrowFieldType"};
+      $.DelimitedTextConfiguration.properties["HeadersPresent"]["x-ms-xml"] = $.DelimitedTextConfiguration.properties["HeadersPresent"]["xml"];
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.parameters
+    transform: >
+      $.push({"$ref": "#/parameters/EncryptionScope"});
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.responses
+    transform: >  
+      for (const status_code of ["200", "206"]) {
+        delete $[status_code].headers["x-ms-meta"];
+        delete $[status_code].headers["Content-Length"];
+        delete $[status_code].headers["Content-Type"];
+        delete $[status_code].headers["Content-Range"];
+        delete $[status_code].headers["Content-MD5"];
+        delete $[status_code].headers["Content-Encoding"];
+        delete $[status_code].headers["Cache-Control"];
+        delete $[status_code].headers["Content-Disposition"];
+        delete $[status_code].headers["Content-Language"];
+        delete $[status_code].headers["x-ms-blob-sequence-number"];
+        delete $[status_code].headers["x-ms-blob-type"];
+        delete $[status_code].headers["x-ms-copy-completion-time"];
+        delete $[status_code].headers["x-ms-copy-status-description"];
+        delete $[status_code].headers["x-ms-copy-id"];
+        delete $[status_code].headers["x-ms-copy-progress"];
+        delete $[status_code].headers["x-ms-copy-source"];
+        delete $[status_code].headers["x-ms-copy-status"];
+        delete $[status_code].headers["Accept-Ranges"];
+        delete $[status_code].headers["x-ms-blob-committed-block-count"];
+        delete $[status_code].headers["x-ms-encryption-key-sha256"];
+        delete $[status_code].headers["x-ms-encryption-scope"];
+        delete $[status_code].headers["x-ms-blob-content-md5"];
+        delete $[status_code].headers["x-ms-content-crc64"];
+        $[status_code].headers["x-ms-lease-duration"]["x-nullable"] = true;
       }
 ```
 
@@ -1302,6 +1362,10 @@ directive:
             "x-ms-client-name": "ClearRanges",
             "x-ms-xml": {"name": "PageList"},
             "items": {"$ref": "#/definitions/ClearRange"}
+          },
+          "ContinuationToken": {
+            "type": "string",
+            "x-ms-xml": {"name": "PageList/NextMarker"}
           }
         }
       }
@@ -1335,6 +1399,10 @@ directive:
             "x-ms-client-name": "ClearRanges",
             "x-ms-xml": {"name": "PageList"},
             "items": {"$ref": "#/definitions/ClearRange"}
+          },
+          "ContinuationToken": {
+            "type": "string",
+            "x-ms-xml": {"name": "PageList/NextMarker"}
           }
         }
       }
@@ -1574,4 +1642,32 @@ directive:
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=legalhold"].put.responses["200"].headers
     transform: >
       $["x-ms-legal-hold"]["x-ms-client-name"] = "HasLegalHold";
+```
+
+
+### SubmitBatch
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.SubmitBatchResult = {
+        "type": "object",
+        "x-ms-sealed": false,
+        "x-namespace": "_detail",
+        "properties": {
+          "BodyStream": {"type": "object", "format": "file"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/?comp=batch"].post.responses
+    transform: >
+      $["202"] = $["200"];
+      delete $["200"];
+      $["202"].schema =  {"$ref": "#/definitions/SubmitBatchResult"};
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=batch"].post.responses["202"]
+    transform: >
+      $.schema =  {"$ref": "#/definitions/SubmitBatchResult"};
 ```

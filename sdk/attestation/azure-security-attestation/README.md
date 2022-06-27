@@ -1,3 +1,7 @@
+---
+# cspell:words opentelemetry
+---
+
 # Azure Attestation Package client library for C++
 
 Microsoft Azure Attestation is a unified solution for remotely verifying the trustworthiness of a platform and integrity of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
@@ -155,15 +159,15 @@ The following APIs are available in the shared instance:
 - AttestSgxEnclave
 - AttestOpenEnclave
 - GetAttestationPolicy
-- GetPolicyManagementCertificates (always returns an empty set)
+- GetIsolatedModeCertificates (always returns an empty set)
 
 The following APIs are not available in the shared instance:
 
 - AttestTPMEnclave
 - SetAttestationPolicy
 - ResetAttestationPolicy
-- AddPolicyManagementCertificate
-- RemovePolicyManagementCertificate
+- AddIsolatedModeCertificate
+- RemoveIsolatedModeCertificate
 
 The APIs available in the shared instance do not require AAD authentication.
 
@@ -178,76 +182,66 @@ Most responses from the MAA service are expressed in the form of a JSON Web Toke
 issued by the MAA service for the specified instance. If the MAA service instance is running in a region where the service runs in an SGX enclave, then
 the certificate issued by the server can be verified using the [oe_verify_attestation_certificate() API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html).
 
-### Policy Management
+### Isolated Mode Management
 
 Each attestation service instance has a policy applied to it which defines additional criteria which the customer has defined.
 
 For more information on attestation policies, see [Attestation Policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-### Policy Management certificate management
+### Isolated Mode certificate management
 
 When an attestation instance is running in "Isolated" mode, the customer who created the instance will have provided
-a policy management certificate at the time the instance is created. All policy modification operations require that the customer sign
-the policy data with one of the existing policy management certificates. The Policy Management Certificate Management APIs enable
-clients to add, remove or enumerate the policy management certificates.
+a certificate at the time the instance is created. All administrative operations (for instance, policy modification operations)
+require that the customer sign the policy data with one of the existing policy management certificates. The
+Isolated Mode Certificate Management APIs enable clients to add, remove or enumerate these certificates.
 
 ### Examples
 
-- [Instantiate a synchronous attestation client](#create-a-synchronous-attestation-client)
+- [Create an attestation client](#create-an-attestation-client)
 - [Retrieve token validation certificates](#retrieve-token-certificates)
 - [Attest an SGX enclave](#attest-an-sgx-enclave)
-- [Instantiate a synchronous administrative client](#create-a-synchronous-administrative-client)
+- [Instantiate an administrative client](#create-an-administrative-client)
 - [Get attestation policy](#retrieve-current-attestation-policy-for-openenclave)
 - [Set unsigned attestation policy](#set-unsigned-attestation-policy-aad-clients-only)
 - [Set signed attestation policy](#set-signed-attestation-policy)
-- [List policy management certificates](#list-attestation-signing-certificates)
-- [Add policy management certificate](#add-attestation-signing-certificate)
+- [List Isolated Mode certificates](#list-isolated-mode-signing-certificates)
+- [Add Isolated Mode certificate](#add-a-new-isolated-mode-signing-certificate)
+- [Remove Isolated Mode certificate](#remove-isolated-mode-signing-certificate)
 
 #### Create an attestation client
 
-The `AttestationClientBuilder` class is used to create instances of the attestation client:
+The `AttestationClient::Create` method is used to create instances of the attestation client:
 
-```cpp 
+```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint);
+    Azure::Security::Attestation::AttestationClient client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
 ```
 
 If the attestation APIs require authentication, use the following:
 
-```cpp 
+```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
     = std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, credential);
+auto client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
 
-#### Retrieve attestation response validation collateral.
-
-Validating the response from the attestation service requires that the client have some additional information tto help it
-validate the responses from the attestation service. Before making most service methods, developers should call the
-`RetrieveResponseValidationCollateral` API to retrieve and cache this information.
-
-This only needs to be called once for each attestation client or attestation administration client instance.
-
-```cpp
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
-```
 #### Retrieve Token Certificates
 
-Use `GetAttestationSigningCertificates` to retrieve the set of certificates, which can be used to validate the token returned from the attestation service.
+Use `GetTokenValidationCertificates` to retrieve the set of certificates, which can be used to validate the token returned
+from the attestation service.
+
 Normally, this information is not required as the attestation SDK will perform the validation as a part of the interaction with the
 attestation service, however the APIs are provided for completeness and to facilitate customer's independently validating
 attestation results.
 
 ```cpp
-auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
+auto validationCertificates = attestationClient.GetTokenValidationCertificates();
 // Enumerate the signers.
-for (const auto& signer : attestationSigners.Value.Signers)
+for (const auto& signer : validationCertificates.Value.Signers)
 {
 }
 
@@ -276,17 +270,14 @@ std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(
           std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-AttestationAdministrationClient adminClient(m_endpoint, credential);
+AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(m_endpoint, credential));
 ```
 
 #### Retrieve current attestation policy for OpenEnclave
 
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
-```cpp 
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
+```cpp
     // Retrieve the SGX Attestation Policy from this attestation service instance.
     Azure::Response<AttestationToken<std::string>> const sgxPolicy
         = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
@@ -299,20 +290,17 @@ Use the `GetAttestationPolicy` API to retrieve the current attestation policy fo
 When an attestation instance is in AAD mode, the caller can use a convenience method to set an unsigned attestation
 policy on the instance.
 
-```cpp 
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
+```cpp
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy
     // being set.
     std::string const policyToSet(R"(version= 1.0;
 authorizationrules 
 {
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
+    [ type=="x-ms-sgx-is-debuggable", value==true ]&&
+    [ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
+    [ type=="x-ms-sgx-is-debuggable", value==true ]&& 
+    [ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
 };)");
     Azure::Response<AttestationToken<PolicyResult>> const setResult
         = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
@@ -320,7 +308,8 @@ authorizationrules
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {
       std::cout << "Attestation policy was updated." << std::endl;
-    }```
+    }
+```
 
 #### Set signed attestation policy
 
@@ -343,10 +332,10 @@ These are the signing key and certificate which were used when creating the atte
     std::string const policyToSet(R"(version= 1.0;
 authorizationrules 
 {
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
+    [ type=="x-ms-sgx-is-debuggable", value==true ]&&
+    [ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
+    [ type=="x-ms-sgx-is-debuggable", value==true ]&& 
+    [ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
 };)");
 
     // When setting attestation policy, use the signing key associated with the isolated instance.
@@ -362,7 +351,7 @@ authorizationrules
     }
 ```
 
-#### List attestation signing certificates
+#### List Isolated Mode signing certificates
 
 When an attestation instance is in `Isolated` mode, the policy APIs need additional proof of authorization. This proof is
 provided via the `AttestationSigningKey` parameter passed into the set and reset policy APIs.
@@ -376,18 +365,15 @@ the policy management tokens. This interaction ensures that the client is in pos
 one of the policy management certificates and is thus authorized to perform the operation.
 
 ```cpp
-// Retrieve attestation response validation collateral before calling into the service.
-adminClient.RetrieveResponseValidationCollateral();
-
 // Retrieve the SGX Attestation Policy from this attestation service instance.
-Azure::Response<AttestationToken<PolicyCertificateListResult>> const policyCertificates
-        = adminClient.GetPolicyManagementCertificates();
+Azure::Response<AttestationToken<IsolatedModeCertificateListResult>> const policyCertificates
+        = adminClient.GetIsolatedModeCertificates();
 
 std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
               << " certificates configured on this instance." << std::endl;
 ```
 
-#### Add attestation signing certificate
+#### Add a new Isolated Mode signing certificate
 
 Adds a new certificate to the set of policy management certificates. The request to add the policy management certificate
 must be signed with the private key associated with one of the existing policy management certificates (this ensures that
@@ -404,9 +390,6 @@ ignored (this possibly surprising behavior is there because retries could cause 
 
     AttestationSigningKey const requestSigner{pemSigningKey, pemSigningCert};
 
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
     // We start this sample by adding a new certificate to the set of policy management
     // certificates.
     {
@@ -418,14 +401,14 @@ ignored (this possibly surprising behavior is there because retries could cause 
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
-      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
-          = adminClient.AddPolicyManagementCertificate(pemCertificateToAdd, requestSigner);
+      Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
+          = adminClient.AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
 
       std::cout << "The result of the certificate add operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;
 ```
 
-#### Remove attestation signing certificate
+#### Remove Isolated Mode signing certificate
 
 Removes a certificate from the set of policy management certificates. The request to remove the policy management certificate
 must be signed with the private key associated with one of the existing policy management certificates (this ensures that
@@ -443,8 +426,8 @@ std::string const pemCertificateToRemove(
 
 // Add the new certificate to the set of policy management certificates for this attestation
 // service instance.
-Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
-    = adminClient.RemovePolicyManagementCertificate(pemCertificateToRemove, requestSigner);
+Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
+    = adminClient.RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
 
 std::cout << "The result of the certificate remove operation is: "
         << addResult.Value.Body.CertificateModification.ToString() << std::endl;
@@ -513,4 +496,3 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [cloud_shell_bash]: https://shell.azure.com/bash
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Fattestation%2Fazure-security-attestation%2FREADME.png)
-

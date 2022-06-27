@@ -63,29 +63,28 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       else
       {
-        returnValue.ValidationTimeSlack = 10s;
+        returnValue.TimeValidationSlack = 10s;
       }
       return returnValue;
     }
 
-    std::unique_ptr<AttestationClient> CreateClient()
+    AttestationClient CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
-      return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
+      return AttestationClient::Create(m_endpoint, options);
     }
-    std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
+    AttestationClient CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
-      AttestationClientOptions options;
+      AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return InitTestClient<AttestationClient, AttestationClientOptions>(
-          m_endpoint, credential, options);
+      return AttestationClient::Create(m_endpoint, credential, options);
     }
 
     void ValidateAttestResponse(
@@ -107,15 +106,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         if (data->DataType == AttestationDataType::Json)
         {
-          EXPECT_TRUE(response.Value.Body.RuntimeClaims);
+          EXPECT_TRUE(response.Value.Body.RunTimeClaims);
           EXPECT_FALSE(response.Value.Body.EnclaveHeldData);
           // canonicalize the JSON sent to the service before checking with the service output.
           auto sentJson(Azure::Core::Json::_internal::json::parse(data->Data));
-          EXPECT_EQ(sentJson.dump(), *response.Value.Body.RuntimeClaims);
+          EXPECT_EQ(sentJson.dump(), *response.Value.Body.RunTimeClaims);
         }
         else
         {
-          EXPECT_FALSE(response.Value.Body.RuntimeClaims);
+          EXPECT_FALSE(response.Value.Body.RunTimeClaims);
           EXPECT_TRUE(response.Value.Body.EnclaveHeldData);
           // If we expected binary, the EnclaveHeldData in the response should be the value sent.
           EXPECT_EQ(data->Data, *response.Value.Body.EnclaveHeldData);
@@ -134,22 +133,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST_P(AttestationTests, SimpleAttest)
   {
     auto client(CreateClient());
-    client->RetrieveResponseValidationCollateral();
 
     AttestationType type = std::get<1>(GetParam());
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      auto attestResponse = client->AttestOpenEnclave(report);
-      ValidateAttestResponse(attestResponse);
-
-      attestResponse = client->AttestOpenEnclave(report);
+      auto attestResponse = client.AttestOpenEnclave(report);
       ValidateAttestResponse(attestResponse);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote);
+      auto attestResponse = client.AttestSgxEnclave(quote);
       ValidateAttestResponse(attestResponse);
     }
   }
@@ -158,23 +153,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     // Attestation clients don't need to be authenticated, but they can be.
     auto client(CreateAuthenticatedClient());
-    auto runtimeData = AttestationCollateral::RuntimeData();
+    auto runtimeData = AttestationCollateral::RunTimeData();
 
     AttestationType type = std::get<1>(GetParam());
-    AttestOptions options;
-    client->RetrieveResponseValidationCollateral();
     AttestationData data{runtimeData, AttestationDataType::Binary};
-    options.RuntimeData = data;
     if (type == AttestationType::OpenEnclave)
     {
+      AttestOpenEnclaveOptions options;
+      options.RunTimeData = data;
       auto report = AttestationCollateral::OpenEnclaveReport();
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client.AttestOpenEnclave(report, options);
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
     {
+      AttestSgxEnclaveOptions options;
+      options.RunTimeData = data;
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, options);
+      auto attestResponse = client.AttestSgxEnclave(quote, options);
       ValidateAttestResponse(attestResponse, data);
     }
   }
@@ -183,14 +179,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     // Attestation clients don't need to be authenticated, but they can be.
     auto client(CreateAuthenticatedClient());
-    auto runtimeData = AttestationCollateral::RuntimeData();
-
-    client->RetrieveResponseValidationCollateral();
+    auto runtimeData = AttestationCollateral::RunTimeData();
 
     AttestationType type = std::get<1>(GetParam());
 
-    AttestOptions options;
-    options.DraftPolicyForAttestation = R"(version= 1.0;
+    if (type == AttestationType::OpenEnclave)
+    {
+      AttestOpenEnclaveOptions options;
+      options.DraftPolicyForAttestation = R"(version= 1.0;
 authorizationrules
 {
     [ type=="x-ms-sgx-is-debuggable", value==true] &&
@@ -202,11 +198,9 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-    if (type == AttestationType::OpenEnclave)
-    {
       auto report = AttestationCollateral::OpenEnclaveReport();
 
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client.AttestOpenEnclave(report, options);
       // Because a draft policy was set, the resulting token is unsigned.
       ValidateAttestResponse(
           attestResponse, Azure::Nullable<AttestationData>(), *options.DraftPolicyForAttestation);
@@ -222,12 +216,25 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(client->AttestOpenEnclave(report, options), Azure::Core::RequestFailedException);
+      EXPECT_THROW(client.AttestOpenEnclave(report, options), Azure::Core::RequestFailedException);
     }
     else if (type == AttestationType::SgxEnclave)
     {
+      AttestSgxEnclaveOptions options;
+      options.DraftPolicyForAttestation = R"(version= 1.0;
+authorizationrules
+{
+    [ type=="x-ms-sgx-is-debuggable", value==true] &&
+    [ type=="x-ms-sgx-product-id", value!=0 ] &&
+    [ type=="x-ms-sgx-svn", value>= 0 ] &&
+    [ type=="x-ms-sgx-mrsigner", value == "4aea5f9a0ed04b11f889aadfe6a1d376213a29a95a85ce7337ae6f7fece6610c"]
+        => permit();
+};
+issuancerules {
+    c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
+};)";
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, options);
+      auto attestResponse = client.AttestSgxEnclave(quote, options);
       ValidateAttestResponse(
           attestResponse, Azure::Nullable<AttestationData>(), *options.DraftPolicyForAttestation);
 
@@ -242,26 +249,25 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(client->AttestSgxEnclave(quote, options), Azure::Core::RequestFailedException);
+      EXPECT_THROW(client.AttestSgxEnclave(quote, options), Azure::Core::RequestFailedException);
     }
   }
 
   TEST_P(AttestationTests, AttestWithRuntimeDataJson)
   {
     auto client(CreateClient());
-    auto runtimeData = AttestationCollateral::RuntimeData();
-    client->RetrieveResponseValidationCollateral();
+    auto runtimeData = AttestationCollateral::RunTimeData();
 
     AttestationType type = std::get<1>(GetParam());
     AttestationData data{runtimeData, AttestationDataType::Json};
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      AttestOptions options;
-      options.RuntimeData = data;
-      options.TokenValidationOptions = GetTokenValidationOptions();
-      (*options.TokenValidationOptions).ValidationCallback
-          = [&](AttestationToken<> const& token, AttestationSigner const& signer) {
+      AttestOpenEnclaveOptions options;
+      options.RunTimeData = data;
+      options.TokenValidationOptionsOverride = GetTokenValidationOptions();
+      (*options.TokenValidationOptionsOverride).ValidationCallback
+          = [&](AttestationToken<void> const& token, AttestationSigner const& signer) {
               EXPECT_TRUE(token.Issuer);
               // When running against a live server, the m_endpoint value is mocked, so we cannot
               // compare against it.
@@ -280,14 +286,52 @@ issuancerules {
                 EXPECT_NE(cert->GetSubjectName().find(m_endpoint), std::string::npos);
               }
             };
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client.AttestOpenEnclave(report, options);
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, {data});
+      auto attestResponse = client.AttestSgxEnclave(quote, {data});
       ValidateAttestResponse(attestResponse, data);
+    }
+  }
+
+  TEST_P(AttestationTests, CreateAttestationClients)
+  {
+    // `InitTestClient` takes care of setting up Record&Playback.
+    auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
+
+    {
+      AttestationClient client = AttestationClient::Create(this->m_endpoint, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      AttestationClient const client = AttestationClient::Create(this->m_endpoint, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      AttestationClient client = AttestationClient::Create(this->m_endpoint, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      auto client = AttestationClient::Create(this->m_endpoint, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      auto const client = AttestationClient::Create(this->m_endpoint, options);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+
+    {
+      std::unique_ptr<AttestationClient> client = std::make_unique<AttestationClient>(
+          AttestationClient::Create(this->m_endpoint, options));
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::unique_ptr<AttestationClient const> client = std::make_unique<AttestationClient>(
+          AttestationClient::Create(this->m_endpoint, options));
+      EXPECT_EQ(m_endpoint, client->Endpoint());
     }
   }
 

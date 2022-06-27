@@ -830,6 +830,6 @@ TEST(RetryPolicy, LogMessages)
   EXPECT_EQ(log.Entries[3].Level, Logger::Level::Informational);
   EXPECT_EQ(log.Entries[3].Message, "HTTP Retry attempt #2 will be made in 0ms.");
 
-  EXPECT_EQ(log.Entries[4].Level, Logger::Level::Warning);
+  EXPECT_EQ(log.Entries[4].Level, Logger::Level::Informational);
   EXPECT_EQ(log.Entries[4].Message, "HTTP status code 503 won't be retried.");
 }
