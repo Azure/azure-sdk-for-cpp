@@ -100,8 +100,7 @@ TEST(WebSocketTests, SimpleEcho)
 
 template <size_t N> void EchoRandomData(WebSocket& socket)
 {
-  std::array<uint8_t, N> data = Azure::Core::Http::WebSockets::_detail::GenerateRandomBytes<N>();
-  std::vector<uint8_t> sendData{data.begin(), data.end()};
+  std::vector<uint8_t> sendData = Azure::Core::Http::WebSockets::_detail::GenerateRandomBytes(N);
 
   socket.SendFrame(sendData, true);
 
@@ -161,6 +160,136 @@ TEST(WebSocketTests, CloseDuringEcho)
 
     // Close the socket gracefully.
     testSocket.Close();
+  }
+}
+
+std::string ToHexString(std::vector<uint8_t> const& data)
+{
+  std::stringstream ss;
+  for (auto const& byte : data)
+  {
+    ss << std::hex << std::setfill('0') << std::setw(2) << (int)byte;
+  }
+  return ss.str();
+}
+
+TEST(WebSocketTests, MultiThreadedTestOnSingleSocket)
+{
+  constexpr size_t threadCount = 50;
+  constexpr size_t testDataLength = 30000;
+  constexpr auto testDuration = 10s;
+
+
+  WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+
+  testSocket.Open();
+
+  // seed test data for the operations.
+  std::vector<std::vector<uint8_t>> testData(testDataLength);
+  std::vector<std::vector<uint8_t>> receivedData(testDataLength);
+  std::atomic_size_t iterationCount(0);
+
+  // Spin up threadCount threads and hammer the echo server for 10 seconds.
+  std::vector<std::thread> threads;
+  for (size_t i = 0; i < threadCount; i += 1)
+  {
+    threads.push_back(std::thread([&]() {
+      std::chrono::time_point<std::chrono::steady_clock> startTime
+          = std::chrono::steady_clock::now();
+
+      do
+      {
+        size_t i = iterationCount++;
+        std::vector<uint8_t> sendData
+            = Azure::Core::Http::WebSockets::_detail::GenerateRandomBytes(100);
+        {
+          if (i < testData.size())
+          {
+            EXPECT_EQ(0, testData[i].size());
+            testData[i] = sendData;
+          }
+        }
+
+        testSocket.SendFrame(sendData, true);
+
+        auto response = testSocket.ReceiveFrame();
+        EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+        auto binaryResult = response->AsBinaryFrame();
+        // Make sure we get back the data we sent in the echo request.
+        EXPECT_EQ(sendData.size(), binaryResult->Data.size());
+        {
+          // There is no ordering expectation on the results, so we just remember the data
+          // as it comes in. We'll make sure we received everything later on.
+          if (i < receivedData.size())
+          {
+            EXPECT_EQ(0, receivedData[i].size());
+            receivedData[i] = binaryResult->Data;
+          }
+        }
+      } while (std::chrono::steady_clock::now() - startTime < testDuration);
+    }));
+  }
+  //  std::this_thread::sleep_for(10s);
+
+  for (auto& thread : threads)
+  {
+    thread.join();
+  }
+
+  // We no longer need to worry about synchronization since all the worker threads are done.
+  GTEST_LOG_(INFO) << "Total server requests: " << iterationCount.load() << std::endl;
+  GTEST_LOG_(INFO) << "Logged " << std::dec << testData.size() << " iterations (0x" << std::hex
+                   << testData.size() << ")" << std::endl;
+
+  // Close the socket gracefully.
+  testSocket.Close();
+
+  // If we've processed every iteration, let's make sure that we received everything we sent.
+  // If we dropped some results, then we can't check to ensure that we have received everything
+  // because we can't account for everything sent.
+  if (iterationCount <= testDataLength)
+  {
+
+    // Compare testData and receivedData to ensure every element in testData is in receivedData
+    // and every element in receivedData is in testData.
+    //
+    // This is a bit of a hack, but it is the only way to do this without a lot of extra code.
+    // The problem is that the order of the elements in testData and receivedData is not
+    // guaranteed, so we need to sort them before we can compare them.
+    // We sort by the size of the vector, so the smaller vectors will be first in the sort.
+    std::vector<std::string> testDataStrings;
+    std::vector<std::string> receivedDataStrings;
+    for (auto const& data : testData)
+    {
+      testDataStrings.push_back(ToHexString(data));
+    }
+    for (auto const& data : receivedData)
+    {
+      receivedDataStrings.push_back(ToHexString(data));
+    }
+    std::sort(testDataStrings.begin(), testDataStrings.end());
+    std::sort(receivedDataStrings.begin(), receivedDataStrings.end());
+    for (size_t i = 0; i < testDataStrings.size(); ++i)
+    {
+      if (testDataStrings[i] != receivedDataStrings[i])
+      {
+        GTEST_LOG_(ERROR) << "Mismatch at index " << i << std::endl;
+        GTEST_LOG_(ERROR) << "testData:     " << testDataStrings[i] << std::endl;
+        GTEST_LOG_(ERROR) << "receivedData: " << receivedDataStrings[i] << std::endl;
+      }
+    }
+
+    for (auto const& data : testDataStrings)
+    {
+      EXPECT_NE(
+          receivedDataStrings.end(),
+          std::find(receivedDataStrings.begin(), receivedDataStrings.end(), data));
+    }
+    for (auto const& data : receivedDataStrings)
+    {
+      EXPECT_NE(
+          testDataStrings.end(), std::find(testDataStrings.begin(), testDataStrings.end(), data));
+    }
   }
 }
 

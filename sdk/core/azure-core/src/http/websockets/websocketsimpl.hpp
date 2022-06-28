@@ -11,14 +11,7 @@
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
 
   // Generator for random bytes. Used in WebSocketImplementation and tests.
-  template <size_t N> std::array<uint8_t, N> GenerateRandomBytes()
-  {
-    std::random_device randomEngine;
-
-    std::array<uint8_t, N> rv;
-    std::generate(begin(rv), end(rv), std::ref(randomEngine));
-    return rv;
-  }
+  std::vector<uint8_t> GenerateRandomBytes(size_t vectorSize);
 
   class WebSocketImplementation {
     enum class SocketState
@@ -284,7 +277,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     SocketState m_state{SocketState::Invalid};
 
-    std::array<uint8_t, 16> GenerateRandomKey() { return GenerateRandomBytes<16>(); };
+    std::vector<uint8_t> GenerateRandomKey()
+    {
+      return GenerateRandomBytes(16);
+    };
     void VerifySocketAccept(std::string const& encodedKey, std::string const& acceptHeader);
     Azure::Core::Url m_remoteUrl;
     WebSocketOptions m_options;

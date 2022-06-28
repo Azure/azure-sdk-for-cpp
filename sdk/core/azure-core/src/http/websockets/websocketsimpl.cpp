@@ -405,7 +405,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     if (maskOutput)
     {
       // Start by generating the mask - 4 bytes of random data.
-      std::array<uint8_t, 4> mask = GenerateRandomBytes<4>();
+      std::vector<uint8_t> mask = GenerateRandomBytes(4);
 
       // Append the mask to the payload.
       encodedFrame.insert(encodedFrame.end(), mask.begin(), mask.end());
@@ -499,5 +499,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           "Hash returned by WebSocket server does not match expected hash. Aborting");
     }
   }
+
+  // Generator for random bytes. Used in WebSocketImplementation and tests.
+  std::vector<uint8_t> GenerateRandomBytes(size_t vectorSize)
+  {
+    std::random_device randomEngine;
+
+    std::vector<uint8_t> rv(vectorSize);
+    std::generate(begin(rv), end(rv), std::ref(randomEngine));
+    return rv;
+  }
+
 
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail

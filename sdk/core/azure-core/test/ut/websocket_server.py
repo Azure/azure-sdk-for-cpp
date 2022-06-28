@@ -42,7 +42,7 @@ async def handleEcho(websocket, url):
     while  websocket.open:
         try:
             data = await websocket.recv()
-            print(f'Echo ', length_hint(data),' bytes')
+#            print(f'Echo ', len(data),' bytes')
             await websocket.send(data)
         except websockets.ConnectionClosedOK:
             print("Connection closed ok.")
