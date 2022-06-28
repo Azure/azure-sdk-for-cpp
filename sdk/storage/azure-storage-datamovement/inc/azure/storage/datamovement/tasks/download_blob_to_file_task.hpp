@@ -14,6 +14,14 @@
 #include "azure/storage/datamovement/task.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
+  struct WriteChunk
+  {
+    int64_t Offset;
+    size_t Length;
+    size_t MemoryGiveBack;
+    std::unique_ptr<uint8_t[]> Buffer;
+    Azure::Storage::_detail::JournalContext JournalContext;
+  };
 
   struct DownloadRangeToMemoryTask final : public Storage::_internal::TaskBase
   {
@@ -33,6 +41,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       int NumChunks{0};
       std::atomic<int> NumDownloadedChunks{0};
       std::atomic<bool> Failed{false};
+      std::mutex m_writeChunksMutex;
+      bool writeTaskRunning{false};
+      std::map<int64_t, std::unique_ptr<WriteChunk>> m_chunksToWrite;
+      int64_t OffsetToWrite{0};
     };
 
     std::shared_ptr<TaskContext> Context;
@@ -47,9 +59,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     using TaskBase::TaskBase;
 
     std::shared_ptr<DownloadRangeToMemoryTask::TaskContext> Context;
-    int64_t Offset;
-    size_t Length;
-    std::unique_ptr<uint8_t[]> Buffer;
+    std::vector<std::unique_ptr<WriteChunk>> chunksToWrite;
 
     void Execute() noexcept override;
   };
