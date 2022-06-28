@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Test {
     container2Client.Delete();
   }
 
-  TEST_F(BlobBatchClientTest, SubmitSetTierBatch)
+  TEST_F(BlobBatchClientTest, SubmitSetTierBatch_LIVEONLY_)
   {
     const std::string testName = GetTestNameLowerCase();
 
@@ -98,7 +98,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceClient = GetClientForTest(testName);
     serviceClient.GetBlobContainerClient(containerName).CreateIfNotExists();
     auto containerClient = Blobs::BlobContainerClient(
-        serviceClient.GetBlobContainerClient(containerName).GetUrl() + containerSasToken);
+        serviceClient.GetBlobContainerClient(containerName).GetUrl() + containerSasToken,
+        InitClientOptions<Blobs::BlobClientOptions>());
     auto blob1Client = containerClient.GetBlockBlobClient(blob1Name);
     blob1Client.UploadFrom(nullptr, 0);
     auto blob2Client = containerClient.GetBlockBlobClient(blob2Name);
@@ -154,7 +155,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.Delete();
   }
 
-  TEST_F(BlobBatchClientTest, Exceptions)
+  TEST_F(BlobBatchClientTest, Exceptions_LIVEONLY_)
   {
     const std::string testName = GetTestNameLowerCase();
 

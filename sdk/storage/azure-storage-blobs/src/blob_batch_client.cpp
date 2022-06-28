@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#pragma once
-
 #include "azure/storage/blobs/blob_batch_client.hpp"
 
 #include <algorithm>
@@ -264,7 +262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       std::string BlobUrl;
-      Nullable<BlobClient> BlobClient;
+      Nullable<Blobs::BlobClient> BlobClient;
       DeleteBlobOptions Options;
       // Need to use Nullable here to get around a bug in Visual Studio. Ref
       // https://developercommunity.visualstudio.com/t/c-shared-state-futuresstate-default-constructs-the/60897
@@ -282,7 +280,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       std::string BlobUrl;
-      Nullable<BlobClient> BlobClient;
+      Nullable<Blobs::BlobClient> BlobClient;
       Models::AccessTier Tier;
       SetBlobAccessTierOptions Options;
       std::promise<Nullable<Response<Models::SetBlobAccessTierResult>>> Promise;
@@ -362,10 +360,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (dynamic_cast<Core::Http::Policies::_internal::RetryPolicy*>(policyRawPtr))
       {
         parentRequestPolicies.push_back(std::make_unique<ConstructBatchRequestBodyPolicy>(
-            [this](auto& request, const auto& context) { ConstructSubrequests(request, context); },
-            [this](auto& rawResponse, const auto& context) {
-              ParseSubresponses(rawResponse, context);
-            }));
+            [this](Core::Http::Request& request, const Core::Context& context) {
+              ConstructSubrequests(request, context);
+            },
+            [this](
+                std::unique_ptr<Core::Http::RawResponse>& rawResponse,
+                const Core::Context& context) { ParseSubresponses(rawResponse, context); }));
       }
 
       if (dynamic_cast<_internal::SharedKeyPolicy*>(policyRawPtr))
@@ -498,7 +498,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::string requestBody;
 
-    BlobBatch* batch = nullptr;
+    const BlobBatch* batch = nullptr;
     context.TryGetValue(s_batchKey, batch);
 
     for (const auto& subrequest : batch->DeferredOperations())
@@ -580,7 +580,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         parser.currPos = contentIdPos;
         auto idEndPos = parser.FindNext(LineEnding);
-        int id = std::stoi(std::string(parser.currPos, idEndPos));
+        size_t id = static_cast<size_t>(std::stoi(std::string(parser.currPos, idEndPos)));
         if (subresponses.size() < id + 1)
         {
           subresponses.resize(id + 1);
@@ -596,7 +596,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     }
 
-    BlobBatch* batch = nullptr;
+    const BlobBatch* batch = nullptr;
     context.TryGetValue(s_batchKey, batch);
 
     size_t subresponseCounter = 0;
