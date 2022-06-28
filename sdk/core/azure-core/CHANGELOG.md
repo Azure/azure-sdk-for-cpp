@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Removed `_internal` APIs from the public API surface. Also removed most of the `_internal` APIs from the public `tracing.hpp` header.
+
+
 ## 1.7.0-beta.1 (2022-06-02)
 
 ### Features Added
