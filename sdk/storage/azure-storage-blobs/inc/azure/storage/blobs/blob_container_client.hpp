@@ -303,6 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
+    friend class BlobBatchClient;
   };
 
 }}} // namespace Azure::Storage::Blobs
