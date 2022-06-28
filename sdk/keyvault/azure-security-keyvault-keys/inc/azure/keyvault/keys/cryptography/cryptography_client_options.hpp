@@ -38,7 +38,6 @@ namespace Azure {
     /**
      * @brief Construct a new Key Client Options object.
      *
-     * @param version Optional version for the client.
      */
     CryptographyClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
   };
