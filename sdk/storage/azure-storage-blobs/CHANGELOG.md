@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for Blob Batch.
+
 ### Breaking Changes
 
 ### Bugs Fixed
