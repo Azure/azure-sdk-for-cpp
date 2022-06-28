@@ -14,8 +14,8 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/http/http_sanitizer.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
-#include "azure/core/internal/input_sanitizer.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -395,7 +395,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class RequestActivityPolicy final : public HttpPolicy {
     private:
-      Azure::Core::_internal::InputSanitizer m_inputSanitizer;
+      Azure::Core::Http::_internal::HttpSanitizer m_httpSanitizer;
 
     public:
       /**
@@ -405,10 +405,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       /**
        * @brief Constructs HTTP Request Activity policy.
        *
-       * @param inputSanitizer for sanitizing data before it is logged.
+       * @param httpSanitizer for sanitizing data before it is logged.
        */
-      explicit RequestActivityPolicy(Azure::Core::_internal::InputSanitizer const& inputSanitizer)
-          : m_inputSanitizer(inputSanitizer)
+      explicit RequestActivityPolicy(
+          Azure::Core::Http::_internal::HttpSanitizer const& httpSanitizer)
+          : m_httpSanitizer(httpSanitizer)
       {
       }
 
@@ -520,7 +521,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class LogPolicy final : public HttpPolicy {
       LogOptions m_options;
-      Azure::Core::_internal::InputSanitizer m_inputSanitizer;
+      Azure::Core::Http::_internal::HttpSanitizer m_httpSanitizer;
 
     public:
       /**
@@ -529,7 +530,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        */
       explicit LogPolicy(LogOptions options)
           : m_options(std::move(options)),
-            m_inputSanitizer(m_options.AllowedHttpQueryParameters, m_options.AllowedHttpHeaders)
+            m_httpSanitizer(m_options.AllowedHttpQueryParameters, m_options.AllowedHttpHeaders)
       {
       }
 

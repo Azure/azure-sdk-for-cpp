@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                @jsquire @rickwinter
+/.github/                @jsquire @rickwinter @ronniegeraghty
 
 ###########
 # SDK
@@ -23,7 +23,7 @@
 /sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama
+/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama @LarryOsterman
 
 ###########
 # Client SDKs

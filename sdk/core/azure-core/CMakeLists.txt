@@ -84,6 +84,7 @@ set(
     inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/environment.hpp
     inc/azure/core/internal/extendable_enumeration.hpp
+    inc/azure/core/internal/http/http_sanitizer.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/http/user_agent.hpp
     inc/azure/core/internal/input_sanitizer.hpp
@@ -124,6 +125,7 @@ set(
     src/exception.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/http.cpp
+    src/http/http_sanitizer.cpp
     src/http/log_policy.cpp
     src/http/policy.cpp
     src/http/raw_response.cpp
@@ -141,7 +143,6 @@ set(
     src/logger.cpp
     src/operation_status.cpp
     src/private/environment_log_level_listener.hpp
-    src/private/input_sanitizer.cpp
     src/private/package_version.hpp
     src/strings.cpp
     src/tracing/tracing.cpp

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added Azure App Service API version `2019-08-01` support for `ManagedIdentityCredential`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -14,7 +14,7 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/client_options.hpp"
-#include "azure/core/internal/input_sanitizer.hpp"
+#include "azure/core/internal/http/http_sanitizer.hpp"
 
 #include <memory>
 #include <vector>
@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
         std::string const& telemetryServiceName = {},
         std::string const& telemetryServiceVersion = {})
     {
-      Azure::Core::_internal::InputSanitizer inputSanitizer(
+      Azure::Core::Http::_internal::HttpSanitizer httpSanitizer(
           clientOptions.Log.AllowedHttpQueryParameters, clientOptions.Log.AllowedHttpHeaders);
 
       auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
@@ -111,7 +111,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       // Add a request activity policy which will generate distributed traces for the pipeline.
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::RequestActivityPolicy>(
-              inputSanitizer));
+              httpSanitizer));
 
       // logging - won't update request
       m_policies.emplace_back(
