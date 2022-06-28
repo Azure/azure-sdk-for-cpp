@@ -1,6 +1,8 @@
 from array import array
 import asyncio
+from operator import length_hint
 from time import sleep
+from urllib.parse import urlparse
  
 import websockets
  
@@ -36,11 +38,25 @@ async def handleCustomPath(websocket, path:dict):
     await websocket.send(data)
     await websocket.close()
 
+async def handleEcho(websocket, url):
+    while  websocket.open:
+        try:
+            data = await websocket.recv()
+            print(f'Echo ', length_hint(data),' bytes')
+            await websocket.send(data)
+        except websockets.ConnectionClosedOK:
+            print("Connection closed ok.")
+            return
+        except websockets.ConnectionClosed as ex:
+            print(f"Connection closed exception: {ex.rcvd.code} {ex.rcvd.reason}")
+            return
+
 
 
 async def handler(websocket, path : str):
     print("Socket handler: ", path)
-    if (path == '/openclosetest'):
+    parsedUrl = urlparse(path)
+    if (parsedUrl.path == '/openclosetest'):
         print("Open/Close Test")
         try:
             data = await websocket.recv()
@@ -49,15 +65,14 @@ async def handler(websocket, path : str):
         except websockets.ConnectionClosed as ex:
             print(f"Connection closed exception: {ex.rcvd.code} {ex.rcvd.reason}")
         return
-    elif (path == '/echotest'):
-        data = await websocket.recv()
-        await websocket.send(data)
-    elif (path == '/closeduringecho'):
+    elif (parsedUrl.path == '/echotest'):
+        await handleEcho(websocket, parsedUrl)
+    elif (parsedUrl.path == '/closeduringecho'):
         data = await websocket.recv()
         await websocket.close(1001, 'closed')
-    elif (path=='control'):
+    elif (parsedUrl.path =='control'):
         await handleControlPath(websocket)
-    elif (path in customPaths.keys()):
+    elif (parsedUrl.path in customPaths.keys()):
         print("Found path ", path, "in control paths.")
         await handleCustomPath(websocket, customPaths[path])
     else:

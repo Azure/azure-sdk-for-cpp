@@ -10,10 +10,10 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <array>
 
 namespace Azure { namespace Core {
 
@@ -48,7 +48,8 @@ namespace Azure { namespace Core {
      */
     static std::string Base64Encode(uint8_t const* const data, size_t length);
 
-    template <size_t length> static std::string Base64Encode(std::array<uint8_t, length> const& data)
+    template <size_t length>
+    static std::string Base64Encode(std::array<uint8_t, length> const& data)
     {
       return Base64Encode(data.data(), data.size());
     }

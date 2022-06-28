@@ -9,9 +9,8 @@
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/websockets/curl_websockets_transport.hpp"
 #endif
-#include "websocket_frame.hpp"
-
 #include <array>
+#include <mutex>
 #include <random>
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
@@ -41,6 +40,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_transport
         = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
     m_options.Transport.Transport = m_transport;
+    m_bufferedStreamReader.SetTransport(m_transport);
 #endif
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies{};
@@ -116,8 +116,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_state = SocketState::Open;
   }
 
-  std::string const& WebSocketImplementation::GetChosenProtocol() const
+  std::string const& WebSocketImplementation::GetChosenProtocol()
   {
+    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -127,6 +128,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
   void WebSocketImplementation::Close(Azure::Core::Context const& context)
   {
+    std::unique_lock<std::shared_mutex> lock(m_stateMutex);
+
+    // If we're closing an already closed socket, we're done.
+    if (m_state == SocketState::Closed)
+    {
+      return;
+    }
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -143,11 +151,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::vector<uint8_t> closePayload;
       closePayload.push_back(closeReason >> 8);
       closePayload.push_back(closeReason & 0xff);
-      std::vector<uint8_t> closeFrame = WebSocketFrameEncoder::EncodeFrame(
-          SocketOpcode::Close, m_options.EnableMasking, true, closePayload);
+      std::vector<uint8_t> closeFrame
+          = EncodeFrame(SocketOpcode::Close, m_options.EnableMasking, true, closePayload);
       m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
 
-      auto closeResponse = ReceiveFrame(context);
+      auto closeResponse = ReceiveFrame(context, true);
       if (closeResponse->ResultType != WebSocketResultType::PeerClosed)
       {
         throw std::runtime_error("Unexpected result type received during close().");
@@ -162,6 +170,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::string const& closeReason,
       Azure::Core::Context const& context)
   {
+    std::unique_lock<std::shared_mutex> lock(m_stateMutex);
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -179,11 +188,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       closePayload.push_back(closeStatus & 0xff);
       closePayload.insert(closePayload.end(), closeReason.begin(), closeReason.end());
 
-      std::vector<uint8_t> closeFrame = WebSocketFrameEncoder::EncodeFrame(
-          SocketOpcode::Close, m_options.EnableMasking, true, closePayload);
+      std::vector<uint8_t> closeFrame
+          = EncodeFrame(SocketOpcode::Close, m_options.EnableMasking, true, closePayload);
       m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
 
-      auto closeResponse = ReceiveFrame(context);
+      auto closeResponse = ReceiveFrame(context, true);
       if (closeResponse->ResultType != WebSocketResultType::PeerClosed)
       {
         throw std::runtime_error("Unexpected result type received during close().");
@@ -203,6 +212,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       bool isFinalFrame,
       Azure::Core::Context const& context)
   {
+    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -214,8 +224,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     else
     {
       std::vector<uint8_t> utf8text(textFrame.begin(), textFrame.end());
-      std::vector<uint8_t> sendFrame = WebSocketFrameEncoder::EncodeFrame(
-          SocketOpcode::TextFrame, m_options.EnableMasking, isFinalFrame, utf8text);
+      std::vector<uint8_t> sendFrame
+          = EncodeFrame(SocketOpcode::TextFrame, m_options.EnableMasking, isFinalFrame, utf8text);
 
       m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
     }
@@ -226,6 +236,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       bool isFinalFrame,
       Azure::Core::Context const& context)
   {
+    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
+
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -236,16 +248,25 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     else
     {
-      std::vector<uint8_t> sendFrame = WebSocketFrameEncoder::EncodeFrame(
+      std::vector<uint8_t> sendFrame = EncodeFrame(
           SocketOpcode::BinaryFrame, m_options.EnableMasking, isFinalFrame, binaryFrame);
 
+      std::unique_lock<std::mutex> transportLock(m_transportMutex);
       m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
     }
   }
 
   std::shared_ptr<WebSocketResult> WebSocketImplementation::ReceiveFrame(
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context,
+      bool stateIsLocked)
   {
+    std::shared_lock<std::shared_mutex> lock(m_stateMutex, std::defer_lock);
+
+    if (!stateIsLocked)
+    {
+      lock.lock();
+    }
+
     if (m_state != SocketState::Open && m_state != SocketState::Closing)
     {
       throw std::runtime_error("Socket is not open.");
@@ -256,90 +277,21 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     else
     {
-      uint8_t payloadByte;
-      // Read the first byte from the socket (the opcode and final bit).
-      auto bytesRead = m_transport->ReadFromSocket(&payloadByte, sizeof(payloadByte), context);
-      if (bytesRead == 0)
-      {
-        return nullptr;
-      }
-      if (bytesRead != sizeof(payloadByte))
-      {
-        throw std::runtime_error("Could not read opcode from socket.");
-      }
-      SocketOpcode opcode = static_cast<SocketOpcode>(payloadByte & 0x7f);
-      bool isFinal = (payloadByte & 0x80) != 0;
+      std::vector<uint8_t> frameData;
+      SocketOpcode opcode;
 
-      // Read the next byte from the socket (the size
-      bytesRead = m_transport->ReadFromSocket(&payloadByte, sizeof(payloadByte), context);
-      if (bytesRead != sizeof(payloadByte))
-      {
-        throw std::runtime_error("Could not read size and mask from socket.");
-      }
-
+      bool isFinal = false;
       bool isMasked = false;
-      if (payloadByte & 0x80)
-      {
-        isMasked = true;
-      }
-      uint64_t payloadLength = payloadByte & 0x7f;
-      if (payloadLength == 126)
-      {
-        uint8_t shortSize[sizeof(uint16_t)];
-        bytesRead = m_transport->ReadFromSocket(shortSize, sizeof(shortSize), context);
-        if (bytesRead != sizeof(shortSize))
-        {
-          throw std::runtime_error("Could not read short size from socket.");
-        }
-        payloadLength = 0;
-        payloadLength |= (static_cast<uint64_t>(shortSize[0]) << 8) & 0xff;
-        payloadLength |= (static_cast<uint64_t>(shortSize[1]) & 0xff);
-      }
-      else if (payloadLength == 127)
-      {
-        uint8_t int64Size[sizeof(uint64_t)];
-        bytesRead = m_transport->ReadFromSocket(int64Size, sizeof(int64Size), context);
-        if (bytesRead != sizeof(int64Size))
-        {
-          throw std::runtime_error("Could not read short size from socket.");
-        }
-        payloadLength = 0;
-        payloadLength |= (static_cast<uint64_t>(int64Size[0]) << 56) & 0xff00000000000000;
-        payloadLength |= (static_cast<uint64_t>(int64Size[1]) << 48) & 0x00ff000000000000;
-        payloadLength |= (static_cast<uint64_t>(int64Size[2]) << 40) & 0x0000ff0000000000;
-        payloadLength |= (static_cast<uint64_t>(int64Size[3]) << 32) & 0x000000ff00000000;
-        payloadLength |= (static_cast<uint64_t>(int64Size[4]) << 24) & 0x00000000ff000000;
-        payloadLength |= (static_cast<uint64_t>(int64Size[5]) << 16) & 0x0000000000ff0000;
-        payloadLength |= (static_cast<uint64_t>(int64Size[6]) << 8) & 0x000000000000ff00;
-        payloadLength |= (static_cast<uint64_t>(int64Size[7])) & 0x00000000000000ff;
-      }
-      else if (payloadLength >= 126)
-      {
-        throw std::logic_error("Unexpected payload length.");
-      }
+      uint64_t payloadLength;
       std::array<uint8_t, 4> maskKey{};
-      if (isMasked)
-      {
-        bytesRead = m_transport->ReadFromSocket(maskKey.data(), maskKey.size(), context);
-        if (bytesRead != sizeof(maskKey))
-        {
-          throw std::runtime_error("Could not read short size from socket.");
-        }
-      }
+      frameData = DecodeFrame(
+          m_bufferedStreamReader, opcode, payloadLength, isFinal, isMasked, maskKey, context);
 
-      // Now read the entire buffer from the socket.
-      std::vector<uint8_t> readBuffer(payloadLength);
-      bytesRead = m_transport->ReadFromSocket(readBuffer.data(), readBuffer.size(), context);
-
-      // If the buffer was masked, unmask the buffer contents.
       if (isMasked)
       {
         int index = 0;
         std::transform(
-            readBuffer.begin(),
-            readBuffer.end(),
-            readBuffer.begin(),
-            [&maskKey, &index](uint8_t val) {
+            frameData.begin(), frameData.end(), frameData.begin(), [&maskKey, &index](uint8_t val) {
               val ^= maskKey[index % 4];
               index += 1;
               return val;
@@ -351,24 +303,33 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         {
           case SocketOpcode::BinaryFrame:
             return std::make_shared<WebSocketBinaryFrame>(
-                isFinal, readBuffer.data(), readBuffer.size());
+                isFinal, frameData.data(), frameData.size());
           case SocketOpcode::TextFrame: {
             return std::make_shared<WebSocketTextFrame>(
-                isFinal, readBuffer.data(), readBuffer.size());
+                isFinal, frameData.data(), frameData.size());
           }
           case SocketOpcode::Close: {
 
-            if (readBuffer.size() < 2)
+            if (frameData.size() < 2)
             {
               throw std::runtime_error("Close response buffer is too short.");
             }
             uint16_t errorCode = 0;
-            errorCode |= (readBuffer[0] << 8) & 0xff00;
-            errorCode |= (readBuffer[1] & 0x00ff);
+            errorCode |= (frameData[0] << 8) & 0xff00;
+            errorCode |= (frameData[1] & 0x00ff);
+
+            // Update our state to be closed once we've received a closed frame. We only need to do
+            // this if our state is not currently locked.
+            if (!stateIsLocked)
+            {
+              lock.unlock();
+              std::unique_lock<std::shared_mutex> closeLock(m_stateMutex);
+              m_state = SocketState::Closed;
+            }
             return std::make_shared<WebSocketPeerCloseFrame>(
                 errorCode,
-                readBuffer.data() + sizeof(uint16_t),
-                readBuffer.size() - sizeof(uint16_t));
+                frameData.data() + sizeof(uint16_t),
+                frameData.size() - sizeof(uint16_t));
           }
           case SocketOpcode::Ping:
           case SocketOpcode::Pong:
@@ -376,7 +337,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             break;
           case SocketOpcode::Continuation:
             return std::make_shared<WebSocketContinuationFrame>(
-                isFinal, readBuffer.data(), readBuffer.size());
+                isFinal, frameData.data(), frameData.size());
           default:
             throw std::runtime_error("Unknown opcode received.");
         }
@@ -387,13 +348,134 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     context;
   }
 
-  std::array<uint8_t, 16> WebSocketImplementation::GenerateRandomKey()
+  std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
+      SocketOpcode opcode,
+      bool maskOutput,
+      bool isFinal,
+      std::vector<uint8_t> const& payload)
   {
-    std::random_device randomEngine;
+    std::vector<uint8_t> encodedFrame;
+    // Add opcode+fin.
+    encodedFrame.push_back(static_cast<uint8_t>(opcode) | (isFinal ? 0x80 : 0));
+    uint8_t maskAndLength = 0;
+    if (maskOutput)
+    {
+      maskAndLength |= 0x80;
+    }
+    // Payloads smaller than 125 bytes are encoded directly in the maskAndLength field.
+    uint64_t payloadSize = static_cast<uint64_t>(payload.size());
+    if (payloadSize <= 125)
+    {
+      maskAndLength |= static_cast<uint8_t>(payload.size());
+    }
+    else if (payloadSize <= 65535)
+    {
+      // Payloads greater than 125 whose size can fit in a 16 bit integer bytes
+      // are encoded as a 16 bit unsigned integer in network byte order.
+      maskAndLength |= 126;
+    }
+    else
+    {
+      // Payloads greater than 65536 have their length are encoded as a 64 bit unsigned integer
+      // in network byte order.
+      maskAndLength |= 127;
+    }
+    encodedFrame.push_back(maskAndLength);
+    // Encode a 16 bit length.
+    if (payloadSize > 125 && payloadSize <= 65535)
+    {
+      encodedFrame.push_back(static_cast<uint16_t>(payload.size()) >> 8);
+      encodedFrame.push_back(static_cast<uint16_t>(payload.size()) & 0xff);
+    }
+    // Encode a 64 bit length.
+    else if (payloadSize >= 65536)
+    {
 
-    std::array<uint8_t, 16> rv;
-    std::generate(begin(rv), end(rv), std::ref(randomEngine));
-    return rv;
+      encodedFrame.push_back((payloadSize >> 56) & 0xff);
+      encodedFrame.push_back((payloadSize >> 48) & 0xff);
+      encodedFrame.push_back((payloadSize >> 40) & 0xff);
+      encodedFrame.push_back((payloadSize >> 32) & 0xff);
+      encodedFrame.push_back((payloadSize >> 24) & 0xff);
+      encodedFrame.push_back((payloadSize >> 16) & 0xff);
+      encodedFrame.push_back((payloadSize >> 8) & 0xff);
+      encodedFrame.push_back(payloadSize & 0xff);
+    }
+    // Calculate the masking key. This MUST be 4 bytes of high entropy random numbers used to
+    // mask the input data.
+    if (maskOutput)
+    {
+      // Start by generating the mask - 4 bytes of random data.
+      std::array<uint8_t, 4> mask = GenerateRandomBytes<4>();
+
+      // Append the mask to the payload.
+      encodedFrame.insert(encodedFrame.end(), mask.begin(), mask.end());
+
+      // And mask the payload before transmitting it.
+      size_t index = 0;
+      for (auto ch : payload)
+      {
+        encodedFrame.push_back(ch ^ mask[index % 4]);
+        index += 1;
+      }
+    }
+    else
+    {
+      // Since the payload is unmasked, simply append the payload to the encoded frame.
+      encodedFrame.insert(encodedFrame.end(), payload.begin(), payload.end());
+    }
+
+    return encodedFrame;
+  }
+
+  std::vector<uint8_t> WebSocketImplementation::DecodeFrame(
+      WebSocketImplementation::BufferedStreamReader& streamReader,
+      SocketOpcode& opcode,
+      uint64_t& payloadLength,
+      bool& isFinal,
+      bool& isMasked,
+      std::array<uint8_t, 4>& maskKey,
+      Azure::Core::Context const& context)
+  {
+    std::unique_lock<std::mutex> lock(m_transportMutex);
+    if (streamReader.IsEof())
+    {
+      throw std::runtime_error("Frame buffer is too small.");
+    }
+    uint8_t payloadByte = streamReader.ReadByte(context);
+    opcode = static_cast<SocketOpcode>(payloadByte & 0x7f);
+    isFinal = (payloadByte & 0x80) != 0;
+    payloadByte = streamReader.ReadByte(context);
+    isMasked = false;
+    if (payloadByte & 0x80)
+    {
+      isMasked = true;
+    }
+    payloadLength = payloadByte & 0x7f;
+    if (payloadLength <= 125)
+    {
+      payloadByte += 1;
+    }
+    else if (payloadLength == 126)
+    {
+      payloadLength = streamReader.ReadShort(context);
+    }
+    else if (payloadLength == 127)
+    {
+      payloadLength = streamReader.ReadInt64(context);
+    }
+    else
+    {
+      throw std::logic_error("Unexpected payload length.");
+    }
+
+    if (isMasked)
+    {
+      maskKey[0] = streamReader.ReadByte(context);
+      maskKey[1] = streamReader.ReadByte(context);
+      maskKey[2] = streamReader.ReadByte(context);
+      maskKey[3] = streamReader.ReadByte(context);
+    };
+    return streamReader.ReadBytes(payloadLength, context);
   }
 
   // Verify the Sec-WebSocket-Accept header as defined in RFC 6455 Section 1.3, which defines the

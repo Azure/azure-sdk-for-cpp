@@ -326,7 +326,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->GetUpgradedConnection());
     if (upgradedConnection)
     {
-        OnUpgradedConnection(upgradedConnection);
+      OnUpgradedConnection(upgradedConnection);
     }
   }
 

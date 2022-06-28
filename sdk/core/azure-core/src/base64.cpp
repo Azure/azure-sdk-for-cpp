@@ -313,7 +313,7 @@ static void Base64WriteIntAsFourBytes(char* destination, int32_t value)
   destination[0] = static_cast<uint8_t>(value & 0xFF);
 }
 
-std::string Base64Encode(uint8_t const * const data, size_t length)
+std::string Base64Encode(uint8_t const* const data, size_t length)
 {
   size_t sourceIndex = 0;
   auto inputSize = length;
@@ -493,7 +493,7 @@ namespace Azure { namespace Core {
     return Base64Encode(data.data(), data.size());
   }
 
-  std::string Convert::Base64Encode(uint8_t const * const data, size_t length)
+  std::string Convert::Base64Encode(uint8_t const* const data, size_t length)
   {
     return ::Base64Encode(data, length);
   }

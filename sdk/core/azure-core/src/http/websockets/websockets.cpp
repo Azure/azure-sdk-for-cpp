@@ -60,8 +60,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     return m_socketImplementation->GetChosenProtocol();
   }
 
-  bool WebSocket::IsOpen() { return m_socketImplementation->IsOpen();
-  }
+  bool WebSocket::IsOpen() { return m_socketImplementation->IsOpen(); }
 
   std::shared_ptr<WebSocketTextFrame> WebSocketResult::AsTextFrame()
   {

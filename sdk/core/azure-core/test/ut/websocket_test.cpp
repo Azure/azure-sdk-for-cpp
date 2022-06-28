@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "../../src/http/websockets/websocketsimpl.hpp"
 #include "azure/core/http/websockets/websockets.hpp"
 #include "azure/core/internal/json/json.hpp"
 #include <chrono>
@@ -79,7 +80,7 @@ TEST(WebSocketTests, SimpleEcho)
     testSocket.Close();
   }
   {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest?delay=20"));
 
     testSocket.Open();
 
@@ -92,6 +93,53 @@ TEST(WebSocketTests, SimpleEcho)
     auto textResult = response->AsBinaryFrame();
     EXPECT_EQ(binaryData, textResult->Data);
 
+    // Close the socket gracefully.
+    testSocket.Close();
+  }
+}
+
+template <size_t N> void EchoRandomData(WebSocket& socket)
+{
+  std::array<uint8_t, N> data = Azure::Core::Http::WebSockets::_detail::GenerateRandomBytes<N>();
+  std::vector<uint8_t> sendData{data.begin(), data.end()};
+
+  socket.SendFrame(sendData, true);
+
+  auto response = socket.ReceiveFrame();
+  EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+  auto binaryResult = response->AsBinaryFrame();
+  // Make sure we get back the data we sent in the echo request.
+  EXPECT_EQ(sendData.size(), binaryResult->Data.size());
+  EXPECT_EQ(sendData, binaryResult->Data);
+}
+
+TEST(WebSocketTests, VariableSizeEcho)
+{
+  {
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+
+    testSocket.Open();
+    {
+      EchoRandomData<100>(testSocket);
+      EchoRandomData<124>(testSocket);
+      EchoRandomData<125>(testSocket);
+      // The websocket protocol treats lengths of 125, 126 and > 127 specially.
+      EchoRandomData<126>(testSocket);
+      EchoRandomData<127>(testSocket);
+      EchoRandomData<128>(testSocket);
+      EchoRandomData<1020>(testSocket);
+      EchoRandomData<1021>(testSocket);
+      EchoRandomData<1022>(testSocket);
+      EchoRandomData<1023>(testSocket);
+      EchoRandomData<1024>(testSocket);
+      EchoRandomData<2048>(testSocket);
+      EchoRandomData<4096>(testSocket);
+      EchoRandomData<8192>(testSocket);
+      // The websocket protocol treats lengths of >65536 specially.
+      EchoRandomData<65535>(testSocket);
+      EchoRandomData<65536>(testSocket);
+      EchoRandomData<131072>(testSocket);
+    }
     // Close the socket gracefully.
     testSocket.Close();
   }
@@ -194,7 +242,7 @@ public:
   std::string GetLWSStatus()
   {
     WebSocketOptions options;
-    
+
     options.ServiceName = "websockettest";
     // Send 3 protocols to LWS.
     options.Protocols.push_back("brownCow");
@@ -203,7 +251,8 @@ public:
     WebSocket serverSocket(Azure::Core::Url("wss://libwebsockets.org"), options);
     serverSocket.Open();
 
-    // The server should have chosen the lws-status protocol since it doesn't understand the other protocols.
+    // The server should have chosen the lws-status protocol since it doesn't understand the other
+    // protocols.
     EXPECT_EQ("lws-status", serverSocket.GetChosenProtocol());
     auto lwsStatus = serverSocket.ReceiveFrame();
     if (lwsStatus->ResultType != WebSocketResultType::TextFrameReceived)

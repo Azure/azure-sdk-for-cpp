@@ -88,8 +88,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     bool IsFinalFrame;
   };
 
-  class WebSocketContinuationFrame : public WebSocketResult,
-                                public std::enable_shared_from_this<WebSocketContinuationFrame> {
+  class WebSocketContinuationFrame
+      : public WebSocketResult,
+        public std::enable_shared_from_this<WebSocketContinuationFrame> {
   public:
     WebSocketContinuationFrame() = default;
     WebSocketContinuationFrame(bool isFinal, unsigned char const* body, size_t size)
@@ -133,9 +134,24 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief The set of protocols which are supported by this client
      */
     std::vector<std::string> Protocols = {};
+
+    /**
+     * @brief The protocol name of the service client. Used for the User-Agent header
+     * in the initial WebSocket handshake.
+     */
     std::string ServiceName;
+    /**
+     * @brief The version of the service client. Used for the User-Agent header in the
+     * initial WebSocket handshake
+     */
     std::string ServiceVersion;
 
+    /**
+     * @brief Construct an instance of a WebSocketOptions type.
+     *
+     * @param enableMasking If true, enable masking for the websocket
+     * @param protocols Supported protocols for this websocket client.
+     */
     explicit WebSocketOptions(bool enableMasking, std::vector<std::string> protocols)
         : Azure::Core::_internal::ClientOptions{}, EnableMasking(enableMasking),
           Protocols(protocols)
@@ -146,34 +162,91 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   class WebSocket {
   public:
+    /** @brief Constructs a new instance of a WebSocket with the specified WebSocket options.
+     *
+     * @param remoteUrl The URL of the remote WebSocket server.
+     * @param options The options to use for the WebSocket.
+     */
     explicit WebSocket(
         Azure::Core::Url const& remoteUrl,
         WebSocketOptions const& options = WebSocketOptions{});
 
+    /** @brief Destroys an instance of a WebSocket.
+     */
     ~WebSocket();
 
+    /** @brief Opens a WebSocket connection to a remote server.
+     *
+     * @param context Context for the operation, used for cancellation and timeout.
+     */
     void Open(Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /** @brief Closes a WebSocket connection to the remote server gracefully.
+     *
+     * @param context Context for the operation.
+     */
     void Close(Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /** @brief Closes a WebSocket connection to the remote server with additional context.
+     *
+     * @param closeStatus 16 bit WebSocket error code.
+     * @param closeReason String describing the reason for closing the socket.
+     * @param context Context for the operation.
+     */
     void Close(
         uint16_t closeStatus,
         std::string const& closeReason = {},
         Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /** @brief Sends a String frame to the remote server.
+     *
+     * @param textFrame UTF-8 encoded text to send.
+     * @param isFinalFrame if True, this is the final frame in a multi-frame message.
+     * @param context Context for the operation.
+     */
     void SendFrame(
         std::string const& textFrame,
         bool isFinalFrame,
         Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /** @brief Sends a Binary frame to the remote server.
+     *
+     * @param binaryFrame Binary data to send.
+     * @param isFinalFrame if True, this is the final frame in a multi-frame message.
+     * @param context Context for the operation.
+     */
     void SendFrame(
         std::vector<uint8_t> const& binaryFrame,
         bool isFinalFrame,
         Azure::Core::Context const& context = Azure::Core::Context{});
 
+    /** @brief Receive a frame from the remote server.
+     *
+     * @param context Context for the operation.
+     *
+     * @returns The received WebSocket frame.
+     *
+     */
     std::shared_ptr<WebSocketResult> ReceiveFrame(
         Azure::Core::Context const& context = Azure::Core::Context{});
 
+    /** @brief AddHeader - Adds a header to the initial handshake.
+     *
+     * @note This API is ignored after the WebSocket is opened.
+     *
+     * @param headerName Name of header to add to the initial handshake request.
+     * @param headerValue Value of header to add.
+     */
     void AddHeader(std::string const& headerName, std::string const& headerValue);
 
+    /** @brief Determine if the WebSocket is open.
+     *
+     * @returns true if the WebSocket is open, false otherwise.
+     */
     bool IsOpen();
 
+    /** @brief Returns the protocol chosen by the remote server during the initial handshake
+     */
     std::string const& GetChosenProtocol() const;
 
   private:

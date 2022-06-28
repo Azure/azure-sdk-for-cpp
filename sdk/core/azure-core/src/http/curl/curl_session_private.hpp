@@ -274,10 +274,10 @@ namespace Azure { namespace Core { namespace Http {
 
     size_t m_sessionTotalRead = 0;
 
-    /** 
-    * @brief If True, the connection is going to be "upgraded" into a websocket connection, so block
-    * moving the connection to the pool.
-    */
+    /**
+     * @brief If True, the connection is going to be "upgraded" into a websocket connection, so
+     * block moving the connection to the pool.
+     */
     bool m_connectionUpgraded = false;
 
     /**
@@ -425,12 +425,12 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t Length() const override { return m_contentLength; }
 
-    /** 
-    * @brief Return the network connection if the server indicated that the connection is upgraded.
-    * 
-    * @return The network connection, or null if the connection was not upgraded.
-    */
-    std::unique_ptr<CurlNetworkConnection> &&GetUpgradedConnection();
+    /**
+     * @brief Return the network connection if the server indicated that the connection is upgraded.
+     *
+     * @return The network connection, or null if the connection was not upgraded.
+     */
+    std::unique_ptr<CurlNetworkConnection>&& GetUpgradedConnection();
   };
 
 }}} // namespace Azure::Core::Http
