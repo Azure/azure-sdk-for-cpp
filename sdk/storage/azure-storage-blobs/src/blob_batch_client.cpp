@@ -20,6 +20,8 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+#if defined(AZ_STORAGE_BLOBS_RTTI)
+
   namespace _detail {
     DeferredResponseSharedBase::~DeferredResponseSharedBase() {}
   } // namespace _detail
@@ -642,5 +644,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZURE_UNREACHABLE_CODE();
     }
   }
+
+#endif
 
 }}} // namespace Azure::Storage::Blobs

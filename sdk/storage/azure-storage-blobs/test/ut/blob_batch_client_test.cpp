@@ -6,8 +6,10 @@
 #include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
-  class BlobBatchClientTest : public StorageTest {
 
+#if defined(AZ_STORAGE_BLOBS_RTTI)
+
+  class BlobBatchClientTest : public StorageTest {
   private:
     std::unique_ptr<Azure::Storage::Blobs::BlobServiceClient> m_client;
 
@@ -259,5 +261,6 @@ namespace Azure { namespace Storage { namespace Test {
 
     containerClient.Delete();
   }
+#endif
 
 }}} // namespace Azure::Storage::Test

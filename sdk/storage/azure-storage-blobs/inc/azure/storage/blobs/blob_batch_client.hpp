@@ -12,8 +12,11 @@
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/blobs/deferred_response.hpp"
+#include "azure/storage/blobs/rtti.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+#if defined(AZ_STORAGE_BLOBS_RTTI)
 
   class BlobBatch final : private _detail::DeferredResponseFactory {
   public:
@@ -69,4 +72,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_subrequestPipeline;
   };
+
+#endif
 }}} // namespace Azure::Storage::Blobs
