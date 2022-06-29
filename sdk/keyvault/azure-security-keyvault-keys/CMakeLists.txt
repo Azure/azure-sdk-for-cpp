@@ -62,7 +62,6 @@ set(
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/cryptography/cryptography_client.cpp
-    src/cryptography/cryptography_client_options.cpp
     src/cryptography/decrypt_parameters.cpp
     src/cryptography/decrypt_result.cpp
     src/cryptography/encrypt_parameters.cpp
