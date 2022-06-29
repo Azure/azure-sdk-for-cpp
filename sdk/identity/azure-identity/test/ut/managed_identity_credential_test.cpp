@@ -40,7 +40,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -133,7 +133,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019ClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -292,7 +292,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -385,7 +385,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017ClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -544,7 +544,7 @@ TEST(ManagedIdentityCredential, CloudShell)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -624,7 +624,7 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -761,7 +761,7 @@ TEST(ManagedIdentityCredential, AzureArc)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       {{HttpStatusCode::Unauthorized,
         "",
         {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test1.txt"}}},
@@ -1109,7 +1109,7 @@ TEST(ManagedIdentityCredential, Imds)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -1202,7 +1202,7 @@ TEST(ManagedIdentityCredential, ImdsClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {tokenRequestContext1, tokenRequestContext2, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
