@@ -50,8 +50,12 @@ if(BUILD_TRANSPORT_CURL)
   )
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
-  SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
-  SET(WIN_TRANSPORT_ADAPTER_INC inc/azure/core/http/win_http_transport.hpp)
+  SET(WIN_TRANSPORT_ADAPTER_SRC 
+    src/http/winhttp/win_http_transport.cpp
+    src/http/winhttp/win_http_websockets.cpp)
+ SET(WIN_TRANSPORT_ADAPTER_INC 
+    inc/azure/core/http/win_http_transport.hpp
+    inc/azure/core/http/websockets/win_http_websockets_transport.hpp)
 endif()
 
 set(
@@ -87,7 +91,6 @@ set(
     inc/azure/core/internal/http/http_sanitizer.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/http/user_agent.hpp
-    inc/azure/core/internal/input_sanitizer.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/json/json_optional.hpp
@@ -138,7 +141,7 @@ set(
     src/http/user_agent.cpp
     src/http/websockets/websockets.cpp
     src/http/websockets/websocketsimpl.cpp
-     src/io/body_stream.cpp
+    src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/logger.cpp
     src/operation_status.cpp

@@ -9,6 +9,7 @@
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/websockets/curl_websockets_transport.hpp"
 #endif
+#include <algorithm>
 #include <array>
 #include <mutex>
 #include <random>
@@ -31,9 +32,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_state = SocketState::Opening;
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    auto winHttpTransport
-        = std::make_shared<Azure::Core::Http::WebSockets::WinHttpWebSocketTransport>();
-    m_options.Transport.Transport = winHttpTransport;
+    WinHttpTransportOptions transportOptions;
+    // WinHTTP overrides the Connection: Upgrade header, so disable keep alives.
+    transportOptions.EnableWebSocketUpgrade = true;
+
+    m_transport = std::make_shared<Azure::Core::Http::WebSockets::WinHttpWebSocketTransport>(
+        transportOptions);
+    m_options.Transport.Transport = m_transport;
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     CurlTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = false;
@@ -59,22 +64,31 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     Azure::Core::Http::Request openSocketRequest(
         Azure::Core::Http::HttpMethod::Get, m_remoteUrl, false);
 
-    // Set the standardized WebSocket upgrade headers.
-    openSocketRequest.SetHeader("Upgrade", "websocket");
-    openSocketRequest.SetHeader("Connection", "Upgrade");
-    openSocketRequest.SetHeader("Sec-WebSocket-Version", "13");
-    // Generate the random request key
+    // Generate the random request key. Only used when the transport doesn't support websockets
+    // natively.
     auto randomKey = GenerateRandomKey();
     auto encodedKey = Azure::Core::Convert::Base64Encode(randomKey);
-    openSocketRequest.SetHeader("Sec-WebSocket-Key", encodedKey);
-    std::string protocols;
-    for (auto const& protocol : m_options.Protocols)
+    if (!m_transport->NativeWebsocketSupport())
     {
-      protocols += protocol;
-      protocols += ", ";
+      // If the transport doesn't support WebSockets natively, set the standardized WebSocket
+      // upgrade headers.
+      openSocketRequest.SetHeader("Upgrade", "websocket");
+      openSocketRequest.SetHeader("Connection", "upgrade");
+      openSocketRequest.SetHeader("Sec-WebSocket-Version", "13");
+      openSocketRequest.SetHeader("Sec-WebSocket-Key", encodedKey);
     }
-    protocols = protocols.substr(0, protocols.size() - 2);
-    openSocketRequest.SetHeader("Sec-WebSocket-Protocol", protocols);
+    if (!m_options.Protocols.empty())
+    {
+
+      std::string protocols;
+      for (auto const& protocol : m_options.Protocols)
+      {
+        protocols += protocol;
+        protocols += ", ";
+      }
+      protocols = protocols.substr(0, protocols.size() - 2);
+      openSocketRequest.SetHeader("Sec-WebSocket-Protocol", protocols);
+    }
     for (auto const& additionalHeader : m_headers)
     {
       openSocketRequest.SetHeader(additionalHeader.first, additionalHeader.second);
@@ -97,10 +111,19 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     // Prove that the server received this socket request.
     auto& responseHeaders = response->GetHeaders();
-    auto socketAccept(responseHeaders.find("Sec-WebSocket-Accept"));
-    if (socketAccept != responseHeaders.end())
+    if (!m_transport->NativeWebsocketSupport())
     {
-      VerifySocketAccept(encodedKey, socketAccept->second);
+
+      auto socketAccept(responseHeaders.find("Sec-WebSocket-Accept"));
+      if (socketAccept == responseHeaders.end())
+      {
+        throw Azure::Core::Http::TransportException("Missing Sec-WebSocket-Accept header");
+      }
+      // Verify that the WebSocket server received *this* open request.
+      else
+      {
+        VerifySocketAccept(encodedKey, socketAccept->second);
+      }
     }
 
     // Remember the protocol that the client chose.
@@ -506,9 +529,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::random_device randomEngine;
 
     std::vector<uint8_t> rv(vectorSize);
+#pragma warning(suppress : 4244)
     std::generate(begin(rv), end(rv), std::ref(randomEngine));
     return rv;
   }
-
 
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail

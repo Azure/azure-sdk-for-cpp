@@ -24,6 +24,7 @@
 #include <windows.h>
 #endif
 
+#include <memory>
 #include <type_traits>
 #include <vector>
 #include <winhttp.h>
@@ -35,41 +36,22 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
     constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
-    struct HandleManager final
-    {
-      Context const& m_context;
-      Request& m_request;
-      HINTERNET m_connectionHandle;
-      HINTERNET m_requestHandle;
-
-      HandleManager(Request& request, Context const& context)
-          : m_request(request), m_context(context)
+    // unique_ptr class wrapping an HINTERNET handle
+    class HINTERNET_deleter {
+    public:
+      void operator()(HINTERNET handle) noexcept
       {
-        m_connectionHandle = NULL;
-        m_requestHandle = NULL;
-      }
-
-      ~HandleManager()
-      {
-        // Close the handles and set them to null to avoid multiple calls to WinHTTP to close the
-        // handles.
-        if (m_requestHandle)
+        if (handle != nullptr)
         {
-          WinHttpCloseHandle(m_requestHandle);
-          m_requestHandle = NULL;
-        }
-
-        if (m_connectionHandle)
-        {
-          WinHttpCloseHandle(m_connectionHandle);
-          m_connectionHandle = NULL;
+          WinHttpCloseHandle(handle);
         }
       }
     };
+    using unique_HINTERNET = std::unique_ptr<void, HINTERNET_deleter>;
 
     class WinHttpStream final : public Azure::Core::IO::BodyStream {
     private:
-      std::unique_ptr<HandleManager> m_handleManager;
+      _detail::unique_HINTERNET m_requestHandle;
       bool m_isEOF;
 
       /**
@@ -99,8 +81,8 @@ namespace Azure { namespace Core { namespace Http {
       size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
-      WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)
-          : m_handleManager(std::move(handleManager)), m_contentLength(contentLength),
+      WinHttpStream(_detail::unique_HINTERNET& requestHandle, int64_t contentLength)
+          : m_requestHandle(std::move(requestHandle)), m_contentLength(contentLength),
             m_isEOF(false), m_streamTotalRead(0)
       {
       }
@@ -124,33 +106,63 @@ namespace Azure { namespace Core { namespace Http {
      * @brief When `true`, allows an invalid certificate authority.
      */
     bool IgnoreUnknownCertificateAuthority = false;
+
+    /**
+     * @brief When `true`, enables WebSocket upgrade.
+     */
+    bool EnableWebSocketUpgrade = false;
   };
 
   /**
    * @brief Concrete implementation of an HTTP transport that uses WinHTTP when sending and
    * receiving requests and responses over the wire.
    */
-  class WinHttpTransport final : public HttpTransport {
+  class WinHttpTransport : public HttpTransport {
   private:
     WinHttpTransportOptions m_options;
 
     // This should remain immutable and not be modified after calling the ctor, to avoid threading
     // issues.
-    HINTERNET m_sessionHandle = NULL;
+    _detail::unique_HINTERNET m_sessionHandle;
 
-    HINTERNET CreateSessionHandle();
-    void CreateConnectionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
-    void CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
-    void Upload(std::unique_ptr<_detail::HandleManager>& handleManager);
-    void SendRequest(std::unique_ptr<_detail::HandleManager>& handleManager);
-    void ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager);
+    _detail::unique_HINTERNET CreateSessionHandle();
+    _detail::unique_HINTERNET CreateConnectionHandle(
+        Azure::Core::Url const& url,
+        Azure::Core::Context const& context);
+    _detail::unique_HINTERNET CreateRequestHandle(
+        _detail::unique_HINTERNET& connectionHandle,
+        Azure::Core::Url const& url,
+        Azure::Core::Http::HttpMethod const& method);
+    void Upload(
+        _detail::unique_HINTERNET& requestHandle,
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context);
+    void SendRequest(
+        _detail::unique_HINTERNET& requestHandle,
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context);
+    void ReceiveResponse(
+        _detail::unique_HINTERNET& requestHandle,
+        Azure::Core::Context const& context);
     int64_t GetContentLength(
-        std::unique_ptr<_detail::HandleManager>& handleManager,
+        _detail::unique_HINTERNET& requestHandle,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
-        std::unique_ptr<_detail::HandleManager> handleManager,
+        _detail::unique_HINTERNET& requestHandle,
         HttpMethod requestMethod);
+
+    // Callback to allow a derived transport to extract the request handle. Used for WebSocket
+    // transports.
+  protected:
+    virtual void OnResponseReceived(_detail::unique_HINTERNET&){};
+    /**
+     * @brief Throw an exception based on the Win32 Error code
+     *
+     * @param exceptionMessage Message describing error.
+     * @param error Win32 Error code.
+     */
+    void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError());
 
   public:
     /**
@@ -170,16 +182,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
 
-    ~WinHttpTransport()
-    {
-      // Close the handles and set them to null to avoid multiple calls to WinHTTP to close the
-      // handles.
-      if (m_sessionHandle)
-      {
-        WinHttpCloseHandle(m_sessionHandle);
-        m_sessionHandle = NULL;
-      }
-    }
+    virtual ~WinHttpTransport() = default;
   };
 
 }}} // namespace Azure::Core::Http
