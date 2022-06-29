@@ -94,7 +94,9 @@ int main(int argc, char** argv)
     ManagedIdentityCredential credential(
         Environment::GetVariable("AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID"), options);
 
-    auto const token = credential.GetToken({{resourceUrl}}, Context());
+    Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+    tokenRequestContext.Scopes = {resourceUrl};
+    auto const token = credential.GetToken(tokenRequestContext, Context());
 
     std::string tokenPreview;
     {
