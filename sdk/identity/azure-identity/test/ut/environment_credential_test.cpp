@@ -8,12 +8,16 @@
 #include <gtest/gtest.h>
 
 using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::EnvironmentCredential;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(EnvironmentCredential, RegularClientSecretCredential)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -30,7 +34,7 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -69,6 +73,9 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -85,7 +92,7 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -125,6 +132,9 @@ TEST(EnvironmentCredential, Unavailable)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -141,7 +151,7 @@ TEST(EnvironmentCredential, Unavailable)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -153,6 +163,9 @@ TEST(EnvironmentCredential, Unavailable)
 
 TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -169,7 +182,7 @@ TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -211,6 +224,9 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -227,7 +243,7 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -241,6 +257,9 @@ TEST(EnvironmentCredential, ClientSecretNoClientId)
 {
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
+
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -258,7 +277,7 @@ TEST(EnvironmentCredential, ClientSecretNoClientId)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -272,6 +291,9 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
 {
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
+
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -289,7 +311,7 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;

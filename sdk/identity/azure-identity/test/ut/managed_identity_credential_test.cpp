@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
@@ -17,6 +18,12 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(ManagedIdentityCredential, AppServiceV2019)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -33,7 +40,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -103,6 +110,12 @@ TEST(ManagedIdentityCredential, AppServiceV2019)
 
 TEST(ManagedIdentityCredential, AppServiceV2019ClientId)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -120,7 +133,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019ClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -257,6 +270,12 @@ TEST(ManagedIdentityCredential, AppServiceV2019UnsupportedUrl)
 
 TEST(ManagedIdentityCredential, AppServiceV2017)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -273,7 +292,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -343,6 +362,12 @@ TEST(ManagedIdentityCredential, AppServiceV2017)
 
 TEST(ManagedIdentityCredential, AppServiceV2017ClientId)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -360,7 +385,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017ClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -497,6 +522,12 @@ TEST(ManagedIdentityCredential, AppServiceV2017UnsupportedUrl)
 
 TEST(ManagedIdentityCredential, CloudShell)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -513,7 +544,7 @@ TEST(ManagedIdentityCredential, CloudShell)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -570,6 +601,12 @@ TEST(ManagedIdentityCredential, CloudShell)
 
 TEST(ManagedIdentityCredential, CloudShellClientId)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -587,7 +624,7 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -702,6 +739,12 @@ TEST(ManagedIdentityCredential, AzureArc)
     secretFile << "SECRET3";
   }
 
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -718,7 +761,7 @@ TEST(ManagedIdentityCredential, AzureArc)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       {{HttpStatusCode::Unauthorized,
         "",
         {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test1.txt"}}},
@@ -867,6 +910,9 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -883,7 +929,7 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {{HttpStatusCode::Unauthorized, "", {}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
@@ -906,6 +952,9 @@ TEST(ManagedIdentityCredential, AzureArcUnexpectedHttpStatusCode)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -922,7 +971,7 @@ TEST(ManagedIdentityCredential, AzureArcUnexpectedHttpStatusCode)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {{HttpStatusCode::Forbidden,
         "",
         {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test0.txt"}}},
@@ -940,6 +989,9 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -956,7 +1008,7 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABCSECRET1"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
@@ -972,6 +1024,9 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -988,7 +1043,7 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1=SECRET2"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
@@ -1032,6 +1087,12 @@ TEST(ManagedIdentityCredential, AzureArcInvalidUrl)
 
 TEST(ManagedIdentityCredential, Imds)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -1048,7 +1109,7 @@ TEST(ManagedIdentityCredential, Imds)
 
         return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -1118,6 +1179,12 @@ TEST(ManagedIdentityCredential, Imds)
 
 TEST(ManagedIdentityCredential, ImdsClientId)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -1135,7 +1202,7 @@ TEST(ManagedIdentityCredential, ImdsClientId)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      {tokenRequestContext1, tokenRequestContext2, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
@@ -1208,6 +1275,12 @@ TEST(ManagedIdentityCredential, ImdsClientId)
 
 TEST(ManagedIdentityCredential, ImdsCreation)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
+
   auto const actual1 = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -1225,7 +1298,7 @@ TEST(ManagedIdentityCredential, ImdsCreation)
         return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext1},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   auto const actual2 = CredentialTestHelper::SimulateTokenRequest(
@@ -1245,7 +1318,7 @@ TEST(ManagedIdentityCredential, ImdsCreation)
         return std::make_unique<ManagedIdentityCredential>(
             "01234567-89ab-cdef-fedc-ba9876543210", options);
       },
-      {{{"https://outlook.com/.default"}}},
+      {tokenRequestContext2},
       {"{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
 
   EXPECT_EQ(actual1.Requests.size(), 1U);

@@ -67,6 +67,9 @@ public:
 
 TEST(TokenCredentialImpl, Normal)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default", "https://microsoft.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -75,9 +78,7 @@ TEST(TokenCredentialImpl, Normal)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}},
-       {{"https://azure.com/.default", "https://microsoft.com/.default"}},
-       {{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {tokenRequestContext, tokenRequestContext, tokenRequestContext},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"access_token\":\"ACCESSTOKEN2\", \"expires_in\":7200}",
@@ -144,6 +145,9 @@ TEST(TokenCredentialImpl, Normal)
 
 TEST(TokenCredentialImpl, StdException)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default", "https://microsoft.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -152,7 +156,7 @@ TEST(TokenCredentialImpl, StdException)
         return std::make_unique<TokenCredentialImplTester>(
             []() { throw std::exception(); }, options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -164,6 +168,9 @@ TEST(TokenCredentialImpl, StdException)
 
 TEST(TokenCredentialImpl, ThrowInt)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default", "https://microsoft.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -171,7 +178,7 @@ TEST(TokenCredentialImpl, ThrowInt)
 
         return std::make_unique<TokenCredentialImplTester>([]() { throw 0; }, options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -298,6 +305,9 @@ TEST(TokenCredentialImpl, FormatScopes)
 
 TEST(TokenCredentialImpl, NoExpiration)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default", "https://microsoft.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -306,7 +316,7 @@ TEST(TokenCredentialImpl, NoExpiration)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {tokenRequestContext},
       {"{\"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -318,6 +328,9 @@ TEST(TokenCredentialImpl, NoExpiration)
 
 TEST(TokenCredentialImpl, NoToken)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default", "https://microsoft.com/.default"};
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -326,7 +339,7 @@ TEST(TokenCredentialImpl, NoToken)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {tokenRequestContext},
       {"{\"expires_in\":3600}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -345,6 +358,9 @@ TEST(TokenCredentialImpl, CurrentJsonParserQuirksAndLimitations)
   // happens, at any point, this test case gets broken, it is ok to drop/update this test case - it
   // is likely that the proper JSON parser has better behavior.
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -353,7 +369,7 @@ TEST(TokenCredentialImpl, CurrentJsonParserQuirksAndLimitations)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://microsoft.com/"), options);
       },
-      {{{"https://azure.com/.default"}}, {{"https://azure.com/.default"}}},
+      {tokenRequestContext, tokenRequestContext},
       std::vector<std::string>{
           {"{\"access_token\":\'ACCESSTOKEN\', \"expires_in\": \"\'"},
           {"{\"expires_in\": 3600, \"access_token\": \"\'"}});
@@ -409,6 +425,9 @@ TEST(TokenCredentialImpl, NullResponse)
   using Azure::Core::Http::Policies::HttpPolicy;
   using Azure::Core::Http::Policies::NextHttpPolicy;
 
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   class NullResponsePolicy : public HttpPolicy {
   public:
     std::unique_ptr<HttpPolicy> Clone() const override
@@ -431,7 +450,7 @@ TEST(TokenCredentialImpl, NullResponse)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://microsoft.com/"), options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext},
       {{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;

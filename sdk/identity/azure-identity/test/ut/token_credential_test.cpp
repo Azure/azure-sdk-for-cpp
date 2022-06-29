@@ -58,8 +58,11 @@ TEST_F(TokenCredentialTest, ClientSecret)
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetClientSecretCredential(testName);
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+
   auto const token = clientSecretCredential->GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
+      tokenRequestContext, Azure::Core::Context::ApplicationContext);
 
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
@@ -70,8 +73,11 @@ TEST_F(TokenCredentialTest, EnvironmentCredential)
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+
   auto const token = clientSecretCredential->GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
+      tokenRequestContext, Azure::Core::Context::ApplicationContext);
 
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());

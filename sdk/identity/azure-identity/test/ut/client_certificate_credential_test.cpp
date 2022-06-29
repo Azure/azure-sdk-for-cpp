@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::ClientCertificateCredential;
 using Azure::Identity::ClientCertificateCredentialOptions;
@@ -34,7 +35,10 @@ TEST(ClientCertificateCredential, Regular)
 {
   TempCertFile tempCertFile;
 
-  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
+      auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         ClientCertificateCredentialOptions options;
         options.Transport.Transport = transport;
@@ -45,7 +49,7 @@ TEST(ClientCertificateCredential, Regular)
             TempCertFile::Path,
             options);
       },
-      {{{"https://azure.com/.default"}}, {{}}},
+      {tokenRequestContext, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});

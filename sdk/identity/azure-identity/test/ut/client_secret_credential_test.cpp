@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::ClientSecretCredential;
 using Azure::Identity::ClientSecretCredentialOptions;
@@ -14,6 +15,9 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(ClientSecretCredential, Regular)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         ClientSecretCredentialOptions options;
@@ -25,7 +29,7 @@ TEST(ClientSecretCredential, Regular)
             "CLIENTSECRET",
             options);
       },
-      {{{"https://azure.com/.default"}}, {{}}},
+      {tokenRequestContext, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
@@ -90,6 +94,9 @@ TEST(ClientSecretCredential, Regular)
 
 TEST(ClientSecretCredential, AzureStack)
 {
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://azure.com/.default"};
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         ClientSecretCredentialOptions options;
@@ -98,7 +105,7 @@ TEST(ClientSecretCredential, AzureStack)
         return std::make_unique<ClientSecretCredential>(
             "adfs", "fedcba98-7654-3210-0123-456789abcdef", "CLIENTSECRET", options);
       },
-      {{{"https://azure.com/.default"}}, {{}}},
+      {tokenRequestContext, {{}}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
@@ -160,6 +167,9 @@ TEST(ClientSecretCredential, AzureStack)
 
 TEST(ClientSecretCredential, Authority)
 {
+  TokenRequestContext tokenRequestContext1;
+  tokenRequestContext1.Scopes = {"https://azure.com/.default"};
+
   auto const actual1 = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         ClientSecretCredentialOptions options;
@@ -172,8 +182,12 @@ TEST(ClientSecretCredential, Authority)
             "CLIENTSECRET1",
             options);
       },
-      {{{"https://azure.com/.default"}}},
+      {tokenRequestContext1},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+
+
+  TokenRequestContext tokenRequestContext2;
+  tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
 
   auto const actual2 = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -184,8 +198,9 @@ TEST(ClientSecretCredential, Authority)
         return std::make_unique<ClientSecretCredential>(
             "adfs", "01234567-89ab-cdef-fedc-ba8976543210", "CLIENTSECRET2", options);
       },
-      {{{"https://outlook.com/.default"}}},
+      {tokenRequestContext2},
       {"{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
+
 
   EXPECT_EQ(actual1.Requests.size(), 1U);
   EXPECT_EQ(actual1.Responses.size(), 1U);
