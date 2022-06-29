@@ -49,7 +49,7 @@ stages:
         - Name: azure-core-tracing-opentelemetry
           Path: azure-core-tracing-opentelemetry
           VcpkgPortName: azure-core-tracing-opentelemetry-cpp
-# Since Azure Core will run all service's tests, it requires all the expected env vars from services          
+# Since Azure Core will run all service's tests, it requires all the expected env vars from services
       TestEnv:
 # Key Vault
         - Name: AZURE_KEYVAULT_URL

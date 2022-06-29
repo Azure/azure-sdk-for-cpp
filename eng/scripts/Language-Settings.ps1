@@ -98,3 +98,16 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
     -ReleaseDate $ReleaseDate `
     -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
 }
+
+function Find-cpp-Artifacts-For-Apireview($ArtifactPath, $PackageName)
+{
+  $artifact = Get-ChildItem -Path (Join-Path $ArtifactPath $PackageName) -Filter "*.cppast"
+  if ($artifact)
+  {
+    $packages = @{
+      $artifact.FullName = $artifact.FullName
+    }
+    return $packages
+  }
+  return $null
+}

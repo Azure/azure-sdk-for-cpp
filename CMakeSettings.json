@@ -231,6 +231,28 @@
           "type": "BOOL"
         }
       ]
+    },
+    {
+      "name": "x64-DebugWithPerfTest",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON",
+      "buildCommandArgs": "-v",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "VCPKG_TARGET_TRIPLET",
+          "value": "x64-windows-static",
+          "type": "STRING"
+        },
+        {
+          "name": "MSVC_USE_STATIC_CRT",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }
