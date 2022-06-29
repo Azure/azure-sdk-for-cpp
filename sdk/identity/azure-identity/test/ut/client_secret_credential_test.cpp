@@ -29,7 +29,7 @@ TEST(ClientSecretCredential, Regular)
             "CLIENTSECRET",
             options);
       },
-      {tokenRequestContext, {{}}},
+      {tokenRequestContext, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
@@ -105,7 +105,7 @@ TEST(ClientSecretCredential, AzureStack)
         return std::make_unique<ClientSecretCredential>(
             "adfs", "fedcba98-7654-3210-0123-456789abcdef", "CLIENTSECRET", options);
       },
-      {tokenRequestContext, {{}}},
+      {tokenRequestContext, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
@@ -185,7 +185,6 @@ TEST(ClientSecretCredential, Authority)
       {tokenRequestContext1},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
-
   TokenRequestContext tokenRequestContext2;
   tokenRequestContext2.Scopes = {"https://outlook.com/.default"};
 
@@ -200,7 +199,6 @@ TEST(ClientSecretCredential, Authority)
       },
       {tokenRequestContext2},
       {"{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
-
 
   EXPECT_EQ(actual1.Requests.size(), 1U);
   EXPECT_EQ(actual1.Responses.size(), 1U);

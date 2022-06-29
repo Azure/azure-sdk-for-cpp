@@ -38,7 +38,7 @@ TEST(ClientCertificateCredential, Regular)
   TokenRequestContext tokenRequestContext;
   tokenRequestContext.Scopes = {"https://azure.com/.default"};
 
-      auto const actual = CredentialTestHelper::SimulateTokenRequest(
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         ClientCertificateCredentialOptions options;
         options.Transport.Transport = transport;
@@ -49,7 +49,7 @@ TEST(ClientCertificateCredential, Regular)
             TempCertFile::Path,
             options);
       },
-      {tokenRequestContext, {{}}},
+      {tokenRequestContext, {}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});

@@ -5,6 +5,4 @@
 
 #include <gtest/gtest.h>
 
-TEST(ChallengeBasedAuthenticationPolicy, FirstUse)
-{
-}
+TEST(ChallengeBasedAuthenticationPolicy, FirstUse) {}
