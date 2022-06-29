@@ -10,6 +10,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/datetime.hpp"
+#include "azure/core/url.hpp"
 
 #include <exception>
 #include <memory>
@@ -48,6 +49,18 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     std::vector<std::string> Scopes;
+
+    /**
+     * @brief URL used to authorize the request.
+     *
+     */
+    Url AuthorizationUrl;
+
+    /**
+     * @brief Tenant ID.
+     *
+     */
+    std::string TenantId;
   };
 
   /**

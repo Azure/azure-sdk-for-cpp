@@ -4,7 +4,10 @@
 
 ### Features Added
 
+- Added support for challenge-based and multi-tenant authentication.
 - Added Azure App Service API version `2019-08-01` support for `ManagedIdentityCredential`.
+- Added authority host overriding support for `ClientCertificateCredential`.
+- Added Azure Stack support for `ClientCertificateCredential`.
 
 ### Breaking Changes
 

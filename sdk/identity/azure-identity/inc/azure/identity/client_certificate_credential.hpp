@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/identity/dll_import_export.hpp"
+#include "azure/identity/detail/client_credential_helper.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
@@ -28,6 +28,24 @@ namespace Azure { namespace Identity {
    */
   struct ClientCertificateCredentialOptions final : public Core::Credentials::TokenCredentialOptions
   {
+  public:
+    /**
+     * @brief Authentication authority URL.
+     * @note Default value is Azure AD global authority (https://login.microsoftonline.com/).
+     *
+     * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
+     * clouds' Azure AD authentication endpoints:
+     * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
+     */
+    std::string AuthorityHost = _detail::g_aadGlobalAuthority;
+
+    /**
+     * @brief Disables multi-tenant discovery feature.
+     * The default value can be populated by setting the environment variable
+     * `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `true`.
+     */
+    bool DisableTenantDiscovery
+        = _detail::ClientCredentialHelper::IsTenantDiscoveryDisabledByDefault();
   };
 
   /**
@@ -38,11 +56,19 @@ namespace Azure { namespace Identity {
   class ClientCertificateCredential final : public Core::Credentials::TokenCredential {
   private:
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
-    Core::Url m_requestUrl;
+    _detail::ClientCredentialHelper m_clientCredentialHelper;
     std::string m_requestBody;
     std::string m_tokenHeaderEncoded;
     std::string m_tokenPayloadStaticPart;
     void* m_pkey;
+
+    explicit ClientCertificateCredential(
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientCertificatePath,
+        std::string const& authorityHost,
+        bool disableTenantDiscovery,
+        Core::Credentials::TokenCredentialOptions const& options);
 
   public:
     /**

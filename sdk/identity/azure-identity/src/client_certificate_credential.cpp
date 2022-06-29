@@ -42,9 +42,11 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& tenantId,
     std::string const& clientId,
     std::string const& clientCertificatePath,
+    std::string const& authorityHost,
+    bool disableTenantDiscovery,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : m_tokenCredentialImpl(std::make_unique<_detail::TokenCredentialImpl>(options)),
-      m_pkey(nullptr)
+      m_clientCredentialHelper(tenantId, authorityHost, disableTenantDiscovery), m_pkey(nullptr)
 {
   BIO* bio = nullptr;
   X509* x509 = nullptr;
@@ -130,18 +132,12 @@ ClientCertificateCredential::ClientCertificateCredential(
       }
     }
 
-    using Azure::Core::Url;
-    {
-
-      m_requestUrl = Url("https://login.microsoftonline.com/");
-      m_requestUrl.AppendPath(tenantId);
-      m_requestUrl.AppendPath("oauth2/v2.0/token");
-    }
-
-    m_tokenPayloadStaticPart = std::string("{\"aud\":\"") + m_requestUrl.GetAbsoluteUrl()
-        + "\",\"iss\":\"" + clientId + "\",\"sub\":\"" + clientId + "\",\"jti\":\"";
+    m_tokenPayloadStaticPart
+        = "\",\"iss\":\"" + clientId + "\",\"sub\":\"" + clientId + "\",\"jti\":\"";
 
     {
+      using Azure::Core::Url;
+
       std::ostringstream body;
       body
           << "grant_type=client_credentials"
@@ -178,11 +174,28 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& tenantId,
     std::string const& clientId,
     std::string const& clientCertificatePath,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ClientCertificateCredential(
+        tenantId,
+        clientId,
+        clientCertificatePath,
+        _detail::g_aadGlobalAuthority,
+        _detail::ClientCredentialHelper::IsTenantDiscoveryDisabledByDefault(),
+        options)
+{
+}
+
+ClientCertificateCredential::ClientCertificateCredential(
+    std::string const& tenantId,
+    std::string const& clientId,
+    std::string const& clientCertificatePath,
     ClientCertificateCredentialOptions const& options)
     : ClientCertificateCredential(
         tenantId,
         clientId,
         clientCertificatePath,
+        options.AuthorityHost,
+        options.DisableTenantDiscovery,
         static_cast<Azure::Core::Credentials::TokenCredentialOptions const&>(options))
 {
 }
@@ -210,6 +223,8 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
       }
     }
 
+    auto const requestUrl = m_clientCredentialHelper.GetRequestUrl(tokenRequestContext);
+
     std::string assertion = m_tokenHeaderEncoded;
     {
       using Azure::Core::_internal::Base64Url;
@@ -226,7 +241,8 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
           const Azure::DateTime now = std::chrono::system_clock::now();
           const Azure::DateTime exp = now + std::chrono::minutes(10);
 
-          payloadStream << m_tokenPayloadStaticPart << Uuid::CreateUuid().ToString()
+          payloadStream << "{\"aud\":\"" << requestUrl.GetAbsoluteUrl() << m_tokenPayloadStaticPart
+                        << Uuid::CreateUuid().ToString()
                         << "\",\"nbf\":" << PosixTimeConverter::DateTimeToPosixTime(now)
                         << ",\"exp\":" << PosixTimeConverter::DateTimeToPosixTime(exp) << "}";
 
@@ -288,7 +304,7 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
     body << "&client_assertion=" << Azure::Core::Url::Encode(assertion);
 
     auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
-        HttpMethod::Post, m_requestUrl, body.str());
+        HttpMethod::Post, requestUrl, body.str());
 
     return request;
   });

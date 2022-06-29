@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/identity/dll_import_export.hpp"
+#include "azure/identity/detail/client_credential_helper.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
@@ -20,7 +20,6 @@
 namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
-    AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
   } // namespace _detail
 
   /**
@@ -39,6 +38,14 @@ namespace Azure { namespace Identity {
      * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
     std::string AuthorityHost = _detail::g_aadGlobalAuthority;
+
+    /**
+     * @brief Disables multi-tenant discovery feature.
+     * The default value can be populated by setting the environment variable
+     * `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `true`.
+     */
+    bool DisableTenantDiscovery
+        = _detail::ClientCredentialHelper::IsTenantDiscoveryDisabledByDefault();
   };
 
   /**
@@ -49,15 +56,15 @@ namespace Azure { namespace Identity {
   class ClientSecretCredential final : public Core::Credentials::TokenCredential {
   private:
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
-    Core::Url m_requestUrl;
     std::string m_requestBody;
-    bool m_isAdfs;
+    _detail::ClientCredentialHelper m_clientCredentialHelper;
 
     ClientSecretCredential(
         std::string const& tenantId,
         std::string const& clientId,
         std::string const& clientSecret,
         std::string const& authorityHost,
+        bool disableTenantDiscovery,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:

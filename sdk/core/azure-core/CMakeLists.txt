@@ -118,7 +118,7 @@ set(
     src/environment_log_level_listener.cpp
     src/etag.cpp
     src/exception.cpp
-    src/http/bearer_token_authentication_policy.cpp
+    src/http/authentication_policy.cpp
     src/http/http.cpp
     src/http/http_sanitizer.cpp
     src/http/log_policy.cpp

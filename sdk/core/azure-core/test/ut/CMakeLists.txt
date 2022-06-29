@@ -40,6 +40,7 @@ add_executable (
     bearer_token_authentication_policy_test.cpp
     bodystream_test.cpp
     case_insensitive_containers_test.cpp
+    challenge_based_authentication_policy_test.cpp
     client_options_test.cpp
     context_test.cpp
     ${CURL_CONNECTION_POOL_TESTS}

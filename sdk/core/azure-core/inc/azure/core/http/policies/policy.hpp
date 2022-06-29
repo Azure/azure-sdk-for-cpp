@@ -16,6 +16,7 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
+#include "azure/core/url.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -475,16 +476,36 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Bearer Token authentication policy.
      *
      */
-    class BearerTokenAuthenticationPolicy final : public HttpPolicy {
+    class BearerTokenAuthenticationPolicy : public HttpPolicy {
     private:
       std::shared_ptr<Credentials::TokenCredential const> const m_credential;
-      Credentials::TokenRequestContext m_tokenRequestContext;
 
       mutable Credentials::AccessToken m_accessToken;
       mutable std::mutex m_accessTokenMutex;
 
-      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
       void operator=(BearerTokenAuthenticationPolicy const&) = delete;
+
+      virtual std::unique_ptr<RawResponse> AuthorizeAndSendRequest(
+          Request& request,
+          NextHttpPolicy nextPolicy,
+          Context const& context) const;
+
+      virtual std::string GetChallenge(RawResponse const& response) const;
+
+      virtual void AuthorizeRequestOnChallenge(
+          Request& request,
+          std::string const& challenge,
+          Context const& context) const;
+
+    protected:
+      mutable Credentials::TokenRequestContext TokenRequestContext;
+
+      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
+          : BearerTokenAuthenticationPolicy(other.m_credential, other.TokenRequestContext)
+      {
+      }
+
+      void AuthenticateAndAuthorizeRequest(Request& request, Context const& context) const;
 
     public:
       /**
@@ -496,21 +517,63 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       explicit BearerTokenAuthenticationPolicy(
           std::shared_ptr<Credentials::TokenCredential const> credential,
           Credentials::TokenRequestContext tokenRequestContext)
-          : m_credential(std::move(credential)),
-            m_tokenRequestContext(std::move(tokenRequestContext))
+          : m_credential(std::move(credential)), TokenRequestContext(std::move(tokenRequestContext))
       {
       }
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {
-        return std::make_unique<BearerTokenAuthenticationPolicy>(
-            m_credential, m_tokenRequestContext);
+        return std::unique_ptr<HttpPolicy>(new BearerTokenAuthenticationPolicy(*this));
       }
 
       std::unique_ptr<RawResponse> Send(
           Request& request,
           NextHttpPolicy nextPolicy,
+          Context const& context) const final;
+    };
+
+    /**
+     * @brief Challenge-Based authentication policy.
+     *
+     */
+    class ChallengeBasedAuthenticationPolicy final : public BearerTokenAuthenticationPolicy {
+    private:
+      std::unique_ptr<RawResponse> AuthorizeAndSendRequest(
+          Request& request,
+          NextHttpPolicy nextPolicy,
           Context const& context) const override;
+
+      std::string GetChallenge(RawResponse const& response) const override;
+
+      void AuthorizeRequestOnChallenge(
+          Request& request,
+          std::string const& challenge,
+          Context const& context) const override;
+
+    protected:
+      ChallengeBasedAuthenticationPolicy(ChallengeBasedAuthenticationPolicy const& other)
+          : BearerTokenAuthenticationPolicy(other)
+      {
+      }
+
+    public:
+      /**
+       * @brief Construct a Challenge-Based authentication policy.
+       *
+       * @param credential An #Azure::Core::TokenCredential to use with this policy.
+       */
+      explicit ChallengeBasedAuthenticationPolicy(
+          std::shared_ptr<Credentials::TokenCredential const> credential)
+          : BearerTokenAuthenticationPolicy(
+              std::move(credential),
+              Credentials::TokenRequestContext())
+      {
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::unique_ptr<HttpPolicy>(new ChallengeBasedAuthenticationPolicy(*this));
+      }
     };
 
     /**
