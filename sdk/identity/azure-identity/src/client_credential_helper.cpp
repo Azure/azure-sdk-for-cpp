@@ -9,15 +9,15 @@
 using Azure::Core::Url;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Identity::_detail::ClientCredentialHelper;
-using Azure::Identity::_detail::g_aadGlobalAuthority;
 
-std::string const g_aadGlobalAuthority = "https://login.microsoftonline.com/";
+std::string const Azure::Identity::_detail::g_aadGlobalAuthority
+    = "https://login.microsoftonline.com/";
 
 ClientCredentialHelper::ClientCredentialHelper(
     std::string tenantId,
     std::string const& authorityHost,
     bool disableTenantDiscovery)
-    : m_tenantId(tenantId), m_authorityHost(Url(authorityHost)),
+    : m_authorityHost(Url(authorityHost)), m_tenantId(tenantId),
       m_disableTenantDiscovery(disableTenantDiscovery), IsAdfs(tenantId == "adfs")
 {
 }
