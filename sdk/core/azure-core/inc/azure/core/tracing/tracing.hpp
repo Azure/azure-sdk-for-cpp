@@ -33,8 +33,14 @@ namespace Azure { namespace Core { namespace Tracing {
           std::string const& version) const = 0;
     };
 
+	/** 
+    * @brief Returns a TracerProviderImpl from a TracerProvider object.
+    * 
+    * @param provider The TracerProvider object.
+    * @returns A TracerProviderImpl implementation.
+    */
     std::shared_ptr<TracerProviderImpl> TracerImplFromTracer(
-        std::shared_ptr<TracerProvider> const&);
+        std::shared_ptr<TracerProvider> const& provider);
 
   } // namespace _internal
 
@@ -42,6 +48,7 @@ namespace Azure { namespace Core { namespace Tracing {
    * @brief Trace Provider - factory for creating Tracer objects.
    */
   class TracerProvider : _internal::TracerProviderImpl {
+    // Marked TracerImplFromTracer as friend so it can access private members in the class.
     friend std::shared_ptr<TracerProviderImpl> _internal::TracerImplFromTracer(
         std::shared_ptr<TracerProvider> const&);
   };

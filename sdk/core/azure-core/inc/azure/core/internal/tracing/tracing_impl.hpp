@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Handling log messages from Azure SDK.
+ * @brief Internal classes which abstract the OpenTelemetry API surface.
  */
 
 #pragma once
@@ -12,11 +12,9 @@
 #include "azure/core/internal/extendable_enumeration.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/tracing/tracing.hpp"
-#include "azure/core/url.hpp"
-#include <array>
 #include <memory>
 #include <string>
-#include <vector>
+#include <map>
 
 // Forward declare Azure::Core::Http::Request to resolve an include file ordering problem.
 namespace Azure { namespace Core { namespace Http {
@@ -271,8 +269,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   public:
     /**
      * @brief Create new Span object.
-     *
-     * @details Creates a new span object.
      *
      * @note There is no concept of a "current" span, each span created is a top level span,
      * unless the CreateSpanOptions has ParentSpan member, in which case the ParentSpan member

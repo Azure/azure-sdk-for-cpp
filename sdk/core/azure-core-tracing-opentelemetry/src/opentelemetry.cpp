@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
-#include "opentelemetry_impl.hpp"
+#include "opentelemetry_private.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/tracing/tracing_impl.hpp>
 #include <azure/core/nullable.hpp>

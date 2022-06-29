@@ -49,7 +49,7 @@ the [opentelemetry-cpp](https://github.com/open-telemetry/opentelemetry-cpp/blob
 ```cpp
 // Start by creating an OpenTelemetry Provider using the
 // default OpenTelemetry tracer provider.
-std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>();
+std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = Azure::Core::OpenTelemetry::TracerProvider::Create();
 
 // Connect the tracerProvider to the current application context.
 ApplicationContext().SetTracerProvider(tracerProvider);
@@ -80,7 +80,7 @@ auto openTelemetryProvider = opentelemetry::nostd::shared_ptr<opentelemetry::tra
 
 // Use the default OpenTelemetry tracer provider.
 std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = 
-    std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>(openTelemetryProvider);
+    Azure::Core::OpenTelemetry::TracerProvider::Create(openTelemetryProvider);
 
 // Connect the tracerProvider to the current application context.
 ApplicationContext().SetTracerProvider(tracerProvider);

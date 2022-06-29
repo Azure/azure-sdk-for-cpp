@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #define USE_MEMORY_EXPORTER 1
-#include "../src/opentelemetry_impl.hpp"
+#include "../src/opentelemetry_private.hpp"
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
 #include <azure/core/test/test_base.hpp>
 
