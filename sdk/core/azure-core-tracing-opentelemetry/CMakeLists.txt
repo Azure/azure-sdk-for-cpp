@@ -40,6 +40,7 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
 
     set(
       AZURE_CORE_OPENTELEMETRY_HEADER
+        inc/azure/core/tracing/opentelemetry/internal/apiview.hpp
         inc/azure/core/tracing/opentelemetry/opentelemetry.hpp
         src/opentelemetry_private.hpp
     )
