@@ -1,13 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/storage/blobs/blob_batch_client.hpp>
+#include <azure/storage/blobs.hpp>
 
 #include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
-
-#if defined(AZ_STORAGE_BLOBS_RTTI)
 
   class BlobBatchClientTest : public StorageTest {
   private:
@@ -57,15 +55,13 @@ namespace Azure { namespace Storage { namespace Test {
     blob3Client.Create();
     blob3Client.CreateSnapshot();
 
-    Blobs::BlobBatchClient batchClient(serviceClient);
-
-    auto batch = batchClient.CreateBatch();
+    auto batch = serviceClient.CreateBatch();
     auto delete1Response = batch.DeleteBlob(blob1Client.GetUrl());
     auto delete2Response = batch.DeleteBlob(containerName1, blob2Name);
     Blobs::DeleteBlobOptions deleteOptions;
     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::OnlySnapshots;
     auto delete3Response = batch.DeleteBlob(blob3Client.GetUrl(), deleteOptions);
-    auto submitBatchResponse = batchClient.SubmitBatch(batch);
+    auto submitBatchResponse = serviceClient.SubmitBatch(batch);
 
     EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
     EXPECT_TRUE(delete2Response.GetResponse().Value.Deleted);
@@ -107,14 +103,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto blob2Client = containerClient.GetBlockBlobClient(blob2Name);
     blob2Client.UploadFrom(nullptr, 0);
 
-    Blobs::BlobBatchClient batchClient(containerClient);
-
-    auto batch = batchClient.CreateBatch();
+    auto batch = containerClient.CreateBatch();
     auto setTier1Response
         = batch.SetBlobAccessTier(containerName, blob1Name, Blobs::Models::AccessTier::Cool);
     auto setTier2Response
         = batch.SetBlobAccessTier(blob2Client.GetUrl(), Blobs::Models::AccessTier::Archive);
-    auto submitBatchResponse = batchClient.SubmitBatch(batch);
+    auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_NO_THROW(setTier1Response.GetResponse());
     EXPECT_NO_THROW(setTier2Response.GetResponse());
@@ -146,11 +140,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = containerClient.GetAppendBlobClient(blobName);
     blobClient.Create();
 
-    Blobs::BlobBatchClient batchClient(containerClient);
-
-    auto batch = batchClient.CreateBatch();
+    auto batch = containerClient.CreateBatch();
     auto delete1Response = batch.DeleteBlob(blobClient.GetUrl());
-    auto submitBatchResponse = batchClient.SubmitBatch(batch);
+    auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
 
@@ -170,14 +162,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = containerClient.GetBlockBlobClient(blobName);
     blobClient.UploadFrom(nullptr, 0);
 
-    Blobs::BlobBatchClient batchClient(containerClient);
-
     // Empty batch
-    auto batch = batchClient.CreateBatch();
+    auto batch = containerClient.CreateBatch();
 
     try
     {
-      batchClient.SubmitBatch(batch);
+      containerClient.SubmitBatch(batch);
       FAIL();
     }
     catch (StorageException& e)
@@ -194,13 +184,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     // Mixed operations
-    auto batch2 = batchClient.CreateBatch();
+    auto batch2 = containerClient.CreateBatch();
     batch2.SetBlobAccessTier(blobClient.GetUrl(), Blobs::Models::AccessTier::Cool);
     batch2.DeleteBlob(blobClient.GetUrl());
 
     try
     {
-      batchClient.SubmitBatch(batch2);
+      containerClient.SubmitBatch(batch2);
       FAIL();
     }
     catch (StorageException& e)
@@ -238,12 +228,11 @@ namespace Azure { namespace Storage { namespace Test {
     }();
     auto containerSasClient = Blobs::BlobContainerClient(
         serviceClient.GetBlobContainerClient(containerName).GetUrl() + containerExpiredSasToken);
-    auto batchSasClient = Blobs::BlobBatchClient(containerSasClient);
-    auto batch3 = batchSasClient.CreateBatch();
+    auto batch3 = containerSasClient.CreateBatch();
     batch3.DeleteBlob(blobClient.GetUrl() + containerSasToken);
     try
     {
-      batchSasClient.SubmitBatch(batch3);
+      containerSasClient.SubmitBatch(batch3);
       FAIL();
     }
     catch (StorageException& e)
@@ -261,6 +250,5 @@ namespace Azure { namespace Storage { namespace Test {
 
     containerClient.Delete();
   }
-#endif
 
 }}} // namespace Azure::Storage::Test

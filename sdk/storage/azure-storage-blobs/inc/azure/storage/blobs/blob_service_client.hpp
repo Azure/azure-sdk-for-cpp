@@ -13,6 +13,8 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  class BlobBatch;
+
   /**
    * The BlobServiceClient allows you to manipulate Azure Storage service resources and blob
    * containers. The storage account provides the top-level namespace for the Blob service.
@@ -243,12 +245,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         const RenameBlobContainerOptions& options = RenameBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    BlobBatch CreateBatch();
+
+    Response<Models::SubmitBlobBatchResult> SubmitBatch(
+        const BlobBatch& batch,
+        const SubmitBlobBatchOptions& options = SubmitBlobBatchOptions(),
+        const Core::Context& context = Core::Context()) const;
+
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Nullable<std::string> m_encryptionScope;
 
-    friend class BlobBatchClient;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchRequestPipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchSubrequestPipeline;
+
+    friend class BlobBatch;
   };
 }}} // namespace Azure::Storage::Blobs

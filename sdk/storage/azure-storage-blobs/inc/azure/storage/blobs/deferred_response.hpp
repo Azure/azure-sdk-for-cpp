@@ -3,59 +3,14 @@
 
 #pragma once
 
-#include <exception>
 #include <functional>
-#include <memory>
-#include <vector>
 
-#include <azure/core/http/http.hpp>
 #include <azure/core/response.hpp>
 
-namespace Azure { namespace Storage { namespace Blobs {
-
-  template <typename T> class DeferredResponse;
-
-  namespace _detail {
-
-    class DeferredResponseSharedBase {
-    public:
-      virtual ~DeferredResponseSharedBase() = 0;
-    };
-
-    template <typename T> class DeferredResponseShared : public DeferredResponseSharedBase {
-    public:
-      ~DeferredResponseShared() override {}
-
-      virtual Response<T> GetResponse() = 0;
-    };
-
-    class DeferredResponseFactory {
-    protected:
-      DeferredResponseFactory() = default;
-      DeferredResponseFactory(const DeferredResponseFactory&) = delete;
-      DeferredResponseFactory(DeferredResponseFactory&&) = default;
-      DeferredResponseFactory& operator=(const DeferredResponseFactory&) = delete;
-      DeferredResponseFactory& operator=(DeferredResponseFactory&&) = default;
-
-      template <typename T>
-      DeferredResponse<T> CreateDeferredResponse(
-          std::shared_ptr<DeferredResponseShared<T>> deferredOperationShared)
-      {
-        m_deferredOperations.push_back(deferredOperationShared);
-        return DeferredResponse<T>(std::move(deferredOperationShared));
-      }
-
-      const std::vector<std::shared_ptr<DeferredResponseSharedBase>>& DeferredOperations() const
-      {
-        return m_deferredOperations;
-      }
-
-    private:
-      std::vector<std::shared_ptr<DeferredResponseSharedBase>> m_deferredOperations;
-    };
-
-  } // namespace _detail
-
+namespace Azure { namespace Storage {
+  namespace Blobs {
+    class BlobBatch;
+  }
   /**
    * @brief Base type for a deferred response.
    */
@@ -74,18 +29,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return The deferred response. An exception is thrown if error occurred.
      */
-    Response<T> GetResponse() const { return m_sharedState->GetResponse(); }
+    Response<T> GetResponse() const { return m_func(); }
 
   private:
-    DeferredResponse(std::shared_ptr<_detail::DeferredResponseShared<T>> sharedState)
-        : m_sharedState(std::move(sharedState))
-    {
-    }
+    DeferredResponse(std::function<Response<T>()> func) : m_func(std::move(func)) {}
 
   private:
-    std::shared_ptr<_detail::DeferredResponseShared<T>> m_sharedState;
+    std::function<Response<T>()> m_func;
 
-    friend class _detail::DeferredResponseFactory;
+    friend class Blobs::BlobBatch;
   };
-
-}}} // namespace Azure::Storage::Blobs
+}} // namespace Azure::Storage

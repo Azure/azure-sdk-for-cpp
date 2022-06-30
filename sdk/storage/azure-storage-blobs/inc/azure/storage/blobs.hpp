@@ -11,7 +11,7 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 #include "azure/storage/blobs/append_blob_client.hpp"
-#include "azure/storage/blobs/blob_batch_client.hpp"
+#include "azure/storage/blobs/blob_batch.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_lease_client.hpp"

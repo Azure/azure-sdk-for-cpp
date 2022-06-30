@@ -12,6 +12,7 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   class BlobLeaseClient;
+  class BlobBatch;
 
   /**
    * The BlobContainerClient allows you to manipulate Azure Storage containers and their
@@ -284,26 +285,25 @@ namespace Azure { namespace Storage { namespace Blobs {
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    BlobBatch CreateBatch();
+
+    Response<Models::SubmitBlobBatchResult> SubmitBatch(
+        const BlobBatch& batch,
+        const SubmitBlobBatchOptions& options = SubmitBlobBatchOptions(),
+        const Core::Context& context = Core::Context()) const;
+
   private:
     Azure::Core::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Nullable<std::string> m_encryptionScope;
 
-    explicit BlobContainerClient(
-        Azure::Core::Url blobContainerUrl,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        Azure::Nullable<EncryptionKey> customerProvidedKey,
-        Azure::Nullable<std::string> encryptionScope)
-        : m_blobContainerUrl(std::move(blobContainerUrl)), m_pipeline(std::move(pipeline)),
-          m_customerProvidedKey(std::move(customerProvidedKey)),
-          m_encryptionScope(std::move(encryptionScope))
-    {
-    }
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchRequestPipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchSubrequestPipeline;
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
-    friend class BlobBatchClient;
+    friend class BlobBatch;
   };
 
 }}} // namespace Azure::Storage::Blobs
