@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Keyvault 7.3 support added for Keys.
+- Keyvault 7.3 support added for Keys. 
 
 ## 4.2.0 (2021-10-05)
 
