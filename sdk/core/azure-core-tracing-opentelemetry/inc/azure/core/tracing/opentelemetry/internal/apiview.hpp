@@ -5,8 +5,10 @@
 
 namespace opentelemetry {
 namespace nostd {
-  template <typename> struct shared_ptr;
-}
+  template <typename> struct shared_ptr
+  {
+  };
+} // namespace nostd
 namespace trace {
   struct TracerProvider;
   struct Provider
