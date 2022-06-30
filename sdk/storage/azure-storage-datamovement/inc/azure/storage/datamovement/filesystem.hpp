@@ -15,7 +15,6 @@ namespace Azure { namespace Storage { namespace _internal {
   void CreateDirectory(const std::string& path);
   void Rename(const std::string& oldPath, const std::string& newPath);
   void Remove(const std::string& path);
-  std::string GetParentDir(const std::string& blobPath);
   int64_t GetFileSize(const std::string& path);
 
   class DirectoryIterator final {

@@ -30,7 +30,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <algorithm>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 namespace Azure { namespace Storage { namespace _internal {
@@ -114,17 +113,6 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to get file size.");
     }
     return (static_cast<uint64_t>(info.nFileSizeHigh) << 32) | info.nFileSizeLow;
-  }
-
-  std::string GetParentDir(const std::string& blobPath)
-  {
-    auto pos = blobPath.find_last_of('/');
-    if (-1 != pos)
-    {
-      return blobPath.substr(0, pos);
-    }
-
-    return "";
   }
 
   struct ListDirectoryContext
@@ -337,20 +325,6 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       remove(path.data());
     }
-  }
-
-  void AzurePathToLocalpath(std::string& azurePath)
-  {}
-
-  std::string GetParentDir(const std::string& blobPath)
-  {
-    auto pos = blobPath.find_last_of('\\');
-    if (-1 != pos)
-    {
-      return blobPath.substr(0, pos);
-    }
-
-    return "";
   }
 
   int64_t GetFileSize(const std::string& path)

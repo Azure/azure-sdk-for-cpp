@@ -416,7 +416,9 @@ namespace Azure { namespace Storage {
           _internal::JoinPath(jobPlanDir, "job_info"), std::fstream::in | std::fstream::binary);
       fin.exceptions(std::fstream::failbit | std::fstream::badbit);
       int32_t planFileVersion = ReadFixedInt<int32_t>(fin);
-      AZURE_ASSERT(planFileVersion == g_PlanFileVersion); // Assert may break the whole process, should report error here.
+      AZURE_ASSERT(
+          planFileVersion
+          == g_PlanFileVersion); // Assert may break the whole process, should report error here.
       fin.seekg(g_JobInfoFileHeaderSize);
       auto serializedJobInfo = ReadString(fin);
       auto object = Core::Json::_internal::json::parse(serializedJobInfo);

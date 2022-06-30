@@ -8,10 +8,10 @@
 
 #include <azure/core/azure_assert.hpp>
 
+#include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
-#include "azure/storage/blobs/blob_options.hpp"
 
 namespace Azure { namespace Storage { namespace _detail {
 
@@ -20,6 +20,32 @@ namespace Azure { namespace Storage { namespace _detail {
     constexpr size_t g_DownloadBlockSize = 8 * 1024 * 1024;
     constexpr size_t g_NumSubtasksPerPart = 50000;
     constexpr size_t g_MaxTasksGenerated = 1000000;
+    constexpr int32_t g_BlobListPageSize = 250;
+
+    std::string GetParentDir(const std::string& blobPath)
+    {
+      auto pos = blobPath.find_last_of("/\\");
+      if (std::string::npos != pos)
+      {
+        return blobPath.substr(0, pos);
+      }
+
+      return "";
+    }
+
+    void CreateDirectoryIfNotExists(const std::string& dirPath)
+    {
+      if (!_internal::IsDirectory(dirPath))
+      {
+        const auto parent = GetParentDir(dirPath);
+        if (!parent.empty())
+        {
+          CreateDirectoryIfNotExists(parent);
+        }
+
+        _internal::CreateDirectory(dirPath);
+      }
+    }
   } // namespace
 
   void JobPlan::GeneratePartImpl(const PartGeneratorModel& gen)
@@ -132,11 +158,7 @@ namespace Azure { namespace Storage { namespace _detail {
       std::string currentDirectory = rootDirectory;
 
       partGens.push_back(gen);
-      if (!_internal::IsDirectory(currentDirectory))
-      {
-        _internal::CreateDirectory(currentDirectory);
-        // TODO: error handling
-      }
+      CreateDirectoryIfNotExists(currentDirectory);
 
       do
       {
@@ -144,28 +166,28 @@ namespace Azure { namespace Storage { namespace _detail {
         partGens.pop_back();
 
         Blobs::ListBlobsOptions options;
-        options.Prefix = m_model.Source.m_blobFolder.Value().GetFolderPath();
-        options.PageSizeHint = 250;
+        std::string prefix = m_model.Source.m_blobFolder.Value().m_folderPath;
+        if ((prefix != "") && (prefix.at(prefix.size() - 1) != '/'))
+        {
+          prefix.append("/");
+        }
+
+        options.Prefix = std::move(prefix);
+        options.PageSizeHint = g_BlobListPageSize;
         options.ContinuationToken = std::move(currGen.ContinuationToken);
 
         std::vector<_internal::Task> subtasks;
-        auto result = m_model.Source.m_blobFolder.Value().GetContainerClient().ListBlobs(options);
+        auto result = m_model.Source.m_blobFolder.Value().m_blobContainerClient.ListBlobs(options);
         for (auto blobItem : result.Blobs)
         {
           TaskModel task;
           const std::string blobName = blobItem.Name.substr(options.Prefix->length());
           std::string localFileName = blobName;
 
-          std::string parentDir
-              = _internal::JoinPath(rootDirectory, _internal::GetParentDir(localFileName));
-          if (parentDir.compare(currentDirectory) != 0)
+          std::string parentDir = _internal::JoinPath(rootDirectory, GetParentDir(localFileName));
+          if (parentDir != currentDirectory)
           {
-            if (!_internal::IsDirectory(parentDir))
-            {
-              _internal::CreateDirectory(parentDir);
-              // TODO: error handling
-            }
-
+            CreateDirectoryIfNotExists(parentDir); // TODO: error handling
             currentDirectory = std::move(parentDir);
           }
 

@@ -42,9 +42,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       std::atomic<int> NumDownloadedChunks{0};
       std::atomic<bool> Failed{false};
       std::mutex m_writeChunksMutex;
-      bool writeTaskRunning{false};
+      bool m_writeTaskRunning{false};
       std::map<int64_t, std::unique_ptr<WriteChunk>> m_chunksToWrite;
-      int64_t OffsetToWrite{0};
+      int64_t m_offsetToWrite{0};
     };
 
     std::shared_ptr<TaskContext> Context;
@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     using TaskBase::TaskBase;
 
     std::shared_ptr<DownloadRangeToMemoryTask::TaskContext> Context;
-    std::vector<std::unique_ptr<WriteChunk>> chunksToWrite;
+    std::vector<std::unique_ptr<WriteChunk>> m_chunksToWrite;
 
     void Execute() noexcept override;
   };
