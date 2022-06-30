@@ -50,4 +50,6 @@ foreach ($incDir in $AllLibIncDirs) {
     $CmdLine += " -I " + $incDir
 }
 
+$CmdLine += " -D_azure_APIVIEW"
+
 $CmdLine
