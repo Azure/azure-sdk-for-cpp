@@ -31,25 +31,31 @@ namespace Azure { namespace Core { namespace Tracing {
       virtual std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
           std::string const& name,
           std::string const& version) const = 0;
+
+      virtual ~TracerProviderImpl() = default;
     };
 
-	/** 
-    * @brief Returns a TracerProviderImpl from a TracerProvider object.
-    * 
-    * @param provider The TracerProvider object.
-    * @returns A TracerProviderImpl implementation.
-    */
-    std::shared_ptr<TracerProviderImpl> TracerImplFromTracer(
-        std::shared_ptr<TracerProvider> const& provider);
+    struct TracerProviderImplGetter
+    {
+      /**
+       * @brief Returns a TracerProviderImpl from a TracerProvider object.
+       *
+       * @param provider The TracerProvider object.
+       * @returns A TracerProviderImpl implementation.
+       */
+      static std::shared_ptr<TracerProviderImpl> TracerImplFromTracer(
+          std::shared_ptr<TracerProvider> const& provider);
+    };
 
   } // namespace _internal
 
   /**
    * @brief Trace Provider - factory for creating Tracer objects.
    */
-  class TracerProvider : _internal::TracerProviderImpl {
+  class TracerProvider : private _internal::TracerProviderImpl {
     // Marked TracerImplFromTracer as friend so it can access private members in the class.
-    friend std::shared_ptr<TracerProviderImpl> _internal::TracerImplFromTracer(
+    friend std::shared_ptr<TracerProviderImpl>
+    _internal::TracerProviderImplGetter::TracerImplFromTracer(
         std::shared_ptr<TracerProvider> const&);
   };
 

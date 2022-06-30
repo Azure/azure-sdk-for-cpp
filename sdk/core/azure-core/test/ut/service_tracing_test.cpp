@@ -18,13 +18,11 @@ TEST(TracingContextFactory, ServiceTraceEnums)
     spanKind = SpanKind::Internal;
     spanKind = SpanKind::Producer;
     spanKind = Azure::Core::Tracing::_internal::SpanKind::Server;
-    std::string kindValue = spanKind.ToString();
   }
   {
     SpanStatus spanStatus = SpanStatus::Unset;
     spanStatus = SpanStatus::Error;
     spanStatus = SpanStatus::Ok;
-    std::string statusValue = spanStatus.ToString();
   }
   Azure::Core::Tracing::_internal::CreateSpanOptions options;
   options.Kind = SpanKind::Internal;

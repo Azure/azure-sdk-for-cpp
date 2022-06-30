@@ -9,12 +9,11 @@
 #pragma once
 
 #include "azure/core/datetime.hpp"
-#include "azure/core/internal/extendable_enumeration.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/tracing/tracing.hpp"
+#include <map>
 #include <memory>
 #include <string>
-#include <map>
 
 // Forward declare Azure::Core::Http::Request to resolve an include file ordering problem.
 namespace Azure { namespace Core { namespace Http {
@@ -114,59 +113,54 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   /** @brief The Type of Span.
    */
-  class SpanKind final : public Azure::Core::_internal::ExtendableEnumeration<SpanKind> {
-  public:
-    explicit SpanKind(std::string const& kind) : ExtendableEnumeration(kind) {}
-    SpanKind() = default;
-
+  enum class SpanKind : int
+  {
     /**
      * @brief Represents an "Internal" operation.
      *
      */
-    AZ_CORE_DLLEXPORT const static SpanKind Internal;
+    Internal,
     /**
      * @brief Represents a request to a remote service.
      *
      */
-    AZ_CORE_DLLEXPORT const static SpanKind Client;
+    Client,
     /**
      * @brief Represents a span covering the server side handling of an API call.
      *
      */
-    AZ_CORE_DLLEXPORT const static SpanKind Server;
+    Server,
     /**
      * @brief Represents the initiator of an asynchronous request.
      *
      */
-    AZ_CORE_DLLEXPORT const static SpanKind Producer;
+    Producer,
     /**
      * @brief Represents a span which describes a child of a producer request.
      *
      */
-    AZ_CORE_DLLEXPORT const static SpanKind Consumer;
+    Consumer,
   };
 
   /**
    * @brief Represents the status of a span.
    */
-  class SpanStatus final : public Azure::Core::_internal::ExtendableEnumeration<SpanStatus> {
-
-  public:
-    explicit SpanStatus(std::string const& status) : ExtendableEnumeration(status) {}
-    SpanStatus() = default;
+  enum class SpanStatus : int
+  {
 
     /**
      * @brief The default status of a span.
      */
-    AZ_CORE_DLLEXPORT const static SpanStatus Unset;
+    Unset,
     /**
      * @brief The operation has completed successfully.
      */
-    AZ_CORE_DLLEXPORT const static SpanStatus Ok;
+    Ok,
     /**
      * @brief The operation contains an error.
      */
-    AZ_CORE_DLLEXPORT const static SpanStatus Error;
+    Error,
+
   };
 
   /**
@@ -177,7 +171,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     /**
      * @brief Signals that the span has now ended.
      */
-    virtual void End(Azure::Nullable<Azure::DateTime> endTime = {}) = 0;
+    virtual void End(Azure::Nullable<Azure::DateTime> endTime) = 0;
 
     /**
      * @brief Adds a set of attributes to the span.
@@ -236,6 +230,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * add required headers to the HTTP Request.
      */
     virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) = 0;
+
+    virtual ~Span() = default;
   };
 
   /**
@@ -283,5 +279,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         CreateSpanOptions const& options) const = 0;
 
     virtual std::unique_ptr<AttributeSet> CreateAttributeSet() const = 0;
+    virtual ~Tracer() = default;
   };
 }}}} // namespace Azure::Core::Tracing::_internal

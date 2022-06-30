@@ -88,7 +88,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       }
       else
       {
-        throw std::runtime_error("Unknown SpanOptions Kind: " + options.Kind.ToString());
+        throw std::runtime_error("Unknown SpanOptions Kind: " + std::to_string(static_cast<int>(options.Kind)));
       }
 
       if (options.ParentSpan)
@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       }
       else
       {
-        throw std::runtime_error("Unknown status code: " + status.ToString());
+        throw std::runtime_error("Unknown status code: " + std::to_string(static_cast<int>(status)));
       }
 
       m_span->SetStatus(statusCode, statusMessage);

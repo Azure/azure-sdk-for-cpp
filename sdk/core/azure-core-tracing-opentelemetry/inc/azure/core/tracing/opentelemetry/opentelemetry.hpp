@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
    * other Azure services.
    *
    */
-  class OpenTelemetryProvider : public Azure::Core::Tracing::TracerProvider {
+  class OpenTelemetryProvider final : public Azure::Core::Tracing::TracerProvider {
   private:
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
         std::string const& name,
@@ -41,6 +41,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         = opentelemetry::trace::Provider::GetTracerProvider());
 
   public:
+    /**
+     * @brief Create a new instance of an OpenTelemetryProvider.
+     *
+     * @param tracerProvider opentelemetry-cpp TracerProvider object.
+     *
+     * @returns a new OpenTelemetryProvider object
+     */
     static std::shared_ptr<OpenTelemetryProvider> Create(
         opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider
         = opentelemetry::trace::Provider::GetTracerProvider());

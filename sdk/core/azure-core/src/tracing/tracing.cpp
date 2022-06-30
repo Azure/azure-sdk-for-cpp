@@ -10,15 +10,6 @@
 
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
-  const SpanKind SpanKind::Internal("Internal");
-  const SpanKind SpanKind::Client("Client");
-  const SpanKind SpanKind::Consumer("Consumer");
-  const SpanKind SpanKind::Producer("Producer");
-  const SpanKind SpanKind::Server("Server");
-
-  const SpanStatus SpanStatus::Unset("Unset");
-  const SpanStatus SpanStatus::Ok("Ok");
-  const SpanStatus SpanStatus::Error("Error");
 
   const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
   const TracingAttributes TracingAttributes::ServiceRequestId("serviceRequestId");
@@ -30,7 +21,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   using Azure::Core::Context;
 
-  std::shared_ptr<TracerProviderImpl> TracerImplFromTracer(
+  std::shared_ptr<TracerProviderImpl> TracerProviderImplGetter::TracerImplFromTracer(
       std::shared_ptr<TracerProvider> const& provider)
   {
     const auto pointer = static_cast<TracerProvider*>(provider.get());

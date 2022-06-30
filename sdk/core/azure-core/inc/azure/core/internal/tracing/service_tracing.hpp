@@ -3,6 +3,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/internal/client_options.hpp"
+#include "azure/core/internal/extendable_enumeration.hpp"
 #include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/internal/tracing/tracing_impl.hpp"
 
@@ -46,7 +47,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     {
       if (m_span)
       {
-        m_span->End();
+        m_span->End({});
       }
     }
 
@@ -198,7 +199,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
               options.Telemetry.ApplicationId)),
           m_serviceTracer(
               options.Telemetry.TracingProvider
-                  ? Azure::Core::Tracing::_internal::TracerImplFromTracer(
+                  ? Azure::Core::Tracing::_internal::TracerProviderImplGetter::TracerImplFromTracer(
                         options.Telemetry.TracingProvider)
                         ->CreateTracer(serviceName, serviceVersion)
                   : nullptr)
