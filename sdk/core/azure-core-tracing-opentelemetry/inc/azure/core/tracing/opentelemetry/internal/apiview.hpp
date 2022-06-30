@@ -3,6 +3,9 @@
 
 #pragma once
 
+// This file is supposed to be included only when generating files for ApiView.
+// All the declarations here are only sufficient for the ApiView generation to not fail.
+
 namespace opentelemetry {
 namespace nostd {
   template <typename> struct shared_ptr
