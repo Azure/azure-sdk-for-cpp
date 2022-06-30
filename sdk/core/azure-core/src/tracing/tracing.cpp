@@ -10,7 +10,6 @@
 
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
-
   const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
   const TracingAttributes TracingAttributes::ServiceRequestId("serviceRequestId");
   const TracingAttributes TracingAttributes::HttpUserAgent("http.user_agent");
