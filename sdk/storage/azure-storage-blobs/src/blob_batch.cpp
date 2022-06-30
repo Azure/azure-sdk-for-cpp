@@ -332,7 +332,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       requestBody += "--" + boundary + "--" + LineEnding;
 
       request.SetHeader(_internal::HttpHeaderContentType, BatchContentTypePrefix + boundary);
-      dynamic_cast<_detail::StringBodyStream&>(*request.GetBodyStream())
+      static_cast<_detail::StringBodyStream&>(*request.GetBodyStream())
           = _detail::StringBodyStream(std::move(requestBody));
       request.SetHeader(
           _internal::HttpHeaderContentLength, std::to_string(request.GetBodyStream()->Length()));
