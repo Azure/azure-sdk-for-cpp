@@ -183,6 +183,16 @@ namespace Azure { namespace Storage { namespace Test {
       FAIL();
     }
 
+    // Partial failure
+    {
+      auto r1 = batch.SetBlobAccessTier(blobClient.GetUrl(), Blobs::Models::AccessTier::Hot);
+      auto r2 = batch.SetBlobAccessTier(
+          containerName, "BlobNameNotExists", Blobs::Models::AccessTier::Hot);
+      EXPECT_NO_THROW(containerClient.SubmitBatch(batch));
+      EXPECT_NO_THROW(r1.GetResponse());
+      EXPECT_THROW(r2.GetResponse(), StorageException);
+    }
+
     // Mixed operations
     auto batch2 = containerClient.CreateBatch();
     batch2.SetBlobAccessTier(blobClient.GetUrl(), Blobs::Models::AccessTier::Cool);
