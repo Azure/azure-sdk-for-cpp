@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobTransferManagerTest, DirectoryUpload_Download_LIVEONLY_)
+  TEST_F(BlobTransferManagerTest, DirectoryUploadDownload_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);

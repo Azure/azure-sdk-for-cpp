@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace _detail {
         return blobPath.substr(0, pos);
       }
 
-      return "";
+      return std::string();
     }
 
     void CreateDirectoryIfNotExists(const std::string& dirPath)
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
         Blobs::ListBlobsOptions options;
         std::string prefix = m_model.Source.m_blobFolder.Value().m_folderPath;
-        if ((prefix != "") && (prefix.at(prefix.size() - 1) != '/'))
+        if (!prefix.empty() && (prefix.back() != '/'))
         {
           prefix.append("/");
         }
