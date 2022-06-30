@@ -591,7 +591,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   DeferredResponse<Models::SetBlobAccessTierResult> BlobBatch::SetBlobAccessTier(
       const std::string& blobContainerName,
       const std::string& blobName,
-      Models::AccessTier tier,
+      Models::AccessTier accessTier,
       const SetBlobAccessTierOptions& options)
   {
     auto blobUrl = m_url;
@@ -599,7 +599,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     blobUrl.AppendPath(blobName);
     auto op = std::make_shared<SetBlobAccessTierSubrequest>();
     op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
-    op->Tier = tier;
+    op->Tier = accessTier;
     op->Options = options;
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
@@ -609,12 +609,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   DeferredResponse<Models::SetBlobAccessTierResult> BlobBatch::SetBlobAccessTier(
       const std::string& blobUrl,
-      Models::AccessTier tier,
+      Models::AccessTier accessTier,
       const SetBlobAccessTierOptions& options)
   {
     auto op = std::make_shared<SetBlobAccessTierSubrequest>();
     op->Client = GetBlobClientForSubrequest(Core::Url(blobUrl));
-    op->Tier = tier;
+    op->Tier = accessTier;
     op->Options = options;
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));

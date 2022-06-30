@@ -285,8 +285,24 @@ namespace Azure { namespace Storage { namespace Blobs {
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Creates a new batch object to collect subrequests that can be submitted together via
+     * SubmitBatch.
+     *
+     * @return A new batch object.
+     */
     BlobBatch CreateBatch();
 
+    /**
+     * @brief Submits a batch of subrequests.
+     *
+     * @param batch The batch object containing subrequests.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A SubmitBlobBatchResult.
+     * @remark This function will throw only if there's something wrong with the batch request
+     * (parent request).
+     */
     Response<Models::SubmitBlobBatchResult> SubmitBatch(
         const BlobBatch& batch,
         const SubmitBlobBatchOptions& options = SubmitBlobBatchOptions(),

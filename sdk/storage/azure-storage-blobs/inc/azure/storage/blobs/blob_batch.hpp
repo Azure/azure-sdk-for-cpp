@@ -70,26 +70,67 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options);
   } // namespace _detail
 
+  /**
+   * @brief A batch object allows you to batch multiple operations in a single request via
+   * #Azure::Storage::Blobs::BlobServiceClient::SubmitBatch or
+   * #Azure::Storage::Blobs::BlobContainerClient::SubmitBatch.
+   */
   class BlobBatch final {
   public:
+    /**
+     * @brief Adds a delete subrequest into batch object.
+     *
+     * @param blobContainerName Container name of the blob to delete.
+     * @param blobName Blob name of the blob to delete.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
+     * is submitted.
+     */
     DeferredResponse<Models::DeleteBlobResult> DeleteBlob(
         const std::string& blobContainerName,
         const std::string& blobName,
         const DeleteBlobOptions& options = DeleteBlobOptions());
 
+    /**
+     * @brief Adds a delete subrequest into batch object.
+     *
+     * @param blobUrl Url of the blob to delete.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
+     * is submitted.
+     */
     DeferredResponse<Models::DeleteBlobResult> DeleteBlob(
         const std::string& blobUrl,
         const DeleteBlobOptions& options = DeleteBlobOptions());
 
+    /**
+     * @brief Adds a change tier subrequest into batch object.
+     *
+     * @param blobContainerName Container name of the blob to delete.
+     * @param blobName Blob name of the blob to delete.
+     * @param accessTier Indicates the tier to be set on the blob.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
+     * object is submitted.
+     */
     DeferredResponse<Models::SetBlobAccessTierResult> SetBlobAccessTier(
         const std::string& blobContainerName,
         const std::string& blobName,
-        Models::AccessTier tier,
+        Models::AccessTier accessTier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
 
+    /**
+     * @brief Adds a change tier subrequest into batch object.
+     *
+     * @param blobUrl Url of the blob to delete.
+     * @param accessTier Indicates the tier to be set on the blob.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
+     * object is submitted.
+     */
     DeferredResponse<Models::SetBlobAccessTierResult> SetBlobAccessTier(
         const std::string& blobUrl,
-        Models::AccessTier tier,
+        Models::AccessTier accessTier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
 
   private:
