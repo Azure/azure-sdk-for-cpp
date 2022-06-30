@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.2 (2022-06-30)
 
 ### Breaking Changes
 
-- The `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` type can only be instantiated via a factory method: `OpenTelemetryProvider::Create`.
-
-### Bugs Fixed
+- The `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` type can only be instantiated via a factory method: `OpenTelemetryProvider::Create()`.
 
 ### Other Changes
 
