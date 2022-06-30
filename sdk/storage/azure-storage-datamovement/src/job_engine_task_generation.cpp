@@ -8,6 +8,7 @@
 
 #include <azure/core/azure_assert.hpp>
 
+#include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
@@ -19,6 +20,32 @@ namespace Azure { namespace Storage { namespace _detail {
     constexpr size_t g_DownloadBlockSize = 8 * 1024 * 1024;
     constexpr size_t g_NumSubtasksPerPart = 50000;
     constexpr size_t g_MaxTasksGenerated = 1000000;
+    constexpr int32_t g_BlobListPageSize = 250;
+
+    std::string GetParentDir(const std::string& blobPath)
+    {
+      auto pos = blobPath.find_last_of("/\\");
+      if (std::string::npos != pos)
+      {
+        return blobPath.substr(0, pos);
+      }
+
+      return std::string();
+    }
+
+    void CreateDirectoryIfNotExists(const std::string& dirPath)
+    {
+      if (!_internal::IsDirectory(dirPath))
+      {
+        const auto parent = GetParentDir(dirPath);
+        if (!parent.empty())
+        {
+          CreateDirectoryIfNotExists(parent);
+        }
+
+        _internal::CreateDirectory(dirPath);
+      }
+    }
   } // namespace
 
   void JobPlan::GeneratePartImpl(const PartGeneratorModel& gen)
@@ -127,7 +154,59 @@ namespace Azure { namespace Storage { namespace _detail {
     }
     else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlobFolder)
     {
-      AZURE_NOT_IMPLEMENTED();
+      const std::string rootDirectory = _internal::PathFromUrl(m_model.Destination.m_url);
+      std::string currentDirectory = rootDirectory;
+
+      partGens.push_back(gen);
+      CreateDirectoryIfNotExists(currentDirectory);
+
+      do
+      {
+        PartGeneratorModel currGen = std::move(partGens.back());
+        partGens.pop_back();
+
+        Blobs::ListBlobsOptions options;
+        std::string prefix = m_model.Source.m_blobFolder.Value().m_folderPath;
+        if (!prefix.empty() && (prefix.back() != '/'))
+        {
+          prefix.append("/");
+        }
+
+        options.Prefix = std::move(prefix);
+        options.PageSizeHint = g_BlobListPageSize;
+        options.ContinuationToken = std::move(currGen.ContinuationToken);
+
+        std::vector<_internal::Task> subtasks;
+        auto result = m_model.Source.m_blobFolder.Value().m_blobContainerClient.ListBlobs(options);
+        for (auto blobItem : result.Blobs)
+        {
+          TaskModel task;
+          const std::string blobName = blobItem.Name.substr(options.Prefix->length());
+          std::string localFileName = blobName;
+
+          std::string parentDir = _internal::JoinPath(rootDirectory, GetParentDir(localFileName));
+          if (parentDir != currentDirectory)
+          {
+            CreateDirectoryIfNotExists(parentDir); // TODO: error handling
+            currentDirectory = std::move(parentDir);
+          }
+
+          task.Source = _internal::JoinPath(currGen.Source, blobName);
+          task.Destination = _internal::JoinPath(currGen.Destination, localFileName);
+          task.ObjectSize = blobItem.BlobSize;
+          task.ChunkSize = g_DownloadBlockSize;
+          task.NumSubtasks = static_cast<int32_t>(
+              (blobItem.BlobSize + g_DownloadBlockSize - 1) / g_DownloadBlockSize);
+          task.NumSubtasks = std::max(task.NumSubtasks, 1);
+          taskGenerated(std::move(task));
+        }
+
+        if (result.NextPageToken.HasValue())
+        {
+          currGen.ContinuationToken = std::move(result.NextPageToken.Value());
+          partGens.push_back(std::move(currGen));
+        }
+      } while (!partGens.empty() && totalNumNewSubtasks < g_MaxTasksGenerated);
     }
     else
     {
