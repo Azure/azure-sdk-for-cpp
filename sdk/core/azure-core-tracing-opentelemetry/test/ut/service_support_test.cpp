@@ -300,8 +300,8 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
   //
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
+    auto provider(
+        Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     Azure::Core::Context rootContext;
     rootContext.SetTracerProvider(provider);
@@ -310,8 +310,8 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
 
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
+    auto provider(
+        Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     // Create a serviceTrace and span using a provider specified in the ClientOptions.
     {
@@ -349,8 +349,8 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
 {
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
+    auto provider(
+        Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
 
@@ -392,8 +392,8 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
 {
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
+    auto provider(
+        Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
 
@@ -441,8 +441,8 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 {
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
+    auto provider(
+        Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
 
@@ -662,8 +662,8 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
 {
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
+    auto provider(
+        Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     {
       // Call a simple API and verify telemetry is generated.
