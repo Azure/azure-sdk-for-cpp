@@ -10,6 +10,7 @@
 
 ### Other Changes
 
+- Added prototypes and initial service support for Distributed Tracing.
 ## 1.7.0-beta.1 (2022-06-02)
 
 ### Features Added
