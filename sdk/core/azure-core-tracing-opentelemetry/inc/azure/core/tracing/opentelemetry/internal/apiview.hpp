@@ -13,7 +13,7 @@ namespace trace {
   struct TracerProvider;
   struct Provider
   {
-    nostd::shared_ptr<TracerProvider> GetTracerProvider();
+    nostd::shared_ptr<TracerProvider> GetTracerProvider() { return {}; }
   };
 } // namespace trace
 } // namespace opentelemetry
