@@ -12,6 +12,11 @@ namespace Azure { namespace Storage {
   namespace _internal {
     class TransferEnd;
   }
+
+  namespace _detail {
+    struct JobPlan;
+  }
+
   namespace Blobs {
 
     class BlobFolder final {
@@ -29,6 +34,7 @@ namespace Azure { namespace Storage {
       std::string m_folderPath;
 
       friend class _internal::TransferEnd;
+      friend struct Storage::_detail::JobPlan;
     };
 
   } // namespace Blobs

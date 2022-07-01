@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <azure/storage/blobs.hpp>
+#include <azure/storage/datamovement/blob_folder.hpp>
 #include <azure/storage/datamovement/blob_transfer_manager.hpp>
 #include <azure/storage/datamovement/filesystem.hpp>
 
@@ -38,6 +39,189 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(ReadFile(tempFilename), content);
       DeleteFile(tempFilename);
     }
+    containerClient.DeleteIfExists();
+  }
+
+  TEST_F(BlobTransferManagerTest, SingleDownloadPauseResume_LIVEONLY_)
+  {
+    const auto testName = GetTestNameLowerCase();
+    auto blobServiceClient = GetClientForTest(testName);
+    const auto containerName = GetContainerValidName();
+    auto containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+    containerClient.CreateIfNotExists();
+    auto blobClient = containerClient.GetBlobClient(testName);
+
+    ResumeJobOptions resumeOptions;
+    {
+      auto parsedConnectionString
+          = _internal::ParseConnectionString(StandardStorageConnectionString());
+      resumeOptions.SourceCredential.SharedKeyCredential = parsedConnectionString.KeyCredential;
+    }
+
+    const std::string tempFilename = "localfile" + testName;
+    const std::string backupFilename = tempFilename + ".bk";
+    constexpr size_t fileSize = static_cast<size_t>(256_MB);
+
+    if (_internal::PathExists(tempFilename))
+    {
+      _internal::Remove(tempFilename);
+    }
+    {
+      int64_t serviceFileSize = -1;
+      try
+      {
+        serviceFileSize = blobClient.GetProperties().Value.BlobSize;
+      }
+      catch (StorageException&)
+      {
+      }
+      if (!(serviceFileSize == fileSize && _internal::IsRegularFile(backupFilename)
+            && _internal::GetFileSize(backupFilename) == fileSize))
+      {
+        WriteFile(backupFilename, RandomBuffer(fileSize));
+        Blobs::UploadBlockBlobFromOptions options;
+        options.TransferOptions.Concurrency = 32;
+        options.TransferOptions.SingleUploadThreshold = 0;
+        blobClient.AsBlockBlobClient().UploadFrom(backupFilename, options);
+      }
+    }
+
+    StorageTransferManagerOptions options;
+    options.NumThreads = 2;
+    std::unique_ptr<Blobs::BlobTransferManager> m
+        = std::make_unique<Blobs::BlobTransferManager>(options);
+    auto job = m->ScheduleDownload(blobClient, tempFilename);
+
+    bool atLeasePausedOnce = false;
+    bool atLeaseDestructedOnce = false;
+    for (int i = 0; i < 10; ++i)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10) * (2 << i));
+      if (i % 2 == 0)
+      {
+        m.reset();
+        m = std::make_unique<Blobs::BlobTransferManager>(options);
+        atLeaseDestructedOnce = true;
+      }
+      else
+      {
+        try
+        {
+          m->PauseJob(job.Id);
+          atLeasePausedOnce = true;
+        }
+        catch (std::exception&)
+        {
+          break;
+        }
+      }
+      auto status = job.WaitHandle.get();
+      EXPECT_TRUE(status == JobStatus::Succeeded || status == JobStatus::Paused);
+      if (status == JobStatus::Succeeded)
+      {
+        break;
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      job = m->ResumeJob(job.Id, resumeOptions);
+    }
+    EXPECT_TRUE(atLeasePausedOnce);
+    EXPECT_TRUE(atLeaseDestructedOnce);
+
+    auto jobStatus = job.WaitHandle.get();
+    EXPECT_EQ(jobStatus, JobStatus::Succeeded);
+    EXPECT_THROW(m->PauseJob(job.Id), std::exception);
+
+    EXPECT_EQ(ReadFile(tempFilename), ReadFile(backupFilename));
+    DeleteFile(tempFilename);
+    DeleteFile(backupFilename);
+    containerClient.DeleteIfExists();
+  }
+
+  TEST_F(BlobTransferManagerTest, DirectoryDownload_LIVEONLY_)
+  {
+    const auto testName = GetTestNameLowerCase();
+    auto blobServiceClient = GetClientForTest(testName);
+    const auto containerName = GetContainerValidName();
+    auto containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+    containerClient.CreateIfNotExists();
+    const std::string localDir = "dir_l1";
+    const std::string serviceDir = "folder1";
+    auto blobFolder = Blobs::BlobFolder(containerClient, serviceDir);
+
+    std::vector<std::string> files;
+    CreateDir("dir_l1");
+    WriteFile("dir_l1/file1", RandomBuffer(static_cast<size_t>(5_MB)));
+    WriteFile("dir_l1/file2", RandomBuffer(static_cast<size_t>(213_KB)));
+    WriteFile("dir_l1/file3", RandomBuffer(0));
+    CreateDir("dir_l1/dir_l2");
+    WriteFile("dir_l1/dir_l2/file4", RandomBuffer(123));
+    CreateDir("dir_l1/dir_l2/dir_l3");
+    CreateDir("dir_l1/dir_l2/dir_l3/dir_l4");
+    CreateDir("dir_l1/dir_l2/dir_l3/dir_l4/dir_l5");
+    CreateDir("dir_l1/dir_l2_2");
+    CreateDir("dir_l1/dir_l2_2/dir_l3_2");
+    WriteFile("dir_l1/dir_l2_2/dir_l3_2/file4", RandomBuffer(static_cast<size_t>(10_MB)));
+    files.push_back("file1");
+    files.push_back("file2");
+    files.push_back("file3");
+    files.push_back("dir_l2/file4");
+    files.push_back("dir_l2_2/dir_l3_2/file4");
+
+    Blobs::BlobTransferManager m;
+    auto job = m.ScheduleUploadDirectory(localDir, blobFolder);
+    auto jobStatus = job.WaitHandle.get();
+    ASSERT_EQ(jobStatus, JobStatus::Succeeded);
+
+    const std::string destDir = "dir_dest";
+
+    auto downloadJob = m.ScheduleDownloadDirectory(blobFolder, destDir);
+    EXPECT_FALSE(downloadJob.Id.empty());
+    EXPECT_EQ(downloadJob.SourceUrl, blobFolder.GetUrl());
+    EXPECT_FALSE(downloadJob.DestinationUrl.empty());
+    EXPECT_EQ(downloadJob.Type, TransferType::DirectoryDownload);
+
+    auto downloadJobStatus = downloadJob.WaitHandle.get();
+    EXPECT_EQ(downloadJobStatus, JobStatus::Succeeded);
+
+    for (const auto& f : files)
+    {
+      EXPECT_EQ(ReadFile(localDir + "/" + f), ReadFile(destDir + "/" + f));
+    }
+
+    std::vector<std::string> destFiles;
+    {
+      std::queue<std::string> dirQueue;
+      dirQueue.push(destDir);
+
+      while (!dirQueue.empty())
+      {
+        const std::string currentDir = dirQueue.front();
+        _internal::DirectoryIterator currentIter(currentDir);
+        dirQueue.pop();
+
+        auto entry = currentIter.Next();
+        while (!entry.Name.empty())
+        {
+          if (!entry.IsDirectory)
+          {
+            std::string fileName = currentDir + "/" + entry.Name;
+            destFiles.emplace_back(fileName.substr(destDir.length() + 1));
+          }
+          else
+          {
+            dirQueue.push(currentDir + "/" + entry.Name);
+          }
+          entry = currentIter.Next();
+        }
+      }
+    }
+    std::sort(files.begin(), files.end());
+    std::sort(destFiles.begin(), destFiles.end());
+    EXPECT_EQ(files, destFiles);
+    DeleteDir(localDir);
+    DeleteDir(destDir);
     containerClient.DeleteIfExists();
   }
 

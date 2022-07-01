@@ -70,6 +70,19 @@ namespace Azure { namespace Storage {
       std::atomic<bool> m_stopped{false};
       std::atomic<size_t> m_numTasks{0};
 
+      void ReclaimAllocatedResource(const Task& t)
+      {
+        if (!t)
+        {
+          return;
+        }
+        if (t->MemoryGiveBack != 0)
+        {
+          m_memoryLeft.fetch_add(t->MemoryGiveBack);
+          m_pendingTasksCv.notify_one();
+        }
+      }
+
     private:
       void ReclaimProvisionedResource(const Task& t)
       {
@@ -80,19 +93,6 @@ namespace Azure { namespace Storage {
         if (t->MemoryCost != 0)
         {
           m_memoryLeft.fetch_add(t->MemoryCost);
-          m_pendingTasksCv.notify_one();
-        }
-      }
-
-      void ReclaimAllocatedResource(const Task& t)
-      {
-        if (!t)
-        {
-          return;
-        }
-        if (t->MemoryGiveBack != 0)
-        {
-          m_memoryLeft.fetch_add(t->MemoryGiveBack);
           m_pendingTasksCv.notify_one();
         }
       }

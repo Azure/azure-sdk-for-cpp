@@ -8,6 +8,7 @@
 
 #include <azure/core/azure_assert.hpp>
 
+#include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/datamovement/tasks/async_copy_blob_task.hpp"
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
@@ -20,6 +21,32 @@ namespace Azure { namespace Storage { namespace _detail {
     constexpr size_t g_DownloadBlockSize = 8 * 1024 * 1024;
     constexpr size_t g_NumSubtasksPerPart = 50000;
     constexpr size_t g_MaxTasksGenerated = 1000000;
+    constexpr int32_t g_ListBlobsPageSize = 250;
+
+    std::string GetParentDir(const std::string& blobPath)
+    {
+      auto pos = blobPath.find_last_of("/\\");
+      if (std::string::npos != pos)
+      {
+        return blobPath.substr(0, pos);
+      }
+
+      return std::string();
+    }
+
+    void CreateDirectoryIfNotExists(const std::string& dirPath)
+    {
+      if (!_internal::IsDirectory(dirPath))
+      {
+        const auto parent = GetParentDir(dirPath);
+        if (!parent.empty())
+        {
+          CreateDirectoryIfNotExists(parent);
+        }
+
+        _internal::CreateDirectory(dirPath);
+      }
+    }
   } // namespace
 
   void JobPlan::GeneratePartImpl(const PartGeneratorModel& gen)
@@ -127,6 +154,62 @@ namespace Azure { namespace Storage { namespace _detail {
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
       taskGenerated(std::move(task));
     }
+    else if (transferType == TransferType::DirectoryDownload)
+    {
+      const std::string rootDirectory = _internal::PathFromUrl(m_model.Destination.m_url);
+      std::string currentDirectory = rootDirectory;
+
+      partGens.push_back(gen);
+      CreateDirectoryIfNotExists(currentDirectory);
+
+      do
+      {
+        PartGeneratorModel currGen = std::move(partGens.back());
+        partGens.pop_back();
+
+        Blobs::ListBlobsOptions options;
+        std::string prefix = m_model.Source.m_blobFolder.Value().m_folderPath;
+        if (!prefix.empty() && (prefix.back() != '/'))
+        {
+          prefix.append("/");
+        }
+
+        options.Prefix = std::move(prefix);
+        options.PageSizeHint = g_ListBlobsPageSize;
+        options.ContinuationToken = std::move(currGen.ContinuationToken);
+
+        std::vector<_internal::Task> subtasks;
+        auto result = m_model.Source.m_blobFolder.Value().m_blobContainerClient.ListBlobs(options);
+        for (auto& blobItem : result.Blobs)
+        {
+          TaskModel task;
+          const std::string blobName = blobItem.Name.substr(options.Prefix->length());
+          std::string localFileName = blobName;
+
+          std::string parentDir = _internal::JoinPath(rootDirectory, GetParentDir(localFileName));
+          if (parentDir != currentDirectory)
+          {
+            CreateDirectoryIfNotExists(parentDir);
+            currentDirectory = std::move(parentDir);
+          }
+
+          task.Source = _internal::JoinPath(currGen.Source, blobName);
+          task.Destination = _internal::JoinPath(currGen.Destination, localFileName);
+          task.ObjectSize = blobItem.BlobSize;
+          task.ChunkSize = g_DownloadBlockSize;
+          task.NumSubtasks = static_cast<int32_t>(
+              (blobItem.BlobSize + g_DownloadBlockSize - 1) / g_DownloadBlockSize);
+          task.NumSubtasks = std::max(task.NumSubtasks, 1);
+          taskGenerated(std::move(task));
+        }
+
+        if (result.NextPageToken.HasValue())
+        {
+          currGen.ContinuationToken = std::move(result.NextPageToken.Value());
+          partGens.push_back(std::move(currGen));
+        }
+      } while (!partGens.empty() && totalNumNewSubtasks < g_MaxTasksGenerated);
+    }
     else if (transferType == TransferType::SingleCopy)
     {
       AZURE_ASSERT(gen.Source.empty());
@@ -136,12 +219,6 @@ namespace Azure { namespace Storage { namespace _detail {
       TaskModel task;
       task.NumSubtasks = 1;
       taskGenerated(std::move(task));
-    }
-    else if (
-        transferType == TransferType::DirectoryDownload
-        || transferType == TransferType::DirectoryCopy)
-    {
-      AZURE_NOT_IMPLEMENTED();
     }
     else
     {
@@ -230,6 +307,7 @@ namespace Azure { namespace Storage { namespace _detail {
 
         auto context = std::make_shared<Blobs::_detail::DownloadRangeToMemoryTask::TaskContext>(
             source, destination);
+        context->TransferEngine = m_rootTask->SharedStatus->TransferEngine;
         context->FileSize = taskModel.ObjectSize;
         context->NumChunks = static_cast<int>(
             (taskModel.ObjectSize + taskModel.ChunkSize - 1) / taskModel.ChunkSize);
@@ -254,6 +332,10 @@ namespace Azure { namespace Storage { namespace _detail {
               _internal::TaskType::NetworkDownload);
           task->Context = context;
           task->Offset = i * taskModel.ChunkSize;
+          if (context->OffsetToWrite == -1)
+          {
+            context->OffsetToWrite = task->Offset;
+          }
           task->Length = static_cast<size_t>(
               std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize));
           task->MemoryCost = task->Length;

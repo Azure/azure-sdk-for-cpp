@@ -358,12 +358,6 @@ namespace Azure { namespace Storage {
 
     void JobEngine::ProcessMessage(EngineOperation& op)
     {
-      struct DummyTask final : public Storage::_internal::TaskBase
-      {
-        using TaskBase::TaskBase;
-        void Execute() noexcept override { AZURE_UNREACHABLE_CODE(); }
-      };
-
       if (op.Type == decltype(op.Type)::CreateJob)
       {
         JobPlan::CreateJobPlan(std::move(op.Model), _internal::JoinPath(m_plansDir, op.JobId));
@@ -402,7 +396,8 @@ namespace Azure { namespace Storage {
           {
             sharedStatus->HasSuccess = true;
           }
-          existingJobPlan.m_rootTask = std::make_unique<DummyTask>(_internal::TaskType::Other);
+          existingJobPlan.m_rootTask
+              = std::make_unique<_internal::DummyTask>(_internal::TaskType::Other);
           existingJobPlan.m_rootTask->SharedStatus = sharedStatus;
           properties.Type = _internal::JobModel::DeduceTransferType(existingJobPlan.m_model);
           properties.SourceUrl = _internal::RemoveSasToken(existingJobPlan.m_model.Source.m_url);

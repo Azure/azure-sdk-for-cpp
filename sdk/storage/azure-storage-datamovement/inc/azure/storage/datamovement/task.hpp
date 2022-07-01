@@ -67,5 +67,10 @@ namespace Azure { namespace Storage {
 
     using Task = std::unique_ptr<TaskBase>;
 
+    struct DummyTask final : public Storage::_internal::TaskBase
+    {
+      using TaskBase::TaskBase;
+      void Execute() noexcept override { AZURE_UNREACHABLE_CODE(); }
+    };
   } // namespace _internal
 }} // namespace Azure::Storage
