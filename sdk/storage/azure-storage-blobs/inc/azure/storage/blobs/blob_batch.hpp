@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Adds a delete subrequest into batch object.
      *
      * @param blobContainerName Container name of the blob to delete.
-     * @param blobName Blob name of the blob to delete.
+     * @param blobName Name of the blob to delete.
      * @param options Optional parameters to execute the delete operation.
      * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
      * is submitted.
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Adds a change tier subrequest into batch object.
      *
      * @param blobContainerName Container name of the blob to delete.
-     * @param blobName Blob name of the blob to delete.
+     * @param blobName Name of the blob to delete.
      * @param accessTier Indicates the tier to be set on the blob.
      * @param options Optional parameters to execute the delete operation.
      * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Adds a delete subrequest into batch object.
      *
-     * @param blobName Blob name of the blob to delete.
+     * @param blobName Name of the blob to delete.
      * @param options Optional parameters to execute the delete operation.
      * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
      * is submitted.
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Adds a change tier subrequest into batch object.
      *
-     * @param blobName Blob name of the blob to delete.
+     * @param blobName Name of the blob to delete.
      * @param accessTier Indicates the tier to be set on the blob.
      * @param options Optional parameters to execute the delete operation.
      * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
