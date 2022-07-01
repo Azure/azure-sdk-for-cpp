@@ -9,7 +9,8 @@
 
 namespace Azure { namespace Storage {
   namespace Blobs {
-    class BlobBatch;
+    class BlobServiceBatch;
+    class BlobContainerBatch;
   }
   /**
    * @brief Base type for a deferred response.
@@ -37,6 +38,7 @@ namespace Azure { namespace Storage {
   private:
     std::function<Response<T>()> m_func;
 
-    friend class Blobs::BlobBatch;
+    friend class Blobs::BlobServiceBatch;
+    friend class Blobs::BlobContainerBatch;
   };
 }} // namespace Azure::Storage

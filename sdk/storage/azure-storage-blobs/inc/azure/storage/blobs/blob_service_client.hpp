@@ -13,7 +13,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  class BlobBatch;
+  class BlobServiceBatch;
 
   /**
    * The BlobServiceClient allows you to manipulate Azure Storage service resources and blob
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new batch object.
      */
-    BlobBatch CreateBatch();
+    BlobServiceBatch CreateBatch();
 
     /**
      * @brief Submits a batch of subrequests.
@@ -264,7 +264,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * (parent request).
      */
     Response<Models::SubmitBlobBatchResult> SubmitBatch(
-        const BlobBatch& batch,
+        const BlobServiceBatch& batch,
         const SubmitBlobBatchOptions& options = SubmitBlobBatchOptions(),
         const Core::Context& context = Core::Context()) const;
 
@@ -277,6 +277,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchRequestPipeline;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchSubrequestPipeline;
 
-    friend class BlobBatch;
+    friend class BlobServiceBatch;
   };
 }}} // namespace Azure::Storage::Blobs

@@ -12,7 +12,7 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   class BlobLeaseClient;
-  class BlobBatch;
+  class BlobContainerBatch;
 
   /**
    * The BlobContainerClient allows you to manipulate Azure Storage containers and their
@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new batch object.
      */
-    BlobBatch CreateBatch();
+    BlobContainerBatch CreateBatch();
 
     /**
      * @brief Submits a batch of subrequests.
@@ -304,7 +304,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * (parent request).
      */
     Response<Models::SubmitBlobBatchResult> SubmitBatch(
-        const BlobBatch& batch,
+        const BlobContainerBatch& batch,
         const SubmitBlobBatchOptions& options = SubmitBlobBatchOptions(),
         const Core::Context& context = Core::Context()) const;
 
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
-    friend class BlobBatch;
+    friend class BlobContainerBatch;
   };
 
 }}} // namespace Azure::Storage::Blobs
