@@ -6,11 +6,9 @@
 
 - Keyvault 7.3 support added for Certificates.
 
-## 4.0.0 (2022-06-07)
-
 ### Breaking Changes
 
-- Renamed `keyvault_certificates.hpp` to `certificates.hpp`.
+- Removed ServiceVersion type, replaced with Version field in the CertificateClientOptions type;
 
 ## 4.0.0 (2022-06-07)
 

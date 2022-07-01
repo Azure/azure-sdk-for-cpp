@@ -80,12 +80,9 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
     EXPECT_TRUE(found);
   }
 }
-// FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
+
 TEST_F(KeyVaultKeyClient, GetRandomBytes)
-{ // NEED TO DISABLE TEST FOR THE MOMENT.
-  // DUE TO ISSUE WITH CREATE EC HSM TEST WHICH FAILS WITH ACTUAL HSM BEING SET IN THE ENVIRONMENT
-  // VARIABLE FILED BUG 3563 TO FIX IT
-  // we actually need to have have an HSM defined
+{
   if (m_keyVaultUrl.compare(m_keyVaultHsmUrl) != 0)
   {
     auto const keyName = GetTestName();

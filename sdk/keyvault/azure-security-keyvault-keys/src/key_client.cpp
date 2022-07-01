@@ -445,7 +445,7 @@ Azure::Response<KeyRotationPolicy> KeyClient::UpdateKeyRotationPolicy(
       HttpMethod::Put, {_detail::KeysPath, name, _detail::RotationPolicyPath}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(*rawResponse);
   return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));

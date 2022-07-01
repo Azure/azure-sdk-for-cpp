@@ -31,7 +31,6 @@ stages:
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
-      #EnableHSM: true
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys

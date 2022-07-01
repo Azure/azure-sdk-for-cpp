@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample demonstrates how to sign data with both a RSA key and an EC key using the
- * synchronous methods of the CryptographyClient.
+ * @brief This sample demonstrates how update a key rotation policy, and then rotate the key based
+ * on the policy.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.

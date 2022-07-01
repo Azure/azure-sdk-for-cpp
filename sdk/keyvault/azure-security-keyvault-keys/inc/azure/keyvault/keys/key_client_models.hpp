@@ -91,50 +91,50 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string const& ToString() const { return m_operation; }
 
     /**
-     * @brief The key can be used to encrypt with the #Encrypt(EncryptionAlgorithm, Byte[],
-     * CancellationToken) method.
+     * @brief The key can be used to encrypt with the #Encrypt method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Encrypt;
 
     /**
-     * @brief The key can be used to decrypt with the #Decrypt(EncryptionAlgorithm, Byte[],
-     * CancellationToken) method.
+     * @brief The key can be used to decrypt with the #Decrypt method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Decrypt;
 
     /**
-     * @brief The key can be used to sign with the Sign(SignatureAlgorithm, Byte[],
-     * CancellationToken) method.
+     * @brief The key can be used to sign with the Sign method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Sign;
 
     /**
-     * @brief The key can be used to verify with the Verify(SignatureAlgorithm, Byte[], Byte[],
-     * CancellationToken) method.
+     * @brief The key can be used to verify with the Verify method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Verify;
 
     /**
-     * @brief The key can be used to wrap another key with the WrapKey(KeyWrapAlgorithm, Byte[],
-     * CancellationToken) method.
+     * @brief The key can be used to wrap another key with the WrapKey method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation WrapKey;
 
     /**
-     * @brief The key can be used to unwrap another key with the UnwrapKey(KeyWrapAlgorithm,
-     * Byte[], CancellationToken) method.
+     * @brief The key can be used to unwrap another key with the UnwrapKey method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation UnwrapKey;
 
     /**
-     * @brief The key can be imported during creation using the ImportKey(ImportKeyOptions,
-     * CancellationToken) method.
+     * @brief The key can be imported during creation using the ImportKey method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
 
     /**
-     * @brief The key can be exported during creation using the ImportKey(ImportKeyOptions,
-     * CancellationToken) method.
+     * @brief The key can be exported during creation using the ImportKey method.
+     *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Export;
   };
@@ -300,7 +300,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
-   * @brief The encryption algorithm to use to protected the exported key material.
+   * @brief The encryption algorithm to use to protect the exported key material.
    *
    */
   class KeyEncryptionAlgorithm final

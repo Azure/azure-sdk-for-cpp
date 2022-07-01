@@ -235,6 +235,7 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
 }
+
 std::string BinaryToHexString(std::vector<uint8_t> const& src)
 {
   static constexpr char hexMap[]
@@ -249,70 +250,6 @@ std::string BinaryToHexString(std::vector<uint8_t> const& src)
   }
 
   return output;
-}
-
-// temporary while i get the live tests working
-TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
-{ /*
-#if __GNUC__ == 5
-  EXPECT_TRUE(true);
-#else
-  auto const keyName = GetTestName() + "2";
-  auto const& client = GetClientForTest(keyName);
-
-  auto restored = client.RestoreKeyBackup(Base64Url::Base64UrlDecode(RawBackupKey));
-
-  Azure::Core::Json::_internal::json keysJson;
-  Azure::Core::Json::_internal::json keyJson;
-  Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeySerialize(
-      restored.Value.Key, keyJson);
-  keysJson["keys"].emplace_back(keyJson);
-  auto keySerializedJWK = keysJson.dump();
-
-  auto decodedGeneratedToken = Base64Url::Base64UrlDecode(Base64UrlEncodedGeneratedQuote);
-
-  AttestationClientOptions attestationOptions;
-  attestationOptions.TokenValidationOptions.TimeValidationSlack = 10s;
-
-  Azure::Security::Attestation::AttestationClient attestationClient = AttestationClient::Create(
-      Azure::Security::KeyVault::Keys::Test::AttestationServiceUrl(), m_credential,
-attestationOptions); attestationClient.RetrieveResponseValidationCollateral(); AttestationData
-attestData = attestationClient.AttestTpm; attestData.Data =
-std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end()); attestData.DataType =
-AttestationDataType::Binary; AttestOptions attestOptions; attestOptions.RuntimeData = attestData;
-
-  auto attestResponse = attestationClient.AttestOpenEnclave(decodedGeneratedToken, attestOptions);
-
-  Azure::Security::KeyVault::Keys::CreateKeyOptions options;
-  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
-  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
-  options.ReleasePolicy = KeyReleasePolicy();
-  options.ReleasePolicy.Value().Immutable = false;
-  // cspell:disable
-  std::string dataStr = R"({
-                        "anyOf" : [ {
-                        "allOf" : [{"claim" : "x-ms-sgx-mrsigner", "equals" : ")"
-      + BinaryToHexString(attestResponse.Value.Body.SgxMrSigner.Value()) + R"("
-        }],
-        "authority" : ")"
-      + AttestationServiceUrl() + R"("
-        }],
-         "version" : "1.0.0"
-        })";
-  // cspell:enable
-  auto jsonParser = json::parse(dataStr);
-  options.ReleasePolicy.Value().Data = jsonParser.dump();
-  options.Exportable = true;
-  auto keyResponse
-      = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::EcHsm, options);
-
-  KeyReleaseOptions relOpt;
-  relOpt.Target = attestResponse.Value.RawToken;
-  relOpt.Encryption = KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
-  auto result2 = client.ReleaseKey(keyName, keyResponse.Value.Properties.Version, relOpt);
-  EXPECT_NE(result2.Value.Value.length(), size_t(0));
-  EXPECT_EQ(result2.RawResponse->GetStatusCode(), HttpStatusCode::Ok);
-#endif*/
 }
 
 TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
