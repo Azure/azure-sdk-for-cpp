@@ -36,16 +36,18 @@ namespace Azure { namespace Storage { namespace _detail {
 
     void CreateDirectoryIfNotExists(const std::string& dirPath)
     {
-      if (!_internal::IsDirectory(dirPath))
+      if (_internal::IsDirectory(dirPath))
       {
-        const auto parent = GetParentDir(dirPath);
-        if (!parent.empty())
-        {
-          CreateDirectoryIfNotExists(parent);
-        }
-
-        _internal::CreateDirectory(dirPath);
+        return;
       }
+      // TODO: need decide what to do when path conflicts with file
+      const auto parent = GetParentDir(dirPath);
+      if (!parent.empty())
+      {
+        CreateDirectoryIfNotExists(parent);
+      }
+
+      _internal::CreateDirectory(dirPath);
     }
   } // namespace
 
@@ -154,13 +156,20 @@ namespace Azure { namespace Storage { namespace _detail {
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
       taskGenerated(std::move(task));
     }
-    else if (transferType == TransferType::DirectoryDownload)
+    else if (
+        transferType == TransferType::DirectoryDownload
+        || transferType == TransferType::DirectoryCopy)
     {
-      const std::string rootDirectory = _internal::PathFromUrl(m_model.Destination.m_url);
-      std::string currentDirectory = rootDirectory;
+      std::string rootDirectory;
+      std::string currentDirectory;
+      if (transferType == TransferType::DirectoryDownload)
+      {
+        rootDirectory = _internal::PathFromUrl(m_model.Destination.m_url);
+        currentDirectory = rootDirectory;
+        CreateDirectoryIfNotExists(currentDirectory);
+      }
 
       partGens.push_back(gen);
-      CreateDirectoryIfNotExists(currentDirectory);
 
       do
       {
@@ -184,22 +193,29 @@ namespace Azure { namespace Storage { namespace _detail {
         {
           TaskModel task;
           const std::string blobName = blobItem.Name.substr(options.Prefix->length());
-          std::string localFileName = blobName;
-
-          std::string parentDir = _internal::JoinPath(rootDirectory, GetParentDir(localFileName));
-          if (parentDir != currentDirectory)
+          if (transferType == TransferType::DirectoryDownload)
           {
-            CreateDirectoryIfNotExists(parentDir);
-            currentDirectory = std::move(parentDir);
-          }
+            std::string parentDir = GetParentDir(_internal::JoinPath(rootDirectory, blobName));
+            if (parentDir != currentDirectory)
+            {
+              CreateDirectoryIfNotExists(parentDir);
+              currentDirectory = std::move(parentDir);
+            }
 
-          task.Source = _internal::JoinPath(currGen.Source, blobName);
-          task.Destination = _internal::JoinPath(currGen.Destination, localFileName);
-          task.ObjectSize = blobItem.BlobSize;
-          task.ChunkSize = g_DownloadBlockSize;
-          task.NumSubtasks = static_cast<int32_t>(
-              (blobItem.BlobSize + g_DownloadBlockSize - 1) / g_DownloadBlockSize);
-          task.NumSubtasks = std::max(task.NumSubtasks, 1);
+            task.Source = _internal::JoinPath(currGen.Source, blobName);
+            task.Destination = _internal::JoinPath(currGen.Destination, blobName);
+            task.ObjectSize = blobItem.BlobSize;
+            task.ChunkSize = g_DownloadBlockSize;
+            task.NumSubtasks = static_cast<int32_t>(
+                (blobItem.BlobSize + g_DownloadBlockSize - 1) / g_DownloadBlockSize);
+            task.NumSubtasks = std::max(task.NumSubtasks, 1);
+          }
+          else
+          {
+            task.NumSubtasks = 1;
+            task.Source = _internal::JoinPath(currGen.Source, blobName);
+            task.Destination = _internal::JoinPath(currGen.Destination, blobName);
+          }
           taskGenerated(std::move(task));
         }
 
