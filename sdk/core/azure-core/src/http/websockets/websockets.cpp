@@ -89,13 +89,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     return static_cast<WebSocketPeerCloseFrame*>(this)->shared_from_this();
   }
 
-  std::shared_ptr<WebSocketContinuationFrame> WebSocketResult::AsContinuationFrame()
-  {
-    if (ResultType != WebSocketResultType::ContinuationReceived)
-    {
-      throw std::logic_error("Cannot cast to ContinuationReceived.");
-    }
-    return static_cast<WebSocketContinuationFrame*>(this)->shared_from_this();
-  }
-
 }}}} // namespace Azure::Core::Http::WebSockets

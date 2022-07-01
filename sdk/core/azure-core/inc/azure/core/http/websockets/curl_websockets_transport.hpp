@@ -81,6 +81,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     }
 
     /**
+     * @brief Retrieve the status of the close socket operation.
+     *
+     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     *
+     */
+    std::pair<uint16_t, std::string> GetCloseSocketInformation(const Azure::Core::Context&) override
+    {
+      throw std::runtime_error("Not implemented");
+    }
+
+    /**
      * @brief Send a frame of data to the remote node.
      *
      * @detail Not implemented for CURL websockets because CURL does not support native websockets.
@@ -88,10 +99,27 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief frameType Frame type sent to the server, Text or Binary.
      * @brief frameData Frame data to be sent to the server.
      */
-    virtual void SendFrame(WebSocketFrameType, std::vector<uint8_t>, Azure::Core::Context const&)
-        override
+    virtual void SendFrame(
+        WebSocketFrameType,
+        std::vector<uint8_t> const&,
+        Azure::Core::Context const&) override
     {
       throw std::runtime_error("Not implemented.");
+    }
+
+    /**
+     * @brief Receive a frame of data from the remote node.
+     *
+     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     *
+     * @brief buffer data received from the server.
+     * @brief bufferSize size of buffer.
+     * @brief bytesRead number of bytes read from server.
+     */
+    virtual std::vector<uint8_t> ReceiveFrame(WebSocketFrameType&, Azure::Core::Context const&)
+        override
+    {
+      throw std::runtime_error("Not implemented");
     }
 
     // Non-Native WebSocket support.

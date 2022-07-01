@@ -26,7 +26,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     Unknown,
     TextFrameReceived,
     BinaryFrameReceived,
-    ContinuationReceived,
     PeerClosed,
   };
 
@@ -49,16 +48,15 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   class WebSocketTextFrame;
   class WebSocketBinaryFrame;
-  class WebSocketContinuationFrame;
   class WebSocketPeerCloseFrame;
 
   struct WebSocketResult
   {
     WebSocketResultType ResultType;
+    bool IsFinalFrame{false};
     std::shared_ptr<WebSocketTextFrame> AsTextFrame();
     std::shared_ptr<WebSocketBinaryFrame> AsBinaryFrame();
     std::shared_ptr<WebSocketPeerCloseFrame> AsPeerCloseFrame();
-    std::shared_ptr<WebSocketContinuationFrame> AsContinuationFrame();
   };
 
   class WebSocketTextFrame : public WebSocketResult,
@@ -67,12 +65,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   public:
     WebSocketTextFrame() = default;
     WebSocketTextFrame(bool isFinalFrame, unsigned char const* body, size_t size)
-        : WebSocketResult{WebSocketResultType::TextFrameReceived}, Text(body, body + size),
-          IsFinalFrame(isFinalFrame)
+        : WebSocketResult{WebSocketResultType::TextFrameReceived, isFinalFrame},
+          Text(body, body + size)
     {
     }
     std::string Text;
-    bool IsFinalFrame;
   };
   class WebSocketBinaryFrame : public WebSocketResult,
                                public std::enable_shared_from_this<WebSocketBinaryFrame> {
@@ -80,44 +77,24 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   public:
     WebSocketBinaryFrame() = default;
     WebSocketBinaryFrame(bool isFinal, unsigned char const* body, size_t size)
-        : WebSocketResult{WebSocketResultType::BinaryFrameReceived}, Data(body, body + size),
-          IsFinalFrame(isFinal)
+        : WebSocketResult{WebSocketResultType::BinaryFrameReceived, isFinal},
+          Data(body, body + size)
     {
     }
     std::vector<uint8_t> Data;
-    bool IsFinalFrame;
-  };
-
-  class WebSocketContinuationFrame
-      : public WebSocketResult,
-        public std::enable_shared_from_this<WebSocketContinuationFrame> {
-  public:
-    WebSocketContinuationFrame() = default;
-    WebSocketContinuationFrame(bool isFinal, unsigned char const* body, size_t size)
-        : WebSocketResult{WebSocketResultType::ContinuationReceived},
-          ContinuationData(body, body + size), IsFinalFrame(isFinal)
-    {
-    }
-    std::vector<uint8_t> ContinuationData;
-    bool IsFinalFrame;
   };
 
   class WebSocketPeerCloseFrame : public WebSocketResult,
                                   public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
-    std::vector<uint8_t> frameData_;
-
   public:
     WebSocketPeerCloseFrame() = default;
-    WebSocketPeerCloseFrame(
-        uint16_t remoteStatusCode,
-        unsigned char const* closeData,
-        size_t closeSize)
+    WebSocketPeerCloseFrame(uint16_t remoteStatusCode, std::string const& remoteCloseReason)
         : WebSocketResult{WebSocketResultType::PeerClosed}, RemoteStatusCode(remoteStatusCode),
-          frameData_(closeData, closeData + closeSize), BodyStream(frameData_)
+          RemoteCloseReason(remoteCloseReason)
     {
     }
     uint16_t RemoteStatusCode;
-    Azure::Core::IO::MemoryBodyStream BodyStream;
+    std::string RemoteCloseReason;
   };
 
   struct WebSocketOptions : Azure::Core::_internal::ClientOptions

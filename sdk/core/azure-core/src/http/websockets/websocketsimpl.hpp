@@ -62,6 +62,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       Pong = 0x0a
     };
 
+    /**
+     * Indicates the type of the message currently being processed. Used when processing
+     * Continuation Opcode frames.
+     */
+    enum class SocketMessageType : int
+    {
+      Unknown,
+      Text,
+      Binary,
+    };
+
     // Implement a buffered stream reader
     class BufferedStreamReader {
       std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
@@ -277,10 +288,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     SocketState m_state{SocketState::Invalid};
 
-    std::vector<uint8_t> GenerateRandomKey()
-    {
-      return GenerateRandomBytes(16);
-    };
+    std::vector<uint8_t> GenerateRandomKey() { return GenerateRandomBytes(16); };
     void VerifySocketAccept(std::string const& encodedKey, std::string const& acceptHeader);
     Azure::Core::Url m_remoteUrl;
     WebSocketOptions m_options;
@@ -288,6 +296,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::string m_chosenProtocol;
     std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
     BufferedStreamReader m_bufferedStreamReader;
+    SocketMessageType m_currentMessageType{SocketMessageType::Unknown};
 
     std::mutex m_transportMutex;
     std::shared_mutex m_stateMutex;

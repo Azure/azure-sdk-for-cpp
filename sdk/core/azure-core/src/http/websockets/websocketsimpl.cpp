@@ -149,6 +149,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     return m_chosenProtocol;
   }
 
+  void WebSocketImplementation::AddHeader(std::string const& header, std::string const& headerValue)
+  {
+    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
+    if (m_state != SocketState::Closed && m_state != SocketState::Invalid)
+    {
+      throw std::runtime_error("AddHeader can only be called on closed sockets.");
+    }
+    m_headers.emplace(std::make_pair(header, headerValue));
+  }
+
   void WebSocketImplementation::Close(Azure::Core::Context const& context)
   {
     std::unique_lock<std::shared_mutex> lock(m_stateMutex);
@@ -165,7 +175,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_state = SocketState::Closing;
     if (m_transport->NativeWebsocketSupport())
     {
-      m_transport->CloseSocket(0, "", context);
+      m_transport->CloseSocket(
+          static_cast<uint16_t>(WebSocketErrorCode::EndpointDisappearing), "", context);
     }
     else
     {
@@ -184,6 +195,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         throw std::runtime_error("Unexpected result type received during close().");
       }
     }
+    // Close the socket - after this point, the m_transport is invalid.
     m_transport->Close();
     m_state = SocketState::Closed;
   }
@@ -221,15 +233,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         throw std::runtime_error("Unexpected result type received during close().");
       }
     }
+    // Close the socket - after this point, the m_transport is invalid.
     m_transport->Close();
 
     m_state = SocketState::Closed;
   }
 
-  void WebSocketImplementation::AddHeader(std::string const& header, std::string const& headerValue)
-  {
-    m_headers.emplace(std::make_pair(header, headerValue));
-  }
   void WebSocketImplementation::SendFrame(
       std::string const& textFrame,
       bool isFinalFrame,
@@ -240,13 +249,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     {
       throw std::runtime_error("Socket is not open.");
     }
+    std::vector<uint8_t> utf8text(textFrame.begin(), textFrame.end());
     if (m_transport->NativeWebsocketSupport())
     {
-      throw std::runtime_error("Not implemented");
+      m_transport->SendFrame(
+          (isFinalFrame ? WebSocketTransport::WebSocketFrameType::FrameTypeText
+                        : WebSocketTransport::WebSocketFrameType::FrameTypeTextFragment),
+          utf8text,
+          context);
     }
     else
     {
-      std::vector<uint8_t> utf8text(textFrame.begin(), textFrame.end());
       std::vector<uint8_t> sendFrame
           = EncodeFrame(SocketOpcode::TextFrame, m_options.EnableMasking, isFinalFrame, utf8text);
 
@@ -267,7 +280,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     if (m_transport->NativeWebsocketSupport())
     {
-      throw std::runtime_error("Not implemented");
+      m_transport->SendFrame(
+          (isFinalFrame ? WebSocketTransport::WebSocketFrameType::FrameTypeBinary
+                        : WebSocketTransport::WebSocketFrameType::FrameTypeBinaryFragment),
+          binaryFrame,
+          context);
     }
     else
     {
@@ -296,18 +313,35 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     if (m_transport->NativeWebsocketSupport())
     {
-      throw std::runtime_error("Not implemented");
+      WebSocketTransport::WebSocketFrameType frameType;
+      std::vector<uint8_t> payload = m_transport->ReceiveFrame(frameType, context);
+      switch (frameType)
+      {
+        case WebSocketTransport::WebSocketFrameType::FrameTypeBinary:
+          return std::make_shared<WebSocketBinaryFrame>(true, payload.data(), payload.size());
+        case WebSocketTransport::WebSocketFrameType::FrameTypeBinaryFragment:
+          return std::make_shared<WebSocketBinaryFrame>(false, payload.data(), payload.size());
+        case WebSocketTransport::WebSocketFrameType::FrameTypeText:
+          return std::make_shared<WebSocketTextFrame>(true, payload.data(), payload.size());
+        case WebSocketTransport::WebSocketFrameType::FrameTypeTextFragment:
+          return std::make_shared<WebSocketTextFrame>(false, payload.data(), payload.size());
+        case WebSocketTransport::WebSocketFrameType::FrameTypeClosed: {
+          auto closeResult = m_transport->GetCloseSocketInformation(context);
+          return std::make_shared<WebSocketPeerCloseFrame>(closeResult.first, closeResult.second);
+        }
+        default:
+          throw std::runtime_error("Unexpected frame type received.");
+      }
     }
     else
     {
-      std::vector<uint8_t> frameData;
       SocketOpcode opcode;
 
       bool isFinal = false;
       bool isMasked = false;
       uint64_t payloadLength;
       std::array<uint8_t, 4> maskKey{};
-      frameData = DecodeFrame(
+      std::vector<uint8_t> frameData = DecodeFrame(
           m_bufferedStreamReader, opcode, payloadLength, isFinal, isMasked, maskKey, context);
 
       if (isMasked)
@@ -325,9 +359,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         switch (opcode)
         {
           case SocketOpcode::BinaryFrame:
+            m_currentMessageType = SocketMessageType::Binary;
             return std::make_shared<WebSocketBinaryFrame>(
                 isFinal, frameData.data(), frameData.size());
           case SocketOpcode::TextFrame: {
+            m_currentMessageType = SocketMessageType::Text;
             return std::make_shared<WebSocketTextFrame>(
                 isFinal, frameData.data(), frameData.size());
           }
@@ -341,8 +377,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             errorCode |= (frameData[0] << 8) & 0xff00;
             errorCode |= (frameData[1] & 0x00ff);
 
-            // Update our state to be closed once we've received a closed frame. We only need to do
-            // this if our state is not currently locked.
+            // Update our state to be closed once we've received a closed frame. We only need to
+            // do this if our state is not currently locked.
             if (!stateIsLocked)
             {
               lock.unlock();
@@ -350,17 +386,36 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
               m_state = SocketState::Closed;
             }
             return std::make_shared<WebSocketPeerCloseFrame>(
-                errorCode,
-                frameData.data() + sizeof(uint16_t),
-                frameData.size() - sizeof(uint16_t));
+                errorCode, std::string(frameData.begin() + 2, frameData.end()));
           }
           case SocketOpcode::Ping:
           case SocketOpcode::Pong:
             __debugbreak();
             break;
           case SocketOpcode::Continuation:
-            return std::make_shared<WebSocketContinuationFrame>(
-                isFinal, frameData.data(), frameData.size());
+            if (m_currentMessageType == SocketMessageType::Text)
+            {
+              if (isFinal)
+              {
+                m_currentMessageType = SocketMessageType::Unknown;
+              }
+              return std::make_shared<WebSocketTextFrame>(
+                  isFinal, frameData.data(), frameData.size());
+            }
+            else if (m_currentMessageType == SocketMessageType::Binary)
+            {
+              if (isFinal)
+              {
+                m_currentMessageType = SocketMessageType::Unknown;
+              }
+              return std::make_shared<WebSocketBinaryFrame>(
+                  isFinal, frameData.data(), frameData.size());
+            }
+            else
+            {
+              throw std::runtime_error("Unknown message type and received continuation opcode");
+            }
+            break;
           default:
             throw std::runtime_error("Unknown opcode received.");
         }
@@ -368,7 +423,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
 
     return std::shared_ptr<WebSocketResult>();
-    context;
   }
 
   std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
@@ -533,5 +587,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::generate(begin(rv), end(rv), std::ref(randomEngine));
     return rv;
   }
-
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail

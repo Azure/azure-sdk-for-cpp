@@ -376,8 +376,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
 
   if (m_options.EnableWebSocketUpgrade)
   {
-    int option;
-    if (!WinHttpSetOption(hi.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, &option, 0))
+    if (!WinHttpSetOption(hi.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
     {
       GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
     }

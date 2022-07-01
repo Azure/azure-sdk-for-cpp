@@ -14,6 +14,7 @@
 #include "azure/core/http/websockets/websockets_transport.hpp"
 #include "azure/core/http/win_http_transport.hpp"
 #include <memory>
+#include <mutex>
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
@@ -22,11 +23,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    */
   class WinHttpWebSocketTransport : public WebSocketTransport, public WinHttpTransport {
 
-	Azure::Core::Http::_detail::unique_HINTERNET m_socketHandle;
-	
-	// Called by the 
-	void OnResponseReceived(Azure::Core::Http::_detail::unique_HINTERNET& requestHandle) override;
-	
+    Azure::Core::Http::_detail::unique_HINTERNET m_socketHandle;
+    std::mutex m_sendMutex;
+    std::mutex m_receiveMutex;
+
+    // Called by the
+    void OnResponseReceived(Azure::Core::Http::_detail::unique_HINTERNET& requestHandle) override;
+
   public:
     /**
      * @brief Construct a new CurlTransport object.
@@ -76,6 +79,18 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual void CloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override;
 
     /**
+     * @brief Retrieve the information associated with a WebSocket close response.
+     *
+     * Should only be called when a Receive operation returns WebSocketFrameType::CloseFrameType
+     *
+     * @param context Context for the operation.
+     *
+     * @returns a tuple containing the status code and string.
+     */
+    virtual std::pair<uint16_t, std::string> GetCloseSocketInformation(
+        Azure::Core::Context const& context) override;
+
+    /**
      * @brief Send a frame of data to the remote node.
      *
      * @detail Not implemented for CURL websockets because CURL does not support native
@@ -84,8 +99,14 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief frameType Frame type sent to the server, Text or Binary.
      * @brief frameData Frame data to be sent to the server.
      */
-    virtual void SendFrame(WebSocketFrameType, std::vector<uint8_t>, Azure::Core::Context const&)
-        override;
+    virtual void SendFrame(
+        WebSocketFrameType,
+        std::vector<uint8_t> const&,
+        Azure::Core::Context const&) override;
+
+    virtual std::vector<uint8_t> ReceiveFrame(
+        WebSocketFrameType& frameType,
+        Azure::Core::Context const&) override;
 
     // Non-Native WebSocket support.
     /**

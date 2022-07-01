@@ -43,6 +43,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        * complete frame to be sent to the remote node.
        */
       FrameTypeBinaryFragment,
+
+      FrameTypeClosed,
     };
     /**
      * @brief Destructs `%HttpTransport`.
@@ -90,6 +92,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual void Close() = 0;
 
     /**
+     * @brief Retrieve the information associated with a WebSocket close response.
+     *
+     * @param context Context for the operation.
+     *
+     * @returns a tuple containing the status code and string.
+     */
+    virtual std::pair<uint16_t, std::string> GetCloseSocketInformation(
+        Azure::Core::Context const& context)
+        = 0;
+
+    /**
      * @brief Send a frame of data to the remote node.
      *
      * @brief frameType Frame type sent to the server, Text or Binary.
@@ -97,7 +110,19 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     virtual void SendFrame(
         WebSocketFrameType frameType,
-        std::vector<uint8_t> frameData,
+        std::vector<uint8_t> const& frameData,
+        Azure::Core::Context const& context)
+        = 0;
+
+    /**
+     * @brief Receive a frame from the remote WebSocket server.
+     *
+     * @param frameTypeReceived frame type received from the remote server.
+     *
+     * @returns Frame data received from the remote server.
+     */
+    virtual std::vector<uint8_t> ReceiveFrame(
+        WebSocketFrameType& frameTypeReceived,
         Azure::Core::Context const& context)
         = 0;
 
