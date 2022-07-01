@@ -7,8 +7,7 @@
 #include <cstring>
 #include <functional>
 #include <future>
-#include <type_traits>
-#include <vector>
+#include <stdexcept>
 
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -22,19 +21,24 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  const Core::Context::Key _detail::s_batchKey;
+  const Core::Context::Key _detail::s_serviceBatchKey;
+  const Core::Context::Key _detail::s_containerBatchKey;
 
   namespace _detail {
 
-    struct BlobBatchAccessHelper
-    {
-      explicit BlobBatchAccessHelper(const BlobBatch& batch) : m_batch(&batch) {}
+    class BlobBatchAccessHelper final {
+    public:
+      explicit BlobBatchAccessHelper(const BlobServiceBatch& batch) : m_serviceBatch(&batch) {}
+      explicit BlobBatchAccessHelper(const BlobContainerBatch& batch) : m_containerBatch(&batch) {}
 
       const std::vector<std::shared_ptr<BatchSubrequest>>& Subrequests() const
       {
-        return m_batch->m_subrequests;
+        return m_serviceBatch ? m_serviceBatch->m_subrequests : m_containerBatch->m_subrequests;
       }
-      const BlobBatch* m_batch;
+
+    private:
+      const BlobServiceBatch* m_serviceBatch = nullptr;
+      const BlobContainerBatch* m_containerBatch = nullptr;
     };
 
   } // namespace _detail
@@ -263,21 +267,29 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DeleteBlobSubrequest final : public _detail::BatchSubrequest
     {
-      DeleteBlobSubrequest() : BatchSubrequest(_detail::BatchSubrequestType::DeleteBlob) {}
+      DeleteBlobSubrequest(Blobs::BlobClient blobClient, DeleteBlobOptions options)
+          : BatchSubrequest(_detail::BatchSubrequestType::DeleteBlob),
+            Client(std::move(blobClient)), Options(std::move(options))
+      {
+      }
 
-      Nullable<Blobs::BlobClient> Client;
+      Blobs::BlobClient Client;
       DeleteBlobOptions Options;
       std::promise<Nullable<Response<Models::DeleteBlobResult>>> Promise;
     };
 
     struct SetBlobAccessTierSubrequest final : public _detail::BatchSubrequest
     {
-      SetBlobAccessTierSubrequest()
-          : BatchSubrequest(_detail::BatchSubrequestType::SetBlobAccessTier)
+      SetBlobAccessTierSubrequest(
+          Blobs::BlobClient blobClient,
+          Models::AccessTier tier,
+          SetBlobAccessTierOptions options)
+          : BatchSubrequest(_detail::BatchSubrequestType::SetBlobAccessTier),
+            Client(std::move(blobClient)), Tier(std::move(tier)), Options(std::move(options))
       {
       }
 
-      Nullable<Blobs::BlobClient> Client;
+      Blobs::BlobClient Client;
       Models::AccessTier Tier;
       SetBlobAccessTierOptions Options;
       std::promise<Nullable<Response<Models::SetBlobAccessTierResult>>> Promise;
@@ -298,17 +310,32 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       std::string requestBody;
 
-      const BlobBatch* batch = nullptr;
-      context.TryGetValue(_detail::s_batchKey, batch);
+      std::unique_ptr<_detail::BlobBatchAccessHelper> batchAccessHelper;
+      {
+        const BlobServiceBatch* batch = nullptr;
+        context.TryGetValue(_detail::s_serviceBatchKey, batch);
+        if (batch)
+        {
+          batchAccessHelper = std::make_unique<_detail::BlobBatchAccessHelper>(*batch);
+        }
+      }
+      {
+        const BlobContainerBatch* batch = nullptr;
+        context.TryGetValue(_detail::s_containerBatchKey, batch);
+        if (batch)
+        {
+          batchAccessHelper = std::make_unique<_detail::BlobBatchAccessHelper>(*batch);
+        }
+      }
 
-      for (const auto& subrequestPtr : _detail::BlobBatchAccessHelper(*batch).Subrequests())
+      for (const auto& subrequestPtr : batchAccessHelper->Subrequests())
       {
         if (subrequestPtr->Type == _detail::BatchSubrequestType::DeleteBlob)
         {
           auto& subrequest = *static_cast<DeleteBlobSubrequest*>(subrequestPtr.get());
           requestBody += getBatchBoundary();
           std::string subrequestText;
-          subrequest.Client.Value().Delete(
+          subrequest.Client.Delete(
               subrequest.Options, Core::Context().WithValue(s_subrequestKey, &subrequestText));
           requestBody += subrequestText;
         }
@@ -318,7 +345,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           requestBody += getBatchBoundary();
 
           std::string subrequestText;
-          subrequest.Client.Value().SetAccessTier(
+          subrequest.Client.SetAccessTier(
               subrequest.Tier,
               subrequest.Options,
               Core::Context().WithValue(s_subrequestKey, &subrequestText));
@@ -391,18 +418,33 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
       }
 
-      const BlobBatch* batch = nullptr;
-      context.TryGetValue(_detail::s_batchKey, batch);
+      std::unique_ptr<_detail::BlobBatchAccessHelper> batchAccessHelper;
+      {
+        const BlobServiceBatch* batch = nullptr;
+        context.TryGetValue(_detail::s_serviceBatchKey, batch);
+        if (batch)
+        {
+          batchAccessHelper = std::make_unique<_detail::BlobBatchAccessHelper>(*batch);
+        }
+      }
+      {
+        const BlobContainerBatch* batch = nullptr;
+        context.TryGetValue(_detail::s_containerBatchKey, batch);
+        if (batch)
+        {
+          batchAccessHelper = std::make_unique<_detail::BlobBatchAccessHelper>(*batch);
+        }
+      }
 
       size_t subresponseCounter = 0;
-      for (const auto& subrequestPtr : _detail::BlobBatchAccessHelper(*batch).Subrequests())
+      for (const auto& subrequestPtr : batchAccessHelper->Subrequests())
       {
         if (subrequestPtr->Type == _detail::BatchSubrequestType::DeleteBlob)
         {
           auto& subrequest = *static_cast<DeleteBlobSubrequest*>(subrequestPtr.get());
           try
           {
-            auto response = subrequest.Client.Value().Delete(
+            auto response = subrequest.Client.Delete(
                 subrequest.Options,
                 Core::Context().WithValue(s_subresponseKey, &subresponses[subresponseCounter++]));
             subrequest.Promise.set_value(std::move(response));
@@ -417,7 +459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto& subrequest = *static_cast<SetBlobAccessTierSubrequest*>(subrequestPtr.get());
           try
           {
-            auto response = subrequest.Client.Value().SetAccessTier(
+            auto response = subrequest.Client.SetAccessTier(
                 subrequest.Tier,
                 subrequest.Options,
                 Core::Context().WithValue(s_subresponseKey, &subresponses[subresponseCounter++]));
@@ -518,108 +560,141 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   } // namespace _detail
 
-  BlobBatch::BlobBatch(BlobServiceClient blobServiceClient)
+  BlobServiceBatch::BlobServiceBatch(BlobServiceClient blobServiceClient)
       : m_blobServiceClient(std::move(blobServiceClient))
   {
-    m_url = m_blobServiceClient.Value().m_serviceUrl;
   }
 
-  BlobBatch::BlobBatch(BlobContainerClient blobContainerClient)
+  BlobClient BlobServiceBatch::GetBlobClientForSubrequest(Core::Url url) const
+  {
+    auto blobClient = m_blobServiceClient.GetBlobContainerClient("$").GetBlobClient("$");
+    blobClient.m_blobUrl = std::move(url);
+    blobClient.m_pipeline = m_blobServiceClient.m_batchSubrequestPipeline;
+    return blobClient;
+  }
+
+  DeferredResponse<Models::DeleteBlobResult> BlobServiceBatch::DeleteBlob(
+      const std::string& blobContainerName,
+      const std::string& blobName,
+      const DeleteBlobOptions& options)
+  {
+    auto blobUrl = m_blobServiceClient.m_serviceUrl;
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
+    auto op = std::make_shared<DeleteBlobSubrequest>(
+        GetBlobClientForSubrequest(std::move(blobUrl)), options);
+    DeferredResponse<Models::DeleteBlobResult> deferredResponse(
+        CreateDeferredResponseFunc(op->Promise));
+    m_subrequests.push_back(std::move(op));
+    return deferredResponse;
+  }
+
+  DeferredResponse<Models::DeleteBlobResult> BlobServiceBatch::DeleteBlobUrl(
+      const std::string& blobUrl,
+      const DeleteBlobOptions& options)
+  {
+    auto op = std::make_shared<DeleteBlobSubrequest>(
+        GetBlobClientForSubrequest(Core::Url(blobUrl)), options);
+    DeferredResponse<Models::DeleteBlobResult> deferredResponse(
+        CreateDeferredResponseFunc(op->Promise));
+    m_subrequests.push_back(std::move(op));
+    return deferredResponse;
+  }
+
+  DeferredResponse<Models::SetBlobAccessTierResult> BlobServiceBatch::SetBlobAccessTier(
+      const std::string& blobContainerName,
+      const std::string& blobName,
+      Models::AccessTier accessTier,
+      const SetBlobAccessTierOptions& options)
+  {
+    auto blobUrl = m_blobServiceClient.m_serviceUrl;
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
+    auto op = std::make_shared<SetBlobAccessTierSubrequest>(
+        GetBlobClientForSubrequest(std::move(blobUrl)), std::move(accessTier), options);
+    DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
+        CreateDeferredResponseFunc(op->Promise));
+    m_subrequests.push_back(std::move(op));
+    return deferredResponse;
+  }
+
+  DeferredResponse<Models::SetBlobAccessTierResult> BlobServiceBatch::SetBlobAccessTierUrl(
+      const std::string& blobUrl,
+      Models::AccessTier accessTier,
+      const SetBlobAccessTierOptions& options)
+  {
+    auto op = std::make_shared<SetBlobAccessTierSubrequest>(
+        GetBlobClientForSubrequest(Core::Url(blobUrl)), std::move(accessTier), options);
+    DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
+        CreateDeferredResponseFunc(op->Promise));
+    m_subrequests.push_back(std::move(op));
+    return deferredResponse;
+  }
+
+  BlobContainerBatch::BlobContainerBatch(BlobContainerClient blobContainerClient)
       : m_blobContainerClient(std::move(blobContainerClient))
   {
-    auto serviceUrl = m_blobContainerClient.Value().m_blobContainerUrl;
-    auto path = serviceUrl.GetPath();
-    if (!path.empty() && path.back() == '/')
-    {
-      path.pop_back();
-    }
-    auto slash_pos = path.rfind('/');
-    path = path.substr(0, slash_pos == std::string::npos ? 0 : (slash_pos + 1));
-    serviceUrl.SetPath(path);
-    m_url = std::move(serviceUrl);
   }
 
-  BlobClient BlobBatch::GetBlobClientForSubrequest(Core::Url url) const
+  BlobClient BlobContainerBatch::GetBlobClientForSubrequest(Core::Url url) const
   {
-    if (m_blobServiceClient.HasValue())
-    {
-      auto blobClient = m_blobServiceClient.Value().GetBlobContainerClient("$").GetBlobClient("$");
-      blobClient.m_blobUrl = std::move(url);
-      blobClient.m_pipeline = m_blobServiceClient.Value().m_batchSubrequestPipeline;
-      return blobClient;
-    }
-    else if (m_blobContainerClient.HasValue())
-    {
-      auto blobClient = m_blobContainerClient->GetBlobClient("$");
-      blobClient.m_blobUrl = std::move(url);
-      blobClient.m_pipeline = m_blobContainerClient.Value().m_batchSubrequestPipeline;
-      return blobClient;
-    }
-    AZURE_UNREACHABLE_CODE();
+    auto blobClient = m_blobContainerClient.GetBlobClient("$");
+    blobClient.m_blobUrl = std::move(url);
+    blobClient.m_pipeline = m_blobContainerClient.m_batchSubrequestPipeline;
+    return blobClient;
   }
 
-  DeferredResponse<Models::DeleteBlobResult> BlobBatch::DeleteBlob(
-      const std::string& blobContainerName,
+  DeferredResponse<Models::DeleteBlobResult> BlobContainerBatch::DeleteBlob(
       const std::string& blobName,
       const DeleteBlobOptions& options)
   {
-    auto blobUrl = m_url;
-    blobUrl.AppendPath(blobContainerName);
-    blobUrl.AppendPath(blobName);
-    auto op = std::make_shared<DeleteBlobSubrequest>();
-    op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
-    op->Options = options;
+    auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
+    auto op = std::make_shared<DeleteBlobSubrequest>(
+        GetBlobClientForSubrequest(std::move(blobUrl)), options);
     DeferredResponse<Models::DeleteBlobResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
     return deferredResponse;
   }
 
-  DeferredResponse<Models::DeleteBlobResult> BlobBatch::DeleteBlob(
+  DeferredResponse<Models::DeleteBlobResult> BlobContainerBatch::DeleteBlobUrl(
       const std::string& blobUrl,
       const DeleteBlobOptions& options)
   {
-    auto op = std::make_shared<DeleteBlobSubrequest>();
-    op->Client = GetBlobClientForSubrequest(Core::Url(blobUrl));
-    op->Options = options;
+    auto op = std::make_shared<DeleteBlobSubrequest>(
+        GetBlobClientForSubrequest(Core::Url(blobUrl)), options);
     DeferredResponse<Models::DeleteBlobResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
     return deferredResponse;
   }
 
-  DeferredResponse<Models::SetBlobAccessTierResult> BlobBatch::SetBlobAccessTier(
-      const std::string& blobContainerName,
+  DeferredResponse<Models::SetBlobAccessTierResult> BlobContainerBatch::SetBlobAccessTier(
       const std::string& blobName,
       Models::AccessTier accessTier,
       const SetBlobAccessTierOptions& options)
   {
-    auto blobUrl = m_url;
-    blobUrl.AppendPath(blobContainerName);
-    blobUrl.AppendPath(blobName);
-    auto op = std::make_shared<SetBlobAccessTierSubrequest>();
-    op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
-    op->Tier = accessTier;
-    op->Options = options;
+    auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
+    auto op = std::make_shared<SetBlobAccessTierSubrequest>(
+        GetBlobClientForSubrequest(std::move(blobUrl)), std::move(accessTier), options);
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
     return deferredResponse;
   }
 
-  DeferredResponse<Models::SetBlobAccessTierResult> BlobBatch::SetBlobAccessTier(
+  DeferredResponse<Models::SetBlobAccessTierResult> BlobContainerBatch::SetBlobAccessTierUrl(
       const std::string& blobUrl,
       Models::AccessTier accessTier,
       const SetBlobAccessTierOptions& options)
   {
-    auto op = std::make_shared<SetBlobAccessTierSubrequest>();
-    op->Client = GetBlobClientForSubrequest(Core::Url(blobUrl));
-    op->Tier = accessTier;
-    op->Options = options;
+    auto op = std::make_shared<SetBlobAccessTierSubrequest>(
+        GetBlobClientForSubrequest(Core::Url(blobUrl)), std::move(accessTier), options);
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
     return deferredResponse;
   }
-
 }}} // namespace Azure::Storage::Blobs
