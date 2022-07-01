@@ -141,6 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobServiceClient;
     friend class _detail::BlobBatchAccessHelper;
   };
+
   /**
    * @brief A batch object allows you to batch multiple operations in a single request via
    * #Azure::Storage::Blobs::BlobContainerClient::SubmitBatch.

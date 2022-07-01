@@ -11,7 +11,7 @@ namespace Azure { namespace Storage {
   namespace Blobs {
     class BlobServiceBatch;
     class BlobContainerBatch;
-  }
+  } // namespace Blobs
   /**
    * @brief Base type for a deferred response.
    */
