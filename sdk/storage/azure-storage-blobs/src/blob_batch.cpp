@@ -7,8 +7,7 @@
 #include <cstring>
 #include <functional>
 #include <future>
-#include <type_traits>
-#include <vector>
+#include <stdexcept>
 
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -572,8 +571,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DeleteBlobOptions& options)
   {
     auto blobUrl = m_blobServiceClient.m_serviceUrl;
-    blobUrl.AppendPath(blobContainerName);
-    blobUrl.AppendPath(blobName);
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<DeleteBlobSubrequest>();
     op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
     op->Options = options;
@@ -603,8 +602,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobAccessTierOptions& options)
   {
     auto blobUrl = m_blobServiceClient.m_serviceUrl;
-    blobUrl.AppendPath(blobContainerName);
-    blobUrl.AppendPath(blobName);
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<SetBlobAccessTierSubrequest>();
     op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
     op->Tier = std::move(accessTier);
@@ -648,7 +647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DeleteBlobOptions& options)
   {
     auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
-    blobUrl.AppendPath(blobName);
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<DeleteBlobSubrequest>();
     op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
     op->Options = options;
@@ -677,7 +676,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobAccessTierOptions& options)
   {
     auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
-    blobUrl.AppendPath(blobName);
+    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<SetBlobAccessTierSubrequest>();
     op->Client = GetBlobClientForSubrequest(std::move(blobUrl));
     op->Tier = std::move(accessTier);

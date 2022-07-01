@@ -3,13 +3,9 @@
 
 #pragma once
 
-#include <cstring>
-#include <future>
 #include <memory>
 #include <string>
-#include <utility>
-
-#include <azure/core/url.hpp>
+#include <vector>
 
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
