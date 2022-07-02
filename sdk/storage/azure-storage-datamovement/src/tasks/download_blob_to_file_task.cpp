@@ -116,8 +116,16 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         // should NOT truncate if this is a resumed job.
         // A better way is to download to a non-existing temp file, and overwirte destination after
         // download is finished.
-        Context->FileWriter
-            = std::make_unique<Storage::_internal::FileWriter>(Context->Destination, false);
+        if (ChunksToWrite[0]->Offset == 0)
+        {
+          Context->FileWriter
+              = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+        }
+        else
+        {
+          Context->FileWriter
+              = std::make_unique<Storage::_internal::FileWriter>(Context->Destination, false);
+        }
       }
     }
 
@@ -178,7 +186,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         Context->WriteTaskRunning = false;
       }
     }
-    if (writeToFileTask->ChunksToWrite.empty())
+    if (!writeToFileTask->ChunksToWrite.empty())
     {
       writeToFileTask->Context = Context;
       SharedStatus->TransferEngine->AddTask(std::move(writeToFileTask));

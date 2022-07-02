@@ -44,8 +44,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
             operation.GetRawResponse().GetHeaders().at("x-ms-copy-status"));
         if (copyStatus == Models::CopyStatus::Success)
         {
-          TransferSucceeded(std::stoll(
-              operation.GetRawResponse().GetHeaders().at(_internal::HttpHeaderContentLength)));
+          // TODO: it tasks one extra HTTP request to get real copy size.
+          TransferSucceeded(0);
           return;
         }
         else if (copyStatus == Models::CopyStatus::Pending)
