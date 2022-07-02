@@ -142,17 +142,17 @@ namespace Azure { namespace Storage { namespace Test {
     auto srcBlobFolder = Blobs::BlobFolder(containerClient, srcDir);
 
     std::vector<std::string> files;
-    CreateDir("dir_l1");
+    _internal::CreateDirectory("dir_l1");
     WriteFile("dir_l1/file1", RandomBuffer(static_cast<size_t>(5_MB)));
     WriteFile("dir_l1/file2", RandomBuffer(static_cast<size_t>(213_KB)));
     WriteFile("dir_l1/file3", RandomBuffer(0));
-    CreateDir("dir_l1/dir_l2");
+    _internal::CreateDirectory("dir_l1/dir_l2");
     WriteFile("dir_l1/dir_l2/file4", RandomBuffer(123));
-    CreateDir("dir_l1/dir_l2/dir_l3");
-    CreateDir("dir_l1/dir_l2/dir_l3/dir_l4");
-    CreateDir("dir_l1/dir_l2/dir_l3/dir_l4/dir_l5");
-    CreateDir("dir_l1/dir_l2_2");
-    CreateDir("dir_l1/dir_l2_2/dir_l3_2");
+    _internal::CreateDirectory("dir_l1/dir_l2/dir_l3");
+    _internal::CreateDirectory("dir_l1/dir_l2/dir_l3/dir_l4");
+    _internal::CreateDirectory("dir_l1/dir_l2/dir_l3/dir_l4/dir_l5");
+    _internal::CreateDirectory("dir_l1/dir_l2_2");
+    _internal::CreateDirectory("dir_l1/dir_l2_2/dir_l3_2");
     WriteFile("dir_l1/dir_l2_2/dir_l3_2/file4", RandomBuffer(static_cast<size_t>(10_MB)));
     files.push_back("file1");
     files.push_back("file2");
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::sort(files.begin(), files.end());
     std::sort(destFiles.begin(), destFiles.end());
     EXPECT_EQ(files, destFiles);
-    DeleteDir(localDir);
+    _internal::Remove(localDir);
     containerClient.DeleteIfExists();
   }
 
