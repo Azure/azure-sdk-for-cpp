@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace _internal {
   FileWriter::FileWriter(const std::string& filename, bool truncate)
   {
     int flags = O_WRONLY | O_CREAT;
-    if (truncatge)
+    if (truncate)
     {
       flags |= O_TRUNC;
     }
