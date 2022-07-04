@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       {
         // TODO: we should truncate the original file if this is the first write to the file, and
         // should NOT truncate if this is a resumed job.
-        // A better way is to download to a non-existing temp file, and overwirte destination after
+        // A better way is to download to a non-existing temp file, and overwrite destination after
         // download is finished.
         if (ChunksToWrite[0]->Offset == 0)
         {
