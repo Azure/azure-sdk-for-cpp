@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
   std::string const& WebSocketImplementation::GetChosenProtocol()
   {
-    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
+    std::lock_guard<std::mutex> lock(m_stateMutex);
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -152,7 +152,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
   void WebSocketImplementation::AddHeader(std::string const& header, std::string const& headerValue)
   {
-    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
+    std::lock_guard<std::mutex> lock(m_stateMutex);
     if (m_state != SocketState::Closed && m_state != SocketState::Invalid)
     {
       throw std::runtime_error("AddHeader can only be called on closed sockets.");
@@ -162,7 +162,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
   void WebSocketImplementation::Close(Azure::Core::Context const& context)
   {
-    std::unique_lock<std::shared_mutex> lock(m_stateMutex);
+    std::lock_guard<std::mutex> lock(m_stateMutex);
 
     // If we're closing an already closed socket, we're done.
     if (m_state == SocketState::Closed)
@@ -206,7 +206,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::string const& closeReason,
       Azure::Core::Context const& context)
   {
-    std::unique_lock<std::shared_mutex> lock(m_stateMutex);
+    std::lock_guard<std::mutex> lock(m_stateMutex);
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -245,7 +245,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       bool isFinalFrame,
       Azure::Core::Context const& context)
   {
-    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
+    std::lock_guard<std::mutex> lock(m_stateMutex);
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -273,7 +273,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       bool isFinalFrame,
       Azure::Core::Context const& context)
   {
-    std::shared_lock<std::shared_mutex> lock(m_stateMutex);
+    std::lock_guard<std::mutex> lock(m_stateMutex);
 
     if (m_state != SocketState::Open)
     {
@@ -301,7 +301,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       Azure::Core::Context const& context,
       bool stateIsLocked)
   {
-    std::shared_lock<std::shared_mutex> lock(m_stateMutex, std::defer_lock);
+    std::unique_lock<std::mutex> lock(m_stateMutex, std::defer_lock);
 
     if (!stateIsLocked)
     {
@@ -383,7 +383,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             if (!stateIsLocked)
             {
               lock.unlock();
-              std::unique_lock<std::shared_mutex> closeLock(m_stateMutex);
+              std::unique_lock<std::mutex> closeLock(m_stateMutex);
               m_state = SocketState::Closed;
             }
             return std::make_shared<WebSocketPeerCloseFrame>(

@@ -270,8 +270,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     /**
      * @brief Decode a frame received from the websocket server.
      *
-     * @param payload Pointer to the payload returned by the service. Note that this may be shorter
-     * than the full data in the response message.
+     * @param streamReader Buffered stream reader to read the frame from.
      * @param opcode Opcode returned by the server.
      * @param isFinal True if this is the final message.
      * @param maskKey On Return, contains the contents of the mask key if the data is masked.
@@ -299,6 +298,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     SocketMessageType m_currentMessageType{SocketMessageType::Unknown};
 
     std::mutex m_transportMutex;
-    std::shared_mutex m_stateMutex;
+    std::mutex m_stateMutex;
   };
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail
