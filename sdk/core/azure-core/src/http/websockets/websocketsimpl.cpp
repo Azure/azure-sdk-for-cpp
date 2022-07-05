@@ -391,7 +391,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           }
           case SocketOpcode::Ping:
           case SocketOpcode::Pong:
-            __debugbreak();
+            throw std::runtime_error("Unexpected Ping/Pong opcode received.");
             break;
           case SocketOpcode::Continuation:
             if (m_currentMessageType == SocketMessageType::Text)
@@ -422,8 +422,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         }
       }
     }
-
-    return std::shared_ptr<WebSocketResult>();
   }
 
   std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
@@ -584,7 +582,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::random_device randomEngine;
 
     std::vector<uint8_t> rv(vectorSize);
+#if defined(_MSC_VER)
 #pragma warning(suppress : 4244)
+#endif
     std::generate(begin(rv), end(rv), std::ref(randomEngine));
     return rv;
   }
