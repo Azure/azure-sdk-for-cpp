@@ -356,70 +356,67 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             });
       }
       // At this point, readBuffer contains the actual payload from the service.
+      switch (opcode)
       {
-        switch (opcode)
-        {
-          case SocketOpcode::BinaryFrame:
-            m_currentMessageType = SocketMessageType::Binary;
-            return std::make_shared<WebSocketBinaryFrame>(
-                isFinal, frameData.data(), frameData.size());
-          case SocketOpcode::TextFrame: {
-            m_currentMessageType = SocketMessageType::Text;
+        case SocketOpcode::BinaryFrame:
+          m_currentMessageType = SocketMessageType::Binary;
+          return std::make_shared<WebSocketBinaryFrame>(
+              isFinal, frameData.data(), frameData.size());
+        case SocketOpcode::TextFrame: {
+          m_currentMessageType = SocketMessageType::Text;
+          return std::make_shared<WebSocketTextFrame>(isFinal, frameData.data(), frameData.size());
+        }
+        case SocketOpcode::Close: {
+
+          if (frameData.size() < 2)
+          {
+            throw std::runtime_error("Close response buffer is too short.");
+          }
+          uint16_t errorCode = 0;
+          errorCode |= (frameData[0] << 8) & 0xff00;
+          errorCode |= (frameData[1] & 0x00ff);
+
+          // Update our state to be closed once we've received a closed frame. We only need to
+          // do this if our state is not currently locked.
+          if (!stateIsLocked)
+          {
+            lock.unlock();
+            std::unique_lock<std::mutex> closeLock(m_stateMutex);
+            m_state = SocketState::Closed;
+          }
+          return std::make_shared<WebSocketPeerCloseFrame>(
+              errorCode, std::string(frameData.begin() + 2, frameData.end()));
+        }
+        case SocketOpcode::Ping:
+        case SocketOpcode::Pong:
+          throw std::runtime_error("Unexpected Ping/Pong opcode received.");
+          break;
+        case SocketOpcode::Continuation:
+          if (m_currentMessageType == SocketMessageType::Text)
+          {
+            if (isFinal)
+            {
+              m_currentMessageType = SocketMessageType::Unknown;
+            }
             return std::make_shared<WebSocketTextFrame>(
                 isFinal, frameData.data(), frameData.size());
           }
-          case SocketOpcode::Close: {
-
-            if (frameData.size() < 2)
+          else if (m_currentMessageType == SocketMessageType::Binary)
+          {
+            if (isFinal)
             {
-              throw std::runtime_error("Close response buffer is too short.");
+              m_currentMessageType = SocketMessageType::Unknown;
             }
-            uint16_t errorCode = 0;
-            errorCode |= (frameData[0] << 8) & 0xff00;
-            errorCode |= (frameData[1] & 0x00ff);
-
-            // Update our state to be closed once we've received a closed frame. We only need to
-            // do this if our state is not currently locked.
-            if (!stateIsLocked)
-            {
-              lock.unlock();
-              std::unique_lock<std::mutex> closeLock(m_stateMutex);
-              m_state = SocketState::Closed;
-            }
-            return std::make_shared<WebSocketPeerCloseFrame>(
-                errorCode, std::string(frameData.begin() + 2, frameData.end()));
+            return std::make_shared<WebSocketBinaryFrame>(
+                isFinal, frameData.data(), frameData.size());
           }
-          case SocketOpcode::Ping:
-          case SocketOpcode::Pong:
-            throw std::runtime_error("Unexpected Ping/Pong opcode received.");
-            break;
-          case SocketOpcode::Continuation:
-            if (m_currentMessageType == SocketMessageType::Text)
-            {
-              if (isFinal)
-              {
-                m_currentMessageType = SocketMessageType::Unknown;
-              }
-              return std::make_shared<WebSocketTextFrame>(
-                  isFinal, frameData.data(), frameData.size());
-            }
-            else if (m_currentMessageType == SocketMessageType::Binary)
-            {
-              if (isFinal)
-              {
-                m_currentMessageType = SocketMessageType::Unknown;
-              }
-              return std::make_shared<WebSocketBinaryFrame>(
-                  isFinal, frameData.data(), frameData.size());
-            }
-            else
-            {
-              throw std::runtime_error("Unknown message type and received continuation opcode");
-            }
-            break;
-          default:
-            throw std::runtime_error("Unknown opcode received.");
-        }
+          else
+          {
+            throw std::runtime_error("Unknown message type and received continuation opcode");
+          }
+          break;
+        default:
+          throw std::runtime_error("Unknown opcode received.");
       }
     }
   }
@@ -583,9 +580,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     std::vector<uint8_t> rv(vectorSize);
 #if defined(_MSC_VER)
+#pragma warning(push)
 #pragma warning(suppress : 4244)
 #endif
     std::generate(begin(rv), end(rv), std::ref(randomEngine));
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
     return rv;
   }
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail
