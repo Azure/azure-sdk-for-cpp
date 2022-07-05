@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Indicates if the transports supports native websockets or not.
      *
-     * @detail For the WinHTTP websocket transport, the transport supports native websockets.
+     * @details For the WinHTTP websocket transport, the transport supports native websockets.
      */
     virtual bool NativeWebsocketSupport() override { return true; }
 
@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
-     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      * @param status Status value to be sent to the remote node. Application defined.
      * @param disconnectReason UTF-8 encoded reason for the disconnection. Optional.
@@ -93,7 +93,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Send a frame of data to the remote node.
      *
-     * @detail Not implemented for CURL websockets because CURL does not support native
+     * @details Not implemented for CURL websockets because CURL does not support native
      * websockets.
      *
      * @brief frameType Frame type sent to the server, Text or Binary.

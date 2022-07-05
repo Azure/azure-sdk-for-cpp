@@ -430,7 +430,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return The network connection, or null if the connection was not upgraded.
      */
-    std::unique_ptr<CurlNetworkConnection>&& GetUpgradedConnection();
+    std::unique_ptr<CurlNetworkConnection> GetUpgradedConnection();
   };
 
 }}} // namespace Azure::Core::Http

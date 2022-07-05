@@ -429,7 +429,7 @@ CURLcode CurlSession::Perform(Context const& context)
   return result;
 }
 
-std::unique_ptr<CurlNetworkConnection>&& CurlSession::GetUpgradedConnection()
+std::unique_ptr<CurlNetworkConnection> CurlSession::GetUpgradedConnection()
 {
   if (m_connectionUpgraded)
   {
@@ -437,7 +437,7 @@ std::unique_ptr<CurlNetworkConnection>&& CurlSession::GetUpgradedConnection()
   }
   else
   {
-    return std::move(std::unique_ptr<CurlNetworkConnection>());
+    return nullptr;
   }
 }
 

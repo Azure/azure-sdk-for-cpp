@@ -13,6 +13,7 @@
 #include <array>
 #include <mutex>
 #include <random>
+#include <shared_mutex>
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
 
@@ -552,7 +553,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       maskKey[2] = streamReader.ReadByte(context);
       maskKey[3] = streamReader.ReadByte(context);
     };
-    return streamReader.ReadBytes(payloadLength, context);
+    return streamReader.ReadBytes(static_cast<size_t>(payloadLength), context);
   }
 
   // Verify the Sec-WebSocket-Accept header as defined in RFC 6455 Section 1.3, which defines the

@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Complete the WebSocket upgrade.
      *
-     * @detail Called by the WebSocket client after the HTTP server responds with a
+     * @details Called by the WebSocket client after the HTTP server responds with a
      * SwitchingProtocols response. This method performs whatever operations are needed to
      * transfer the protocol from HTTP to WebSockets.
      */
@@ -105,8 +105,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Send a frame of data to the remote node.
      *
-     * @brief frameType Frame type sent to the server, Text or Binary.
-     * @brief frameData Frame data to be sent to the server.
+     * @param frameType Frame type sent to the server, Text or Binary.
+     * @param frameData Frame data to be sent to the server.
+     * @param context Context for the operation.
      */
     virtual void SendFrame(
         WebSocketFrameType frameType,

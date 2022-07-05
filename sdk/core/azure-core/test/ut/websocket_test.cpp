@@ -404,7 +404,7 @@ public:
       lwsStatus = serverSocket.ReceiveFrame();
       if (lwsStatus->ResultType != WebSocketResultType::TextFrameReceived)
       {
-        __debugbreak();
+		throw std::runtime_error("Expected text frame");
       }
       EXPECT_EQ(WebSocketResultType::TextFrameReceived, lwsStatus->ResultType);
       auto textFrame = lwsStatus->AsTextFrame();

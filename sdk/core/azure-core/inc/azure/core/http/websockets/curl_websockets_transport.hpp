@@ -50,7 +50,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Indicates if the transports supports native websockets or not.
      *
-     * @detail For the CURL websocket transport, the transport does NOT support native websockets -
+     * @details For the CURL websocket transport, the transport does NOT support native websockets -
      * it is the responsibility of the client of the WebSocketTransport to format WebSocket protocol
      * elements.
      */
@@ -69,10 +69,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
      * @detail Not implemented for CURL websockets because CURL does not support native websockets.
-     *
-     * @param status Status value to be sent to the remote node. Application defined.
-     * @param disconnectReason UTF-8 encoded reason for the disconnection. Optional.
-     * @param context Context for the operation.
      *
      */
     virtual void CloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override
@@ -96,8 +92,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @detail Not implemented for CURL websockets because CURL does not support native websockets.
      *
-     * @brief frameType Frame type sent to the server, Text or Binary.
-     * @brief frameData Frame data to be sent to the server.
      */
     virtual void SendFrame(
         WebSocketFrameType,
@@ -112,9 +106,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @detail Not implemented for CURL websockets because CURL does not support native websockets.
      *
-     * @brief buffer data received from the server.
-     * @brief bufferSize size of buffer.
-     * @brief bytesRead number of bytes read from server.
      */
     virtual std::vector<uint8_t> ReceiveFrame(WebSocketFrameType&, Azure::Core::Context const&)
         override
@@ -127,6 +118,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief This function is used when working with streams to pull more data from the wire.
      * Function will try to keep pulling data from socket until the buffer is all written or until
      * there is no more data to get from the socket.
+     * 
+     * @param buffer Buffer to fill with data.
+     * @param bufferSize Size of buffer.
+     * @param context Context to control the request lifetime.
+     * 
+     * @returns Buffer data received.
      *
      */
     virtual size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
@@ -135,6 +132,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
      *
+     * @param buffer Buffer to send.
+     * @param bufferSize Number of bytes to write.
+     * @param context Context for the operation.
      */
     virtual int SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
         override;

@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Enable masking for this WebSocket.
      *
-     * @detail Masking is needed to block [certain infrastructure
+     * @details Masking is needed to block [certain infrastructure
      * attacks](https://www.rfc-editor.org/rfc/rfc6455.html#section-10.3) and is strongly
      * recommended.
      */
