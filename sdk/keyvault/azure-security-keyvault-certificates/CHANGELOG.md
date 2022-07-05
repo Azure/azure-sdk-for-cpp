@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- Removed ServiceVersion type, replaced with Version field in the CertificateClientOptions type;
+- Removed ServiceVersion type, replaced with Version field in the CertificateClientOptions type.
 
 ## 4.0.0 (2022-06-07)
 
