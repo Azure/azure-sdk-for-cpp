@@ -420,7 +420,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       }
     }
 #if !defined(_MSC_VER)
-	// gcc 5 doesn't seem to detect that this is dead code, so we'll just leave it here.
+    // gcc 5 doesn't seem to detect that this is dead code, so we'll just leave it here.
     return nullptr;
 #endif
   }
