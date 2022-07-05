@@ -138,6 +138,10 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - pwsh: |
+          pip install websockets
+        workingDirectory: build
+        displayName: Install Python WebSockets.
+      - pwsh: |
           ctest `
             -C Debug `
             -V `
