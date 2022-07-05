@@ -270,7 +270,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     /**
      * @brief Decode a frame received from the websocket server.
      *
-     * @param paylod Pointer to the payload returned by the service. Note that this may be shorter
+     * @param payload Pointer to the payload returned by the service. Note that this may be shorter
      * than the full data in the response message.
      * @param opcode Opcode returned by the server.
      * @param isFinal True if this is the final message.
