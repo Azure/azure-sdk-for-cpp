@@ -579,16 +579,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::random_device randomEngine;
 
     std::vector<uint8_t> rv(vectorSize);
-#if defined(_MSC_VER)
-//#pragma warning(push)
-//#pragma warning(suppress : 4244)
-#endif
-          std::generate(begin(rv), end(rv), [&randomEngine]() mutable {
-            return static_cast<uint8_t>(randomEngine() % UINT8_MAX);
-          });
-#if defined(_MSC_VER)
-//#pragma warning(pop)
-#endif
+    std::generate(begin(rv), end(rv), [&randomEngine]() mutable {
+      return static_cast<uint8_t>(randomEngine() % UINT8_MAX);
+    });
     return rv;
   }
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail

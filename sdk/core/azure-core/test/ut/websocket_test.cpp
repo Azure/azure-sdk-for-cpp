@@ -7,6 +7,7 @@
 #include <chrono>
 #include <gtest/gtest.h>
 #include <list>
+#include <thread>
 // cspell::words closeme flibbityflobbidy
 
 using namespace Azure::Core;
@@ -178,7 +179,7 @@ std::string ToHexString(std::vector<uint8_t> const& data)
   std::stringstream ss;
   for (auto const& byte : data)
   {
-    ss << std::hex << std::setfill('0') << std::setw(2) << (int)byte;
+    ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(byte);
   }
   return ss.str();
 }
