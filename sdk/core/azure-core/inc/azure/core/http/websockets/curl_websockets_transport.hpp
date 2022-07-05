@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
-     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
     virtual void CloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override
@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Retrieve the status of the close socket operation.
      *
-     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
     std::pair<uint16_t, std::string> GetCloseSocketInformation(const Azure::Core::Context&) override
@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Send a frame of data to the remote node.
      *
-     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
     virtual void SendFrame(
@@ -104,7 +104,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Receive a frame of data from the remote node.
      *
-     * @detail Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
     virtual std::vector<uint8_t> ReceiveFrame(WebSocketFrameType&, Azure::Core::Context const&)
