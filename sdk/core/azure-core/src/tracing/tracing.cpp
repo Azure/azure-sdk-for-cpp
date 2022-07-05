@@ -1,24 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/tracing/tracing.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
+#include "azure/core/internal/tracing/tracing_impl.hpp"
 #include <cctype>
 #include <sstream>
 
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
-
-  const SpanKind SpanKind::Internal("Internal");
-  const SpanKind SpanKind::Client("Client");
-  const SpanKind SpanKind::Consumer("Consumer");
-  const SpanKind SpanKind::Producer("Producer");
-  const SpanKind SpanKind::Server("Server");
-
-  const SpanStatus SpanStatus::Unset("Unset");
-  const SpanStatus SpanStatus::Ok("Ok");
-  const SpanStatus SpanStatus::Error("Error");
 
   const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
   const TracingAttributes TracingAttributes::ServiceRequestId("serviceRequestId");
@@ -29,6 +19,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   const TracingAttributes TracingAttributes::HttpStatusCode("http.status_code");
 
   using Azure::Core::Context;
+
+  std::shared_ptr<TracerProviderImpl> TracerProviderImplGetter::TracerImplFromTracer(
+      std::shared_ptr<TracerProvider> const& provider)
+  {
+    const auto pointer = static_cast<TracerProvider*>(provider.get());
+    return std::shared_ptr<TracerProviderImpl>(provider, pointer);
+  }
 
   TracingContextFactory::TracingContext TracingContextFactory::CreateTracingContext(
       std::string const& methodName,
