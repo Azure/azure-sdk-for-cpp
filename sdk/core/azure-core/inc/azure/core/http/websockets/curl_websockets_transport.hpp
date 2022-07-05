@@ -118,11 +118,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief This function is used when working with streams to pull more data from the wire.
      * Function will try to keep pulling data from socket until the buffer is all written or until
      * there is no more data to get from the socket.
-     * 
+     *
      * @param buffer Buffer to fill with data.
      * @param bufferSize Size of buffer.
      * @param context Context to control the request lifetime.
-     * 
+     *
      * @returns Buffer data received.
      *
      */
