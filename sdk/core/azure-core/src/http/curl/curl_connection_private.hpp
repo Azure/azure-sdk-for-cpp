@@ -159,6 +159,12 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       /**
+       * @brief Gets the connection handle
+       *
+       */
+      CURL* GetHandle() { return m_handle; }
+
+      /**
        * @brief Destructor.
        * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
        */

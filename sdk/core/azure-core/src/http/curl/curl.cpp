@@ -1308,23 +1308,27 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string("curl_easy_init returned Null"));
   }
   CURLcode result;
-
+  auto curlConnection = std::make_unique<CurlConnection>(newHandle, connectionKey);
   // Libcurl setup before open connection (url, connect_only, timeout)
-  if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
+  if (!SetLibcurlOption(
+          curlConnection->GetHandle(),
+          CURLOPT_URL,
+          request.GetUrl().GetAbsoluteUrl().data(),
+          &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
+  if (port != 0 && !SetLibcurlOption(curlConnection->GetHandle(), CURLOPT_PORT, port, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
+  if (!SetLibcurlOption(curlConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
@@ -1334,7 +1338,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  if (!SetLibcurlOption(newHandle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
+  if (!SetLibcurlOption(curlConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
@@ -1343,7 +1347,11 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
+    if (!SetLibcurlOption(
+            curlConnection->GetHandle(),
+            CURLOPT_CONNECTTIMEOUT_MS,
+            options.ConnectionTimeout,
+            &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1358,7 +1366,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
    */
   if (options.Proxy)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_PROXY, options.Proxy->c_str(), &result))
+    if (!SetLibcurlOption(
+            curlConnection->GetHandle(), CURLOPT_PROXY, options.Proxy->c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1369,7 +1378,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (!options.CAInfo.empty())
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
+    if (!SetLibcurlOption(
+            curlConnection->GetHandle(), CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1384,7 +1394,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
 
-  if (!SetLibcurlOption(newHandle, CURLOPT_SSL_OPTIONS, sslOption, &result))
+  if (!SetLibcurlOption(curlConnection->GetHandle(), CURLOPT_SSL_OPTIONS, sslOption, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1394,7 +1404,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (!options.SslVerifyPeer)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
+    if (!SetLibcurlOption(curlConnection->GetHandle(), CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1404,7 +1414,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (options.NoSignal)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_NOSIGNAL, 1L, &result))
+    if (!SetLibcurlOption(curlConnection->GetHandle(), CURLOPT_NOSIGNAL, 1L, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1416,7 +1426,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // curl-transport adapter supports only HTTP/1.1
   // https://github.com/Azure/azure-sdk-for-cpp/issues/2848
   // The libcurl uses HTTP/2 by default, if it can be negotiated with a server on handshake.
-  if (!SetLibcurlOption(newHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
+  if (!SetLibcurlOption(
+          curlConnection->GetHandle(), CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1424,14 +1435,15 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   }
 
   // Make libcurl to support only TLS v1.2 or later
-  if (!SetLibcurlOption(newHandle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
+  if (!SetLibcurlOption(
+          curlConnection->GetHandle(), CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
         + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
   }
 
-  auto performResult = curl_easy_perform(newHandle);
+  auto performResult = curl_easy_perform(curlConnection->GetHandle());
   if (performResult != CURLE_OK)
   {
     throw Http::TransportException(
@@ -1439,7 +1451,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(performResult)));
   }
 
-  return std::make_unique<CurlConnection>(newHandle, connectionKey);
+  return curlConnection;
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
