@@ -419,6 +419,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           throw std::runtime_error("Unknown opcode received.");
       }
     }
+#if !defined(_MSC_VER)
+	// gcc 5 doesn't seem to detect that this is dead code, so we'll just leave it here.
+    return nullptr;
+#endif
   }
 
   std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
