@@ -56,11 +56,11 @@ namespace Azure { namespace Storage { namespace Test {
     blob3Client.CreateSnapshot();
 
     auto batch = serviceClient.CreateBatch();
-    auto delete1Response = batch.DeleteBlob(blob1Client.GetUrl());
+    auto delete1Response = batch.DeleteBlobUrl(blob1Client.GetUrl());
     auto delete2Response = batch.DeleteBlob(containerName1, blob2Name);
     Blobs::DeleteBlobOptions deleteOptions;
     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::OnlySnapshots;
-    auto delete3Response = batch.DeleteBlob(blob3Client.GetUrl(), deleteOptions);
+    auto delete3Response = batch.DeleteBlobUrl(blob3Client.GetUrl(), deleteOptions);
     auto submitBatchResponse = serviceClient.SubmitBatch(batch);
 
     EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
@@ -104,10 +104,8 @@ namespace Azure { namespace Storage { namespace Test {
     blob2Client.UploadFrom(nullptr, 0);
 
     auto batch = containerClient.CreateBatch();
-    auto setTier1Response
-        = batch.SetBlobAccessTier(containerName, blob1Name, Blobs::Models::AccessTier::Cool);
-    auto setTier2Response
-        = batch.SetBlobAccessTier(blob2Client.GetUrl(), Blobs::Models::AccessTier::Archive);
+    auto setTier1Response = batch.SetBlobAccessTier(blob1Name, Blobs::Models::AccessTier::Cool);
+    auto setTier2Response = batch.SetBlobAccessTier(blob2Name, Blobs::Models::AccessTier::Archive);
     auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_NO_THROW(setTier1Response.GetResponse());
@@ -141,7 +139,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.Create();
 
     auto batch = containerClient.CreateBatch();
-    auto delete1Response = batch.DeleteBlob(blobClient.GetUrl());
+    auto delete1Response = batch.DeleteBlobUrl(blobClient.GetUrl());
     auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
@@ -185,9 +183,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Partial failure
     {
-      auto r1 = batch.SetBlobAccessTier(blobClient.GetUrl(), Blobs::Models::AccessTier::Hot);
-      auto r2 = batch.SetBlobAccessTier(
-          containerName, "BlobNameNotExists", Blobs::Models::AccessTier::Hot);
+      auto r1 = batch.SetBlobAccessTierUrl(blobClient.GetUrl(), Blobs::Models::AccessTier::Hot);
+      auto r2 = batch.SetBlobAccessTier("BlobNameNotExists", Blobs::Models::AccessTier::Hot);
       EXPECT_NO_THROW(containerClient.SubmitBatch(batch));
       EXPECT_NO_THROW(r1.GetResponse());
       EXPECT_THROW(r2.GetResponse(), StorageException);
@@ -195,8 +192,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Mixed operations
     auto batch2 = containerClient.CreateBatch();
-    batch2.SetBlobAccessTier(blobClient.GetUrl(), Blobs::Models::AccessTier::Cool);
-    batch2.DeleteBlob(blobClient.GetUrl());
+    batch2.SetBlobAccessTierUrl(blobClient.GetUrl(), Blobs::Models::AccessTier::Cool);
+    batch2.DeleteBlobUrl(blobClient.GetUrl());
 
     try
     {
@@ -239,7 +236,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto containerSasClient = Blobs::BlobContainerClient(
         serviceClient.GetBlobContainerClient(containerName).GetUrl() + containerExpiredSasToken);
     auto batch3 = containerSasClient.CreateBatch();
-    batch3.DeleteBlob(blobClient.GetUrl() + containerSasToken);
+    batch3.DeleteBlobUrl(blobClient.GetUrl() + containerSasToken);
     try
     {
       containerSasClient.SubmitBatch(batch3);

@@ -3,14 +3,9 @@
 
 #pragma once
 
-#include <cstring>
-#include <future>
 #include <memory>
 #include <string>
-#include <utility>
-
-#include <azure/core/nullable.hpp>
-#include <azure/core/url.hpp>
+#include <vector>
 
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
@@ -20,7 +15,8 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   namespace _detail {
-    extern const Core::Context::Key s_batchKey;
+    extern const Core::Context::Key s_serviceBatchKey;
+    extern const Core::Context::Key s_containerBatchKey;
 
     class StringBodyStream final : public Core::IO::BodyStream {
     public:
@@ -55,7 +51,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BatchSubrequestType Type;
     };
 
-    struct BlobBatchAccessHelper;
+    class BlobBatchAccessHelper;
 
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> ConstructBatchRequestPolicy(
         const std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&
@@ -72,16 +68,15 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   /**
    * @brief A batch object allows you to batch multiple operations in a single request via
-   * #Azure::Storage::Blobs::BlobServiceClient::SubmitBatch or
-   * #Azure::Storage::Blobs::BlobContainerClient::SubmitBatch.
+   * #Azure::Storage::Blobs::BlobServiceClient::SubmitBatch.
    */
-  class BlobBatch final {
+  class BlobServiceBatch final {
   public:
     /**
      * @brief Adds a delete subrequest into batch object.
      *
      * @param blobContainerName Container name of the blob to delete.
-     * @param blobName Blob name of the blob to delete.
+     * @param blobName Name of the blob to delete.
      * @param options Optional parameters to execute the delete operation.
      * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
      * is submitted.
@@ -99,7 +94,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
      * is submitted.
      */
-    DeferredResponse<Models::DeleteBlobResult> DeleteBlob(
+    DeferredResponse<Models::DeleteBlobResult> DeleteBlobUrl(
         const std::string& blobUrl,
         const DeleteBlobOptions& options = DeleteBlobOptions());
 
@@ -107,7 +102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Adds a change tier subrequest into batch object.
      *
      * @param blobContainerName Container name of the blob to delete.
-     * @param blobName Blob name of the blob to delete.
+     * @param blobName Name of the blob to delete.
      * @param accessTier Indicates the tier to be set on the blob.
      * @param options Optional parameters to execute the delete operation.
      * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
@@ -128,27 +123,95 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
      * object is submitted.
      */
-    DeferredResponse<Models::SetBlobAccessTierResult> SetBlobAccessTier(
+    DeferredResponse<Models::SetBlobAccessTierResult> SetBlobAccessTierUrl(
         const std::string& blobUrl,
         Models::AccessTier accessTier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
 
   private:
-    explicit BlobBatch(BlobServiceClient blobServiceClient);
-    explicit BlobBatch(BlobContainerClient blobContainerClient);
+    explicit BlobServiceBatch(BlobServiceClient blobServiceClient);
 
     BlobClient GetBlobClientForSubrequest(Core::Url url) const;
 
   private:
-    Core::Url m_url;
-    Nullable<BlobServiceClient> m_blobServiceClient;
-    Nullable<BlobContainerClient> m_blobContainerClient;
+    BlobServiceClient m_blobServiceClient;
 
     std::vector<std::shared_ptr<_detail::BatchSubrequest>> m_subrequests;
 
     friend class BlobServiceClient;
+    friend class _detail::BlobBatchAccessHelper;
+  };
+
+  /**
+   * @brief A batch object allows you to batch multiple operations in a single request via
+   * #Azure::Storage::Blobs::BlobContainerClient::SubmitBatch.
+   */
+  class BlobContainerBatch final {
+  public:
+    /**
+     * @brief Adds a delete subrequest into batch object.
+     *
+     * @param blobName Name of the blob to delete.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
+     * is submitted.
+     */
+    DeferredResponse<Models::DeleteBlobResult> DeleteBlob(
+        const std::string& blobName,
+        const DeleteBlobOptions& options = DeleteBlobOptions());
+
+    /**
+     * @brief Adds a delete subrequest into batch object.
+     *
+     * @param blobUrl Url of the blob to delete.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<DeleteBlobResult> after batch object
+     * is submitted.
+     */
+    DeferredResponse<Models::DeleteBlobResult> DeleteBlobUrl(
+        const std::string& blobUrl,
+        const DeleteBlobOptions& options = DeleteBlobOptions());
+
+    /**
+     * @brief Adds a change tier subrequest into batch object.
+     *
+     * @param blobName Name of the blob to delete.
+     * @param accessTier Indicates the tier to be set on the blob.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
+     * object is submitted.
+     */
+    DeferredResponse<Models::SetBlobAccessTierResult> SetBlobAccessTier(
+        const std::string& blobName,
+        Models::AccessTier accessTier,
+        const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
+
+    /**
+     * @brief Adds a change tier subrequest into batch object.
+     *
+     * @param blobUrl Url of the blob to delete.
+     * @param accessTier Indicates the tier to be set on the blob.
+     * @param options Optional parameters to execute the delete operation.
+     * @return A deferred response which can produce a Response<SetBlobAccessTierResult> after batch
+     * object is submitted.
+     */
+    DeferredResponse<Models::SetBlobAccessTierResult> SetBlobAccessTierUrl(
+        const std::string& blobUrl,
+        Models::AccessTier accessTier,
+        const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
+
+  private:
+    explicit BlobContainerBatch(BlobContainerClient blobContainerClient);
+
+    BlobClient GetBlobClientForSubrequest(Core::Url url) const;
+
+  private:
+    BlobContainerClient m_blobContainerClient;
+
+    std::vector<std::shared_ptr<_detail::BatchSubrequest>> m_subrequests;
+
     friend class BlobContainerClient;
-    friend struct _detail::BlobBatchAccessHelper;
+    friend class _detail::BlobBatchAccessHelper;
   };
 
 }}} // namespace Azure::Storage::Blobs

@@ -50,4 +50,9 @@ foreach ($incDir in $AllLibIncDirs) {
     $CmdLine += " -I " + $incDir
 }
 
+# Define an _azure_APIVIEW macro so that the public headers that depend on 3rd party headers apply a work around
+# for declaring 3rd party dependencies in a minimalistic way that is sufficient for the ApiView generation.
+# Otherwise, ApiView would've been including 3rd party types for review, which is not what we want.
+$CmdLine += " -D_azure_APIVIEW"
+
 $CmdLine

@@ -310,19 +310,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blobContainerClient), std::move(response.RawResponse));
   }
 
-  BlobBatch BlobServiceClient::CreateBatch() { return BlobBatch(*this); }
+  BlobServiceBatch BlobServiceClient::CreateBatch() { return BlobServiceBatch(*this); }
 
   Response<Models::SubmitBlobBatchResult> BlobServiceClient::SubmitBatch(
-      const BlobBatch& batch,
+      const BlobServiceBatch& batch,
       const SubmitBlobBatchOptions& options,
       const Core::Context& context) const
   {
     (void)options;
-
-    if (!batch.m_blobServiceClient.HasValue())
-    {
-      throw std::runtime_error("Batch is container-scoped.");
-    }
 
     _detail::ServiceClient::SubmitServiceBatchOptions protocolLayerOptions;
     _detail::StringBodyStream bodyStream(std::string{});
@@ -331,7 +326,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_serviceUrl,
         bodyStream,
         protocolLayerOptions,
-        context.WithValue(_detail::s_batchKey, &batch));
+        context.WithValue(_detail::s_serviceBatchKey, &batch));
     return Azure::Response<Models::SubmitBlobBatchResult>(
         Models::SubmitBlobBatchResult(), std::move(response.RawResponse));
   }
