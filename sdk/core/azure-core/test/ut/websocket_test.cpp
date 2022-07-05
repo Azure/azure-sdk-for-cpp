@@ -7,6 +7,7 @@
 #include <chrono>
 #include <gtest/gtest.h>
 #include <list>
+// cspell::words closeme flibbityflobbidy
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http::WebSockets;
