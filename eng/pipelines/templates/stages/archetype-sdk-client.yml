@@ -108,6 +108,8 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
+          EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer }}
+          PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
