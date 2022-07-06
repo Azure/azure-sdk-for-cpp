@@ -80,9 +80,9 @@ jobs:
 
     steps:
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.6'
+        displayName: 'Use Python 3.10'
         inputs:
-          versionSpec: '3.6'
+          versionSpec: '3.10'
 
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
