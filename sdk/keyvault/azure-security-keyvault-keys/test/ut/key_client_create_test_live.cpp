@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "../../azure-security-attestation/src/private/crypto/inc/crypto.hpp"
 #include "key_client_base_test.hpp"
 
 #include "private/key_constants.hpp"
@@ -240,7 +239,7 @@ std::string BinaryToHexString(std::vector<uint8_t> const& src)
 {
   static constexpr char hexMap[]
       = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-  std::string output(static_cast<size_t>(src.size()) * 2, ' ');
+  std::string output(static_cast<size_t>(src.size()) * 2, '\0');
   const uint8_t* input = src.data();
 
   for (size_t i = 0; i < src.size(); i++)
@@ -262,13 +261,20 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
   options.ReleasePolicy = KeyReleasePolicy();
   options.ReleasePolicy.Value().Immutable = false;
-  std::string dataStr = "{"
-                        "\"anyOf\" : [ {"
-                        "\"allOf\" : [ {\"claim\" : \"claim\", \"equals\" : \"0123456789\"} ],"
-                        "\"authority\" : \"https://sharedeus.eus.test.attest.azure.net/\""
-                        "} ],"
-                        " \"version\" : \"1.0.0\""
-                        "} ";
+  std::string dataStr = R"JSON({
+  "anyOf":[
+    {
+      "allOf":[
+        {
+          "claim":"claim",
+          "equals":"0123456789"
+        }
+      ],
+      "authority":"https://sharedeus.eus.test.attest.azure.net/"
+    }
+  ],
+  "version":"1.0.0"
+})JSON";
   auto jsonParser = json::parse(dataStr);
   auto parsedJson = jsonParser.dump();
   options.ReleasePolicy.Value().EncodedPolicy
