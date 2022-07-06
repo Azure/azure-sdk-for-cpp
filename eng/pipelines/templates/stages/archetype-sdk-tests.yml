@@ -29,6 +29,12 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
+- name: EnablePythonWebSocketServer
+  type: boolean
+  default: false
+- name: PythonWebSocketServerName
+  type: string
+  default: ''
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
@@ -57,3 +63,5 @@ stages:
                 Coverage: ${{ parameters.Coverage}}
                 CoverageReportPath: ${{ parameters.CoverageReportPath}}
                 TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}
+                EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer}}
+                PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName}}

@@ -46,6 +46,12 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: EnablePythonWebSocketServer
+    type: boolean
+    default: false
+  - name: PythonWebSocketServerName
+    type: string
+    default: ''
 
 jobs:
   - job:
@@ -83,6 +89,7 @@ jobs:
         displayName: 'Use Python 3.10'
         inputs:
           versionSpec: '3.10'
+        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
 
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
@@ -135,13 +142,6 @@ jobs:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             TestPipeline: ${{ parameters.TestPipeline }}
 
-      - pwsh: |
-          python --version
-          pip install -r requirements.txt
-        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/
-        displayName: Install Python requirements.
-        condition: eq('${{parameters.ServiceDirectory}}', 'core')
-
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -150,11 +150,18 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - pwsh: |
-            Start-Job -ScriptBlock {
+          python --version
+          pip install -r requirements.txt
+        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/
+        displayName: Install Python requirements.
+        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
+
+      - pwsh: |
+            Start-Job -Name PythonServer -ScriptBlock {
             python websocket_server.py
             }
         workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
-        condition: eq('${{parameters.ServiceDirectory}}', 'core')
+        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
         displayName: Launch python websocket server.
         
       - pwsh: |
@@ -168,9 +175,9 @@ jobs:
         workingDirectory: build
         displayName: Test
       - pwsh: |
-            Stop-Job
+            Stop-Job -Name PythonServer
         workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
-        condition: eq('${{parameters.ServiceDirectory}}', 'core')
+        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
         displayName: Stop python websocket server.
 
       - task: PublishTestResults@2

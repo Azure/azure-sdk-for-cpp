@@ -42,6 +42,8 @@ stages:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
+      EnablePythonWebSocketServer: true
+      PythonWebSocketServerName: sdk/core/azure-core/test/ut/websocket-server.py
       Artifacts:
         - Name: azure-core
           Path: azure-core
