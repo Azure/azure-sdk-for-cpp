@@ -42,7 +42,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options)
-    : m_endpoint(endpoint), m_apiVersion(options.Version.ToString()),
+    : m_endpoint(endpoint), m_apiVersion(options.Version),
       m_tokenValidationOptions(options.TokenValidationOptions),
       m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
 {
@@ -56,7 +56,6 @@ AttestationAdministrationClient::AttestationAdministrationClient(
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
-  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(

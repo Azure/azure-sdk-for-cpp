@@ -45,7 +45,7 @@ AttestationClient::AttestationClient(
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
-  m_apiVersion = options.Version.ToString();
+  m_apiVersion = options.Version;
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
