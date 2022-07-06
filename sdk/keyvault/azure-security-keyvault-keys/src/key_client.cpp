@@ -68,7 +68,7 @@ KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     KeyClientOptions options)
-    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version)
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {

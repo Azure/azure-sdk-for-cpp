@@ -28,13 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Service Version used.
      *
      */
-    std::string Version;
-
-    /**
-     * @brief Construct a new Certificate Client Options object.
-     *
-     */
-    CertificateClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
+    const std::string ApiVersion{"7.3"};
   };
 
 }}}} // namespace Azure::Security::KeyVault::Certificates
