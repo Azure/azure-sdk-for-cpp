@@ -42,7 +42,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options)
-    : m_endpoint(endpoint), m_apiVersion(options.Version),
+    : m_endpoint(endpoint), m_apiVersion(options.ApiVersion),
       m_tokenValidationOptions(options.TokenValidationOptions),
       m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
 {
