@@ -16,28 +16,6 @@
 
 namespace Azure { namespace Security { namespace Attestation {
 
-  /** @brief Version to be used when communicating with the Attestation service.
-   */
-  class ServiceVersion final
-      : public Azure::Core::_internal::ExtendableEnumeration<ServiceVersion> {
-  public:
-    /**
-     * @brief Construct a new Service Version object
-     *
-     * @param version The string version for the Attestation service.
-     */
-    explicit ServiceVersion(std::string version)
-        : Azure::Core::_internal::ExtendableEnumeration<ServiceVersion>(std::move(version))
-    {
-    }
-
-    /**
-     * @brief Use to send request to the 2020-10-01 version of Attestation service.
-     *
-     */
-    AZ_ATTESTATION_DLLEXPORT static const ServiceVersion V2020_10_01;
-  };
-
   /**
    * @brief The TokenValidationCallbackFn represents a callback which is called to allow the caller
    *  to perform additional token validation options beyond the validations performed by the
@@ -116,7 +94,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    std::string ApiVersion{"2020-10-01"};
+    std::string Version;
 
     /** @brief Options sent when validating tokens received by the attestation service.
      */
@@ -145,7 +123,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    ServiceVersion Version;
+    std::string Version;
     /** @brief Options sent when validating tokens received by the attestation service.
      */
     AttestationTokenValidationOptions TokenValidationOptions;
@@ -157,7 +135,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * the service.
      */
     AttestationAdministrationClientOptions(
-        ServiceVersion version = ServiceVersion::V2020_10_01,
+        std::string version = "2020-10-01",
         AttestationTokenValidationOptions const& tokenValidationOptions = {})
         : Azure::Core::_internal::ClientOptions(), Version(version),
           TokenValidationOptions(tokenValidationOptions)

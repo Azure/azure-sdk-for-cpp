@@ -4,11 +4,12 @@
 
 ### Features Added
 
+- Keyvault 7.3 support added for Keys. 
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Removed ServiceVersion type, replaced with Version field in the KeyClientOptions type.
 
-### Other Changes
 
 ## 4.2.0 (2021-10-05)
 

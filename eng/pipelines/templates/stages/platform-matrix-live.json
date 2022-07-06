@@ -128,12 +128,14 @@
                     "RunSamples": 1,
                     "WindowsCtestConfig": "-C Release"
                 },
-                "Win_x64_with_unit_test_libcurl": {
+                "HSM_Win_x64_with_unit_test_libcurl": {
                     "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
                     "CMAKE_GENERATOR_PLATFORM": "x64",
                     "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
                     "BuildArgs": "-v --parallel 8 --config Release",
-                    "WindowsCtestConfig": "-C Release"
+                    "WindowsCtestConfig": "-C Release",
+                    "KVLocation": "eastus2",
+                    "EnableHSM": 1
                 },
                 "Win_x64_with_unit_samples_libcurl": {
                     "VcpkgInstall": "curl[winssl] openssl",

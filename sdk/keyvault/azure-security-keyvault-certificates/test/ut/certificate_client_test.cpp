@@ -888,3 +888,22 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     }
   }
 }
+
+TEST_F(KeyVaultCertificateClientTest, ServiceVersion)
+{
+  auto credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
+  {
+    // 7.3
+    EXPECT_NO_THROW(auto options = CertificateClientOptions(); CertificateClient certificateClient(
+                        "http://account.vault.azure.net", credential, options);
+                    EXPECT_EQ(options.Version, "7.3"););
+  }
+  {
+    // arbitrary version
+    EXPECT_NO_THROW(
+        auto options = CertificateClientOptions(); options.Version = "1.0";
+        CertificateClient certificateClient("http://account.vault.azure.net", credential, options);
+        EXPECT_EQ(options.Version, "1.0"););
+  }
+}

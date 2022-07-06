@@ -15,7 +15,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:49:37 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/pending?api-version=7.2&request_id=b5d9abb875c74900ab649d9aae9ca924",
+        "location": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/pending?api-version=7.3&request_id=b5d9abb875c74900ab649d9aae9ca924",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -27,7 +27,7 @@
         "x-ms-request-id": "beb49c0e-697c-4e93-9a03-be1179e122de",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -55,7 +55,7 @@
         "x-ms-request-id": "dcdc7f30-7146-46c3-a162-e6d0a25b2579",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "c05775a3-b2e7-4501-852e-d23a4983a466",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -109,7 +109,7 @@
         "x-ms-request-id": "aac3ced7-3a28-467e-b34e-3b8ab19a9005",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy?api-version=7.3"
     },
     {
       "Headers": {
@@ -136,7 +136,7 @@
         "x-ms-request-id": "4ea987e6-54d6-4352-a6c1-d60ff8cb3375",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/policy?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetCertificatePolicy/policy?api-version=7.3"
     }
   ]
 }
