@@ -158,13 +158,14 @@ jobs:
 
       - pwsh: |
             Start-Job -Name PythonServer -ScriptBlock {
-            python websocket_server.py
+            python ${{parameters.PythonWebSocketServerName}}
             }
-        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
+        workingDirectory: build
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
         displayName: Launch python websocket server.
         
       - pwsh: |
+          Get-Job
           ctest `
             -C Debug `
             -V `
@@ -175,7 +176,8 @@ jobs:
         workingDirectory: build
         displayName: Test
       - pwsh: |
-            Stop-Job -Name PythonServer
+          Get-Job
+          Stop-Job -Name PythonServer
         workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
         displayName: Stop python websocket server.
