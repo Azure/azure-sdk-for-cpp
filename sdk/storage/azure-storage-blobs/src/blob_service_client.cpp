@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blobContainerClient), std::move(response.RawResponse));
   }
 
-  BlobServiceBatch BlobServiceClient::CreateBatch() { return BlobServiceBatch(*this); }
+  BlobServiceBatch BlobServiceClient::CreateBatch() const { return BlobServiceBatch(*this); }
 
   Response<Models::SubmitBlobBatchResult> BlobServiceClient::SubmitBatch(
       const BlobServiceBatch& batch,
