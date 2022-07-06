@@ -130,6 +130,13 @@ jobs:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             TestPipeline: ${{ parameters.TestPipeline }}
 
+      - pwsh: |
+          python --version
+          pip install -r requirements.txt
+        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/
+        displayName: Install Python requirements.
+        condition: eq('${{parameters.ServiceDirectory}}', 'core')
+
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -138,16 +145,10 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - pwsh: |
-          python --version
-          pip install -r requirements.txt
-        workingDirectory: $(Build.SourcesDirectory)/azure-core/test/ut/
-        displayName: Install Python requirements.
-        condition: eq('${{parameters.ServiceDirectory}}', 'core')
-      - pwsh: |
             Start-Job -ScriptBlock {
             python websocket_server.py
             }
-        workingDirectory: $(Build.SourcesDirectory)/azure-core/test/ut
+        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
         condition: eq('${{parameters.ServiceDirectory}}', 'core')
         displayName: Launch python websocket server.
         
@@ -163,7 +164,7 @@ jobs:
         displayName: Test
       - pwsh: |
             Stop-Job
-        workingDirectory: $(Build.SourcesDirectory)/azure-core/test/ut
+        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
         condition: eq('${{parameters.ServiceDirectory}}', 'core')
         displayName: Stop python websocket server.
 
