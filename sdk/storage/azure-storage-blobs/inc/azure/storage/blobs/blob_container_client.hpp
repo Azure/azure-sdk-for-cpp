@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new batch object.
      */
-    BlobContainerBatch CreateBatch();
+    BlobContainerBatch CreateBatch() const;
 
     /**
      * @brief Submits a batch of subrequests.
