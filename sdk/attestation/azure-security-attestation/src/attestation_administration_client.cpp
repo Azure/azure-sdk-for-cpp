@@ -49,7 +49,6 @@ AttestationAdministrationClient::AttestationAdministrationClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
   {
-    m_credentials = credential;
     Azure::Core::Credentials::TokenRequestContext const tokenContext
         = {{"https://attest.azure.net/.default"}};
 
