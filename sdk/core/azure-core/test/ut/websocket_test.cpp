@@ -404,13 +404,12 @@ public:
     {
 
       lwsStatus = serverSocket.ReceiveFrame();
-      if (lwsStatus->ResultType != WebSocketResultType::TextFrameReceived)
-      {
-        throw std::runtime_error("Expected text frame");
-      }
       EXPECT_EQ(WebSocketResultType::TextFrameReceived, lwsStatus->ResultType);
-      auto textFrame = lwsStatus->AsTextFrame();
-      returnValue.insert(returnValue.end(), textFrame->Text.begin(), textFrame->Text.end());
+      if (lwsStatus->ResultType == WebSocketResultType::TextFrameReceived)
+      {
+        auto textFrame = lwsStatus->AsTextFrame();
+        returnValue.insert(returnValue.end(), textFrame->Text.begin(), textFrame->Text.end());
+      }
     } while (!lwsStatus->IsFinalFrame);
     serverSocket.Close();
     return returnValue;
@@ -422,7 +421,7 @@ TEST(WebSocketTests, LibWebSocketOrg)
   {
     LibWebSocketStatus lwsStatus;
     auto serverStatus = lwsStatus.GetLWSStatus();
-    GTEST_LOG_(INFO) << serverStatus << std::endl;
+    GTEST_LOG_(INFO) << "Server status: " << serverStatus << std::endl;
 
     Azure::Core::Json::_internal::json status(
         Azure::Core::Json::_internal::json::parse(serverStatus));

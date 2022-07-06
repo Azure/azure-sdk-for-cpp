@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationClientOptions(
         std::string version = "2020-10-01",
         AttestationTokenValidationOptions const& tokenValidationOptions = {})
-        : Azure::Core::_internal::ClientOptions(), ApiVersion(version),
+        : Azure::Core::_internal::ClientOptions(), Version(version),
           TokenValidationOptions(tokenValidationOptions)
     {
     }
