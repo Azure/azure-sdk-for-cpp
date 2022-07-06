@@ -116,7 +116,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    ServiceVersion Version;
+    std::string ApiVersion{"2020-10-01"};
 
     /** @brief Options sent when validating tokens received by the attestation service.
      */
@@ -130,9 +130,9 @@ namespace Azure { namespace Security { namespace Attestation {
      * the service.
      */
     AttestationClientOptions(
-        ServiceVersion version = ServiceVersion::V2020_10_01,
+        std::string version = "2020-10-01",
         AttestationTokenValidationOptions const& tokenValidationOptions = {})
-        : Azure::Core::_internal::ClientOptions(), Version(version),
+        : Azure::Core::_internal::ClientOptions(), ApiVersion(version),
           TokenValidationOptions(tokenValidationOptions)
     {
     }
