@@ -138,9 +138,19 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - pwsh: |
-          pip install websockets
-        workingDirectory: build
-        displayName: Install Python WebSockets.
+          python --version
+          pip install -r requirements.txt
+        workingDirectory: $(Build.SourcesDirectory)/azure-core/test/ut/
+        displayName: Install Python requirements.
+        condition: eq(${{parameters.ServiceDirectory}}, "core")
+      - pwsh: |
+            Start-Job -ScriptBlock {
+            python websocket_server.py
+            }
+        workingDirectory: $(Build.SourcesDirectory)/azure-core/test/ut
+        condition: eq(${{parameters.ServiceDirectory}}, "core")
+        displayName: Launch python websocket server.
+        
       - pwsh: |
           ctest `
             -C Debug `
@@ -151,6 +161,11 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
+      - pwsh: |
+            Stop-Job
+        workingDirectory: $(Build.SourcesDirectory)/azure-core/test/ut
+        condition: eq(${{parameters.ServiceDirectory}}, "core")
+        displayName: Stop python websocket server.
 
       - task: PublishTestResults@2
         inputs:
