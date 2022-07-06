@@ -103,7 +103,6 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Construct a new Attestation Client Options object.
      *
-     * @param version Optional version for the client.
      * @param tokenValidationOptions Options applied when validating attestation tokens returned by
      * the service.
      */
@@ -127,7 +126,6 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Construct a new Attestation Client Options object.
      *
-     * @param version Optional version for the client.
      * @param tokenValidationOptions Options applied when validating attestation tokens returned by
      * the service.
      */
