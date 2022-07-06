@@ -43,55 +43,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<std::string> NextPageToken;
   };
 
-  class ServiceVersion final {
-  private:
-    std::string m_version;
-
-  public:
-    /**
-     * @brief Construct a new Service Version object
-     *
-     * @param version The string version for the Key Vault keys service.
-     */
-    ServiceVersion(std::string version) : m_version(std::move(version)) {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #ServiceVersion to be compared.
-     */
-    bool operator==(ServiceVersion const& other) const { return m_version == other.m_version; }
-
-    /**
-     * @brief Return the #ServiceVersion string representation.
-     *
-     */
-    std::string const& ToString() const { return m_version; }
-
-    /**
-     * @brief Use to send request to the 7.2 version of Key Vault service.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_2;
-  };
-
   /**
    * @brief Define the options to create an SDK Keys client.
    *
    */
   struct KeyClientOptions final : public Azure::Core::_internal::ClientOptions
   {
-    ServiceVersion Version;
+    /**
+     * @brief Service Version used.
+     *
+     */
+    std::string Version;
 
     /**
      * @brief Construct a new Key Client Options object.
      *
-     * @param version Optional version for the client.
      */
-    KeyClientOptions(ServiceVersion version = ServiceVersion::V7_2)
-        : Azure::Core::_internal::ClientOptions(), Version(version)
-    {
-    }
+    KeyClientOptions() : Azure::Core::_internal::ClientOptions() { Version = "7.3"; }
   };
 
   /**
@@ -126,19 +94,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::vector<KeyOperation> KeyOperations;
 
     /**
-     * @brief Indicates when the key will be valid and can be used for cryptographic operations.
+     * @brief Indicate when the key will be valid and can be used for cryptographic operations.
      *
      */
     Azure::Nullable<Azure::DateTime> NotBefore;
 
     /**
-     * @brief Indicates when the key will expire and cannot be used for cryptographic operations.
+     * @brief Indicate when the key will expire and cannot be used for cryptographic operations.
      *
      */
     Azure::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
-     * @brief whether the key is enabled and useable for cryptographic operations.
+     * @brief Indicate whether the key is enabled and useable for cryptographic operations.
      *
      */
     Azure::Nullable<bool> Enabled;
@@ -148,6 +116,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief The policy rules under which the key can be exported.
+     *
+     */
+    Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
+
+    /**
+     * @brief Indicate if the private key can be exported.
+     *
+     */
+    Azure::Nullable<bool> Exportable;
   };
 
   /**
@@ -393,6 +373,50 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The name of the key.
      */
     std::string const& Name() const { return Properties.Name; }
+  };
+
+  /**
+   * @brief Get Random Bytes options
+   *
+   */
+  struct GetRandomBytesOptions final
+  {
+    /**
+     * @brief The requested number of random bytes.
+     *
+     */
+    int32_t Count;
+  };
+
+  /**
+   * @brief Release key options.
+   *
+   */
+  struct KeyReleaseOptions final
+  {
+    /**
+     * @brief The attestation assertion for the target of the key release.
+     *
+     */
+    std::string Target;
+
+    /**
+     * @brief A client provided nonce for freshness.
+     *
+     */
+    Azure::Nullable<std::string> Nonce;
+
+    /**
+     * @brief The encryption algorithm to use to protected the exported key material.
+     *
+     */
+    Azure::Nullable<KeyEncryptionAlgorithm> Encryption;
+
+    /**
+     * @brief The version of the key to release.
+     *
+     */
+    Azure::Nullable<std::string> Version;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys
