@@ -94,7 +94,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    std::string Version;
+    std::string ApiVersion{"2020-10-01"};
 
     /** @brief Options sent when validating tokens received by the attestation service.
      */
@@ -103,15 +103,11 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Construct a new Attestation Client Options object.
      *
-     * @param version Optional version for the client.
      * @param tokenValidationOptions Options applied when validating attestation tokens returned by
      * the service.
      */
-    AttestationClientOptions(
-        std::string version = "2020-10-01",
-        AttestationTokenValidationOptions const& tokenValidationOptions = {})
-        : Azure::Core::_internal::ClientOptions(), Version(version),
-          TokenValidationOptions(tokenValidationOptions)
+    AttestationClientOptions(AttestationTokenValidationOptions const& tokenValidationOptions = {})
+        : Azure::Core::_internal::ClientOptions(), TokenValidationOptions(tokenValidationOptions)
     {
     }
   };
@@ -123,22 +119,19 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    std::string Version;
+    std::string ApiVersion{"2020-10-01"};
     /** @brief Options sent when validating tokens received by the attestation service.
      */
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
      *
-     * @param version Optional version for the client.
      * @param tokenValidationOptions Options applied when validating attestation tokens returned by
      * the service.
      */
     AttestationAdministrationClientOptions(
-        std::string version = "2020-10-01",
         AttestationTokenValidationOptions const& tokenValidationOptions = {})
-        : Azure::Core::_internal::ClientOptions(), Version(version),
-          TokenValidationOptions(tokenValidationOptions)
+        : Azure::Core::_internal::ClientOptions(), TokenValidationOptions(tokenValidationOptions)
     {
     }
   };
