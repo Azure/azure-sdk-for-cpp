@@ -69,7 +69,7 @@ public:
       case SHASize::SHA1: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha1(), NULL))
         {
-          throw std::runtime_error("Crypto error while init Sha256Hash.");
+          throw std::runtime_error("Crypto error while initializing Sha1Hash.");
         }
         break;
       }
