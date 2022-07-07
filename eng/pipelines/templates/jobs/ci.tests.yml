@@ -152,6 +152,7 @@ jobs:
       - pwsh: |
           python --version
           echo 'Search for requirements.'
+          get-location
           dir -r requirements.txt
           echo 'Install requirements.'
           pip install -r requirements.txt
