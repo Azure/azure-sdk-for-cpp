@@ -39,7 +39,7 @@ async def handleCustomPath(websocket, path:dict):
     await websocket.send(data)
     await websocket.close()
 
-    async def handleEcho(websocket, url):
+async def handleEcho(websocket, url):
     while  websocket.open:
         try:
             data = await websocket.recv()

@@ -14,7 +14,16 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http::WebSockets;
 using namespace std::chrono_literals;
 
-TEST(WebSocketTests, CreateSimpleSocket)
+class WebSocketTests : public testing::Test {
+private:
+protected:
+  // Create
+  virtual void SetUp() override
+  {
+  }
+};
+
+TEST_F(WebSocketTests, CreateSimpleSocket)
 {
   {
     WebSocket defaultSocket(Azure::Core::Url("http://localhost:8000"));
@@ -22,7 +31,7 @@ TEST(WebSocketTests, CreateSimpleSocket)
   }
 }
 
-TEST(WebSocketTests, OpenSimpleSocket)
+TEST_F(WebSocketTests, OpenSimpleSocket)
 {
   {
     WebSocketOptions options;
@@ -36,7 +45,7 @@ TEST(WebSocketTests, OpenSimpleSocket)
   }
 }
 
-TEST(WebSocketTests, OpenAndCloseSocket)
+TEST_F(WebSocketTests, OpenAndCloseSocket)
 {
   if (false)
   {
@@ -65,7 +74,7 @@ TEST(WebSocketTests, OpenAndCloseSocket)
   }
 }
 
-TEST(WebSocketTests, SimpleEcho)
+TEST_F(WebSocketTests, SimpleEcho)
 {
   {
     WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
@@ -123,7 +132,7 @@ template <size_t N> void EchoRandomData(WebSocket& socket)
   EXPECT_EQ(sendData, receiveData);
 }
 
-TEST(WebSocketTests, VariableSizeEcho)
+TEST_F(WebSocketTests, VariableSizeEcho)
 {
   {
     WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
@@ -155,7 +164,7 @@ TEST(WebSocketTests, VariableSizeEcho)
   }
 }
 
-TEST(WebSocketTests, CloseDuringEcho)
+TEST_F(WebSocketTests, CloseDuringEcho)
 {
   {
     WebSocket testSocket(Azure::Core::Url("http://localhost:8000/closeduringecho"));
@@ -184,7 +193,7 @@ std::string ToHexString(std::vector<uint8_t> const& data)
   return ss.str();
 }
 
-TEST(WebSocketTests, MultiThreadedTestOnSingleSocket)
+TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
   constexpr size_t testDataLength = 30000;
@@ -416,7 +425,7 @@ public:
   }
 };
 
-TEST(WebSocketTests, LibWebSocketOrg)
+TEST_F(WebSocketTests, LibWebSocketOrg)
 {
   {
     LibWebSocketStatus lwsStatus;

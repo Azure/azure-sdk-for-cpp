@@ -160,14 +160,20 @@ jobs:
         displayName: Install Python requirements.
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
 
-      - pwsh: |
-            Start-Job -Name PythonServer -ScriptBlock {
-            python ${{parameters.PythonWebSocketServerName}}
-            }
-            Get-Job
-        workingDirectory: build
-        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
-        displayName: Launch python websocket server.
+      - ${{ if (eq(parameters.EnablePythonWebSocketServer, true))}}:
+        - pwsh: |
+            Start-Process 'python.exe' 
+                -ArgumentList '${{parameters.PythonWebSocketServerName}}'
+                -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
+          workingDirectory: ${{parameters.rootFolder}}
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+          displayName: Launch python websocket server (Windows).
+          
+        - bash: |
+            nohup python ${{parameters.PythonWebSocketServerName}} > $(Build.SourcesDirectory)/test-proxy.log &
+          workingDirectory: ${{parameters.rootFolder}}
+          condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+          displayName: Launch python websocket server (Linux).
         
       - pwsh: |
           echo "Check Jobs"
@@ -182,13 +188,6 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-      - pwsh: |
-          Get-Job
-          Stop-Job -Name PythonServer
-        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut
-        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
-        displayName: Stop python websocket server.
-
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: cTest
