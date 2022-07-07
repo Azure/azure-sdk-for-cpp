@@ -143,7 +143,7 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - ${{ if eq(parameters.EnablePythonWebSocketServer, true) }}:
+      - ${{ if and(contains($(CmakeArgs), 'BUILD_TESTING=ON'), eq(parameters.EnablePythonWebSocketServer, true)) }}:
         - task: UsePythonVersion@0
           displayName: 'Use Python 3.10'
           inputs:
