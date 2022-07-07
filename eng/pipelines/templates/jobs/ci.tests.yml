@@ -156,7 +156,7 @@ jobs:
           dir -r requirements.txt
           echo 'Install requirements.'
           pip install -r requirements.txt
-        workingDirectory: build
+        workingDirectory: build/sdk/core/azure-core/test/ut
         displayName: Install Python requirements.
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
 
