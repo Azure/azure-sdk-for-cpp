@@ -160,7 +160,7 @@ jobs:
         displayName: Install Python requirements.
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
 
-      - ${{ if (eq(parameters.EnablePythonWebSocketServer, true))}}:
+      - ${{ if eq(parameters.EnablePythonWebSocketServer, true) }}:
         - pwsh: |
             Start-Process 'python.exe' 
                 -ArgumentList '${{parameters.PythonWebSocketServerName}}'
@@ -176,9 +176,6 @@ jobs:
           displayName: Launch python websocket server (Linux).
         
       - pwsh: |
-          echo "Check Jobs"
-          Get-Job
-          echo "Run Tests"
           ctest `
             -C Debug `
             -V `
