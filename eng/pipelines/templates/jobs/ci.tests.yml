@@ -143,7 +143,7 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - ${{ if and(contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), eq(parameters.EnablePythonWebSocketServer, true)) }}:
+      - ${{ if eq(parameters.EnablePythonWebSocketServer, true) }}:
         - task: UsePythonVersion@0
           displayName: 'Use Python 3.10'
           inputs:
@@ -155,6 +155,7 @@ jobs:
             pip install -r requirements.txt
           workingDirectory: build/sdk/core/azure-core/test/ut
           displayName: Install Python requirements.
+          condition: and(succeeded(), contains(parameters['CmakeArgs'], "BUILD_TESTING=ON"))
 
         - pwsh: |
             Start-Process 'python.exe' `
