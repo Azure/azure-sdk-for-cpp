@@ -165,13 +165,13 @@ jobs:
             Start-Process 'python.exe' 
                 -ArgumentList '${{parameters.PythonWebSocketServerName}}'
                 -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
-          workingDirectory: ${{parameters.rootFolder}}
+          workingDirectory: build
           condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
           displayName: Launch python websocket server (Windows).
           
         - bash: |
             nohup python ${{parameters.PythonWebSocketServerName}} > $(Build.SourcesDirectory)/test-proxy.log &
-          workingDirectory: ${{parameters.rootFolder}}
+          workingDirectory: build
           condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
           displayName: Launch python websocket server (Linux).
         
