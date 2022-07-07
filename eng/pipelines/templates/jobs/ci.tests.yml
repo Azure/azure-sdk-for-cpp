@@ -155,7 +155,7 @@ jobs:
             pip install -r requirements.txt
           workingDirectory: build/sdk/core/azure-core/test/ut
           displayName: Install Python requirements.
-          condition: and(succeeded(), contains($(CmakeArgs), "BUILD_TESTING=ON"))
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - pwsh: |
             Start-Process 'python.exe' `
