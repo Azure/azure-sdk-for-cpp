@@ -151,7 +151,9 @@ jobs:
 
       - pwsh: |
           python --version
+          echo 'Search for requirements.'
           dir -r requirements.txt
+          echo 'Install requirements.'
           pip install -r requirements.txt
         workingDirectory: build
         displayName: Install Python requirements.
