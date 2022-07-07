@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
      * appended.
      * @param data The pointer to binary data to compute the hash value for.
      * @param length The size of the data provided.
-     * @return The computed SHA256 hash value corresponding to the input provided including any
+     * @return The computed SHA1 hash value corresponding to the input provided including any
      * previously appended.
      */
     std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
