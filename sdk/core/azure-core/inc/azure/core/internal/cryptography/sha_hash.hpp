@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
     Sha1Hash();
 
     /**
-     * @brief Cleanup any state when destroying the instance of #Sha256Hash.
+     * @brief Cleanup any state when destroying the instance of #Sha1Hash.
      *
      */
     ~Sha1Hash() {}
