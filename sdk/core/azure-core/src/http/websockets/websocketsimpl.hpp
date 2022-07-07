@@ -4,9 +4,9 @@
 #include "azure/core/http/websockets/websockets_transport.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include <array>
+#include <iostream>
 #include <random>
 #include <shared_mutex>
-#include <iostream>
 
 // Implementation of WebSocket protocol.
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {

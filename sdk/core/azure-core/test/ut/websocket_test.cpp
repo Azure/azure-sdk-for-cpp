@@ -18,9 +18,7 @@ class WebSocketTests : public testing::Test {
 private:
 protected:
   // Create
-  virtual void SetUp() override
-  {
-  }
+  virtual void SetUp() override {}
 };
 
 TEST_F(WebSocketTests, CreateSimpleSocket)
