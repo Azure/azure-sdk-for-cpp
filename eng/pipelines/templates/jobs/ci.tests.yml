@@ -152,7 +152,7 @@ jobs:
       - pwsh: |
           python --version
           pip install -r requirements.txt
-        workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/
+        workingDirectory: build
         displayName: Install Python requirements.
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
 
@@ -160,12 +160,15 @@ jobs:
             Start-Job -Name PythonServer -ScriptBlock {
             python ${{parameters.PythonWebSocketServerName}}
             }
+            Get-Job
         workingDirectory: build
         condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
         displayName: Launch python websocket server.
         
       - pwsh: |
+          echo "Check Jobs"
           Get-Job
+          echo "Run Tests"
           ctest `
             -C Debug `
             -V `

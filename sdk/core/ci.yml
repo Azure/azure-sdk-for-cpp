@@ -43,7 +43,7 @@ stages:
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
       EnablePythonWebSocketServer: true
-      PythonWebSocketServerName: sdk/core/azure-core/test/ut/websocket-server.py
+      PythonWebSocketServerName: websocket-server.py
       Artifacts:
         - Name: azure-core
           Path: azure-core

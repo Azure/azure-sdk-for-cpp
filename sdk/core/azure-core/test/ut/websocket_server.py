@@ -28,6 +28,7 @@ async def handleControlPath(websocket):
             await websocket.send(data)
         websocket
 
+		
 async def handleCustomPath(websocket, path:dict):
     print("Handle custom path", path)
     data : str = await websocket.recv()
@@ -38,7 +39,7 @@ async def handleCustomPath(websocket, path:dict):
     await websocket.send(data)
     await websocket.close()
 
-async def handleEcho(websocket, url):
+    async def handleEcho(websocket, url):
     while  websocket.open:
         try:
             data = await websocket.recv()
@@ -50,9 +51,7 @@ async def handleEcho(websocket, url):
         except websockets.ConnectionClosed as ex:
             print(f"Connection closed exception: {ex.rcvd.code} {ex.rcvd.reason}")
             return
-
-
-
+			 
 async def handler(websocket, path : str):
     print("Socket handler: ", path)
     parsedUrl = urlparse(path)
@@ -80,10 +79,8 @@ async def handler(websocket, path : str):
         print("Received: ", data)
     
         reply = f"Data received as:  {data}!"
-    
         await websocket.send(reply)
- 
- 
+  
 async def main():
     print("Starting server")
     async with websockets.serve(handler, "localhost", 8000):

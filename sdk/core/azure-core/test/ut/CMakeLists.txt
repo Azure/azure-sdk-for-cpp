@@ -80,7 +80,8 @@ add_executable (
     transport_adapter_implementation_test.cpp
     url_test.cpp
     uuid_test.cpp
- "websocket_test.cpp")
+    websocket_test.cpp
+  )
 
 if (MSVC)
   # Disable warnings:
@@ -97,6 +98,19 @@ if (MSVC)
   # - C6326: Google comparisons 
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
+
+#add_custom_target(copy_non_source_outputs 
+#    COMMAND ${CMAKE_COMMAND} -E copy websocket_server.py requirements.txt ${CMAKE_BINARY_DIR}
+#    SOURCES ${CMAKE_CURRENT_LIST_DIR}/websocket_server.py ${CMAKE_CURRENT_LIST_DIR}/requirements.txt)
+#add_dependencies(azure-core-test copy_non_source_outputs)
+
+add_custom_command(TARGET azure-core-test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/websocket_server.py ${CMAKE_CURRENT_LIST_DIR}/requirements.txt ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/websocket_server.py ${CMAKE_CURRENT_LIST_DIR}/requirements.txt
+    COMMENT 'Copying non-source output files')
+
+#file(COPY_FILE requirements.txt ${CMAKE_CURRENT_BINARY_DIR}/requirements.txt ONLY_IF_DIFFERENT)
+#file(COPY_FILE websocket_server.py ${CMAKE_CURRENT_BINARY_DIR}/websocket_server.py ONLY_IF_DIFFERENT)
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
 target_include_directories (azure-core-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
