@@ -23,6 +23,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char TagsPropertyName[] = "tags";
   constexpr static const char ReleasePolicyPropertyName[] = "release_policy";
   constexpr static const char EnabledPropertyName[] = "enabled";
+  constexpr static const char ExportablePropertyName[] = "exportable";
   constexpr static const char NbfPropertyName[] = "nbf";
   constexpr static const char ExpPropertyName[] = "exp";
   constexpr static const char CreatedPropertyName[] = "created";
@@ -122,8 +123,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char SignValue[] = "sign";
   constexpr static const char VerifyValue[] = "verify";
   constexpr static const char ImportValue[] = "import";
+  constexpr static const char ExportValue[] = "export";
 
   /***************** Service *********/
   constexpr static const char ApiVersionValue[] = "api-version";
 
+  /***************** Rotation Policy *********/
+  constexpr static const char IdValue[] = "id";
+  constexpr static const char ExpiryTimeValue[] = "expiryTime";
+  constexpr static const char LifeTimeActionsValue[] = "lifetimeActions";
+  constexpr static const char RotateActionsValue[] = "rotate";
+  constexpr static const char NotifyActionsValue[] = "notify";
+  constexpr static const char ActionActionsValue[] = "action";
+  constexpr static const char TriggerActionsValue[] = "trigger";
+  constexpr static const char TypeActionsValue[] = "type";
+  constexpr static const char TBEActionsValue[] = "timeBeforeExpiry";
+  constexpr static const char TACActionsValue[] = "timeAfterCreate";
+  constexpr static const char RotationPolicyPath[] = "rotationpolicy";
+  constexpr static const char ContentTypeValue[] = "contentType";
+  constexpr static const char ContentTypeDefaultValue[] = "application/json; charset=utf-8";
+  constexpr static const char ImmutableValue[] = "immutable";
+  constexpr static const char DataValue[] = "data";
+
+  /***************** Get Random Bytes *********/
+  constexpr static const char CountPropertiesValue[] = "count";
+
+  /***************** Release *********/
+  constexpr static const char ReleaseValue[] = "release";
+  constexpr static const char CKM_RSA_AES_KEY_WRAP_Value[] = "CKM_RSA_AES_KEY_WRAP";
+  constexpr static const char RSA_AES_KEY_WRAP_256_Value[] = "RSA_AES_KEY_WRAP_256";
+  constexpr static const char RSA_AES_KEY_WRAP_384_Value[] = "RSA_AES_KEY_WRAP_384";
+  constexpr static const char TargetValue[] = "target";
+  constexpr static const char NonceValue[] = "nonce";
+  constexpr static const char EncryptionValue[] = "enc";
+  constexpr static const char PropertiesValue[] = "properties";
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

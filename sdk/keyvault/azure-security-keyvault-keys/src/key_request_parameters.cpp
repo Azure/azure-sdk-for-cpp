@@ -6,6 +6,7 @@
 
 #include "private/key_constants.hpp"
 #include "private/key_request_parameters.hpp"
+#include "private/key_serializers.hpp"
 
 #include <string>
 
@@ -26,6 +27,12 @@ std::string KeyRequestParameters::Serialize() const
   // attributes
   JsonOptional::SetFromNullable(
       m_options.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
+
+  // exportable attribute
+  JsonOptional::SetFromNullable(
+      m_options.Exportable,
+      payload[_detail::AttributesPropertyName],
+      _detail::ExportablePropertyName);
 
   /* Optional */
   // key_size
@@ -62,5 +69,11 @@ std::string KeyRequestParameters::Serialize() const
   }
 
   // release_policy
+  JsonOptional::SetFromNullable<KeyReleasePolicy, Azure::Core::Json::_internal::json>(
+      m_options.ReleasePolicy,
+      payload,
+      _detail::ReleasePolicyPropertyName,
+      KeyReleasePolicySerializer::KeyReleasePolicySerialize);
+
   return payload.dump();
 }

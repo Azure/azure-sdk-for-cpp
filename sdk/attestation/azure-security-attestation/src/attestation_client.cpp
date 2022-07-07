@@ -31,21 +31,19 @@ AttestationClient::AttestationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options)
-    : m_endpoint(endpoint), m_credentials(credential),
+    : m_endpoint(endpoint), m_apiVersion(options.ApiVersion),
       m_tokenValidationOptions(options.TokenValidationOptions),
       m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
   {
-    m_credentials = credential;
     Azure::Core::Credentials::TokenRequestContext const tokenContext
         = {{"https://attest.azure.net/.default"}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
-  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(

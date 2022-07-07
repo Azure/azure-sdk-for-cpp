@@ -15,7 +15,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:55:35 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/pending?api-version=7.2&request_id=f061394ae44c40b7b6a8d32e31eb7e71",
+        "location": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/pending?api-version=7.3&request_id=f061394ae44c40b7b6a8d32e31eb7e71",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -27,7 +27,7 @@
         "x-ms-request-id": "9cf13fe1-757f-4c20-8e0d-875b0ae3bdd5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -55,7 +55,7 @@
         "x-ms-request-id": "87e31f8e-bb30-40cd-9df6-8a5522861d76",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "5f007b23-a3b2-4bf3-a99b-61ad4a4fa763",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -109,7 +109,7 @@
         "x-ms-request-id": "ba828e2b-620a-45ca-b2d3-7a34ce3f3e18",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate?api-version=7.3"
     },
     {
       "Headers": {
@@ -136,7 +136,7 @@
         "x-ms-request-id": "d4441748-51af-4dad-a6f3-d3569818e622",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/9f456a7fc4a0480196c2994c81d7b73a?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificate/9f456a7fc4a0480196c2994c81d7b73a?api-version=7.3"
     }
   ]
 }
