@@ -18,7 +18,7 @@
 namespace Azure { namespace Core { namespace Cryptography { namespace _internal {
 
   /**
-   * @brief Defines #Sha256Hash.
+   * @brief Defines #Sha1Hash.
    *
    */
   class Sha1Hash final : public Azure::Core::Cryptography::Hash {
