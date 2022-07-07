@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
   class Sha1Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**
-     * @brief Construct a default instance of #Sha256Hash.
+     * @brief Construct a default instance of #Sha1Hash.
      *
      */
     Sha1Hash();
