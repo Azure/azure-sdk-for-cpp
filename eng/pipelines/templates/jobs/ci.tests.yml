@@ -157,12 +157,6 @@ jobs:
           displayName: Install Python requirements.
 
         - pwsh: |
-            dir -r
-          workingDirectory: build
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
-          displayName: Dir -r Launch python websocket server (Windows).
-
-        - pwsh: |
             Start-Process 'python.exe' `
                 -ArgumentList '${{parameters.PythonWebSocketServerName}}' `
                 -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
