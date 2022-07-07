@@ -85,12 +85,6 @@ jobs:
         value: ${{ testEnvVar.Value }}
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.10'
-        inputs:
-          versionSpec: '3.10'
-        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
-
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
           AgentImage: $(OsVmImage)
@@ -149,18 +143,25 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - pwsh: |
-          python --version
-          echo 'Search for requirements.'
-          get-location
-          dir -r requirements.txt
-          echo 'Install requirements.'
-          pip install -r requirements.txt
-        workingDirectory: build/sdk/core/azure-core/test/ut
-        displayName: Install Python requirements.
-        condition: eq(true, ${{parameters.EnablePythonWebSocketServer}})
-
       - ${{ if eq(parameters.EnablePythonWebSocketServer, true) }}:
+        - task: UsePythonVersion@0
+          displayName: 'Use Python 3.10'
+          inputs:
+            versionSpec: '3.10'
+
+        - pwsh: |
+            python --version
+            dir -r 
+            pip install -r requirements.txt
+          workingDirectory: build/sdk/core/azure-core/test/ut
+          displayName: Install Python requirements.
+
+        - pwsh: |
+            dir -r
+          workingDirectory: build
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+          displayName: Dir -r Launch python websocket server (Windows).
+
         - pwsh: |
             Start-Process 'python.exe' 
                 -ArgumentList '${{parameters.PythonWebSocketServerName}}'
