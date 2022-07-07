@@ -61,9 +61,9 @@ SecretClient::SecretClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     SecretClientOptions options)
-    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version)
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
-  auto apiVersion = options.Version;
+  auto apiVersion = options.ApiVersion;
   Azure::Core::Url url(vaultUrl);
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
