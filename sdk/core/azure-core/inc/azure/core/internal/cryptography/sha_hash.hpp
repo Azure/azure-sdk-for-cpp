@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
     }
 
     /**
-     * @brief Used to append partial binary input data to compute the SHA256 hash in a streaming
+     * @brief Used to append partial binary input data to compute the SHA1 hash in a streaming
      * fashion.
      * @remark Once all the data has been added, call #Final() to get the computed hash value.
      * @param data The pointer to the current block of binary data that is used for hash
