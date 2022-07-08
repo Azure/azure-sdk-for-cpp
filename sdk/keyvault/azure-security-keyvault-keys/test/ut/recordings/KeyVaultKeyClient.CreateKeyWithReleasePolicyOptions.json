@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "f189a685-1a00-4983-6451-0c36e0447cd0"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/CreateKeyWithReleasePolicyOptions/a29534808b7846748c8257f96f9b3ca7\",\"kty\":\"EC-HSM\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"CID7ygPaUpi32ZcJoIyj5Lze3Hd09pgHPRN3MyrLj1w\",\"y\":\"9pzAXMd4t9wCR6voH0FSg8VJJaLztRW_3bA1TYxurKw\"},\"attributes\":{\"enabled\":true,\"created\":1651169878,\"updated\":1651169878,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90,\"exportable\":true},\"release_policy\":{\"contentType\":\"application/json; charset=utf-8\",\"data\":\"eyJ2ZXJzaW9uIjoiMS4wLjAiLCJhbnlPZiI6W3siYXV0aG9yaXR5IjoiaHR0cHM6Ly9zaGFyZWRldXMuZXVzLnRlc3QuYXR0ZXN0LmF6dXJlLm5ldC8iLCJhbGxPZiI6W3siY2xhaW0iOiJjbGFpbSIsImVxdWFscyI6IjAxMjM0NTY3ODkifV19XX0\",\"immutable\":false}}",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "713",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 28 Apr 2022 18:18:00 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "f189a685-1a00-4983-6451-0c36e0447cd0",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.378.1",
+        "x-ms-request-id": "d5db391b-83ce-4735-83f3-aae44c6c7a8c"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateKeyWithReleasePolicyOptions/create?api-version=7.3"
+    }
+  ]
+}

@@ -39,9 +39,9 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.5.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.2.0" REQUIRED)
+    find_package(azure-core-cpp "1.5.0" REQUIRED)
   endif()
 endif()
 
@@ -62,7 +62,6 @@ set(
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/cryptography/cryptography_client.cpp
-    src/cryptography/cryptography_client_options.cpp
     src/cryptography/decrypt_parameters.cpp
     src/cryptography/decrypt_result.cpp
     src/cryptography/encrypt_parameters.cpp
@@ -95,15 +94,19 @@ set(
     src/json_web_key.cpp
     src/key_backup.cpp
     src/key_client.cpp
-    src/key_client_options.cpp
     src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp
+    src/key_release_options.cpp
+    src/key_release_policy.cpp
     src/key_request_parameters.cpp
+    src/key_encryption_algorithm.cpp
     src/key_type.cpp
     src/keyvault_key.cpp
     src/keyvault_protocol.cpp
     src/recover_deleted_key_operation.cpp
+    src/key_rotation_policy.cpp
+    src/key_get_random_bytes.cpp
 )
 
 add_library(azure-security-keyvault-keys

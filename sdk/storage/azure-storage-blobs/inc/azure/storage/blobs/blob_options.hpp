@@ -1484,6 +1484,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
   };
 
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobBatchClient::SubmitBatch.
+   */
+  struct SubmitBlobBatchOptions final
+  {
+  };
+
   namespace _detail {
     inline std::string TagsToString(const std::map<std::string, std::string>& tags)
     {

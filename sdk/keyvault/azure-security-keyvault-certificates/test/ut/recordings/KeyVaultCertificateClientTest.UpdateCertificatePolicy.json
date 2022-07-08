@@ -15,7 +15,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:49:58 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/pending?api-version=7.2&request_id=80ecce065c424de58fedcba3c43454a2",
+        "location": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/pending?api-version=7.3&request_id=80ecce065c424de58fedcba3c43454a2",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -27,7 +27,7 @@
         "x-ms-request-id": "40226034-b8a5-46fd-a927-0cb90b3a29e3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -55,7 +55,7 @@
         "x-ms-request-id": "0a2b37eb-0fdf-4109-b59b-a6cb3dcc65a6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "85ebc0da-4869-4f5e-aa44-ebeb67937907",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -109,7 +109,7 @@
         "x-ms-request-id": "c850260b-f050-4ae3-88e1-ebc1b0cd693e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy?api-version=7.3"
     },
     {
       "Headers": {
@@ -136,7 +136,7 @@
         "x-ms-request-id": "5c876bd5-a285-4aeb-8983-c94aac438ee6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/policy?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/policy?api-version=7.3"
     },
     {
       "Headers": {
@@ -163,7 +163,7 @@
         "x-ms-request-id": "43546632-e3c0-4e4d-b1e2-fd7f4102467c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/policy?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/UpdateCertificatePolicy/policy?api-version=7.3"
     }
   ]
 }

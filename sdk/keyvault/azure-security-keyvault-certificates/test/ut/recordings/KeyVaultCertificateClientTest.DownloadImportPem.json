@@ -15,7 +15,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:54:52 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/pending?api-version=7.2&request_id=c4b4602b25034f42a1cff8a46a7fcfcc",
+        "location": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/pending?api-version=7.3&request_id=c4b4602b25034f42a1cff8a46a7fcfcc",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -27,7 +27,7 @@
         "x-ms-request-id": "2d49fe11-8af8-478a-8878-737d3f61b0d6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -55,7 +55,7 @@
         "x-ms-request-id": "1efaec97-1930-497b-bc88-fd41195ca43e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "9fe073fe-6cd5-4d94-a12d-5a255d773b00",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -109,7 +109,7 @@
         "x-ms-request-id": "a60a0587-eaa6-4038-ac65-213f0453430f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem?api-version=7.3"
     },
     {
       "Headers": {
@@ -136,7 +136,7 @@
         "x-ms-request-id": "b562fe57-4fb2-4406-8707-15810caeb413",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem?api-version=7.3"
     },
     {
       "Headers": {
@@ -163,7 +163,7 @@
         "x-ms-request-id": "af87a214-421e-4285-9629-38479ff9d1a7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/secrets/DownloadImportPem/69ad57e677ba4c0597052df3142ed747?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/secrets/DownloadImportPem/69ad57e677ba4c0597052df3142ed747?api-version=7.3"
     },
     {
       "Headers": {
@@ -190,7 +190,7 @@
         "x-ms-request-id": "bf97e1c6-2737-4e36-943a-9e53ce9d4908",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem2/import?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem2/import?api-version=7.3"
     },
     {
       "Headers": {
@@ -217,7 +217,7 @@
         "x-ms-request-id": "78e1ac10-c22b-4faf-8faa-b45891d58b8e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPem?api-version=7.3"
     },
     {
       "Headers": {
@@ -244,7 +244,7 @@
         "x-ms-request-id": "57073052-d9ad-4472-9a14-32e7fefd43da",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DownloadImportPem?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DownloadImportPem?api-version=7.3"
     },
     {
       "Headers": {
@@ -271,7 +271,7 @@
         "x-ms-request-id": "23afd308-836a-4529-bef1-6f4495839376",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DownloadImportPem?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DownloadImportPem?api-version=7.3"
     },
     {
       "Headers": {
@@ -296,7 +296,7 @@
         "x-ms-request-id": "8bdf97c2-a354-4430-8955-4e6516ba1ddc",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DownloadImportPem?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DownloadImportPem?api-version=7.3"
     }
   ]
 }

@@ -253,7 +253,6 @@ namespace Azure { namespace Security { namespace Attestation {
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;

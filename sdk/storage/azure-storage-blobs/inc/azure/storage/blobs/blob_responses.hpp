@@ -163,6 +163,13 @@ namespace Azure { namespace Storage {
         std::string LeaseId;
       };
 
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobBatchClient::SubmitBatch.
+       */
+      struct SubmitBlobBatchResult final
+      {
+      };
+
     } // namespace Models
 
     /**
