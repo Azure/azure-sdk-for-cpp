@@ -70,9 +70,10 @@ stages:
           displayName: Launch python websocket server (Linux).
 
       PostTestSteps:
-          # Shut down the test server.
+          # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
+          # When the test server receives a request on terminateserver, it shuts down gracefully.
         - pwsh: |
-            curl.exe `
+            curl `
                 --include `
                 --no-buffer `
                 --header "Connection: Upgrade" `
