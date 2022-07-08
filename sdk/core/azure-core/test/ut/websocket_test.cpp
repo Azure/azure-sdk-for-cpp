@@ -21,17 +21,15 @@ class WebSocketTests : public testing::Test {
 private:
 protected:
   // Create
-  static void SetUpTestSuite()
-  {
-  }
+  static void SetUpTestSuite() {}
   static void TearDownTestSuite()
   {
-//    GTEST_LOG_(INFO) << "Shut down test server" << std::endl;
-//    WebSocket controlSocket(Azure::Core::Url("http://localhost:8000/control"));
-//    controlSocket.Open();
-//    controlSocket.SendFrame("close", true);
-//    auto controlResponse = controlSocket.ReceiveFrame();
-//    EXPECT_EQ(controlResponse->ResultType, WebSocketResultType::TextFrameReceived);
+    //    GTEST_LOG_(INFO) << "Shut down test server" << std::endl;
+    //    WebSocket controlSocket(Azure::Core::Url("http://localhost:8000/control"));
+    //    controlSocket.Open();
+    //    controlSocket.SendFrame("close", true);
+    //    auto controlResponse = controlSocket.ReceiveFrame();
+    //    EXPECT_EQ(controlResponse->ResultType, WebSocketResultType::TextFrameReceived);
   }
 };
 
