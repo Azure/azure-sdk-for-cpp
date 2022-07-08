@@ -39,9 +39,13 @@ template <typename T>
 // C26812: The enum type 'CURLoption' is un-scoped. Prefer 'enum class' over 'enum' (Enum.3)
 #pragma warning(disable : 26812)
 #endif
-inline bool SetLibcurlOption(CURL* handle, CURLoption option, T value, CURLcode* outError)
+inline bool SetLibcurlOption(
+    Azure::Core::Http::_detail::unique_CURL const& handle,
+    CURLoption option,
+    T value,
+    CURLcode* outError)
 {
-  *outError = curl_easy_setopt(handle, option, value);
+  *outError = curl_easy_setopt(handle.get(), option, value);
   return *outError == CURLE_OK;
 }
 #if defined(_MSC_VER)
@@ -504,7 +508,10 @@ CURLcode CurlConnection::SendBuffer(
     {
       size_t sentBytesPerRequest = 0;
       sendResult = curl_easy_send(
-          m_handle, buffer + sentBytesTotal, bufferSize - sentBytesTotal, &sentBytesPerRequest);
+          m_handle.get(),
+          buffer + sentBytesTotal,
+          bufferSize - sentBytesTotal,
+          &sentBytesPerRequest);
 
       switch (sendResult)
       {
@@ -960,7 +967,7 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
-    readResult = curl_easy_recv(m_handle, buffer, bufferSize, &readBytes);
+    readResult = curl_easy_recv(m_handle.get(), buffer, bufferSize, &readBytes);
 
     switch (readResult)
     {
@@ -1329,7 +1336,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
-  CURL* newHandle = curl_easy_init();
+  unique_CURL newHandle(curl_easy_init(), CURL_deleter());
   if (!newHandle)
   {
     throw Azure::Core::Http::TransportException(
@@ -1339,7 +1346,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   CURLcode result;
 
   // Libcurl setup before open connection (url, connect_only, timeout)
-  if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
+  if (!SetLibcurlOption(
+          newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
@@ -1372,7 +1380,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
+    if (!SetLibcurlOption(
+            newHandle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
@@ -1460,7 +1469,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
   }
 
-  auto performResult = curl_easy_perform(newHandle);
+  auto performResult = curl_easy_perform(newHandle.get());
   if (performResult != CURLE_OK)
   {
     throw Http::TransportException(
@@ -1468,7 +1477,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(performResult)));
   }
 
-  return std::make_unique<CurlConnection>(newHandle, connectionKey);
+  return std::make_unique<CurlConnection>(std::move(newHandle), connectionKey);
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the

@@ -193,10 +193,11 @@ jobs:
           publishRunAttachments: true
         displayName: Publish test results
         condition: succeededOrFailed()
-      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-        parameters:
-          ArtifactPath: '$(Build.SourcesDirectory)/'
-          ArtifactName: 'WebSocketServer.log'
+      - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
+            ArtifactName: 'WebSocketLogs'
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |
             $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"

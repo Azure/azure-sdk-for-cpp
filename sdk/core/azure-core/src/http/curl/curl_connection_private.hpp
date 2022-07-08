@@ -47,6 +47,22 @@ namespace Azure { namespace Core { namespace Http {
     // Define the maximun allowed connections per host-index in the pool. If this number is reached
     // for the host-index, next connections trying to be added to the pool will be ignored.
     constexpr static int32_t MaxConnectionsPerIndex = 1024;
+	
+	    // unique_ptr class wrapping an HINTERNET handle
+    class CURL_deleter {
+    public:
+      void operator()(CURL* handle) noexcept
+      {
+        if (handle != nullptr)
+        {
+          curl_easy_cleanup(handle);
+        }
+      }
+    };
+    using unique_CURL = std::unique_ptr<CURL, CURL_deleter>;
+
+  
+
   } // namespace _detail
 
   /**
@@ -122,7 +138,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class CurlConnection final : public CurlNetworkConnection {
   private:
-    CURL* m_handle;
+    _detail::unique_CURL m_handle;
     curl_socket_t m_curlSocket;
     std::chrono::steady_clock::time_point m_lastUseTime;
     std::string m_connectionKey;
@@ -135,8 +151,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param connectionPropertiesKey CURL connection properties key
      */
-    CurlConnection(CURL* handle, std::string connectionPropertiesKey)
-        : m_handle(handle), m_connectionKey(std::move(connectionPropertiesKey))
+    CurlConnection(_detail::unique_CURL&& handle, std::string connectionPropertiesKey)
+        : m_handle(std::move(handle)), m_connectionKey(std::move(connectionPropertiesKey))
     {
       // Get the socket that libcurl is using from handle. Will use this to wait while
       // reading/writing
@@ -146,7 +162,7 @@ namespace Azure { namespace Core { namespace Http {
 // C26812: The enum type 'CURLcode' is un-scoped. Prefer 'enum class' over 'enum' (Enum.3)
 #pragma warning(disable : 26812)
 #endif
-        auto result = curl_easy_getinfo(m_handle, CURLINFO_ACTIVESOCKET, &m_curlSocket);
+        auto result = curl_easy_getinfo(m_handle.get(), CURLINFO_ACTIVESOCKET, &m_curlSocket);
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
@@ -162,7 +178,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Destructor.
        * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
        */
-      ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
+      ~CurlConnection() override { curl_easy_cleanup(this->m_handle.get()); }
 
       std::string const& GetConnectionKey() const override { return this->m_connectionKey; }
 
