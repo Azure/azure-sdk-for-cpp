@@ -127,9 +127,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   };
 
   /**
-  * @brief std::default_delete for the CURL * type , used for std::unique_ptr
-  * 
-  */
+   * @brief std::default_delete for the CURL * type , used for std::unique_ptr
+   *
+   */
   class CURL_deleter {
   public:
     void operator()(CURL* handle) noexcept
