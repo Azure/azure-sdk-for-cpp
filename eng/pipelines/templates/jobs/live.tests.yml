@@ -126,6 +126,38 @@ jobs:
         Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
 
+  # If the pipeline is configured to enable a Python WebSocket server, then
+  # configure the server and launch it. Note that we only launch the server if
+  # we're not running tests locally.
+  - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
+        - task: UsePythonVersion@0
+          displayName: 'Use Python 3.10'
+          inputs:
+            versionSpec: '3.10'
+
+        - pwsh: |
+            python --version
+            pip install -r requirements.txt
+          workingDirectory: build/sdk/core/azure-core/test/ut
+          displayName: Install Python requirements.
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+
+        - pwsh: |
+            Start-Process 'python.exe' `
+                -ArgumentList '${{parameters.PythonWebSocketServerName}}' `
+                -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
+          workingDirectory: build
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          displayName: Launch python websocket server (Windows).
+          
+        - bash: |
+            nohup python ${{parameters.PythonWebSocketServerName}} > $(Build.SourcesDirectory)/test-proxy.log &
+          workingDirectory: build
+          condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          displayName: Launch python websocket server (Linux).
+        
+      
+
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
     # Visual Studio generator used in CI is a multi-config generator.

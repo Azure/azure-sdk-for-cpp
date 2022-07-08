@@ -143,6 +143,9 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
+      # If the pipeline is configured to enable a Python WebSocket server, then
+      # configure the server and launch it. Note that we only launch the server if
+      # we're not running tests locally.
       - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
         - task: UsePythonVersion@0
           displayName: 'Use Python 3.10'
@@ -165,7 +168,7 @@ jobs:
           displayName: Launch python websocket server (Windows).
           
         - bash: |
-            nohup python ${{parameters.PythonWebSocketServerName}} > $(Build.SourcesDirectory)/test-proxy.log &
+            nohup python ${{parameters.PythonWebSocketServerName}} > $(Build.SourcesDirectory)/WebSocketServer.log &
           workingDirectory: build
           condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
           displayName: Launch python websocket server (Linux).
@@ -190,7 +193,10 @@ jobs:
           publishRunAttachments: true
         displayName: Publish test results
         condition: succeededOrFailed()
-
+      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)/WebSocketServer.Log'
+          ArtifactName: '$(Build.SourcesDirectory)/WebSocketServer.log'
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |
             $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"

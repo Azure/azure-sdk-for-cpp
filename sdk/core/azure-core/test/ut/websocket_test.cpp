@@ -8,6 +8,9 @@
 #include <gtest/gtest.h>
 #include <list>
 #include <thread>
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#include "azure/core/http/websockets/curl_websockets_transport.hpp"
+#endif
 // cspell::words closeme flibbityflobbidy
 
 using namespace Azure::Core;
@@ -430,14 +433,14 @@ TEST_F(WebSocketTests, LibWebSocketOrg)
     auto serverStatus = lwsStatus.GetLWSStatus();
     GTEST_LOG_(INFO) << "Server status: " << serverStatus << std::endl;
 
-    Azure::Core::Json::_internal::json status(
-        Azure::Core::Json::_internal::json::parse(serverStatus));
+    Azure::Core::Json::_internal::json status;
+    EXPECT_NO_THROW(status = Azure::Core::Json::_internal::json::parse(serverStatus));
     EXPECT_TRUE(status["conns"].is_array());
-    auto connections = status["conns"].get_ref<std::vector<Azure::Core::Json::_internal::json>&>();
+    auto& connections = status["conns"].get_ref<std::vector<Azure::Core::Json::_internal::json>&>();
     bool foundOurConnection = false;
 
     // Scan through the list of connections to find a connection from the websockettest.
-    for (auto connection : connections)
+    for (auto& connection : connections)
     {
       EXPECT_TRUE(connection["ua"].is_string());
       auto userAgent = connection["ua"].get<std::string>();
@@ -469,3 +472,21 @@ TEST_F(WebSocketTests, LibWebSocketOrg)
     incrementProtocol.ConsumeUntilClosed();
   }
 }
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+TEST_F(WebSocketTests, CurlTransportCoverage)
+{
+  Azure::Core::Http::CurlTransportOptions transportOptions;
+  transportOptions.HttpKeepAlive = false;
+  auto transport
+      = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
+
+  EXPECT_THROW(transport->CloseSocket(1001, {}, {}), std::runtime_error);
+  EXPECT_THROW(transport->GetCloseSocketInformation({}), std::runtime_error);
+  EXPECT_THROW(
+      transport->SendFrame(WebSocketTransport::WebSocketFrameType::FrameTypeBinary, {}, {}),
+      std::runtime_error);
+  WebSocketTransport::WebSocketFrameType ft;
+  EXPECT_THROW(transport->ReceiveFrame(ft, {}), std::runtime_error);
+}
+
+#endif
