@@ -43,9 +43,38 @@ stages:
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
       PreTestSteps:
-        - pwsh: Write-Host "Hello Pre-test"
+        - task: UsePythonVersion@0
+          displayName: 'Use Python 3.10'
+          inputs:
+            versionSpec: '3.10'
+
+        - pwsh: |
+            python --version
+            pip install -r requirements.txt
+          workingDirectory: build/sdk/core/azure-core/test/ut
+          displayName: Install Python requirements.
+
+        - pwsh: |
+            Start-Process 'python.exe' `
+                -ArgumentList 'sdk/core/azure-core/test/ut/websocket_server.py' `
+                -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
+          workingDirectory: build
+          condition: eq(variables['Agent.OS'], 'Windows_NT')
+          displayName: Launch python websocket server (Windows).
+
+        - bash: |
+            nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
+          workingDirectory: build
+          condition: ne(variables['Agent.OS'], 'Windows_NT')
+          displayName: Launch python websocket server (Linux).
+
       PostTestSteps:
-        - pwsh: Write-Host "Hello Post-test"
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
+            ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
+            CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
+
       Artifacts:
         - Name: azure-core
           Path: azure-core
