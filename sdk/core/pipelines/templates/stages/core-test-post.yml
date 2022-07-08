@@ -1,0 +1,15 @@
+parameters:
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+
+
+stages:
+  - stage: 
+    jobs:
+      job: 
+        - task: UsePythonVersion@0
+          displayName: 'Use Python 3.10'
+          inputs:
+            versionSpec: '3.10'
+
