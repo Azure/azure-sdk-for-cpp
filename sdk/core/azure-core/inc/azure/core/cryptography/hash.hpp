@@ -121,12 +121,10 @@ namespace Azure { namespace Core { namespace Cryptography {
    * @brief Represents the class for the MD5 hash function which maps binary data of an arbitrary
    * length to small binary data of a fixed length.
    *
-   * @warning NOTE: MD5 is a deprecated hashing algorithm and SHOULD NOT be used,
+   * @warning MD5 is a deprecated hashing algorithm and SHOULD NOT be used,
    * unless it is used to implement a specific protocol (See RFC 6151 for more information
-   * about the weaknesses of the MD5 hash function).
-   *
-   * Client implementers should strongly prefer the SHA256, SHA384, and SHA512 hash
-   * functions.
+   * about the weaknesses of the MD5 hash function). Client implementers should strongly prefer the
+   * SHA256, SHA384, and SHA512 hash functions.
    */
   class Md5Hash final : public Hash {
 
