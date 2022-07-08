@@ -198,7 +198,7 @@ jobs:
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
-            ArtifactName: 'WebSocketLogs'
+            ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
             CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
