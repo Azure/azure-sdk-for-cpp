@@ -199,7 +199,7 @@ jobs:
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
             ArtifactName: 'WebSocketLogs'
-          condition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
+            CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |

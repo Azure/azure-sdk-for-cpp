@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Cryptography {
    * @remarks NOTE: MD5 is a deprecated hashing algorithm and SHOULD NOT be used,
    * unless it is used to implement a specific protocol (See RFC 6151 for more information
    * about the weaknesses of the MD5 hash function).
-   * 
+   *
    * Client implementers should strongly prefer the SHA256, SHA384, and SHA512 hash
    * functions.
    */
