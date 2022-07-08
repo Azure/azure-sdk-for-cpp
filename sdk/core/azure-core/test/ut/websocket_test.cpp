@@ -197,7 +197,7 @@ std::string ToHexString(std::vector<uint8_t> const& data)
 TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
-  constexpr size_t testDataLength = 30000;
+  constexpr size_t testDataLength = 95000;
   constexpr auto testDuration = 10s;
 
   WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
