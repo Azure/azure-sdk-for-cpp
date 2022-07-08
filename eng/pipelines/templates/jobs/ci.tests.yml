@@ -195,8 +195,8 @@ jobs:
         condition: succeededOrFailed()
       - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
         parameters:
-          ArtifactPath: '$(Build.ArtifactStagingDirectory)/WebSocketServer.Log'
-          ArtifactName: '$(Build.SourcesDirectory)/WebSocketServer.log'
+          ArtifactPath: '$(Build.SourcesDirectory)/'
+          ArtifactName: 'WebSocketServer.log'
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |
             $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
