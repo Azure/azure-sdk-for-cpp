@@ -46,12 +46,13 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
-  - name: EnablePythonWebSocketServer
-    type: boolean
-    default: false
-  - name: PythonWebSocketServerName
-    type: string
-    default: ''
+  - name: PreTestSteps
+    type: object
+    default: []
+  - name: PostTestSteps
+    type: object
+    default: []
+
 
 jobs:
   - job:
@@ -143,36 +144,8 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      # If the pipeline is configured to enable a Python WebSocket server, then
-      # configure the server and launch it. Note that we only launch the server if
-      # we're not running tests locally.
-      - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
-        - task: UsePythonVersion@0
-          displayName: 'Use Python 3.10'
-          inputs:
-            versionSpec: '3.10'
+      - ${{ parameters.PreTestSteps }}
 
-        - pwsh: |
-            python --version
-            pip install -r requirements.txt
-          workingDirectory: build/sdk/core/azure-core/test/ut
-          displayName: Install Python requirements.
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
-        - pwsh: |
-            Start-Process 'python.exe' `
-                -ArgumentList '${{parameters.PythonWebSocketServerName}}' `
-                -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
-          workingDirectory: build
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-          displayName: Launch python websocket server (Windows).
-          
-        - bash: |
-            nohup python ${{parameters.PythonWebSocketServerName}} > $(Build.SourcesDirectory)/WebSocketServer.log &
-          workingDirectory: build
-          condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-          displayName: Launch python websocket server (Linux).
-        
       - pwsh: |
           ctest `
             -C Debug `
@@ -183,6 +156,9 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
+
+      - ${{ parameters.PostTestSteps }}
+
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: cTest
@@ -194,12 +170,12 @@ jobs:
         displayName: Publish test results
         condition: succeededOrFailed()
 
-      - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
-        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-          parameters:
-            ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
-            ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
-            CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
+      # - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
+      #   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      #     parameters:
+      #       ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
+      #       ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
+      #       CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |

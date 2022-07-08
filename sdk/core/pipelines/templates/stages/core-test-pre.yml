@@ -1,34 +1,25 @@
-parameters:
-- name: ServiceDirectory
-  type: string
-  default: not-specified
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.10'
+    inputs:
+      versionSpec: '3.10'
 
+  - pwsh: |
+      python --version
+      pip install -r requirements.txt
+    workingDirectory: build/sdk/core/azure-core/test/ut
+    displayName: Install Python requirements.
 
-stages:
-  - stage: 
-    jobs:
-      job: 
-        - task: UsePythonVersion@0
-          displayName: 'Use Python 3.10'
-          inputs:
-            versionSpec: '3.10'
+  - pwsh: |
+      Start-Process 'python.exe' `
+          -ArgumentList 'sdk/core/azure-core/test/ut/websocket_server.py' `
+          -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
+    workingDirectory: build
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    displayName: Launch python websocket server (Windows).
 
-        - pwsh: |
-            python --version
-            pip install -r requirements.txt
-          workingDirectory: build/sdk/core/azure-core/test/ut
-          displayName: Install Python requirements.
-
-        - pwsh: |
-            Start-Process 'python.exe' `
-                -ArgumentList 'sdk/core/azure-core/test/ut/websocket_server.py' `
-                -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
-          workingDirectory: build
-          condition: eq(variables['Agent.OS'], 'Windows_NT')
-          displayName: Launch python websocket server (Windows).
-          
-        - bash: |
-            nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
-          workingDirectory: build
-          condition: ne(variables['Agent.OS'], 'Windows_NT')
-          displayName: Launch python websocket server (Linux).
+  - bash: |
+      nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
+    workingDirectory: build
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
+    displayName: Launch python websocket server (Linux).
