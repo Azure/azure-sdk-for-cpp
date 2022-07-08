@@ -43,9 +43,9 @@ stages:
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
       PreTestSteps:
-        - template: /sdk/core/pipelines/templates/stages/core-test-pre.yml
+        - pwsh: Write-Host "Hello Pre-test"
       PostTestSteps:
-        - template: /sdk/core/pipelines/templates/stages/core-test-post.yml
+        - pwsh: Write-Host "Hello Post-test"
       Artifacts:
         - Name: azure-core
           Path: azure-core
