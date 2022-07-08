@@ -75,6 +75,9 @@ async def handler(websocket, path : str):
     elif (parsedUrl.path in customPaths.keys()):
         print("Found path ", path, "in control paths.")
         await handleCustomPath(websocket, customPaths[path])
+    elif (parsedUrl.path == '/terminateserver'):
+        print("Terminating WebSocket server.")
+        stop.set_result(0)
     else:
         data = await websocket.recv()
         print("Received: ", data)

@@ -46,7 +46,7 @@ stages:
         - task: UsePythonVersion@0
           displayName: 'Use Python 3.10'
           inputs:
-            versionSpec: '3.10'
+            versionSpec: '3.10.5'
 
         - pwsh: |
             python --version
@@ -69,6 +69,20 @@ stages:
           displayName: Launch python websocket server (Linux).
 
       PostTestSteps:
+      # Shut down the test server.
+        - pwsh: |
+            curl.exe `
+                --include `
+                --no-buffer `
+                --header "Connection: Upgrade" `
+                --header "Upgrade: websocket" `
+                --header "Host: localhost:8000" `
+                --header "Origin: http://localhost:8000" `
+                --header "Sec-WebSocket-Key: eaQZ9ed+LnT0zs5EvI04aQ==" `
+                --header "Sec-WebSocket-Version: 13" `
+                http://localhost:8000/terminateserver
+
+
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
