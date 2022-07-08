@@ -79,6 +79,12 @@ parameters:
 - name: PythonWebSocketServerName
   type: string
   default: ''
+- name: PreTestSteps
+  type: object
+  default: []
+- name: PostTestSteps
+  type: object
+  default: []
 
 
 stages:
@@ -110,6 +116,8 @@ stages:
           TestEnv: ${{ parameters.TestEnv }}
           EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer }}
           PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName }}
+          PreTestSteps: ${{ parameters.PreTestSteps }}
+          PostTestSteps: ${{ parameters.PostTestSteps }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
@@ -126,6 +134,8 @@ stages:
         UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
         EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer }}
         PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName }}
+        PreTestSteps: ${{ parameters.PreTestSteps }}
+        PostTestSteps: ${{ parameters.PostTestSteps }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
     - template: archetype-cpp-release.yml

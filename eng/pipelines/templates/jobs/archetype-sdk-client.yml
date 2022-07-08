@@ -38,6 +38,12 @@ parameters:
   - name: PythonWebSocketServerName
     type: string
     default: ''
+  - name: PreTestSteps
+    type: object
+    default: []
+  - name: PostTestSteps
+    type: object
+    default: []
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -61,6 +67,8 @@ jobs:
         TestEnv: ${{ parameters.TestEnv }}
         EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer }}
         PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName }}
+        PreTestSteps: ${{ parameters.PreTestSteps }}
+        PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:

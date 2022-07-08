@@ -31,9 +31,6 @@ pr:
       - sdk/core
 
 stages:
-  - template: pipelines/templates/stages/core-test-pre.yml
-    parameters:
-      ServiceDirectory: core
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: core
@@ -45,6 +42,10 @@ stages:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
+      PreTestSteps:
+        - template: /sdk/core/pipelines/templates/stages/core-test-pre.yml
+      PostTestSteps:
+        - template: /sdk/core/pipelines/templates/stages/core-test-post.yml
       Artifacts:
         - Name: azure-core
           Path: azure-core
@@ -92,6 +93,3 @@ stages:
           Value: ''
         - Name: Test
           Value: '-DBUILD_TESTING=ON'
-  - template: pipelines/templates/stages/core-test-post.yml
-    parameters:
-      ServiceDirectory: core

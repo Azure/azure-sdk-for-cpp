@@ -35,6 +35,12 @@ parameters:
 - name: PythonWebSocketServerName
   type: string
   default: ''
+- name: PreTestSteps
+  type: object
+  default: []
+- name: PostTestSteps
+  type: object
+  default: []
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
@@ -65,3 +71,5 @@ stages:
                 TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}
                 EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer}}
                 PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName}}
+                PreTestSteps: ${{ parameters.PreTestSteps }}
+                PostTestSteps: ${{ parameters.PostTestSteps }}
