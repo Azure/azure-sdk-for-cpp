@@ -98,6 +98,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
     }
 
+    // Reads the current test instance name.
+    // Name gets also sanitized (special chars are removed) to avoid issues when recording or
+    // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.
+    std::string GetTestName(bool sanitize = true)
+    {
+      return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
+    }
+
     static inline void RemoveAllSecretsFromVault(
         SecretClient const& secretClient,
         bool waitForPurge = true)

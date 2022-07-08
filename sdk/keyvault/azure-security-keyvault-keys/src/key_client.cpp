@@ -5,7 +5,6 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
@@ -69,7 +68,7 @@ KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     KeyClientOptions options)
-    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version.ToString())
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
@@ -236,6 +235,28 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
       std::make_shared<KeyClient>(*this), std::move(responseT));
 }
 
+Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
+    std::string const& name,
+    KeyReleaseOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto payload = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request = CreateRequest(
+      HttpMethod::Post,
+      {_detail::KeysPath, name, options.Version.ValueOr(""), _detail::ReleaseValue},
+      &payloadStream);
+
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsDeserialize(*rawResponse);
+  return Azure::Response<ReleaseKeyResult>(value, std::move(rawResponse));
+}
+
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const
@@ -379,6 +400,74 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
   auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
       importKeyOptions.Name(), *rawResponse);
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<KeyVaultKey> KeyClient::RotateKey(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  // Request with no payload
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, _detail::RotateActionsValue});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<KeyRotationPolicy> KeyClient::GetKeyRotationPolicy(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  // Request with no payload
+  auto request
+      = CreateRequest(HttpMethod::Get, {_detail::KeysPath, name, _detail::RotationPolicyPath});
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(*rawResponse);
+  return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<KeyRotationPolicy> KeyClient::UpdateKeyRotationPolicy(
+    std::string const& name,
+    KeyRotationPolicy const& rotationPolicy,
+    Azure::Core::Context const& context) const
+{
+  // Payload for the request
+  auto payload = _detail::KeyRotationPolicySerializer::KeyRotationPolicySerialize(rotationPolicy);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request = CreateRequest(
+      HttpMethod::Put, {_detail::KeysPath, name, _detail::RotationPolicyPath}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  // Send and parse response
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(*rawResponse);
+  return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<GetRandomBytesResult> KeyClient::GetRandomBytes(
+    GetRandomBytesOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto payload = _detail::GetRandomBytesSerializer::GetRandomBytesOptionsSerialize(options);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request = CreateRequest(HttpMethod::Post, {"/rng"}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto response = GetRandomBytesResult{
+      _detail::GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(*rawResponse)};
+  return Azure::Response<GetRandomBytesResult>(std::move(response), std::move(rawResponse));
 }
 
 Cryptography::CryptographyClient KeyClient::GetCryptographyClient(

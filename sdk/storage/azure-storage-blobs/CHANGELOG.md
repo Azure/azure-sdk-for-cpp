@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.2 (Unreleased)
+## 12.5.0-beta.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.5.0-beta.2 (2022-07-07)
+
+### Features Added
+
+- Added support for Blob Batch.
 
 ## 12.5.0-beta.1 (2022-06-07)
 

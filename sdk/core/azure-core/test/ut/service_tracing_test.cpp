@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/tracing/tracing.hpp"
+#include "azure/core/internal/tracing/tracing_impl.hpp"
 #include <azure/core/internal/tracing/service_tracing.hpp>
 #include <gtest/gtest.h>
 
@@ -18,13 +18,15 @@ TEST(TracingContextFactory, ServiceTraceEnums)
     spanKind = SpanKind::Internal;
     spanKind = SpanKind::Producer;
     spanKind = Azure::Core::Tracing::_internal::SpanKind::Server;
-    std::string kindValue = spanKind.ToString();
+    int i = static_cast<int>(spanKind);
+    i += 1;
   }
   {
     SpanStatus spanStatus = SpanStatus::Unset;
     spanStatus = SpanStatus::Error;
     spanStatus = SpanStatus::Ok;
-    std::string statusValue = spanStatus.ToString();
+    int i = static_cast<int>(spanStatus);
+    i += 1;
   }
   Azure::Core::Tracing::_internal::CreateSpanOptions options;
   options.Kind = SpanKind::Internal;

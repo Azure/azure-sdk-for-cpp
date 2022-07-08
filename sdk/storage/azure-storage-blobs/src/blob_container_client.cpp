@@ -14,6 +14,7 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 #include "azure/storage/blobs/append_blob_client.hpp"
+#include "azure/storage/blobs/blob_batch.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 
@@ -48,8 +49,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       : BlobContainerClient(blobContainerUrl, options)
   {
     BlobClientOptions newOptions = options;
-    newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<_internal::SharedKeyPolicy>(credential));
+    auto sharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
+    newOptions.PerRetryPolicies.emplace_back(sharedKeyAuthPolicy->Clone());
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -58,6 +59,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+
+    m_batchRequestPipeline
+        = _detail::ConstructBatchRequestPolicy(perRetryPolicies, perOperationPolicies, newOptions);
+
+    m_batchSubrequestPipeline
+        = _detail::ConstructBatchSubrequestPolicy(nullptr, std::move(sharedKeyAuthPolicy), options);
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::BlobServicePackageName,
@@ -77,15 +85,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> tokenAuthPolicy;
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
-      perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
+      tokenAuthPolicy = std::make_unique<
+          Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
+          credential, tokenContext);
+      perRetryPolicies.emplace_back(tokenAuthPolicy->Clone());
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+
+    m_batchRequestPipeline
+        = _detail::ConstructBatchRequestPolicy(perRetryPolicies, perOperationPolicies, options);
+
+    m_batchSubrequestPipeline
+        = _detail::ConstructBatchSubrequestPolicy(std::move(tokenAuthPolicy), nullptr, options);
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::BlobServicePackageName,
@@ -107,6 +124,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+
+    m_batchRequestPipeline
+        = _detail::ConstructBatchRequestPolicy(perRetryPolicies, perOperationPolicies, options);
+
+    m_batchSubrequestPipeline = _detail::ConstructBatchSubrequestPolicy(nullptr, nullptr, options);
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::BlobServicePackageName,
@@ -442,6 +465,27 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = blockBlobClient.Upload(content, options, context);
     return Azure::Response<BlockBlobClient>(
         std::move(blockBlobClient), std::move(response.RawResponse));
+  }
+
+  BlobContainerBatch BlobContainerClient::CreateBatch() const { return BlobContainerBatch(*this); }
+
+  Response<Models::SubmitBlobBatchResult> BlobContainerClient::SubmitBatch(
+      const BlobContainerBatch& batch,
+      const SubmitBlobBatchOptions& options,
+      const Core::Context& context) const
+  {
+    (void)options;
+
+    _detail::BlobContainerClient::SubmitBlobContainerBatchOptions protocolLayerOptions;
+    _detail::StringBodyStream bodyStream(std::string{});
+    auto response = _detail::BlobContainerClient::SubmitBatch(
+        *m_batchRequestPipeline,
+        m_blobContainerUrl,
+        bodyStream,
+        protocolLayerOptions,
+        context.WithValue(_detail::s_containerBatchKey, &batch));
+    return Azure::Response<Models::SubmitBlobBatchResult>(
+        Models::SubmitBlobBatchResult(), std::move(response.RawResponse));
   }
 
 }}} // namespace Azure::Storage::Blobs

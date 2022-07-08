@@ -1,14 +1,14 @@
 # Release History
 
-## 4.1.0-beta.1 (Unreleased)
+## 4.1.0-beta.1 (2022-07-07)
 
 ### Features Added
 
+- Keyvault 7.3 support added for Certificates.
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Removed ServiceVersion type, replaced with ApiVersion field in the CertificateClientOptions type.
 
 ## 4.0.0 (2022-06-07)
 

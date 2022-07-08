@@ -27,8 +27,6 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
-const ServiceVersion ServiceVersion::V7_2("7.2");
-
 std::unique_ptr<RawResponse> SecretClient::SendRequest(
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context) const
@@ -63,9 +61,9 @@ SecretClient::SecretClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     SecretClientOptions options)
-    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version.ToString())
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
-  auto apiVersion = options.Version.ToString();
+  auto apiVersion = options.ApiVersion;
   Azure::Core::Url url(vaultUrl);
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
