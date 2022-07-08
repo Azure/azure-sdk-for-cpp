@@ -73,12 +73,6 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
-- name: EnablePythonWebSocketServer
-  type: boolean
-  default: false
-- name: PythonWebSocketServerName
-  type: string
-  default: ''
 - name: PreTestSteps
   type: object
   default: []
@@ -114,8 +108,6 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
-          EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer }}
-          PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName }}
           PreTestSteps: ${{ parameters.PreTestSteps }}
           PostTestSteps: ${{ parameters.PostTestSteps }}
 
@@ -132,8 +124,6 @@ stages:
         Clouds: ${{ parameters.Clouds }}
         SupportedClouds: ${{ parameters.SupportedClouds }}
         UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
-        EnablePythonWebSocketServer: ${{ parameters.EnablePythonWebSocketServer }}
-        PythonWebSocketServerName: ${{ parameters.PythonWebSocketServerName }}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 
