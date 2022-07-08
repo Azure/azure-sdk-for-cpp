@@ -48,7 +48,10 @@ namespace Azure { namespace Core { namespace Http {
     // for the host-index, next connections trying to be added to the pool will be ignored.
     constexpr static int32_t MaxConnectionsPerIndex = 1024;
 
-    // unique_ptr class wrapping a CURL handle
+    /**
+     * @brief std::default_delete for the CURL * type , used for std::unique_ptr
+     *
+     */
     class CURL_deleter {
     public:
       void operator()(CURL* handle) noexcept
