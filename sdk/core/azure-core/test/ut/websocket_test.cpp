@@ -206,7 +206,7 @@ std::string ToHexString(std::vector<uint8_t> const& data)
 TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
-  constexpr size_t testDataLength = 95000;
+  constexpr size_t testDataLength = 110000;
   constexpr auto testDuration = 10s;
 
   WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
@@ -274,7 +274,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 
   // We no longer need to worry about synchronization since all the worker threads are done.
   GTEST_LOG_(INFO) << "Total server requests: " << iterationCount.load() << std::endl;
-  GTEST_LOG_(INFO) << "Logged " << std::dec << testData.size() << " iterations (0x" << std::hex
+  GTEST_LOG_(INFO) << "Estimated " << std::dec << testData.size() << " iterations (0x" << std::hex
                    << testData.size() << ")" << std::endl;
   EXPECT_GE(testData.size(), iterationCount.load());
   // Close the socket gracefully.
