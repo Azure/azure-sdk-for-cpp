@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
   /**
    * @brief Defines #Sha1Hash.
    *
-   * @remarks NOTE: SHA1 is a deprecated hashing algorithm and SHOULD NOT be used,
+   * @warning NOTE: SHA1 is a deprecated hashing algorithm and SHOULD NOT be used,
    * unless it is used to implement a specific protocol (for instance, RFC 6455 and
    * RFC 7517 both require the use of SHA1 hashes).
    *
