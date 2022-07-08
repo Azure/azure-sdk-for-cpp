@@ -8,6 +8,7 @@ import websockets
  
 # create handler for each connection
 customPaths = {}
+stop = False
 
 async def handleControlPath(websocket):
     while (1):
@@ -16,6 +17,8 @@ async def handleControlPath(websocket):
         if (parsedCommand[0] == "close"):
             print("Closing control channel")
             await websocket.send("ok")
+            print("Terminating WebSocket server.")
+            stop.set_result(0)
             break
         elif parsedCommand[0] == "newPath":
             print("Add path")
@@ -26,9 +29,7 @@ async def handleControlPath(websocket):
         else:
             print("Unknown command, echoing it.")
             await websocket.send(data)
-        websocket
 
-		
 async def handleCustomPath(websocket, path:dict):
     print("Handle custom path", path)
     data : str = await websocket.recv()
@@ -69,7 +70,7 @@ async def handler(websocket, path : str):
     elif (parsedUrl.path == '/closeduringecho'):
         data = await websocket.recv()
         await websocket.close(1001, 'closed')
-    elif (parsedUrl.path =='control'):
+    elif (parsedUrl.path =='/control'):
         await handleControlPath(websocket)
     elif (parsedUrl.path in customPaths.keys()):
         print("Found path ", path, "in control paths.")
@@ -82,9 +83,12 @@ async def handler(websocket, path : str):
         await websocket.send(reply)
   
 async def main():
+    global stop
     print("Starting server")
+    loop = asyncio.get_running_loop()
+    stop = loop.create_future()
     async with websockets.serve(handler, "localhost", 8000):
-        await asyncio.Future() # run forever.
+        await stop # run forever.
  
 if __name__=="__main__":
     asyncio.run(main())

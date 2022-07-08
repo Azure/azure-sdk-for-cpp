@@ -22,6 +22,14 @@ private:
 protected:
   // Create
   virtual void SetUp() override {}
+
+static void TearDownTestSuite() {
+  WebSocket controlSocket(Azure::Core::Url("http://localhost:8000/control"));
+  controlSocket.Open();
+  controlSocket.SendFrame("close", true);
+  auto controlResponse = controlSocket.ReceiveFrame();
+  EXPECT_EQ(controlResponse->ResultType, WebSocketResultType::TextFrameReceived);
+}
 };
 
 TEST_F(WebSocketTests, CreateSimpleSocket)
