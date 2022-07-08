@@ -4,7 +4,6 @@
 #include "azure/core/http/websockets/websockets_transport.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include <array>
-#include <iostream>
 #include <random>
 #include <shared_mutex>
 
@@ -95,11 +94,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
       uint8_t ReadByte(Azure::Core::Context const& context)
       {
-        std::cout << "BufferedStreamReader::ReadByte ";
         if (m_bufferPos >= m_bufferLen)
         {
           m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
-          std::cout << " Read " << m_bufferLen << " bytes from socket";
           m_bufferPos = 0;
           if (m_bufferLen == 0)
           {
@@ -107,7 +104,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             return 0;
           }
         }
-        std::cout << "Read byte " << std::to_string(m_buffer[m_bufferPos]) << std::endl;
         return m_buffer[m_bufferPos++];
       }
       uint16_t ReadShort(Azure::Core::Context const& context)

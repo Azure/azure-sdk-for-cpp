@@ -267,7 +267,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   GTEST_LOG_(INFO) << "Total server requests: " << iterationCount.load() << std::endl;
   GTEST_LOG_(INFO) << "Logged " << std::dec << testData.size() << " iterations (0x" << std::hex
                    << testData.size() << ")" << std::endl;
-
+  EXPECT_GE(testData.size(), iterationCount.load());
   // Close the socket gracefully.
   testSocket.Close();
 
