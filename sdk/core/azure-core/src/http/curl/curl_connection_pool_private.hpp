@@ -126,4 +126,18 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::thread m_cleanThread;
   };
 
+  /**
+  * @brief std::default_delete for the CURL * type , used for std::unique_ptr
+  * 
+  */
+  class CURL_deleter {
+  public:
+    void operator()(CURL* handle) noexcept
+    {
+      if (handle != nullptr)
+      {
+        curl_easy_cleanup(handle);
+      }
+    }
+  };
 }}}} // namespace Azure::Core::Http::_detail
