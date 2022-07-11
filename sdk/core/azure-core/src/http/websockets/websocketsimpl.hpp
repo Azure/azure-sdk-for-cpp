@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include "azure/core/http/websockets/websockets.hpp"
 #include "azure/core/http/websockets/websockets_transport.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include <array>
 #include <random>
@@ -107,6 +108,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           {
             // If we run out of the initial stream, we need to read from the transport.
             m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
+          }
+          else
+          {
+            Azure::Core::Diagnostics::_internal::Log::Write(
+                Azure::Core::Diagnostics::Logger::Level::Informational,
+                "Read data from initial stream");
           }
           m_bufferPos = 0;
           if (m_bufferLen == 0)

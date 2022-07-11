@@ -44,9 +44,9 @@ stages:
       BranchCoverageTarget: 55
       PreTestSteps:
         - task: UsePythonVersion@0
-          displayName: 'Use Python 3.10'
+          displayName: 'Use Python 3'
           inputs:
-            versionSpec: '3.10.5'
+            versionSpec: '3'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - pwsh: |

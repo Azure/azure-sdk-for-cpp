@@ -433,7 +433,7 @@ public:
   }
 };
 
-TEST_F(WebSocketTests, LibWebSocketOrg)
+TEST_F(WebSocketTests, LibWebSocketOrgLwsStatus)
 {
   {
     LibWebSocketStatus lwsStatus;
@@ -459,6 +459,9 @@ TEST_F(WebSocketTests, LibWebSocketOrg)
     }
     EXPECT_TRUE(foundOurConnection);
   }
+}
+TEST_F(WebSocketTests, LibWebSocketOrgIncrement)
+{
   {
     LibWebSocketIncrementProtocol incrementProtocol;
     incrementProtocol.Open();

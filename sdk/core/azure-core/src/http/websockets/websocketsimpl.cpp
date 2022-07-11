@@ -9,6 +9,7 @@
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/websockets/curl_websockets_transport.hpp"
 #endif
+#include "azure/core/internal/diagnostics/log.hpp"
 #include <algorithm>
 #include <array>
 #include <mutex>
@@ -16,6 +17,9 @@
 #include <shared_mutex>
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
+  using namespace Azure::Core::Diagnostics::_internal;
+  using namespace Azure::Core::Diagnostics;
+  using namespace std::chrono_literals;
 
   WebSocketImplementation::WebSocketImplementation(
       Azure::Core::Url const& remoteUrl,
@@ -191,10 +195,27 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::vector<uint8_t> closeFrame = EncodeFrame(SocketOpcode::Close, true, closePayload);
       m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
 
-      auto closeResponse = ReceiveFrame(context, true);
-      if (closeResponse->ResultType != WebSocketResultType::PeerClosed)
+      // To ensure that we process the responses in a "timely" fashion, limit the close reception to
+      // 20 seconds if we don't already have a timeout.
+      Azure::Core::Context closeContext = context;
+      auto cancelTimepoint = closeContext.GetDeadline();
+      if (cancelTimepoint == Azure::DateTime::max())
       {
-        throw std::runtime_error("Unexpected result type received during close().");
+        closeContext = closeContext.WithDeadline(std::chrono::system_clock::now() + 20s);
+      }
+      // Drain the incoming series of frames from the server.
+      // Note that there might be in-flight frames that were sent from the other end of the
+      // WebSocket that we don't care about any more (since we're closing the WebSocket). So drain
+      // those frames.
+      auto closeResponse = ReceiveFrame(closeContext, true);
+      while (closeResponse->ResultType != WebSocketResultType::PeerClosed)
+      {
+        auto textResult = closeResponse->AsTextFrame();
+        Log::Write(
+            Logger::Level::Warning,
+            "Received unexpected frame during close. Frame type: "
+                + std::to_string(static_cast<uint8_t>(closeResponse->ResultType)));
+        closeResponse = ReceiveFrame(closeContext, true);
       }
     }
     // Close the socket - after this point, the m_transport is invalid.
@@ -342,6 +363,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::vector<uint8_t> frameData
           = DecodeFrame(m_bufferedStreamReader, opcode, payloadLength, isFinal, context);
 
+      Log::Write(
+          Azure::Core::Diagnostics::Logger::Level::Informational,
+          "Received frame with opcode: " + std::to_string(static_cast<uint8_t>(opcode)));
       // At this point, readBuffer contains the actual payload from the service.
       switch (opcode)
       {
