@@ -105,8 +105,8 @@ TEST(SHA, SHA512Test)
       printf("%02x", shaResult[i]);
   }
   {
-    Sha384Hash sha;
-    Sha384Hash sha2;
+    Sha512Hash sha;
+    Sha512Hash sha2;
     std::string data1 = "ABCDE";
     std::string data2 = "FGHIJ";
     sha.Append(reinterpret_cast<const uint8_t*>(data1.data()), data1.size());

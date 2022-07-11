@@ -194,7 +194,6 @@ public:
     }
     if (1 != EVP_DigestInit_ex(m_context, EVP_md5(), NULL))
     {
-      EVP_MD_CTX_free(m_context);
       throw std::runtime_error("Crypto error while init Md5Hash.");
     }
   }

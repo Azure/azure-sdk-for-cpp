@@ -279,6 +279,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   }
   //  std::this_thread::sleep_for(10s);
 
+  // Wait for all the threads to exit.
   for (auto& thread : threads)
   {
     thread.join();
@@ -288,55 +289,35 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   GTEST_LOG_(INFO) << "Total server requests: " << iterationCount.load() << std::endl;
   GTEST_LOG_(INFO) << "Estimated " << std::dec << testData.size() << " iterations (0x" << std::hex
                    << testData.size() << ")" << std::endl;
-  EXPECT_GE(testData.size(), iterationCount.load());
+  EXPECT_GE(testDataLength, iterationCount.load());
   // Close the socket gracefully.
   testSocket.Close();
+
+  // Resize the test data to the number of actual iterations.
+  testData.resize(iterationCount.load());
+  receivedData.resize(iterationCount.load());
 
   // If we've processed every iteration, let's make sure that we received everything we sent.
   // If we dropped some results, then we can't check to ensure that we have received everything
   // because we can't account for everything sent.
-  if (iterationCount <= testDataLength)
+  std::set<std::string> testDataStrings;
+  std::set<std::string> receivedDataStrings;
+  for (auto const& data : testData)
   {
-    // Compare testData and receivedData to ensure every element in testData is in receivedData
-    // and every element in receivedData is in testData.
-    //
-    // This is a bit of a hack, but it is the only way to do this without a lot of extra code.
-    // The problem is that the order of the elements in testData and receivedData is not
-    // guaranteed, so we need to sort them before we can compare them.
-    // We sort by the size of the vector, so the smaller vectors will be first in the sort.
-    std::vector<std::string> testDataStrings;
-    std::vector<std::string> receivedDataStrings;
-    for (auto const& data : testData)
-    {
-      testDataStrings.push_back(ToHexString(data));
-    }
-    for (auto const& data : receivedData)
-    {
-      receivedDataStrings.push_back(ToHexString(data));
-    }
-    std::sort(testDataStrings.begin(), testDataStrings.end());
-    std::sort(receivedDataStrings.begin(), receivedDataStrings.end());
-    for (size_t i = 0; i < testDataStrings.size(); ++i)
-    {
-      if (testDataStrings[i] != receivedDataStrings[i])
-      {
-        GTEST_LOG_(ERROR) << "Mismatch at index " << i << std::endl;
-        GTEST_LOG_(ERROR) << "testData:     " << testDataStrings[i] << std::endl;
-        GTEST_LOG_(ERROR) << "receivedData: " << receivedDataStrings[i] << std::endl;
-      }
-    }
+    testDataStrings.emplace(ToHexString(data));
+  }
+  for (auto const& data : receivedData)
+  {
+    receivedDataStrings.emplace(ToHexString(data));
+  }
 
-    for (auto const& data : testDataStrings)
-    {
-      EXPECT_NE(
-          receivedDataStrings.end(),
-          std::find(receivedDataStrings.begin(), receivedDataStrings.end(), data));
-    }
-    for (auto const& data : receivedDataStrings)
-    {
-      EXPECT_NE(
-          testDataStrings.end(), std::find(testDataStrings.begin(), testDataStrings.end(), data));
-    }
+  for (auto const& data : testDataStrings)
+  {
+    EXPECT_NE(receivedDataStrings.end(), receivedDataStrings.find(data));
+  }
+  for (auto const& data : receivedDataStrings)
+  {
+    EXPECT_NE(testDataStrings.end(), testDataStrings.find(data));
   }
 }
 
