@@ -76,6 +76,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     // Implement a buffered stream reader
     class BufferedStreamReader {
       std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
+      std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
       constexpr static size_t m_bufferSize = 1024;
       uint8_t m_buffer[m_bufferSize]{};
       size_t m_bufferPos = 0;
@@ -86,6 +87,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       explicit BufferedStreamReader() = default;
       ~BufferedStreamReader() = default;
 
+      void SetInitialStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
+      {
+        m_initialBodyStream = std::move(stream);
+      }
       void SetTransport(
           std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport>& transport)
       {
@@ -96,7 +101,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       {
         if (m_bufferPos >= m_bufferLen)
         {
-          m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
+          // Start by reading data from our initial body stream.
+          m_bufferLen = m_initialBodyStream->ReadToCount(m_buffer, m_bufferSize, context);
+          if (m_bufferLen == 0)
+          {
+            // If we run out of the initial stream, we need to read from the transport.
+            m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
+          }
           m_bufferPos = 0;
           if (m_bufferLen == 0)
           {
@@ -263,7 +274,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
      */
     std::vector<uint8_t> EncodeFrame(
         SocketOpcode opcode,
-        bool maskOutput,
         bool isFinal,
         std::vector<uint8_t> const& payload);
 
@@ -281,8 +291,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         SocketOpcode& opcode,
         uint64_t& payloadLength,
         bool& isFinal,
-        bool& isMasked,
-        std::array<uint8_t, 4>& maskKey,
         Azure::Core::Context const& context);
 
     SocketState m_state{SocketState::Invalid};

@@ -191,6 +191,11 @@ TEST_F(WebSocketTests, CloseDuringEcho)
   {
     WebSocket testSocket(Azure::Core::Url("http://localhost:8000/closeduringecho"));
 
+    EXPECT_THROW(testSocket.SendFrame("Foo", true), std::runtime_error);
+    std::vector<uint8_t> data{1, 2, 3, 4};
+    EXPECT_THROW(testSocket.SendFrame(data, true), std::runtime_error);
+    EXPECT_THROW(testSocket.ReceiveFrame(), std::runtime_error);
+
     testSocket.Open();
 
     testSocket.SendFrame("Test message", true);
@@ -323,7 +328,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 
 // Does not work because curl rejects the wss: scheme.
 class LibWebSocketIncrementProtocol {
-  WebSocketOptions m_options{true, {"dumb-increment-protocol"}};
+  WebSocketOptions m_options{{"dumb-increment-protocol"}};
   WebSocket m_socket;
 
 public:

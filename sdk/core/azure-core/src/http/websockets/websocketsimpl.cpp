@@ -125,6 +125,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       {
         VerifySocketAccept(encodedKey, socketAccept->second);
       }
+      auto bodyStream = response->ExtractBodyStream();
+      m_bufferedStreamReader.SetInitialStream(bodyStream);
     }
 
     // Remember the protocol that the client chose.
@@ -186,8 +188,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::vector<uint8_t> closePayload;
       closePayload.push_back(closeReason >> 8);
       closePayload.push_back(closeReason & 0xff);
-      std::vector<uint8_t> closeFrame
-          = EncodeFrame(SocketOpcode::Close, m_options.EnableMasking, true, closePayload);
+      std::vector<uint8_t> closeFrame = EncodeFrame(SocketOpcode::Close, true, closePayload);
       m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
 
       auto closeResponse = ReceiveFrame(context, true);
@@ -224,8 +225,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       closePayload.push_back(closeStatus & 0xff);
       closePayload.insert(closePayload.end(), closeReason.begin(), closeReason.end());
 
-      std::vector<uint8_t> closeFrame
-          = EncodeFrame(SocketOpcode::Close, m_options.EnableMasking, true, closePayload);
+      std::vector<uint8_t> closeFrame = EncodeFrame(SocketOpcode::Close, true, closePayload);
       m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
 
       auto closeResponse = ReceiveFrame(context, true);
@@ -261,8 +261,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     else
     {
-      std::vector<uint8_t> sendFrame
-          = EncodeFrame(SocketOpcode::TextFrame, m_options.EnableMasking, isFinalFrame, utf8text);
+      std::vector<uint8_t> sendFrame = EncodeFrame(SocketOpcode::TextFrame, isFinalFrame, utf8text);
 
       m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
     }
@@ -289,8 +288,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     else
     {
-      std::vector<uint8_t> sendFrame = EncodeFrame(
-          SocketOpcode::BinaryFrame, m_options.EnableMasking, isFinalFrame, binaryFrame);
+      std::vector<uint8_t> sendFrame
+          = EncodeFrame(SocketOpcode::BinaryFrame, isFinalFrame, binaryFrame);
 
       std::unique_lock<std::mutex> transportLock(m_transportMutex);
       m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
@@ -339,22 +338,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       SocketOpcode opcode;
 
       bool isFinal = false;
-      bool isMasked = false;
       uint64_t payloadLength;
-      std::array<uint8_t, 4> maskKey{};
-      std::vector<uint8_t> frameData = DecodeFrame(
-          m_bufferedStreamReader, opcode, payloadLength, isFinal, isMasked, maskKey, context);
+      std::vector<uint8_t> frameData
+          = DecodeFrame(m_bufferedStreamReader, opcode, payloadLength, isFinal, context);
 
-      if (isMasked)
-      {
-        int index = 0;
-        std::transform(
-            frameData.begin(), frameData.end(), frameData.begin(), [&maskKey, &index](uint8_t val) {
-              val ^= maskKey[index % 4];
-              index += 1;
-              return val;
-            });
-      }
       // At this point, readBuffer contains the actual payload from the service.
       switch (opcode)
       {
@@ -427,7 +414,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
   std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
       SocketOpcode opcode,
-      bool maskOutput,
       bool isFinal,
       std::vector<uint8_t> const& payload)
   {
@@ -435,10 +421,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     // Add opcode+fin.
     encodedFrame.push_back(static_cast<uint8_t>(opcode) | (isFinal ? 0x80 : 0));
     uint8_t maskAndLength = 0;
-    if (maskOutput)
-    {
-      maskAndLength |= 0x80;
-    }
+    maskAndLength |= 0x80;
+
     // Payloads smaller than 125 bytes are encoded directly in the maskAndLength field.
     uint64_t payloadSize = static_cast<uint64_t>(payload.size());
     if (payloadSize <= 125)
@@ -479,7 +463,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     // Calculate the masking key. This MUST be 4 bytes of high entropy random numbers used to
     // mask the input data.
-    if (maskOutput)
     {
       // Start by generating the mask - 4 bytes of random data.
       std::vector<uint8_t> mask = GenerateRandomBytes(4);
@@ -495,11 +478,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         index += 1;
       }
     }
-    else
-    {
-      // Since the payload is unmasked, simply append the payload to the encoded frame.
-      encodedFrame.insert(encodedFrame.end(), payload.begin(), payload.end());
-    }
 
     return encodedFrame;
   }
@@ -509,8 +487,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       SocketOpcode& opcode,
       uint64_t& payloadLength,
       bool& isFinal,
-      bool& isMasked,
-      std::array<uint8_t, 4>& maskKey,
       Azure::Core::Context const& context)
   {
     std::unique_lock<std::mutex> lock(m_transportMutex);
@@ -522,10 +498,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     opcode = static_cast<SocketOpcode>(payloadByte & 0x7f);
     isFinal = (payloadByte & 0x80) != 0;
     payloadByte = streamReader.ReadByte(context);
-    isMasked = false;
     if (payloadByte & 0x80)
     {
-      isMasked = true;
+      throw std::runtime_error("Server sent a frame with a reserved bit set.");
     }
     payloadLength = payloadByte & 0x7f;
     if (payloadLength <= 125)
@@ -545,13 +520,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       throw std::logic_error("Unexpected payload length.");
     }
 
-    if (isMasked)
-    {
-      maskKey[0] = streamReader.ReadByte(context);
-      maskKey[1] = streamReader.ReadByte(context);
-      maskKey[2] = streamReader.ReadByte(context);
-      maskKey[3] = streamReader.ReadByte(context);
-    };
     return streamReader.ReadBytes(static_cast<size_t>(payloadLength), context);
   }
 

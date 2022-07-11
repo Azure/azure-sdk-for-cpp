@@ -915,6 +915,11 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
     return 0;
   }
 
+  // If we no longer have a connection, read 0 bytes.
+  if (!m_connection)
+  {
+    return 0;
+  }
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
   totalRead = m_connection->ReadFromSocket(buffer, static_cast<size_t>(readRequestLength), context);

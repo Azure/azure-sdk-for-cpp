@@ -100,14 +100,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   struct WebSocketOptions : Azure::Core::_internal::ClientOptions
   {
     /**
-     * @brief Enable masking for this WebSocket.
-     *
-     * @details Masking is needed to block [certain infrastructure
-     * attacks](https://www.rfc-editor.org/rfc/rfc6455.html#section-10.3) and is strongly
-     * recommended.
-     */
-    bool EnableMasking{true};
-    /**
      * @brief The set of protocols which are supported by this client
      */
     std::vector<std::string> Protocols = {};
@@ -129,9 +121,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @param enableMasking If true, enable masking for the websocket
      * @param protocols Supported protocols for this websocket client.
      */
-    explicit WebSocketOptions(bool enableMasking, std::vector<std::string> protocols)
-        : Azure::Core::_internal::ClientOptions{}, EnableMasking(enableMasking),
-          Protocols(protocols)
+    explicit WebSocketOptions(std::vector<std::string> protocols)
+        : Azure::Core::_internal::ClientOptions{}, Protocols(protocols)
     {
     }
     WebSocketOptions() = default;
