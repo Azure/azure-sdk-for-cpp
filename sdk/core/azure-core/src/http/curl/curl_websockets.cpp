@@ -75,6 +75,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   void CurlWebSocketTransport::OnUpgradedConnection(
       std::unique_ptr<CurlNetworkConnection>& upgradedConnection)
   {
+    CurlTransport::OnUpgradedConnection(upgradedConnection);
     // Note that m_upgradedConnection is a std::shared_ptr. We define it as a std::shared_ptr
     // because a std::shared_ptr can be declared on an incomplete type, while a std::unique_ptr
     // cannot.

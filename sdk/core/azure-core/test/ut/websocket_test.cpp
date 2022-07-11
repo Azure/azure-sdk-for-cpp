@@ -38,6 +38,7 @@ TEST_F(WebSocketTests, CreateSimpleSocket)
   {
     WebSocket defaultSocket(Azure::Core::Url("http://localhost:8000"));
     defaultSocket.AddHeader("newHeader", "headerValue");
+    EXPECT_THROW(defaultSocket.GetChosenProtocol(), std::runtime_error);
   }
 }
 
@@ -50,8 +51,18 @@ TEST_F(WebSocketTests, OpenSimpleSocket)
 
     defaultSocket.Open();
 
+    EXPECT_THROW(defaultSocket.AddHeader("newHeader", "headerValue"), std::runtime_error);
+
     // Close the socket without notifying the peer.
     defaultSocket.Close();
+  }
+
+  {
+    WebSocketOptions options;
+    WebSocket defaultSocket(Azure::Core::Url("http://microsoft.com/index.htm"), options);
+    defaultSocket.AddHeader("newHeader", "headerValue");
+
+    EXPECT_THROW(defaultSocket.Open(), std::runtime_error);
   }
 }
 
@@ -80,6 +91,7 @@ TEST_F(WebSocketTests, OpenAndCloseSocket)
     //
     // Now re-open the socket - this should work to reset everything.
     defaultSocket.Open();
+    EXPECT_THROW(defaultSocket.Open(), std::runtime_error);
     defaultSocket.Close();
   }
 }
@@ -484,18 +496,21 @@ TEST_F(WebSocketTests, LibWebSocketOrg)
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 TEST_F(WebSocketTests, CurlTransportCoverage)
 {
-  Azure::Core::Http::CurlTransportOptions transportOptions;
-  transportOptions.HttpKeepAlive = false;
-  auto transport
-      = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
+  {
 
-  EXPECT_THROW(transport->CloseSocket(1001, {}, {}), std::runtime_error);
-  EXPECT_THROW(transport->GetCloseSocketInformation({}), std::runtime_error);
-  EXPECT_THROW(
-      transport->SendFrame(WebSocketTransport::WebSocketFrameType::FrameTypeBinary, {}, {}),
-      std::runtime_error);
-  WebSocketTransport::WebSocketFrameType ft;
-  EXPECT_THROW(transport->ReceiveFrame(ft, {}), std::runtime_error);
+    Azure::Core::Http::CurlTransportOptions transportOptions;
+    transportOptions.HttpKeepAlive = false;
+    auto transport
+        = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
+
+    EXPECT_THROW(transport->CloseSocket(1001, {}, {}), std::runtime_error);
+    EXPECT_THROW(transport->GetCloseSocketInformation({}), std::runtime_error);
+    EXPECT_THROW(
+        transport->SendFrame(WebSocketTransport::WebSocketFrameType::FrameTypeBinary, {}, {}),
+        std::runtime_error);
+    WebSocketTransport::WebSocketFrameType ft;
+    EXPECT_THROW(transport->ReceiveFrame(ft, {}), std::runtime_error);
+  }
 }
 
 #endif
