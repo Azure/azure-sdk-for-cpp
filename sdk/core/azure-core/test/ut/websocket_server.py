@@ -45,7 +45,11 @@ async def handleEcho(websocket, url):
         try:
             data = await websocket.recv()
 #            print(f'Echo ', len(data),' bytes')
-            await websocket.send(data)
+
+            if (url.query == 'fragment=true'):
+                await websocket.send(data.split())
+            else:
+                await websocket.send(data)
         except websockets.ConnectionClosedOK:
             print("Connection closed ok.")
             return

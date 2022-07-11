@@ -130,6 +130,32 @@ TEST_F(WebSocketTests, SimpleEcho)
     // Close the socket gracefully.
     testSocket.Close();
   }
+
+  {
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest?fragment=true"));
+
+    testSocket.Open();
+
+    std::vector<uint8_t> binaryData{1, 2, 3, 4, 5, 6};
+
+    testSocket.SendFrame(binaryData, true);
+
+    std::vector<uint8_t> responseData;
+    std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketResult> response;
+    do
+    {
+      response = testSocket.ReceiveFrame();
+      EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+      auto binaryResult = response->AsBinaryFrame();
+      responseData.insert(responseData.end(), binaryResult->Data.begin(), binaryResult->Data.end());
+    } while (!response->IsFinalFrame);
+
+    auto textResult = response->AsBinaryFrame();
+    EXPECT_EQ(binaryData, responseData);
+
+    // Close the socket gracefully.
+    testSocket.Close();
+  }
 }
 
 template <size_t N> void EchoRandomData(WebSocket& socket)
