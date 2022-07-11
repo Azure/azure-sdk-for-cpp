@@ -118,7 +118,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Construct an instance of a WebSocketOptions type.
      *
-     * @param enableMasking If true, enable masking for the websocket
      * @param protocols Supported protocols for this websocket client.
      */
     explicit WebSocketOptions(std::vector<std::string> protocols)

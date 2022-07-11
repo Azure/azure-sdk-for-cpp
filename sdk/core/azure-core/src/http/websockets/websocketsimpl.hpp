@@ -283,7 +283,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
      * @param streamReader Buffered stream reader to read the frame from.
      * @param opcode Opcode returned by the server.
      * @param isFinal True if this is the final message.
-     * @param maskKey On Return, contains the contents of the mask key if the data is masked.
      * @returns A pointer to the start of the decoded data.
      */
     std::vector<uint8_t> DecodeFrame(
