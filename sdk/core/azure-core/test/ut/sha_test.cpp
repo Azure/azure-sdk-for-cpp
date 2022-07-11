@@ -7,6 +7,7 @@
 
 using namespace Azure::Core::Cryptography::_internal;
 
+// cspell: words ABCDE FGHIJ
 TEST(SHA, SHA1Test)
 {
   {
