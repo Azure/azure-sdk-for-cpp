@@ -107,7 +107,7 @@ TEST_F(WebSocketTests, SimpleEcho)
 
     auto response = testSocket.ReceiveFrame();
     EXPECT_EQ(WebSocketResultType::TextFrameReceived, response->ResultType);
-    EXPECT_THROW(response->AsBinaryFrame(), std::runtime_error);
+    EXPECT_THROW(response->AsBinaryFrame(), std::logic_error);
     auto textResult = response->AsTextFrame();
     EXPECT_EQ("Test message", textResult->Text);
 
@@ -125,8 +125,8 @@ TEST_F(WebSocketTests, SimpleEcho)
 
     auto response = testSocket.ReceiveFrame();
     EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
-    EXPECT_THROW(response->AsPeerCloseFrame(), std::runtime_error);
-    EXPECT_THROW(response->AsTextFrame(), std::runtime_error);
+    EXPECT_THROW(response->AsPeerCloseFrame(), std::logic_error);
+    EXPECT_THROW(response->AsTextFrame(), std::logic_error);
     auto textResult = response->AsBinaryFrame();
     EXPECT_EQ(binaryData, textResult->Data);
 
