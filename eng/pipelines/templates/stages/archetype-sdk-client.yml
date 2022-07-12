@@ -126,5 +126,6 @@ stages:
                   - LiveTest_${{ cloud.key }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactName: packages
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
+        # TODO: Enable before merge
+        # ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+        #   TestPipeline: true

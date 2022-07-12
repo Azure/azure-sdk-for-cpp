@@ -173,9 +173,15 @@ stages:
                         condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                         displayName: Set $(HasChanges) to $true for create-pull-request.yml
 
-                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                      # TODO: Enable before merge
+                      # - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                      #   parameters:
+                      #     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+
+                      # TODO: Remove before merge
+                      - pwsh: Write-Host "##vso[task.setvariable variable=DefaultBranch]test-vcpkg-beta-release"
+                        displayName: Override default branch to test vcpkg beta release
+
 
                       # SkipCheckingForChanges is true to skip the commit step
                       # (which is already done by Update-VcpkgPort.ps1)
