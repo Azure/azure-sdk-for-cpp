@@ -96,6 +96,7 @@ stages:
                 vmImage: MMS2019
 
               variables:
+                # TODO: Revert to Microsoft before merge
                 VcpkgPrRepoOwner: azure-sdk
                 VcpkgPrRepoName: vcpkg
 
