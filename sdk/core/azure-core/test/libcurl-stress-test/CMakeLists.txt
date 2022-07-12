@@ -21,7 +21,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile
 find_program(DOCKER_EXECUTABLE docker)
 #if docker is found try to build the docker image in the defined docker_build stage which should be run after build
 if(DOCKER_EXECUTABLE)
-  add_custom_target(docker_build
-    COMMAND ${DOCKER_EXECUTABLE} build --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on --tag=gearama/curlstress .
-  )
+	add_custom_target(docker_build
+	COMMAND ${DOCKER_EXECUTABLE} build --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on --tag=gearama/curlstress -f Dockerfile .)
 endif()
