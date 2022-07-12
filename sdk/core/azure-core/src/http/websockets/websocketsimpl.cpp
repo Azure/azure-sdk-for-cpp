@@ -363,9 +363,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::vector<uint8_t> frameData
           = DecodeFrame(m_bufferedStreamReader, opcode, payloadLength, isFinal, context);
 
-      Log::Write(
-          Azure::Core::Diagnostics::Logger::Level::Informational,
-          "Received frame with opcode: " + std::to_string(static_cast<uint8_t>(opcode)));
       // At this point, readBuffer contains the actual payload from the service.
       switch (opcode)
       {

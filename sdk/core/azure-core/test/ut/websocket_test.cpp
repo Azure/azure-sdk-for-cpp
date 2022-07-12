@@ -107,6 +107,7 @@ TEST_F(WebSocketTests, SimpleEcho)
 
     auto response = testSocket.ReceiveFrame();
     EXPECT_EQ(WebSocketResultType::TextFrameReceived, response->ResultType);
+    EXPECT_THROW(response->AsBinaryFrame(), std::runtime_error);
     auto textResult = response->AsTextFrame();
     EXPECT_EQ("Test message", textResult->Text);
 
@@ -124,6 +125,8 @@ TEST_F(WebSocketTests, SimpleEcho)
 
     auto response = testSocket.ReceiveFrame();
     EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+    EXPECT_THROW(response->AsPeerCloseFrame(), std::runtime_error);
+    EXPECT_THROW(response->AsTextFrame(), std::runtime_error);
     auto textResult = response->AsBinaryFrame();
     EXPECT_EQ(binaryData, textResult->Data);
 
@@ -215,7 +218,7 @@ TEST_F(WebSocketTests, VariableSizeEcho)
 TEST_F(WebSocketTests, CloseDuringEcho)
 {
   {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/closeduringecho"));
+    WebSocket testSocket(Azure::Core::Url("ws://localhost:8000/closeduringecho"));
 
     EXPECT_THROW(testSocket.SendFrame("Foo", true), std::runtime_error);
     std::vector<uint8_t> data{1, 2, 3, 4};
@@ -288,6 +291,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
           auto response = testSocket.ReceiveFrame();
           EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
           auto binaryResult = response->AsBinaryFrame();
+		
           // Make sure we get back the data we sent in the echo request.
           EXPECT_EQ(sendData.size(), binaryResult->Data.size());
           {
