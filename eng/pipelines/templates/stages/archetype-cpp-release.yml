@@ -96,7 +96,7 @@ stages:
                 vmImage: MMS2019
 
               variables:
-                VcpkgPrRepoOwner: Microsoft
+                VcpkgPrRepoOwner: azure-sdk
                 VcpkgPrRepoName: vcpkg
 
               strategy:
