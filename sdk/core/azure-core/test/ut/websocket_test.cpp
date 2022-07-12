@@ -291,7 +291,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
           auto response = testSocket.ReceiveFrame();
           EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
           auto binaryResult = response->AsBinaryFrame();
-		
+
           // Make sure we get back the data we sent in the echo request.
           EXPECT_EQ(sendData.size(), binaryResult->Data.size());
           {
