@@ -20,6 +20,7 @@ using namespace Azure::Core::Http;
 namespace {
 
 const std::string HttpScheme = "http";
+const std::string WebSocketScheme = "ws";
 
 inline std::wstring HttpMethodToWideString(HttpMethod method)
 {
@@ -325,7 +326,9 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
   HttpMethod requestMethod = method;
   bool const requestSecureHttp(
       !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-          url.GetScheme(), HttpScheme));
+          url.GetScheme(), HttpScheme)
+      && !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+          url.GetScheme(), WebSocketScheme));
 
   // Create an HTTP request handle.
   _detail::unique_HINTERNET hi(
