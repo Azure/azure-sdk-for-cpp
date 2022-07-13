@@ -16,7 +16,13 @@
 
 #include <azure/core.hpp>
 #include <azure/core/http/curl_transport.hpp>
+#include <fstream>
+#include <ios>
 #include <iostream>
+#include <memory>
+#include <stdlib.h>
+#include <string>
+#include <vector>
 
 void SendRequest(std::string target)
 {
@@ -26,10 +32,16 @@ void SendRequest(std::string target)
   curlOptions.SslVerifyPeer = false;
   auto implementationClient = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 
+#elif (BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
+  auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
+#endif
   try
   {
 
     Azure::Core::Context context;
+    //  auto duration = std::chrono::milliseconds(1000);
+    // auto deadline = std::chrono::system_clock::now() + duration;
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(target));
     auto response = implementationClient->Send(request, context);
