@@ -170,13 +170,6 @@ jobs:
         displayName: Publish test results
         condition: succeededOrFailed()
 
-      # - ${{ if eq(parameters.EnablePythonWebSocketServer, True) }}:
-      #   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-      #     parameters:
-      #       ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
-      #       ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
-      #       CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
-
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |
             $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
