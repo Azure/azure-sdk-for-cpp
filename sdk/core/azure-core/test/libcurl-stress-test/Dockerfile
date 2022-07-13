@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04
+
+ARG targetTest
+ARG build
+
+# copy the tagrget binary
+ADD $targetTest ./$targetTest
+RUN chmod +x ./$targetTest
+
+# install the mem check tool 
+RUN apt-get update -y
+RUN apt-get install valgrind -y
+
+# execute under memcheck tool 
+RUN valgrind --tool=memcheck -s ./$targetTest $build
