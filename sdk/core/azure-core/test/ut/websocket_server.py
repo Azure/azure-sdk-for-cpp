@@ -94,7 +94,7 @@ async def main():
     print("Starting server")
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
-    async with websockets.serve(handler, "localhost", 8000):
+    async with websockets.serve(handler, "localhost", 8000, ping_interval=3):
         await stop # run forever.
  
 if __name__=="__main__":

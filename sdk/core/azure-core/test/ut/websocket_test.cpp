@@ -29,7 +29,7 @@ protected:
     //    controlSocket.Open();
     //    controlSocket.SendFrame("close", true);
     //    auto controlResponse = controlSocket.ReceiveFrame();
-    //    EXPECT_EQ(controlResponse->ResultType, WebSocketResultType::TextFrameReceived);
+    //    EXPECT_EQ(controlResponse->FrameType, WebSocketFrameType::TextFrameReceived);
   }
 };
 
@@ -110,7 +110,7 @@ TEST_F(WebSocketTests, SimpleEcho)
     testSocket.SendFrame("Test message", true);
 
     auto response = testSocket.ReceiveFrame();
-    EXPECT_EQ(WebSocketResultType::TextFrameReceived, response->ResultType);
+    EXPECT_EQ(WebSocketFrameType::TextFrameReceived, response->FrameType);
     EXPECT_THROW(response->AsBinaryFrame(), std::logic_error);
     auto textResult = response->AsTextFrame();
     EXPECT_EQ("Test message", textResult->Text);
@@ -128,7 +128,7 @@ TEST_F(WebSocketTests, SimpleEcho)
     testSocket.SendFrame(binaryData, true);
 
     auto response = testSocket.ReceiveFrame();
-    EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+    EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
     EXPECT_THROW(response->AsPeerCloseFrame(), std::logic_error);
     EXPECT_THROW(response->AsTextFrame(), std::logic_error);
     auto textResult = response->AsBinaryFrame();
@@ -148,17 +148,59 @@ TEST_F(WebSocketTests, SimpleEcho)
     testSocket.SendFrame(binaryData, true);
 
     std::vector<uint8_t> responseData;
-    std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketResult> response;
+    std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketFrame> response;
     do
     {
       response = testSocket.ReceiveFrame();
-      EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+      EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
       auto binaryResult = response->AsBinaryFrame();
       responseData.insert(responseData.end(), binaryResult->Data.begin(), binaryResult->Data.end());
     } while (!response->IsFinalFrame);
 
     auto textResult = response->AsBinaryFrame();
     EXPECT_EQ(binaryData, responseData);
+
+    // Close the socket gracefully.
+    testSocket.Close();
+  }
+}
+
+TEST_F(WebSocketTests, PingTest)
+{
+  {
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+
+    testSocket.Open();
+
+    testSocket.SendFrame("Test message", true);
+    // Sleep for 10s - this should trigger a ping.
+    // The websocket server is configured to ping every 5 seconds, so the 10 second sleep should
+    // force the next frame received to be a ping frame.
+    std::this_thread::sleep_for(10s);
+
+    auto response = testSocket.ReceiveFrame();
+    EXPECT_EQ(WebSocketFrameType::TextFrameReceived, response->FrameType);
+    auto textResult = response->AsTextFrame();
+    EXPECT_EQ("Test message", textResult->Text);
+
+    // Close the socket gracefully.
+    testSocket.Close();
+  }
+  {
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+
+    testSocket.Open();
+
+    // Sleep for 10s - this should trigger a ping.
+    // The websocket server is configured to ping every 5 seconds, so the 10 second sleep should
+    // force the next frame received to be a ping frame.
+    testSocket.SendPing({1, 2, 3, 4});
+
+    auto response = testSocket.ReceiveFrame();
+    EXPECT_EQ(WebSocketFrameType::PongReceived, response->FrameType);
+    auto pongResult = response->AsPongFrame();
+    std::vector<uint8_t> pongData{1, 2, 3, 4};
+    EXPECT_EQ(pongResult->Data, pongData);
 
     // Close the socket gracefully.
     testSocket.Close();
@@ -173,11 +215,11 @@ template <size_t N> void EchoRandomData(WebSocket& socket)
 
   std::vector<uint8_t> receiveData;
 
-  std::shared_ptr<WebSocketResult> response;
+  std::shared_ptr<WebSocketFrame> response;
   do
   {
     response = socket.ReceiveFrame();
-    EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+    EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
     auto binaryResult = response->AsBinaryFrame();
     receiveData.insert(receiveData.end(), binaryResult->Data.begin(), binaryResult->Data.end());
   } while (!response->IsFinalFrame);
@@ -229,9 +271,9 @@ TEST_F(WebSocketTests, CloseDuringEcho)
     testSocket.SendFrame("Test message", true);
 
     auto response = testSocket.ReceiveFrame();
-    EXPECT_EQ(WebSocketResultType::PeerClosed, response->ResultType);
-    auto peerClosed = response->AsPeerCloseFrame();
-    EXPECT_EQ(1001, peerClosed->RemoteStatusCode);
+    EXPECT_EQ(WebSocketFrameType::PeerClosedReceived, response->FrameType);
+    auto PeerClosedReceived = response->AsPeerCloseFrame();
+    EXPECT_EQ(1001, PeerClosedReceived->RemoteStatusCode);
 
     // Close the socket gracefully.
     testSocket.Close();
@@ -300,7 +342,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
           testSocket.SendFrame(sendData, true);
 
           auto response = testSocket.ReceiveFrame();
-          EXPECT_EQ(WebSocketResultType::BinaryFrameReceived, response->ResultType);
+          EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
           auto binaryResult = response->AsBinaryFrame();
 
           // Make sure we get back the data we sent in the echo request.
@@ -384,17 +426,17 @@ public:
     Azure::Core::Context contextWithTimeout
         = Azure::Core::Context().WithDeadline(std::chrono::system_clock::now() + 10s);
     auto work = m_socket.ReceiveFrame(contextWithTimeout);
-    if (work->ResultType == WebSocketResultType::TextFrameReceived)
+    if (work->FrameType == WebSocketFrameType::TextFrameReceived)
     {
       auto frame = work->AsTextFrame();
       return std::atoi(frame->Text.c_str());
     }
-    if (work->ResultType == WebSocketResultType::BinaryFrameReceived)
+    if (work->FrameType == WebSocketFrameType::BinaryFrameReceived)
     {
       auto frame = work->AsBinaryFrame();
       throw std::runtime_error("Not implemented");
     }
-    else if (work->ResultType == WebSocketResultType::PeerClosed)
+    else if (work->FrameType == WebSocketFrameType::PeerClosedReceived)
     {
       GTEST_LOG_(INFO) << "Remote server closed connection." << std::endl;
       throw std::runtime_error("Remote server closed connection.");
@@ -417,7 +459,7 @@ public:
     while (m_socket.IsOpen())
     {
       auto work = m_socket.ReceiveFrame();
-      if (work->ResultType == WebSocketResultType::PeerClosed)
+      if (work->FrameType == WebSocketFrameType::PeerClosedReceived)
       {
         auto peerClose = work->AsPeerCloseFrame();
         GTEST_LOG_(INFO) << "Peer closed. Remote Code: " << std::dec << peerClose->RemoteStatusCode
@@ -429,7 +471,7 @@ public:
         GTEST_LOG_(INFO) << std::endl;
         return;
       }
-      else if (work->ResultType == WebSocketResultType::TextFrameReceived)
+      else if (work->FrameType == WebSocketFrameType::TextFrameReceived)
       {
         auto frame = work->AsTextFrame();
         GTEST_LOG_(INFO) << "Ignoring " << frame->Text << std::endl;
@@ -457,13 +499,13 @@ public:
     // protocols.
     EXPECT_EQ("lws-status", serverSocket.GetChosenProtocol());
     std::string returnValue;
-    std::shared_ptr<WebSocketResult> lwsStatus;
+    std::shared_ptr<WebSocketFrame> lwsStatus;
     do
     {
 
       lwsStatus = serverSocket.ReceiveFrame();
-      EXPECT_EQ(WebSocketResultType::TextFrameReceived, lwsStatus->ResultType);
-      if (lwsStatus->ResultType == WebSocketResultType::TextFrameReceived)
+      EXPECT_EQ(WebSocketFrameType::TextFrameReceived, lwsStatus->FrameType);
+      if (lwsStatus->FrameType == WebSocketFrameType::TextFrameReceived)
       {
         auto textFrame = lwsStatus->AsTextFrame();
         returnValue.insert(returnValue.end(), textFrame->Text.begin(), textFrame->Text.end());

@@ -21,12 +21,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     class WebSocketImplementation;
   }
 
-  enum class WebSocketResultType : int
+  enum class WebSocketFrameType : int
   {
     Unknown,
     TextFrameReceived,
     BinaryFrameReceived,
-    PeerClosed,
+    PeerClosedReceived,
+    PongReceived,
   };
 
   enum class WebSocketErrorCode : uint16_t
@@ -49,48 +50,61 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   class WebSocketTextFrame;
   class WebSocketBinaryFrame;
   class WebSocketPeerCloseFrame;
+  class WebSocketPongFrame;
 
-  struct WebSocketResult
+  struct WebSocketFrame
   {
-    WebSocketResultType ResultType;
+    WebSocketFrameType FrameType;
     bool IsFinalFrame{false};
     std::shared_ptr<WebSocketTextFrame> AsTextFrame();
     std::shared_ptr<WebSocketBinaryFrame> AsBinaryFrame();
     std::shared_ptr<WebSocketPeerCloseFrame> AsPeerCloseFrame();
+    std::shared_ptr<WebSocketPongFrame> AsPongFrame();
   };
 
-  class WebSocketTextFrame : public WebSocketResult,
+  class WebSocketTextFrame : public WebSocketFrame,
                              public std::enable_shared_from_this<WebSocketTextFrame> {
   private:
   public:
     WebSocketTextFrame() = default;
     WebSocketTextFrame(bool isFinalFrame, unsigned char const* body, size_t size)
-        : WebSocketResult{WebSocketResultType::TextFrameReceived, isFinalFrame},
+        : WebSocketFrame{WebSocketFrameType::TextFrameReceived, isFinalFrame},
           Text(body, body + size)
     {
     }
     std::string Text;
   };
-  class WebSocketBinaryFrame : public WebSocketResult,
+  class WebSocketBinaryFrame : public WebSocketFrame,
                                public std::enable_shared_from_this<WebSocketBinaryFrame> {
   private:
   public:
     WebSocketBinaryFrame() = default;
     WebSocketBinaryFrame(bool isFinal, unsigned char const* body, size_t size)
-        : WebSocketResult{WebSocketResultType::BinaryFrameReceived, isFinal},
-          Data(body, body + size)
+        : WebSocketFrame{WebSocketFrameType::BinaryFrameReceived, isFinal}, Data(body, body + size)
     {
     }
     std::vector<uint8_t> Data;
   };
 
-  class WebSocketPeerCloseFrame : public WebSocketResult,
+  class WebSocketPongFrame : public WebSocketFrame,
+                             public std::enable_shared_from_this<WebSocketPongFrame> {
+  private:
+  public:
+    WebSocketPongFrame() = default;
+    WebSocketPongFrame(unsigned char const* body, size_t size)
+        : WebSocketFrame{WebSocketFrameType::PongReceived, true}, Data(body, body + size)
+    {
+    }
+    std::vector<uint8_t> Data;
+  };
+
+  class WebSocketPeerCloseFrame : public WebSocketFrame,
                                   public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
   public:
     WebSocketPeerCloseFrame() = default;
     WebSocketPeerCloseFrame(uint16_t remoteStatusCode, std::string const& remoteCloseReason)
-        : WebSocketResult{WebSocketResultType::PeerClosed}, RemoteStatusCode(remoteStatusCode),
-          RemoteCloseReason(remoteCloseReason)
+        : WebSocketFrame{WebSocketFrameType::PeerClosedReceived},
+          RemoteStatusCode(remoteStatusCode), RemoteCloseReason(remoteCloseReason)
     {
     }
     uint16_t RemoteStatusCode;
@@ -194,7 +208,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @returns The received WebSocket frame.
      *
      */
-    std::shared_ptr<WebSocketResult> ReceiveFrame(
+    std::shared_ptr<WebSocketFrame> ReceiveFrame(
+        Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /** @brief Send a 'Ping' frame to the remote server.
+     *
+     * @param pingData data to be sent in the ping operation.
+     * @param context Context for the operation.
+     */
+    void SendPing(
+        std::vector<uint8_t> const& pingData,
         Azure::Core::Context const& context = Azure::Core::Context{});
 
     /** @brief AddHeader - Adds a header to the initial handshake.

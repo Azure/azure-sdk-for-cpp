@@ -46,9 +46,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     m_socketImplementation->SendFrame(binaryFrame, isFinalFrame, context);
   }
 
-  std::shared_ptr<WebSocketResult> WebSocket::ReceiveFrame(Azure::Core::Context const& context)
+  std::shared_ptr<WebSocketFrame> WebSocket::ReceiveFrame(Azure::Core::Context const& context)
   {
     return m_socketImplementation->ReceiveFrame(context);
+  }
+
+  void WebSocket::SendPing(
+      std::vector<uint8_t> const& pingData,
+      Azure::Core::Context const& context)
+  {
+    m_socketImplementation->SendPing(pingData, context);
   }
 
   void WebSocket::AddHeader(std::string const& headerName, std::string const& headerValue)
@@ -62,31 +69,39 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   bool WebSocket::IsOpen() { return m_socketImplementation->IsOpen(); }
 
-  std::shared_ptr<WebSocketTextFrame> WebSocketResult::AsTextFrame()
+  std::shared_ptr<WebSocketTextFrame> WebSocketFrame::AsTextFrame()
   {
-    if (ResultType != WebSocketResultType::TextFrameReceived)
+    if (FrameType != WebSocketFrameType::TextFrameReceived)
     {
       throw std::logic_error("Cannot cast to TextFrameReceived.");
     }
     return static_cast<WebSocketTextFrame*>(this)->shared_from_this();
   }
 
-  std::shared_ptr<WebSocketBinaryFrame> WebSocketResult::AsBinaryFrame()
+  std::shared_ptr<WebSocketBinaryFrame> WebSocketFrame::AsBinaryFrame()
   {
-    if (ResultType != WebSocketResultType::BinaryFrameReceived)
+    if (FrameType != WebSocketFrameType::BinaryFrameReceived)
     {
       throw std::logic_error("Cannot cast to BinaryFrameReceived.");
     }
     return static_cast<WebSocketBinaryFrame*>(this)->shared_from_this();
   }
 
-  std::shared_ptr<WebSocketPeerCloseFrame> WebSocketResult::AsPeerCloseFrame()
+  std::shared_ptr<WebSocketPeerCloseFrame> WebSocketFrame::AsPeerCloseFrame()
   {
-    if (ResultType != WebSocketResultType::PeerClosed)
+    if (FrameType != WebSocketFrameType::PeerClosedReceived)
     {
       throw std::logic_error("Cannot cast to PeerClose.");
     }
     return static_cast<WebSocketPeerCloseFrame*>(this)->shared_from_this();
+  }
+  std::shared_ptr<WebSocketPongFrame> WebSocketFrame::AsPongFrame()
+  {
+    if (FrameType != WebSocketFrameType::PongReceived)
+    {
+      throw std::logic_error("Cannot cast to PongReceived.");
+    }
+    return static_cast<WebSocketPongFrame*>(this)->shared_from_this();
   }
 
 }}}} // namespace Azure::Core::Http::WebSockets

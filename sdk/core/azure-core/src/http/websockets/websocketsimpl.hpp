@@ -42,9 +42,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         bool isFinalFrame,
         Azure::Core::Context const& context);
 
-    std::shared_ptr<WebSocketResult> ReceiveFrame(
+    std::shared_ptr<WebSocketFrame> ReceiveFrame(
         Azure::Core::Context const& context,
         bool stateIsLocked = false);
+    void SendPing(std::vector<uint8_t> const& pingData, Azure::Core::Context const& context);
 
     void AddHeader(std::string const& headerName, std::string const& headerValue);
 
@@ -298,6 +299,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         uint64_t& payloadLength,
         bool& isFinal,
         Azure::Core::Context const& context);
+
+    void SendPong(std::vector<uint8_t> const& pongData, Azure::Core::Context const& context);
 
     SocketState m_state{SocketState::Invalid};
 

@@ -211,13 +211,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       // WebSocket that we don't care about any more (since we're closing the WebSocket). So drain
       // those frames.
       auto closeResponse = ReceiveFrame(closeContext, true);
-      while (closeResponse->ResultType != WebSocketResultType::PeerClosed)
+      while (closeResponse->FrameType != WebSocketFrameType::PeerClosedReceived)
       {
         auto textResult = closeResponse->AsTextFrame();
         Log::Write(
             Logger::Level::Warning,
             "Received unexpected frame during close. Frame type: "
-                + std::to_string(static_cast<uint8_t>(closeResponse->ResultType)));
+                + std::to_string(static_cast<uint8_t>(closeResponse->FrameType)));
         closeResponse = ReceiveFrame(closeContext, true);
       }
     }
@@ -255,7 +255,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
 
       auto closeResponse = ReceiveFrame(context, true);
-      if (closeResponse->ResultType != WebSocketResultType::PeerClosed)
+      if (closeResponse->FrameType != WebSocketFrameType::PeerClosedReceived)
       {
         throw std::runtime_error("Unexpected result type received during close().");
       }
@@ -326,7 +326,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
   }
 
-  std::shared_ptr<WebSocketResult> WebSocketImplementation::ReceiveFrame(
+  std::shared_ptr<WebSocketFrame> WebSocketImplementation::ReceiveFrame(
       Azure::Core::Context const& context,
       bool stateIsLocked)
   {
@@ -335,6 +335,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     if (!stateIsLocked)
     {
       lock.lock();
+      stateIsLocked = true;
     }
 
     if (m_state != SocketState::Open && m_state != SocketState::Closing)
@@ -407,9 +408,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
               errorCode, std::string(frameData.begin() + 2, frameData.end()));
         }
         case SocketOpcode::Ping:
+          // Respond to the ping and then recurse to process the next frame.
+          SendPong(frameData, context);
+          return ReceiveFrame(context, stateIsLocked);
         case SocketOpcode::Pong:
-          throw std::runtime_error("Unexpected Ping/Pong opcode received.");
-          break;
+          return std::make_shared<WebSocketPongFrame>(frameData.data(), frameData.size());
+
         case SocketOpcode::Continuation:
           if (m_currentMessageType == SocketMessageType::Text)
           {
@@ -442,6 +446,34 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     // gcc 5 doesn't seem to detect that this is dead code, so we'll just leave it here.
     return nullptr;
 #endif
+  }
+
+  void WebSocketImplementation::SendPing(
+      std::vector<uint8_t> const& pingData,
+      Azure::Core::Context const& context)
+  {
+    {
+
+      std::unique_lock<std::mutex> lock(m_stateMutex);
+
+      if (m_state != SocketState::Open)
+      {
+        throw std::runtime_error("Socket is not open.");
+      }
+    }
+    std::vector<uint8_t> pingFrame = EncodeFrame(SocketOpcode::Ping, true, pingData);
+
+    std::unique_lock<std::mutex> transportLock(m_transportMutex);
+    m_transport->SendBuffer(pingFrame.data(), pingFrame.size(), context);
+  }
+  void WebSocketImplementation::SendPong(
+      std::vector<uint8_t> const& pongData,
+      Azure::Core::Context const& context)
+  {
+    std::vector<uint8_t> pongFrame = EncodeFrame(SocketOpcode::Pong, true, pongData);
+
+    std::unique_lock<std::mutex> transportLock(m_transportMutex);
+    m_transport->SendBuffer(pongFrame.data(), pongFrame.size(), context);
   }
 
   std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
