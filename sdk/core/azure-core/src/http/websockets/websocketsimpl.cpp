@@ -4,10 +4,15 @@
 #include "azure/core/base64.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/cryptography/sha_hash.hpp"
+// SUPPORT_NATIVE_TRANSPORT indicates if WinHTTP should be compiled with native transport support
+// or not.
+// Note that this is primarily required to improve the code coverage numbers in the CI pipeline.
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include "azure/core/http/websockets/win_http_websockets_transport.hpp"
+#define SUPPORT_NATIVE_TRANSPORT 1
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/websockets/curl_websockets_transport.hpp"
+#define SUPPORT_NATIVE_TRANSPORT 0
 #endif
 #include "azure/core/internal/diagnostics/log.hpp"
 #include <algorithm>
@@ -118,7 +123,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     auto& responseHeaders = response->GetHeaders();
     if (!m_transport->NativeWebsocketSupport())
     {
-
       auto socketAccept(responseHeaders.find("Sec-WebSocket-Accept"));
       if (socketAccept == responseHeaders.end())
       {
@@ -180,12 +184,14 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       throw std::runtime_error("Socket is not open.");
     }
     m_state = SocketState::Closing;
+#if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
       m_transport->CloseSocket(
           static_cast<uint16_t>(WebSocketErrorCode::EndpointDisappearing), "", context);
     }
     else
+#endif
     {
       // Send a going away message to the server.
       uint16_t closeReason = static_cast<uint16_t>(WebSocketErrorCode::EndpointDisappearing);
@@ -235,11 +241,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
 
     m_state = SocketState::Closing;
+#if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
       m_transport->CloseSocket(closeStatus, closeReason, context);
     }
     else
+#endif
     {
       std::vector<uint8_t> closePayload;
       closePayload.push_back(closeStatus >> 8);
@@ -272,6 +280,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       throw std::runtime_error("Socket is not open.");
     }
     std::vector<uint8_t> utf8text(textFrame.begin(), textFrame.end());
+#if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
       m_transport->SendFrame(
@@ -281,6 +290,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           context);
     }
     else
+#endif
     {
       std::vector<uint8_t> sendFrame = EncodeFrame(SocketOpcode::TextFrame, isFinalFrame, utf8text);
 
@@ -299,6 +309,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     {
       throw std::runtime_error("Socket is not open.");
     }
+#if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
       m_transport->SendFrame(
@@ -308,6 +319,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           context);
     }
     else
+#endif
     {
       std::vector<uint8_t> sendFrame
           = EncodeFrame(SocketOpcode::BinaryFrame, isFinalFrame, binaryFrame);
@@ -332,6 +344,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     {
       throw std::runtime_error("Socket is not open.");
     }
+#if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
       WebSocketTransport::WebSocketFrameType frameType;
@@ -355,6 +368,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       }
     }
     else
+#endif
     {
       SocketOpcode opcode;
 
