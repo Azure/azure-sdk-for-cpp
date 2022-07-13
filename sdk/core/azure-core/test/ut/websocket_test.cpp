@@ -62,7 +62,11 @@ TEST_F(WebSocketTests, OpenSimpleSocket)
     WebSocket defaultSocket(Azure::Core::Url("http://microsoft.com/index.htm"), options);
     defaultSocket.AddHeader("newHeader", "headerValue");
 
-    EXPECT_THROW(defaultSocket.Open(), std::runtime_error);
+    // When running this test locally, the call times out, so drop in a 5 second timeout on
+    // the request.
+    Azure::Core::Context requestContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        std::chrono::system_clock::now() + 15s);
+    EXPECT_THROW(defaultSocket.Open(requestContext), std::runtime_error);
   }
 }
 
