@@ -60,7 +60,7 @@ void Operation(int repetitions)
   for (int i = 0; i < repetitions; i++)
   {
     std::cout << i << std::endl;
-    SendRequest(base + std::to_string(i) + ".abc" + '\0');
+    SendRequest(base + std::to_string(i) + ".abc");
   }
 }
 
