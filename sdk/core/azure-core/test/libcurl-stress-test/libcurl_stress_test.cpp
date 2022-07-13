@@ -70,7 +70,7 @@ int main(int argc, char** argv) // i can have either 0 or 2 params here
 {
   (void)argv; // to get rid of the unused warning
   // some param was passed to the program , which happens only in build mode, not run of the docker
-  // file. thus we will run a quick test to make sure the executable execuates.
+  // file. thus we will run a quick test to make sure the executable runs.
   if (argc != 1)
   {
     std::cout << "--------------\tBUILD TEST\t--------------" << std::endl;
