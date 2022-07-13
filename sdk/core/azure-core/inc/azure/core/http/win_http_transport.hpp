@@ -106,11 +106,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief When `true`, allows an invalid certificate authority.
      */
     bool IgnoreUnknownCertificateAuthority = false;
-
-    /**
-     * @brief When `true`, enables WebSocket upgrade.
-     */
-    bool EnableWebSocketUpgrade = false;
   };
 
   /**

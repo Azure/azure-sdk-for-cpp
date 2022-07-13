@@ -220,11 +220,6 @@ TEST_F(WebSocketTests, CloseDuringEcho)
   {
     WebSocket testSocket(Azure::Core::Url("ws://localhost:8000/closeduringecho"));
 
-    EXPECT_THROW(testSocket.SendFrame("Foo", true), std::runtime_error);
-    std::vector<uint8_t> data{1, 2, 3, 4};
-    EXPECT_THROW(testSocket.SendFrame(data, true), std::runtime_error);
-    EXPECT_THROW(testSocket.ReceiveFrame(), std::runtime_error);
-
     testSocket.Open();
 
     testSocket.SendFrame("Test message", true);
@@ -236,6 +231,18 @@ TEST_F(WebSocketTests, CloseDuringEcho)
 
     // Close the socket gracefully.
     testSocket.Close();
+  }
+}
+
+TEST_F(WebSocketTests, ExpectThrow)
+{
+  {
+    WebSocket testSocket(Azure::Core::Url("ws://localhost:8000/closeduringecho"));
+
+    EXPECT_THROW(testSocket.SendFrame("Foo", true), std::runtime_error);
+    std::vector<uint8_t> data{1, 2, 3, 4};
+    EXPECT_THROW(testSocket.SendFrame(data, true), std::runtime_error);
+    EXPECT_THROW(testSocket.ReceiveFrame(), std::runtime_error);
   }
 }
 

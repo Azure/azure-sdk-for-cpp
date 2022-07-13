@@ -80,7 +80,9 @@ int pollSocketUntilEventOrTimeout(
   throw TransportException("Error while sending request. Platform does not support Poll()");
 #endif
 
-  struct pollfd poller;
+  struct pollfd poller
+  {
+  };
   poller.fd = socketFileDescriptor;
 
   // set direction
@@ -327,10 +329,13 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   }
   else
   {
-    std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->GetUpgradedConnection());
-    if (upgradedConnection)
+    if (SupportsWebSockets())
     {
-      OnUpgradedConnection(upgradedConnection);
+      std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->GetUpgradedConnection());
+      if (upgradedConnection)
+      {
+        OnUpgradedConnection(upgradedConnection);
+      }
     }
   }
 
@@ -1334,8 +1339,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         return connection;
       }
     }
-    lock.unlock(); // Why is this line here? std::unique_lock releases the lock when it leaves
-                   // scope.
   }
 
   // Creating a new connection is thread safe. No need to lock mutex here.

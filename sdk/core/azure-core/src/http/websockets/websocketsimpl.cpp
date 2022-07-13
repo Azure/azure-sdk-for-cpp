@@ -43,9 +43,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
     WinHttpTransportOptions transportOptions;
-    // WinHTTP overrides the Connection: Upgrade header, so disable keep-alive.
-    transportOptions.EnableWebSocketUpgrade = true;
-
     m_transport = std::make_shared<Azure::Core::Http::WebSockets::WinHttpWebSocketTransport>(
         transportOptions);
     m_options.Transport.Transport = m_transport;

@@ -145,6 +145,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     virtual int SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context) = 0;
 
+    bool SupportsWebSockets() const override { return true; }
+
   protected:
     /**
      * @brief Constructs a default instance of `%HttpTransport`.

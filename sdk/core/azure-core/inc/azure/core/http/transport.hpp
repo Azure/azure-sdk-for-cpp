@@ -66,6 +66,12 @@ namespace Azure { namespace Core { namespace Http {
      * @return A reference to this instance.
      */
     HttpTransport& operator=(const HttpTransport& other) = default;
+
+    /**
+     * @brief Returns true if the HttpTransport supports WebSockets (the ability to
+     * communicate bidirectionally on the TCP connection used by the HTTP transport).
+     */
+    virtual bool SupportsWebSockets() const { return false; }
   };
 
 }}} // namespace Azure::Core::Http

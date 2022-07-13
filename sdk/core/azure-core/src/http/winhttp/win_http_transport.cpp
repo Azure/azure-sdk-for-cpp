@@ -377,7 +377,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     }
   }
 
-  if (m_options.EnableWebSocketUpgrade)
+  if (SupportsWebSockets())
   {
     if (!WinHttpSetOption(hi.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
     {
@@ -686,7 +686,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 
   ReceiveResponse(requestHandle, context);
 
-  if (m_options.EnableWebSocketUpgrade)
+  if (SupportsWebSockets())
   {
     OnResponseReceived(requestHandle);
   }

@@ -138,6 +138,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     virtual int SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
         override;
+    bool SupportsWebSockets() const override { return true; }
   };
 
 }}}} // namespace Azure::Core::Http::WebSockets
