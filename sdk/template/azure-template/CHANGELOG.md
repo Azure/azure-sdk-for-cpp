@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2021-06-03)
+## 1.1.0-beta.1 (2022-07-13)
 
 * Validate template project ahead of release
 
