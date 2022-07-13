@@ -54,15 +54,13 @@ void SendRequest(std::string target)
   }
 }
 
-void Operation(int const& repetitions)
+void Operation(int repetitions)
 {
-  char buffer[12];
-  std::string base = "https://";
+  std::string base = "https://xyz.";
   for (int i = 0; i < repetitions; i++)
   {
     std::cout << i << std::endl;
-    snprintf(buffer, sizeof(buffer), "%d", i);
-    SendRequest(base + buffer + ".com" + '\0');
+    SendRequest(base + std::to_string(i) + ".abc" + '\0');
   }
 }
 
