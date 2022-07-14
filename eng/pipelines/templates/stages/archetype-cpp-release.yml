@@ -196,7 +196,7 @@ stages:
                           PrBranchName: $(PrBranchName)
                           PRTitle: $(PrTitle)
                           PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
-                          SkipCheckingForChanges: true
+                          SkipCheckingForChanges: $(PublishToVcpkg)
                           BaseBranchName: $(DefaultBranch)
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
