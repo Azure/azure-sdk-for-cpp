@@ -48,6 +48,13 @@ namespace Azure { namespace Core {
      */
     static std::string Base64Encode(uint8_t const* const data, size_t length);
 
+    /**
+     * @brief Encodes an array of binary data into a Base64 encoded string.
+     *
+     * @param data The binary data to be encoded.
+     * @param length The length of the binaryData parameter.
+     * @return The UTF-8 encoded text in Base64.
+     */
     template <size_t length>
     static std::string Base64Encode(std::array<uint8_t, length> const& data)
     {
