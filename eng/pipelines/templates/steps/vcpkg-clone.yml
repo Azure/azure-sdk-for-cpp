@@ -2,11 +2,12 @@ parameters:
   Workspace: $(Pipeline.Workspace)
   RepoOwner: not-set
   RepoName: vcpkg
+  BaseBranchName: main
   PRBranchName: not-set
 
 steps:
   - pwsh: |
-      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
+      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}" --branch "${{ parameters.BaseBranchName }}"
       git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
       if ($LASTEXITCODE -ne 0) {
         Write-Error "Unable to check out vcpkg fork repo"

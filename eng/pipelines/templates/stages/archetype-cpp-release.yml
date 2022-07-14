@@ -139,6 +139,7 @@ stages:
                         parameters:
                           RepoOwner: azure-sdk
                           PRBranchName: $(PrBranchName)
+                          BaseBranchName: test-vcpkg-beta-release
 
                       # Clone Vcpkg Betas
                       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
