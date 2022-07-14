@@ -215,8 +215,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @param pingData data to be sent in the ping operation.
      * @param context Context for the operation.
+     *
+     * @returns True if the "Ping" was sent to the server, False if the underlying transport
+     * does not support ping operations.
      */
-    void SendPing(
+    bool SendPing(
         std::vector<uint8_t> const& pingData,
         Azure::Core::Context const& context = Azure::Core::Context{});
 

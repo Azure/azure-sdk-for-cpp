@@ -51,11 +51,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     return m_socketImplementation->ReceiveFrame(context);
   }
 
-  void WebSocket::SendPing(
+  bool WebSocket::SendPing(
       std::vector<uint8_t> const& pingData,
       Azure::Core::Context const& context)
   {
-    m_socketImplementation->SendPing(pingData, context);
+    return m_socketImplementation->SendPing(pingData, context);
   }
 
   void WebSocket::AddHeader(std::string const& headerName, std::string const& headerValue)

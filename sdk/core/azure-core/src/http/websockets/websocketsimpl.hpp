@@ -45,7 +45,14 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::shared_ptr<WebSocketFrame> ReceiveFrame(
         Azure::Core::Context const& context,
         bool stateIsLocked = false);
-    void SendPing(std::vector<uint8_t> const& pingData, Azure::Core::Context const& context);
+
+    /**
+     * @brief Send a "ping" frame to the other side of the WebSocket.
+     *
+     * @returns True if the ping was sent, false if the underlying transport didn't support "Ping"
+     * operations.
+     */
+    bool SendPing(std::vector<uint8_t> const& pingData, Azure::Core::Context const& context);
 
     void AddHeader(std::string const& headerName, std::string const& headerValue);
 

@@ -442,12 +442,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #endif
   }
 
-  void WebSocketImplementation::SendPing(
+  bool WebSocketImplementation::SendPing(
       std::vector<uint8_t> const& pingData,
       Azure::Core::Context const& context)
   {
     {
-
       std::unique_lock<std::mutex> lock(m_stateMutex);
 
       if (m_state != SocketState::Open)
@@ -455,10 +454,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         throw std::runtime_error("Socket is not open.");
       }
     }
+    if (m_transport->NativeWebsocketSupport())
+    {
+      return false;
+    }
+
     std::vector<uint8_t> pingFrame = EncodeFrame(SocketOpcode::Ping, true, pingData);
 
     std::unique_lock<std::mutex> transportLock(m_transportMutex);
     m_transport->SendBuffer(pingFrame.data(), pingFrame.size(), context);
+    return true;
   }
   void WebSocketImplementation::SendPong(
       std::vector<uint8_t> const& pongData,

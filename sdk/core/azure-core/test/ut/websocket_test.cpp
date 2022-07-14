@@ -191,17 +191,16 @@ TEST_F(WebSocketTests, PingTest)
 
     testSocket.Open();
 
-    // Sleep for 10s - this should trigger a ping.
-    // The websocket server is configured to ping every 5 seconds, so the 10 second sleep should
-    // force the next frame received to be a ping frame.
-    testSocket.SendPing({1, 2, 3, 4});
-
-    auto response = testSocket.ReceiveFrame();
-    EXPECT_EQ(WebSocketFrameType::PongReceived, response->FrameType);
-    auto pongResult = response->AsPongFrame();
-    std::vector<uint8_t> pongData{1, 2, 3, 4};
-    EXPECT_EQ(pongResult->Data, pongData);
-
+    // Send a "Ping" to the remote server. If the "Ping" operation is supported,
+    // wait until the corresponding "Pong" response is received.
+    if (testSocket.SendPing({1, 2, 3, 4}))
+    {
+      auto response = testSocket.ReceiveFrame();
+      EXPECT_EQ(WebSocketFrameType::PongReceived, response->FrameType);
+      auto pongResult = response->AsPongFrame();
+      std::vector<uint8_t> pongData{1, 2, 3, 4};
+      EXPECT_EQ(pongResult->Data, pongData);
+    }
     // Close the socket gracefully.
     testSocket.Close();
   }
