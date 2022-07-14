@@ -109,7 +109,7 @@ stages:
                       - pwsh: |
                           $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
                           if ('$(VcpkgForkBranchName)') {
-                            Write-Host "Using queue time branch name" 
+                            Write-Host "Using queue time branch name"
                             $branchName = '$(VcpkgForkBranchName)'
                           } 
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
@@ -139,6 +139,7 @@ stages:
                         parameters:
                           RepoOwner: azure-sdk
                           PRBranchName: $(PrBranchName)
+                          # TODO: Use default branch before merge
                           BaseBranchName: test-vcpkg-beta-release
 
                       # Clone Vcpkg Betas
