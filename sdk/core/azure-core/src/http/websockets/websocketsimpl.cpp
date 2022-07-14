@@ -352,7 +352,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           return std::make_shared<WebSocketBinaryFrame>(
               true, payload.second.data(), payload.second.size());
         case WebSocketTransport::WebSocketFrameType::FrameTypeBinaryFragment:
-          return std::make_shared<WebSocketBinaryFrame>(false, payload.second.data(), payload.second.size());
+          return std::make_shared<WebSocketBinaryFrame>(
+              false, payload.second.data(), payload.second.size());
         case WebSocketTransport::WebSocketFrameType::FrameTypeText:
           return std::make_shared<WebSocketTextFrame>(
               true, payload.second.data(), payload.second.size());
