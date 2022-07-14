@@ -196,7 +196,13 @@ stages:
                           PrBranchName: $(PrBranchName)
                           PRTitle: $(PrTitle)
                           PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
-                          SkipCheckingForChanges: $(PublishToVcpkg)
+                          # If PublishToVcpkg is true, this template blindly attempts to create a PR. In that case
+                          # changes must already be checked into the branch for this template to succeed.
+                          # If PublishToVcpkg is false, the non-skipped checking for changes will result in no attempt
+                          # to open a PR because there will be no detected changes.
+                          # Use dictionary syntax because the template inserts the literal string into a `condition:`
+                          # element.
+                          SkipCheckingForChanges: variables['PublishToVcpkg']
                           BaseBranchName: $(DefaultBranch)
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
