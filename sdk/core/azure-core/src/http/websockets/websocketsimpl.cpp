@@ -396,14 +396,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           errorCode |= (frameData[0] << 8) & 0xff00;
           errorCode |= (frameData[1] & 0x00ff);
 
-          // Update our state to be closed once we've received a closed frame. We only need to
-          // do this if our state is not currently locked.
-          if (!stateIsLocked)
-          {
-            lock.unlock();
-            std::unique_lock<std::mutex> closeLock(m_stateMutex);
-            m_state = SocketState::Closed;
-          }
+          // Update our state to be closed once we've received a closed frame.
+          m_state = SocketState::Closed;
           return std::make_shared<WebSocketPeerCloseFrame>(
               errorCode, std::string(frameData.begin() + 2, frameData.end()));
         }
