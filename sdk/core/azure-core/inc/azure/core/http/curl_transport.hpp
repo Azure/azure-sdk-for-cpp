@@ -132,6 +132,12 @@ namespace Azure { namespace Core { namespace Http {
     CurlTransportOptions m_options;
 
   protected:
+    /**
+     * @brief Called when an HTTP response indicates that the connection should be upgraded to
+     * a websocket.
+     *
+     * @param The connection that is being upgraded.
+     */
     virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&){};
 
   public:

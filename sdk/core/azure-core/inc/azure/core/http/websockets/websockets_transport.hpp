@@ -120,10 +120,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @param frameTypeReceived frame type received from the remote server.
      *
-     * @returns Frame data received from the remote server.
+     * @returns a tuple containing the Frame data received from the remote server and the type of
+     * data returned from the remote endpoint
      */
-    virtual std::vector<uint8_t> ReceiveFrame(
-        WebSocketFrameType& frameTypeReceived,
+    virtual std::pair<WebSocketFrameType, std::vector<uint8_t>> ReceiveFrame(
         Azure::Core::Context const& context)
         = 0;
 

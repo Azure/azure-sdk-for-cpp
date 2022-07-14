@@ -20,6 +20,9 @@ namespace Azure { namespace Core {
   /**
    * @brief Used to convert one form of data  into another, for example encoding binary data into
    * Base64 text.
+   *
+   * @note Base64 encoded data is a subset of the ASCII encoding (characters 0-127). As such,
+   * it can be considered a subset of UTF-8.
    */
   class Convert final {
   private:
@@ -32,39 +35,17 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as Base64.
+     * @brief Base64 encodes a vector of binary data.
      *
-     * @param data The input vector that contains binary data that needs to be encoded.
-     * @return The UTF-8 encoded text in Base64.
+     * @param data The input vector that contains binary data to be encoded.
+     * @return The Base64 encoded contents of the vector.
      */
     static std::string Base64Encode(const std::vector<uint8_t>& data);
 
     /**
-     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as Base64.
+     * @brief Decodes the Base64 encoded text into binary data.
      *
-     * @param data The binary data to be encoded.
-     * @param length The length of the binaryData parameter.
-     * @return The UTF-8 encoded text in Base64.
-     */
-    static std::string Base64Encode(uint8_t const* const data, size_t length);
-
-    /**
-     * @brief Encodes an array of binary data into a Base64 encoded string.
-     *
-     * @param data The binary data to be encoded.
-     * @param length The length of the binaryData parameter.
-     * @return The UTF-8 encoded text in Base64.
-     */
-    template <size_t length>
-    static std::string Base64Encode(std::array<uint8_t, length> const& data)
-    {
-      return Base64Encode(data.data(), data.size());
-    }
-
-    /**
-     * @brief Decodes the UTF-8 encoded text represented as Base64 into binary data.
-     *
-     * @param text The input UTF-8 encoded text in Base64 that needs to be decoded.
+     * @param text Base64 encoded text to be decoded.
      * @return The decoded binary data.
      */
     static std::vector<uint8_t> Base64Decode(const std::string& text);

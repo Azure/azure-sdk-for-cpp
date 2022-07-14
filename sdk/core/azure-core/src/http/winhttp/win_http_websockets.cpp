@@ -174,11 +174,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     }
   }
 
-  std::vector<uint8_t> WinHttpWebSocketTransport::ReceiveFrame(
-      WebSocketFrameType& frameTypeReceived,
-      Azure::Core::Context const& context)
+  std::pair<
+      Azure::Core::Http::WebSockets::WebSocketTransport::WebSocketFrameType,
+      std::vector<uint8_t>>
+  WinHttpWebSocketTransport::ReceiveFrame(Azure::Core::Context const& context)
   {
     WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType;
+    WebSocketFrameType frameTypeReceived;
     DWORD bufferBytesRead;
     std::vector<uint8_t> buffer(128);
     context.ThrowIfCancelled();
@@ -217,7 +219,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         throw std::runtime_error("Unknown frame type.");
         break;
     }
-    return buffer;
+    return std::make_pair(frameTypeReceived, buffer);
   }
 
 }}}} // namespace Azure::Core::Http::WebSockets

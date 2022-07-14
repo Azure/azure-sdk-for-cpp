@@ -579,8 +579,7 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
     EXPECT_THROW(
         transport->SendFrame(WebSocketTransport::WebSocketFrameType::FrameTypeBinary, {}, {}),
         std::runtime_error);
-    WebSocketTransport::WebSocketFrameType ft;
-    EXPECT_THROW(transport->ReceiveFrame(ft, {}), std::runtime_error);
+    EXPECT_THROW(transport->ReceiveFrame({}), std::runtime_error);
   }
 }
 

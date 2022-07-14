@@ -21,15 +21,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    * @brief Concrete implementation of a WebSocket Transport that uses libcurl.
    */
   class CurlWebSocketTransport : public WebSocketTransport, public CurlTransport {
-    // std::unique_ptr cannot be constructed on an incomplete type (CurlNetworkConnection), but
-    // std::shared_ptr can be.
-    std::shared_ptr<Azure::Core::Http::CurlNetworkConnection> m_upgradedConnection;
-    void OnUpgradedConnection(
-        std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>& upgradedConnection) override;
-
   public:
     /**
-     * @brief Construct a new CurlTransport object.
+     * @brief Construct a new CurlWebSocketTransport object.
      *
      * @param options Optional parameter to override the default options.
      */
@@ -56,6 +50,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     virtual bool NativeWebsocketSupport() override { return false; }
 
+    /**
+     * @brief Complete the WebSocket upgrade.
+     *
+     * @details Called by the WebSocket client after the HTTP server responds with a
+     * SwitchingProtocols response. This method performs whatever operations are needed to
+     * transfer the protocol from HTTP to WebSockets.
+     */
     virtual void CompleteUpgrade() override;
 
     /**
@@ -107,8 +108,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    virtual std::vector<uint8_t> ReceiveFrame(WebSocketFrameType&, Azure::Core::Context const&)
-        override
+    virtual std::pair<WebSocketFrameType, std::vector<uint8_t>> ReceiveFrame(
+        Azure::Core::Context const&) override
     {
       throw std::runtime_error("Not implemented");
     }
@@ -138,7 +139,18 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     virtual int SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
         override;
+
+    /**
+     * @brief returns true if this transport supports WebSockets, false otherwise.
+     */
     bool SupportsWebSockets() const override { return true; }
+
+  private:
+    // std::unique_ptr cannot be constructed on an incomplete type (CurlNetworkConnection), but
+    // std::shared_ptr can be.
+    std::shared_ptr<Azure::Core::Http::CurlNetworkConnection> m_upgradedConnection;
+    void OnUpgradedConnection(
+        std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>& upgradedConnection) override;
   };
 
 }}}} // namespace Azure::Core::Http::WebSockets

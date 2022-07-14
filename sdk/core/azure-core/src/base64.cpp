@@ -490,12 +490,7 @@ namespace Azure { namespace Core {
 
   std::string Convert::Base64Encode(const std::vector<uint8_t>& data)
   {
-    return Base64Encode(data.data(), data.size());
-  }
-
-  std::string Convert::Base64Encode(uint8_t const* const data, size_t length)
-  {
-    return ::Base64Encode(data, length);
+    return ::Base64Encode(data.data(), data.size());
   }
 
   std::vector<uint8_t> Convert::Base64Decode(const std::string& text)

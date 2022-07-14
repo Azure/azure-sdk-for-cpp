@@ -104,8 +104,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         std::vector<uint8_t> const&,
         Azure::Core::Context const&) override;
 
-    virtual std::vector<uint8_t> ReceiveFrame(
-        WebSocketFrameType& frameType,
+    virtual std::pair<WebSocketFrameType, std::vector<uint8_t>> ReceiveFrame(
         Azure::Core::Context const&) override;
 
     // Non-Native WebSocket support.
