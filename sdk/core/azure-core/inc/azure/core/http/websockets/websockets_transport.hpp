@@ -118,7 +118,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Receive a frame from the remote WebSocket server.
      *
-     * @param frameTypeReceived frame type received from the remote server.
+     * @param context Context for the operation.
      *
      * @returns a tuple containing the Frame data received from the remote server and the type of
      * data returned from the remote endpoint
