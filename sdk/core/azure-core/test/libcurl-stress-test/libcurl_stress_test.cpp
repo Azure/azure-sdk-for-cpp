@@ -27,16 +27,12 @@ void SendRequest(std::string target)
 {
   std::cout << target << std::endl;
   /* The transport adapter must allow insecure SSL certs.
-  If both curl and winHttp are available, curl is preferred for this test.for*/
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  If both curl and winHttp are available, curl is preferred for this test*/
+
   Azure::Core::Http::CurlTransportOptions curlOptions;
   curlOptions.SslVerifyPeer = false;
   auto implementationClient = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 
-#elif (BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
-  auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
-#endif
   try
   {
 
