@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   /**
    * @brief Concrete implementation of a WebSocket Transport that uses libcurl.
    */
-  class CurlWebSocketTransport : public WebSocketTransport, public CurlTransport {
+  class CurlWebSocketTransport : public CurlTransport, public WebSocketTransport {
   public:
     /**
      * @brief Construct a new CurlWebSocketTransport object.

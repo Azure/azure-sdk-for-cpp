@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   /**
    * @brief Base class for all WebSocket transport implementations.
    */
-  class WebSocketTransport : public HttpTransport {
+  class WebSocketTransport {
   public:
     /**
      * @brief Web Socket Frame type, one of Text or Binary.
@@ -144,8 +144,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      */
     virtual int SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context) = 0;
-
-    bool SupportsWebSockets() const override { return true; }
 
   protected:
     /**

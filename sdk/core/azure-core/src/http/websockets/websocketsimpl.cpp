@@ -43,15 +43,19 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
     WinHttpTransportOptions transportOptions;
-    m_transport = std::make_shared<Azure::Core::Http::WebSockets::WinHttpWebSocketTransport>(
-        transportOptions);
-    m_options.Transport.Transport = m_transport;
+    auto winHttpTransport
+        = std::make_shared<Azure::Core::Http::WebSockets::WinHttpWebSocketTransport>(
+            transportOptions);
+    m_transport = std::static_pointer_cast<WebSocketTransport>(winHttpTransport);
+    m_options.Transport.Transport = std::static_pointer_cast<HttpTransport>(winHttpTransport);
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     CurlTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = false;
-    m_transport
+    auto curlWebSockets
         = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
-    m_options.Transport.Transport = m_transport;
+
+    m_transport = std::static_pointer_cast<WebSocketTransport>(curlWebSockets);
+    m_options.Transport.Transport = std::static_pointer_cast<HttpTransport>(curlWebSockets);
     m_bufferedStreamReader.SetTransport(m_transport);
 #endif
 
