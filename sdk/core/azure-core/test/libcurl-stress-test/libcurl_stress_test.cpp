@@ -32,10 +32,6 @@ void SendRequest(std::string target)
   curlOptions.SslVerifyPeer = false;
   auto implementationClient = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 
-#elif (BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
-  auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
-#endif
   try
   {
 
