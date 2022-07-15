@@ -45,8 +45,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     return WinHttpTransport::Send(request, context);
   }
 
-  void WinHttpWebSocketTransport::CompleteUpgrade() {}
-
   /**
    * @brief  Close the WebSocket cleanly.
    */

@@ -27,8 +27,6 @@
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
-  void CurlWebSocketTransport::CompleteUpgrade() {}
-
   void CurlWebSocketTransport::Close() { m_upgradedConnection->Shutdown(); }
 
   // Send an HTTP request to the remote server.

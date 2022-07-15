@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       FrameTypeClosed,
     };
     /**
-     * @brief Destructs `%HttpTransport`.
+     * @brief Destructs `%WebSocketTransport`.
      *
      */
     virtual ~WebSocketTransport() {}
@@ -58,14 +58,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @returns true iff the transport has native websocket support, false otherwise.
      */
     virtual bool NativeWebsocketSupport() = 0;
-    /**
-     * @brief Complete the WebSocket upgrade.
-     *
-     * @details Called by the WebSocket client after the HTTP server responds with a
-     * SwitchingProtocols response. This method performs whatever operations are needed to
-     * transfer the protocol from HTTP to WebSockets.
-     */
-    virtual void CompleteUpgrade() = 0;
 
     /**************/
     /* Native WebSocket support functions*/

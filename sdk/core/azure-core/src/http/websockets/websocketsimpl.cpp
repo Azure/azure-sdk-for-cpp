@@ -145,9 +145,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       m_chosenProtocol = chosenProtocol->second;
     }
 
-    // Inform the transport that the upgrade is complete and that the WebSockets layer is taking
-    // over the HTTP connection.
-    m_transport->CompleteUpgrade();
     m_state = SocketState::Open;
   }
 

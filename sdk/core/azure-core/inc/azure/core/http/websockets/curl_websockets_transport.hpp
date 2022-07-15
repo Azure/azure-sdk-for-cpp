@@ -51,15 +51,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual bool NativeWebsocketSupport() override { return false; }
 
     /**
-     * @brief Complete the WebSocket upgrade.
-     *
-     * @details Called by the WebSocket client after the HTTP server responds with a
-     * SwitchingProtocols response. This method performs whatever operations are needed to
-     * transfer the protocol from HTTP to WebSockets.
-     */
-    virtual void CompleteUpgrade() override;
-
-    /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
      */
