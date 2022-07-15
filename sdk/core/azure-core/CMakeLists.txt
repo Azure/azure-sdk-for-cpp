@@ -204,7 +204,10 @@ if(BUILD_TESTING)
     add_subdirectory(test/nlohmann-json-test)
   endif()
   add_subdirectory(test/fault-injector)
-  add_subdirectory(test/libcurl-stress-test)
+  
+  if(BUILD_TRANSPORT_CURL)
+    add_subdirectory(test/libcurl-stress-test)
+  endif()
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
