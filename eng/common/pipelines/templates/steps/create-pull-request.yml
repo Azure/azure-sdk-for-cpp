@@ -21,19 +21,23 @@ parameters:
   SkipCheckingForChanges: false
   CloseAfterOpenForTesting: false
   OpenAsDraft: false
+  # If PushWorkingDirectoryChanges is set to false, something else must set
+  # $(HasChanges) == true to open a PR
+  PushWorkingDirectoryChanges: true
 
 steps:
-- template: /eng/common/pipelines/templates/steps/git-push-changes.yml
-  parameters:
-    BaseRepoBranch: ${{ parameters.PRBranchName }}
-    BaseRepoOwner: ${{ parameters.PROwner }}
-    CommitMsg: ${{ parameters.CommitMsg }}
-    TargetRepoOwner: ${{ parameters.RepoOwner }}
-    TargetRepoName: ${{ parameters.RepoName }}
-    PushArgs: ${{ parameters.PushArgs }}
-    WorkingDirectory: ${{ parameters.WorkingDirectory }}
-    ScriptDirectory: ${{ parameters.ScriptDirectory }}
-    SkipCheckingForChanges: ${{ parameters.SkipCheckingForChanges }}
+- ${{ if eq('true', parameters.PushWorkingDirectoryChanges) }}:
+  - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+    parameters:
+      BaseRepoBranch: ${{ parameters.PRBranchName }}
+      BaseRepoOwner: ${{ parameters.PROwner }}
+      CommitMsg: ${{ parameters.CommitMsg }}
+      TargetRepoOwner: ${{ parameters.RepoOwner }}
+      TargetRepoName: ${{ parameters.RepoName }}
+      PushArgs: ${{ parameters.PushArgs }}
+      WorkingDirectory: ${{ parameters.WorkingDirectory }}
+      ScriptDirectory: ${{ parameters.ScriptDirectory }}
+      SkipCheckingForChanges: ${{ parameters.SkipCheckingForChanges }}
 
 - task: PowerShell@2
   displayName: Create pull request
