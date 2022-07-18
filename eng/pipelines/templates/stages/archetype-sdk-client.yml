@@ -93,9 +93,8 @@ stages:
           CoverageReportPath: ${{ parameters.CoverageReportPath }}
           LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
           BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
-          # TODO: Uncomment before merge
-          # ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          #   TestPipeline: true
+          ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+            TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
@@ -127,6 +126,5 @@ stages:
                   - LiveTest_${{ cloud.key }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactName: packages
-        # TODO: Enable before merge
-        # ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-        #   TestPipeline: true
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
