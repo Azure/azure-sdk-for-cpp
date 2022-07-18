@@ -9,6 +9,7 @@
 #include <limits>
 #include <sstream>
 #include <thread>
+#include <stdlib.h>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
@@ -60,9 +61,14 @@ std::chrono::milliseconds CalculateExponentialDelay(
 {
   if (jitterFactor < 0.8 || jitterFactor > 1.3)
   {
+    double rand;
+    static drand48_data buf;
+    srand48_r(time(NULL), &buf);
+    drand48_r(&buf, &rand);
+
     // jitterFactor is a random double number in the range [0.8 .. 1.3]
     jitterFactor
-        = 0.8 + ((static_cast<double>(static_cast<int32_t>(std::rand())) / RAND_MAX) * 0.5);
+        = 0.8 + (rand / RAND_MAX) * 0.5);
   }
 
   constexpr auto beforeLastBit
