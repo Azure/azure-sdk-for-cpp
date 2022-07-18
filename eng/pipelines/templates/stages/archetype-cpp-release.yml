@@ -198,6 +198,13 @@ stages:
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                          # If PublishToVcpkg is true, this template blindly attempts to create a PR. In that case
+                          # changes must already be checked into the branch for this template to succeed.
+                          # If PublishToVcpkg is false, the non-skipped checking for changes will result in no attempt
+                          # to open a PR because there will be no detected changes.
+                          # Use dictionary syntax because the template inserts the literal string into a `condition:`
+                          # element.
+                          SkipCheckingForChanges: variables['PublishToVcpkg']
 
                       - pwsh: |
                           $codeOwnersToNotify = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `

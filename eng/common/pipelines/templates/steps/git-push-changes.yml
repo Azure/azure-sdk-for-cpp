@@ -25,10 +25,21 @@ steps:
       echo "##vso[task.setvariable variable=HasChanges]$false"
       echo "No changes so skipping code push"
     }
+
+    # Conditions determined that SkipCheckingForChanges is 'false', set this
+    # as a variable which can be passed into the "Push Changes" step
+    echo "##vso[task.setvariable variable=SkipCheckingForChanges]false"
   displayName: Check for changes
   condition: and(succeeded(), eq(${{ parameters.SkipCheckingForChanges }}, false))
   workingDirectory: ${{ parameters.WorkingDirectory }}
   ignoreLASTEXITCODE: true
+
+- pwsh: |
+    # Checking for changes was skipped, set a variable which can be passed into
+    # the "Push Changes" step
+    Write-Host "##vso[task.setvariable variable=SkipCheckingForChanges]true"
+  condition: and(succeeded(), eq(${{ parameters.SkipCheckingForChanges }}, true))
+  displayName: Set SkipCheckingForChanges to true
 
 - pwsh: |
     # Remove the repo owner from the front of the repo name if it exists there
@@ -39,6 +50,7 @@ steps:
   condition: succeeded()
   workingDirectory: ${{ parameters.WorkingDirectory }}
 
+# $(SkipCheckingForChanges) is set in an earlier step
 - task: PowerShell@2
   displayName: Push changes
   condition: and(succeeded(), eq(variables['HasChanges'], 'true'))
@@ -51,4 +63,4 @@ steps:
       -CommitMsg "${{ parameters.CommitMsg }}"
       -GitUrl "https://$(azuresdk-github-pat)@github.com/${{ parameters.BaseRepoOwner }}/$(RepoNameWithoutOwner).git"
       -PushArgs "${{ parameters.PushArgs }}"
-      -SkipCommit $${{ parameters.SkipCheckingForChanges }}
+      -SkipCommit $$(SkipCheckingForChanges)
