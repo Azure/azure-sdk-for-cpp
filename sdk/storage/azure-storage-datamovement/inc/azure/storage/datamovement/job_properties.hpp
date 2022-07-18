@@ -12,9 +12,11 @@ namespace Azure { namespace Storage {
   enum class TransferType
   {
     SingleUpload = 0,
-    SingleDownload = 1,
-    DirectoryUpload = 2,
+    DirectoryUpload = 1,
+    SingleDownload = 2,
     DirectoryDownload = 3,
+    SingleCopy = 4,
+    DirectoryCopy = 5,
   };
 
   enum class JobStatus

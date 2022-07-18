@@ -60,6 +60,7 @@ namespace Azure { namespace Storage {
       Nullable<Blobs::BlobClient> m_blobClient;
       Nullable<Blobs::BlobFolder> m_blobFolder;
 
+      friend struct JobModel;
       friend struct _detail::JobPlan;
       friend class _detail::JobEngine;
     };
@@ -73,6 +74,8 @@ namespace Azure { namespace Storage {
     {
       TransferEnd Source;
       TransferEnd Destination;
+
+      static TransferType DeduceTransferType(const JobModel& model);
     };
 
     struct HydrationParameters final

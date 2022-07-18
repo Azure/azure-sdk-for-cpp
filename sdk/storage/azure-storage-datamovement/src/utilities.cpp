@@ -137,14 +137,12 @@ namespace Azure { namespace Storage { namespace _internal {
     if (url.substr(0, 8) == "https://" || url.substr(0, 7) == "http://")
     {
       Core::Url url2(url);
-      for (const auto& k : {
-               /* cSpell:disable */
-               "sv",    "ss",    "srt", "sp",  "se",  "st",  "spr",  "sig",  "sip",  "si",   "sr",
-               "skoid", "sktid", "skt", "ske", "sks", "skv", "rscc", "rscd", "rsce", "rscl", "rsct",
-               /* cSpell:enable */
-           })
+      for (const auto& p : url2.GetQueryParameters())
       {
-        url2.RemoveQueryParameter(k);
+        if (p.first != "snapshot" && p.first != "versionid")
+        {
+          url2.RemoveQueryParameter(p.first);
+        }
       }
       return url2.GetAbsoluteUrl();
     }

@@ -29,10 +29,6 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
               StandardStorageConnectionString(), options));
     }
-
-    static void CreateDir(const std::string& dir);
-
-    static void DeleteDir(const std::string& dir);
   };
 
 }}} // namespace Azure::Storage::Test

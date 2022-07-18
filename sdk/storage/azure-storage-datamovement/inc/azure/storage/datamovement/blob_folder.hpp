@@ -34,7 +34,7 @@ namespace Azure { namespace Storage {
       std::string m_folderPath;
 
       friend class _internal::TransferEnd;
-      friend struct Azure::Storage::_detail::JobPlan;
+      friend struct Storage::_detail::JobPlan;
     };
 
   } // namespace Blobs

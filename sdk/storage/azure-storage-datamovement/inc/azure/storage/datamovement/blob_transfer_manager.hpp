@@ -38,6 +38,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobFolder& sourceBlobFolder,
         const std::string& destinationLocalPath,
         const ScheduleDownloadBlobOptions& options = ScheduleDownloadBlobOptions());
+
+    JobProperties ScheduleCopy(
+        const BlobClient& sourceBlob,
+        const BlobClient& destinationBlob,
+        const ScheduleCopyBlobOptions& options = ScheduleCopyBlobOptions());
+
+    JobProperties ScheduleCopyDirectory(
+        const BlobFolder& sourceBlobFolder,
+        const BlobFolder& destinationBlobFolder,
+        const ScheduleCopyBlobOptions& options = ScheduleCopyBlobOptions());
   };
 
 }}} // namespace Azure::Storage::Blobs

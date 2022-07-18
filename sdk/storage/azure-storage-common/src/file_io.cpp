@@ -149,8 +149,9 @@ namespace Azure { namespace Storage { namespace _internal {
     return bytesRead;
   }
 
-  FileWriter::FileWriter(const std::string& filename)
+  FileWriter::FileWriter(const std::string& filename, bool truncate)
   {
+    DWORD creationDisposition = truncate ? CREATE_ALWAYS : OPEN_ALWAYS;
     const std::wstring filenameW = Utf8ToWide(filename);
 
     HANDLE fileHandle;
@@ -162,12 +163,16 @@ namespace Azure { namespace Storage { namespace _internal {
         GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         nullptr,
-        CREATE_ALWAYS,
+        creationDisposition,
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 #else
     fileHandle = CreateFile2(
-        filenameW.data(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, CREATE_ALWAYS, NULL);
+        filenameW.data(),
+        GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        creationDisposition,
+        NULL);
 #endif
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
@@ -235,10 +240,14 @@ namespace Azure { namespace Storage { namespace _internal {
     return bytesRead;
   }
 
-  FileWriter::FileWriter(const std::string& filename)
+  FileWriter::FileWriter(const std::string& filename, bool truncate)
   {
-    m_handle = open(
-        filename.data(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    int flags = O_WRONLY | O_CREAT;
+    if (truncate)
+    {
+      flags |= O_TRUNC;
+    }
+    m_handle = open(filename.data(), flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if (m_handle == -1)
     {
       throw std::runtime_error("Failed to open file.");
