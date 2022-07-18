@@ -67,8 +67,7 @@ std::chrono::milliseconds CalculateExponentialDelay(
     drand48_r(&buf, &rand);
 
     // jitterFactor is a random double number in the range [0.8 .. 1.3]
-    jitterFactor
-        = 0.8 + (rand / RAND_MAX) * 0.5);
+    jitterFactor = 0.8 + (rand / RAND_MAX) * 0.5;
   }
 
   constexpr auto beforeLastBit
