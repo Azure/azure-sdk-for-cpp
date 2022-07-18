@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   class FileWriter final {
   public:
-    FileWriter(const std::string& filename);
+    FileWriter(const std::string& filename, bool truncate = true);
     FileWriter(const FileWriter&) = delete;
     FileWriter& operator=(const FileWriter&) = delete;
     ~FileWriter();

@@ -10,8 +10,28 @@
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   namespace {
-    constexpr size_t WritePieceLength = 8 * 1024 * 1024;
+    constexpr size_t g_WritePieceLength = 8 * 1024 * 1024;
   } // namespace
+
+  DownloadRangeToMemoryTask::TaskContext::~TaskContext()
+  {
+    size_t memoryToDeallocate = 0;
+    {
+      std::lock_guard<std::mutex> guard(WriteChunksMutex);
+      for (auto& p : ChunksToWrite)
+      {
+        memoryToDeallocate += p.second->MemoryGiveBack;
+      }
+      ChunksToWrite.clear();
+    }
+    if (memoryToDeallocate != 0)
+    {
+      _internal::Task releaseMemoryTask
+          = std::make_unique<_internal::DummyTask>(_internal::TaskType::Other);
+      releaseMemoryTask->MemoryGiveBack = memoryToDeallocate;
+      TransferEngine->ReclaimAllocatedResource(releaseMemoryTask);
+    }
+  }
 
   void DownloadRangeToMemoryTask::Execute() noexcept
   {
@@ -49,37 +69,35 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     writeChunk->Buffer = std::move(buffer);
     writeChunk->Offset = this->Offset;
     writeChunk->Length = Length;
-    writeChunk->MemoryGiveBack = 0;
     std::swap(writeChunk->MemoryGiveBack, this->MemoryGiveBack);
     writeChunk->JournalContext = std::move(JournalContext);
 
     auto writeToFileTask = CreateTask<WriteToFileTask>(_internal::TaskType::DiskIO);
     {
-      std::lock_guard<std::mutex> guard(Context->m_writeChunksMutex);
-      Context->m_chunksToWrite.emplace(writeChunk->Offset, std::move(writeChunk));
-      if (!Context->m_writeTaskRunning)
+      std::lock_guard<std::mutex> guard(Context->WriteChunksMutex);
+      Context->ChunksToWrite.emplace(writeChunk->Offset, std::move(writeChunk));
+      if (!Context->WriteTaskRunning)
       {
-        auto iter = Context->m_chunksToWrite.begin();
-        while ((iter != Context->m_chunksToWrite.end())
-               && (iter->first == Context->m_offsetToWrite))
+
+        while (!Context->ChunksToWrite.empty()
+               && Context->ChunksToWrite.begin()->first == Context->OffsetToWrite)
         {
-          Context->m_offsetToWrite += iter->second->Length;
-          writeToFileTask->MemoryGiveBack += iter->second->MemoryGiveBack;
-          writeToFileTask->m_chunksToWrite.push_back(std::move(iter->second));
-          Context->m_chunksToWrite.erase(iter);
-          iter = Context->m_chunksToWrite.begin();
+          auto& chunk = Context->ChunksToWrite.begin()->second;
+          Context->OffsetToWrite += chunk->Length;
+          writeToFileTask->MemoryGiveBack += chunk->MemoryGiveBack;
+          writeToFileTask->ChunksToWrite.push_back(std::move(chunk));
+          Context->ChunksToWrite.erase(Context->ChunksToWrite.begin());
         }
-        if (!writeToFileTask->m_chunksToWrite.empty())
+        if (!writeToFileTask->ChunksToWrite.empty())
         {
-          Context->m_writeTaskRunning = true;
+          Context->WriteTaskRunning = true;
         }
       }
-    }
-
-    if (!writeToFileTask->m_chunksToWrite.empty())
-    {
-      writeToFileTask->Context = Context;
-      SharedStatus->TransferEngine->AddTask(std::move(writeToFileTask));
+      if (!writeToFileTask->ChunksToWrite.empty())
+      {
+        writeToFileTask->Context = Context;
+        SharedStatus->TransferEngine->AddTask(std::move(writeToFileTask));
+      }
     }
   }
 
@@ -94,21 +112,33 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       std::lock_guard<std::mutex> guard(Context->FileWriterMutex);
       if (!Context->FileWriter)
       {
-        Context->FileWriter
-            = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+        // TODO: we should truncate the original file if this is the first write to the file, and
+        // should NOT truncate if this is a resumed job.
+        // A better way is to download to a non-existing temp file, and overwrite destination after
+        // download is finished.
+        if (ChunksToWrite[0]->Offset == 0)
+        {
+          Context->FileWriter
+              = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+        }
+        else
+        {
+          Context->FileWriter
+              = std::make_unique<Storage::_internal::FileWriter>(Context->Destination, false);
+        }
       }
     }
 
-    for (auto& chunkToWrite : m_chunksToWrite)
+    for (auto& chunk : ChunksToWrite)
     {
-      int64_t offset = chunkToWrite->Offset;
-      size_t length = chunkToWrite->Length;
-      uint8_t* bufferPointer = chunkToWrite->Buffer.get();
+      int64_t offset = chunk->Offset;
+      size_t length = chunk->Length;
+      uint8_t* bufferPointer = chunk->Buffer.get();
       try
       {
         while (length > 0)
         {
-          size_t thisWriteLength = std::min(length, WritePieceLength);
+          size_t thisWriteLength = std::min(length, g_WritePieceLength);
           Context->FileWriter->Write(bufferPointer, thisWriteLength, offset);
           bufferPointer += thisWriteLength;
           offset += thisWriteLength;
@@ -127,37 +157,36 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
       int numDownloadedBlocks
           = Context->NumDownloadedChunks.fetch_add(1, std::memory_order_relaxed) + 1;
-      JournalContext = std::move(chunkToWrite->JournalContext);
+      JournalContext = std::move(chunk->JournalContext);
       if (numDownloadedBlocks == Context->NumChunks)
       {
-        TransferSucceeded(chunkToWrite->Length, 1);
+        TransferSucceeded(chunk->Length, 1);
         return;
       }
       else
       {
-        TransferSucceeded(chunkToWrite->Length, 0);
+        TransferSucceeded(chunk->Length, 0);
       }
     }
 
     auto writeToFileTask = CreateTask<WriteToFileTask>(_internal::TaskType::DiskIO);
     {
-      std::lock_guard<std::mutex> guard(Context->m_writeChunksMutex);
-      auto iter = Context->m_chunksToWrite.begin();
-      while ((iter != Context->m_chunksToWrite.end()) && (iter->first == Context->m_offsetToWrite))
+      std::lock_guard<std::mutex> guard(Context->WriteChunksMutex);
+      while (!Context->ChunksToWrite.empty()
+             && Context->ChunksToWrite.begin()->first == Context->OffsetToWrite)
       {
-        Context->m_offsetToWrite += iter->second->Length;
-        writeToFileTask->MemoryGiveBack += iter->second->MemoryGiveBack;
-        writeToFileTask->m_chunksToWrite.push_back(std::move(iter->second));
-        Context->m_chunksToWrite.erase(iter);
-        iter = Context->m_chunksToWrite.begin();
+        auto& chunk = Context->ChunksToWrite.begin()->second;
+        Context->OffsetToWrite += chunk->Length;
+        writeToFileTask->MemoryGiveBack += chunk->MemoryGiveBack;
+        writeToFileTask->ChunksToWrite.push_back(std::move(chunk));
+        Context->ChunksToWrite.erase(Context->ChunksToWrite.begin());
       }
-      if (writeToFileTask->m_chunksToWrite.empty())
+      if (writeToFileTask->ChunksToWrite.empty())
       {
-        Context->m_writeTaskRunning = false;
+        Context->WriteTaskRunning = false;
       }
     }
-
-    if (!writeToFileTask->m_chunksToWrite.empty())
+    if (!writeToFileTask->ChunksToWrite.empty())
     {
       writeToFileTask->Context = Context;
       SharedStatus->TransferEngine->AddTask(std::move(writeToFileTask));

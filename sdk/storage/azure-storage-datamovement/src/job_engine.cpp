@@ -48,6 +48,41 @@ namespace Azure { namespace Storage {
       return ret;
     }
 
+    TransferType JobModel::DeduceTransferType(const JobModel& model)
+    {
+      if (model.Source.m_type == TransferEnd::EndType::LocalFile
+          && model.Destination.m_type == TransferEnd::EndType::AzureBlob)
+      {
+        return TransferType::SingleUpload;
+      }
+      if (model.Source.m_type == TransferEnd::EndType::LocalDirectory
+          && model.Destination.m_type == TransferEnd::EndType::AzureBlobFolder)
+      {
+        return TransferType::DirectoryUpload;
+      }
+      if (model.Source.m_type == TransferEnd::EndType::AzureBlob
+          && model.Destination.m_type == TransferEnd::EndType::LocalFile)
+      {
+        return TransferType::SingleDownload;
+      }
+      if (model.Source.m_type == TransferEnd::EndType::AzureBlobFolder
+          && model.Destination.m_type == TransferEnd::EndType::LocalDirectory)
+      {
+        return TransferType::DirectoryDownload;
+      }
+      if (model.Source.m_type == TransferEnd::EndType::AzureBlob
+          && model.Destination.m_type == TransferEnd::EndType::AzureBlob)
+      {
+        return TransferType::SingleCopy;
+      }
+      if (model.Source.m_type == TransferEnd::EndType::AzureBlobFolder
+          && model.Destination.m_type == TransferEnd::EndType::AzureBlobFolder)
+      {
+        return TransferType::DirectoryCopy;
+      }
+      AZURE_NOT_IMPLEMENTED();
+    }
+
   } // namespace _internal
   namespace _detail {
 
@@ -323,12 +358,6 @@ namespace Azure { namespace Storage {
 
     void JobEngine::ProcessMessage(EngineOperation& op)
     {
-      struct DummyTask final : public Storage::_internal::TaskBase
-      {
-        using TaskBase::TaskBase;
-        void Execute() noexcept override { AZURE_UNREACHABLE_CODE(); }
-      };
-
       if (op.Type == decltype(op.Type)::CreateJob)
       {
         JobPlan::CreateJobPlan(std::move(op.Model), _internal::JoinPath(m_plansDir, op.JobId));
@@ -367,33 +396,10 @@ namespace Azure { namespace Storage {
           {
             sharedStatus->HasSuccess = true;
           }
-          existingJobPlan.m_rootTask = std::make_unique<DummyTask>(_internal::TaskType::Other);
+          existingJobPlan.m_rootTask
+              = std::make_unique<_internal::DummyTask>(_internal::TaskType::Other);
           existingJobPlan.m_rootTask->SharedStatus = sharedStatus;
-          if (existingJobPlan.m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile)
-          {
-            properties.Type = TransferType::SingleUpload;
-          }
-          else if (
-              existingJobPlan.m_model.Source.m_type
-              == _internal::TransferEnd::EndType::LocalDirectory)
-          {
-            properties.Type = TransferType::DirectoryUpload;
-          }
-          else if (
-              existingJobPlan.m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob)
-          {
-            properties.Type = TransferType::SingleDownload;
-          }
-          else if (
-              existingJobPlan.m_model.Source.m_type
-              == _internal::TransferEnd::EndType::AzureBlobFolder)
-          {
-            properties.Type = TransferType::DirectoryDownload;
-          }
-          else
-          {
-            AZURE_NOT_IMPLEMENTED();
-          }
+          properties.Type = _internal::JobModel::DeduceTransferType(existingJobPlan.m_model);
           properties.SourceUrl = _internal::RemoveSasToken(existingJobPlan.m_model.Source.m_url);
           properties.DestinationUrl
               = _internal::RemoveSasToken(existingJobPlan.m_model.Destination.m_url);

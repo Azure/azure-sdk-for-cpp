@@ -42,7 +42,104 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobTransferManagerTest, DirectoryUploadDownload_LIVEONLY_)
+  TEST_F(BlobTransferManagerTest, SingleDownloadPauseResume_LIVEONLY_)
+  {
+    const auto testName = GetTestNameLowerCase();
+    auto blobServiceClient = GetClientForTest(testName);
+    const auto containerName = GetContainerValidName();
+    auto containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+    containerClient.CreateIfNotExists();
+    auto blobClient = containerClient.GetBlobClient(testName);
+
+    ResumeJobOptions resumeOptions;
+    {
+      auto parsedConnectionString
+          = _internal::ParseConnectionString(StandardStorageConnectionString());
+      resumeOptions.SourceCredential.SharedKeyCredential = parsedConnectionString.KeyCredential;
+    }
+
+    const std::string tempFilename = "localfile" + testName;
+    const std::string backupFilename = tempFilename + ".bk";
+    constexpr size_t fileSize = static_cast<size_t>(256_MB);
+
+    if (_internal::PathExists(tempFilename))
+    {
+      _internal::Remove(tempFilename);
+    }
+    {
+      int64_t serviceFileSize = -1;
+      try
+      {
+        serviceFileSize = blobClient.GetProperties().Value.BlobSize;
+      }
+      catch (StorageException&)
+      {
+      }
+      if (!(serviceFileSize == fileSize && _internal::IsRegularFile(backupFilename)
+            && _internal::GetFileSize(backupFilename) == fileSize))
+      {
+        WriteFile(backupFilename, RandomBuffer(fileSize));
+        Blobs::UploadBlockBlobFromOptions options;
+        options.TransferOptions.Concurrency = 32;
+        options.TransferOptions.SingleUploadThreshold = 0;
+        blobClient.AsBlockBlobClient().UploadFrom(backupFilename, options);
+      }
+    }
+
+    StorageTransferManagerOptions options;
+    options.NumThreads = 2;
+    std::unique_ptr<Blobs::BlobTransferManager> m
+        = std::make_unique<Blobs::BlobTransferManager>(options);
+    auto job = m->ScheduleDownload(blobClient, tempFilename);
+
+    bool atLeasePausedOnce = false;
+    bool atLeaseDestructedOnce = false;
+    for (int i = 0; i < 10; ++i)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10) * (2 << i));
+      if (i % 2 == 0)
+      {
+        m.reset();
+        m = std::make_unique<Blobs::BlobTransferManager>(options);
+        atLeaseDestructedOnce = true;
+      }
+      else
+      {
+        try
+        {
+          m->PauseJob(job.Id);
+          atLeasePausedOnce = true;
+        }
+        catch (std::exception&)
+        {
+          break;
+        }
+      }
+      auto status = job.WaitHandle.get();
+      EXPECT_TRUE(status == JobStatus::Succeeded || status == JobStatus::Paused);
+      if (status == JobStatus::Succeeded)
+      {
+        break;
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      job = m->ResumeJob(job.Id, resumeOptions);
+    }
+    EXPECT_TRUE(atLeasePausedOnce);
+    EXPECT_TRUE(atLeaseDestructedOnce);
+
+    auto jobStatus = job.WaitHandle.get();
+    EXPECT_EQ(jobStatus, JobStatus::Succeeded);
+    EXPECT_THROW(m->PauseJob(job.Id), std::exception);
+
+    EXPECT_EQ(ReadFile(tempFilename), ReadFile(backupFilename));
+    DeleteFile(tempFilename);
+    DeleteFile(backupFilename);
+    containerClient.DeleteIfExists();
+  }
+
+  TEST_F(BlobTransferManagerTest, DirectoryDownload_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);
@@ -54,17 +151,17 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobFolder = Blobs::BlobFolder(containerClient, serviceDir);
 
     std::vector<std::string> files;
-    CreateDir("dir_l1");
+    _internal::CreateDirectory("dir_l1");
     WriteFile("dir_l1/file1", RandomBuffer(static_cast<size_t>(5_MB)));
     WriteFile("dir_l1/file2", RandomBuffer(static_cast<size_t>(213_KB)));
     WriteFile("dir_l1/file3", RandomBuffer(0));
-    CreateDir("dir_l1/dir_l2");
+    _internal::CreateDirectory("dir_l1/dir_l2");
     WriteFile("dir_l1/dir_l2/file4", RandomBuffer(123));
-    CreateDir("dir_l1/dir_l2/dir_l3");
-    CreateDir("dir_l1/dir_l2/dir_l3/dir_l4");
-    CreateDir("dir_l1/dir_l2/dir_l3/dir_l4/dir_l5");
-    CreateDir("dir_l1/dir_l2_2");
-    CreateDir("dir_l1/dir_l2_2/dir_l3_2");
+    _internal::CreateDirectory("dir_l1/dir_l2/dir_l3");
+    _internal::CreateDirectory("dir_l1/dir_l2/dir_l3/dir_l4");
+    _internal::CreateDirectory("dir_l1/dir_l2/dir_l3/dir_l4/dir_l5");
+    _internal::CreateDirectory("dir_l1/dir_l2_2");
+    _internal::CreateDirectory("dir_l1/dir_l2_2/dir_l3_2");
     WriteFile("dir_l1/dir_l2_2/dir_l3_2/file4", RandomBuffer(static_cast<size_t>(10_MB)));
     files.push_back("file1");
     files.push_back("file2");
@@ -74,13 +171,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::BlobTransferManager m;
     auto job = m.ScheduleUploadDirectory(localDir, blobFolder);
-    EXPECT_FALSE(job.Id.empty());
-    EXPECT_FALSE(job.SourceUrl.empty());
-    EXPECT_EQ(job.DestinationUrl, blobFolder.GetUrl());
-    EXPECT_EQ(job.Type, TransferType::DirectoryUpload);
-
     auto jobStatus = job.WaitHandle.get();
-    EXPECT_EQ(jobStatus, JobStatus::Succeeded);
+    ASSERT_EQ(jobStatus, JobStatus::Succeeded);
 
     const std::string destDir = "dir_dest";
 
@@ -128,8 +220,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::sort(files.begin(), files.end());
     std::sort(destFiles.begin(), destFiles.end());
     EXPECT_EQ(files, destFiles);
-    DeleteDir(localDir);
-    DeleteDir(destDir);
+    _internal::Remove(localDir);
+    _internal::Remove(destDir);
     containerClient.DeleteIfExists();
   }
 
