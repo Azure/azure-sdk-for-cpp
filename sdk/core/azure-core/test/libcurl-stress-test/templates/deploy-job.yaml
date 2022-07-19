@@ -1,5 +1,7 @@
-apiVersion: v1
-kind: Pod
+{{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.deploy-example") -}}
+{{- define "stress.deploy-example" -}}
+#apiVersion: v1
+#kind: Pod
 metadata:
   labels:
     testName: "libcurl-stress-test"
@@ -16,3 +18,5 @@ spec:
           "-s",
           "./azure-core-libcurl-stress-test",
         ]
+      {{- include "stress-test-addons.container-env" . | nindent 6 }}
+{{- end -}}
