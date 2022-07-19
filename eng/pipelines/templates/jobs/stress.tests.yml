@@ -1,0 +1,95 @@
+parameters:
+  - name: Artifacts
+    type: object
+    default: []
+  - name: ServiceDirectory
+    type: string
+    default: not-specified
+  - name: CMakeTestOptions
+    type: object
+    default: []
+  - name: MaxParallel
+    type: number
+    default: 0
+  # Matrix generation:
+  # https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/scripts/job-matrix/README.md
+  - name: Matrix
+    type: string
+    default: ''
+  - name: UsePlatformContainer
+    type: boolean
+    default: false
+  - name: DependsOn
+    type: string
+    default: not-set
+  - name: CloudConfig
+    type: object
+    default: {}
+  - name: JobName
+    type: string
+    default: CMakeGenerate
+
+jobs:
+- job: ${{ parameters.JobName }}
+  condition: >-
+    and(
+      succeededOrFailed(),
+      ne(variables['Skip.CMakeGenerate'], 'true'),
+      ne(${{ parameters.Matrix }}, '{}')
+    )
+  dependsOn: ${{ parameters.DependsOn }}
+  strategy:
+    maxParallel: ${{ parameters.MaxParallel }}
+    matrix: $[ ${{ parameters.Matrix }} ]
+
+  pool:
+    name: $(Pool)
+    vmImage: $(OSVmImage)
+
+  ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+    # Add a default so the job doesn't fail when the matrix is empty
+    container: $[ variables['Container'] ]
+
+  variables:
+    CMOCKA_XML_FILE: "%g-test-results.xml"
+
+  steps:
+  - checkout: self
+    submodules: recursive
+
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+    parameters:
+      AgentImage: $(OSVmImage)
+
+  - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
+    condition: and(succeeded(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+  
+  - pwsh: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg && echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && sudo apt-get update && sudo apt-get install -y kubectl
+    condition: and(succeeded(), ne(variables['AptDependencies'], ''))
+    displayName: Install kubectl
+
+  - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
+    condition: and(succeeded(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+
+
+  - pwsh: |
+      brew install $(BrewDependencies)
+    condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
+    displayName: Install dependencies from brew
+
+  - template: /eng/pipelines/templates/steps/vcpkg.yml
+
+  - script: cmake --version
+    displayName: cmake --version
+
+  - ${{ each artifact in parameters.Artifacts }}:
+    - script: echo 'CMake generate tests for ${{ artifact.Name }}'
+      displayName: ${{ artifact.Name }}
+    - ${{ each cmakeOption in parameters.CMakeTestOptions }}:
+      - template: /eng/pipelines/templates/steps/cmake-generate.yml
+        parameters:
+          CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
+          GenerateArgs: ${{ cmakeOption.Value }}
+          Env: "$(CmakeEnvArg)"
