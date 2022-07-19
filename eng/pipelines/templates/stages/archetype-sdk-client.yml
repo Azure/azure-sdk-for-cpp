@@ -135,8 +135,5 @@ stages:
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.StressTestLocations, '')) }}:
     - template: archetype-sdk-stress-tests.yml
       parameters:
-        ServiceDirectory: ${{ parameters.StressTestLocations }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ArtifactName: packages
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
