@@ -19,10 +19,10 @@ Where namaspace will be created if missing , search directory can be any folder 
 
 ATM the docker image is build by hand and harcoded in the chart to simplify matters.  
 
-To build the image run "docker build -t unsoecified.acr.io/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
+To build the image run "docker build -t unspecified.acr.io/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
 
-To push to mcr : "docker push unsoecified.acr.io/azuresdkforcpp/curlstress:v8"
-Obviously after logging in to the acr "az acr login -n unsoecified.azurecr.io"
+To push to mcr : "docker push unspecified.acr.io/azuresdkforcpp/curlstress:v8"
+Obviously after logging in to the acr "az acr login -n unspecified.azurecr.io"
 
 To use another image you will need to go to line 12 in deploy job and update with your new file. 
 
