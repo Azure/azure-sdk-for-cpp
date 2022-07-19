@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 apiVersion: v2
 name: libcurl-stress-test
 description: An example of c++ stress test

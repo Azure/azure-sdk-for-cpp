@@ -1,7 +1,7 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
 {{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.deploy-example") -}}
 {{- define "stress.deploy-example" -}}
-#apiVersion: v1
-#kind: Pod
 metadata:
   labels:
     testName: "libcurl-stress-test"
