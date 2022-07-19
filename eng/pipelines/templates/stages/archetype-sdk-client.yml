@@ -67,6 +67,9 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
+- name: StressTestLocations
+  type: string
+  default: 'a'
 
 
 stages:
