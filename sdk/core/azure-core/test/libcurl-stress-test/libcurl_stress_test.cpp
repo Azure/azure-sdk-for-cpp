@@ -32,13 +32,13 @@ void SendRequest(std::string target)
     Azure::Core::Context context;
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(target));
-    auto response = implementationClient->Send(request, context); 
+    auto response = implementationClient->Send(request, context);
     // Make sure to pull all bytes from network.
     auto body = response->ExtractBodyStream()->ReadToEnd();
   }
   catch (std::exception const&)
   {
-      // don't print exceptions, they are happening at each request, this is the point of the test
+    // don't print exceptions, they are happening at each request, this is the point of the test
   }
 }
 
@@ -55,9 +55,9 @@ void Operation(int repetitions)
 int main(int argc, char** argv) // i can have either 0 or 2 params here
 {
   (void)argv; // to get rid of the unused warning
-  // some param was passed to the program, doesn't matter what it is, 
-  // it is meant for the moment to just run a quick iteration to check for sanity of the test. 
-  // since prototype TODO: pass in warmup/rounds/requests as params. 
+  // some param was passed to the program, doesn't matter what it is,
+  // it is meant for the moment to just run a quick iteration to check for sanity of the test.
+  // since prototype TODO: pass in warmup/rounds/requests as params.
   if (argc != 1)
   {
     std::cout << "--------------\tBUILD TEST\t--------------" << std::endl;
