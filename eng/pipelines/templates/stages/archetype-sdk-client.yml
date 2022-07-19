@@ -67,9 +67,6 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
-- name: StressTestLocations
-  type: string
-  default: 'a'
 
 
 stages:
@@ -131,8 +128,3 @@ stages:
         ArtifactName: packages
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
-
-  - template: archetype-sdk-stress-tests.yml
-    parameters:
-      ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-        TestPipeline: true
