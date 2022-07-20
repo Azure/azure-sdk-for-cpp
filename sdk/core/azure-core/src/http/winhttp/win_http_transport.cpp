@@ -238,7 +238,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
           WINHTTP_NO_PROXY_NAME,
           WINHTTP_NO_PROXY_BYPASS,
           0),
-      _detail::HINTERNET_deleter());
+      _detail::HINTERNET_deleter{});
 
   if (!sessionHandle)
   {
@@ -300,7 +300,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateConnectionHandle(
           StringToWideString(url.GetHost()).c_str(),
           port == 0 ? INTERNET_DEFAULT_PORT : port,
           0),
-      _detail::HINTERNET_deleter());
+      _detail::HINTERNET_deleter{});
 
   if (!rv)
   {
@@ -341,7 +341,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
           WINHTTP_NO_REFERER,
           WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
           requestSecureHttp ? WINHTTP_FLAG_SECURE : 0),
-      _detail::HINTERNET_deleter()); // Uses secure transaction semantics (SSL/TLS)
+      _detail::HINTERNET_deleter{}); // Uses secure transaction semantics (SSL/TLS)
   if (!hi)
   {
     // Errors include:

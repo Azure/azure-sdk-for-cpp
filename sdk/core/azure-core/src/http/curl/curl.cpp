@@ -141,14 +141,14 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-
-    if (Log::ShouldWrite(Logger::Level::Verbose))
-    {
-      Log::Write(
-          Logger::Level::Verbose,
-          LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
-              + std::to_string(ideal) + " result = " + std::to_string(result));
-    }
+    result;
+    //    if (Log::ShouldWrite(Logger::Level::Verbose))
+    //    {
+    //      Log::Write(
+    //          Logger::Level::Verbose,
+    //          LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
+    //              + std::to_string(ideal) + " result = " + std::to_string(result));
+    //    }
   }
 }
 #endif
@@ -978,7 +978,6 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
     readResult = curl_easy_recv(m_handle.get(), buffer, bufferSize, &readBytes);
-
     switch (readResult)
     {
       case CURLE_AGAIN: {
@@ -1344,7 +1343,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
-  unique_CURL newHandle(curl_easy_init(), CURL_deleter());
+  unique_CURL newHandle(curl_easy_init(), CURL_deleter{});
   if (!newHandle)
   {
     throw Azure::Core::Http::TransportException(

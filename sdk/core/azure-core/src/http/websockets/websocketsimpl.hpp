@@ -5,8 +5,10 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include <array>
+#include <queue>
 #include <random>
 #include <shared_mutex>
+#include <thread>
 
 // Implementation of WebSocket protocol.
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
@@ -28,7 +30,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     WebSocketImplementation(Azure::Core::Url const& remoteUrl, WebSocketOptions const& options);
 
     void Open(Azure::Core::Context const& context);
-    void Close(Azure::Core::Context const& context);
     void Close(
         uint16_t closeStatus,
         std::string const& closeReason,
@@ -42,22 +43,15 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         bool isFinalFrame,
         Azure::Core::Context const& context);
 
-    std::shared_ptr<WebSocketFrame> ReceiveFrame(
-        Azure::Core::Context const& context,
-        bool stateIsLocked = false);
-
-    /**
-     * @brief Send a "ping" frame to the other side of the WebSocket.
-     *
-     * @returns True if the ping was sent, false if the underlying transport didn't support "Ping"
-     * operations.
-     */
-    bool SendPing(std::vector<uint8_t> const& pingData, Azure::Core::Context const& context);
+    std::shared_ptr<WebSocketFrame> ReceiveFrame(Azure::Core::Context const& context);
 
     void AddHeader(std::string const& headerName, std::string const& headerValue);
 
     std::string const& GetChosenProtocol();
     bool IsOpen() { return m_state == SocketState::Open; }
+    bool HasNativeWebSocketSupport();
+
+    WebSocketStatistics GetStatistics() const;
 
   private:
     // WebSocket opcodes.
@@ -82,91 +76,124 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       Binary,
     };
 
-    // Implement a buffered stream reader
-    class BufferedStreamReader {
-      std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
-      std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
-      constexpr static size_t m_bufferSize = 1024;
-      uint8_t m_buffer[m_bufferSize]{};
-      size_t m_bufferPos = 0;
-      size_t m_bufferLen = 0;
-      bool m_eof = false;
-
+    class WebSocketInternalFrame {
     public:
-      explicit BufferedStreamReader() = default;
-      ~BufferedStreamReader() = default;
+      SocketOpcode Opcode{};
+      bool IsFinalFrame{false};
+      std::vector<uint8_t> Payload;
+      std::exception_ptr Exception;
+      WebSocketInternalFrame(
+          SocketOpcode opcode,
+          bool isFinalFrame,
+          std::vector<uint8_t> const& payload)
+          : Opcode(opcode), IsFinalFrame(isFinalFrame), Payload(payload)
+      {
+      }
+      WebSocketInternalFrame(std::exception_ptr exception) : Exception(exception) {}
+    };
 
-      void SetInitialStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
-      {
-        m_initialBodyStream = std::move(stream);
-      }
-      void SetTransport(
-          std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport>& transport)
-      {
-        m_transport = transport;
-      }
+    struct ReceiveStatistics
+    {
+      std::atomic_uint32_t FramesSent;
+      std::atomic_uint32_t FramesReceived;
+      std::atomic_uint32_t BytesSent;
+      std::atomic_uint32_t BytesReceived;
+      std::atomic_uint32_t PingFramesSent;
+      std::atomic_uint32_t PingFramesReceived;
+      std::atomic_uint32_t PongFramesSent;
+      std::atomic_uint32_t PongFramesReceived;
+      std::atomic_uint32_t TextFramesReceived;
+      std::atomic_uint32_t BinaryFramesReceived;
+      std::atomic_uint32_t ContinuationFramesReceived;
+      std::atomic_uint32_t CloseFramesReceived;
+      std::atomic_uint32_t UnknownFramesReceived;
+      std::atomic_uint32_t FramesDropped;
+      std::atomic_uint32_t FramesDroppedByPayloadSizeLimit;
+      std::atomic_uint32_t FramesDroppedByProtocolError;
+      std::atomic_uint32_t TransportReads;
+      std::atomic_uint32_t TransportReadBytes;
+      std::atomic_uint32_t BinaryFramesSent;
+      std::atomic_uint32_t TextFramesSent;
+      std::atomic_uint32_t FramesDroppedByClose;
 
-      uint8_t ReadByte(Azure::Core::Context const& context)
+      void Reset()
       {
-        if (m_bufferPos >= m_bufferLen)
-        {
-          // Start by reading data from our initial body stream.
-          m_bufferLen = m_initialBodyStream->ReadToCount(m_buffer, m_bufferSize, context);
-          if (m_bufferLen == 0)
-          {
-            // If we run out of the initial stream, we need to read from the transport.
-            m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
-          }
-          else
-          {
-            Azure::Core::Diagnostics::_internal::Log::Write(
-                Azure::Core::Diagnostics::Logger::Level::Informational,
-                "Read data from initial stream");
-          }
-          m_bufferPos = 0;
-          if (m_bufferLen == 0)
-          {
-            m_eof = true;
-            return 0;
-          }
-        }
-        return m_buffer[m_bufferPos++];
+        FramesSent = 0;
+        BytesSent = 0;
+        FramesReceived = 0;
+        BytesReceived = 0;
+        PingFramesReceived = 0;
+        PingFramesSent = 0;
+        PongFramesReceived = 0;
+        PongFramesSent = 0;
+        TextFramesReceived = 0;
+        TextFramesSent = 0;
+        BinaryFramesReceived = 0;
+        BinaryFramesSent = 0;
+        ContinuationFramesReceived = 0;
+        CloseFramesReceived = 0;
+        UnknownFramesReceived = 0;
+        FramesDropped = 0;
+        FramesDroppedByClose = 0;
+        FramesDroppedByPayloadSizeLimit = 0;
+        FramesDroppedByProtocolError = 0;
+        TransportReads = 0;
+        TransportReadBytes = 0;
       }
-      uint16_t ReadShort(Azure::Core::Context const& context)
-      {
-        uint16_t result = ReadByte(context);
-        result <<= 8;
-        result |= ReadByte(context);
-        return result;
-      }
-      uint64_t ReadInt64(Azure::Core::Context const& context)
-      {
-        uint64_t result = 0;
+    };
+    /**
+     * @brief The PingThread handles sending Ping operations from the WebSocket server.
+     *
+     */
+    class PingThread {
+    public:
+      /**
+       * @brief Construct a new ReceiveQueue object.
+       *
+       * @param webSocketImplementation Parent object, used to send Ping threads.
+       * @param pingInterval Interval to wait between sending pings.
+       */
+      PingThread(
+          WebSocketImplementation* webSocketImplementation,
+          std::chrono::duration<int64_t> pingInterval);
+      /**
+       * @brief Destroys a ReceiveQueue object. Blocks until the queue thread is completed.
+       */
+      ~PingThread();
 
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 56 & 0xff00000000000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 48 & 0x00ff000000000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 40 & 0x0000ff0000000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 32 & 0x000000ff00000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 24 & 0x00000000ff000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 16 & 0x0000000000ff0000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 8 & 0x000000000000ff00);
-        result |= static_cast<uint64_t>(ReadByte(context));
-        return result;
-      }
-      std::vector<uint8_t> ReadBytes(size_t readLength, Azure::Core::Context const& context)
-      {
-        std::vector<uint8_t> result;
-        size_t index = 0;
-        while (index < readLength)
-        {
-          uint8_t byte = ReadByte(context);
-          result.push_back(byte);
-          index += 1;
-        }
-        return result;
-      }
+      /**
+       * @brief Start the receive queue. This will start a thread that will process incoming frames.
+       *
+       * @param transport The websocket transport to use for receiving frames.
+       */
+      void Start(std::shared_ptr<WebSocketTransport> transport);
+      /**
+       * @brief Stop the receive queue. This will stop the thread that processes incoming frames.
+       */
+      void Shutdown();
 
-      bool IsEof() const { return m_eof; }
+    private:
+      /**
+       * @brief The receive queue thread.
+       */
+      void PingThreadLoop();
+      /**
+       * @brief Send a "ping" frame to the other side of the WebSocket.
+       *
+       * @returns True if the ping was sent, false if the underlying transport didn't support "Ping"
+       * operations.
+       */
+      bool SendPing(std::vector<uint8_t> const& pingData, Azure::Core::Context const& context);
+
+      WebSocketImplementation* m_webSocketImplementation;
+      std::chrono::duration<int64_t> m_pingInterval;
+      std::thread m_pingThread;
+      std::mutex m_pingThreadStarted;
+      std::condition_variable m_pingThreadReady;
+
+      std::mutex m_stopMutex;
+      std::condition_variable m_pingThreadStopped;
+      bool m_stop = false;
     };
 
     /**
@@ -287,41 +314,63 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
      *      is equal to the payload length minus the length of the "Extension
      *      data".
      */
-    std::vector<uint8_t> EncodeFrame(
+    static std::vector<uint8_t> EncodeFrame(
         SocketOpcode opcode,
         bool isFinal,
         std::vector<uint8_t> const& payload);
-
-    /**
-     * @brief Decode a frame received from the websocket server.
-     *
-     * @param streamReader Buffered stream reader to read the frame from.
-     * @param opcode Opcode returned by the server.
-     * @param isFinal True if this is the final message.
-     * @returns A pointer to the start of the decoded data.
-     */
-    std::vector<uint8_t> DecodeFrame(
-        BufferedStreamReader& streamReader,
-        SocketOpcode& opcode,
-        uint64_t& payloadLength,
-        bool& isFinal,
-        Azure::Core::Context const& context);
-
-    void SendPong(std::vector<uint8_t> const& pongData, Azure::Core::Context const& context);
 
     SocketState m_state{SocketState::Invalid};
 
     std::vector<uint8_t> GenerateRandomKey() { return GenerateRandomBytes(16); };
     void VerifySocketAccept(std::string const& encodedKey, std::string const& acceptHeader);
+
+    /*********
+     * Buffered Read Support. Read data from the underlying transport into a buffer.
+     */
+    uint8_t ReadTransportByte(Azure::Core::Context const& context);
+    uint16_t ReadTransportShort(Azure::Core::Context const& context);
+    uint64_t ReadTransportInt64(Azure::Core::Context const& context);
+    std::vector<uint8_t> ReadTransportBytes(size_t readLength, Azure::Core::Context const& context);
+    bool IsTransportEof() const { return m_eof; }
+    void SendPong(std::vector<uint8_t> const& pongData, Azure::Core::Context const& context);
+    void SendTransportBuffer(
+        std::vector<uint8_t> const& payload,
+        Azure::Core::Context const& context);
+    std::shared_ptr<WebSocketInternalFrame> ReceiveTransportFrame(
+        Azure::Core::Context const& context);
+
+    /**
+     * @brief Decode a frame received from the websocket server.
+     *
+     * @param opcode Opcode returned by the server.
+     * @param isFinal True if this is the final message.
+     * @param context Context for reads if necessary.
+     * @returns A pointer to the start of the decoded data.
+     */
+    std::vector<uint8_t> DecodeFrame(
+        SocketOpcode& opcode,
+        bool& isFinal,
+        Azure::Core::Context const& context);
+
     Azure::Core::Url m_remoteUrl;
     WebSocketOptions m_options;
     std::map<std::string, std::string> m_headers;
     std::string m_chosenProtocol;
     std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
-    BufferedStreamReader m_bufferedStreamReader;
+    PingThread m_pingThread;
     SocketMessageType m_currentMessageType{SocketMessageType::Unknown};
+    std::mutex m_stateMutex;
+    std::thread::id m_stateOwner;
+
+    ReceiveStatistics m_receiveStatistics{};
 
     std::mutex m_transportMutex;
-    std::mutex m_stateMutex;
+
+    std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
+    constexpr static size_t m_bufferSize = 1024;
+    uint8_t m_buffer[m_bufferSize]{};
+    size_t m_bufferPos = 0;
+    size_t m_bufferLen = 0;
+    bool m_eof = false;
   };
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail

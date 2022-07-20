@@ -7,6 +7,7 @@
 #include <chrono>
 #include <gtest/gtest.h>
 #include <list>
+#include <set>
 #include <thread>
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/websockets/curl_websockets_transport.hpp"
@@ -85,7 +86,6 @@ TEST_F(WebSocketTests, OpenAndCloseSocket)
 
   {
     WebSocket defaultSocket(Azure::Core::Url("http://localhost:8000/openclosetest"));
-    defaultSocket.AddHeader("newHeader", "headerValue");
 
     defaultSocket.Open();
 
@@ -160,47 +160,6 @@ TEST_F(WebSocketTests, SimpleEcho)
     auto textResult = response->AsBinaryFrame();
     EXPECT_EQ(binaryData, responseData);
 
-    // Close the socket gracefully.
-    testSocket.Close();
-  }
-}
-
-TEST_F(WebSocketTests, PingTest)
-{
-  {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
-
-    testSocket.Open();
-
-    testSocket.SendFrame("Test message", true);
-    // Sleep for 10s - this should trigger a ping.
-    // The websocket server is configured to ping every 5 seconds, so the 10 second sleep should
-    // force the next frame received to be a ping frame.
-    std::this_thread::sleep_for(10s);
-
-    auto response = testSocket.ReceiveFrame();
-    EXPECT_EQ(WebSocketFrameType::TextFrameReceived, response->FrameType);
-    auto textResult = response->AsTextFrame();
-    EXPECT_EQ("Test message", textResult->Text);
-
-    // Close the socket gracefully.
-    testSocket.Close();
-  }
-  {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
-
-    testSocket.Open();
-
-    // Send a "Ping" to the remote server. If the "Ping" operation is supported,
-    // wait until the corresponding "Pong" response is received.
-    if (testSocket.SendPing({1, 2, 3, 4}))
-    {
-      auto response = testSocket.ReceiveFrame();
-      EXPECT_EQ(WebSocketFrameType::PongReceived, response->FrameType);
-      auto pongResult = response->AsPongFrame();
-      std::vector<uint8_t> pongData{1, 2, 3, 4};
-      EXPECT_EQ(pongResult->Data, pongData);
-    }
     // Close the socket gracefully.
     testSocket.Close();
   }
@@ -301,10 +260,92 @@ std::string ToHexString(std::vector<uint8_t> const& data)
   return ss.str();
 }
 
+// Generator for random bytes. Used in WebSocketImplementation and tests.
+std::vector<uint8_t> GenerateRandomBytes(size_t index, size_t vectorSize)
+{
+  std::random_device randomEngine;
+
+  std::vector<uint8_t> rv(vectorSize + 4);
+  rv[0] = index & 0xff;
+  rv[1] = (index >> 8) & 0xff;
+  rv[2] = (index >> 16) & 0xff;
+  rv[3] = (index >> 24) & 0xff;
+  std::generate(std::begin(rv) + 4, std::end(rv), [&randomEngine]() mutable {
+    return static_cast<uint8_t>(randomEngine() % UINT8_MAX);
+  });
+  return rv;
+}
+
+TEST_F(WebSocketTests, PingReceiveTest)
+{
+  WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+
+  testSocket.Open();
+  if (!testSocket.HasNativeWebSocketSupport())
+  {
+
+    GTEST_LOG_(INFO) << "Sleeping for 15 seconds to collect pings.";
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime{std::chrono::system_clock::now() + 15s});
+    EXPECT_THROW(testSocket.ReceiveFrame(receiveContext), Azure::Core::OperationCancelledException);
+    auto statistics = testSocket.GetStatistics();
+    GTEST_LOG_(INFO) << "Total bytes sent: " << std::dec << statistics.BytesSent;
+    GTEST_LOG_(INFO) << "Total bytes received: " << std::dec << statistics.BytesReceived;
+    GTEST_LOG_(INFO) << "Ping Frames received: " << std::dec << statistics.PingFramesReceived;
+    GTEST_LOG_(INFO) << "Ping Frames sent: " << std::dec << statistics.PingFramesSent;
+    GTEST_LOG_(INFO) << "Pong Frames received: " << std::dec << statistics.PongFramesReceived;
+    GTEST_LOG_(INFO) << "Pong Frames sent: " << std::dec << statistics.PongFramesSent;
+    GTEST_LOG_(INFO) << "Binary frames sent: " << std::dec << statistics.BinaryFramesSent;
+    GTEST_LOG_(INFO) << "Binary frames received: " << std::dec << statistics.BinaryFramesReceived;
+    GTEST_LOG_(INFO) << "Total frames lost: " << std::dec << statistics.FramesDropped;
+    GTEST_LOG_(INFO) << "Transport Reads " << std::dec << statistics.TransportReads;
+    GTEST_LOG_(INFO) << "Transport Bytes Read " << std::dec << statistics.TransportReadBytes;
+    EXPECT_NE(0, statistics.PingFramesReceived);
+    EXPECT_NE(0, statistics.PongFramesSent);
+  }
+}
+
+TEST_F(WebSocketTests, PingSendTest)
+{
+  // Configure the socket to ping every second.
+  WebSocketOptions socketOptions;
+  socketOptions.PingInterval = std::chrono::seconds(1);
+  WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"), socketOptions);
+
+  testSocket.Open();
+  if (!testSocket.HasNativeWebSocketSupport())
+  {
+
+    GTEST_LOG_(INFO) << "Sleeping for 10 seconds to collect pings.";
+    // Note that we cannot collect incoming pings or outgoing pongs unless we are receiving
+    // data from the server.
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime{std::chrono::system_clock::now() + 10s});
+    EXPECT_THROW(testSocket.ReceiveFrame(receiveContext), Azure::Core::OperationCancelledException);
+    auto statistics = testSocket.GetStatistics();
+    GTEST_LOG_(INFO) << "Total bytes sent: " << std::dec << statistics.BytesSent;
+    GTEST_LOG_(INFO) << "Total bytes received: " << std::dec << statistics.BytesReceived;
+    GTEST_LOG_(INFO) << "Ping Frames received: " << std::dec << statistics.PingFramesReceived;
+    GTEST_LOG_(INFO) << "Ping Frames sent: " << std::dec << statistics.PingFramesSent;
+    GTEST_LOG_(INFO) << "Pong Frames received: " << std::dec << statistics.PongFramesReceived;
+    GTEST_LOG_(INFO) << "Pong Frames sent: " << std::dec << statistics.PongFramesSent;
+    GTEST_LOG_(INFO) << "Binary frames sent: " << std::dec << statistics.BinaryFramesSent;
+    GTEST_LOG_(INFO) << "Binary frames received: " << std::dec << statistics.BinaryFramesReceived;
+    GTEST_LOG_(INFO) << "Total frames lost: " << std::dec << statistics.FramesDropped;
+    GTEST_LOG_(INFO) << "Transport Reads " << std::dec << statistics.TransportReads;
+    GTEST_LOG_(INFO) << "Transport Bytes Read " << std::dec << statistics.TransportReadBytes;
+    EXPECT_NE(0, statistics.PingFramesSent);
+    EXPECT_NE(0, statistics.PongFramesReceived);
+    EXPECT_NE(0, statistics.PingFramesReceived);
+    EXPECT_NE(0, statistics.PongFramesSent);
+  }
+}
+
 TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
   constexpr size_t testDataLength = 150000;
+  constexpr size_t testDataSize = 100;
   constexpr auto testDuration = 10s;
 
   WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
@@ -318,49 +359,85 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 
   // Spin up threadCount threads and hammer the echo server for 10 seconds.
   std::vector<std::thread> threads;
-  for (size_t i = 0; i < threadCount; i += 1)
+  std::atomic_int32_t cancellationExceptions{0};
+  std::atomic_int32_t exceptions{0};
+  for (size_t threadIndex = 0; threadIndex < threadCount; threadIndex += 1)
   {
     threads.push_back(std::thread([&]() {
-      std::chrono::time_point<std::chrono::steady_clock> startTime
-          = std::chrono::steady_clock::now();
+      std::chrono::time_point<std::chrono::system_clock> startTime
+          = std::chrono::system_clock::now();
+      // Set the context to expire *after* the test is supposed to finish.
+      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
+          Azure::DateTime{startTime} + testDuration + 10s);
+      size_t iteration = 0;
       try
       {
         do
         {
-          size_t i = iterationCount++;
-          std::vector<uint8_t> sendData
-              = Azure::Core::Http::WebSockets::_detail::GenerateRandomBytes(100);
+          iteration = iterationCount++;
+          std::vector<uint8_t> sendData = GenerateRandomBytes(iteration, testDataSize);
           {
-            if (i < testData.size())
+            if (iteration < testData.size())
             {
-              EXPECT_EQ(0, testData[i].size());
-              testData[i] = sendData;
+              if (testData[iteration].size() != 0)
+              {
+                GTEST_LOG_(ERROR) << "Overwriting send frame at offset " << iteration << std::endl;
+              }
+              EXPECT_EQ(0, testData[iteration].size());
+              testData[iteration] = sendData;
+            }
+            else
+            {
+              GTEST_LOG_(ERROR) << "Dropping test result at offset " << iteration << std::endl;
             }
           }
 
-          testSocket.SendFrame(sendData, true);
-
-          auto response = testSocket.ReceiveFrame();
+          testSocket.SendFrame(sendData, true /*, context*/);
+          auto response = testSocket.ReceiveFrame(context);
           EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
           auto binaryResult = response->AsBinaryFrame();
 
           // Make sure we get back the data we sent in the echo request.
+          if (binaryResult->Data.size() == 0)
+          {
+            GTEST_LOG_(ERROR) << "Received empty frame at offset " << iteration << std::endl;
+          }
           EXPECT_EQ(sendData.size(), binaryResult->Data.size());
           {
             // There is no ordering expectation on the results, so we just remember the data
             // as it comes in. We'll make sure we received everything later on.
-            if (i < receivedData.size())
+            if (iteration < receivedData.size())
             {
-              EXPECT_EQ(0, receivedData[i].size());
-              receivedData[i] = binaryResult->Data;
+              if (receivedData[iteration].size() != 0)
+              {
+                GTEST_LOG_(ERROR) << "Overwriting receive frame at offset " << iteration
+                                  << std::endl;
+              }
+
+              EXPECT_EQ(0, receivedData[iteration].size());
+              receivedData[iteration] = binaryResult->Data;
+            }
+            else
+            {
+              GTEST_LOG_(ERROR) << "Dropping test result at offset " << iteration << std::endl;
             }
           }
-        } while (std::chrono::steady_clock::now() - startTime < testDuration);
+          if (receivedData[iteration].size() == 0)
+          {
+            GTEST_LOG_(ERROR) << "Received empty frame at offset " << iteration << std::endl;
+          }
+        } while (std::chrono::system_clock::now() - startTime < testDuration);
+      }
+      catch (Azure::Core::OperationCancelledException& ex)
+      {
+        GTEST_LOG_(ERROR) << "Cancelled Exception: " << ex.what() << " at index " << iteration
+                          << " Current Thread: " << std::this_thread::get_id() << std::endl;
+        cancellationExceptions++;
       }
       catch (std::exception const& ex)
       {
         GTEST_LOG_(ERROR) << "Exception: " << ex.what() << std::endl;
-        EXPECT_TRUE(false);
+        exceptions++;
       }
     }));
   }
@@ -377,8 +454,25 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   GTEST_LOG_(INFO) << "Estimated " << std::dec << testData.size() << " iterations (0x" << std::hex
                    << testData.size() << ")" << std::endl;
   EXPECT_GE(testDataLength, iterationCount.load());
+
+  auto statistics = testSocket.GetStatistics();
+  GTEST_LOG_(INFO) << "Total bytes sent: " << std::dec << statistics.BytesSent;
+  GTEST_LOG_(INFO) << "Total bytes received: " << std::dec << statistics.BytesReceived;
+  GTEST_LOG_(INFO) << "Ping Frames received: " << std::dec << statistics.PingFramesReceived;
+  GTEST_LOG_(INFO) << "Ping Frames sent: " << std::dec << statistics.PingFramesSent;
+  GTEST_LOG_(INFO) << "Pong Frames received: " << std::dec << statistics.PongFramesReceived;
+  GTEST_LOG_(INFO) << "Pong Frames sent: " << std::dec << statistics.PongFramesSent;
+  GTEST_LOG_(INFO) << "Binary frames sent: " << std::dec << statistics.BinaryFramesSent;
+  GTEST_LOG_(INFO) << "Binary frames received: " << std::dec << statistics.BinaryFramesReceived;
+  GTEST_LOG_(INFO) << "Total frames lost: " << std::dec << statistics.FramesDropped;
+  GTEST_LOG_(INFO) << "Transport Reads " << std::dec << statistics.TransportReads;
+  GTEST_LOG_(INFO) << "Transport Bytes Read " << std::dec << statistics.TransportReadBytes;
+
   // Close the socket gracefully.
   testSocket.Close();
+
+  EXPECT_EQ(iterationCount.load(), statistics.BinaryFramesSent);
+  EXPECT_EQ(iterationCount.load(), statistics.BinaryFramesReceived);
 
   // Resize the test data to the number of actual iterations.
   testData.resize(iterationCount.load());
@@ -387,8 +481,8 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   // If we've processed every iteration, let's make sure that we received everything we sent.
   // If we dropped some results, then we can't check to ensure that we have received everything
   // because we can't account for everything sent.
-  std::set<std::string> testDataStrings;
-  std::set<std::string> receivedDataStrings;
+  std::multiset<std::string> testDataStrings;
+  std::multiset<std::string> receivedDataStrings;
   for (auto const& data : testData)
   {
     testDataStrings.emplace(ToHexString(data));
@@ -398,14 +492,32 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
     receivedDataStrings.emplace(ToHexString(data));
   }
 
+  //  EXPECT_EQ(testDataStrings, receivedDataStrings);
   for (auto const& data : testDataStrings)
   {
+    if (receivedDataStrings.count(data) != testDataStrings.count(data))
+    {
+      GTEST_LOG_(INFO) << "Missing data. TestDataCount: " << testDataStrings.count(data)
+                       << " ReceivedDataCount: " << receivedDataStrings.count(data)
+                       << " Missing Data: " << data << std::endl;
+    }
     EXPECT_NE(receivedDataStrings.end(), receivedDataStrings.find(data));
   }
   for (auto const& data : receivedDataStrings)
   {
+    if (testDataStrings.count(data) != receivedDataStrings.count(data))
+    {
+      GTEST_LOG_(INFO) << "Extra data. TestDataCount: " << testDataStrings.count(data)
+                       << " ReceivedDataCount: " << receivedDataStrings.count(data)
+                       << " Missing Data: " << data << std::endl;
+    }
+
     EXPECT_NE(testDataStrings.end(), testDataStrings.find(data));
   }
+
+  // We shouldn't have seen any exceptions during the run.
+  EXPECT_EQ(0, exceptions.load());
+  EXPECT_EQ(0, cancellationExceptions.load());
 }
 
 // Does not work because curl rejects the wss: scheme.

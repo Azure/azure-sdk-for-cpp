@@ -31,7 +31,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     // Convert the request handle into a WebSocket handle for us to use later.
     m_socketHandle = Azure::Core::Http::_detail::unique_HINTERNET(
         WinHttpWebSocketCompleteUpgrade(requestHandle.get(), 0),
-        Azure::Core::Http::_detail::HINTERNET_deleter());
+        Azure::Core::Http::_detail::HINTERNET_deleter{});
     if (!m_socketHandle)
     {
       GetErrorAndThrow("Error Upgrading HttpRequest handle to WebSocket handle.");
@@ -109,7 +109,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     uint16_t closeStatus = 0;
     char closeReason[WINHTTP_WEB_SOCKET_MAX_CLOSE_REASON_LENGTH]{};
     DWORD closeReasonLength;
-    std::lock_guard<std::mutex> lock(m_receiveMutex);
 
     auto err = WinHttpWebSocketQueryCloseStatus(
         m_socketHandle.get(),

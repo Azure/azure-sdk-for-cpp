@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * it is the responsibility of the client of the WebSocketTransport to format WebSocket protocol
      * elements.
      */
-    virtual bool NativeWebsocketSupport() override { return false; }
+    virtual bool HasNativeWebsocketSupport() override { return false; }
 
     /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.

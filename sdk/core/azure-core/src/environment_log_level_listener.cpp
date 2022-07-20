@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <thread>
 
 using Azure::Core::_internal::Environment;
 using namespace Azure::Core::Diagnostics;
@@ -114,7 +115,8 @@ EnvironmentLogLevelListener::GetLogListener()
                   << Azure::DateTime(std::chrono::system_clock::now())
                          .ToString(
                              DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
+                  << " T: " << std::this_thread::get_id() << "] " << LogLevelToConsoleString(level)
+                  << " : " << message << std::endl;
       };
 
   return consoleLogger;

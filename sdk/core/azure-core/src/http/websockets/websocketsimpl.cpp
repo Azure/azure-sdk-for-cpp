@@ -17,19 +17,33 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include <algorithm>
 #include <array>
+#include <iomanip>
 #include <mutex>
 #include <random>
 #include <shared_mutex>
+#include <sstream>
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
   using namespace Azure::Core::Diagnostics::_internal;
   using namespace Azure::Core::Diagnostics;
   using namespace std::chrono_literals;
 
+  namespace {
+    std::string HexEncode(std::vector<uint8_t> const& data, size_t length)
+    {
+      std::stringstream ss;
+      for (size_t i = 0; i < std::min(data.size(), length); i++)
+      {
+        ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(data[i]);
+      }
+      return ss.str();
+    }
+  } // namespace
+
   WebSocketImplementation::WebSocketImplementation(
       Azure::Core::Url const& remoteUrl,
       WebSocketOptions const& options)
-      : m_remoteUrl(remoteUrl), m_options(options)
+      : m_remoteUrl(remoteUrl), m_options(options), m_pingThread(this, m_options.PingInterval)
   {
   }
 
@@ -56,13 +70,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     m_transport = std::static_pointer_cast<WebSocketTransport>(curlWebSockets);
     m_options.Transport.Transport = std::static_pointer_cast<HttpTransport>(curlWebSockets);
-    m_bufferedStreamReader.SetTransport(m_transport);
 #endif
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies{};
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies{};
-    // If the caller has told us a service name, add the telemetry policy to the pipeline to add a
-    // user agent header to the request.
+    // If the caller has told us a service name, add the telemetry policy to the pipeline to add
+    // a user agent header to the request.
     if (!m_options.ServiceName.empty())
     {
       perCallPolicies.push_back(
@@ -79,7 +92,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     // natively.
     auto randomKey = GenerateRandomKey();
     auto encodedKey = Azure::Core::Convert::Base64Encode(randomKey);
-    if (!m_transport->NativeWebsocketSupport())
+    if (!m_transport->HasNativeWebsocketSupport())
     {
       // If the transport doesn't support WebSockets natively, set the standardized WebSocket
       // upgrade headers.
@@ -122,7 +135,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     // Prove that the server received this socket request.
     auto& responseHeaders = response->GetHeaders();
-    if (!m_transport->NativeWebsocketSupport())
+    if (!m_transport->HasNativeWebsocketSupport())
     {
       auto socketAccept(responseHeaders.find("Sec-WebSocket-Accept"));
       if (socketAccept == responseHeaders.end())
@@ -134,8 +147,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       {
         VerifySocketAccept(encodedKey, socketAccept->second);
       }
-      auto bodyStream = response->ExtractBodyStream();
-      m_bufferedStreamReader.SetInitialStream(bodyStream);
+      m_initialBodyStream = response->ExtractBodyStream();
+      m_pingThread.Start(m_transport);
     }
 
     // Remember the protocol that the client chose.
@@ -147,10 +160,21 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     m_state = SocketState::Open;
   }
+  bool WebSocketImplementation::HasNativeWebSocketSupport()
+  {
+    std::lock_guard<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
+    if (m_state != SocketState::Open)
+    {
+      throw std::runtime_error("Socket is not open.");
+    }
+    return m_transport->HasNativeWebsocketSupport();
+  }
 
   std::string const& WebSocketImplementation::GetChosenProtocol()
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
@@ -161,6 +185,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   void WebSocketImplementation::AddHeader(std::string const& header, std::string const& headerValue)
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
     if (m_state != SocketState::Closed && m_state != SocketState::Invalid)
     {
       throw std::runtime_error("AddHeader can only be called on closed sockets.");
@@ -168,9 +193,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_headers.emplace(std::make_pair(header, headerValue));
   }
 
-  void WebSocketImplementation::Close(Azure::Core::Context const& context)
+  void WebSocketImplementation::Close(
+      uint16_t closeStatus,
+      std::string const& closeReason,
+      Azure::Core::Context const& context)
   {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
+    std::unique_lock<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
 
     // If we're closing an already closed socket, we're done.
     if (m_state == SocketState::Closed)
@@ -185,22 +214,23 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
-      m_transport->CloseSocket(
-          static_cast<uint16_t>(WebSocketErrorCode::EndpointDisappearing), "", context);
+      m_transport->CloseSocket(closeStatus, closeReason.c_str(), context);
     }
     else
 #endif
     {
       // Send a going away message to the server.
-      uint16_t closeReason = static_cast<uint16_t>(WebSocketErrorCode::EndpointDisappearing);
       std::vector<uint8_t> closePayload;
-      closePayload.push_back(closeReason >> 8);
-      closePayload.push_back(closeReason & 0xff);
+      closePayload.push_back(closeStatus >> 8);
+      closePayload.push_back(closeStatus & 0xff);
+      closePayload.insert(closePayload.end(), closeReason.begin(), closeReason.end());
       std::vector<uint8_t> closeFrame = EncodeFrame(SocketOpcode::Close, true, closePayload);
-      m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
+      SendTransportBuffer(closeFrame, context);
 
-      // To ensure that we process the responses in a "timely" fashion, limit the close reception to
-      // 20 seconds if we don't already have a timeout.
+      // Unlock the state mutex before waiting for the close response to be received.
+      lock.unlock();
+      // To ensure that we process the responses in a "timely" fashion, limit the close
+      // reception to 20 seconds if we don't already have a timeout.
       Azure::Core::Context closeContext = context;
       auto cancelTimepoint = closeContext.GetDeadline();
       if (cancelTimepoint == Azure::DateTime::max())
@@ -209,61 +239,25 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       }
       // Drain the incoming series of frames from the server.
       // Note that there might be in-flight frames that were sent from the other end of the
-      // WebSocket that we don't care about any more (since we're closing the WebSocket). So drain
-      // those frames.
-      auto closeResponse = ReceiveFrame(closeContext, true);
+      // WebSocket that we don't care about any more (since we're closing the WebSocket). So
+      // drain those frames.
+      auto closeResponse = ReceiveFrame(context);
       while (closeResponse->FrameType != WebSocketFrameType::PeerClosedReceived)
       {
-        auto textResult = closeResponse->AsTextFrame();
+        m_receiveStatistics.FramesDroppedByClose++;
         Log::Write(
             Logger::Level::Warning,
-            "Received unexpected frame during close. Frame type: "
+            "Received unexpected frame during close. Opcode: "
                 + std::to_string(static_cast<uint8_t>(closeResponse->FrameType)));
-        closeResponse = ReceiveFrame(closeContext, true);
+        closeResponse = ReceiveFrame(closeContext);
       }
+
+      // Re-acquire the state lock once we've received the close lock.
+      lock.lock();
     }
     // Close the socket - after this point, the m_transport is invalid.
+    m_pingThread.Shutdown();
     m_transport->Close();
-    m_state = SocketState::Closed;
-  }
-
-  void WebSocketImplementation::Close(
-      uint16_t closeStatus,
-      std::string const& closeReason,
-      Azure::Core::Context const& context)
-  {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
-    if (m_state != SocketState::Open)
-    {
-      throw std::runtime_error("Socket is not open.");
-    }
-
-    m_state = SocketState::Closing;
-#if SUPPORT_NATIVE_TRANSPORT
-    if (m_transport->NativeWebsocketSupport())
-    {
-      m_transport->CloseSocket(closeStatus, closeReason, context);
-    }
-    else
-#endif
-    {
-      std::vector<uint8_t> closePayload;
-      closePayload.push_back(closeStatus >> 8);
-      closePayload.push_back(closeStatus & 0xff);
-      closePayload.insert(closePayload.end(), closeReason.begin(), closeReason.end());
-
-      std::vector<uint8_t> closeFrame = EncodeFrame(SocketOpcode::Close, true, closePayload);
-      m_transport->SendBuffer(closeFrame.data(), closeFrame.size(), context);
-
-      auto closeResponse = ReceiveFrame(context, true);
-      if (closeResponse->FrameType != WebSocketFrameType::PeerClosedReceived)
-      {
-        throw std::runtime_error("Unexpected result type received during close().");
-      }
-    }
-    // Close the socket - after this point, the m_transport is invalid.
-    m_transport->Close();
-
     m_state = SocketState::Closed;
   }
 
@@ -273,11 +267,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       Azure::Core::Context const& context)
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
     }
     std::vector<uint8_t> utf8text(textFrame.begin(), textFrame.end());
+    m_receiveStatistics.TextFramesSent++;
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
@@ -291,8 +287,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #endif
     {
       std::vector<uint8_t> sendFrame = EncodeFrame(SocketOpcode::TextFrame, isFinalFrame, utf8text);
-
-      m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
+      SendTransportBuffer(sendFrame, context);
     }
   }
 
@@ -302,11 +297,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       Azure::Core::Context const& context)
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
 
     if (m_state != SocketState::Open)
     {
       throw std::runtime_error("Socket is not open.");
     }
+    m_receiveStatistics.BinaryFramesSent++;
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
@@ -319,51 +316,148 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     else
 #endif
     {
+      //      Log::Write(Logger::Level::Verbose, "Send Binary Frame " + HexEncode(binaryFrame, 16));
       std::vector<uint8_t> sendFrame
           = EncodeFrame(SocketOpcode::BinaryFrame, isFinalFrame, binaryFrame);
 
-      std::unique_lock<std::mutex> transportLock(m_transportMutex);
-      m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
+      SendTransportBuffer(sendFrame, context);
     }
   }
 
   std::shared_ptr<WebSocketFrame> WebSocketImplementation::ReceiveFrame(
-      Azure::Core::Context const& context,
-      bool stateIsLocked)
+      Azure::Core::Context const& context)
   {
-    std::unique_lock<std::mutex> lock(m_stateMutex, std::defer_lock);
-
-    if (!stateIsLocked)
-    {
-      lock.lock();
-      stateIsLocked = true;
-    }
+    std::unique_lock<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
 
     if (m_state != SocketState::Open && m_state != SocketState::Closing)
     {
       throw std::runtime_error("Socket is not open.");
     }
+
+    // Unlock the state lock to allow other threads to run. If we don't, we might end up in in a
+    // situation where the server won't respond to the this client because all the client threads
+    // are blocked on the state lock.
+    lock.unlock();
+
+    std::shared_ptr<WebSocketInternalFrame> frame;
+    // Loop until we receive an returnable incoming frame.
+    // If the incoming frame is returnable, we return the value from the frame.
+    while (true)
+    {
+      frame = ReceiveTransportFrame(context);
+      switch (frame->Opcode)
+      {
+          // When we receive a "ping" frame, we want to send a Pong frame back to the server.
+        case SocketOpcode::Ping:
+          Log::Write(
+              Logger::Level::Verbose, "Received Ping frame: " + HexEncode(frame->Payload, 16));
+          SendPong(frame->Payload, context);
+          break;
+          // We want to ignore all incoming "Pong" frames.
+        case SocketOpcode::Pong:
+          Log::Write(
+              Logger::Level::Verbose, "Received Pong frame: " + HexEncode(frame->Payload, 16));
+          break;
+
+        case SocketOpcode::BinaryFrame:
+          m_currentMessageType = SocketMessageType::Binary;
+          return std::make_shared<WebSocketBinaryFrame>(
+              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+
+        case SocketOpcode::TextFrame:
+          m_currentMessageType = SocketMessageType::Text;
+          return std::make_shared<WebSocketTextFrame>(
+              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+
+        case SocketOpcode::Close: {
+          if (frame->Payload.size() < 2)
+          {
+            throw std::runtime_error("Close response buffer is too short.");
+          }
+          uint16_t errorCode = 0;
+          errorCode |= (frame->Payload[0] << 8) & 0xff00;
+          errorCode |= (frame->Payload[1] & 0x00ff);
+
+          // We received a close frame, mark the socket as closed. Make sure we
+          // reacquire the state lock before setting the state to closed.
+          lock.lock();
+          m_state = SocketState::Closed;
+
+          return std::make_shared<WebSocketPeerCloseFrame>(
+              errorCode, std::string(frame->Payload.begin() + 2, frame->Payload.end()));
+        }
+
+          // Continuation frames need to be treated somewhat specially.
+          // We depend on the fact that the protocol requires that a Continuation frame
+          // only be sent if it is part of a multi-frame message whose previous frame was a Text or
+          // Binary frame.
+        case SocketOpcode::Continuation:
+          if (m_currentMessageType == SocketMessageType::Text)
+          {
+            if (frame->IsFinalFrame)
+            {
+              m_currentMessageType = SocketMessageType::Unknown;
+            }
+            return std::make_shared<WebSocketTextFrame>(
+                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+          }
+          else if (m_currentMessageType == SocketMessageType::Binary)
+          {
+            if (frame->IsFinalFrame)
+            {
+              m_currentMessageType = SocketMessageType::Unknown;
+            }
+            return std::make_shared<WebSocketBinaryFrame>(
+                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+          }
+          else
+          {
+            m_receiveStatistics.FramesDroppedByProtocolError++;
+            throw std::runtime_error("Unknown message type and received continuation opcode");
+          }
+        default:
+          throw std::runtime_error("Unknown frame type received.");
+      }
+      context.ThrowIfCancelled();
+    }
+  }
+
+  std::shared_ptr<WebSocketImplementation::WebSocketInternalFrame>
+  WebSocketImplementation::ReceiveTransportFrame(Azure::Core::Context const& context)
+  {
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->NativeWebsocketSupport())
     {
       auto payload = m_transport->ReceiveFrame(context);
+      m_receiveStatistics.FramesReceived++;
       switch (payload.first)
       {
         case WebSocketTransport::WebSocketFrameType::FrameTypeBinary:
-          return std::make_shared<WebSocketBinaryFrame>(
-              true, payload.second.data(), payload.second.size());
+          m_receiveStatistics.BinaryFramesReceived++;
+          return std::make_shared<WebSocketInternalFrame>(
+              SocketOpcode::BinaryFrame, true, payload.second);
         case WebSocketTransport::WebSocketFrameType::FrameTypeBinaryFragment:
-          return std::make_shared<WebSocketBinaryFrame>(
-              false, payload.second.data(), payload.second.size());
+          m_receiveStatistics.BinaryFramesReceived++;
+          return std::make_shared<WebSocketInternalFrame>(
+              SocketOpcode::BinaryFrame, false, payload.second);
         case WebSocketTransport::WebSocketFrameType::FrameTypeText:
-          return std::make_shared<WebSocketTextFrame>(
-              true, payload.second.data(), payload.second.size());
+          m_receiveStatistics.TextFramesReceived++;
+          return std::make_shared<WebSocketInternalFrame>(
+              SocketOpcode::TextFrame, true, payload.second);
         case WebSocketTransport::WebSocketFrameType::FrameTypeTextFragment:
-          return std::make_shared<WebSocketTextFrame>(
-              false, payload.second.data(), payload.second.size());
+          m_receiveStatistics.TextFramesReceived++;
+          return std::make_shared<WebSocketInternalFrame>(
+              SocketOpcode::TextFrame, false, payload.second);
         case WebSocketTransport::WebSocketFrameType::FrameTypeClosed: {
+          m_receiveStatistics.CloseFramesReceived++;
           auto closeResult = m_transport->GetCloseSocketInformation(context);
-          return std::make_shared<WebSocketPeerCloseFrame>(closeResult.first, closeResult.second);
+          std::vector<uint8_t> closePayload;
+          closePayload.push_back(closeResult.first >> 8);
+          closePayload.push_back(closeResult.first & 0xff);
+          closePayload.insert(
+              closePayload.end(), closeResult.second.begin(), closeResult.second.end());
+          return std::make_shared<WebSocketInternalFrame>(SocketOpcode::Close, true, closePayload);
         }
         default:
           throw std::runtime_error("Unexpected frame type received.");
@@ -375,108 +469,72 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       SocketOpcode opcode;
 
       bool isFinal = false;
-      uint64_t payloadLength;
-      std::vector<uint8_t> frameData
-          = DecodeFrame(m_bufferedStreamReader, opcode, payloadLength, isFinal, context);
+      std::vector<uint8_t> frameData = DecodeFrame(opcode, isFinal, context);
+      // At this point, frameData contains the actual payload from the service.
+      auto frame = std::make_shared<WebSocketInternalFrame>(opcode, isFinal, frameData);
 
-      // At this point, readBuffer contains the actual payload from the service.
-      switch (opcode)
+      // Handle statistics for the incoming frame.
+      m_receiveStatistics.FramesReceived++;
+      switch (frame->Opcode)
       {
-        case SocketOpcode::BinaryFrame:
-          m_currentMessageType = SocketMessageType::Binary;
-          return std::make_shared<WebSocketBinaryFrame>(
-              isFinal, frameData.data(), frameData.size());
+        case SocketOpcode::Ping: {
+          m_receiveStatistics.PingFramesReceived++;
+          break;
+        }
+        case SocketOpcode::Pong: {
+          m_receiveStatistics.PongFramesReceived++;
+          break;
+        }
         case SocketOpcode::TextFrame: {
-          m_currentMessageType = SocketMessageType::Text;
-          return std::make_shared<WebSocketTextFrame>(isFinal, frameData.data(), frameData.size());
+          m_receiveStatistics.TextFramesReceived++;
+          break;
+        }
+        case SocketOpcode::BinaryFrame: {
+          m_receiveStatistics.BinaryFramesReceived++;
+          break;
         }
         case SocketOpcode::Close: {
-
-          if (frameData.size() < 2)
-          {
-            throw std::runtime_error("Close response buffer is too short.");
-          }
-          uint16_t errorCode = 0;
-          errorCode |= (frameData[0] << 8) & 0xff00;
-          errorCode |= (frameData[1] & 0x00ff);
-
-          // Update our state to be closed once we've received a closed frame.
-          m_state = SocketState::Closed;
-          return std::make_shared<WebSocketPeerCloseFrame>(
-              errorCode, std::string(frameData.begin() + 2, frameData.end()));
-        }
-        case SocketOpcode::Ping:
-          // Respond to the ping and then recurse to process the next frame.
-          SendPong(frameData, context);
-          return ReceiveFrame(context, stateIsLocked);
-        case SocketOpcode::Pong:
-          return std::make_shared<WebSocketPongFrame>(frameData.data(), frameData.size());
-
-        case SocketOpcode::Continuation:
-          if (m_currentMessageType == SocketMessageType::Text)
-          {
-            if (isFinal)
-            {
-              m_currentMessageType = SocketMessageType::Unknown;
-            }
-            return std::make_shared<WebSocketTextFrame>(
-                isFinal, frameData.data(), frameData.size());
-          }
-          else if (m_currentMessageType == SocketMessageType::Binary)
-          {
-            if (isFinal)
-            {
-              m_currentMessageType = SocketMessageType::Unknown;
-            }
-            return std::make_shared<WebSocketBinaryFrame>(
-                isFinal, frameData.data(), frameData.size());
-          }
-          else
-          {
-            throw std::runtime_error("Unknown message type and received continuation opcode");
-          }
+          m_receiveStatistics.CloseFramesReceived++;
           break;
-        default:
-          throw std::runtime_error("Unknown opcode received.");
+        }
+        case SocketOpcode::Continuation: {
+          m_receiveStatistics.ContinuationFramesReceived++;
+          break;
+        }
+        default: {
+          m_receiveStatistics.UnknownFramesReceived++;
+          break;
+        }
       }
+      return frame;
     }
-#if !defined(_MSC_VER)
-    // gcc 5 doesn't seem to detect that this is dead code, so we'll just leave it here.
-    return nullptr;
-#endif
   }
 
-  bool WebSocketImplementation::SendPing(
-      std::vector<uint8_t> const& pingData,
-      Azure::Core::Context const& context)
+  WebSocketStatistics WebSocketImplementation::GetStatistics() const
   {
-    {
-      std::unique_lock<std::mutex> lock(m_stateMutex);
+    WebSocketStatistics returnValue{};
+    returnValue.FramesSent = m_receiveStatistics.FramesSent.load();
+    returnValue.FramesReceived = m_receiveStatistics.FramesReceived.load();
+    returnValue.BinaryFramesReceived = m_receiveStatistics.BinaryFramesReceived.load();
+    returnValue.TextFramesReceived = m_receiveStatistics.TextFramesReceived.load();
+    returnValue.BinaryFramesSent = m_receiveStatistics.BinaryFramesSent.load();
+    returnValue.TextFramesSent = m_receiveStatistics.TextFramesSent.load();
+    returnValue.PingFramesReceived = m_receiveStatistics.PingFramesReceived.load();
+    returnValue.PongFramesReceived = m_receiveStatistics.PongFramesReceived.load();
+    returnValue.PingFramesSent = m_receiveStatistics.PingFramesSent.load();
+    returnValue.PongFramesSent = m_receiveStatistics.PongFramesSent.load();
 
-      if (m_state != SocketState::Open)
-      {
-        throw std::runtime_error("Socket is not open.");
-      }
-    }
-    if (m_transport->NativeWebsocketSupport())
-    {
-      return false;
-    }
-
-    std::vector<uint8_t> pingFrame = EncodeFrame(SocketOpcode::Ping, true, pingData);
-
-    std::unique_lock<std::mutex> transportLock(m_transportMutex);
-    m_transport->SendBuffer(pingFrame.data(), pingFrame.size(), context);
-    return true;
-  }
-  void WebSocketImplementation::SendPong(
-      std::vector<uint8_t> const& pongData,
-      Azure::Core::Context const& context)
-  {
-    std::vector<uint8_t> pongFrame = EncodeFrame(SocketOpcode::Pong, true, pongData);
-
-    std::unique_lock<std::mutex> transportLock(m_transportMutex);
-    m_transport->SendBuffer(pongFrame.data(), pongFrame.size(), context);
+    returnValue.BytesSent = m_receiveStatistics.BytesSent.load();
+    returnValue.BytesReceived = m_receiveStatistics.BytesReceived.load();
+    returnValue.FramesDropped = m_receiveStatistics.FramesDropped.load();
+    returnValue.FramesDroppedByClose = m_receiveStatistics.FramesDroppedByClose.load();
+    returnValue.FramesDroppedByPayloadSizeLimit
+        = m_receiveStatistics.FramesDroppedByPayloadSizeLimit.load();
+    returnValue.FramesDroppedByProtocolError
+        = m_receiveStatistics.FramesDroppedByProtocolError.load();
+    returnValue.TransportReadBytes = m_receiveStatistics.TransportReadBytes.load();
+    returnValue.TransportReads = m_receiveStatistics.TransportReads.load();
+    return returnValue;
   }
 
   std::vector<uint8_t> WebSocketImplementation::EncodeFrame(
@@ -548,50 +606,133 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     return encodedFrame;
   }
-
   std::vector<uint8_t> WebSocketImplementation::DecodeFrame(
-      WebSocketImplementation::BufferedStreamReader& streamReader,
       SocketOpcode& opcode,
-      uint64_t& payloadLength,
       bool& isFinal,
       Azure::Core::Context const& context)
   {
+    // Ensure single threaded access to receive this frame.
     std::unique_lock<std::mutex> lock(m_transportMutex);
-    if (streamReader.IsEof())
+    if (IsTransportEof())
     {
       throw std::runtime_error("Frame buffer is too small.");
     }
-    uint8_t payloadByte = streamReader.ReadByte(context);
+    uint8_t payloadByte = ReadTransportByte(context);
     opcode = static_cast<SocketOpcode>(payloadByte & 0x7f);
     isFinal = (payloadByte & 0x80) != 0;
-    payloadByte = streamReader.ReadByte(context);
+    payloadByte = ReadTransportByte(context);
     if (payloadByte & 0x80)
     {
       throw std::runtime_error("Server sent a frame with a reserved bit set.");
     }
-    payloadLength = payloadByte & 0x7f;
+    int64_t payloadLength = payloadByte & 0x7f;
     if (payloadLength <= 125)
     {
       payloadByte += 1;
     }
     else if (payloadLength == 126)
     {
-      payloadLength = streamReader.ReadShort(context);
+      payloadLength = ReadTransportShort(context);
     }
     else if (payloadLength == 127)
     {
-      payloadLength = streamReader.ReadInt64(context);
+      payloadLength = ReadTransportInt64(context);
     }
     else
     {
       throw std::logic_error("Unexpected payload length.");
     }
 
-    return streamReader.ReadBytes(static_cast<size_t>(payloadLength), context);
+    return ReadTransportBytes(static_cast<size_t>(payloadLength), context);
   }
 
-  // Verify the Sec-WebSocket-Accept header as defined in RFC 6455 Section 1.3, which defines the
-  // opening handshake used for establishing the WebSocket connection.
+  uint8_t WebSocketImplementation::ReadTransportByte(Azure::Core::Context const& context)
+  {
+    if (m_bufferPos >= m_bufferLen)
+    {
+      // Start by reading data from our initial body stream.
+      m_bufferLen = m_initialBodyStream->ReadToCount(m_buffer, m_bufferSize, context);
+      if (m_bufferLen == 0)
+      {
+        // If we run out of the initial stream, we need to read from the transport.
+        m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
+        m_receiveStatistics.TransportReads++;
+        m_receiveStatistics.TransportReadBytes += static_cast<uint32_t>(m_bufferLen);
+        //        Log::Write(
+        //            Logger::Level::Verbose,
+        //            "Read #" + std::to_string(m_receiveStatistics.TransportReads.load())
+        //                + "from transport: " + std::to_string(m_bufferLen));
+      }
+      else
+      {
+        Azure::Core::Diagnostics::_internal::Log::Write(
+            Azure::Core::Diagnostics::Logger::Level::Informational,
+            "Read data from initial stream");
+      }
+      m_bufferPos = 0;
+      if (m_bufferLen == 0)
+      {
+        m_eof = true;
+        return 0;
+      }
+    }
+
+    m_receiveStatistics.BytesReceived++;
+    return m_buffer[m_bufferPos++];
+  }
+  uint16_t WebSocketImplementation::ReadTransportShort(Azure::Core::Context const& context)
+  {
+    uint16_t result = ReadTransportByte(context);
+    result <<= 8;
+    result |= ReadTransportByte(context);
+    return result;
+  }
+  uint64_t WebSocketImplementation::ReadTransportInt64(Azure::Core::Context const& context)
+  {
+    uint64_t result = 0;
+
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 56 & 0xff00000000000000);
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 48 & 0x00ff000000000000);
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 40 & 0x0000ff0000000000);
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 32 & 0x000000ff00000000);
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 24 & 0x00000000ff000000);
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 16 & 0x0000000000ff0000);
+    result |= (static_cast<uint64_t>(ReadTransportByte(context)) << 8 & 0x000000000000ff00);
+    result |= static_cast<uint64_t>(ReadTransportByte(context));
+    return result;
+  }
+  std::vector<uint8_t> WebSocketImplementation::ReadTransportBytes(
+      size_t readLength,
+      Azure::Core::Context const& context)
+  {
+    std::vector<uint8_t> result;
+    size_t index = 0;
+    while (index < readLength)
+    {
+      uint8_t byte = ReadTransportByte(context);
+      result.push_back(byte);
+      index += 1;
+    }
+    return result;
+  }
+
+  void WebSocketImplementation::SendTransportBuffer(
+      std::vector<uint8_t> const& sendFrame,
+      Azure::Core::Context const& context)
+  {
+    std::unique_lock<std::mutex> transportLock(m_transportMutex);
+    m_receiveStatistics.BytesSent += static_cast<uint32_t>(sendFrame.size());
+    m_receiveStatistics.FramesSent += 1;
+    //    Log::Write(
+    //        Logger::Level::Verbose,
+    //        "Send #" + std::to_string(m_receiveStatistics.FramesSent.load()) + "to
+    //        transport:"
+    //            + std::to_string(sendFrame.size()) + "Data: " + HexEncode(sendFrame, 0x10));
+    m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
+  }
+
+  // Verify the Sec-WebSocket-Accept header as defined in RFC 6455 Section 1.3, which defines
+  // the opening handshake used for establishing the WebSocket connection.
   std::string acceptHeaderGuid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
   void WebSocketImplementation::VerifySocketAccept(
       std::string const& encodedKey,
@@ -610,6 +751,89 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       throw std::runtime_error(
           "Hash returned by WebSocket server does not match expected hash. Aborting");
     }
+  }
+
+  WebSocketImplementation::PingThread::PingThread(
+      WebSocketImplementation* socketImplementation,
+      std::chrono::duration<int64_t> pingInterval)
+      : m_webSocketImplementation(socketImplementation), m_pingInterval(pingInterval)
+  {
+  }
+  void WebSocketImplementation::PingThread::Start(std::shared_ptr<WebSocketTransport> transport)
+  {
+    m_stop = false;
+    // Spin up a thread to receive data from the transport.
+    if (!transport->HasNativeWebsocketSupport())
+    {
+      std::unique_lock<std::mutex> lock(m_pingThreadStarted);
+      m_pingThread = std::thread{&PingThread::PingThreadLoop, this};
+      m_pingThreadReady.wait(lock);
+    }
+  }
+
+  WebSocketImplementation::PingThread::~PingThread()
+  {
+    // Ensure that the receive thread is stopped.
+    Shutdown();
+  }
+  void WebSocketImplementation::PingThread::Shutdown()
+  {
+    if (m_pingThread.joinable())
+    {
+      std::unique_lock<std::mutex> lock(m_stopMutex);
+      m_stop = true;
+      lock.unlock();
+      m_pingThreadStopped.notify_all();
+
+      m_pingThread.join();
+    }
+  }
+
+  void WebSocketImplementation::PingThread::PingThreadLoop()
+  {
+    Log::Write(Logger::Level::Verbose, "Start Ping Thread Loop.");
+    {
+      std::unique_lock<std::mutex> lock(m_pingThreadStarted);
+      m_pingThreadReady.notify_all();
+    }
+    while (true)
+    {
+      std::unique_lock<std::mutex> lock(m_stopMutex);
+      if (this->m_pingThreadStopped.wait_for(lock, m_pingInterval) == std::cv_status::timeout)
+      {
+        Log::Write(Logger::Level::Verbose, "Send Ping to peer.");
+
+        // The receiveContext timed out, this means we timed out our "ping" timeout.
+        // Send a "Ping" request to the remote node.
+        auto pingData = GenerateRandomBytes(4);
+        SendPing(pingData, Azure::Core::Context{});
+      }
+      if (m_stop)
+      {
+        Log::Write(Logger::Level::Verbose, "Exiting ping thread");
+        return;
+      }
+    }
+  }
+
+  bool WebSocketImplementation::PingThread::SendPing(
+      std::vector<uint8_t> const& pingData,
+      Azure::Core::Context const& context)
+  {
+    std::vector<uint8_t> pingFrame = EncodeFrame(SocketOpcode::Ping, true, pingData);
+    m_webSocketImplementation->m_receiveStatistics.PingFramesSent++;
+    m_webSocketImplementation->SendTransportBuffer(pingFrame, context);
+    return true;
+  }
+
+  void WebSocketImplementation::SendPong(
+      std::vector<uint8_t> const& pongData,
+      Azure::Core::Context const& context)
+  {
+    std::vector<uint8_t> pongFrame = EncodeFrame(SocketOpcode::Pong, true, pongData);
+
+    m_receiveStatistics.PongFramesSent++;
+    SendTransportBuffer(pongFrame, context);
   }
 
   // Generator for random bytes. Used in WebSocketImplementation and tests.

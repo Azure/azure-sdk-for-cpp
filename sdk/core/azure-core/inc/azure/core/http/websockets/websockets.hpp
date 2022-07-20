@@ -27,7 +27,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     TextFrameReceived,
     BinaryFrameReceived,
     PeerClosedReceived,
-    PongReceived,
   };
 
   enum class WebSocketErrorCode : uint16_t
@@ -50,64 +49,145 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   class WebSocketTextFrame;
   class WebSocketBinaryFrame;
   class WebSocketPeerCloseFrame;
-  class WebSocketPongFrame;
 
-  struct WebSocketFrame
+  /** @brief Statistics about data sent and received by the WebSocket.
+   *
+   * @remarks This class is primarily intended for test collateral and debugging to allow
+   * a caller to determine information about the status of a WebSocket.
+   *
+   * Note: Some of these statistics are not available if the underlying transport supports native
+   * websockets.
+   */
+  struct WebSocketStatistics
   {
-    WebSocketFrameType FrameType;
-    bool IsFinalFrame{false};
-    std::shared_ptr<WebSocketTextFrame> AsTextFrame();
-    std::shared_ptr<WebSocketBinaryFrame> AsBinaryFrame();
-    std::shared_ptr<WebSocketPeerCloseFrame> AsPeerCloseFrame();
-    std::shared_ptr<WebSocketPongFrame> AsPongFrame();
+    /** @brief The number of WebSocket frames sent on this WebSocket. */
+    uint32_t FramesSent;
+    /** @brief The number of bytes of data sent to the peer on this WebSocket. */
+    uint32_t BytesSent;
+    /** @brief The number of WebSocket frames received from the peer. */
+    uint32_t FramesReceived;
+    /** @brief The number of bytes received from the peer. */
+    uint32_t BytesReceived;
+    /** @brief The number of "Ping" frames received from the peer. */
+    uint32_t PingFramesReceived;
+    /** @brief The number of "Ping" frames sent to the peer. */
+    uint32_t PingFramesSent;
+    /** @brief The number of "Pong" frames received from the peer. */
+    uint32_t PongFramesReceived;
+    /** @brief The number of "Pong" frames sent to the peer. */
+    uint32_t PongFramesSent;
+    /** @brief The number of "Text" frames received from the peer. */
+    uint32_t TextFramesReceived;
+    /** @brief The number of "Text" frames sent to the peer. */
+    uint32_t TextFramesSent;
+    /** @brief The number of "Binary" frames received from the peer. */
+    uint32_t BinaryFramesReceived;
+    /** @brief The number of "Binary" frames sent to the peer. */
+    uint32_t BinaryFramesSent;
+    /** @brief The number of "Continuation" frames sent to the peer. */
+    uint32_t ContinuationFramesSent;
+    /** @brief The number of "Continuation" frames received from the peer. */
+    uint32_t ContinuationFramesReceived;
+    /** @brief The number of "Close" frames received from the peer. */
+    uint32_t CloseFramesReceived;
+    /** @brief The number of frames received which were not processed. */
+    uint32_t FramesDropped;
+    /** @brief The number of frames received which were not returned because they were received
+     * after the Close() method was called. */
+    uint32_t FramesDroppedByClose;
+    /** @brief The number of frames dropped because they were over the maximum payload size. */
+    uint32_t FramesDroppedByPayloadSizeLimit;
+    /** @brief The number of frames dropped because they were out of compliance with the protocol.
+     */
+    uint32_t FramesDroppedByProtocolError;
+    /** @brief The number of reads performed on the transport.*/
+    uint32_t TransportReads;
+    /** @brief The number of bytes read from the transport. */
+    uint32_t TransportReadBytes;
   };
 
+  /** @brief A frame of data received from a WebSocket.
+   */
+  struct WebSocketFrame
+  {
+    /** @brief The type of frame received: Text, Binary or Close. */
+    WebSocketFrameType FrameType;
+    /** @brief True if the frame received is a "final" frame */
+    bool IsFinalFrame{false};
+    /** @brief Returns the contents of the frame as a Text frame.
+     * @returns A WebSocketTextFrame containing the contents of the frame.
+     */
+    std::shared_ptr<WebSocketTextFrame> AsTextFrame();
+    /** @brief Returns the contents of the frame as a Binary frame.
+     * @returns A WebSocketBinaryFrame containing the contents of the frame.
+     */
+    std::shared_ptr<WebSocketBinaryFrame> AsBinaryFrame();
+    /** @brief Returns the contents of the frame as a Peer Close frame.
+     * @returns A WebSocketPeerCloseFrame containing the contents of the frame.
+     */
+    std::shared_ptr<WebSocketPeerCloseFrame> AsPeerCloseFrame();
+  };
+
+  /** @brief Contains the contents of a WebSocket Text frame.*/
   class WebSocketTextFrame : public WebSocketFrame,
                              public std::enable_shared_from_this<WebSocketTextFrame> {
   private:
   public:
+    /** @brief Constructs a new WebSocketTextFrame */
     WebSocketTextFrame() = default;
+    /** @brief Constructs a new WebSocketTextFrame
+     * @param isFinalFrame True if this is the final frame in a multi-frame message.
+     * @param body UTF-8 encoded text of the frame data.
+     * @param size Length in bytes of the frame body.
+     */
     WebSocketTextFrame(bool isFinalFrame, unsigned char const* body, size_t size)
         : WebSocketFrame{WebSocketFrameType::TextFrameReceived, isFinalFrame},
           Text(body, body + size)
     {
     }
+    /** @brief Text of the frame received from the remote peer. */
     std::string Text;
   };
+
+  /** @brief Contains the contents of a WebSocket Binary frame.*/
   class WebSocketBinaryFrame : public WebSocketFrame,
                                public std::enable_shared_from_this<WebSocketBinaryFrame> {
   private:
   public:
+    /** @brief Constructs a new WebSocketBinaryFrame */
     WebSocketBinaryFrame() = default;
+    /** @brief Constructs a new WebSocketBinaryFrame
+     * @param isFinal True if this is the final frame in a multi-frame message.
+     * @param body binary of the frame data.
+     * @param size Length in bytes of the frame body.
+     */
     WebSocketBinaryFrame(bool isFinal, unsigned char const* body, size_t size)
         : WebSocketFrame{WebSocketFrameType::BinaryFrameReceived, isFinal}, Data(body, body + size)
     {
     }
+    /** @brief Binary frame data received from the remote peer. */
     std::vector<uint8_t> Data;
   };
 
-  class WebSocketPongFrame : public WebSocketFrame,
-                             public std::enable_shared_from_this<WebSocketPongFrame> {
-  private:
-  public:
-    WebSocketPongFrame() = default;
-    WebSocketPongFrame(unsigned char const* body, size_t size)
-        : WebSocketFrame{WebSocketFrameType::PongReceived, true}, Data(body, body + size)
-    {
-    }
-    std::vector<uint8_t> Data;
-  };
-
+  /** @brief Contains the contents of a WebSocket Close frame.*/
   class WebSocketPeerCloseFrame : public WebSocketFrame,
                                   public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
   public:
+    /** @brief Constructs a new WebSocketPeerCloseFrame */
     WebSocketPeerCloseFrame() = default;
+    /** @brief Constructs a new WebSocketBinaryFrame
+     * @param remoteStatusCode Status code sent by the remote peer.
+     * @param remoteCloseReason Optional reason sent by the remote peer.
+     */
     WebSocketPeerCloseFrame(uint16_t remoteStatusCode, std::string const& remoteCloseReason)
         : WebSocketFrame{WebSocketFrameType::PeerClosedReceived},
           RemoteStatusCode(remoteStatusCode), RemoteCloseReason(remoteCloseReason)
     {
     }
+    /** @brief Status code sent from the remote peer. Typically a member of the WebSocketErrorCode
+     * enumeration */
     uint16_t RemoteStatusCode;
+    /** @brief Optional text sent from the remote peer. */
     std::string RemoteCloseReason;
   };
 
@@ -128,6 +208,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * initial WebSocket handshake
      */
     std::string ServiceVersion;
+
+    /**
+     * @brief The period of time between ping operations, default is 60 seconds.
+     */
+    std::chrono::duration<int64_t> PingInterval{std::chrono::seconds{60}};
 
     /**
      * @brief Construct an instance of a WebSocketOptions type.
@@ -211,18 +296,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     std::shared_ptr<WebSocketFrame> ReceiveFrame(
         Azure::Core::Context const& context = Azure::Core::Context{});
 
-    /** @brief Send a 'Ping' frame to the remote server.
-     *
-     * @param pingData data to be sent in the ping operation.
-     * @param context Context for the operation.
-     *
-     * @returns True if the "Ping" was sent to the server, False if the underlying transport
-     * does not support ping operations.
-     */
-    bool SendPing(
-        std::vector<uint8_t> const& pingData,
-        Azure::Core::Context const& context = Azure::Core::Context{});
-
     /** @brief AddHeader - Adds a header to the initial handshake.
      *
      * @note This API is ignored after the WebSocket is opened.
@@ -236,11 +309,27 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @returns true if the WebSocket is open, false otherwise.
      */
-    bool IsOpen();
+    bool IsOpen() const;
+
+    /** @brief Returns "true" if the configured websocket transport
+     * supports websockets in the transport, or if the websocket implementation
+     * is providing websocket protocol support.
+     *
+     * @returns true if the websocket transport supports websockets natively.
+     */
+    bool HasNativeWebSocketSupport() const;
 
     /** @brief Returns the protocol chosen by the remote server during the initial handshake
+     *
+     * @returns The protocol negotiated between client and server.
      */
     std::string const& GetChosenProtocol() const;
+
+    /** @brief Returns statistics about the WebSocket.
+     *
+     * @returns The statistics about the WebSocket.
+     */
+    WebSocketStatistics GetStatistics() const;
 
   private:
     std::unique_ptr<_detail::WebSocketImplementation> m_socketImplementation;

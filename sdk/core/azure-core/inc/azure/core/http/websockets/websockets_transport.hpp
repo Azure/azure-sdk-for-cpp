@@ -55,9 +55,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Determines if the transport natively supports WebSockets or not.
      *
-     * @returns true iff the transport has native websocket support, false otherwise.
+     * @returns true if the transport has native websocket support, false otherwise.
      */
-    virtual bool NativeWebsocketSupport() = 0;
+    virtual bool HasNativeWebsocketSupport() = 0;
 
     /**************/
     /* Native WebSocket support functions*/
@@ -122,6 +122,87 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**************/
     /* Non Native WebSocket support functions */
     /**************/
+
+    // Implement a buffered stream reader
+    class BufferedStreamReader {
+      std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
+      std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
+      constexpr static size_t m_bufferSize = 1024;
+      uint8_t m_buffer[m_bufferSize]{};
+      size_t m_bufferPos = 0;
+      size_t m_bufferLen = 0;
+      bool m_eof = false;
+
+    public:
+      explicit BufferedStreamReader() = default;
+      ~BufferedStreamReader() = default;
+
+      void SetInitialStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
+      {
+        m_initialBodyStream = std::move(stream);
+      }
+      void SetTransport(
+          std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport>& transport)
+      {
+        m_transport = transport;
+      }
+
+      uint8_t ReadByte(Azure::Core::Context const& context)
+      {
+        if (m_bufferPos >= m_bufferLen)
+        {
+          // Start by reading data from our initial body stream.
+          m_bufferLen = m_initialBodyStream->ReadToCount(m_buffer, m_bufferSize, context);
+          if (m_bufferLen == 0)
+          {
+            // If we run out of the initial stream, we need to read from the transport.
+            m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
+          }
+          m_bufferPos = 0;
+          if (m_bufferLen == 0)
+          {
+            m_eof = true;
+            return 0;
+          }
+        }
+        return m_buffer[m_bufferPos++];
+      }
+      uint16_t ReadShort(Azure::Core::Context const& context)
+      {
+        uint16_t result = ReadByte(context);
+        result <<= 8;
+        result |= ReadByte(context);
+        return result;
+      }
+      uint64_t ReadInt64(Azure::Core::Context const& context)
+      {
+        uint64_t result = 0;
+
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 56 & 0xff00000000000000);
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 48 & 0x00ff000000000000);
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 40 & 0x0000ff0000000000);
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 32 & 0x000000ff00000000);
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 24 & 0x00000000ff000000);
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 16 & 0x0000000000ff0000);
+        result |= (static_cast<uint64_t>(ReadByte(context)) << 8 & 0x000000000000ff00);
+        result |= static_cast<uint64_t>(ReadByte(context));
+        return result;
+      }
+      std::vector<uint8_t> ReadBytes(size_t readLength, Azure::Core::Context const& context)
+      {
+        std::vector<uint8_t> result;
+        size_t index = 0;
+        while (index < readLength)
+        {
+          uint8_t byte = ReadByte(context);
+          result.push_back(byte);
+          index += 1;
+        }
+        return result;
+      }
+
+      bool IsEof() const { return m_eof; }
+    };
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
