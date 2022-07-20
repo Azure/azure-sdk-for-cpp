@@ -94,27 +94,27 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     struct ReceiveStatistics
     {
-      std::atomic_uint32_t FramesSent;
-      std::atomic_uint32_t FramesReceived;
-      std::atomic_uint32_t BytesSent;
-      std::atomic_uint32_t BytesReceived;
-      std::atomic_uint32_t PingFramesSent;
-      std::atomic_uint32_t PingFramesReceived;
-      std::atomic_uint32_t PongFramesSent;
-      std::atomic_uint32_t PongFramesReceived;
-      std::atomic_uint32_t TextFramesReceived;
-      std::atomic_uint32_t BinaryFramesReceived;
-      std::atomic_uint32_t ContinuationFramesReceived;
-      std::atomic_uint32_t CloseFramesReceived;
-      std::atomic_uint32_t UnknownFramesReceived;
-      std::atomic_uint32_t FramesDropped;
-      std::atomic_uint32_t FramesDroppedByPayloadSizeLimit;
-      std::atomic_uint32_t FramesDroppedByProtocolError;
-      std::atomic_uint32_t TransportReads;
-      std::atomic_uint32_t TransportReadBytes;
-      std::atomic_uint32_t BinaryFramesSent;
-      std::atomic_uint32_t TextFramesSent;
-      std::atomic_uint32_t FramesDroppedByClose;
+      std::atomic<uint32_t> FramesSent;
+      std::atomic<uint32_t> FramesReceived;
+      std::atomic<uint32_t> BytesSent;
+      std::atomic<uint32_t> BytesReceived;
+      std::atomic<uint32_t> PingFramesSent;
+      std::atomic<uint32_t> PingFramesReceived;
+      std::atomic<uint32_t> PongFramesSent;
+      std::atomic<uint32_t> PongFramesReceived;
+      std::atomic<uint32_t> TextFramesReceived;
+      std::atomic<uint32_t> BinaryFramesReceived;
+      std::atomic<uint32_t> ContinuationFramesReceived;
+      std::atomic<uint32_t> CloseFramesReceived;
+      std::atomic<uint32_t> UnknownFramesReceived;
+      std::atomic<uint32_t> FramesDropped;
+      std::atomic<uint32_t> FramesDroppedByPayloadSizeLimit;
+      std::atomic<uint32_t> FramesDroppedByProtocolError;
+      std::atomic<uint32_t> TransportReads;
+      std::atomic<uint32_t> TransportReadBytes;
+      std::atomic<uint32_t> BinaryFramesSent;
+      std::atomic<uint32_t> TextFramesSent;
+      std::atomic<uint32_t> FramesDroppedByClose;
 
       void Reset()
       {
