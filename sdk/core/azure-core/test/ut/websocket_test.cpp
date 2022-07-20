@@ -344,7 +344,7 @@ TEST_F(WebSocketTests, PingSendTest)
 TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
-  constexpr size_t testDataLength = 150000;
+  constexpr size_t testDataLength = 175000;
   constexpr size_t testDataSize = 100;
   constexpr auto testDuration = 10s;
 
