@@ -144,7 +144,6 @@ stages:
                         parameters:
                           RepoOwner: Azure
                           RepoName: azure-sdk-vcpkg-betas
-                          BaseBranchName: main
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
@@ -178,18 +177,17 @@ stages:
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
-                          PushWorkingDirectoryChanges: false
                           RepoOwner: $(VcpkgPrRepoOwner)
                           RepoName: $(VcpkgPrRepoName)
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
                           PRTitle: $(PrTitle)
                           PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
+                          SkipCheckingForChanges: true
                           BaseBranchName: $(DefaultBranch)
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-                          SkipCheckingForChanges: true
 
                       - pwsh: |
                           $codeOwnersToNotify = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
