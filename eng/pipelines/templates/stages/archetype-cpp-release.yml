@@ -175,6 +175,8 @@ stages:
                         parameters:
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+                      # SkipCheckingForChanges is true to skip the commit step
+                      # (which is already done by Update-VcpkgPort.ps1)
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoOwner: $(VcpkgPrRepoOwner)
