@@ -96,7 +96,8 @@ stages:
                 vmImage: MMS2019
 
               variables:
-                VcpkgPrRepoOwner: Microsoft
+                # TODO: Revert to Microsoft before merge
+                VcpkgPrRepoOwner: azure-sdk
                 VcpkgPrRepoName: vcpkg
 
               strategy:
@@ -138,6 +139,8 @@ stages:
                         parameters:
                           RepoOwner: azure-sdk
                           PRBranchName: $(PrBranchName)
+                          # TODO: Use default branch before merge
+                          BaseBranchName: test-vcpkg-beta-release
 
                       # Clone Vcpkg Betas
                       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
@@ -171,9 +174,14 @@ stages:
                       - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$(PublishToVcpkg)"
                         displayName: Set $(HasChanges) to $true for create-pull-request.yml
 
-                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                      # TODO: Enable before merge
+                      # - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                      #   parameters:
+                      #     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+
+                      # TODO: Remove before merge
+                      - pwsh: Write-Host "##vso[task.setvariable variable=DefaultBranch]test-vcpkg-beta-release"
+                        displayName: Override default branch to test vcpkg beta release
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
