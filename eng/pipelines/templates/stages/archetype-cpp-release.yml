@@ -164,13 +164,11 @@ stages:
                           CommitMsg: Update vcpkg-configuration.json
                           BaseRepoBranch: $(DefaultBranch)
 
-                      # Set $(HasChanges) to $true so that
-                      # create-pull-request.yml completes the push and PR
-                      # submission steps. This is contegnent upon
-                      # `$(PublishToVcpkg)` being `true`. `$(PublishToVcpkg)` is
-                      # set in `vcpkg-publish.yml`
-                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
-                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
+                      # Set $(HasChanges) to $(PublishToVcpkg) so that
+                      # create-pull-request.yml creates or does not create a PR
+                      # based on the deicision of the step that determines
+                      # whether to publish to vcpkg.
+                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$(PublishToVcpkg)"
                         displayName: Set $(HasChanges) to $true for create-pull-request.yml
 
                       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
@@ -190,13 +188,7 @@ stages:
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-                          # If PublishToVcpkg is true, this template blindly attempts to create a PR. In that case
-                          # changes must already be checked into the branch for this template to succeed.
-                          # If PublishToVcpkg is false, the non-skipped checking for changes will result in no attempt
-                          # to open a PR because there will be no detected changes.
-                          # Use dictionary syntax because the template inserts the literal string into a `condition:`
-                          # element.
-                          SkipCheckingForChanges: variables['PublishToVcpkg']
+                          SkipCheckingForChanges: true
 
                       - pwsh: |
                           $codeOwnersToNotify = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
