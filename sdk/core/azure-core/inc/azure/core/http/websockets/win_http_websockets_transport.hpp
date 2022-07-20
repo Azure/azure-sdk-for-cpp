@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @details For the WinHTTP websocket transport, the transport supports native websockets.
      */
-    virtual bool NativeWebsocketSupport() override { return true; }
+    virtual bool HasNativeWebsocketSupport() override { return true; }
 
     /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
