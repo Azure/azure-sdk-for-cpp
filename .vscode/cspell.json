@@ -11,8 +11,8 @@
     "*.exe",
     "*.a",
     "*.lib",
-    "*.yaml",  // this tool is exasperating, valid source doe is not up to it's standards.
-    "**/libcurl-stress-test/README.md" // valid urls are somehow not up to the glory of this amazingly dumb tool. 
+    "*.yaml",  
+    "**/libcurl-stress-test/README.md", 
     ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
