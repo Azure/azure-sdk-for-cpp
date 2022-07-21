@@ -44,7 +44,6 @@ async def handleCustomPath(websocket, path:dict):
 def HexEncode(data: bytes)->str:
     rv=""
     for val in data:
-#        rv+= hex(val).removeprefix("0x")
         rv+= '{:02X}'.format(val)
     return rv
 
@@ -63,8 +62,6 @@ async def handleEcho(websocket, url):
             data = await websocket.recv()
             with echo_count_lock:
                 echo_count_recv+=1
-#            if type(data) is bytes:
-#                print(f'Echo {HexEncode(data)}')
 
             if (url.query == 'fragment=true'):
                 await websocket.send(data.split())

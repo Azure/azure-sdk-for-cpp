@@ -132,7 +132,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       throw std::runtime_error("Not implemented.");
     }
 
-    bool SupportsWebSockets() const override { return true; }
+    bool HasWebSocketSupport() const override { return true; }
   };
 
 }}}} // namespace Azure::Core::Http::WebSockets

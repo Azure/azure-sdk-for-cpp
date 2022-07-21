@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Returns true if the HttpTransport supports WebSockets (the ability to
      * communicate bidirectionally on the TCP connection used by the HTTP transport).
      */
-    virtual bool SupportsWebSockets() const { return false; }
+    virtual bool HasWebSocketSupport() const { return false; }
   };
 
 }}} // namespace Azure::Core::Http

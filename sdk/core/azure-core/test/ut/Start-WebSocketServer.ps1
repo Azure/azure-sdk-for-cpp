@@ -7,7 +7,7 @@ param(
 if ($IsWindows) { 
   Start-Process 'python.exe' `
     -ArgumentList 'websocket_server.py' `
-    -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/WebSocketServer.log
+    -NoNewWindow -PassThru -RedirectStandardOutput $LogFileLocation
 } else { 
-  nohup python websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
+  nohup python websocket_server.py > $LogFileLocation
 }

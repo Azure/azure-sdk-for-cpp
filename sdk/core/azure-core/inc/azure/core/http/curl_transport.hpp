@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Set the libcurl connection options like a proxy and CA path.
    */
-  struct CurlTransportOptions final
+  struct CurlTransportOptions
   {
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing.

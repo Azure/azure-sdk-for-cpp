@@ -17,6 +17,9 @@
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
+  struct CurlWebSocketTransportOptions : public Azure::Core::Http::CurlTransportOptions
+  {
+  };
   /**
    * @brief Concrete implementation of a WebSocket Transport that uses libcurl.
    */
@@ -27,10 +30,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @param options Optional parameter to override the default options.
      */
-    CurlWebSocketTransport(CurlTransportOptions const& options = CurlTransportOptions())
+    CurlWebSocketTransport(CurlWebSocketTransportOptions const& options = CurlWebSocketTransportOptions())
         : CurlTransport(options)
     {
     }
+	
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
@@ -63,7 +67,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    virtual void NativeCloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override
+    virtual void NativeCloseSocket(uint16_t, std::string const&, Azure::Core::Context const&)
+        override
     {
       throw std::runtime_error("Not implemented.");
     }
@@ -74,7 +79,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    NativeWebSocketCloseInformation NativeGetCloseSocketInformation(const Azure::Core::Context&) override
+    NativeWebSocketCloseInformation NativeGetCloseSocketInformation(
+        const Azure::Core::Context&) override
     {
       throw std::runtime_error("Not implemented");
     }
@@ -134,7 +140,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief returns true if this transport supports WebSockets, false otherwise.
      */
-    bool SupportsWebSockets() const override { return true; }
+    bool HasWebSocketSupport() const override { return true; }
 
   private:
     // std::unique_ptr cannot be constructed on an incomplete type (CurlNetworkConnection), but

@@ -18,20 +18,14 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http::WebSockets;
 using namespace std::chrono_literals;
 
+constexpr uint16_t UndefinedButLegalCloseReason = 4500;
+
 class WebSocketTests : public testing::Test {
 private:
 protected:
   // Create
   static void SetUpTestSuite() {}
-  static void TearDownTestSuite()
-  {
-    //    GTEST_LOG_(INFO) << "Shut down test server" << std::endl;
-    //    WebSocket controlSocket(Azure::Core::Url("http://localhost:8000/control"));
-    //    controlSocket.Open();
-    //    controlSocket.SendFrame("close", true);
-    //    auto controlResponse = controlSocket.ReceiveFrame();
-    //    EXPECT_EQ(controlResponse->FrameType, WebSocketFrameType::TextFrameReceived);
-  }
+  static void TearDownTestSuite() {}
 };
 
 TEST_F(WebSocketTests, CreateSimpleSocket)
@@ -66,7 +60,7 @@ TEST_F(WebSocketTests, OpenSimpleSocket)
     // When running this test locally, the call times out, so drop in a 5 second timeout on
     // the request.
     Azure::Core::Context requestContext = Azure::Core::Context::ApplicationContext.WithDeadline(
-        std::chrono::system_clock::now() + 15s);
+        std::chrono::system_clock::now() + 5s);
     EXPECT_THROW(defaultSocket.Open(requestContext), std::runtime_error);
   }
 }
@@ -81,7 +75,7 @@ TEST_F(WebSocketTests, OpenAndCloseSocket)
     defaultSocket.Open();
 
     // Close the socket without notifying the peer.
-    defaultSocket.Close(4500);
+    defaultSocket.Close(UndefinedButLegalCloseReason);
   }
 
   {
@@ -90,7 +84,7 @@ TEST_F(WebSocketTests, OpenAndCloseSocket)
     defaultSocket.Open();
 
     // Close the socket without notifying the peer.
-    defaultSocket.Close(4500, "This is a good reason.");
+    defaultSocket.Close(UndefinedButLegalCloseReason, "This is a good reason.");
 
     //
     // Now re-open the socket - this should work to reset everything.
@@ -201,18 +195,19 @@ TEST_F(WebSocketTests, VariableSizeEcho)
       EchoRandomData<126>(testSocket);
       EchoRandomData<127>(testSocket);
       EchoRandomData<128>(testSocket);
-      EchoRandomData<1020>(testSocket);
-      EchoRandomData<1021>(testSocket);
-      EchoRandomData<1022>(testSocket);
-      EchoRandomData<1023>(testSocket);
-      EchoRandomData<1024>(testSocket);
-      EchoRandomData<2048>(testSocket);
-      EchoRandomData<4096>(testSocket);
-      EchoRandomData<8192>(testSocket);
+      EchoRandomData<1020>(testSocket); // 1K-4
+      EchoRandomData<1021>(testSocket); // 1K-3
+      EchoRandomData<1022>(testSocket); // 1K-2
+      EchoRandomData<1023>(testSocket); // 1K-1
+      EchoRandomData<1024>(testSocket); // 1K
+      EchoRandomData<2048>(testSocket); // 2K
+      EchoRandomData<4096>(testSocket); // 4K
+      EchoRandomData<8192>(testSocket); // 8K
       // The websocket protocol treats lengths of >65536 specially.
-      EchoRandomData<65535>(testSocket);
-      EchoRandomData<65536>(testSocket);
-      EchoRandomData<131072>(testSocket);
+      EchoRandomData<65535>(testSocket); // 64K-1
+      EchoRandomData<65536>(testSocket); // 64K
+      EchoRandomData<65537>(testSocket); // 64K+1
+      EchoRandomData<131072>(testSocket); // 128K
     }
     // Close the socket gracefully.
     testSocket.Close();
@@ -429,7 +424,6 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
       }
     }));
   }
-  //  std::this_thread::sleep_for(10s);
 
   // Wait for all the threads to exit.
   for (auto& thread : threads)
@@ -480,7 +474,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
     receivedDataStrings.emplace(ToHexString(data));
   }
 
-  //  EXPECT_EQ(testDataStrings, receivedDataStrings);
+  EXPECT_EQ(testDataStrings, receivedDataStrings);
   for (auto const& data : testDataStrings)
   {
     if (receivedDataStrings.count(data) != testDataStrings.count(data))
@@ -669,7 +663,7 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
 {
   {
 
-    Azure::Core::Http::CurlTransportOptions transportOptions;
+    Azure::Core::Http::WebSockets::CurlWebSocketTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = false;
     auto transport
         = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
@@ -677,10 +671,10 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
     EXPECT_THROW(transport->NativeCloseSocket(1001, {}, {}), std::runtime_error);
     EXPECT_THROW(transport->NativeGetCloseSocketInformation({}), std::runtime_error);
     EXPECT_THROW(
-        transport->NativeSendFrame(WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinary, {}, {}),
+        transport->NativeSendFrame(
+            WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinary, {}, {}),
         std::runtime_error);
     EXPECT_THROW(transport->NativeReceiveFrame({}), std::runtime_error);
   }
 }
-
 #endif

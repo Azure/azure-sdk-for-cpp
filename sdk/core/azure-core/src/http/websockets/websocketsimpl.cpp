@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_transport = std::static_pointer_cast<WebSocketTransport>(winHttpTransport);
     m_options.Transport.Transport = std::static_pointer_cast<HttpTransport>(winHttpTransport);
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-    CurlTransportOptions transportOptions;
+    CurlWebSocketTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = false;
     auto curlWebSockets
         = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);

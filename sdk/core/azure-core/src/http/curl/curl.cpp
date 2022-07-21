@@ -319,7 +319,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     throw Azure::Core::Http::TransportException(
         "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
-  if (SupportsWebSockets())
+  if (HasWebSocketSupport())
   {
     std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->ExtractConnection());
     if (upgradedConnection)

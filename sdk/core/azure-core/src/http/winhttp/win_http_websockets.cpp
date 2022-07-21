@@ -154,7 +154,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         bufferType = WINHTTP_WEB_SOCKET_UTF8_FRAGMENT_BUFFER_TYPE;
         break;
       default:
-        throw std::runtime_error("Unknown frame type.");
+        throw std::runtime_error("Unknown frame type: " + std::to_string(static_cast<uint32_t>(frameType)));
         break;
     }
     // Lock the socket to prevent concurrent writes. WinHTTP gets annoyed if
@@ -211,7 +211,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         frameTypeReceived = NativeWebSocketFrameType::FrameTypeClosed;
         break;
       default:
-        throw std::runtime_error("Unknown frame type.");
+        throw std::runtime_error("Unknown frame type: " + std::to_string(bufferType));
         break;
     }
     return NativeWebSocketReceiveInformation{frameTypeReceived, buffer};
