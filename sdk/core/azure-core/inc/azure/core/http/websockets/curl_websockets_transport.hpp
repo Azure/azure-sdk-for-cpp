@@ -30,11 +30,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @param options Optional parameter to override the default options.
      */
-    CurlWebSocketTransport(CurlWebSocketTransportOptions const& options = CurlWebSocketTransportOptions())
+    CurlWebSocketTransport(
+        CurlWebSocketTransportOptions const& options = CurlWebSocketTransportOptions())
         : CurlTransport(options)
     {
     }
-	
+
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *

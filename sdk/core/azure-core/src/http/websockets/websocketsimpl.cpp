@@ -454,9 +454,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           auto closeResult = m_transport->NativeGetCloseSocketInformation(context);
           std::vector<uint8_t> closePayload;
           closePayload.push_back(closeResult.CloseReason >> 8);
-          closePayload.push_back(closeResult.CloseReason& 0xff);
+          closePayload.push_back(closeResult.CloseReason & 0xff);
           closePayload.insert(
-              closePayload.end(), closeResult.CloseReasonDescription.begin(), closeResult.CloseReasonDescription.end());
+              closePayload.end(),
+              closeResult.CloseReasonDescription.begin(),
+              closeResult.CloseReasonDescription.end());
           return std::make_shared<WebSocketInternalFrame>(SocketOpcode::Close, true, closePayload);
         }
         default:

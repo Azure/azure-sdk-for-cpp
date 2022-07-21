@@ -59,7 +59,7 @@ stages:
           displayName: 'Launch python websocket server'
           inputs:
             pwsh: true
-            filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1
+            filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1 $(Build.SourcesDirectory)/WebSocketServer.log
             workingDirectory: build/sdk/core/azure-core/test/ut
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 

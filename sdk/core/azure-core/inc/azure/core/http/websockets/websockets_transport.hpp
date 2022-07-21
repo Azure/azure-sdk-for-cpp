@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
     /**
      * @brief Assigns one WebSocketTransport to another.
-     * 
+     *
      * @param other An instance to assign.
      *
      * @return A reference to this instance.

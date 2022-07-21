@@ -51,8 +51,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   class WebSocketBinaryFrame;
   class WebSocketPeerCloseFrame;
 
-namespace _detail {
-	class WebSocketImplementation;
+  namespace _detail {
+    class WebSocketImplementation;
   }
   /** @brief Statistics about data sent and received by the WebSocket.
    *
@@ -136,6 +136,7 @@ namespace _detail {
   class WebSocketTextFrame : public WebSocketFrame,
                              public std::enable_shared_from_this<WebSocketTextFrame> {
     friend _detail::WebSocketImplementation;
+
   private:
   public:
     /** @brief Constructs a new WebSocketTextFrame */
@@ -204,7 +205,6 @@ namespace _detail {
           RemoteStatusCode(remoteStatusCode), RemoteCloseReason(remoteCloseReason)
     {
     }
-
   };
 
   struct WebSocketOptions : Azure::Core::_internal::ClientOptions
