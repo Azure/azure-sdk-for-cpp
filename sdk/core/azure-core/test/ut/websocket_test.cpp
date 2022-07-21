@@ -344,7 +344,7 @@ TEST_F(WebSocketTests, PingSendTest)
 TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
-  constexpr size_t testDataLength = 175000;
+  constexpr size_t testDataLength = 200000;
   constexpr size_t testDataSize = 100;
   constexpr auto testDuration = 10s;
 
@@ -386,10 +386,6 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
               EXPECT_EQ(0, testData[iteration].size());
               testData[iteration] = sendData;
             }
-            else
-            {
-              GTEST_LOG_(ERROR) << "Dropping test result at offset " << iteration << std::endl;
-            }
           }
 
           testSocket.SendFrame(sendData, true /*, context*/);
@@ -417,14 +413,6 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
               EXPECT_EQ(0, receivedData[iteration].size());
               receivedData[iteration] = binaryResult->Data;
             }
-            else
-            {
-              GTEST_LOG_(ERROR) << "Dropping test result at offset " << iteration << std::endl;
-            }
-          }
-          if (receivedData[iteration].size() == 0)
-          {
-            GTEST_LOG_(ERROR) << "Received empty frame at offset " << iteration << std::endl;
           }
         } while (std::chrono::system_clock::now() - startTime < testDuration);
       }
