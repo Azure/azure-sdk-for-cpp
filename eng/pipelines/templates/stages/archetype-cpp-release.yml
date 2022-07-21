@@ -169,7 +169,7 @@ stages:
                       # based on the deicision of the step that determines
                       # whether to publish to vcpkg.
                       - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$(PublishToVcpkg)"
-                        displayName: Set $(HasChanges) to $true for create-pull-request.yml
+                        displayName: Set $(HasChanges) to $(PublishToVcpkg) for create-pull-request.yml
 
                       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
                         parameters:
