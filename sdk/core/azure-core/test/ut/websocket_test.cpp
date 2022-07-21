@@ -60,7 +60,7 @@ TEST_F(WebSocketTests, OpenSimpleSocket)
 
   {
     WebSocketOptions options;
-    WebSocket defaultSocket(Azure::Core::Url("http://microsoft.com/index.htm"), options);
+    WebSocket defaultSocket(Azure::Core::Url("http://www.microsoft.com/"), options);
     defaultSocket.AddHeader("newHeader", "headerValue");
 
     // When running this test locally, the call times out, so drop in a 5 second timeout on
@@ -674,12 +674,12 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
     auto transport
         = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
 
-    EXPECT_THROW(transport->CloseSocket(1001, {}, {}), std::runtime_error);
-    EXPECT_THROW(transport->GetCloseSocketInformation({}), std::runtime_error);
+    EXPECT_THROW(transport->NativeCloseSocket(1001, {}, {}), std::runtime_error);
+    EXPECT_THROW(transport->NativeGetCloseSocketInformation({}), std::runtime_error);
     EXPECT_THROW(
-        transport->SendFrame(WebSocketTransport::WebSocketFrameType::FrameTypeBinary, {}, {}),
+        transport->NativeSendFrame(WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinary, {}, {}),
         std::runtime_error);
-    EXPECT_THROW(transport->ReceiveFrame({}), std::runtime_error);
+    EXPECT_THROW(transport->NativeReceiveFrame({}), std::runtime_error);
   }
 }
 

@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   /**
    * @brief  Close the WebSocket cleanly.
    */
-  void WinHttpWebSocketTransport::Close() { m_socketHandle.reset(); }
+  void WinHttpWebSocketTransport::NativeClose() { m_socketHandle.reset(); }
 
   // Native WebSocket support methods.
   /**
@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    * @param context Context for the operation.
    *
    */
-  void WinHttpWebSocketTransport::CloseSocket(
+  void WinHttpWebSocketTransport::NativeCloseSocket(
       uint16_t status,
       std::string const& disconnectReason,
       Azure::Core::Context const& context)
@@ -83,14 +83,14 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     context.ThrowIfCancelled();
 
     // Make sure that the server responds gracefully to the close request.
-    auto closeInformation = GetCloseSocketInformation(context);
+    auto closeInformation = NativeGetCloseSocketInformation(context);
 
     // The server should return the same status we sent.
-    if (closeInformation.first != status)
+    if (closeInformation.CloseReason != status)
     {
       throw std::runtime_error(
-          "Close status mismatch, got " + std::to_string(closeInformation.first) + " expected "
-          + std::to_string(status));
+          "Close status mismatch, got " + std::to_string(closeInformation.CloseReason)
+          + " expected " + std::to_string(status));
     }
   }
   /**
@@ -102,8 +102,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    *
    * @returns a tuple containing the status code and string.
    */
-  std::pair<uint16_t, std::string> WinHttpWebSocketTransport::GetCloseSocketInformation(
-      Azure::Core::Context const& context)
+  WinHttpWebSocketTransport::NativeWebSocketCloseInformation
+  WinHttpWebSocketTransport::NativeGetCloseSocketInformation(Azure::Core::Context const& context)
   {
     context.ThrowIfCancelled();
     uint16_t closeStatus = 0;
@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     {
       GetErrorAndThrow("WinHttpGetCloseStatus() failed", err);
     }
-    return std::make_pair(closeStatus, std::string(closeReason));
+    return NativeWebSocketCloseInformation{closeStatus, std::string(closeReason)};
   }
 
   /**
@@ -132,8 +132,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    * @brief frameType Frame type sent to the server, Text or Binary.
    * @brief frameData Frame data to be sent to the server.
    */
-  void WinHttpWebSocketTransport::SendFrame(
-      WebSocketFrameType frameType,
+  void WinHttpWebSocketTransport::NativeSendFrame(
+      NativeWebSocketFrameType frameType,
       std::vector<uint8_t> const& frameData,
       Azure::Core::Context const& context)
   {
@@ -141,16 +141,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType;
     switch (frameType)
     {
-      case WebSocketFrameType::FrameTypeText:
+      case NativeWebSocketFrameType::FrameTypeText:
         bufferType = WINHTTP_WEB_SOCKET_UTF8_MESSAGE_BUFFER_TYPE;
         break;
-      case WebSocketFrameType::FrameTypeBinary:
+      case NativeWebSocketFrameType::FrameTypeBinary:
         bufferType = WINHTTP_WEB_SOCKET_BINARY_MESSAGE_BUFFER_TYPE;
         break;
-      case WebSocketFrameType::FrameTypeBinaryFragment:
+      case NativeWebSocketFrameType::FrameTypeBinaryFragment:
         bufferType = WINHTTP_WEB_SOCKET_BINARY_FRAGMENT_BUFFER_TYPE;
         break;
-      case WebSocketFrameType::FrameTypeTextFragment:
+      case NativeWebSocketFrameType::FrameTypeTextFragment:
         bufferType = WINHTTP_WEB_SOCKET_UTF8_FRAGMENT_BUFFER_TYPE;
         break;
       default:
@@ -171,13 +171,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     }
   }
 
-  std::pair<
-      Azure::Core::Http::WebSockets::WebSocketTransport::WebSocketFrameType,
-      std::vector<uint8_t>>
-  WinHttpWebSocketTransport::ReceiveFrame(Azure::Core::Context const& context)
+  WinHttpWebSocketTransport::NativeWebSocketReceiveInformation
+  WinHttpWebSocketTransport::NativeReceiveFrame(Azure::Core::Context const& context)
   {
     WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType;
-    WebSocketFrameType frameTypeReceived;
+    NativeWebSocketFrameType frameTypeReceived;
     DWORD bufferBytesRead;
     std::vector<uint8_t> buffer(128);
     context.ThrowIfCancelled();
@@ -198,25 +196,25 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     switch (bufferType)
     {
       case WINHTTP_WEB_SOCKET_UTF8_MESSAGE_BUFFER_TYPE:
-        frameTypeReceived = WebSocketFrameType::FrameTypeText;
+        frameTypeReceived = NativeWebSocketFrameType::FrameTypeText;
         break;
       case WINHTTP_WEB_SOCKET_BINARY_MESSAGE_BUFFER_TYPE:
-        frameTypeReceived = WebSocketFrameType::FrameTypeBinary;
+        frameTypeReceived = NativeWebSocketFrameType::FrameTypeBinary;
         break;
       case WINHTTP_WEB_SOCKET_BINARY_FRAGMENT_BUFFER_TYPE:
-        frameTypeReceived = WebSocketFrameType::FrameTypeBinaryFragment;
+        frameTypeReceived = NativeWebSocketFrameType::FrameTypeBinaryFragment;
         break;
       case WINHTTP_WEB_SOCKET_UTF8_FRAGMENT_BUFFER_TYPE:
-        frameTypeReceived = WebSocketFrameType::FrameTypeTextFragment;
+        frameTypeReceived = NativeWebSocketFrameType::FrameTypeTextFragment;
         break;
       case WINHTTP_WEB_SOCKET_CLOSE_BUFFER_TYPE:
-        frameTypeReceived = WebSocketFrameType::FrameTypeClosed;
+        frameTypeReceived = NativeWebSocketFrameType::FrameTypeClosed;
         break;
       default:
         throw std::runtime_error("Unknown frame type.");
         break;
     }
-    return std::make_pair(frameTypeReceived, buffer);
+    return NativeWebSocketReceiveInformation{frameTypeReceived, buffer};
   }
 
 }}}} // namespace Azure::Core::Http::WebSockets

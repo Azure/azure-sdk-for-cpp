@@ -133,10 +133,10 @@ namespace Azure { namespace Core { namespace Http {
 
   protected:
     /**
-     * @brief Called when an HTTP response indicates that the connection should be upgraded to
-     * a websocket.
+     * @brief Called when an HTTP response indicates the connection should be upgraded to
+     * a websocket. Takes ownership of the CurlNetworkConnection object.
      */
-    virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&){};
+    virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&&){};
 
   public:
     /**

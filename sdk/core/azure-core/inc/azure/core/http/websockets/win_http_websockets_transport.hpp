@@ -19,7 +19,7 @@
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   /**
-   * @brief Concrete implementation of a WebSocket Transport that uses libcurl.
+   * @brief Concrete implementation of a WebSocket Transport that uses WinHTTP.
    */
   class WinHttpWebSocketTransport : public WebSocketTransport, public WinHttpTransport {
 
@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   public:
     /**
-     * @brief Construct a new CurlTransport object.
+     * @brief Construct a new WinHTTP WebSocket Transport.
      *
      * @param options Optional parameter to override the default options.
      */
@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
      */
-    virtual void Close() override;
+    virtual void NativeClose() override;
 
     // Native WebSocket support methods.
     /**
@@ -74,7 +74,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @param context Context for the operation.
      *
      */
-    virtual void CloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override;
+    virtual void NativeCloseSocket(uint16_t, std::string const&, Azure::Core::Context const&)
+        override;
 
     /**
      * @brief Retrieve the information associated with a WebSocket close response.
@@ -85,7 +86,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @returns a tuple containing the status code and string.
      */
-    virtual std::pair<uint16_t, std::string> GetCloseSocketInformation(
+    virtual NativeWebSocketCloseInformation NativeGetCloseSocketInformation(
         Azure::Core::Context const& context) override;
 
     /**
@@ -97,12 +98,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief frameType Frame type sent to the server, Text or Binary.
      * @brief frameData Frame data to be sent to the server.
      */
-    virtual void SendFrame(
-        WebSocketFrameType,
+    virtual void NativeSendFrame(
+        NativeWebSocketFrameType,
         std::vector<uint8_t> const&,
         Azure::Core::Context const&) override;
 
-    virtual std::pair<WebSocketFrameType, std::vector<uint8_t>> ReceiveFrame(
+    virtual NativeWebSocketReceiveInformation NativeReceiveFrame(
         Azure::Core::Context const&) override;
 
     // Non-Native WebSocket support.
@@ -111,6 +112,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * Function will try to keep pulling data from socket until the buffer is all written or
      * until there is no more data to get from the socket.
      *
+     * @details Not implemented for WinHTTP websockets because WinHTTP implements websockets
+     * natively.
      */
     virtual size_t ReadFromSocket(uint8_t*, size_t, Context const&) override
     {
@@ -118,7 +121,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     }
 
     /**
-     * @brief This method will use libcurl socket to write all the bytes from buffer.
+     * @brief This method will use sockets to write all the bytes from buffer.
+     *
+     * @details Not implemented for WinHTTP websockets because WinHTTP implements websockets
+     * natively.
      *
      */
     virtual int SendBuffer(uint8_t const*, size_t, Context const&) override

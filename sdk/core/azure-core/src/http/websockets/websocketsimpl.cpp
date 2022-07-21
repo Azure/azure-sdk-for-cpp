@@ -214,7 +214,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->HasNativeWebsocketSupport())
     {
-      m_transport->CloseSocket(closeStatus, closeReason.c_str(), context);
+      m_transport->NativeCloseSocket(closeStatus, closeReason.c_str(), context);
     }
     else
 #endif
@@ -257,7 +257,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     // Close the socket - after this point, the m_transport is invalid.
     m_pingThread.Shutdown();
-    m_transport->Close();
+    m_transport->NativeClose();
     m_state = SocketState::Closed;
   }
 
@@ -277,9 +277,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->HasNativeWebsocketSupport())
     {
-      m_transport->SendFrame(
-          (isFinalFrame ? WebSocketTransport::WebSocketFrameType::FrameTypeText
-                        : WebSocketTransport::WebSocketFrameType::FrameTypeTextFragment),
+      m_transport->NativeSendFrame(
+          (isFinalFrame ? WebSocketTransport::NativeWebSocketFrameType::FrameTypeText
+                        : WebSocketTransport::NativeWebSocketFrameType::FrameTypeTextFragment),
           utf8text,
           context);
     }
@@ -307,9 +307,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->HasNativeWebsocketSupport())
     {
-      m_transport->SendFrame(
-          (isFinalFrame ? WebSocketTransport::WebSocketFrameType::FrameTypeBinary
-                        : WebSocketTransport::WebSocketFrameType::FrameTypeBinaryFragment),
+      m_transport->NativeSendFrame(
+          (isFinalFrame ? WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinary
+                        : WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinaryFragment),
           binaryFrame,
           context);
     }
@@ -362,13 +362,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
         case SocketOpcode::BinaryFrame:
           m_currentMessageType = SocketMessageType::Binary;
-          return std::make_shared<WebSocketBinaryFrame>(
-              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+          return std::shared_ptr<WebSocketFrame>(new WebSocketBinaryFrame(
+              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
 
         case SocketOpcode::TextFrame:
           m_currentMessageType = SocketMessageType::Text;
-          return std::make_shared<WebSocketTextFrame>(
-              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+          return std::shared_ptr<WebSocketFrame>(new WebSocketTextFrame(
+              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
 
         case SocketOpcode::Close: {
           if (frame->Payload.size() < 2)
@@ -384,8 +384,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
           lock.lock();
           m_state = SocketState::Closed;
 
-          return std::make_shared<WebSocketPeerCloseFrame>(
-              errorCode, std::string(frame->Payload.begin() + 2, frame->Payload.end()));
+          return std::shared_ptr<WebSocketFrame>(new WebSocketPeerCloseFrame(
+              errorCode, std::string(frame->Payload.begin() + 2, frame->Payload.end())));
         }
 
           // Continuation frames need to be treated somewhat specially.
@@ -399,8 +399,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             {
               m_currentMessageType = SocketMessageType::Unknown;
             }
-            return std::make_shared<WebSocketTextFrame>(
-                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+            return std::shared_ptr<WebSocketFrame>(new WebSocketTextFrame(
+                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
           }
           else if (m_currentMessageType == SocketMessageType::Binary)
           {
@@ -408,8 +408,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             {
               m_currentMessageType = SocketMessageType::Unknown;
             }
-            return std::make_shared<WebSocketBinaryFrame>(
-                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size());
+            return std::shared_ptr<WebSocketFrame>(new WebSocketBinaryFrame(
+                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
           }
           else
           {
@@ -429,34 +429,34 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 #if SUPPORT_NATIVE_TRANSPORT
     if (m_transport->HasNativeWebsocketSupport())
     {
-      auto payload = m_transport->ReceiveFrame(context);
+      auto payload = m_transport->NativeReceiveFrame(context);
       m_receiveStatistics.FramesReceived++;
-      switch (payload.first)
+      switch (payload.FrameType)
       {
-        case WebSocketTransport::WebSocketFrameType::FrameTypeBinary:
+        case WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinary:
           m_receiveStatistics.BinaryFramesReceived++;
           return std::make_shared<WebSocketInternalFrame>(
-              SocketOpcode::BinaryFrame, true, payload.second);
-        case WebSocketTransport::WebSocketFrameType::FrameTypeBinaryFragment:
+              SocketOpcode::BinaryFrame, true, payload.FrameData);
+        case WebSocketTransport::NativeWebSocketFrameType::FrameTypeBinaryFragment:
           m_receiveStatistics.BinaryFramesReceived++;
           return std::make_shared<WebSocketInternalFrame>(
-              SocketOpcode::BinaryFrame, false, payload.second);
-        case WebSocketTransport::WebSocketFrameType::FrameTypeText:
+              SocketOpcode::BinaryFrame, false, payload.FrameData);
+        case WebSocketTransport::NativeWebSocketFrameType::FrameTypeText:
           m_receiveStatistics.TextFramesReceived++;
           return std::make_shared<WebSocketInternalFrame>(
-              SocketOpcode::TextFrame, true, payload.second);
-        case WebSocketTransport::WebSocketFrameType::FrameTypeTextFragment:
+              SocketOpcode::TextFrame, true, payload.FrameData);
+        case WebSocketTransport::NativeWebSocketFrameType::FrameTypeTextFragment:
           m_receiveStatistics.TextFramesReceived++;
           return std::make_shared<WebSocketInternalFrame>(
-              SocketOpcode::TextFrame, false, payload.second);
-        case WebSocketTransport::WebSocketFrameType::FrameTypeClosed: {
+              SocketOpcode::TextFrame, false, payload.FrameData);
+        case WebSocketTransport::NativeWebSocketFrameType::FrameTypeClosed: {
           m_receiveStatistics.CloseFramesReceived++;
-          auto closeResult = m_transport->GetCloseSocketInformation(context);
+          auto closeResult = m_transport->NativeGetCloseSocketInformation(context);
           std::vector<uint8_t> closePayload;
-          closePayload.push_back(closeResult.first >> 8);
-          closePayload.push_back(closeResult.first & 0xff);
+          closePayload.push_back(closeResult.CloseReason >> 8);
+          closePayload.push_back(closeResult.CloseReason& 0xff);
           closePayload.insert(
-              closePayload.end(), closeResult.second.begin(), closeResult.second.end());
+              closePayload.end(), closeResult.CloseReasonDescription.begin(), closeResult.CloseReasonDescription.end());
           return std::make_shared<WebSocketInternalFrame>(SocketOpcode::Close, true, closePayload);
         }
         default:

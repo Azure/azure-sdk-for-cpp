@@ -140,15 +140,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // if WSAloctl succeeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
-    auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-    result;
-    //    if (Log::ShouldWrite(Logger::Level::Verbose))
-    //    {
-    //      Log::Write(
-    //          Logger::Level::Verbose,
-    //          LogMsgPrefix + "Windows - calling setsockopt after uploading chunk. ideal = "
-    //              + std::to_string(ideal) + " result = " + std::to_string(result));
-    //    }
+    setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
   }
 }
 #endif
@@ -327,15 +319,12 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     throw Azure::Core::Http::TransportException(
         "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
-  else
+  if (SupportsWebSockets())
   {
-    if (SupportsWebSockets())
+    std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->ExtractConnection());
+    if (upgradedConnection)
     {
-      std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->GetUpgradedConnection());
-      if (upgradedConnection)
-      {
-        OnUpgradedConnection(upgradedConnection);
-      }
+      OnUpgradedConnection(std::move(upgradedConnection));
     }
   }
 
@@ -438,7 +427,7 @@ CURLcode CurlSession::Perform(Context const& context)
   return result;
 }
 
-std::unique_ptr<CurlNetworkConnection> CurlSession::GetUpgradedConnection()
+std::unique_ptr<CurlNetworkConnection> CurlSession::ExtractConnection()
 {
   if (m_connectionUpgraded)
   {

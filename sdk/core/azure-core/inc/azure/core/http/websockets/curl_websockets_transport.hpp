@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief #Azure::Core::Http::HttpTransport implementation via CURL.
+ * @brief #Azure::Core::Http::WebSockets::WebSocketTransport implementation via CURL.
  */
 
 #pragma once
@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
      */
-    virtual void Close() override;
+    virtual void NativeClose() override;
 
     // Native WebSocket support methods.
     /**
@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    virtual void CloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override
+    virtual void NativeCloseSocket(uint16_t, std::string const&, Azure::Core::Context const&) override
     {
       throw std::runtime_error("Not implemented.");
     }
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    std::pair<uint16_t, std::string> GetCloseSocketInformation(const Azure::Core::Context&) override
+    NativeWebSocketCloseInformation NativeGetCloseSocketInformation(const Azure::Core::Context&) override
     {
       throw std::runtime_error("Not implemented");
     }
@@ -85,8 +85,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    virtual void SendFrame(
-        WebSocketFrameType,
+    virtual void NativeSendFrame(
+        NativeWebSocketFrameType,
         std::vector<uint8_t> const&,
         Azure::Core::Context const&) override
     {
@@ -99,7 +99,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
      */
-    virtual std::pair<WebSocketFrameType, std::vector<uint8_t>> ReceiveFrame(
+    virtual NativeWebSocketReceiveInformation NativeReceiveFrame(
         Azure::Core::Context const&) override
     {
       throw std::runtime_error("Not implemented");
@@ -141,7 +141,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     // std::shared_ptr can be.
     std::shared_ptr<Azure::Core::Http::CurlNetworkConnection> m_upgradedConnection;
     void OnUpgradedConnection(
-        std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>& upgradedConnection) override;
+        std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>&& upgradedConnection) override;
   };
 
 }}}} // namespace Azure::Core::Http::WebSockets

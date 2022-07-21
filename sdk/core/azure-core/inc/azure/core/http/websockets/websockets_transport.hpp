@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Web Socket Frame type, one of Text or Binary.
      */
-    enum class WebSocketFrameType
+    enum class NativeWebSocketFrameType
     {
       /**
        * @brief Indicates that the frame is a partial UTF-8 encoded text frame - it is NOT the
@@ -46,6 +46,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
       FrameTypeClosed,
     };
+
+    struct NativeWebSocketCloseInformation
+    {
+      uint16_t CloseReason;
+      std::string CloseReasonDescription;
+    };
+    struct NativeWebSocketReceiveInformation
+    {
+      NativeWebSocketFrameType FrameType;
+      std::vector<uint8_t> FrameData;
+    };
     /**
      * @brief Destructs `%WebSocketTransport`.
      *
@@ -69,7 +80,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @param disconnectReason UTF-8 encoded reason for the disconnection. Optional.
      * @param context Context for the operation.
      */
-    virtual void CloseSocket(
+    virtual void NativeCloseSocket(
         uint16_t status,
         std::string const& disconnectReason,
         Azure::Core::Context const& context)
@@ -81,7 +92,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * Does not notify the remote endpoint that the socket is being closed.
      *
      */
-    virtual void Close() = 0;
+    virtual void NativeClose() = 0;
 
     /**
      * @brief Retrieve the information associated with a WebSocket close response.
@@ -90,7 +101,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @returns a tuple containing the status code and string.
      */
-    virtual std::pair<uint16_t, std::string> GetCloseSocketInformation(
+    virtual NativeWebSocketCloseInformation NativeGetCloseSocketInformation(
         Azure::Core::Context const& context)
         = 0;
 
@@ -101,8 +112,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @param frameData Frame data to be sent to the server.
      * @param context Context for the operation.
      */
-    virtual void SendFrame(
-        WebSocketFrameType frameType,
+    virtual void NativeSendFrame(
+        NativeWebSocketFrameType frameType,
         std::vector<uint8_t> const& frameData,
         Azure::Core::Context const& context)
         = 0;
@@ -115,94 +126,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * @returns a tuple containing the Frame data received from the remote server and the type of
      * data returned from the remote endpoint
      */
-    virtual std::pair<WebSocketFrameType, std::vector<uint8_t>> ReceiveFrame(
+    virtual NativeWebSocketReceiveInformation NativeReceiveFrame(
         Azure::Core::Context const& context)
         = 0;
 
     /**************/
     /* Non Native WebSocket support functions */
     /**************/
-
-    // Implement a buffered stream reader
-    class BufferedStreamReader {
-      std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;
-      std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
-      constexpr static size_t m_bufferSize = 1024;
-      uint8_t m_buffer[m_bufferSize]{};
-      size_t m_bufferPos = 0;
-      size_t m_bufferLen = 0;
-      bool m_eof = false;
-
-    public:
-      explicit BufferedStreamReader() = default;
-      ~BufferedStreamReader() = default;
-
-      void SetInitialStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
-      {
-        m_initialBodyStream = std::move(stream);
-      }
-      void SetTransport(
-          std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport>& transport)
-      {
-        m_transport = transport;
-      }
-
-      uint8_t ReadByte(Azure::Core::Context const& context)
-      {
-        if (m_bufferPos >= m_bufferLen)
-        {
-          // Start by reading data from our initial body stream.
-          m_bufferLen = m_initialBodyStream->ReadToCount(m_buffer, m_bufferSize, context);
-          if (m_bufferLen == 0)
-          {
-            // If we run out of the initial stream, we need to read from the transport.
-            m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
-          }
-          m_bufferPos = 0;
-          if (m_bufferLen == 0)
-          {
-            m_eof = true;
-            return 0;
-          }
-        }
-        return m_buffer[m_bufferPos++];
-      }
-      uint16_t ReadShort(Azure::Core::Context const& context)
-      {
-        uint16_t result = ReadByte(context);
-        result <<= 8;
-        result |= ReadByte(context);
-        return result;
-      }
-      uint64_t ReadInt64(Azure::Core::Context const& context)
-      {
-        uint64_t result = 0;
-
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 56 & 0xff00000000000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 48 & 0x00ff000000000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 40 & 0x0000ff0000000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 32 & 0x000000ff00000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 24 & 0x00000000ff000000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 16 & 0x0000000000ff0000);
-        result |= (static_cast<uint64_t>(ReadByte(context)) << 8 & 0x000000000000ff00);
-        result |= static_cast<uint64_t>(ReadByte(context));
-        return result;
-      }
-      std::vector<uint8_t> ReadBytes(size_t readLength, Azure::Core::Context const& context)
-      {
-        std::vector<uint8_t> result;
-        size_t index = 0;
-        while (index < readLength)
-        {
-          uint8_t byte = ReadByte(context);
-          result.push_back(byte);
-          index += 1;
-        }
-        return result;
-      }
-
-      bool IsEof() const { return m_eof; }
-    };
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
@@ -220,7 +150,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   protected:
     /**
-     * @brief Constructs a default instance of `%HttpTransport`.
+     * @brief Constructs a default instance of `%WebSocketTransport`.
      *
      */
     WebSocketTransport() = default;
@@ -233,15 +163,15 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     WebSocketTransport(const WebSocketTransport& other) = default;
 
     /**
-     * @brief Constructs `%HttpTransport` by moving another instance of `%HttpTransport`.
+     * @brief Constructs a WebSocketTransport from another WebSocketTransport.
      *
      * @param other An instance to move in.
      */
     WebSocketTransport(WebSocketTransport&& other) = default;
 
     /**
-     * @brief Assigns `%HttpTransport` to another instance of `%HttpTransport`.
-     *
+     * @brief Assigns one WebSocketTransport to another.
+     * 
      * @param other An instance to assign.
      *
      * @return A reference to this instance.

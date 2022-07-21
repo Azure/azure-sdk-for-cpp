@@ -3,7 +3,8 @@
 
 /**
  * @file
- * @brief Utilities to be used by HTTP transport implementations.
+ * @brief Azure Core APIs implementing the WebSocket protocol [RFC 6455]
+ * (https://www.rfc-editor.org/rfc/rfc6455.html).
  */
 
 #pragma once
@@ -50,6 +51,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   class WebSocketBinaryFrame;
   class WebSocketPeerCloseFrame;
 
+namespace _detail {
+	class WebSocketImplementation;
+  }
   /** @brief Statistics about data sent and received by the WebSocket.
    *
    * @remarks This class is primarily intended for test collateral and debugging to allow
@@ -131,50 +135,66 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   /** @brief Contains the contents of a WebSocket Text frame.*/
   class WebSocketTextFrame : public WebSocketFrame,
                              public std::enable_shared_from_this<WebSocketTextFrame> {
+    friend _detail::WebSocketImplementation;
   private:
   public:
     /** @brief Constructs a new WebSocketTextFrame */
     WebSocketTextFrame() = default;
+    /** @brief Text of the frame received from the remote peer. */
+    std::string Text;
+
+  private:
     /** @brief Constructs a new WebSocketTextFrame
      * @param isFinalFrame True if this is the final frame in a multi-frame message.
      * @param body UTF-8 encoded text of the frame data.
      * @param size Length in bytes of the frame body.
      */
-    WebSocketTextFrame(bool isFinalFrame, unsigned char const* body, size_t size)
+    WebSocketTextFrame(bool isFinalFrame, uint8_t const* body, size_t size)
         : WebSocketFrame{WebSocketFrameType::TextFrameReceived, isFinalFrame},
           Text(body, body + size)
     {
     }
-    /** @brief Text of the frame received from the remote peer. */
-    std::string Text;
   };
 
   /** @brief Contains the contents of a WebSocket Binary frame.*/
   class WebSocketBinaryFrame : public WebSocketFrame,
                                public std::enable_shared_from_this<WebSocketBinaryFrame> {
+    friend _detail::WebSocketImplementation;
+
   private:
   public:
     /** @brief Constructs a new WebSocketBinaryFrame */
     WebSocketBinaryFrame() = default;
+    /** @brief Binary frame data received from the remote peer. */
+    std::vector<uint8_t> Data;
+
     /** @brief Constructs a new WebSocketBinaryFrame
      * @param isFinal True if this is the final frame in a multi-frame message.
      * @param body binary of the frame data.
      * @param size Length in bytes of the frame body.
      */
-    WebSocketBinaryFrame(bool isFinal, unsigned char const* body, size_t size)
+  private:
+    WebSocketBinaryFrame(bool isFinal, uint8_t const* body, size_t size)
         : WebSocketFrame{WebSocketFrameType::BinaryFrameReceived, isFinal}, Data(body, body + size)
     {
     }
-    /** @brief Binary frame data received from the remote peer. */
-    std::vector<uint8_t> Data;
   };
 
   /** @brief Contains the contents of a WebSocket Close frame.*/
   class WebSocketPeerCloseFrame : public WebSocketFrame,
                                   public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
+    friend _detail::WebSocketImplementation;
+
   public:
     /** @brief Constructs a new WebSocketPeerCloseFrame */
     WebSocketPeerCloseFrame() = default;
+    /** @brief Status code sent from the remote peer. Typically a member of the WebSocketErrorCode
+     * enumeration */
+    uint16_t RemoteStatusCode;
+    /** @brief Optional text sent from the remote peer. */
+    std::string RemoteCloseReason;
+
+  private:
     /** @brief Constructs a new WebSocketBinaryFrame
      * @param remoteStatusCode Status code sent by the remote peer.
      * @param remoteCloseReason Optional reason sent by the remote peer.
@@ -184,11 +204,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
           RemoteStatusCode(remoteStatusCode), RemoteCloseReason(remoteCloseReason)
     {
     }
-    /** @brief Status code sent from the remote peer. Typically a member of the WebSocketErrorCode
-     * enumeration */
-    uint16_t RemoteStatusCode;
-    /** @brief Optional text sent from the remote peer. */
-    std::string RemoteCloseReason;
+
   };
 
   struct WebSocketOptions : Azure::Core::_internal::ClientOptions
@@ -272,7 +288,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     void SendFrame(
         std::string const& textFrame,
-        bool isFinalFrame,
+        bool isFinalFrame = false,
         Azure::Core::Context const& context = Azure::Core::Context{});
 
     /** @brief Sends a Binary frame to the remote server.
@@ -283,7 +299,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     void SendFrame(
         std::vector<uint8_t> const& binaryFrame,
-        bool isFinalFrame,
+        bool isFinalFrame = false,
         Azure::Core::Context const& context = Azure::Core::Context{});
 
     /** @brief Receive a frame from the remote server.
