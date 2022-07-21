@@ -55,13 +55,13 @@ stages:
           workingDirectory: build/sdk/core/azure-core/test/ut
           displayName: Install Python requirements.
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-        - pwsh:
+        - task: PowerShell@2
+          displayName: 'Launch python websocket server'
           inputs:
             pwsh: true
             filePath: Start-WebSocketServer.ps1
             workingDirectory: build/sdk/core/azure-core/test/ut
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-          displayName: Launch python websocket server
 
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
