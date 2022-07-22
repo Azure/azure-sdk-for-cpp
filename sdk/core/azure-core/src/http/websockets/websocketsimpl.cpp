@@ -24,6 +24,7 @@
 #include <sstream>
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
+  using namespace Azure::Core::Http::WebSockets::_internal;
   using namespace Azure::Core::Diagnostics::_internal;
   using namespace Azure::Core::Diagnostics;
   using namespace std::chrono_literals;

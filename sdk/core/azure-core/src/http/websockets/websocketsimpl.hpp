@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     };
 
   public:
-    WebSocketImplementation(Azure::Core::Url const& remoteUrl, WebSocketOptions const& options);
+    WebSocketImplementation(Azure::Core::Url const& remoteUrl, _internal::WebSocketOptions const& options);
 
     void Open(Azure::Core::Context const& context);
     void Close(
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         bool isFinalFrame,
         Azure::Core::Context const& context);
 
-    std::shared_ptr<WebSocketFrame> ReceiveFrame(Azure::Core::Context const& context);
+    std::shared_ptr<_internal::WebSocketFrame> ReceiveFrame(Azure::Core::Context const& context);
 
     void AddHeader(std::string const& headerName, std::string const& headerValue);
 
@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     bool IsOpen() { return m_state == SocketState::Open; }
     bool HasNativeWebSocketSupport();
 
-    WebSocketStatistics GetStatistics() const;
+    _internal::WebSocketStatistics GetStatistics() const;
 
   private:
     // WebSocket opcodes.
@@ -353,7 +353,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         Azure::Core::Context const& context);
 
     Azure::Core::Url m_remoteUrl;
-    WebSocketOptions m_options;
+    _internal::WebSocketOptions m_options;
     std::map<std::string, std::string> m_headers;
     std::string m_chosenProtocol;
     std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketTransport> m_transport;

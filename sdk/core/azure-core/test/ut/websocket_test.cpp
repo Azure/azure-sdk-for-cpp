@@ -16,6 +16,7 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http::WebSockets;
+using namespace Azure::Core::Http::WebSockets::_internal;
 using namespace std::chrono_literals;
 
 constexpr uint16_t UndefinedButLegalCloseReason = 4500;
@@ -142,7 +143,7 @@ TEST_F(WebSocketTests, SimpleEcho)
     testSocket.SendFrame(binaryData, true);
 
     std::vector<uint8_t> responseData;
-    std::shared_ptr<Azure::Core::Http::WebSockets::WebSocketFrame> response;
+    std::shared_ptr<WebSocketFrame> response;
     do
     {
       response = testSocket.ReceiveFrame();

@@ -5,10 +5,11 @@
 #include "azure/core/context.hpp"
 #include "websocketsimpl.hpp"
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _internal {
+
   WebSocket::WebSocket(Azure::Core::Url const& remoteUrl, WebSocketOptions const& options)
       : m_socketImplementation(
-          std::make_unique<_detail::WebSocketImplementation>(remoteUrl, options))
+          std::make_unique<Azure::Core::Http::WebSockets::_detail::WebSocketImplementation>(remoteUrl, options))
 
   {
   }
@@ -100,4 +101,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     return static_cast<WebSocketPeerCloseFrame*>(this)->shared_from_this();
   }
 
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::WebSockets::_internal
