@@ -52,7 +52,7 @@ void Operation(int repetitions)
   }
 }
 
-int main(int argc, char** ) 
+int main(int argc, char**)
 {
   // some param was passed to the program, doesn't matter what it is,
   // it is meant for the moment to just run a quick iteration to check for sanity of the test.
