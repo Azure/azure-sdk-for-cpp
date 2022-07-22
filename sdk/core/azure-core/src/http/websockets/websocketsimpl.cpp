@@ -242,15 +242,15 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       // Note that there might be in-flight frames that were sent from the other end of the
       // WebSocket that we don't care about any more (since we're closing the WebSocket). So
       // drain those frames.
-      auto closeResponse = ReceiveFrame(context);
-      while (closeResponse->FrameType != WebSocketFrameType::PeerClosedReceived)
+      auto closeResponse = ReceiveTransportFrame(context);
+      while (closeResponse && closeResponse->Opcode != SocketOpcode::Close)
       {
         m_receiveStatistics.FramesDroppedByClose++;
         Log::Write(
             Logger::Level::Warning,
             "Received unexpected frame during close. Opcode: "
-                + std::to_string(static_cast<uint8_t>(closeResponse->FrameType)));
-        closeResponse = ReceiveFrame(closeContext);
+                + std::to_string(static_cast<uint8_t>(closeResponse->Opcode)));
+        closeResponse = ReceiveTransportFrame(closeContext);
       }
 
       // Re-acquire the state lock once we've received the close lock.
@@ -347,79 +347,92 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     while (true)
     {
       frame = ReceiveTransportFrame(context);
-      switch (frame->Opcode)
+      if (frame)
       {
-          // When we receive a "ping" frame, we want to send a Pong frame back to the server.
-        case SocketOpcode::Ping:
-          Log::Write(
-              Logger::Level::Verbose, "Received Ping frame: " + HexEncode(frame->Payload, 16));
-          SendPong(frame->Payload, context);
-          break;
-          // We want to ignore all incoming "Pong" frames.
-        case SocketOpcode::Pong:
-          Log::Write(
-              Logger::Level::Verbose, "Received Pong frame: " + HexEncode(frame->Payload, 16));
-          break;
+        switch (frame->Opcode)
+        {
+            // When we receive a "ping" frame, we want to send a Pong frame back to the server.
+          case SocketOpcode::Ping:
+            Log::Write(
+                Logger::Level::Verbose, "Received Ping frame: " + HexEncode(frame->Payload, 16));
+            SendPong(frame->Payload, context);
+            break;
+            // We want to ignore all incoming "Pong" frames.
+          case SocketOpcode::Pong:
+            Log::Write(
+                Logger::Level::Verbose, "Received Pong frame: " + HexEncode(frame->Payload, 16));
+            break;
 
-        case SocketOpcode::BinaryFrame:
-          m_currentMessageType = SocketMessageType::Binary;
-          return std::shared_ptr<WebSocketFrame>(new WebSocketBinaryFrame(
-              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
-
-        case SocketOpcode::TextFrame:
-          m_currentMessageType = SocketMessageType::Text;
-          return std::shared_ptr<WebSocketFrame>(new WebSocketTextFrame(
-              frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
-
-        case SocketOpcode::Close: {
-          if (frame->Payload.size() < 2)
-          {
-            throw std::runtime_error("Close response buffer is too short.");
-          }
-          uint16_t errorCode = 0;
-          errorCode |= (frame->Payload[0] << 8) & 0xff00;
-          errorCode |= (frame->Payload[1] & 0x00ff);
-
-          // We received a close frame, mark the socket as closed. Make sure we
-          // reacquire the state lock before setting the state to closed.
-          lock.lock();
-          m_state = SocketState::Closed;
-
-          return std::shared_ptr<WebSocketFrame>(new WebSocketPeerCloseFrame(
-              errorCode, std::string(frame->Payload.begin() + 2, frame->Payload.end())));
-        }
-
-          // Continuation frames need to be treated somewhat specially.
-          // We depend on the fact that the protocol requires that a Continuation frame
-          // only be sent if it is part of a multi-frame message whose previous frame was a Text or
-          // Binary frame.
-        case SocketOpcode::Continuation:
-          if (m_currentMessageType == SocketMessageType::Text)
-          {
-            if (frame->IsFinalFrame)
-            {
-              m_currentMessageType = SocketMessageType::Unknown;
-            }
-            return std::shared_ptr<WebSocketFrame>(new WebSocketTextFrame(
-                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
-          }
-          else if (m_currentMessageType == SocketMessageType::Binary)
-          {
-            if (frame->IsFinalFrame)
-            {
-              m_currentMessageType = SocketMessageType::Unknown;
-            }
+          case SocketOpcode::BinaryFrame:
+            m_currentMessageType = SocketMessageType::Binary;
             return std::shared_ptr<WebSocketFrame>(new WebSocketBinaryFrame(
                 frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
+
+          case SocketOpcode::TextFrame:
+            m_currentMessageType = SocketMessageType::Text;
+            return std::shared_ptr<WebSocketFrame>(new WebSocketTextFrame(
+                frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
+
+          case SocketOpcode::Close: {
+            if (frame->Payload.size() < 2)
+            {
+              throw std::runtime_error("Close response buffer is too short.");
+            }
+            uint16_t errorCode = 0;
+            errorCode |= (frame->Payload[0] << 8) & 0xff00;
+            errorCode |= (frame->Payload[1] & 0x00ff);
+
+            // We received a close frame, mark the socket as closed. Make sure we
+            // reacquire the state lock before setting the state to closed.
+            lock.lock();
+            m_state = SocketState::Closed;
+
+            return std::shared_ptr<WebSocketFrame>(new WebSocketPeerCloseFrame(
+                errorCode, std::string(frame->Payload.begin() + 2, frame->Payload.end())));
           }
-          else
-          {
-            m_receiveStatistics.FramesDroppedByProtocolError++;
-            throw std::runtime_error("Unknown message type and received continuation opcode");
-          }
-        default:
-          throw std::runtime_error("Unknown frame type received.");
+
+            // Continuation frames need to be treated somewhat specially.
+            // We depend on the fact that the protocol requires that a Continuation frame
+            // only be sent if it is part of a multi-frame message whose previous frame was a Text
+            // or Binary frame.
+          case SocketOpcode::Continuation:
+            if (m_currentMessageType == SocketMessageType::Text)
+            {
+              if (frame->IsFinalFrame)
+              {
+                m_currentMessageType = SocketMessageType::Unknown;
+              }
+              return std::shared_ptr<WebSocketFrame>(new WebSocketTextFrame(
+                  frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
+            }
+            else if (m_currentMessageType == SocketMessageType::Binary)
+            {
+              if (frame->IsFinalFrame)
+              {
+                m_currentMessageType = SocketMessageType::Unknown;
+              }
+              return std::shared_ptr<WebSocketFrame>(new WebSocketBinaryFrame(
+                  frame->IsFinalFrame, frame->Payload.data(), frame->Payload.size()));
+            }
+            else
+            {
+              m_receiveStatistics.FramesDroppedByProtocolError++;
+              throw std::runtime_error("Unknown message type and received continuation opcode");
+            }
+          default:
+            throw std::runtime_error("Unknown frame type received.");
+        }
       }
+      else
+      {
+        if (m_state != SocketState::Closed && m_state != SocketState::Closing)
+        {
+          throw std::runtime_error("Transport is at EOF, no frame to receive.");
+        }
+        // The socket was closed, most likely locally, so fake a close frame response.
+        return std::shared_ptr<WebSocketFrame>(new WebSocketPeerCloseFrame());
+      }
+
       context.ThrowIfCancelled();
     }
   }
@@ -469,45 +482,47 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     else
 #endif
     {
-      SocketOpcode opcode;
-
-      bool isFinal = false;
-      std::vector<uint8_t> frameData = DecodeFrame(opcode, isFinal, context);
-      // At this point, frameData contains the actual payload from the service.
-      auto frame = std::make_shared<WebSocketInternalFrame>(opcode, isFinal, frameData);
-
-      // Handle statistics for the incoming frame.
-      m_receiveStatistics.FramesReceived++;
-      switch (frame->Opcode)
+      std::shared_ptr<WebSocketInternalFrame> frame = DecodeFrame(context);
+      if (frame)
       {
-        case SocketOpcode::Ping: {
-          m_receiveStatistics.PingFramesReceived++;
-          break;
+
+        // Handle statistics for the incoming frame.
+        m_receiveStatistics.FramesReceived++;
+        switch (frame->Opcode)
+        {
+          case SocketOpcode::Ping: {
+            m_receiveStatistics.PingFramesReceived++;
+            break;
+          }
+          case SocketOpcode::Pong: {
+            m_receiveStatistics.PongFramesReceived++;
+            break;
+          }
+          case SocketOpcode::TextFrame: {
+            m_receiveStatistics.TextFramesReceived++;
+            break;
+          }
+          case SocketOpcode::BinaryFrame: {
+            m_receiveStatistics.BinaryFramesReceived++;
+            break;
+          }
+          case SocketOpcode::Close: {
+            m_receiveStatistics.CloseFramesReceived++;
+            break;
+          }
+          case SocketOpcode::Continuation: {
+            m_receiveStatistics.ContinuationFramesReceived++;
+            break;
+          }
+          default: {
+            m_receiveStatistics.UnknownFramesReceived++;
+            break;
+          }
         }
-        case SocketOpcode::Pong: {
-          m_receiveStatistics.PongFramesReceived++;
-          break;
-        }
-        case SocketOpcode::TextFrame: {
-          m_receiveStatistics.TextFramesReceived++;
-          break;
-        }
-        case SocketOpcode::BinaryFrame: {
-          m_receiveStatistics.BinaryFramesReceived++;
-          break;
-        }
-        case SocketOpcode::Close: {
-          m_receiveStatistics.CloseFramesReceived++;
-          break;
-        }
-        case SocketOpcode::Continuation: {
-          m_receiveStatistics.ContinuationFramesReceived++;
-          break;
-        }
-        default: {
-          m_receiveStatistics.UnknownFramesReceived++;
-          break;
-        }
+      }
+      else
+      {
+        m_receiveStatistics.FramesDropped++;
       }
       return frame;
     }
@@ -609,10 +624,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     return encodedFrame;
   }
-  std::vector<uint8_t> WebSocketImplementation::DecodeFrame(
-      SocketOpcode& opcode,
-      bool& isFinal,
-      Azure::Core::Context const& context)
+  std::shared_ptr<WebSocketImplementation::WebSocketInternalFrame>
+  WebSocketImplementation::DecodeFrame(Azure::Core::Context const& context)
   {
     // Ensure single threaded access to receive this frame.
     std::unique_lock<std::mutex> lock(m_transportMutex);
@@ -621,9 +634,18 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       throw std::runtime_error("Frame buffer is too small.");
     }
     uint8_t payloadByte = ReadTransportByte(context);
-    opcode = static_cast<SocketOpcode>(payloadByte & 0x7f);
-    isFinal = (payloadByte & 0x80) != 0;
+    // If the transport is at EOF, then there is no payload data, so just return null.
+    if (IsTransportEof())
+    {
+      return nullptr;
+    }
+    SocketOpcode opcode = static_cast<SocketOpcode>(payloadByte & 0x7f);
+    bool isFinal = (payloadByte & 0x80) != 0;
     payloadByte = ReadTransportByte(context);
+    if (IsTransportEof())
+    {
+      return nullptr;
+    }
     if (payloadByte & 0x80)
     {
       throw std::runtime_error("Server sent a frame with a reserved bit set.");
@@ -645,8 +667,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     {
       throw std::logic_error("Unexpected payload length.");
     }
+    if (IsTransportEof())
+    {
+      return nullptr;
+    }
 
-    return ReadTransportBytes(static_cast<size_t>(payloadLength), context);
+    std::vector<uint8_t> payload(ReadTransportBytes(static_cast<size_t>(payloadLength), context));
+    if (IsTransportEof())
+    {
+      return nullptr;
+    }
+    return std::make_shared<WebSocketInternalFrame>(opcode, isFinal, payload);
   }
 
   uint8_t WebSocketImplementation::ReadTransportByte(Azure::Core::Context const& context)

@@ -344,15 +344,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     /**
      * @brief Decode a frame received from the websocket server.
      *
-     * @param opcode Opcode returned by the server.
-     * @param isFinal True if this is the final message.
-     * @param context Context for reads if necessary.
      * @returns A pointer to the start of the decoded data.
      */
-    std::vector<uint8_t> DecodeFrame(
-        SocketOpcode& opcode,
-        bool& isFinal,
-        Azure::Core::Context const& context);
+    std::shared_ptr<WebSocketInternalFrame> DecodeFrame(Azure::Core::Context const& context);
 
     Azure::Core::Url m_remoteUrl;
     _internal::WebSocketOptions m_options;

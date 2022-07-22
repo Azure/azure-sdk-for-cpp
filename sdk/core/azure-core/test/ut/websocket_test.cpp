@@ -114,7 +114,7 @@ TEST_F(WebSocketTests, SimpleEcho)
     testSocket.Close();
   }
   {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest?delay=20"));
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest?delay=5"));
 
     testSocket.Open();
 
@@ -134,7 +134,7 @@ TEST_F(WebSocketTests, SimpleEcho)
   }
 
   {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest?fragment=true"));
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest?fragment=true&delay=5"));
 
     testSocket.Open();
 
@@ -215,6 +215,22 @@ TEST_F(WebSocketTests, VariableSizeEcho)
   }
 }
 
+// Generator for random bytes. Used in WebSocketImplementation and tests.
+std::vector<uint8_t> GenerateRandomBytes(size_t index, size_t vectorSize)
+{
+  std::random_device randomEngine;
+
+  std::vector<uint8_t> rv(vectorSize + 4);
+  rv[0] = index & 0xff;
+  rv[1] = (index >> 8) & 0xff;
+  rv[2] = (index >> 16) & 0xff;
+  rv[3] = (index >> 24) & 0xff;
+  std::generate(std::begin(rv) + 4, std::end(rv), [&randomEngine]() mutable {
+    return static_cast<uint8_t>(randomEngine() % UINT8_MAX);
+  });
+  return rv;
+}
+
 TEST_F(WebSocketTests, CloseDuringEcho)
 {
   {
@@ -231,6 +247,52 @@ TEST_F(WebSocketTests, CloseDuringEcho)
 
     // Close the socket gracefully.
     testSocket.Close();
+  }
+
+  // Close the websocket while a thread is waiting for a response.
+  {
+    WebSocket testSocket(Azure::Core::Url("ws://localhost:8000/echotest?delay=10"));
+
+    testSocket.Open();
+
+    std::thread testThread([&]() {
+      try
+      {
+        std::vector<uint8_t> sendData = GenerateRandomBytes(0, 100);
+        testSocket.SendFrame(sendData);
+        GTEST_LOG_(INFO) << "Receive frame." ;
+        auto response = testSocket.ReceiveFrame();
+        GTEST_LOG_(INFO) << "Received frame.";
+        if (response->FrameType == WebSocketFrameType::PeerClosedReceived)
+        {
+          GTEST_LOG_(INFO) << "Peer closed the socket; Terminating thread.";
+          return;
+        }
+        else if (response->FrameType != WebSocketFrameType::BinaryFrameReceived)
+        {
+          GTEST_LOG_(INFO) << "Unexpected frame type received.";
+        }
+        EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
+        auto binaryResult = response->AsBinaryFrame();
+      }
+      catch (Azure::Core::OperationCancelledException& ex)
+      {
+        GTEST_LOG_(ERROR) << "Cancelled Exception: " << ex.what()
+                          << " Current Thread: " << std::this_thread::get_id() << std::endl;
+      }
+      catch (std::exception const& ex)
+      {
+        GTEST_LOG_(ERROR) << "Exception: " << ex.what() << std::endl;
+      }
+    });
+	
+	std::this_thread::sleep_for(100ms);
+
+    // Close the socket gracefully.
+  GTEST_LOG_(INFO) << "Closing Socket.";
+  EXPECT_NO_THROW(testSocket.Close(UndefinedButLegalCloseReason, "Close Reason."));
+  GTEST_LOG_(INFO) << "Closed Socket.";
+  testThread.join();
   }
 }
 
@@ -254,22 +316,6 @@ std::string ToHexString(std::vector<uint8_t> const& data)
     ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(byte);
   }
   return ss.str();
-}
-
-// Generator for random bytes. Used in WebSocketImplementation and tests.
-std::vector<uint8_t> GenerateRandomBytes(size_t index, size_t vectorSize)
-{
-  std::random_device randomEngine;
-
-  std::vector<uint8_t> rv(vectorSize + 4);
-  rv[0] = index & 0xff;
-  rv[1] = (index >> 8) & 0xff;
-  rv[2] = (index >> 16) & 0xff;
-  rv[3] = (index >> 24) & 0xff;
-  std::generate(std::begin(rv) + 4, std::end(rv), [&randomEngine]() mutable {
-    return static_cast<uint8_t>(randomEngine() % UINT8_MAX);
-  });
-  return rv;
 }
 
 TEST_F(WebSocketTests, PingReceiveTest)

@@ -112,10 +112,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
     /** @brief A frame of data received from a WebSocket.
      */
-    struct WebSocketFrame
-    {
+    class WebSocketFrame {
+    public:
       /** @brief The type of frame received: Text, Binary or Close. */
-      WebSocketFrameType FrameType;
+      WebSocketFrameType FrameType{};
       /** @brief True if the frame received is a "final" frame */
       bool IsFinalFrame{false};
       /** @brief Returns the contents of the frame as a Text frame.
@@ -130,6 +130,18 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        * @returns A WebSocketPeerCloseFrame containing the contents of the frame.
        */
       std::shared_ptr<WebSocketPeerCloseFrame> AsPeerCloseFrame();
+
+      /** @brief Construct a new instance of a WebSocketFrame.*/
+      WebSocketFrame() = default;
+
+      /** @brief Construct a new instance of a WebSocketFrame with a specific frame type.
+       * @param frameType The type of frame received.
+       */
+      WebSocketFrame(WebSocketFrameType frameType) : FrameType{frameType} {}
+      WebSocketFrame(WebSocketFrameType frameType, bool isFinalFrame)
+          : FrameType{frameType}, IsFinalFrame{isFinalFrame}
+      {
+      }
     };
 
     /** @brief Contains the contents of a WebSocket Text frame.*/
@@ -140,7 +152,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     private:
     public:
       /** @brief Constructs a new WebSocketTextFrame */
-      WebSocketTextFrame() = default;
+      WebSocketTextFrame() : WebSocketFrame(WebSocketFrameType::TextFrameReceived){};
       /** @brief Text of the frame received from the remote peer. */
       std::string Text;
 
@@ -165,7 +177,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     private:
     public:
       /** @brief Constructs a new WebSocketBinaryFrame */
-      WebSocketBinaryFrame() = default;
+      WebSocketBinaryFrame() : WebSocketFrame(WebSocketFrameType::BinaryFrameReceived){};
       /** @brief Binary frame data received from the remote peer. */
       std::vector<uint8_t> Data;
 
@@ -189,7 +201,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
     public:
       /** @brief Constructs a new WebSocketPeerCloseFrame */
-      WebSocketPeerCloseFrame() = default;
+      WebSocketPeerCloseFrame() : WebSocketFrame(WebSocketFrameType::PeerClosedReceived){};
       /** @brief Status code sent from the remote peer. Typically a member of the WebSocketErrorCode
        * enumeration */
       uint16_t RemoteStatusCode;

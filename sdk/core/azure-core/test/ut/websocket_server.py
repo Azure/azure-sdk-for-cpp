@@ -1,9 +1,10 @@
 from array import array
 import asyncio
+#from curses import has_key
 from operator import length_hint
 import threading
 from time import sleep
-from urllib.parse import urlparse
+from urllib.parse import ParseResult, urlparse
  
 import websockets
  
@@ -47,23 +48,36 @@ def HexEncode(data: bytes)->str:
         rv+= '{:02X}'.format(val)
     return rv
 
+def ParseQuery(url : ParseResult) -> dict:
+    rv={}
+    if len(url.query)!=0:
+        args = url.query.split('&')
+        for arg in args:
+            vals=arg.split('=')
+            rv[vals[0]]=vals[1]
+    return rv
 
 echo_count_lock = threading.Lock()
 echo_count_recv = 0
 echo_count_send = 0
 client_count = 0
-async def handleEcho(websocket, url):
+async def handleEcho(websocket, url:ParseResult):
     global client_count
     global echo_count_recv
     global echo_count_send
     global echo_count_lock
+    queryValues = ParseQuery(url)
     while  websocket.open:
         try:
             data = await websocket.recv()
             with echo_count_lock:
                 echo_count_recv+=1
+            if 'delay' in queryValues:
+                print(f"sleeping for {queryValues['delay']} seconds")
+                await asyncio.sleep(float(queryValues['delay']))
+                print("woken up.")
 
-            if (url.query == 'fragment=true'):
+            if 'fragment' in queryValues and queryValues['fragment']=='true':
                 await websocket.send(data.split())
             else:
                 await websocket.send(data)
