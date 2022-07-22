@@ -52,9 +52,8 @@ void Operation(int repetitions)
   }
 }
 
-int main(int argc, char** argv) // i can have either 0 or 2 params here
+int main(int argc, char** ) 
 {
-  (void)argv; // to get rid of the unused warning
   // some param was passed to the program, doesn't matter what it is,
   // it is meant for the moment to just run a quick iteration to check for sanity of the test.
   // since prototype TODO: pass in warmup/rounds/requests as params.
