@@ -9,7 +9,7 @@ Represents the build file for the container in which the test runs, it is based 
 The main change from default ubuntu is making sure we have the valgrind tool installed. Valgrind is a heap monitoring tool that helps identify potential stack traces that might leak memory. While not 100% effective is is great at reducing the surface are for investigations. 
 
 ### Helm chart (https://helm.sh/)
-Chart.yaml together with the bicep file(https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the deploy job file , represent the helm chart needed to deploy to the docker image built from the dockerfile to the stress cluster and execute the stress test. 
+Chart.yaml together with the bicep file(https://docs.microsoft.com/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the deploy job file , represent the helm chart needed to deploy to the docker image built from the dockerfile to the stress cluster and execute the stress test. 
 
 The helm chart creates a pod with a container based on the docker image, and executes the test under valgrind. 
 
