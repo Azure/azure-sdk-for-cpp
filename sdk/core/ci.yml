@@ -62,8 +62,14 @@ stages:
             filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1
             arguments: $(Build.SourcesDirectory)/WebSocketServer.log
             workingDirectory: build/sdk/core/azure-core/test/ut
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          # It would be nice to collapse this branch with the previous one, but nohup doesn't seem to
+          # behave when called from powershell.
+        - bash: |
+            nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
+          workingDirectory: build
+          condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          displayName: Launch python websocket server (Linux).
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
           # When the test server receives a request on terminateserver, it shuts down gracefully.
