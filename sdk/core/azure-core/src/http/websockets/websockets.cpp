@@ -9,7 +9,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
   WebSocket::WebSocket(Azure::Core::Url const& remoteUrl, WebSocketOptions const& options)
       : m_socketImplementation(
-          std::make_unique<Azure::Core::Http::WebSockets::_detail::WebSocketImplementation>(remoteUrl, options))
+          std::make_unique<Azure::Core::Http::WebSockets::_detail::WebSocketImplementation>(
+              remoteUrl,
+              options))
 
   {
   }

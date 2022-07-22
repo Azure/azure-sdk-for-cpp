@@ -27,7 +27,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     };
 
   public:
-    WebSocketImplementation(Azure::Core::Url const& remoteUrl, _internal::WebSocketOptions const& options);
+    WebSocketImplementation(
+        Azure::Core::Url const& remoteUrl,
+        _internal::WebSocketOptions const& options);
 
     void Open(Azure::Core::Context const& context);
     void Close(
