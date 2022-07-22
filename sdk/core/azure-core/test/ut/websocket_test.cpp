@@ -260,7 +260,7 @@ TEST_F(WebSocketTests, CloseDuringEcho)
       {
         std::vector<uint8_t> sendData = GenerateRandomBytes(0, 100);
         testSocket.SendFrame(sendData);
-        GTEST_LOG_(INFO) << "Receive frame." ;
+        GTEST_LOG_(INFO) << "Receive frame.";
         auto response = testSocket.ReceiveFrame();
         GTEST_LOG_(INFO) << "Received frame.";
         if (response->FrameType == WebSocketFrameType::PeerClosedReceived)
@@ -285,14 +285,14 @@ TEST_F(WebSocketTests, CloseDuringEcho)
         GTEST_LOG_(ERROR) << "Exception: " << ex.what() << std::endl;
       }
     });
-	
-	std::this_thread::sleep_for(100ms);
+
+    std::this_thread::sleep_for(100ms);
 
     // Close the socket gracefully.
-  GTEST_LOG_(INFO) << "Closing Socket.";
-  EXPECT_NO_THROW(testSocket.Close(UndefinedButLegalCloseReason, "Close Reason."));
-  GTEST_LOG_(INFO) << "Closed Socket.";
-  testThread.join();
+    GTEST_LOG_(INFO) << "Closing Socket.";
+    EXPECT_NO_THROW(testSocket.Close(UndefinedButLegalCloseReason, "Close Reason."));
+    GTEST_LOG_(INFO) << "Closed Socket.";
+    testThread.join();
   }
 }
 
