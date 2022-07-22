@@ -9,5 +9,5 @@ if ($IsWindows) {
     -ArgumentList 'websocket_server.py' `
     -NoNewWindow -PassThru -RedirectStandardOutput $LogFileLocation
 } else { 
-  nohup python websocket_server.py > $LogFileLocation
+  nohup python3 websocket_server.py > $LogFileLocation
 }
