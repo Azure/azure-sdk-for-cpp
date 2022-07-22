@@ -549,6 +549,156 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   EXPECT_EQ(0, cancellationExceptions.load());
 }
 
+TEST_F(WebSocketTests, MultiThreadedTestOnMultipleSockets)
+{
+  constexpr size_t threadCount = 50;
+  constexpr size_t testDataLength = 200000;
+  constexpr size_t testDataSize = 100;
+  constexpr auto testDuration = 10s;
+
+  // seed test data for the operations.
+  std::vector<std::vector<uint8_t>> testData(testDataLength);
+  std::vector<std::vector<uint8_t>> receivedData(testDataLength);
+  std::atomic_size_t iterationCount(0);
+
+  // Spin up threadCount threads and hammer the echo server for 10 seconds.
+  std::vector<std::thread> threads;
+  std::atomic_int32_t cancellationExceptions{0};
+  std::atomic_int32_t exceptions{0};
+  for (size_t threadIndex = 0; threadIndex < threadCount; threadIndex += 1)
+  {
+    threads.push_back(std::thread([&]() {
+      std::chrono::time_point<std::chrono::system_clock> startTime
+          = std::chrono::system_clock::now();
+      // Set the context to expire *after* the test is supposed to finish.
+      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
+          Azure::DateTime{startTime} + testDuration + 10s);
+      size_t iteration = 0;
+      try
+      {
+        WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+
+        testSocket.Open();
+
+        do
+        {
+          iteration = iterationCount++;
+          std::vector<uint8_t> sendData = GenerateRandomBytes(iteration, testDataSize);
+          {
+            if (iteration < testData.size())
+            {
+              if (testData[iteration].size() != 0)
+              {
+                GTEST_LOG_(ERROR) << "Overwriting send frame at offset " << iteration << std::endl;
+              }
+              EXPECT_EQ(0, testData[iteration].size());
+              testData[iteration] = sendData;
+            }
+          }
+
+          testSocket.SendFrame(sendData, true /*, context*/);
+          auto response = testSocket.ReceiveFrame(context);
+          EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
+          auto binaryResult = response->AsBinaryFrame();
+
+          // Make sure we get back the data we sent in the echo request.
+          if (binaryResult->Data.size() == 0)
+          {
+            GTEST_LOG_(ERROR) << "Received empty frame at offset " << iteration << std::endl;
+          }
+          EXPECT_EQ(sendData.size(), binaryResult->Data.size());
+          {
+            // There is no ordering expectation on the results, so we just remember the data
+            // as it comes in. We'll make sure we received everything later on.
+            if (iteration < receivedData.size())
+            {
+              if (receivedData[iteration].size() != 0)
+              {
+                GTEST_LOG_(ERROR) << "Overwriting receive frame at offset " << iteration
+                                  << std::endl;
+              }
+
+              EXPECT_EQ(0, receivedData[iteration].size());
+              receivedData[iteration] = binaryResult->Data;
+            }
+          }
+        } while (std::chrono::system_clock::now() - startTime < testDuration);
+        // Close the socket gracefully.
+        testSocket.Close();
+      }
+      catch (Azure::Core::OperationCancelledException& ex)
+      {
+        GTEST_LOG_(ERROR) << "Cancelled Exception: " << ex.what() << " at index " << iteration
+                          << " Current Thread: " << std::this_thread::get_id() << std::endl;
+        cancellationExceptions++;
+      }
+      catch (std::exception const& ex)
+      {
+        GTEST_LOG_(ERROR) << "Exception: " << ex.what() << std::endl;
+        exceptions++;
+      }
+    }));
+  }
+
+  // Wait for all the threads to exit.
+  for (auto& thread : threads)
+  {
+    thread.join();
+  }
+
+  // We no longer need to worry about synchronization since all the worker threads are done.
+  GTEST_LOG_(INFO) << "Total server requests: " << iterationCount.load() << std::endl;
+  GTEST_LOG_(INFO) << "Estimated " << std::dec << testData.size() << " iterations (0x" << std::hex
+                   << testData.size() << ")" << std::endl;
+  EXPECT_GE(testDataLength, iterationCount.load());
+
+  // Resize the test data to the number of actual iterations.
+  testData.resize(iterationCount.load());
+  receivedData.resize(iterationCount.load());
+
+  // If we've processed every iteration, let's make sure that we received everything we sent.
+  // If we dropped some results, then we can't check to ensure that we have received everything
+  // because we can't account for everything sent.
+  std::multiset<std::string> testDataStrings;
+  std::multiset<std::string> receivedDataStrings;
+  for (auto const& data : testData)
+  {
+    testDataStrings.emplace(ToHexString(data));
+  }
+  for (auto const& data : receivedData)
+  {
+    receivedDataStrings.emplace(ToHexString(data));
+  }
+
+  EXPECT_EQ(testDataStrings, receivedDataStrings);
+  for (auto const& data : testDataStrings)
+  {
+    if (receivedDataStrings.count(data) != testDataStrings.count(data))
+    {
+      GTEST_LOG_(INFO) << "Missing data. TestDataCount: " << testDataStrings.count(data)
+                       << " ReceivedDataCount: " << receivedDataStrings.count(data)
+                       << " Missing Data: " << data << std::endl;
+    }
+    EXPECT_NE(receivedDataStrings.end(), receivedDataStrings.find(data));
+  }
+  for (auto const& data : receivedDataStrings)
+  {
+    if (testDataStrings.count(data) != receivedDataStrings.count(data))
+    {
+      GTEST_LOG_(INFO) << "Extra data. TestDataCount: " << testDataStrings.count(data)
+                       << " ReceivedDataCount: " << receivedDataStrings.count(data)
+                       << " Missing Data: " << data << std::endl;
+    }
+
+    EXPECT_NE(testDataStrings.end(), testDataStrings.find(data));
+  }
+
+  // We shouldn't have seen any exceptions during the run.
+  EXPECT_EQ(0, exceptions.load());
+  EXPECT_EQ(0, cancellationExceptions.load());
+}
+
+
 // Does not work because curl rejects the wss: scheme.
 class LibWebSocketIncrementProtocol {
   WebSocketOptions m_options{{"dumb-increment-protocol"}};
