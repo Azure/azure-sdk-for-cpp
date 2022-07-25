@@ -28,7 +28,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     std::mutex m_receiveMutex;
 
     // Called by the
-    void OnUpgradedConnection(Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle) override;
+    void OnUpgradedConnection(
+        Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle) override;
 
   public:
     /**
