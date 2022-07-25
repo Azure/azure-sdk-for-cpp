@@ -318,7 +318,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateConnectionHandle(
 }
 
 _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
-    _detail::unique_HINTERNET& connectionHandle,
+    _detail::unique_HINTERNET const& connectionHandle,
     Azure::Core::Url const& url,
     Azure::Core::Http::HttpMethod const& method)
 {
@@ -389,7 +389,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
 void WinHttpTransport::Upload(
-    _detail::unique_HINTERNET& requestHandle,
+    _detail::unique_HINTERNET const& requestHandle,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
 {
@@ -429,7 +429,7 @@ void WinHttpTransport::Upload(
 }
 
 void WinHttpTransport::SendRequest(
-    _detail::unique_HINTERNET& requestHandle,
+    _detail::unique_HINTERNET const& requestHandle,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
 {
@@ -497,7 +497,7 @@ void WinHttpTransport::SendRequest(
 }
 
 void WinHttpTransport::ReceiveResponse(
-    _detail::unique_HINTERNET& requestHandle,
+    _detail::unique_HINTERNET const& requestHandle,
     Azure::Core::Context const& context)
 {
   context.ThrowIfCancelled();
@@ -520,7 +520,7 @@ void WinHttpTransport::ReceiveResponse(
 }
 
 int64_t WinHttpTransport::GetContentLength(
-    _detail::unique_HINTERNET& requestHandle,
+    _detail::unique_HINTERNET const& requestHandle,
     HttpMethod requestMethod,
     HttpStatusCode responseStatusCode)
 {
@@ -668,11 +668,18 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
   SetHeaders(responseHeaders, rawResponse);
 
-  int64_t contentLength
-      = GetContentLength(requestHandle, requestMethod, rawResponse->GetStatusCode());
+  if (HasWebSocketSupport() && (httpStatusCode == HttpStatusCode::SwitchingProtocols))
+  {
+    OnUpgradedConnection(requestHandle);
+  }
+  else
+  {
+    int64_t contentLength
+        = GetContentLength(requestHandle, requestMethod, rawResponse->GetStatusCode());
 
-  rawResponse->SetBodyStream(
-      std::make_unique<_detail::WinHttpStream>(requestHandle, contentLength));
+    rawResponse->SetBodyStream(
+        std::make_unique<_detail::WinHttpStream>(requestHandle, contentLength));
+  }
   return rawResponse;
 }
 
@@ -685,11 +692,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
   SendRequest(requestHandle, request, context);
 
   ReceiveResponse(requestHandle, context);
-
-  if (HasWebSocketSupport())
-  {
-    OnResponseReceived(requestHandle);
-  }
 
   return SendRequestAndGetResponse(requestHandle, request.GetMethod());
 }

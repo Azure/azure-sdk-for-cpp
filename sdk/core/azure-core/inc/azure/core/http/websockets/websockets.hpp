@@ -204,7 +204,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       WebSocketPeerCloseFrame() : WebSocketFrame(WebSocketFrameType::PeerClosedReceived){};
       /** @brief Status code sent from the remote peer. Typically a member of the WebSocketErrorCode
        * enumeration */
-      uint16_t RemoteStatusCode;
+      uint16_t RemoteStatusCode{};
       /** @brief Optional text sent from the remote peer. */
       std::string RemoteCloseReason;
 

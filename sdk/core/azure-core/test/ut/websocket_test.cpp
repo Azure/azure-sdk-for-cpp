@@ -698,7 +698,6 @@ TEST_F(WebSocketTests, MultiThreadedTestOnMultipleSockets)
   EXPECT_EQ(0, cancellationExceptions.load());
 }
 
-
 // Does not work because curl rejects the wss: scheme.
 class LibWebSocketIncrementProtocol {
   WebSocketOptions m_options{{"dumb-increment-protocol"}};

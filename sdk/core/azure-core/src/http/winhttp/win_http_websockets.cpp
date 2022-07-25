@@ -25,8 +25,8 @@
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
-  void WinHttpWebSocketTransport::OnResponseReceived(
-      Azure::Core::Http::_detail::unique_HINTERNET& requestHandle)
+  void WinHttpWebSocketTransport::OnUpgradedConnection(
+      Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle)
   {
     // Convert the request handle into a WebSocket handle for us to use later.
     m_socketHandle = Azure::Core::Http::_detail::unique_HINTERNET(

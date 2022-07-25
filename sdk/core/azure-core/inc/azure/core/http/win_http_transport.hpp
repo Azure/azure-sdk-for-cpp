@@ -125,22 +125,22 @@ namespace Azure { namespace Core { namespace Http {
         Azure::Core::Url const& url,
         Azure::Core::Context const& context);
     _detail::unique_HINTERNET CreateRequestHandle(
-        _detail::unique_HINTERNET& connectionHandle,
+        _detail::unique_HINTERNET const& connectionHandle,
         Azure::Core::Url const& url,
         Azure::Core::Http::HttpMethod const& method);
     void Upload(
-        _detail::unique_HINTERNET& requestHandle,
+        _detail::unique_HINTERNET const& requestHandle,
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context);
     void SendRequest(
-        _detail::unique_HINTERNET& requestHandle,
+        _detail::unique_HINTERNET const& requestHandle,
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context);
     void ReceiveResponse(
-        _detail::unique_HINTERNET& requestHandle,
+        _detail::unique_HINTERNET const& requestHandle,
         Azure::Core::Context const& context);
     int64_t GetContentLength(
-        _detail::unique_HINTERNET& requestHandle,
+        _detail::unique_HINTERNET const& requestHandle,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Http {
     // Callback to allow a derived transport to extract the request handle. Used for WebSocket
     // transports.
   protected:
-    virtual void OnResponseReceived(_detail::unique_HINTERNET&){};
+    virtual void OnUpgradedConnection(_detail::unique_HINTERNET const&){};
     /**
      * @brief Throw an exception based on the Win32 Error code
      *
