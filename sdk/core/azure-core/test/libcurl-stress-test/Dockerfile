@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04
 
 ARG targetTest
@@ -11,5 +14,3 @@ RUN chmod +x ./$targetTest
 RUN apt-get update -y
 RUN apt-get install valgrind -y
 
-# execute under memcheck tool 
-RUN valgrind --tool=memcheck -s ./$targetTest $build
