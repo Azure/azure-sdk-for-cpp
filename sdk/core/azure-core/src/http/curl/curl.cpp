@@ -747,7 +747,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       m_connection->Shutdown();
     }
     // If the server indicated that the connection header is "upgrade", it means that this
-    // is a WebSocket connection so the caller will may be upgrading the connection.
+    // is a WebSocket connection so the caller may be upgrading the connection.
     if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
             connectionHeader->second, "upgrade"))
     {
