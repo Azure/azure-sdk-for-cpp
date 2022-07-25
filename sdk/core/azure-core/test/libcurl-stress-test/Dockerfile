@@ -14,5 +14,3 @@ RUN chmod +x ./$targetTest
 RUN apt-get update -y
 RUN apt-get install valgrind -y
 
-# execute under memcheck tool 
-RUN valgrind --tool=memcheck -s ./$targetTest $build

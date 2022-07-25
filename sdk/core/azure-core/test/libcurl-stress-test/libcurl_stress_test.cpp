@@ -16,13 +16,7 @@
 
 #include <azure/core.hpp>
 #include <azure/core/http/curl_transport.hpp>
-#include <fstream>
-#include <ios>
 #include <iostream>
-#include <memory>
-#include <stdlib.h>
-#include <string>
-#include <vector>
 
 void SendRequest(std::string target)
 {
@@ -36,8 +30,6 @@ void SendRequest(std::string target)
   {
 
     Azure::Core::Context context;
-    //  auto duration = std::chrono::milliseconds(1000);
-    // auto deadline = std::chrono::system_clock::now() + duration;
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(target));
     auto response = implementationClient->Send(request, context);
