@@ -177,6 +177,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
 
+    // See also:
+    // [Core Guidelines C.35: "A base class destructor should be either public
+    // and virtual or protected and
+    // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
     virtual ~WinHttpTransport() = default;
   };
 

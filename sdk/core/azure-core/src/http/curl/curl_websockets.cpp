@@ -27,7 +27,7 @@
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
-  void CurlWebSocketTransport::NativeClose() { m_upgradedConnection->Shutdown(); }
+  void CurlWebSocketTransport::Close() { m_upgradedConnection->Shutdown(); }
 
   // Send an HTTP request to the remote server.
   std::unique_ptr<RawResponse> CurlWebSocketTransport::Send(

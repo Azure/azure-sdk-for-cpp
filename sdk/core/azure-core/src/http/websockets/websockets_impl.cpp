@@ -258,7 +258,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     // Close the socket - after this point, the m_transport is invalid.
     m_pingThread.Shutdown();
-    m_transport->NativeClose();
+    m_transport->Close();
     m_state = SocketState::Closed;
   }
 

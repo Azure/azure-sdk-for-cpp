@@ -56,10 +56,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual bool HasBuiltInWebSocketSupport() override { return false; }
 
     /**
-     * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
+     * @brief Closes the WebSocket handle.
      *
      */
-    virtual void NativeClose() override;
+    virtual void Close() override;
 
     // Native WebSocket support methods.
     /**

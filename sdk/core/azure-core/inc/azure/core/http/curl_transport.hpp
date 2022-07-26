@@ -148,6 +148,12 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+    // See also:
+    // [Core Guidelines C.35: "A base class destructor should be either public
+    // and virtual or protected and
+    // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
+    virtual ~CurlTransport() = default;
+
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *

@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   /**
    * @brief  Close the WebSocket cleanly.
    */
-  void WinHttpWebSocketTransport::NativeClose() { m_socketHandle.reset(); }
+  void WinHttpWebSocketTransport::Close() { m_socketHandle.reset(); }
 
   // Native WebSocket support methods.
   /**

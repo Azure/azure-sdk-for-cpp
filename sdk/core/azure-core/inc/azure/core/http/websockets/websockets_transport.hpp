@@ -92,6 +92,14 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      */
     virtual bool HasBuiltInWebSocketSupport() = 0;
 
+    /**
+     * @brief Closes the WebSocket.
+     *
+     * Does not notify the remote endpoint that the socket is being closed.
+     *
+     */
+    virtual void Close() = 0;
+
     /**************/
     /* Native WebSocket support functions*/
     /**************/
@@ -107,14 +115,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         std::string const& disconnectReason,
         Azure::Core::Context const& context)
         = 0;
-
-    /**
-     * @brief Closes the WebSocket.
-     *
-     * Does not notify the remote endpoint that the socket is being closed.
-     *
-     */
-    virtual void NativeClose() = 0;
 
     /**
      * @brief Retrieve the information associated with a WebSocket close response.
