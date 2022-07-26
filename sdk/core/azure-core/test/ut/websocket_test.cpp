@@ -867,8 +867,7 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
     EXPECT_THROW(transport->NativeCloseSocket(1001, {}, {}), std::runtime_error);
     EXPECT_THROW(transport->NativeGetCloseSocketInformation({}), std::runtime_error);
     EXPECT_THROW(
-        transport->NativeSendFrame(
-            WebSocketTransport::NativeWebSocketFrameType::Binary, {}, {}),
+        transport->NativeSendFrame(WebSocketTransport::NativeWebSocketFrameType::Binary, {}, {}),
         std::runtime_error);
     EXPECT_THROW(transport->NativeReceiveFrame({}), std::runtime_error);
   }
