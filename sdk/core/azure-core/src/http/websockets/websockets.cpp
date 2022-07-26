@@ -55,9 +55,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     return m_socketImplementation->GetStatistics();
   }
 
-  bool WebSocket::HasNativeWebSocketSupport() const
+  bool WebSocket::HasBuiltInWebSocketSupport() const
   {
-    return m_socketImplementation->HasNativeWebSocketSupport();
+    return m_socketImplementation->HasBuiltInWebSocketSupport();
   }
 
   std::shared_ptr<WebSocketFrame> WebSocket::ReceiveFrame(Azure::Core::Context const& context)

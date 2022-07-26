@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     std::string const& GetChosenProtocol();
     bool IsOpen() { return m_state == SocketState::Open; }
-    bool HasNativeWebSocketSupport();
+    bool HasBuiltInWebSocketSupport();
 
     _internal::WebSocketStatistics GetStatistics() const;
 

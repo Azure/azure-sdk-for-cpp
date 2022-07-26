@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * it is the responsibility of the client of the WebSocketTransport to format WebSocket protocol
      * elements.
      */
-    virtual bool HasNativeWebsocketSupport() override { return false; }
+    virtual bool HasBuiltInWebSocketSupport() override { return false; }
 
     /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
@@ -67,6 +67,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @details Not implemented for CURL websockets because CURL does not support native websockets.
      *
+     * The first param is the close reason, the second is descriptive text.
      */
     virtual void NativeCloseSocket(uint16_t, std::string const&, Azure::Core::Context const&)
         override

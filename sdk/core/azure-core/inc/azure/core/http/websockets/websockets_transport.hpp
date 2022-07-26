@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      *
      * @returns true if the transport has native websocket support, false otherwise.
      */
-    virtual bool HasNativeWebsocketSupport() = 0;
+    virtual bool HasBuiltInWebSocketSupport() = 0;
 
     /**************/
     /* Native WebSocket support functions*/

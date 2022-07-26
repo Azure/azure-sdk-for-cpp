@@ -323,7 +323,7 @@ TEST_F(WebSocketTests, PingReceiveTest)
   WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
 
   testSocket.Open();
-  if (!testSocket.HasNativeWebSocketSupport())
+  if (!testSocket.HasBuiltInWebSocketSupport())
   {
 
     GTEST_LOG_(INFO) << "Sleeping for 15 seconds to collect pings.";
@@ -355,7 +355,7 @@ TEST_F(WebSocketTests, PingSendTest)
   WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"), socketOptions);
 
   testSocket.Open();
-  if (!testSocket.HasNativeWebSocketSupport())
+  if (!testSocket.HasBuiltInWebSocketSupport())
   {
 
     GTEST_LOG_(INFO) << "Sleeping for 10 seconds to collect pings.";

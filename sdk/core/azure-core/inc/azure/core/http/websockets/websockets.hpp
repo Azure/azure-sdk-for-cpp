@@ -344,9 +344,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        * supports websockets in the transport, or if the websocket implementation
        * is providing websocket protocol support.
        *
-       * @returns true if the websocket transport supports websockets natively.
+       * @returns true if the HTTP transport used for WebSocket support directly supports the
+       * WebSocket API.
        */
-      bool HasNativeWebSocketSupport() const;
+      bool HasBuiltInWebSocketSupport() const;
 
       /** @brief Returns the protocol chosen by the remote server during the initial handshake
        *

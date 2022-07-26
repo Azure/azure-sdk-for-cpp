@@ -93,7 +93,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     // natively.
     auto randomKey = GenerateRandomKey();
     auto encodedKey = Azure::Core::Convert::Base64Encode(randomKey);
-    if (!m_transport->HasNativeWebsocketSupport())
+    if (!m_transport->HasBuiltInWebSocketSupport())
     {
       // If the transport doesn't support WebSockets natively, set the standardized WebSocket
       // upgrade headers.
@@ -136,7 +136,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     // Prove that the server received this socket request.
     auto& responseHeaders = response->GetHeaders();
-    if (!m_transport->HasNativeWebsocketSupport())
+    if (!m_transport->HasBuiltInWebSocketSupport())
     {
       auto socketAccept(responseHeaders.find("Sec-WebSocket-Accept"));
       if (socketAccept == responseHeaders.end())
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     m_state = SocketState::Open;
   }
-  bool WebSocketImplementation::HasNativeWebSocketSupport()
+  bool WebSocketImplementation::HasBuiltInWebSocketSupport()
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);
     m_stateOwner = std::this_thread::get_id();
@@ -169,7 +169,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     {
       throw std::runtime_error("Socket is not open.");
     }
-    return m_transport->HasNativeWebsocketSupport();
+    return m_transport->HasBuiltInWebSocketSupport();
   }
 
   std::string const& WebSocketImplementation::GetChosenProtocol()
@@ -797,7 +797,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   {
     m_stop = false;
     // Spin up a thread to receive data from the transport.
-    if (!transport->HasNativeWebsocketSupport())
+    if (!transport->HasBuiltInWebSocketSupport())
     {
       std::unique_lock<std::mutex> lock(m_pingThreadStarted);
       m_pingThread = std::thread{&PingThread::PingThreadLoop, this};
