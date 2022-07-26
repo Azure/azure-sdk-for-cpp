@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     void AddHeader(std::string const& headerName, std::string const& headerValue);
 
-    std::string const& GetChosenProtocol();
+    std::string const& GetNegotiatedProtocol();
     bool IsOpen() { return m_state == SocketState::Open; }
     bool HasBuiltInWebSocketSupport();
 

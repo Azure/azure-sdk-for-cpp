@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     return m_transport->HasBuiltInWebSocketSupport();
   }
 
-  std::string const& WebSocketImplementation::GetChosenProtocol()
+  std::string const& WebSocketImplementation::GetNegotiatedProtocol()
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);
     m_stateOwner = std::this_thread::get_id();

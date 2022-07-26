@@ -69,9 +69,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   {
     m_socketImplementation->AddHeader(headerName, headerValue);
   }
-  std::string const& WebSocket::GetChosenProtocol() const
+  std::string const& WebSocket::GetNegotiatedProtocol() const
   {
-    return m_socketImplementation->GetChosenProtocol();
+    return m_socketImplementation->GetNegotiatedProtocol();
   }
 
   bool WebSocket::IsOpen() const { return m_socketImplementation->IsOpen(); }

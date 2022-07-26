@@ -34,7 +34,7 @@ TEST_F(WebSocketTests, CreateSimpleSocket)
   {
     WebSocket defaultSocket(Azure::Core::Url("http://localhost:8000"));
     defaultSocket.AddHeader("newHeader", "headerValue");
-    EXPECT_THROW(defaultSocket.GetChosenProtocol(), std::runtime_error);
+    EXPECT_THROW(defaultSocket.GetNegotiatedProtocol(), std::runtime_error);
   }
 }
 
@@ -786,7 +786,7 @@ public:
 
     // The server should have chosen the lws-status protocol since it doesn't understand the other
     // protocols.
-    EXPECT_EQ("lws-status", serverSocket.GetChosenProtocol());
+    EXPECT_EQ("lws-status", serverSocket.GetNegotiatedProtocol());
     std::string returnValue;
     std::shared_ptr<WebSocketFrame> lwsStatus;
     do

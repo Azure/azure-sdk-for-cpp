@@ -349,11 +349,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        */
       bool HasBuiltInWebSocketSupport() const;
 
-      /** @brief Returns the protocol chosen by the remote server during the initial handshake
+      /** @brief Returns the protocol chosen by the remote server during the initial handshake.
        *
        * @returns The protocol negotiated between client and server.
        */
-      std::string const& GetChosenProtocol() const;
+      std::string const& GetNegotiatedProtocol() const;
 
       /** @brief Returns statistics about the WebSocket.
        *
