@@ -141,16 +141,16 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType;
     switch (frameType)
     {
-      case NativeWebSocketFrameType::FrameTypeText:
+      case NativeWebSocketFrameType::Text:
         bufferType = WINHTTP_WEB_SOCKET_UTF8_MESSAGE_BUFFER_TYPE;
         break;
-      case NativeWebSocketFrameType::FrameTypeBinary:
+      case NativeWebSocketFrameType::Binary:
         bufferType = WINHTTP_WEB_SOCKET_BINARY_MESSAGE_BUFFER_TYPE;
         break;
-      case NativeWebSocketFrameType::FrameTypeBinaryFragment:
+      case NativeWebSocketFrameType::BinaryFragment:
         bufferType = WINHTTP_WEB_SOCKET_BINARY_FRAGMENT_BUFFER_TYPE;
         break;
-      case NativeWebSocketFrameType::FrameTypeTextFragment:
+      case NativeWebSocketFrameType::TextFragment:
         bufferType = WINHTTP_WEB_SOCKET_UTF8_FRAGMENT_BUFFER_TYPE;
         break;
       default:
@@ -197,19 +197,19 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     switch (bufferType)
     {
       case WINHTTP_WEB_SOCKET_UTF8_MESSAGE_BUFFER_TYPE:
-        frameTypeReceived = NativeWebSocketFrameType::FrameTypeText;
+        frameTypeReceived = NativeWebSocketFrameType::Text;
         break;
       case WINHTTP_WEB_SOCKET_BINARY_MESSAGE_BUFFER_TYPE:
-        frameTypeReceived = NativeWebSocketFrameType::FrameTypeBinary;
+        frameTypeReceived = NativeWebSocketFrameType::Binary;
         break;
       case WINHTTP_WEB_SOCKET_BINARY_FRAGMENT_BUFFER_TYPE:
-        frameTypeReceived = NativeWebSocketFrameType::FrameTypeBinaryFragment;
+        frameTypeReceived = NativeWebSocketFrameType::BinaryFragment;
         break;
       case WINHTTP_WEB_SOCKET_UTF8_FRAGMENT_BUFFER_TYPE:
-        frameTypeReceived = NativeWebSocketFrameType::FrameTypeTextFragment;
+        frameTypeReceived = NativeWebSocketFrameType::TextFragment;
         break;
       case WINHTTP_WEB_SOCKET_CLOSE_BUFFER_TYPE:
-        frameTypeReceived = NativeWebSocketFrameType::FrameTypeClosed;
+        frameTypeReceived = NativeWebSocketFrameType::Closed;
         break;
       default:
         throw std::runtime_error("Unknown frame type: " + std::to_string(bufferType));

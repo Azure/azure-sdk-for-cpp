@@ -27,24 +27,24 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        * @brief Indicates that the frame is a partial UTF-8 encoded text frame - it is NOT the
        * complete frame to be sent to the remote node.
        */
-      FrameTypeTextFragment,
+      TextFragment,
       /**
        * @brief Indicates that the frame is either the complete UTF-8 encoded text frame to be sent
        * to the remote node or the final frame of a multipart message.
        */
-      FrameTypeText,
+      Text,
       /**
        * @brief Indicates that the frame is either the complete binary frame to be sent
        * to the remote node or the final frame of a multipart message.
        */
-      FrameTypeBinary,
+      Binary,
       /**
        * @brief Indicates that the frame is a partial binary frame - it is NOT the
        * complete frame to be sent to the remote node.
        */
-      FrameTypeBinaryFragment,
+      BinaryFragment,
 
-      FrameTypeClosed,
+      Closed,
     };
 
     struct NativeWebSocketCloseInformation
