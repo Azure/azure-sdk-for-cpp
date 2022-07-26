@@ -44,17 +44,39 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        */
       BinaryFragment,
 
+      /**
+       * @brief Indicates that the frame is a "close" frame - the remote node
+       * sent a close frame.
+       */
       Closed,
     };
 
+    /** @brief Close information returned from a WebSocket transport that has builtin support
+     * for WebSockets.
+     */
     struct NativeWebSocketCloseInformation
     {
+      /**
+       * @brief Close response code.
+       */
       uint16_t CloseReason;
+      /**
+       * @brief Close reason.
+       */
       std::string CloseReasonDescription;
     };
+    /** @brief Frame information returned from a WebSocket transport that has builtin support
+     * for WebSockets.
+     */
     struct NativeWebSocketReceiveInformation
     {
+      /**
+       * @brief Type of frame received.
+       */
       NativeWebSocketFrameType FrameType;
+      /**
+       * @brief Data received.
+       */
       std::vector<uint8_t> FrameData;
     };
     /**
@@ -64,7 +86,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual ~WebSocketTransport() {}
 
     /**
-     * @brief Determines if the transport natively supports WebSockets or not.
+     * @brief Indicates whether the transport natively supports WebSockets.
      *
      * @returns true if the transport has native websocket support, false otherwise.
      */
