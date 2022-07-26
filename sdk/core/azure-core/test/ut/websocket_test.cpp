@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "../../src/http/websockets/websocketsimpl.hpp"
+#include "../../src/http/websockets/websockets_impl.hpp"
 #include "azure/core/http/websockets/websockets.hpp"
 #include "azure/core/internal/json/json.hpp"
 #include <chrono>

@@ -1,6 +1,7 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
 from array import array
 import asyncio
-#from curses import has_key
 from operator import length_hint
 import threading
 from time import sleep

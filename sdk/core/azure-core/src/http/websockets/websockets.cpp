@@ -3,7 +3,7 @@
 
 #include "azure/core/http/websockets/websockets.hpp"
 #include "azure/core/context.hpp"
-#include "websocketsimpl.hpp"
+#include "websockets_impl.hpp"
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _internal {
 

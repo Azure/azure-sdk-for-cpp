@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-#include "websocketsimpl.hpp"
+#include "websockets_impl.hpp"
 #include "azure/core/base64.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/cryptography/sha_hash.hpp"

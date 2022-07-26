@@ -141,7 +141,7 @@ set(
     src/http/url.cpp
     src/http/user_agent.cpp
     src/http/websockets/websockets.cpp
-    src/http/websockets/websocketsimpl.cpp
+    src/http/websockets/websockets_impl.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/logger.cpp

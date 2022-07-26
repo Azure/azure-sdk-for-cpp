@@ -1535,5 +1535,4 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   {
     Log::Write(Logger::Level::Verbose, "Clean thread running. Won't start a new one.");
   }
-  lock.unlock();
 }

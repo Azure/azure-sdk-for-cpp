@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
 
   private:
     /**
-     * @brief Underline implementation based on the OS.
+     * @brief Underlying implementation based on the OS.
      *
      */
     std::unique_ptr<Azure::Core::Cryptography::Hash> m_portableImplementation;
