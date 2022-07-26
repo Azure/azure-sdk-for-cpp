@@ -331,7 +331,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
           url.GetScheme(), WebSocketScheme));
 
   // Create an HTTP request handle.
-  _detail::unique_HINTERNET hi(
+  _detail::unique_HINTERNET request(
       WinHttpOpenRequest(
           connectionHandle.get(),
           HttpMethodToWideString(requestMethod).c_str(),
@@ -342,7 +342,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
           WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
           requestSecureHttp ? WINHTTP_FLAG_SECURE : 0),
       _detail::HINTERNET_deleter{}); // Uses secure transaction semantics (SSL/TLS)
-  if (!hi)
+  if (!request)
   {
     // Errors include:
     // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
@@ -362,7 +362,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     // Note: If/When TLS client certificate support is added to the pipeline, this line may need to
     // be revisited.
     if (!WinHttpSetOption(
-            hi.get(), WINHTTP_OPTION_CLIENT_CERT_CONTEXT, WINHTTP_NO_CLIENT_CERT_CONTEXT, 0))
+            request.get(), WINHTTP_OPTION_CLIENT_CERT_CONTEXT, WINHTTP_NO_CLIENT_CERT_CONTEXT, 0))
     {
       GetErrorAndThrow("Error while setting client cert context to ignore.");
     }
@@ -371,7 +371,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
   if (m_options.IgnoreUnknownCertificateAuthority)
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-    if (!WinHttpSetOption(hi.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
+    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
     {
       GetErrorAndThrow("Error while setting ignore unknown server certificate.");
     }
@@ -379,12 +379,12 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
 
   if (HasWebSocketSupport())
   {
-    if (!WinHttpSetOption(hi.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
+    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
     {
       GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
     }
   }
-  return hi;
+  return request;
 }
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
