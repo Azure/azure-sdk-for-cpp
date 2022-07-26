@@ -15,7 +15,7 @@
             },
             "Mac": {
                 "Pool": "Azure Pipelines",
-                "OSVmImage": "macOS-10.15",
+                "OSVmImage": "macos-11",
                 "VCPKG_DEFAULT_TRIPLET": "x64-osx"
             }
         }

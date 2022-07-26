@@ -5,8 +5,8 @@
     "include": [
         {
             "OSConfiguration": {
-                "macOS-10.15": {
-                    "OSVmImage": "macOS-10.15"
+                "macos-11": {
+                    "OSVmImage": "macos-11"
                 },
                 "macOS-11": {
                     "OSVmImage": "macOS-11",
