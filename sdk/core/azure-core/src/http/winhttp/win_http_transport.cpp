@@ -377,12 +377,12 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     }
   }
 
-  if (HasWebSocketSupport())
+  // If we are supporting WebSockets, then let WinHTTP know that it should
+  // prepare to upgrade the HttpRequest to a WebSocket.
+  if (HasWebSocketSupport()
+      && !WinHttpSetOption(request.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
   {
-    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
-    {
-      GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
-    }
+    GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
   }
   return request;
 }
