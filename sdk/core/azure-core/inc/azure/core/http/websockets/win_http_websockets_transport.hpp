@@ -52,9 +52,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
 
     /**
-     * @brief Indicates if the transports supports native websockets or not.
+     * @brief Indicates if the transports natively websockets or not.
      *
-     * @details For the WinHTTP websocket transport, the transport supports native websockets.
+     * @details For the WinHTTP websocket transport, the WinHTTP API supports websockets.
      */
     virtual bool HasNativeWebsocketSupport() override { return true; }
 

@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
 
     /**
-     * @brief Indicates if the transports supports native websockets or not.
+     * @brief Indicates if the transport natively supports websockets or not.
      *
      * @details For the CURL websocket transport, the transport does NOT support native websockets -
      * it is the responsibility of the client of the WebSocketTransport to format WebSocket protocol
