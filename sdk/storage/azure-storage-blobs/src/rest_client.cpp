@@ -3658,8 +3658,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       Models::DownloadBlobResult response;
       response.BodyStream = pRawResponse->ExtractBodyStream();
-      response.Details.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.Details.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       for (auto i = pRawResponse->GetHeaders().lower_bound("x-ms-meta-");
            i != pRawResponse->GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
            ++i)
@@ -3675,7 +3678,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         response.Details.HttpHeaders.ContentType = pRawResponse->GetHeaders().at("Content-Type");
       }
-      response.Details.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.Details.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
       if (pRawResponse->GetHeaders().count("Content-Encoding") != 0)
       {
         response.Details.HttpHeaders.ContentEncoding
@@ -3926,8 +3932,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::BlobProperties response;
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.CreatedOn = DateTime::Parse(
           pRawResponse->GetHeaders().at("x-ms-creation-time"),
           Azure::DateTime::DateFormat::Rfc1123);
@@ -3999,7 +4008,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         response.HttpHeaders.ContentType = pRawResponse->GetHeaders().at("Content-Type");
       }
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
       if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
       {
         response.HttpHeaders.ContentHash.Value
@@ -4227,9 +4239,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::SetBlobExpiryResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       return Response<Models::SetBlobExpiryResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::SetBlobHttpHeadersResult> BlobClient::SetHttpHeaders(
@@ -4301,9 +4319,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::SetBlobHttpHeadersResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
       {
         response.SequenceNumber
@@ -4463,9 +4487,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::SetBlobMetadataResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -4532,9 +4562,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::AcquireBlobLeaseResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.LeaseId = pRawResponse->GetHeaders().at("x-ms-lease-id");
       return Response<Models::_detail::AcquireBlobLeaseResult>(
           std::move(response), std::move(pRawResponse));
@@ -4584,9 +4620,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::ReleaseBlobLeaseResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       return Response<Models::_detail::ReleaseBlobLeaseResult>(
           std::move(response), std::move(pRawResponse));
     }
@@ -4635,9 +4677,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::RenewBlobLeaseResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.LeaseId = pRawResponse->GetHeaders().at("x-ms-lease-id");
       return Response<Models::_detail::RenewBlobLeaseResult>(
           std::move(response), std::move(pRawResponse));
@@ -4691,9 +4739,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::ChangeBlobLeaseResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.LeaseId = pRawResponse->GetHeaders().at("x-ms-lease-id");
       return Response<Models::_detail::ChangeBlobLeaseResult>(
           std::move(response), std::move(pRawResponse));
@@ -4743,9 +4797,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::BreakBlobLeaseResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.LeaseTime = std::stoi(pRawResponse->GetHeaders().at("x-ms-lease-time"));
       return Response<Models::_detail::BreakBlobLeaseResult>(
           std::move(response), std::move(pRawResponse));
@@ -4818,9 +4878,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       Models::CreateBlobSnapshotResult response;
       response.Snapshot = pRawResponse->GetHeaders().at("x-ms-snapshot");
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -4943,9 +5009,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::StartBlobCopyFromUriResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -5080,9 +5152,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::CopyBlobFromUriResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -5481,9 +5559,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       Models::QueryBlobResult response;
       response.BodyStream = pRawResponse->ExtractBodyStream();
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
       if (pRawResponse->GetHeaders().count("x-ms-lease-duration") != 0)
       {
         response.LeaseDuration
@@ -5791,9 +5875,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::CreatePageBlobResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -5910,9 +6000,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::UploadPagesResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
       {
         response.TransactionalContentHash = ContentHash();
@@ -6027,9 +6123,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::ClearPagesResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.SequenceNumber
           = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
       return Response<Models::ClearPagesResult>(std::move(response), std::move(pRawResponse));
@@ -6167,9 +6269,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::UploadPagesFromUriResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
       {
         response.TransactionalContentHash = ContentHash();
@@ -6356,9 +6464,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
         }
       }
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
       response.BlobSize = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-content-length"));
       return Response<Models::_detail::GetPageRangesResult>(
           std::move(response), std::move(pRawResponse));
@@ -6528,9 +6642,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
         }
       }
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
       response.BlobSize = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-content-length"));
       return Response<Models::_detail::GetPageRangesDiffResult>(
           std::move(response), std::move(pRawResponse));
@@ -6599,9 +6719,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::ResizePageBlobResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.SequenceNumber
           = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
       return Response<Models::ResizePageBlobResult>(std::move(response), std::move(pRawResponse));
@@ -6659,9 +6785,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::UpdateSequenceNumberResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.SequenceNumber
           = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
       return Response<Models::UpdateSequenceNumberResult>(
@@ -6711,9 +6843,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::StartBlobCopyIncrementalResult response;
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.CopyId = pRawResponse->GetHeaders().at("x-ms-copy-id");
       response.CopyStatus = Models::CopyStatus(pRawResponse->GetHeaders().at("x-ms-copy-status"));
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)

@@ -469,6 +469,54 @@ directive:
       $.ArchiveStatus.description = "For blob storage LRS accounts, valid values are rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is not complete then this value indicates that rehydrate is pending and also tells the destination tier.";
 ```
 
+### Striped Blob Support
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $
+    transform: >
+      const operations = [
+        "Blob_GetProperties",
+        "Blob_Download",
+        "Blob_SetExpiry",
+        "Blob_SetHTTPHeaders",
+        "Blob_SetMetadata",
+        "Blob_AcquireLease",
+        "Blob_ReleaseLease",
+        "Blob_RenewLease",
+        "Blob_ChangeLease",
+        "Blob_BreakLease",
+        "Blob_CreateSnapshot",
+        "Blob_StartCopyFromUri",
+        "Blob_CopyFromUri",
+        "Blob_Query",
+        "PageBlob_Create",
+        "PageBlob_UploadPages",
+        "PageBlob_ClearPages",
+        "PageBlob_UploadPagesFromUri",
+        "PageBlob_GetPageRanges",
+        "PageBlob_GetPageRangesDiff",
+        "PageBlob_Resize",
+        "PageBlob_UpdateSequenceNumber",
+        "PageBlob_StartCopyIncremental",
+      ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          status_codes.forEach((status_code, i) => {
+            operation.responses[status_code].headers["Last-Modified"]["x-ms-client-default"] = "";
+            operation.responses[status_code].headers["Last-Modified"]["x-nullable"] = true;
+            operation.responses[status_code].headers["ETag"]["x-ms-client-default"] = "";
+            operation.responses[status_code].headers["ETag"]["x-nullable"] = true;
+          });
+        }
+      }
+```
+
 ### GetBlobServiceProperties
 
 ```yaml
