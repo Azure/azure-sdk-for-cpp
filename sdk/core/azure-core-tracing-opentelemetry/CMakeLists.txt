@@ -36,7 +36,7 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
         find_package(azure-core-cpp REQUIRED)
       endif()
     endif()
-    find_package(opentelemetry-cpp "1.3.0" CONFIG REQUIRED)
+    find_package(opentelemetry-cpp CONFIG REQUIRED)
 
     set(
       AZURE_CORE_OPENTELEMETRY_HEADER
