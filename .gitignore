@@ -19,7 +19,7 @@
 [Rr]eleases/
 x64/
 x86/
-bld/
+bld*/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
