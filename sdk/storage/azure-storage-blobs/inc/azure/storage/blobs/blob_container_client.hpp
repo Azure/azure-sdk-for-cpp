@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param tagFilterSqlExpression The where parameter enables the caller to query blobs
      * whose tags match a given expression. The given expression must evaluate to true for a blob to
-     * be returned in the results. The[OData - ABNF] filter syntax rule defines the formal grammar
+     * be returned in the results. The [OData - ABNF] filter syntax rule defines the formal grammar
      * for the value of the where query parameter, however, only a subset of the OData filter syntax
      * is supported in the Blob service.
      * @param options Optional parameters to execute this function.
