@@ -251,6 +251,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
       // Re-acquire the state lock once we've received the close response.
       lock.lock();
+      m_stateOwner = std::this_thread::get_id();
     }
     // Close the socket - after this point, the m_transport is invalid.
     m_pingThread.Shutdown();
@@ -315,7 +316,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     else
 #endif
     {
-      //      Log::Write(Logger::Level::Verbose, "Send Binary Frame " + HexEncode(binaryFrame, 16));
       std::vector<uint8_t> sendFrame
           = EncodeFrame(SocketOpcode::BinaryFrame, isFinalFrame, binaryFrame);
 
@@ -377,6 +377,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             {
               throw std::runtime_error("Close response buffer is too short.");
             }
+            // Encode the payload for close according to RFC 6455
+            // section 5.5.1. The first two bytes of the payload contain the status code.
+            // The remainder of the payload is a UTF-8 encoded string.
             uint16_t errorCode = 0;
             errorCode |= (frame->Payload[0] << 8) & 0xff00;
             errorCode |= (frame->Payload[1] & 0x00ff);
@@ -384,6 +387,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             // We received a close frame, mark the socket as closed. Make sure we
             // reacquire the state lock before setting the state to closed.
             lock.lock();
+            m_stateOwner = std::this_thread::get_id();
             m_state = SocketState::Closed;
 
             return std::shared_ptr<WebSocketFrame>(new WebSocketPeerCloseFrame(

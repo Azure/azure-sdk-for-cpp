@@ -80,9 +80,7 @@ int pollSocketUntilEventOrTimeout(
   throw TransportException("Error while sending request. Platform does not support Poll()");
 #endif
 
-  struct pollfd poller
-  {
-  };
+  struct pollfd poller;
   poller.fd = socketFileDescriptor;
 
   // set direction
