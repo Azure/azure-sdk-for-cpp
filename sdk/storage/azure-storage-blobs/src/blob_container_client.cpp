@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          * <OrMetadata>
          *   <or-{policy_id}_{rule_id}>replication status</>
          *   <...>
-         * </OrMetatada>
+         * </OrMetadata>
          *
          * We'll convert the metadata to a vector of policies, each policy being a vector of rules.
          */
