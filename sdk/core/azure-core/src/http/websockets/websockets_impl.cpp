@@ -357,6 +357,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
                 Logger::Level::Verbose, "Received Ping frame: " + HexEncode(frame->Payload, 16));
             SendPong(frame->Payload, context);
             break;
+            
             // We want to ignore all incoming "Pong" frames.
           case SocketOpcode::Pong:
             Log::Write(
