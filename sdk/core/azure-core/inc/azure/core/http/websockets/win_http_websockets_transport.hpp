@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         : WinHttpTransport(options)
     {
     }
-	
+
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
