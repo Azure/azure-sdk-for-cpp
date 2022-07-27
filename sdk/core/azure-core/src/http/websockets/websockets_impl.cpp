@@ -52,7 +52,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   {
     if (m_state != SocketState::Invalid && m_state != SocketState::Closed)
     {
-      throw std::runtime_error("Socket is not closed.");
+      throw std::runtime_error(
+          "Socket in unexpected state: " + std::to_string(static_cast<uint32_t>(m_state)));
     }
     m_state = SocketState::Opening;
 
@@ -167,7 +168,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_stateOwner = std::this_thread::get_id();
     if (m_state != SocketState::Open)
     {
-      throw std::runtime_error("Socket is not open.");
+      throw std::runtime_error(
+          "Socket is not open." + std::to_string(static_cast<uint32_t>(m_state)));
     }
     return m_transport->HasBuiltInWebSocketSupport();
   }
@@ -178,7 +180,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_stateOwner = std::this_thread::get_id();
     if (m_state != SocketState::Open)
     {
-      throw std::runtime_error("Socket is not open.");
+      throw std::runtime_error(
+          "Socket is not open." + std::to_string(static_cast<uint32_t>(m_state)));
     }
     return m_chosenProtocol;
   }
@@ -209,7 +212,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     if (m_state != SocketState::Open)
     {
-      throw std::runtime_error("Socket is not open.");
+      throw std::runtime_error(
+          "Socket is not open." + std::to_string(static_cast<uint32_t>(m_state)));
     }
     m_state = SocketState::Closing;
 #if SUPPORT_NATIVE_TRANSPORT
@@ -230,14 +234,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
       // Unlock the state mutex before waiting for the close response to be received.
       lock.unlock();
-      // To ensure that we process the responses in a "timely" fashion, limit the close
-      // reception to 20 seconds if we don't already have a timeout.
-      Azure::Core::Context closeContext = context;
-      auto cancelTimepoint = closeContext.GetDeadline();
-      if (cancelTimepoint == Azure::DateTime::max())
-      {
-        closeContext = closeContext.WithDeadline(std::chrono::system_clock::now() + 20s);
-      }
       // Drain the incoming series of frames from the server.
       // Note that there might be in-flight frames that were sent from the other end of the
       // WebSocket that we don't care about any more (since we're closing the WebSocket). So
@@ -250,10 +246,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
             Logger::Level::Warning,
             "Received unexpected frame during close. Opcode: "
                 + std::to_string(static_cast<uint8_t>(closeResponse->Opcode)));
-        closeResponse = ReceiveTransportFrame(closeContext);
+        closeResponse = ReceiveTransportFrame(context);
       }
 
-      // Re-acquire the state lock once we've received the close lock.
+      // Re-acquire the state lock once we've received the close response.
       lock.lock();
     }
     // Close the socket - after this point, the m_transport is invalid.
@@ -271,7 +267,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_stateOwner = std::this_thread::get_id();
     if (m_state != SocketState::Open)
     {
-      throw std::runtime_error("Socket is not open.");
+      throw std::runtime_error(
+          "Socket is not open." + std::to_string(static_cast<uint32_t>(m_state)));
     }
     std::vector<uint8_t> utf8text(textFrame.begin(), textFrame.end());
     m_receiveStatistics.TextFramesSent++;
@@ -302,7 +299,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     if (m_state != SocketState::Open)
     {
-      throw std::runtime_error("Socket is not open.");
+      throw std::runtime_error(
+          "Socket is not open." + std::to_string(static_cast<uint32_t>(m_state)));
     }
     m_receiveStatistics.BinaryFramesSent++;
 #if SUPPORT_NATIVE_TRANSPORT
@@ -333,7 +331,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
 
     if (m_state != SocketState::Open && m_state != SocketState::Closing)
     {
-      throw std::runtime_error("Socket is not open.");
+      throw std::runtime_error(
+          "Socket is not open." + std::to_string(static_cast<uint32_t>(m_state)));
     }
 
     // Unlock the state lock to allow other threads to run. If we don't, we might end up in in a

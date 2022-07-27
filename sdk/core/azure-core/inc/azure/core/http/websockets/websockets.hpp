@@ -66,46 +66,66 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     {
       /** @brief The number of WebSocket frames sent on this WebSocket. */
       uint32_t FramesSent;
+
       /** @brief The number of bytes of data sent to the peer on this WebSocket. */
       uint32_t BytesSent;
+
       /** @brief The number of WebSocket frames received from the peer. */
       uint32_t FramesReceived;
+
       /** @brief The number of bytes received from the peer. */
       uint32_t BytesReceived;
+
       /** @brief The number of "Ping" frames received from the peer. */
       uint32_t PingFramesReceived;
+
       /** @brief The number of "Ping" frames sent to the peer. */
       uint32_t PingFramesSent;
+
       /** @brief The number of "Pong" frames received from the peer. */
       uint32_t PongFramesReceived;
+
       /** @brief The number of "Pong" frames sent to the peer. */
       uint32_t PongFramesSent;
+
       /** @brief The number of "Text" frames received from the peer. */
       uint32_t TextFramesReceived;
+
       /** @brief The number of "Text" frames sent to the peer. */
       uint32_t TextFramesSent;
+
       /** @brief The number of "Binary" frames received from the peer. */
       uint32_t BinaryFramesReceived;
+
       /** @brief The number of "Binary" frames sent to the peer. */
       uint32_t BinaryFramesSent;
+
       /** @brief The number of "Continuation" frames sent to the peer. */
       uint32_t ContinuationFramesSent;
+
       /** @brief The number of "Continuation" frames received from the peer. */
       uint32_t ContinuationFramesReceived;
+
       /** @brief The number of "Close" frames received from the peer. */
       uint32_t CloseFramesReceived;
+
       /** @brief The number of frames received which were not processed. */
       uint32_t FramesDropped;
+
       /** @brief The number of frames received which were not returned because they were received
        * after the Close() method was called. */
+
       uint32_t FramesDroppedByClose;
       /** @brief The number of frames dropped because they were over the maximum payload size. */
+
       uint32_t FramesDroppedByPayloadSizeLimit;
       /** @brief The number of frames dropped because they were out of compliance with the protocol.
        */
       uint32_t FramesDroppedByProtocolError;
+
       /** @brief The number of reads performed on the transport.*/
       uint32_t TransportReads;
+
       /** @brief The number of bytes read from the transport. */
       uint32_t TransportReadBytes;
     };
@@ -116,15 +136,19 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     public:
       /** @brief The type of frame received: Text, Binary or Close. */
       WebSocketFrameType FrameType{};
+
       /** @brief True if the frame received is a "final" frame */
       bool IsFinalFrame{false};
+
       /** @brief Returns the contents of the frame as a Text frame.
        * @returns A WebSocketTextFrame containing the contents of the frame.
        */
       std::shared_ptr<WebSocketTextFrame> AsTextFrame();
+
       /** @brief Returns the contents of the frame as a Binary frame.
        * @returns A WebSocketBinaryFrame containing the contents of the frame.
        */
+
       std::shared_ptr<WebSocketBinaryFrame> AsBinaryFrame();
       /** @brief Returns the contents of the frame as a Peer Close frame.
        * @returns A WebSocketPeerCloseFrame containing the contents of the frame.
@@ -138,6 +162,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        * @param frameType The type of frame received.
        */
       WebSocketFrame(WebSocketFrameType frameType) : FrameType{frameType} {}
+
+      /** @brief Construct a new instance of a WebSocketFrame with a specific frame type and final
+       * flag.
+       * @param frameType The type of frame received.
+       * @param isFinalFrame true if the frame is the final frame.
+       */
       WebSocketFrame(WebSocketFrameType frameType, bool isFinalFrame)
           : FrameType{frameType}, IsFinalFrame{isFinalFrame}
       {
@@ -153,6 +183,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     public:
       /** @brief Constructs a new WebSocketTextFrame */
       WebSocketTextFrame() : WebSocketFrame(WebSocketFrameType::TextFrameReceived){};
+
       /** @brief Text of the frame received from the remote peer. */
       std::string Text;
 
@@ -178,6 +209,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     public:
       /** @brief Constructs a new WebSocketBinaryFrame */
       WebSocketBinaryFrame() : WebSocketFrame(WebSocketFrameType::BinaryFrameReceived){};
+
       /** @brief Binary frame data received from the remote peer. */
       std::vector<uint8_t> Data;
 
@@ -202,9 +234,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     public:
       /** @brief Constructs a new WebSocketPeerCloseFrame */
       WebSocketPeerCloseFrame() : WebSocketFrame(WebSocketFrameType::PeerClosedReceived){};
+
       /** @brief Status code sent from the remote peer. Typically a member of the WebSocketErrorCode
        * enumeration */
       uint16_t RemoteStatusCode{};
+
       /** @brief Optional text sent from the remote peer. */
       std::string RemoteCloseReason;
 
@@ -232,6 +266,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        * in the initial WebSocket handshake.
        */
       std::string ServiceName;
+
       /**
        * @brief The version of the service client. Used for the User-Agent header in the
        * initial WebSocket handshake
