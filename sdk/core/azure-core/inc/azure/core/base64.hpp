@@ -18,7 +18,10 @@ namespace Azure { namespace Core {
 
   /**
    * @brief Used to convert one form of data  into another, for example encoding binary data into
-   * Base64 text.
+   * Base64 encoded octets.
+   *
+   * @note Base64 encoded data is a subset of the ASCII encoding (characters 0-127). As such,
+   * it can be considered a subset of UTF-8.
    */
   class Convert final {
   private:
@@ -31,17 +34,17 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as Base64.
+     * @brief Encodes a vector of binary data using Base64.
      *
-     * @param data The input vector that contains binary data that needs to be encoded.
-     * @return The UTF-8 encoded text in Base64.
+     * @param data The input vector that contains binary data to be encoded.
+     * @return The Base64 encoded contents of the vector.
      */
     static std::string Base64Encode(const std::vector<uint8_t>& data);
 
     /**
-     * @brief Decodes the UTF-8 encoded text represented as Base64 into binary data.
+     * @brief Decodes a Base64 encoded data into a vector of binary data.
      *
-     * @param text The input UTF-8 encoded text in Base64 that needs to be decoded.
+     * @param text Base64 encoded data to be decoded.
      * @return The decoded binary data.
      */
     static std::vector<uint8_t> Base64Decode(const std::string& text);

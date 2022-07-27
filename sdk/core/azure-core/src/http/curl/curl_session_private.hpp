@@ -275,6 +275,12 @@ namespace Azure { namespace Core { namespace Http {
     size_t m_sessionTotalRead = 0;
 
     /**
+     * @brief If True, the connection is going to be "upgraded" into a websocket connection, so
+     * block moving the connection to the pool.
+     */
+    bool m_connectionUpgraded = false;
+
+    /**
      * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only
      * used while constructing an HTTP RawResponse without adding a body to it. Customers would
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
@@ -388,7 +394,7 @@ namespace Azure { namespace Core { namespace Http {
       // By not moving the connection back to the pool, it gets destroyed calling the connection
       // destructor to clean libcurl handle and close the connection.
       // IsEOF will also handle a connection that fail to complete an upload request.
-      if (IsEOF() && m_keepAlive)
+      if (IsEOF() && m_keepAlive && !m_connectionUpgraded)
       {
         _detail::CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
             std::move(m_connection), m_lastStatusCode);
@@ -418,6 +424,13 @@ namespace Azure { namespace Core { namespace Http {
      * @return The size of the payload.
      */
     int64_t Length() const override { return m_contentLength; }
+
+    /**
+     * @brief Return the network connection if the server indicated that the connection is upgraded.
+     *
+     * @return The network connection, or null if the connection was not upgraded.
+     */
+    std::unique_ptr<CurlNetworkConnection> ExtractConnection();
   };
 
 }}} // namespace Azure::Core::Http

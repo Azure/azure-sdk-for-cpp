@@ -26,6 +26,7 @@ namespace {
 
 enum class SHASize
 {
+  SHA1,
   SHA256,
   SHA384,
   SHA512
@@ -65,6 +66,13 @@ public:
     }
     switch (size)
     {
+      case SHASize::SHA1: {
+        if (1 != EVP_DigestInit_ex(m_context, EVP_sha1(), NULL))
+        {
+          throw std::runtime_error("Crypto error while initializing Sha1Hash.");
+        }
+        break;
+      }
       case SHASize::SHA256: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha256(), NULL))
         {
@@ -96,6 +104,11 @@ public:
 };
 
 } // namespace
+
+Azure::Core::Cryptography::_internal::Sha1Hash::Sha1Hash()
+    : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA1))
+{
+}
 
 Azure::Core::Cryptography::_internal::Sha256Hash::Sha256Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA256))
@@ -221,6 +234,11 @@ public:
 };
 
 } // namespace
+
+Azure::Core::Cryptography::_internal::Sha1Hash::Sha1Hash()
+    : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA1_ALGORITHM))
+{
+}
 
 Azure::Core::Cryptography::_internal::Sha256Hash::Sha256Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA256_ALGORITHM))

@@ -313,10 +313,10 @@ static void Base64WriteIntAsFourBytes(char* destination, int32_t value)
   destination[0] = static_cast<uint8_t>(value & 0xFF);
 }
 
-std::string Base64Encode(const std::vector<uint8_t>& data)
+std::string Base64Encode(uint8_t const* const data, size_t length)
 {
   size_t sourceIndex = 0;
-  auto inputSize = data.size();
+  auto inputSize = length;
   auto maxEncodedSize = ((inputSize + 2) / 3) * 4;
   // Use a string with size to the max possible result
   std::string encodedResult(maxEncodedSize, '0');
@@ -490,7 +490,7 @@ namespace Azure { namespace Core {
 
   std::string Convert::Base64Encode(const std::vector<uint8_t>& data)
   {
-    return ::Base64Encode(data);
+    return ::Base64Encode(data.data(), data.size());
   }
 
   std::vector<uint8_t> Convert::Base64Decode(const std::string& text)

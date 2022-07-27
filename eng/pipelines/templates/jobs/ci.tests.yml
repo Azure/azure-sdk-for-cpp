@@ -46,6 +46,13 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: PreTestSteps
+    type: object
+    default: []
+  - name: PostTestSteps
+    type: object
+    default: []
+
 
 jobs:
   - job:
@@ -137,6 +144,8 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - ${{ parameters.PreTestSteps }}
+
       - pwsh: |
           ctest `
             -C Debug `
@@ -147,6 +156,8 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
+
+      - ${{ parameters.PostTestSteps }}
 
       - task: PublishTestResults@2
         inputs:

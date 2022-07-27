@@ -20,6 +20,7 @@ using namespace Azure::Core::Http;
 namespace {
 
 const std::string HttpScheme = "http";
+const std::string WebSocketScheme = "ws";
 
 inline std::wstring HttpMethodToWideString(HttpMethod method)
 {
@@ -198,9 +199,8 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 
 } // namespace
 
-void GetErrorAndThrow(const std::string& exceptionMessage)
+void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error)
 {
-  DWORD error = GetLastError();
   std::string errorMessage = exceptionMessage + " Error Code: " + std::to_string(error);
 
   char* errorMsg = nullptr;
@@ -226,17 +226,19 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
   throw Azure::Core::Http::TransportException(errorMessage);
 }
 
-HINTERNET WinHttpTransport::CreateSessionHandle()
+_detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
 {
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
-  HINTERNET sessionHandle = WinHttpOpen(
-      NULL, // Do not use a fallback user-agent string, and only rely on the header within the
-            // request itself.
-      WINHTTP_ACCESS_TYPE_NO_PROXY,
-      WINHTTP_NO_PROXY_NAME,
-      WINHTTP_NO_PROXY_BYPASS,
-      0);
+  _detail::unique_HINTERNET sessionHandle(
+      WinHttpOpen(
+          NULL, // Do not use a fallback user-agent string, and only rely on the header within the
+                // request itself.
+          WINHTTP_ACCESS_TYPE_NO_PROXY,
+          WINHTTP_NO_PROXY_NAME,
+          WINHTTP_NO_PROXY_BYPASS,
+          0),
+      _detail::HINTERNET_deleter{});
 
   if (!sessionHandle)
   {
@@ -253,19 +255,22 @@ HINTERNET WinHttpTransport::CreateSessionHandle()
 #ifdef WINHTTP_OPTION_TCP_FAST_OPEN
   BOOL tcp_fast_open = TRUE;
   WinHttpSetOption(
-      sessionHandle, WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
+      sessionHandle.get(), WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
 #endif
 
 #ifdef WINHTTP_OPTION_TLS_FALSE_START
   BOOL tls_false_start = TRUE;
   WinHttpSetOption(
-      sessionHandle, WINHTTP_OPTION_TLS_FALSE_START, &tls_false_start, sizeof(tls_false_start));
+      sessionHandle.get(),
+      WINHTTP_OPTION_TLS_FALSE_START,
+      &tls_false_start,
+      sizeof(tls_false_start));
 #endif
 
   // Enforce TLS version 1.2
   auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
   if (!WinHttpSetOption(
-          sessionHandle, WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
+          sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
     GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
   }
@@ -278,23 +283,26 @@ WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
 {
 }
 
-void WinHttpTransport::CreateConnectionHandle(
-    std::unique_ptr<_detail::HandleManager>& handleManager)
+_detail::unique_HINTERNET WinHttpTransport::CreateConnectionHandle(
+    Azure::Core::Url const& url,
+    Azure::Core::Context const& context)
 {
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
-  uint16_t port = handleManager->m_request.GetUrl().GetPort();
+  uint16_t port = url.GetPort();
 
-  handleManager->m_context.ThrowIfCancelled();
+  context.ThrowIfCancelled();
 
   // Specify an HTTP server.
   // This function always operates synchronously.
-  handleManager->m_connectionHandle = WinHttpConnect(
-      m_sessionHandle,
-      StringToWideString(handleManager->m_request.GetUrl().GetHost()).c_str(),
-      port == 0 ? INTERNET_DEFAULT_PORT : port,
-      0);
+  _detail::unique_HINTERNET rv(
+      WinHttpConnect(
+          m_sessionHandle.get(),
+          StringToWideString(url.GetHost()).c_str(),
+          port == 0 ? INTERNET_DEFAULT_PORT : port,
+          0),
+      _detail::HINTERNET_deleter{});
 
-  if (!handleManager->m_connectionHandle)
+  if (!rv)
   {
     // Errors include:
     // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
@@ -306,29 +314,35 @@ void WinHttpTransport::CreateConnectionHandle(
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a connection handle.");
   }
+  return rv;
 }
 
-void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
+_detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
+    _detail::unique_HINTERNET const& connectionHandle,
+    Azure::Core::Url const& url,
+    Azure::Core::Http::HttpMethod const& method)
 {
-  const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
-  HttpMethod requestMethod = handleManager->m_request.GetMethod();
+  const std::string& path = url.GetRelativeUrl();
+  HttpMethod requestMethod = method;
   bool const requestSecureHttp(
       !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-          handleManager->m_request.GetUrl().GetScheme(), HttpScheme));
+          url.GetScheme(), HttpScheme)
+      && !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+          url.GetScheme(), WebSocketScheme));
 
   // Create an HTTP request handle.
-  handleManager->m_requestHandle = WinHttpOpenRequest(
-      handleManager->m_connectionHandle,
-      HttpMethodToWideString(requestMethod).c_str(),
-      path.empty() ? NULL
-                   : StringToWideString(path)
-                         .c_str(), // Name of the target resource of the specified HTTP verb
-      NULL, // Use HTTP/1.1
-      WINHTTP_NO_REFERER,
-      WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
-      requestSecureHttp ? WINHTTP_FLAG_SECURE : 0); // Uses secure transaction semantics (SSL/TLS)
-
-  if (!handleManager->m_requestHandle)
+  _detail::unique_HINTERNET request(
+      WinHttpOpenRequest(
+          connectionHandle.get(),
+          HttpMethodToWideString(requestMethod).c_str(),
+          path.empty() ? NULL : StringToWideString(path).c_str(), // Name of the target resource of
+                                                                  // the specified HTTP verb
+          NULL, // Use HTTP/1.1
+          WINHTTP_NO_REFERER,
+          WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
+          requestSecureHttp ? WINHTTP_FLAG_SECURE : 0),
+      _detail::HINTERNET_deleter{}); // Uses secure transaction semantics (SSL/TLS)
+  if (!request)
   {
     // Errors include:
     // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
@@ -348,10 +362,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     // Note: If/When TLS client certificate support is added to the pipeline, this line may need to
     // be revisited.
     if (!WinHttpSetOption(
-            handleManager->m_requestHandle,
-            WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
-            WINHTTP_NO_CLIENT_CERT_CONTEXT,
-            0))
+            request.get(), WINHTTP_OPTION_CLIENT_CERT_CONTEXT, WINHTTP_NO_CLIENT_CERT_CONTEXT, 0))
     {
       GetErrorAndThrow("Error while setting client cert context to ignore.");
     }
@@ -360,18 +371,29 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
   if (m_options.IgnoreUnknownCertificateAuthority)
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-    if (!WinHttpSetOption(
-            handleManager->m_requestHandle, WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
+    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
     {
       GetErrorAndThrow("Error while setting ignore unknown server certificate.");
     }
   }
+
+  // If we are supporting WebSockets, then let WinHTTP know that it should
+  // prepare to upgrade the HttpRequest to a WebSocket.
+  if (HasWebSocketSupport()
+      && !WinHttpSetOption(request.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
+  {
+    GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
+  }
+  return request;
 }
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
-void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleManager)
+void WinHttpTransport::Upload(
+    _detail::unique_HINTERNET const& requestHandle,
+    Azure::Core::Http::Request& request,
+    Azure::Core::Context const& context)
 {
-  auto streamBody = handleManager->m_request.GetBodyStream();
+  auto streamBody = request.GetBodyStream();
   int64_t streamLength = streamBody->Length();
 
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
@@ -384,8 +406,7 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
 
   while (true)
   {
-    size_t rawRequestLen
-        = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
+    size_t rawRequestLen = streamBody->Read(unique_buffer.get(), uploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
@@ -393,11 +414,11 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
 
     DWORD dwBytesWritten = 0;
 
-    handleManager->m_context.ThrowIfCancelled();
+    context.ThrowIfCancelled();
 
     // Write data to the server.
     if (!WinHttpWriteData(
-            handleManager->m_requestHandle,
+            requestHandle.get(),
             unique_buffer.get(),
             static_cast<DWORD>(rawRequestLen),
             &dwBytesWritten))
@@ -407,29 +428,32 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   }
 }
 
-void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& handleManager)
+void WinHttpTransport::SendRequest(
+    _detail::unique_HINTERNET const& requestHandle,
+    Azure::Core::Http::Request& request,
+    Azure::Core::Context const& context)
 {
   std::wstring encodedHeaders;
   int encodedHeadersLength = 0;
 
-  auto requestHeaders = handleManager->m_request.GetHeaders();
+  auto requestHeaders = request.GetHeaders();
   if (requestHeaders.size() != 0)
   {
     // The encodedHeaders will be null-terminated and the length is calculated.
     encodedHeadersLength = -1;
-    std::string requestHeaderString = GetHeadersAsString(handleManager->m_request);
+    std::string requestHeaderString = GetHeadersAsString(request);
     requestHeaderString.append("\0");
 
     encodedHeaders = StringToWideString(requestHeaderString);
   }
 
-  int64_t streamLength = handleManager->m_request.GetBodyStream()->Length();
+  int64_t streamLength = request.GetBodyStream()->Length();
 
-  handleManager->m_context.ThrowIfCancelled();
+  context.ThrowIfCancelled();
 
   // Send a request.
   if (!WinHttpSendRequest(
-          handleManager->m_requestHandle,
+          requestHandle.get(),
           requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS : encodedHeaders.c_str(),
           encodedHeadersLength,
           WINHTTP_NO_REQUEST_DATA,
@@ -468,18 +492,20 @@ void WinHttpTransport::SendRequest(std::unique_ptr<_detail::HandleManager>& hand
 
   if (streamLength > 0)
   {
-    Upload(handleManager);
+    Upload(requestHandle, request, context);
   }
 }
 
-void WinHttpTransport::ReceiveResponse(std::unique_ptr<_detail::HandleManager>& handleManager)
+void WinHttpTransport::ReceiveResponse(
+    _detail::unique_HINTERNET const& requestHandle,
+    Azure::Core::Context const& context)
 {
-  handleManager->m_context.ThrowIfCancelled();
+  context.ThrowIfCancelled();
 
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
   // been received.
-  if (!WinHttpReceiveResponse(handleManager->m_requestHandle, NULL))
+  if (!WinHttpReceiveResponse(requestHandle.get(), NULL))
   {
     // Errors include:
     // ERROR_WINHTTP_CANNOT_CONNECT
@@ -494,7 +520,7 @@ void WinHttpTransport::ReceiveResponse(std::unique_ptr<_detail::HandleManager>& 
 }
 
 int64_t WinHttpTransport::GetContentLength(
-    std::unique_ptr<_detail::HandleManager>& handleManager,
+    _detail::unique_HINTERNET const& requestHandle,
     HttpMethod requestMethod,
     HttpStatusCode responseStatusCode)
 {
@@ -511,7 +537,7 @@ int64_t WinHttpTransport::GetContentLength(
   if (requestMethod != HttpMethod::Head && responseStatusCode != HttpStatusCode::NoContent)
   {
     if (!WinHttpQueryHeaders(
-            handleManager->m_requestHandle,
+            requestHandle.get(),
             WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
             WINHTTP_HEADER_NAME_BY_INDEX,
             &dwContentLength,
@@ -530,14 +556,14 @@ int64_t WinHttpTransport::GetContentLength(
 }
 
 std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
-    std::unique_ptr<_detail::HandleManager> handleManager,
+    _detail::unique_HINTERNET& requestHandle,
     HttpMethod requestMethod)
 {
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
   // The call is expected to fail since no destination buffer is provided.
   DWORD sizeOfHeaders = 0;
   if (WinHttpQueryHeaders(
-          handleManager->m_requestHandle,
+          requestHandle.get(),
           WINHTTP_QUERY_RAW_HEADERS,
           WINHTTP_HEADER_NAME_BY_INDEX,
           NULL,
@@ -563,7 +589,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   // Now, use WinHttpQueryHeaders to retrieve all the headers.
   // Each header is terminated by "\0". An additional "\0" terminates the list of headers.
   if (!WinHttpQueryHeaders(
-          handleManager->m_requestHandle,
+          requestHandle.get(),
           WINHTTP_QUERY_RAW_HEADERS,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
@@ -583,7 +609,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
   // Get the HTTP version.
   if (!WinHttpQueryHeaders(
-          handleManager->m_requestHandle,
+          requestHandle.get(),
           WINHTTP_QUERY_VERSION,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
@@ -606,7 +632,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
   // Get the status code as a number.
   if (!WinHttpQueryHeaders(
-          handleManager->m_requestHandle,
+          requestHandle.get(),
           WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
           WINHTTP_HEADER_NAME_BY_INDEX,
           &statusCode,
@@ -623,7 +649,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   DWORD sizeOfReasonPhrase = sizeOfHeaders;
 
   if (WinHttpQueryHeaders(
-          handleManager->m_requestHandle,
+          requestHandle.get(),
           WINHTTP_QUERY_STATUS_TEXT,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
@@ -642,26 +668,32 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
   SetHeaders(responseHeaders, rawResponse);
 
-  int64_t contentLength
-      = GetContentLength(handleManager, requestMethod, rawResponse->GetStatusCode());
+  if (HasWebSocketSupport() && (httpStatusCode == HttpStatusCode::SwitchingProtocols))
+  {
+    OnUpgradedConnection(requestHandle);
+  }
+  else
+  {
+    int64_t contentLength
+        = GetContentLength(requestHandle, requestMethod, rawResponse->GetStatusCode());
 
-  rawResponse->SetBodyStream(
-      std::make_unique<_detail::WinHttpStream>(std::move(handleManager), contentLength));
+    rawResponse->SetBodyStream(
+        std::make_unique<_detail::WinHttpStream>(requestHandle, contentLength));
+  }
   return rawResponse;
 }
 
 std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
-  auto handleManager = std::make_unique<_detail::HandleManager>(request, context);
+  _detail::unique_HINTERNET connectionHandle = CreateConnectionHandle(request.GetUrl(), context);
+  _detail::unique_HINTERNET requestHandle
+      = CreateRequestHandle(connectionHandle, request.GetUrl(), request.GetMethod());
 
-  CreateConnectionHandle(handleManager);
-  CreateRequestHandle(handleManager);
+  SendRequest(requestHandle, request, context);
 
-  SendRequest(handleManager);
+  ReceiveResponse(requestHandle, context);
 
-  ReceiveResponse(handleManager);
-
-  return SendRequestAndGetResponse(std::move(handleManager), request.GetMethod());
+  return SendRequestAndGetResponse(requestHandle, request.GetMethod());
 }
 
 // Read the response from the sent request.
@@ -679,7 +711,7 @@ size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context con
   DWORD numberOfBytesRead = 0;
 
   if (!WinHttpReadData(
-          this->m_handleManager->m_requestHandle,
+          this->m_requestHandle.get(),
           (LPVOID)(buffer),
           static_cast<DWORD>(count),
           &numberOfBytesRead))

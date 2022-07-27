@@ -13,6 +13,7 @@
 #include "azure/core/http/transport.hpp"
 
 namespace Azure { namespace Core { namespace Http {
+  class CurlNetworkConnection;
 
   namespace _detail {
     /**
@@ -46,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Set the libcurl connection options like a proxy and CA path.
    */
-  struct CurlTransportOptions final
+  struct CurlTransportOptions
   {
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing.
@@ -126,9 +127,16 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    */
-  class CurlTransport final : public HttpTransport {
+  class CurlTransport : public HttpTransport {
   private:
     CurlTransportOptions m_options;
+
+  protected:
+    /**
+     * @brief Called when an HTTP response indicates the connection should be upgraded to
+     * a websocket. Takes ownership of the CurlNetworkConnection object.
+     */
+    virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&&){};
 
   public:
     /**
@@ -139,6 +147,12 @@ namespace Azure { namespace Core { namespace Http {
     CurlTransport(CurlTransportOptions const& options = CurlTransportOptions()) : m_options(options)
     {
     }
+
+    // See also:
+    // [Core Guidelines C.35: "A base class destructor should be either public
+    // and virtual or protected and
+    // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
+    virtual ~CurlTransport() = default;
 
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
