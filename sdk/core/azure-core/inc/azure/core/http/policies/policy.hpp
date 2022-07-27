@@ -40,8 +40,10 @@ extern std::shared_ptr<Azure::Core::Http::HttpTransport> AzureSdkGetCustomHttpTr
 
 namespace Azure { namespace Core { namespace Http { namespace Policies {
 
+  struct TransportOptions;
   namespace _detail {
-    std::shared_ptr<HttpTransport> GetTransportAdapter();
+    std::shared_ptr<HttpTransport> GetTransportAdapter(TransportOptions const& transportOptions);
+
     AZ_CORE_DLLEXPORT extern std::set<std::string> const g_defaultAllowedHttpQueryParameters;
     AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
@@ -135,6 +137,27 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    */
   struct TransportOptions final
   {
+#if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) || defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+    /**
+     * @brief Http Proxies used when making an HTTP connection.
+     *
+     * @remark The URL for the proxy server to use for this connection.
+     */
+    std::string HttpProxy;
+
+    /**
+     * @brief The username to use when authenticating with the proxy server.
+     */
+    std::string ProxyUserName;
+
+    /**
+     * @brief The password to use when authenticating with the proxy server.
+     */
+    std::string ProxyPassword;
+#endif // defined(CURL_ADAPTER) || defined(WINHTTP_ADAPTER)
+#endif // !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
+
     /**
      * @brief #Azure::Core::Http::HttpTransport that the transport policy will use to send and
      * receive requests and responses over the wire.
@@ -149,7 +172,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * `::AzureSdkGetCustomHttpTransport()` must be linked in the end-user application.
      *
      */
-    std::shared_ptr<HttpTransport> Transport = _detail::GetTransportAdapter();
+    std::shared_ptr<HttpTransport> Transport;
   };
 
   class NextHttpPolicy;
@@ -278,10 +301,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        *
        * @param options #Azure::Core::Http::Policies::TransportOptions.
        */
-      explicit TransportPolicy(TransportOptions options = TransportOptions())
-          : m_options(std::move(options))
-      {
-      }
+      explicit TransportPolicy(TransportOptions const& options = TransportOptions());
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {

@@ -54,9 +54,10 @@ std::wstring StringToWideString(const std::string& str)
     // ERROR_INVALID_PARAMETER
     // ERROR_NO_UNICODE_TRANSLATION
     DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
+    throw Azure::Core::Http::WinHttpTransportException(
+        error,
         "Unable to get the required transcoded size for the input string. Error Code: "
-        + std::to_string(error) + ".");
+            + std::to_string(error) + ".");
   }
 
   std::wstring wideStr(sizeNeeded, L'\0');
@@ -64,9 +65,10 @@ std::wstring StringToWideString(const std::string& str)
       == 0)
   {
     DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
+    throw Azure::Core::Http::WinHttpTransportException(
+        error,
         "Unable to transcode the input string to a wide string. Error Code: "
-        + std::to_string(error) + ".");
+            + std::to_string(error) + ".");
   }
   return wideStr;
 }
@@ -99,9 +101,10 @@ std::string WideStringToString(const std::wstring& wideString)
     // ERROR_INVALID_PARAMETER
     // ERROR_NO_UNICODE_TRANSLATION
     DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
+    throw Azure::Core::Http::WinHttpTransportException(
+        error,
         "Unable to get the required transcoded size for the input wide string. Error Code: "
-        + std::to_string(error) + ".");
+            + std::to_string(error) + ".");
   }
 
   std::string str(sizeNeeded, 0);
@@ -110,9 +113,10 @@ std::string WideStringToString(const std::wstring& wideString)
       == 0)
   {
     DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
+    throw Azure::Core::Http::WinHttpTransportException(
+        error,
         "Unable to transcode the input wide string to a string. Error Code: "
-        + std::to_string(error) + ".");
+            + std::to_string(error) + ".");
   }
   return str;
 }
@@ -223,7 +227,7 @@ void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWO
   }
   errorMessage += '.';
 
-  throw Azure::Core::Http::TransportException(errorMessage);
+  throw Azure::Core::Http::WinHttpTransportException(error, errorMessage);
 }
 
 _detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
@@ -234,7 +238,9 @@ _detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
       WinHttpOpen(
           NULL, // Do not use a fallback user-agent string, and only rely on the header within the
                 // request itself.
-          WINHTTP_ACCESS_TYPE_NO_PROXY,
+          // If the customer asks for it, enable use of the system default HTTP proxy.
+          (m_options.EnableSystemDefaultProxy ? WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY
+                                              : WINHTTP_ACCESS_TYPE_NO_PROXY),
           WINHTTP_NO_PROXY_NAME,
           WINHTTP_NO_PROXY_BYPASS,
           0),
@@ -368,6 +374,82 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     }
   }
 
+  if (!m_options.ProxyInformation.empty())
+  {
+    WINHTTP_PROXY_INFO proxyInfo{};
+    std::wstring proxyWide{StringToWideString(m_options.ProxyInformation)};
+    proxyInfo.dwAccessType = WINHTTP_ACCESS_TYPE_NAMED_PROXY;
+    proxyInfo.lpszProxy = const_cast<LPWSTR>(proxyWide.c_str());
+    proxyInfo.lpszProxyBypass = WINHTTP_NO_PROXY_BYPASS;
+    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_PROXY, &proxyInfo, sizeof(proxyInfo)))
+    {
+      GetErrorAndThrow("Error while setting Proxy information.");
+    }
+  }
+#if 0
+  if (!m_options.ProxyUserName.empty() || !m_options.ProxyPassword.empty())
+  {
+    DWORD proxyAuthSchemes = 0;
+    DWORD proxyAuthSchemeSize = sizeof(proxyAuthSchemes);
+    if (!WinHttpQueryOption(
+            request.get(),
+            WINHTTP_OPTION_DISABLE_PROXY_AUTH_SCHEMES,
+            &proxyAuthSchemes,
+            &proxyAuthSchemeSize))
+    {
+      GetErrorAndThrow("Error while getting disabled proxy auth schemes.");
+    }
+    proxyAuthSchemes &= ~WINHTTP_PROXY_DISABLE_SCHEME_BASIC;
+    if (!WinHttpSetOption(
+            request.get(),
+            WINHTTP_OPTION_DISABLE_PROXY_AUTH_SCHEMES,
+            &proxyAuthSchemes,
+            proxyAuthSchemeSize))
+    {
+      GetErrorAndThrow("Error while setting disabled proxy auth schemes.");
+    }
+  }
+
+  if (!m_options.ProxyUserName.empty())
+  {
+    std::wstring userNameWide{StringToWideString(m_options.ProxyUserName)};
+    if (!WinHttpSetOption(
+            request.get(),
+            WINHTTP_OPTION_PROXY_USERNAME,
+            reinterpret_cast<LPVOID>(const_cast<wchar_t*>(userNameWide.c_str())),
+            static_cast<DWORD>(m_options.ProxyUserName.size())))
+    {
+      GetErrorAndThrow("Error while setting Proxy UserName information.");
+    }
+  }
+
+  if (!m_options.ProxyPassword.empty())
+  {
+    std::wstring passwordWide{StringToWideString(m_options.ProxyPassword)};
+    if (!WinHttpSetOption(
+            request.get(),
+            WINHTTP_OPTION_PROXY_PASSWORD,
+            reinterpret_cast<LPVOID>(const_cast<wchar_t*>(passwordWide.c_str())),
+            static_cast<DWORD>(m_options.ProxyPassword.size())))
+    {
+      GetErrorAndThrow("Error while setting Proxy Password information.");
+    }
+  }
+#endif
+  if (!m_options.ProxyUserName.empty() || !m_options.ProxyPassword.empty())
+  {
+    if (!WinHttpSetCredentials(
+            request.get(),
+            WINHTTP_AUTH_TARGET_PROXY,
+            WINHTTP_AUTH_SCHEME_BASIC,
+            StringToWideString(m_options.ProxyUserName).c_str(),
+            StringToWideString(m_options.ProxyPassword).c_str(),
+            0))
+    {
+      GetErrorAndThrow("Error while setting Proxy credentials.");
+    }
+  }
+
   if (m_options.IgnoreUnknownCertificateAuthority)
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
@@ -379,8 +461,12 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
 
   // If we are supporting WebSockets, then let WinHTTP know that it should
   // prepare to upgrade the HttpRequest to a WebSocket.
+#pragma warning(push)
+// warning C6387: _Param_(3) could be '0'.
+#pragma warning(disable : 6387)
   if (HasWebSocketSupport()
       && !WinHttpSetOption(request.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
+#pragma warning(pop)
   {
     GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
   }
@@ -578,8 +664,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
     DWORD error = GetLastError();
     if (error != ERROR_INSUFFICIENT_BUFFER)
     {
-      throw Azure::Core::Http::TransportException(
-          "Error while querying response headers. Error Code: " + std::to_string(error) + ".");
+      GetErrorAndThrow("Error while querying response headers.", error);
     }
   }
 
@@ -727,9 +812,10 @@ size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context con
     // ERROR_NOT_ENOUGH_MEMORY
 
     DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
+    throw Azure::Core::Http::WinHttpTransportException(
+        error,
         "Error while reading available data from the wire. Error Code: " + std::to_string(error)
-        + ".");
+            + ".");
   }
 
   this->m_streamTotalRead += numberOfBytesRead;

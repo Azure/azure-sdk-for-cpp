@@ -78,6 +78,7 @@ add_executable (
     transport_adapter_base_test.cpp
     transport_adapter_base_test.hpp
     transport_adapter_implementation_test.cpp
+    transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
     websocket_test.cpp
@@ -97,6 +98,11 @@ if (MSVC)
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
   # - C6326: Google comparisons 
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
+endif()
+
+if (BUILD_CODE_COVERAGE)
+message(STATUS "Building for Code Coverage." )
+add_compile_definitions(CODE_COVERAGE)
 endif()
 
 # Additional test files to be copied to the output directory.

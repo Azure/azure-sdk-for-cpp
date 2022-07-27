@@ -42,6 +42,14 @@ namespace Azure { namespace Core {
     static std::string Base64Encode(const std::vector<uint8_t>& data);
 
     /**
+     * @brief Encodes a string using Base64 encoding.
+     *
+     * @param data The input string that contains data to be encoded.
+     * @return The Base64 encoded contents of the vector.
+     */
+    static std::string Base64Encode(const std::string& data);
+
+    /**
      * @brief Decodes a Base64 encoded data into a vector of binary data.
      *
      * @param text Base64 encoded data to be decoded.

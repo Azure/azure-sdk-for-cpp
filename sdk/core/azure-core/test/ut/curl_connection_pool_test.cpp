@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
       std::string const expectedConnectionKey(CreateConnectionKey(
-          AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "001100"));
+          AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "00001100"));
 
       {
         // Creating a new connection with default options
@@ -65,8 +65,8 @@ namespace Azure { namespace Core { namespace Test {
 
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
 
-        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-            req, std::move(connection), options.HttpKeepAlive);
+        auto session
+            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
@@ -102,8 +102,8 @@ namespace Azure { namespace Core { namespace Test {
         // And the connection key for the connection we got is the expected
         EXPECT_EQ(connection->GetConnectionKey(), expectedConnectionKey);
 
-        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-            req, std::move(connection), options.HttpKeepAlive);
+        auto session
+            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
@@ -123,8 +123,8 @@ namespace Azure { namespace Core { namespace Test {
       }
 
       // Now test that using a different connection config won't re-use the same connection
-      std::string const secondExpectedKey
-          = AzureSdkHttpbinServer::Schema() + "://" + AzureSdkHttpbinServer::Host() + "00100200000";
+      std::string const secondExpectedKey = AzureSdkHttpbinServer::Schema() + "://"
+          + AzureSdkHttpbinServer::Host() + "0000100200000";
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
@@ -147,8 +147,8 @@ namespace Azure { namespace Core { namespace Test {
                 ->GetConnectionKey(),
             expectedConnectionKey);
 
-        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-            req, std::move(connection), options.HttpKeepAlive);
+        auto session
+            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
@@ -202,8 +202,8 @@ namespace Azure { namespace Core { namespace Test {
                 ->GetConnectionKey(),
             secondExpectedKey);
 
-        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-            req, std::move(connection), options.HttpKeepAlive);
+        auto session
+            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
         // Simulate connection was used already
         session->m_lastStatusCode = Azure::Core::Http::HttpStatusCode::Ok;
         session->m_sessionState = Azure::Core::Http::CurlSession::SessionState::STREAMING;
@@ -415,7 +415,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "001100"));
+            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "00001100"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -451,7 +451,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ":443001100"));
+            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ":44300001100"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -488,7 +488,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "001100"));
+            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "00001100"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -523,7 +523,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ":443001100"));
+            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ":44300001100"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -568,8 +568,8 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
-        auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-            req, std::move(connection), options.HttpKeepAlive);
+        auto session
+            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
         auto r = session->Perform(Azure::Core::Context::ApplicationContext);
         EXPECT_EQ(CURLE_SEND_ERROR, r);
       }

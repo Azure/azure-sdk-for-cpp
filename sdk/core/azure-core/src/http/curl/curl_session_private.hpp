@@ -364,6 +364,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool m_keepAlive = true;
 
+    Azure::Nullable<std::string> m_httpProxy;
+    std::string m_httpProxyUser;
+    std::string m_httpProxyPassword;
+
     /**
      * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
      * from the wire.
@@ -375,14 +379,25 @@ namespace Azure { namespace Core { namespace Http {
      */
     size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
+    inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request);
+    inline std::string GetHeadersAsString(Azure::Core::Http::Request const& request);
+    inline static void SetHeader(
+        Azure::Core::Http::RawResponse& response,
+        std::string const& header);
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request, std::unique_ptr<CurlNetworkConnection> connection, bool keepAlive)
-        : m_connection(std::move(connection)), m_request(request), m_keepAlive(keepAlive)
+    CurlSession(
+        Request& request,
+        std::unique_ptr<CurlNetworkConnection> connection,
+        CurlTransportOptions curlOptions)
+        : m_connection(std::move(connection)), m_request(request),
+          m_keepAlive(curlOptions.HttpKeepAlive), m_httpProxy(curlOptions.Proxy),
+          m_httpProxyUser(curlOptions.ProxyUsername), m_httpProxyPassword(curlOptions.ProxyPassword)
     {
     }
 
