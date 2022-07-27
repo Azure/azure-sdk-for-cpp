@@ -356,7 +356,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
                 Logger::Level::Verbose, "Received Ping frame: " + HexEncode(frame->Payload, 16));
             SendPong(frame->Payload, context);
             break;
-            
+
             // We want to ignore all incoming "Pong" frames.
           case SocketOpcode::Pong:
             Log::Write(
@@ -696,10 +696,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
         m_bufferLen = m_transport->ReadFromSocket(m_buffer, m_bufferSize, context);
         m_receiveStatistics.TransportReads++;
         m_receiveStatistics.TransportReadBytes += static_cast<uint32_t>(m_bufferLen);
-        //        Log::Write(
-        //            Logger::Level::Verbose,
-        //            "Read #" + std::to_string(m_receiveStatistics.TransportReads.load())
-        //                + "from transport: " + std::to_string(m_bufferLen));
       }
       else
       {
@@ -761,11 +757,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     std::unique_lock<std::mutex> transportLock(m_transportMutex);
     m_receiveStatistics.BytesSent += static_cast<uint32_t>(sendFrame.size());
     m_receiveStatistics.FramesSent += 1;
-    //    Log::Write(
-    //        Logger::Level::Verbose,
-    //        "Send #" + std::to_string(m_receiveStatistics.FramesSent.load()) + "to
-    //        transport:"
-    //            + std::to_string(sendFrame.size()) + "Data: " + HexEncode(sendFrame, 0x10));
     m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
   }
 
