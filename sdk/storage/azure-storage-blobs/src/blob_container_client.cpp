@@ -68,6 +68,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         blobItem.Details.IsIncrementalCopy = false;
       }
       {
+        /*
+         * Object replication metadata is in the following format.
+         * <OrMetadata>
+         *   <or-{policy_id}_{rule_id}>replication status</>
+         *   <...>
+         * </OrMetatada>
+         *
+         * We'll convert the metadata to a vector of policies, each policy being a vector of rules.
+         */
         std::map<std::string, std::vector<Models::ObjectReplicationRule>> orPropertiesMap;
         for (auto& policy : blobItem.Details.ObjectReplicationSourceProperties)
         {
