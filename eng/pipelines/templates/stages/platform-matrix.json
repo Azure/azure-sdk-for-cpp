@@ -5,11 +5,8 @@
     "include": [
         {
             "OSConfiguration": {
-                "macos-11": {
-                    "OSVmImage": "macos-11"
-                },
                 "macOS-11": {
-                    "OSVmImage": "macOS-11",
+                    "OSVmImage": "macos-11",
                     "XCODE_VERSION": "12.5.1"
                 }
             },
