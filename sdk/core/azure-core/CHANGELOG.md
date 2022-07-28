@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#3794]](https://github.com/Azure/azure-sdk-for-cpp/issues/3794) Fix memory leak in `CurlTransport`.
+
 ### Other Changes
 
 ## 1.7.0 (2022-06-30)
