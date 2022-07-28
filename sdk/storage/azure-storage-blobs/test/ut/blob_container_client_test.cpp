@@ -1275,6 +1275,10 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(blobItem.Name, blobName);
     }
     {
+      /*
+       * UTF-16 0xFFFF and 0xFFFE are not valid in XML, we'll need to encode if blob name contains
+       * these two characters.
+       */
       const std::string blobPrefix
           = std::string("aaaaa\xEF\xBF\xBF") + "bbb/"; // UTF-8 0xEF, 0xBF, 0xBF is UTF-16 0xFFFF
       const std::string blobName = blobPrefix + "ccc";
