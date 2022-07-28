@@ -7,7 +7,7 @@
             "StaticConfigs": {
                 "MacOS_x64_with_unit_test": {
                     "Pool": "Azure Pipelines",
-                    "OSVmImage": "macOS-10.15",
+                    "OSVmImage": "macos-11",
                     "VCPKG_DEFAULT_TRIPLET": "x64-osx",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON",
                     "AZURE_CORE_ENABLE_JSON_TESTS": 1,
