@@ -55,6 +55,35 @@ std::string ListSharesIncludeFlagsToString(
   }
   return ret;
 }
+std::string ListFilesIncludeTypeToString(
+    const Azure::Storage::Files::Shares::Models::ListFilesIncludeType& val)
+{
+  const Azure::Storage::Files::Shares::Models::ListFilesIncludeType valueList[] = {
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::Timestamps,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::ETag,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::Attributes,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::PermissionKey,
+  };
+  const char* stringList[] = {
+      "Timestamps",
+      "Etag",
+      "Attributes",
+      "PermissionKey",
+  };
+  std::string ret;
+  for (size_t i = 0; i < 4; ++i)
+  {
+    if ((val & valueList[i]) == valueList[i])
+    {
+      if (!ret.empty())
+      {
+        ret += ",";
+      }
+      ret += stringList[i];
+    }
+  }
+  return ret;
+}
 } // namespace
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
   namespace Models {
@@ -71,6 +100,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const LeaseState LeaseState::Broken("broken");
     const LeaseDurationType LeaseDurationType::Infinite("infinite");
     const LeaseDurationType LeaseDurationType::Fixed("fixed");
+    const ShareProtocols ShareProtocols::Smb("SMB");
+    const ShareProtocols ShareProtocols::Nfs("NFS");
+    const ShareRootSquash ShareRootSquash::NoRootSquash("NoRootSquash");
+    const ShareRootSquash ShareRootSquash::RootSquash("RootSquash");
+    const ShareRootSquash ShareRootSquash::AllSquash("AllSquash");
     const DeleteSnapshotsOption DeleteSnapshotsOption::Include("include");
     FileAttributes::FileAttributes(const std::string& value)
     {
@@ -153,6 +187,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const CopyStatus CopyStatus::Success("success");
     const CopyStatus CopyStatus::Aborted("aborted");
     const CopyStatus CopyStatus::Failed("failed");
+    const FileLastWrittenMode FileLastWrittenMode::Now("Now");
+    const FileLastWrittenMode FileLastWrittenMode::Preserve("Preserve");
     const PermissionCopyMode PermissionCopyMode::Source("source");
     const PermissionCopyMode PermissionCopyMode::Override("override");
   } // namespace Models
@@ -276,7 +312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -296,7 +332,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -528,7 +564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             _internal::UrlEncodeQueryParameter(
                 ListSharesIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -561,6 +597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kProvisionedIops,
           kProvisionedIngressMBps,
           kProvisionedEgressMBps,
+          kProvisionedBandwidthMiBps,
           kNextAllowedQuotaDowngradeTime,
           kDeletedTime,
           kRemainingRetentionDays,
@@ -570,6 +607,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kLeaseStatus,
           kLeaseState,
           kLeaseDuration,
+          kEnabledProtocols,
+          kRootSquash,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -591,6 +630,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"ProvisionedIops", XmlTagEnum::kProvisionedIops},
             {"ProvisionedIngressMBps", XmlTagEnum::kProvisionedIngressMBps},
             {"ProvisionedEgressMBps", XmlTagEnum::kProvisionedEgressMBps},
+            {"ProvisionedBandwidthMiBps", XmlTagEnum::kProvisionedBandwidthMiBps},
             {"NextAllowedQuotaDowngradeTime", XmlTagEnum::kNextAllowedQuotaDowngradeTime},
             {"DeletedTime", XmlTagEnum::kDeletedTime},
             {"RemainingRetentionDays", XmlTagEnum::kRemainingRetentionDays},
@@ -600,6 +640,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"LeaseStatus", XmlTagEnum::kLeaseStatus},
             {"LeaseState", XmlTagEnum::kLeaseState},
             {"LeaseDuration", XmlTagEnum::kLeaseDuration},
+            {"EnabledProtocols", XmlTagEnum::kEnabledProtocols},
+            {"RootSquash", XmlTagEnum::kRootSquash},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -728,6 +770,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
                 && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kProvisionedBandwidthMiBps)
+            {
+              vectorElement1.Details.ProvisionedBandwidthMBps = std::stoi(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
                 && xmlPath[4] == XmlTagEnum::kNextAllowedQuotaDowngradeTime)
             {
               vectorElement1.Details.NextAllowedQuotaDowngradeTime
@@ -796,6 +846,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement1.Details.LeaseDuration = Models::LeaseDurationType(node.Value);
             }
             else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kEnabledProtocols)
+            {
+              vectorElement1.Details.EnabledProtocols = Models::ShareProtocols(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kRootSquash)
+            {
+              vectorElement1.Details.RootSquash = Models::ShareRootSquash(node.Value);
+            }
+            else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kNextMarker)
             {
@@ -852,7 +917,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-access-tier", options.AccessTier.Value().ToString());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (options.EnabledProtocols.HasValue()
+          && !options.EnabledProtocols.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-enabled-protocols", options.EnabledProtocols.Value().ToString());
+      }
+      if (options.RootSquash.HasValue() && !options.RootSquash.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-root-squash", options.RootSquash.Value().ToString());
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -878,7 +952,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -921,6 +995,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             pRawResponse->GetHeaders().at("x-ms-share-next-allowed-quota-downgrade-time"),
             Azure::DateTime::DateFormat::Rfc1123);
       }
+      if (pRawResponse->GetHeaders().count("x-ms-share-provisioned-bandwidth-mibps") != 0)
+      {
+        response.ProvisionedBandwidthMBps
+            = std::stoi(pRawResponse->GetHeaders().at("x-ms-share-provisioned-bandwidth-mibps"));
+      }
       if (pRawResponse->GetHeaders().count("x-ms-lease-duration") != 0)
       {
         response.LeaseDuration
@@ -950,6 +1029,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.AccessTierTransitionState
             = pRawResponse->GetHeaders().at("x-ms-access-tier-transition-state");
       }
+      if (pRawResponse->GetHeaders().count("x-ms-enabled-protocols") != 0)
+      {
+        response.EnabledProtocols
+            = Models::ShareProtocols(pRawResponse->GetHeaders().at("x-ms-enabled-protocols"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-root-squash") != 0)
+      {
+        response.RootSquash
+            = Models::ShareRootSquash(pRawResponse->GetHeaders().at("x-ms-root-squash"));
+      }
       return Response<Models::ShareProperties>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::DeleteShareResult> ShareClient::Delete(
@@ -965,7 +1054,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.DeleteSnapshots.HasValue() && !options.DeleteSnapshots.Value().ToString().empty())
       {
         request.SetHeader("x-ms-delete-snapshots", options.DeleteSnapshots.Value().ToString());
@@ -1001,7 +1090,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1035,7 +1124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1072,7 +1161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1106,7 +1195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1144,7 +1233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1178,7 +1267,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -1212,7 +1301,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "filepermission");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -1237,7 +1326,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1263,7 +1352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Quota.HasValue())
       {
         request.SetHeader("x-ms-share-quota", std::to_string(options.Quota.Value()));
@@ -1275,6 +1364,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.RootSquash.HasValue() && !options.RootSquash.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-root-squash", options.RootSquash.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1302,7 +1395,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -1328,7 +1421,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "acl");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -1475,7 +1568,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "acl");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -1502,7 +1595,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "stats");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -1577,7 +1670,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
@@ -1590,13 +1683,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
-      if (!options.FileCreationTime.empty())
+      if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime);
+        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime.Value());
       }
-      if (!options.FileLastWriteTime.empty())
+      if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime);
+        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-change-time",
+            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1652,7 +1751,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1708,7 +1807,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
       request.GetUrl().AppendQueryParameter("restype", "directory");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1728,7 +1827,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "directory");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
@@ -1741,13 +1840,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
-      if (!options.FileCreationTime.empty())
+      if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime);
+        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime.Value());
       }
-      if (!options.FileLastWriteTime.empty())
+      if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime);
+        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-change-time",
+            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1804,7 +1909,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1848,7 +1953,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "maxresults", std::to_string(options.MaxResults.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (options.Include.HasValue()
+          && !ListFilesIncludeTypeToString(options.Include.Value()).empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "include",
+            _internal::UrlEncodeQueryParameter(
+                ListFilesIncludeTypeToString(options.Include.Value())));
+      }
+      if (options.IncludeExtendedInfo.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-extended-info", options.IncludeExtendedInfo.Value() ? "true" : "false");
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1870,10 +1988,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kEntries,
           kDirectory,
           kName,
-          kFile,
           kProperties,
+          kLastAccessTime,
+          kLastModified,
+          kEtag,
+          kPermissionKey,
+          kAttributes,
+          kCreationTime,
+          kLastWriteTime,
+          kChangeTime,
+          kFileId,
+          kFile,
           kContentLength,
           kNextMarker,
+          kDirectoryId,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
             {"EnumerationResults", XmlTagEnum::kEnumerationResults},
@@ -1883,10 +2011,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"Entries", XmlTagEnum::kEntries},
             {"Directory", XmlTagEnum::kDirectory},
             {"Name", XmlTagEnum::kName},
-            {"File", XmlTagEnum::kFile},
             {"Properties", XmlTagEnum::kProperties},
+            {"LastAccessTime", XmlTagEnum::kLastAccessTime},
+            {"Last-Modified", XmlTagEnum::kLastModified},
+            {"Etag", XmlTagEnum::kEtag},
+            {"PermissionKey", XmlTagEnum::kPermissionKey},
+            {"Attributes", XmlTagEnum::kAttributes},
+            {"CreationTime", XmlTagEnum::kCreationTime},
+            {"LastWriteTime", XmlTagEnum::kLastWriteTime},
+            {"ChangeTime", XmlTagEnum::kChangeTime},
+            {"FileId", XmlTagEnum::kFileId},
+            {"File", XmlTagEnum::kFile},
             {"Content-Length", XmlTagEnum::kContentLength},
             {"NextMarker", XmlTagEnum::kNextMarker},
+            {"DirectoryId", XmlTagEnum::kDirectoryId},
         };
         std::vector<XmlTagEnum> xmlPath;
         Models::DirectoryItem vectorElement1;
@@ -1930,6 +2068,76 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement1.Name = node.Value;
             }
             else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement1.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement1.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement1.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement1.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement1.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement1.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement1.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement1.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement1.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
                 && xmlPath[3] == XmlTagEnum::kName)
@@ -1945,10 +2153,86 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement2.Details.FileSize = std::stoll(node.Value);
             }
             else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement2.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement2.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement2.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement2.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement2.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement2.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement2.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement2.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement2.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kNextMarker)
             {
               response.NextMarker = node.Value;
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kDirectoryId)
+            {
+              response.DirectoryId = node.Value;
             }
           }
           else if (node.Type == _internal::XmlNodeType::Attribute)
@@ -2026,7 +2310,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-recursive", options.Recursive.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2192,7 +2476,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-recursive", options.Recursive.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2211,6 +2495,95 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       return Response<Models::_detail::ForceCloseDirectoryHandlesResult>(
           std::move(response), std::move(pRawResponse));
     }
+    Response<Models::_detail::RenameDirectoryResult> DirectoryClient::Rename(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const RenameDirectoryOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
+      request.GetUrl().AppendQueryParameter("restype", "directory");
+      request.GetUrl().AppendQueryParameter("comp", "rename");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (!options.RenameSource.empty())
+      {
+        request.SetHeader("x-ms-file-rename-source", options.RenameSource);
+      }
+      if (options.ReplaceIfExists.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-rename-replace-if-exists",
+            options.ReplaceIfExists.Value() ? "true" : "false");
+      }
+      if (options.IgnoreReadOnly.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-rename-ignore-readonly", options.IgnoreReadOnly.Value() ? "true" : "false");
+      }
+      if (options.SourceLeaseId.HasValue() && !options.SourceLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.Value());
+      }
+      if (options.DestinationLeaseId.HasValue() && !options.DestinationLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-destination-lease-id", options.DestinationLeaseId.Value());
+      }
+      if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
+      {
+        request.SetHeader("x-ms-file-attributes", options.FileAttributes.Value());
+      }
+      if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime.Value());
+      }
+      if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue() && !options.FileChangeTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-change-time", options.FileChangeTime.Value());
+      }
+      if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
+      {
+        request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
+      }
+      if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
+      }
+      for (const auto& p : options.Metadata)
+      {
+        request.SetHeader("x-ms-meta-" + p.first, p.second);
+      }
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::RenameDirectoryResult response;
+      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      response.LastModified = DateTime::Parse(
+          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      response.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.FilePermissionKey = pRawResponse->GetHeaders().at("x-ms-file-permission-key");
+      response.FileAttributes = pRawResponse->GetHeaders().at("x-ms-file-attributes");
+      response.FileCreationTime = DateTime::Parse(
+          pRawResponse->GetHeaders().at("x-ms-file-creation-time"),
+          Azure::DateTime::DateFormat::Rfc1123);
+      response.FileLastWriteTime = DateTime::Parse(
+          pRawResponse->GetHeaders().at("x-ms-file-last-write-time"),
+          Azure::DateTime::DateFormat::Rfc1123);
+      response.FileChangeTime = DateTime::Parse(
+          pRawResponse->GetHeaders().at("x-ms-file-change-time"),
+          Azure::DateTime::DateFormat::Rfc1123);
+      response.FileId = pRawResponse->GetHeaders().at("x-ms-file-id");
+      response.FileParentId = pRawResponse->GetHeaders().at("x-ms-file-parent-id");
+      return Response<Models::_detail::RenameDirectoryResult>(
+          std::move(response), std::move(pRawResponse));
+    }
     Response<Models::CreateFileResult> FileClient::Create(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
@@ -2218,7 +2591,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       request.SetHeader("x-ms-content-length", std::to_string(options.FileContentLength));
       request.SetHeader("x-ms-type", "file");
       if (options.FileContentType.HasValue() && !options.FileContentType.Value().empty())
@@ -2264,13 +2637,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
-      if (!options.FileCreationTime.empty())
+      if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime);
+        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime.Value());
       }
-      if (!options.FileLastWriteTime.empty())
+      if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime);
+        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-change-time",
+            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
@@ -2324,7 +2703,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url, false);
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Range.HasValue() && !options.Range.Value().empty())
       {
         request.SetHeader("x-ms-range", options.Range.Value());
@@ -2499,7 +2878,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2627,7 +3006,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2649,7 +3028,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.FileContentLength.HasValue())
       {
         request.SetHeader("x-ms-content-length", std::to_string(options.FileContentLength.Value()));
@@ -2693,13 +3072,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
-      if (!options.FileCreationTime.empty())
+      if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime);
+        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime.Value());
       }
-      if (!options.FileLastWriteTime.empty())
+      if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
       {
-        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime);
+        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-change-time",
+            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
@@ -2759,7 +3144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2793,7 +3178,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -2821,7 +3206,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2852,7 +3237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2880,7 +3265,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -2917,10 +3302,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("Content-MD5", Core::Convert::Base64Encode(options.ContentMD5.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.FileLastWrittenMode.HasValue()
+          && !options.FileLastWrittenMode.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-last-write-time", options.FileLastWrittenMode.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -2988,10 +3379,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "x-ms-source-if-none-match-crc64",
             Core::Convert::Base64Encode(options.SourceIfNoneMatchCrc64.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.CopySourceAuthorization.HasValue()
+          && !options.CopySourceAuthorization.Value().empty())
+      {
+        request.SetHeader(
+            "x-ms-copy-source-authorization", options.CopySourceAuthorization.Value());
+      }
+      if (options.FileLastWrittenMode.HasValue()
+          && !options.FileLastWrittenMode.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-last-write-time", options.FileLastWrittenMode.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -3036,7 +3439,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "prevsharesnapshot",
             _internal::UrlEncodeQueryParameter(options.Prevsharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Range.HasValue() && !options.Range.Value().empty())
       {
         request.SetHeader("x-ms-range", options.Range.Value());
@@ -3150,7 +3553,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       for (const auto& p : options.Metadata)
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
@@ -3176,7 +3579,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.IgnoreReadOnly.HasValue())
       {
         request.SetHeader(
-            "x-ms-file-copy-ignore-read-only", options.IgnoreReadOnly.Value() ? "true" : "false");
+            "x-ms-file-copy-ignore-readonly", options.IgnoreReadOnly.Value() ? "true" : "false");
       }
       if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
       {
@@ -3189,6 +3592,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
       {
         request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue() && !options.FileChangeTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-change-time", options.FileChangeTime.Value());
       }
       if (options.SetArchiveAttribute.HasValue())
       {
@@ -3228,7 +3635,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "copyid", _internal::UrlEncodeQueryParameter(options.CopyId));
       }
       request.SetHeader("x-ms-copy-action", "abort");
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -3265,7 +3672,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -3427,7 +3834,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-handle-id", options.HandleId);
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -3444,6 +3851,98 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.NumberOfHandlesFailedToClose
           = std::stoi(pRawResponse->GetHeaders().at("x-ms-number-of-handles-failed"));
       return Response<Models::_detail::ForceFileCloseHandlesResult>(
+          std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::_detail::RenameFileResult> FileClient::Rename(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const RenameFileOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
+      request.GetUrl().AppendQueryParameter("comp", "rename");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (!options.RenameSource.empty())
+      {
+        request.SetHeader("x-ms-file-rename-source", options.RenameSource);
+      }
+      if (options.ReplaceIfExists.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-rename-replace-if-exists",
+            options.ReplaceIfExists.Value() ? "true" : "false");
+      }
+      if (options.IgnoreReadOnly.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-rename-ignore-readonly", options.IgnoreReadOnly.Value() ? "true" : "false");
+      }
+      if (options.SourceLeaseId.HasValue() && !options.SourceLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.Value());
+      }
+      if (options.DestinationLeaseId.HasValue() && !options.DestinationLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-destination-lease-id", options.DestinationLeaseId.Value());
+      }
+      if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
+      {
+        request.SetHeader("x-ms-file-attributes", options.FileAttributes.Value());
+      }
+      if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-creation-time", options.FileCreationTime.Value());
+      }
+      if (options.FileLastWriteTime.HasValue() && !options.FileLastWriteTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-last-write-time", options.FileLastWriteTime.Value());
+      }
+      if (options.FileChangeTime.HasValue() && !options.FileChangeTime.Value().empty())
+      {
+        request.SetHeader("x-ms-file-change-time", options.FileChangeTime.Value());
+      }
+      if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
+      {
+        request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
+      }
+      if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
+      }
+      for (const auto& p : options.Metadata)
+      {
+        request.SetHeader("x-ms-meta-" + p.first, p.second);
+      }
+      if (options.FileContentType.HasValue() && !options.FileContentType.Value().empty())
+      {
+        request.SetHeader("x-ms-content-type", options.FileContentType.Value());
+      }
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::RenameFileResult response;
+      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      response.LastModified = DateTime::Parse(
+          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      response.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      response.FilePermissionKey = pRawResponse->GetHeaders().at("x-ms-file-permission-key");
+      response.FileAttributes = pRawResponse->GetHeaders().at("x-ms-file-attributes");
+      response.FileCreationTime = DateTime::Parse(
+          pRawResponse->GetHeaders().at("x-ms-file-creation-time"),
+          Azure::DateTime::DateFormat::Rfc1123);
+      response.FileLastWriteTime = DateTime::Parse(
+          pRawResponse->GetHeaders().at("x-ms-file-last-write-time"),
+          Azure::DateTime::DateFormat::Rfc1123);
+      response.FileChangeTime = DateTime::Parse(
+          pRawResponse->GetHeaders().at("x-ms-file-change-time"),
+          Azure::DateTime::DateFormat::Rfc1123);
+      response.FileId = pRawResponse->GetHeaders().at("x-ms-file-id");
+      response.FileParentId = pRawResponse->GetHeaders().at("x-ms-file-parent-id");
+      return Response<Models::_detail::RenameFileResult>(
           std::move(response), std::move(pRawResponse));
     }
   } // namespace _detail

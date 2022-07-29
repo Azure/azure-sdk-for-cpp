@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2020-02-10";
+    constexpr static const char* ApiVersion = "2021-06-08";
   } // namespace _detail
   namespace Models {
     /**
@@ -43,13 +43,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Indicates whether a retention policy is enabled for the File service. If false, metrics
        * data is retained, and the user is responsible for deleting it.
        */
-      bool Enabled = bool();
+      bool Enabled
+          = bool();
       /**
        * Indicates the number of days that metrics data should be retained. All data older than this
        * value will be deleted. Metrics data is deleted on a best-effort basis after the retention
        * period expires.
        */
-      Nullable<int32_t> Days;
+      Nullable<int32_t>
+          Days;
     };
     /**
      * @brief Storage Analytics metrics for file service.
@@ -236,6 +238,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     };
     /**
+     * @brief The protocols that have been enabled on the share.
+     */
+    class ShareProtocols final {
+    public:
+      ShareProtocols() = default;
+      explicit ShareProtocols(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ShareProtocols& other) const { return m_value == other.m_value; }
+      bool operator!=(const ShareProtocols& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Smb;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Nfs;
+
+    private:
+      std::string m_value;
+    };
+    /**
+     * @brief Root squash to set on the share.  Only valid for NFS shares.
+     */
+    class ShareRootSquash final {
+    public:
+      ShareRootSquash() = default;
+      explicit ShareRootSquash(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ShareRootSquash& other) const { return m_value == other.m_value; }
+      bool operator!=(const ShareRootSquash& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash NoRootSquash;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash RootSquash;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash AllSquash;
+
+    private:
+      std::string m_value;
+    };
+    /**
      * @brief Properties of a share.
      */
     struct ShareItemDetails final
@@ -246,6 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<int32_t> ProvisionedIops;
       Nullable<int32_t> ProvisionedIngressMBps;
       Nullable<int32_t> ProvisionedEgressMBps;
+      Nullable<int32_t> ProvisionedBandwidthMBps;
       Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       Nullable<DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
@@ -267,6 +303,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * When a share is leased, specifies whether the lease is of infinite or fixed duration.
        */
       LeaseDurationType LeaseDuration;
+      Nullable<ShareProtocols> EnabledProtocols;
+      Nullable<ShareRootSquash> RootSquash;
     };
     /**
      * @brief A listed Azure Storage share item.
@@ -409,6 +447,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       /**
+       * Returns the current share provisioned bandwidth in megabits per second.
+       */
+      Nullable<int32_t> ProvisionedBandwidthMBps;
+      /**
        * When a share is leased, specifies whether the lease is of infinite or fixed duration.
        */
       Nullable<LeaseDurationType> LeaseDuration;
@@ -428,6 +470,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Returns the transition state between access tiers, when present.
        */
       Nullable<std::string> AccessTierTransitionState;
+      /**
+       * The protocols that have been enabled on the share.
+       */
+      Nullable<ShareProtocols> EnabledProtocols;
+      /**
+       * Valid for NFS shares only.
+       */
+      Nullable<ShareRootSquash> RootSquash;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -712,7 +762,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The approximate size of the data stored in bytes. Note that this value may not include all
        * recently created or recently resized files.
        */
-      int64_t ShareUsageInBytes = int64_t();
+      int64_t ShareUsageInBytes
+          = int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -828,7 +879,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::GetProperties.
@@ -860,7 +912,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the directory metadata is completely encrypted
        * using the specified algorithm. Otherwise, the value is set to false.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::Delete.
@@ -895,7 +948,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::SetMetadata.
@@ -910,7 +964,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
+    };
+    /**
+     * @brief File properties.
+     */
+    struct DirectoryItemDetails final
+    {
+      Nullable<DateTime> LastAccessedOn;
+      DateTime LastModified;
+      ETag Etag;
+      /**
+       * The SMB related properties for the file.
+       */
+      FileSmbProperties SmbProperties;
     };
     /**
      * @brief A listed directory item.
@@ -918,6 +986,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryItem final
     {
       std::string Name;
+      /**
+       * File properties.
+       */
+      DirectoryItemDetails Details;
     };
     /**
      * @brief File properties.
@@ -930,7 +1002,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * handle is closed or the op-lock is broken. To retrieve current property values, call Get
        * File Properties.
        */
-      int64_t FileSize = int64_t();
+      int64_t FileSize
+          = int64_t();
+      Nullable<DateTime> LastAccessedOn;
+      DateTime LastModified;
+      ETag Etag;
+      /**
+       * The SMB related properties for the file.
+       */
+      FileSmbProperties SmbProperties;
     };
     /**
      * @brief A listed file item.
@@ -958,6 +1038,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          */
         std::vector<FileItem> FileItems;
       };
+    } // namespace _detail
+    /**
+     * @brief Include this parameter to specify one or more datasets to include in the response.
+     */
+    enum class ListFilesIncludeType
+    {
+      None = 0,
+      Timestamps = 1,
+      ETag = 2,
+      Attributes = 4,
+      PermissionKey = 8,
+    };
+    inline ListFilesIncludeType operator|(ListFilesIncludeType lhs, ListFilesIncludeType rhs)
+    {
+      using type = std::underlying_type_t<ListFilesIncludeType>;
+      return static_cast<ListFilesIncludeType>(static_cast<type>(lhs) | static_cast<type>(rhs));
+    }
+    inline ListFilesIncludeType& operator|=(ListFilesIncludeType& lhs, ListFilesIncludeType rhs)
+    {
+      lhs = lhs | rhs;
+      return lhs;
+    }
+    inline ListFilesIncludeType operator&(ListFilesIncludeType lhs, ListFilesIncludeType rhs)
+    {
+      using type = std::underlying_type_t<ListFilesIncludeType>;
+      return static_cast<ListFilesIncludeType>(static_cast<type>(lhs) & static_cast<type>(rhs));
+    }
+    inline ListFilesIncludeType& operator&=(ListFilesIncludeType& lhs, ListFilesIncludeType rhs)
+    {
+      lhs = lhs & rhs;
+      return lhs;
+    }
+    namespace _detail {
       /**
        * @brief An enumeration of directories and files.
        */
@@ -975,6 +1088,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          */
         FilesAndDirectoriesListSegment Segment;
         std::string NextMarker;
+        Nullable<std::string> DirectoryId;
       };
     } // namespace _detail
     /**
@@ -1026,7 +1140,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * A string describing next handle to be closed. It is returned when more handles need to be
          * closed to complete the request.
          */
-        Nullable<std::string> ContinuationToken;
+        Nullable<std::string>
+            ContinuationToken;
         /**
          * Contains count of number of handles closed.
          */
@@ -1035,6 +1150,56 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Contains count of number of handles that failed to close.
          */
         int32_t NumberOfHandlesFailedToClose = int32_t();
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::Rename.
+       */
+      struct RenameDirectoryResult final
+      {
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the contents of the request are successfully
+         * encrypted using the specified algorithm, and false otherwise.
+         */
+        bool IsServerEncrypted
+            = bool();
+        /**
+         * Key of the permission set for the file.
+         */
+        std::string FilePermissionKey;
+        /**
+         * Attributes set for the file.
+         */
+        std::string FileAttributes;
+        /**
+         * Creation time for the file.
+         */
+        DateTime FileCreationTime;
+        /**
+         * Last write time for the file.
+         */
+        DateTime FileLastWriteTime;
+        /**
+         * Change time for the file.
+         */
+        DateTime FileChangeTime;
+        /**
+         * The fileId of the file.
+         */
+        std::string FileId;
+        /**
+         * The parent fileId of the directory.
+         */
+        std::string FileParentId;
       };
     } // namespace _detail
     /**
@@ -1064,7 +1229,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
     };
     /**
      * @brief Standard HTTP properties supported files.
@@ -1140,7 +1306,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        *  String identifier for this copy operation. Use with Get File Properties to check the
        * status of this copy operation, or pass to Abort Copy File to abort a pending copy.
        */
-      Nullable<std::string> CopyId;
+      Nullable<std::string>
+          CopyId;
       /**
        * URL up to 2 KB in length that specifies the source file or file used in the last attempted
        * Copy File operation where this file was the destination file. This header does not appear
@@ -1148,7 +1315,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * been modified after a concluded Copy File operation using Set File Properties, Put File, or
        * Put Block List.
        */
-      Nullable<std::string> CopySource;
+      Nullable<std::string>
+          CopySource;
       /**
        * Status of a copy operation.
        */
@@ -1160,7 +1328,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * after a concluded Copy File operation using Set File Properties, Put File, or Put Block
        * List.
        */
-      Nullable<std::string> CopyStatusDescription;
+      Nullable<std::string>
+          CopyStatusDescription;
       /**
        * Contains the number of bytes copied and the total bytes in the source in the last attempted
        * Copy File operation where this file was the destination file. Can show between 0 and
@@ -1168,7 +1337,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * destination in a Copy File operation, or if this file has been modified after a concluded
        * Copy File operation using Set File Properties, Put File, or Put Block List.
        */
-      Nullable<std::string> CopyProgress;
+      Nullable<std::string>
+          CopyProgress;
       /**
        * Conclusion time of the last attempted Copy File operation where this file was the
        * destination file. This value can specify the time of a completed, aborted, or failed copy
@@ -1176,13 +1346,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * destination in a Copy File operation, or if this file has been modified after a concluded
        * Copy File operation using Set File Properties, Put File, or Put Block List.
        */
-      Nullable<DateTime> CopyCompletedOn;
+      Nullable<DateTime>
+          CopyCompletedOn;
       /**
        * True if the file data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the file is unencrypted, or if only parts of the
        * file/application metadata are encrypted).
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
       /**
        * The SMB related properties for the file.
        */
@@ -1254,7 +1426,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
        * header that is stored with the file.
        */
-      int64_t FileSize = int64_t();
+      int64_t FileSize
+          = int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -1264,28 +1437,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * destination file. This value can specify the time of a completed, aborted, or failed copy
        * attempt.
        */
-      Nullable<DateTime> CopyCompletedOn;
+      Nullable<DateTime>
+          CopyCompletedOn;
       /**
        * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
        * non-fatal copy operation failure.
        */
-      Nullable<std::string> CopyStatusDescription;
+      Nullable<std::string>
+          CopyStatusDescription;
       /**
        * String identifier for the last attempted Copy File operation where this file was the
        * destination file.
        */
-      Nullable<std::string> CopyId;
+      Nullable<std::string>
+          CopyId;
       /**
        * Contains the number of bytes copied and the total bytes in the source in the last attempted
        * Copy File operation where this file was the destination file. Can show between 0 and
        * Content-Length bytes copied.
        */
-      Nullable<std::string> CopyProgress;
+      Nullable<std::string>
+          CopyProgress;
       /**
        * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
        * operation where this file was the destination file.
        */
-      Nullable<std::string> CopySource;
+      Nullable<std::string>
+          CopySource;
       /**
        * State of the copy operation identified by 'x-ms-copy-id'.
        */
@@ -1296,7 +1474,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * (when the file is unencrypted, or if only parts of the file/application metadata are
        * encrypted).
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
       /**
        * When a file is leased, specifies whether the lease is of infinite or fixed duration.
        */
@@ -1343,7 +1522,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::SetMetadata.
@@ -1358,7 +1538,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      bool IsServerEncrypted
+          = bool();
     };
     namespace _detail {
       /**
@@ -1439,6 +1620,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       };
     } // namespace _detail
     /**
+     * @brief If the file last write time should be preserved or overwritten.
+     */
+    class FileLastWrittenMode final {
+    public:
+      FileLastWrittenMode() = default;
+      explicit FileLastWrittenMode(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileLastWrittenMode& other) const { return m_value == other.m_value; }
+      bool operator!=(const FileLastWrittenMode& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Now;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Preserve;
+
+    private:
+      std::string m_value;
+    };
+    /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::UploadRange.
      */
     struct UploadFileRangeResult final
@@ -1463,7 +1660,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = false;
+      bool IsServerEncrypted
+          = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::UploadRangeFromUri.
@@ -1490,7 +1688,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = false;
+      bool IsServerEncrypted
+          = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetRangeList.
@@ -1592,7 +1791,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * A string describing next handle to be closed. It is returned when more handles need to be
          * closed to complete the request.
          */
-        Nullable<std::string> ContinuationToken;
+        Nullable<std::string>
+            ContinuationToken;
         /**
          * Contains count of number of handles closed.
          */
@@ -1601,6 +1801,56 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Contains count of number of handles that failed to close.
          */
         int32_t NumberOfHandlesFailedToClose = int32_t();
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::Rename.
+       */
+      struct RenameFileResult final
+      {
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the contents of the request are successfully
+         * encrypted using the specified algorithm, and false otherwise.
+         */
+        bool IsServerEncrypted
+            = bool();
+        /**
+         * Key of the permission set for the file.
+         */
+        std::string FilePermissionKey;
+        /**
+         * Attributes set for the file.
+         */
+        std::string FileAttributes;
+        /**
+         * Creation time for the file.
+         */
+        DateTime FileCreationTime;
+        /**
+         * Last write time for the file.
+         */
+        DateTime FileLastWriteTime;
+        /**
+         * Change time for the file.
+         */
+        DateTime FileChangeTime;
+        /**
+         * The fileId of the file.
+         */
+        std::string FileId;
+        /**
+         * The parent fileId of the directory.
+         */
+        std::string FileParentId;
       };
     } // namespace _detail
   } // namespace Models
@@ -1644,6 +1894,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::map<std::string, std::string> Metadata;
         Nullable<int64_t> Quota;
         Nullable<Models::AccessTier> AccessTier;
+        Nullable<Models::ShareProtocols> EnabledProtocols;
+        Nullable<Models::ShareRootSquash> RootSquash;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -1756,6 +2008,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<int64_t> Quota;
         Nullable<Models::AccessTier> AccessTier;
         Nullable<std::string> LeaseId;
+        Nullable<Models::ShareRootSquash> RootSquash;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -1809,8 +2062,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
-        std::string FileCreationTime;
-        std::string FileLastWriteTime;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<DateTime> FileChangeTime;
       };
       static Response<Models::CreateDirectoryResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -1839,8 +2093,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
-        std::string FileCreationTime;
-        std::string FileLastWriteTime;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<DateTime> FileChangeTime;
       };
       static Response<Models::SetDirectoryPropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -1862,6 +2117,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Sharesnapshot;
         Nullable<std::string> Marker;
         Nullable<int32_t> MaxResults;
+        Nullable<Models::ListFilesIncludeType> Include;
+        Nullable<bool> IncludeExtendedInfo;
       };
       static Response<Models::_detail::ListFilesAndDirectoriesSegmentResponse>
       ListFilesAndDirectoriesSegment(
@@ -1893,6 +2150,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Url& url,
           const ForceDirectoryCloseHandlesOptions& options,
           const Core::Context& context);
+      struct RenameDirectoryOptions final
+      {
+        std::string RenameSource;
+        Nullable<bool> ReplaceIfExists;
+        Nullable<bool> IgnoreReadOnly;
+        Nullable<std::string> SourceLeaseId;
+        Nullable<std::string> DestinationLeaseId;
+        Nullable<std::string> FileAttributes;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<std::string> FileChangeTime;
+        Nullable<std::string> FilePermission;
+        Nullable<std::string> FilePermissionKey;
+        std::map<std::string, std::string> Metadata;
+      };
+      static Response<Models::_detail::RenameDirectoryResult> Rename(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const RenameDirectoryOptions& options,
+          const Core::Context& context);
     };
     class FileClient final {
     public:
@@ -1909,8 +2186,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
-        std::string FileCreationTime;
-        std::string FileLastWriteTime;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<DateTime> FileChangeTime;
         Nullable<std::string> LeaseId;
       };
       static Response<Models::CreateFileResult> Create(
@@ -1960,8 +2238,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
-        std::string FileCreationTime;
-        std::string FileLastWriteTime;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<DateTime> FileChangeTime;
         Nullable<std::string> LeaseId;
       };
       static Response<Models::SetFilePropertiesResult> SetHttpHeaders(
@@ -2023,6 +2302,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string FileRangeWrite;
         Nullable<std::vector<uint8_t>> ContentMD5;
         Nullable<std::string> LeaseId;
+        Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
       };
       static Response<Models::UploadFileRangeResult> UploadRange(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2039,6 +2319,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::vector<uint8_t>> SourceIfMatchCrc64;
         Nullable<std::vector<uint8_t>> SourceIfNoneMatchCrc64;
         Nullable<std::string> LeaseId;
+        Nullable<std::string> CopySourceAuthorization;
+        Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
       };
       static Response<Models::UploadFileRangeFromUriResult> UploadRangeFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2068,6 +2350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
+        Nullable<std::string> FileChangeTime;
         Nullable<bool> SetArchiveAttribute;
         Nullable<std::string> LeaseId;
       };
@@ -2107,6 +2390,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const ForceFileCloseHandlesOptions& options,
+          const Core::Context& context);
+      struct RenameFileOptions final
+      {
+        std::string RenameSource;
+        Nullable<bool> ReplaceIfExists;
+        Nullable<bool> IgnoreReadOnly;
+        Nullable<std::string> SourceLeaseId;
+        Nullable<std::string> DestinationLeaseId;
+        Nullable<std::string> FileAttributes;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<std::string> FileChangeTime;
+        Nullable<std::string> FilePermission;
+        Nullable<std::string> FilePermissionKey;
+        std::map<std::string, std::string> Metadata;
+        Nullable<std::string> FileContentType;
+      };
+      static Response<Models::_detail::RenameFileResult> Rename(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const RenameFileOptions& options,
           const Core::Context& context);
     };
   } // namespace _detail
