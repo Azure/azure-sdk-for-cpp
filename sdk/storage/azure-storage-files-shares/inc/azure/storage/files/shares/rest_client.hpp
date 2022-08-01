@@ -43,15 +43,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Indicates whether a retention policy is enabled for the File service. If false, metrics
        * data is retained, and the user is responsible for deleting it.
        */
-      bool Enabled
-          = bool();
+      bool Enabled = bool();
       /**
        * Indicates the number of days that metrics data should be retained. All data older than this
        * value will be deleted. Metrics data is deleted on a best-effort basis after the retention
        * period expires.
        */
-      Nullable<int32_t>
-          Days;
+      Nullable<int32_t> Days;
     };
     /**
      * @brief Storage Analytics metrics for file service.
@@ -762,8 +760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The approximate size of the data stored in bytes. Note that this value may not include all
        * recently created or recently resized files.
        */
-      int64_t ShareUsageInBytes
-          = int64_t();
+      int64_t ShareUsageInBytes = int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -879,8 +876,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::GetProperties.
@@ -912,8 +908,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the directory metadata is completely encrypted
        * using the specified algorithm. Otherwise, the value is set to false.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::Delete.
@@ -948,8 +943,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::SetMetadata.
@@ -964,8 +958,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief File properties.
@@ -1002,8 +995,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * handle is closed or the op-lock is broken. To retrieve current property values, call Get
        * File Properties.
        */
-      int64_t FileSize
-          = int64_t();
+      int64_t FileSize = int64_t();
       Nullable<DateTime> LastAccessedOn;
       DateTime LastModified;
       ETag Etag;
@@ -1140,8 +1132,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * A string describing next handle to be closed. It is returned when more handles need to be
          * closed to complete the request.
          */
-        Nullable<std::string>
-            ContinuationToken;
+        Nullable<std::string> ContinuationToken;
         /**
          * Contains count of number of handles closed.
          */
@@ -1170,8 +1161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * The value of this header is set to true if the contents of the request are successfully
          * encrypted using the specified algorithm, and false otherwise.
          */
-        bool IsServerEncrypted
-            = bool();
+        bool IsServerEncrypted = bool();
         /**
          * Key of the permission set for the file.
          */
@@ -1229,8 +1219,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief Standard HTTP properties supported files.
@@ -1306,8 +1295,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        *  String identifier for this copy operation. Use with Get File Properties to check the
        * status of this copy operation, or pass to Abort Copy File to abort a pending copy.
        */
-      Nullable<std::string>
-          CopyId;
+      Nullable<std::string> CopyId;
       /**
        * URL up to 2 KB in length that specifies the source file or file used in the last attempted
        * Copy File operation where this file was the destination file. This header does not appear
@@ -1315,8 +1303,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * been modified after a concluded Copy File operation using Set File Properties, Put File, or
        * Put Block List.
        */
-      Nullable<std::string>
-          CopySource;
+      Nullable<std::string> CopySource;
       /**
        * Status of a copy operation.
        */
@@ -1328,8 +1315,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * after a concluded Copy File operation using Set File Properties, Put File, or Put Block
        * List.
        */
-      Nullable<std::string>
-          CopyStatusDescription;
+      Nullable<std::string> CopyStatusDescription;
       /**
        * Contains the number of bytes copied and the total bytes in the source in the last attempted
        * Copy File operation where this file was the destination file. Can show between 0 and
@@ -1337,8 +1323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * destination in a Copy File operation, or if this file has been modified after a concluded
        * Copy File operation using Set File Properties, Put File, or Put Block List.
        */
-      Nullable<std::string>
-          CopyProgress;
+      Nullable<std::string> CopyProgress;
       /**
        * Conclusion time of the last attempted Copy File operation where this file was the
        * destination file. This value can specify the time of a completed, aborted, or failed copy
@@ -1346,15 +1331,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * destination in a Copy File operation, or if this file has been modified after a concluded
        * Copy File operation using Set File Properties, Put File, or Put Block List.
        */
-      Nullable<DateTime>
-          CopyCompletedOn;
+      Nullable<DateTime> CopyCompletedOn;
       /**
        * True if the file data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the file is unencrypted, or if only parts of the
        * file/application metadata are encrypted).
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
       /**
        * The SMB related properties for the file.
        */
@@ -1426,8 +1409,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
        * header that is stored with the file.
        */
-      int64_t FileSize
-          = int64_t();
+      int64_t FileSize = int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -1437,33 +1419,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * destination file. This value can specify the time of a completed, aborted, or failed copy
        * attempt.
        */
-      Nullable<DateTime>
-          CopyCompletedOn;
+      Nullable<DateTime> CopyCompletedOn;
       /**
        * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
        * non-fatal copy operation failure.
        */
-      Nullable<std::string>
-          CopyStatusDescription;
+      Nullable<std::string> CopyStatusDescription;
       /**
        * String identifier for the last attempted Copy File operation where this file was the
        * destination file.
        */
-      Nullable<std::string>
-          CopyId;
+      Nullable<std::string> CopyId;
       /**
        * Contains the number of bytes copied and the total bytes in the source in the last attempted
        * Copy File operation where this file was the destination file. Can show between 0 and
        * Content-Length bytes copied.
        */
-      Nullable<std::string>
-          CopyProgress;
+      Nullable<std::string> CopyProgress;
       /**
        * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
        * operation where this file was the destination file.
        */
-      Nullable<std::string>
-          CopySource;
+      Nullable<std::string> CopySource;
       /**
        * State of the copy operation identified by 'x-ms-copy-id'.
        */
@@ -1474,8 +1451,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * (when the file is unencrypted, or if only parts of the file/application metadata are
        * encrypted).
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
       /**
        * When a file is leased, specifies whether the lease is of infinite or fixed duration.
        */
@@ -1522,8 +1498,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::SetMetadata.
@@ -1538,8 +1513,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = bool();
+      bool IsServerEncrypted = bool();
     };
     namespace _detail {
       /**
@@ -1660,8 +1634,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = false;
+      bool IsServerEncrypted = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::UploadRangeFromUri.
@@ -1688,8 +1661,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted
-          = false;
+      bool IsServerEncrypted = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetRangeList.
@@ -1791,8 +1763,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * A string describing next handle to be closed. It is returned when more handles need to be
          * closed to complete the request.
          */
-        Nullable<std::string>
-            ContinuationToken;
+        Nullable<std::string> ContinuationToken;
         /**
          * Contains count of number of handles closed.
          */
@@ -1821,8 +1792,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * The value of this header is set to true if the contents of the request are successfully
          * encrypted using the specified algorithm, and false otherwise.
          */
-        bool IsServerEncrypted
-            = bool();
+        bool IsServerEncrypted = bool();
         /**
          * Key of the permission set for the file.
          */
