@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2020-10-02";
+    constexpr static const char* ApiVersion = "2021-04-10";
   } // namespace _detail
   namespace Models {
     /**
@@ -619,20 +619,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       std::map<std::string, std::string> Tags;
     };
-    namespace _detail {
-      /**
-       * @brief The result of a Filter Blobs API call.
-       */
-      struct FindBlobsByTagsResult final
-      {
-        std::string ServiceEndpoint;
-        /**
-         * Array of TaggedBlobItem.
-         */
-        std::vector<TaggedBlobItem> Items;
-        Nullable<std::string> ContinuationToken;
-      };
-    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Create.
      */
@@ -821,6 +807,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string ContentType;
       };
       /**
+       * @brief The result of a Filter Blobs API call.
+       */
+      struct FindBlobsByTagsResult final
+      {
+        std::string ServiceEndpoint;
+        /**
+         * Array of TaggedBlobItem.
+         */
+        std::vector<TaggedBlobItem> Items;
+        Nullable<std::string> ContinuationToken;
+      };
+      /**
        * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::AcquireLease.
        */
       struct AcquireBlobContainerLeaseResult final
@@ -920,6 +918,17 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Uniquely identifies a container's lease.
          */
         std::string LeaseId;
+      };
+      struct BlobName final
+      {
+        /**
+         * Indicates if the blob name is encoded.
+         */
+        bool Encoded = bool();
+        /**
+         * The name of the blob.
+         */
+        std::string Content;
       };
     } // namespace _detail
     /**
@@ -1314,48 +1323,50 @@ namespace Azure { namespace Storage { namespace Blobs {
     private:
       std::string m_value;
     };
-    /**
-     * @brief An Azure Storage blob.
-     */
-    struct BlobItem final
-    {
+    namespace _detail {
       /**
-       * Blob name.
+       * @brief An Azure Storage blob.
        */
-      std::string Name;
-      /**
-       * Indicates whether this blob was deleted.
-       */
-      bool IsDeleted = bool();
-      /**
-       * A string value that uniquely identifies a blob snapshot.
-       */
-      std::string Snapshot;
-      /**
-       * A string value that uniquely identifies a blob version.
-       */
-      Nullable<std::string> VersionId;
-      /**
-       * Indicates if this is the current version of the blob.
-       */
-      Nullable<bool> IsCurrentVersion;
-      /**
-       * Properties of a blob.
-       */
-      BlobItemDetails Details;
-      /**
-       * Indicates that this root blob has been deleted, but it has versions that are active.
-       */
-      Nullable<bool> HasVersionsOnly;
-      /**
-       * Size in bytes.
-       */
-      int64_t BlobSize = int64_t();
-      /**
-       * Type of the blob.
-       */
-      Models::BlobType BlobType;
-    };
+      struct BlobItem final
+      {
+        /**
+         * Blob name.
+         */
+        BlobName Name;
+        /**
+         * Indicates whether this blob was deleted.
+         */
+        bool IsDeleted = bool();
+        /**
+         * A string value that uniquely identifies a blob snapshot.
+         */
+        std::string Snapshot;
+        /**
+         * A string value that uniquely identifies a blob version.
+         */
+        Nullable<std::string> VersionId;
+        /**
+         * Indicates if this is the current version of the blob.
+         */
+        Nullable<bool> IsCurrentVersion;
+        /**
+         * Properties of a blob.
+         */
+        BlobItemDetails Details;
+        /**
+         * Indicates that this root blob has been deleted, but it has versions that are active.
+         */
+        Nullable<bool> HasVersionsOnly;
+        /**
+         * Size in bytes.
+         */
+        int64_t BlobSize = int64_t();
+        /**
+         * Type of the blob.
+         */
+        Models::BlobType BlobType;
+      };
+    } // namespace _detail
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
@@ -1423,9 +1434,9 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         std::vector<BlobItem> Items;
         /**
-         * Array of ListBlobsHierarchySegmentResponseBlobPrefixesItem.
+         * Array of BlobName.
          */
-        std::vector<std::string> BlobPrefixes;
+        std::vector<BlobName> BlobPrefixes;
       };
     } // namespace _detail
     /**
@@ -2160,6 +2171,26 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
     } // namespace _detail
     /**
+     * @brief Optional, default 'replace'.  Indicates if source tags should be copied or replaced
+     * with the tags specified by x-ms-tags.
+     */
+    class BlobCopySourceTagsMode final {
+    public:
+      BlobCopySourceTagsMode() = default;
+      explicit BlobCopySourceTagsMode(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobCopySourceTagsMode& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const BlobCopySourceTagsMode& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Replace;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Copy;
+
+    private:
+      std::string m_value;
+    };
+    /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
      */
     struct CopyBlobFromUriResult final
@@ -2194,6 +2225,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * copied content. This header is only returned if the source content MD5 was specified.
        */
       Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * Returns the name of the encryption scope used to encrypt the blob contents and application
+       * metadata.  Note that the absence of this header implies use of the default account
+       * encryption scope.
+       */
+      Nullable<std::string> EncryptionScope;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::AbortCopyFromUri.
@@ -3323,6 +3360,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::IO::BodyStream& requestBody,
           const SubmitBlobContainerBatchOptions& options,
           const Core::Context& context);
+      struct FindBlobContainerBlobsByTagsOptions final
+      {
+        Nullable<std::string> Where;
+        Nullable<std::string> Marker;
+        Nullable<int32_t> MaxResults;
+      };
+      static Response<Models::_detail::FindBlobsByTagsResult> FindBlobsByTags(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const FindBlobContainerBlobsByTagsOptions& options,
+          const Core::Context& context);
       struct AcquireBlobContainerLeaseOptions final
       {
         Nullable<int32_t> Duration;
@@ -3692,6 +3740,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
         Nullable<bool> LegalHold;
         Nullable<std::string> CopySourceAuthorization;
+        Nullable<std::string> EncryptionScope;
+        Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
         Nullable<std::vector<uint8_t>> SourceContentcrc64;
       };
       static Response<Models::CopyBlobFromUriResult> CopyFromUri(
@@ -4134,6 +4184,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string CopySource;
         Nullable<bool> CopySourceBlobProperties;
         Nullable<std::string> CopySourceAuthorization;
+        Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
         Nullable<std::vector<uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(

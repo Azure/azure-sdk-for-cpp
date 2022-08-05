@@ -378,6 +378,52 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
+  TEST_F(BlockBlobClientTest, SyncCopyFromUriEncryptionScope)
+  {
+    auto clientOptions = InitClientOptions<Blobs::BlobClientOptions>();
+    const auto encryptionScope = GetTestEncryptionScope();
+    clientOptions.EncryptionScope = encryptionScope;
+    const auto containerName = GetContainerValidName();
+    const auto blobName = "b";
+    auto containerClient = Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), containerName, clientOptions);
+    containerClient.CreateIfNotExists();
+    auto srcBlobClient = containerClient.GetBlockBlobClient(blobName);
+    uint8_t data;
+    srcBlobClient.UploadFrom(&data, 1);
+
+    auto properties = srcBlobClient.GetProperties().Value;
+    ASSERT_TRUE(properties.EncryptionScope.HasValue());
+    EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
+
+    {
+      Sas::BlobSasBuilder builder;
+      builder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(1);
+      builder.BlobContainerName = containerName;
+      builder.BlobName = blobName;
+      builder.Resource = Sas::BlobSasResource::Blob;
+      builder.EncryptionScope = encryptionScope;
+      builder.SetPermissions("r");
+      auto keyCredential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+      auto sasToken = builder.GenerateSasToken(*keyCredential);
+
+      auto destBlobClient = GetBlockBlobClient(GetTestName());
+      auto response = destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + sasToken);
+      EXPECT_FALSE(response.Value.EncryptionScope.HasValue());
+      properties = destBlobClient.GetProperties().Value;
+      EXPECT_FALSE(properties.EncryptionScope.HasValue());
+
+      destBlobClient = containerClient.GetBlockBlobClient(GetTestName());
+      response = destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + GetSas());
+      ASSERT_TRUE(response.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(response.Value.EncryptionScope.Value(), encryptionScope);
+      properties = destBlobClient.GetProperties().Value;
+      ASSERT_TRUE(properties.EncryptionScope.HasValue());
+      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
+    }
+  }
+
   TEST_F(BlockBlobClientTest, AsyncCopyFromUri)
   {
 
@@ -455,6 +501,11 @@ namespace Azure { namespace Storage { namespace Test {
     properties = blobClient->GetProperties().Value;
     EXPECT_EQ(properties.Metadata, options2.Metadata);
     EXPECT_EQ(properties.AccessTier.Value(), options2.AccessTier.Value());
+
+    options2.CopySourceTagsMode = Blobs::Models::BlobCopySourceTagsMode::Copy;
+    options2.Tags.clear();
+    blobClient->CopyFromUri(blockBlobClient.GetUrl() + GetSas(), options2);
+    EXPECT_TRUE(blobClient->GetTags().Value.empty());
   }
 
   TEST_F(BlockBlobClientTest, SnapShotVersions)
@@ -1856,6 +1907,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto srcBlobClient = GetBlockBlobClient(testName + "src");
     std::vector<uint8_t> blobContent(100, 'a');
     srcBlobClient.UploadFrom(blobContent.data(), blobContent.size());
+    std::map<std::string, std::string> srcTags;
+    srcTags["srctags"] = "a1212";
+    srcBlobClient.SetTags(srcTags);
 
     const std::vector<uint8_t> blobMd5
         = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
@@ -1894,6 +1948,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(destBlobProperties.Metadata, options.Metadata);
     EXPECT_EQ(destBlobProperties.AccessTier.Value(), options.AccessTier.Value());
     EXPECT_EQ(static_cast<size_t>(destBlobProperties.TagCount.Value()), options.Tags.size());
+
+    options.CopySourceTagsMode = Blobs::Models::BlobCopySourceTagsMode::Copy;
+    options.Tags.clear();
+    uploadFromUriResult = destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options);
+    EXPECT_EQ(destBlobClient.GetTags().Value, srcTags);
   }
 
   TEST_F(BlockBlobClientTest, SetGetTagsWithLeaseId)

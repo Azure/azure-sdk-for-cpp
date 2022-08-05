@@ -1,5 +1,20 @@
 # Release History
 
+## 12.6.0-beta1 (Unreleased)
+
+### Features Added
+
+- Bumped up API version to `2021-04-10`.
+- Added support for encryption scope SAS (`ses` query parameter in SAS token).
+- Added encryption scope support for `BlobClient::CopyFromUri()`.
+- Added support for filtering blobs on container level.
+- Added support for tags copy mode (replace or copy from source) when copying blobs from URL.
+- Added support for permanent delete permission in SAS.
+
+### Bugs Fixed
+
+- Fixed listing blobs failure when blob name contains invalid characters in xml.
+
 ## 12.5.0 (2022-08-08)
 
 ### Features Added

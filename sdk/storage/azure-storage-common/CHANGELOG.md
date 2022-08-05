@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added support for encryption scope SAS (`ses` query parameter in SAS token).
+- Added support for permanent delete permission in SAS.
+
 ### Breaking Changes
 
 ### Bugs Fixed
