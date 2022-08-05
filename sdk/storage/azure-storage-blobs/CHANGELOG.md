@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.3 (Unreleased)
+## 12.6.0.beta1 (2022-08-09)
 
 ### Features Added
 
@@ -11,13 +11,15 @@
 - Added support for tags copy mode (replace or copy from source) when copying blobs from URL.
 - Added support for permanent delete permission in SAS.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed listing blobs failure when blob name contains invalid characters in xml.
 
-### Other Changes
+## 12.5.0 (2022-08-08)
+
+### Features Added
+
+- Features in `12.5.0.beta1` and `12.5.0.beta2` are now generally available.
 
 ## 12.5.0-beta.2 (2022-07-07)
 
