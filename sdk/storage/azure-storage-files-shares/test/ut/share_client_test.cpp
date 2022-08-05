@@ -529,6 +529,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.Value());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
+    EXPECT_TRUE(properties.ProvisionedBandwidthMBps.HasValue());
 
     Files::Shares::ListSharesOptions listOptions;
     listOptions.Prefix = shareName;
@@ -545,6 +546,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, shareItems[0].Details.AccessTier.Value());
     EXPECT_FALSE(shareItems[0].Details.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(shareItems[0].Details.AccessTierChangedOn.HasValue());
+    EXPECT_TRUE(shareItems[0].Details.ProvisionedBandwidthMBps.HasValue());
 
     auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
     setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::Hot;
