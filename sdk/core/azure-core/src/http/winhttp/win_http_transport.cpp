@@ -624,7 +624,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
   // HTTP/2 does not support reason phrase, refer to
   // https://www.rfc-editor.org/rfc/rfc7540#section-8.1.2.4.
-  if (majorVersion > 1)
+  if (majorVersion == 1)
   {
     if (WinHttpQueryHeaders(
             handleManager->m_requestHandle,
