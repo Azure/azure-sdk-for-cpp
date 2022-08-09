@@ -622,7 +622,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   std::string reasonPhrase;
   DWORD sizeOfReasonPhrase = sizeOfHeaders;
 
-  // HTTP/2 does not support reason phrase, refer to https://www.rfc-editor.org/rfc/rfc7540#section-8.1.2.4.
+  // HTTP/2 does not support reason phrase, refer to
+  // https://www.rfc-editor.org/rfc/rfc7540#section-8.1.2.4.
   if (majorVersion == 1)
   {
     if (WinHttpQueryHeaders(
@@ -633,7 +634,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
             &sizeOfReasonPhrase,
             WINHTTP_NO_HEADER_INDEX))
     {
-      // even with HTTP/1.1, we cannot assume that reason phrase is set since it is optional according to https://www.rfc-editor.org/rfc/rfc2616.html#section-6.1.1.
+      // even with HTTP/1.1, we cannot assume that reason phrase is set since it is optional
+      // according to https://www.rfc-editor.org/rfc/rfc2616.html#section-6.1.1.
       if (sizeOfReasonPhrase > 0)
       {
         start = outputBuffer.begin();
