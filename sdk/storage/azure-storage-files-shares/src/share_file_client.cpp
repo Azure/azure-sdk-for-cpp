@@ -133,6 +133,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileChangeTime = std::string(FileDefaultTimeValue);
+    }
     if (options.Permission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.Permission;

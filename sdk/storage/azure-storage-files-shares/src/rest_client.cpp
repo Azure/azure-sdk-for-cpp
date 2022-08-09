@@ -1693,9 +1693,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       if (options.FileChangeTime.HasValue())
       {
-        request.SetHeader(
-            "x-ms-file-change-time",
-            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+        request.SetHeader("x-ms-file-change-time", options.FileChangeTime.Value());
+
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1850,9 +1849,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       if (options.FileChangeTime.HasValue())
       {
-        request.SetHeader(
-            "x-ms-file-change-time",
-            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+        request.SetHeader("x-ms-file-change-time",options.FileChangeTime.Value());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -2647,9 +2644,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       if (options.FileChangeTime.HasValue())
       {
-        request.SetHeader(
-            "x-ms-file-change-time",
-            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+        request.SetHeader("x-ms-file-change-time", options.FileChangeTime.Value());
       }
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
@@ -3082,9 +3077,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       if (options.FileChangeTime.HasValue())
       {
-        request.SetHeader(
-            "x-ms-file-change-time",
-            options.FileChangeTime.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+        request.SetHeader("x-ms-file-change-time", options.FileChangeTime.Value());
+
       }
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
