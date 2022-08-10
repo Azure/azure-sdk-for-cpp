@@ -2034,7 +2034,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
-        Nullable<DateTime> FileChangeTime;
+        Nullable<std::string> FileChangeTime;
       };
       static Response<Models::CreateDirectoryResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2065,7 +2065,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
-        Nullable<DateTime> FileChangeTime;
+        Nullable<std::string> FileChangeTime;
       };
       static Response<Models::SetDirectoryPropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2158,7 +2158,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
-        Nullable<DateTime> FileChangeTime;
+        Nullable<std::string> FileChangeTime;
         Nullable<std::string> LeaseId;
       };
       static Response<Models::CreateFileResult> Create(
@@ -2210,7 +2210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
-        Nullable<DateTime> FileChangeTime;
+        Nullable<std::string> FileChangeTime;
         Nullable<std::string> LeaseId;
       };
       static Response<Models::SetFilePropertiesResult> SetHttpHeaders(
