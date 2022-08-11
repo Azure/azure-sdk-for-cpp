@@ -219,6 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreatedOn = std::chrono::system_clock::now();
     properties.LastWrittenOn = std::chrono::system_clock::now();
+    properties.ChangedOn = std::chrono::system_clock::now();
     properties.PermissionKey = m_fileClient->GetProperties().Value.SmbProperties.PermissionKey;
     {
       // Create directory with SmbProperties works
@@ -239,6 +240,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
           directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
+      EXPECT_EQ(
+          directoryProperties2.Value.SmbProperties.ChangedOn.Value(),
+          directoryProperties1.Value.SmbProperties.ChangedOn.Value());
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
@@ -261,6 +265,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
           directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
+      EXPECT_EQ(
+          directoryProperties2.Value.SmbProperties.ChangedOn.Value(),
+          directoryProperties1.Value.SmbProperties.ChangedOn.Value());
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
@@ -883,7 +890,35 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(static_cast<int64_t>(numOfChunks) * rangeSize, result.FileSize);
       }
     }
-
+    // last write time
+    {
+      memBodyStream.Rewind();
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(m_testName);
+      fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
+      auto lastWriteTimeBeforeUpload
+          = fileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      Files::Shares::UploadFileRangeOptions uploadOptions;
+      uploadOptions.FileLastWrittenMode
+          = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Now;
+      EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream, uploadOptions));
+      auto lastWriteTimeAfterUpload
+          = fileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      EXPECT_NE(lastWriteTimeBeforeUpload, lastWriteTimeAfterUpload);
+    }
+    {
+      memBodyStream.Rewind();
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(m_testName);
+      fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
+      auto lastWriteTimeBeforeUpload
+          = fileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      Files::Shares::UploadFileRangeOptions uploadOptions;
+      uploadOptions.FileLastWrittenMode
+          = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Now;
+      EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream, uploadOptions));
+      auto lastWriteTimeAfterUpload
+          = fileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      EXPECT_EQ(lastWriteTimeBeforeUpload, lastWriteTimeAfterUpload);
+    }
     {
       // MD5 works.
       memBodyStream.Rewind();
@@ -1119,6 +1154,42 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getRangeResult.Ranges[0].Length.HasValue());
     EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Length.Value());
 
+    // last write time
+    {
+      auto lastWriteTimeBeforeUpload 
+          = destFileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.FileLastWrittenMode = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Now;
+      EXPECT_NO_THROW(
+          uploadResult = destFileClient
+                             .UploadRangeFromUri(
+                                 destRange.Offset,
+                                 sourceFileClient.GetUrl() + sourceSas,
+                                 sourceRange,
+                                 uploadRangeOptions)
+                             .Value);
+      auto lastWriteTimeAfterUpload
+          = destFileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      EXPECT_NE(lastWriteTimeBeforeUpload, lastWriteTimeAfterUpload);
+    }
+    {
+      auto lastWriteTimeBeforeUpload
+          = destFileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
+      uploadRangeOptions.FileLastWrittenMode
+          = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
+      EXPECT_NO_THROW(
+          uploadResult = destFileClient
+                             .UploadRangeFromUri(
+                                 destRange.Offset,
+                                 sourceFileClient.GetUrl() + sourceSas,
+                                 sourceRange,
+                                 uploadRangeOptions)
+                             .Value);
+      auto lastWriteTimeAfterUpload
+          = destFileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
+      EXPECT_EQ(lastWriteTimeBeforeUpload, lastWriteTimeAfterUpload);
+    }
     // source access condition works.
     std::vector<uint8_t> invalidCrc64(
         uploadResult.TransactionalContentHash.Value.begin(),

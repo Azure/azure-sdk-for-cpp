@@ -146,6 +146,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileChangeTime = std::string(FileDefaultTimeValue);
+    }
     if (options.DirectoryPermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.DirectoryPermission.Value();
@@ -267,6 +276,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     else
     {
       protocolLayerOptions.FileLastWriteTime = FilePreserveSmbProperties;
+    }
+    if (smbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = smbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileChangeTime = std::string(FileDefaultTimeValue);
     }
     if (options.FilePermission.HasValue())
     {
