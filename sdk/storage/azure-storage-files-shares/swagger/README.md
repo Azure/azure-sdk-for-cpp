@@ -219,6 +219,8 @@ directive:
       $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
       $.ShareEnabledProtocols["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
       $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
+      delete $.FileChangeTime.format;
+      $.FileLastWriteTimeMode["x-ms-enum"]["values"] = [{"value": "now", "name": "Now"},{"value": "preserve", "name": "Preserve"}];
   - from: swagger-document
     where: $.definitions
     transform: >
