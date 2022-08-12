@@ -103,8 +103,18 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct WinHttpTransportException : public TransportException
   {
+    /**
+     * @brief The Win32 Status code which triggered the transport exception.
+     */
+
     DWORD TransportError;
 
+	/**
+     * @brief Create a new WinHttpTransportException wrapping an error and a Win32 error code.
+     *
+     * @param status Win32 error code triggering the exception.
+     * @param what Text status describing the exception.
+     */
     explicit WinHttpTransportException(DWORD status, std::string const& what)
         : Azure::Core::Http::TransportException(what), TransportError(status)
     {

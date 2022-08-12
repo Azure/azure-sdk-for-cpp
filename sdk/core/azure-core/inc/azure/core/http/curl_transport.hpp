@@ -31,8 +31,17 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CurlTransportException : public TransportException
   {
+    /** 
+    * @brief The CURLError which triggered the transport exception.
+    */
     int TransportError;
 
+	/** 
+    * @brief Create a new CurlTransportException wrapping an error and a CURL error code.
+    * 
+    * @param status CURLError error code triggering the exception.
+    * @param what Text status describing the exception.
+    */
     explicit CurlTransportException(int status, std::string const& what)
         : Azure::Core::Http::TransportException(what), TransportError(status)
     {
