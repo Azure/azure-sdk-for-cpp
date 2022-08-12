@@ -988,8 +988,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       UploadFileRangeOptions uploadRangeOptions;
       if (options.SmbProperties.LastWrittenOn.HasValue())
       {
-        uploadRangeOptions.FileLastWrittenMode =
-             Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
+        uploadRangeOptions.FileLastWrittenMode
+            = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
       }
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };

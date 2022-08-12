@@ -1156,10 +1156,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     // last write time
     {
-      auto lastWriteTimeBeforeUpload 
+      auto lastWriteTimeBeforeUpload
           = destFileClient.GetProperties().Value.SmbProperties.LastWrittenOn.Value();
       Files::Shares::UploadFileRangeFromUriOptions uploadRangeOptions;
-      uploadRangeOptions.FileLastWrittenMode 
+      uploadRangeOptions.FileLastWrittenMode
           = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Now;
       EXPECT_NO_THROW(
           uploadResult = destFileClient
