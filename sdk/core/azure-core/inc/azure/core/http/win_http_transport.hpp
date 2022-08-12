@@ -109,7 +109,7 @@ namespace Azure { namespace Core { namespace Http {
 
     DWORD TransportError;
 
-	/**
+    /**
      * @brief Create a new WinHttpTransportException wrapping an error and a Win32 error code.
      *
      * @param status Win32 error code triggering the exception.
