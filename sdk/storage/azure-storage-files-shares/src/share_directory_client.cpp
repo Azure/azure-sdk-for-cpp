@@ -278,10 +278,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileChangeTime = smbProperties.ChangedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileChangeTime = std::string(FileDefaultTimeValue);
-    }
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission.Value();

@@ -531,6 +531,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * Specifies if the file last write time should be set to the current time,
+     * or the last write time currently associated with the file should be preserved.
+     */
+    Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
   };
 
   /**
