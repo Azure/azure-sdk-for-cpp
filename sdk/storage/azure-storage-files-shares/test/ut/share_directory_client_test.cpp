@@ -250,6 +250,7 @@ namespace Azure { namespace Storage { namespace Test {
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreatedOn = std::chrono::system_clock::now();
     properties.LastWrittenOn = std::chrono::system_clock::now();
+    properties.ChangedOn = std::chrono::system_clock::now();
     properties.PermissionKey
         = m_fileShareDirectoryClient->GetProperties().Value.SmbProperties.PermissionKey;
     {
@@ -274,6 +275,9 @@ namespace Azure { namespace Storage { namespace Test {
           directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
           directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
       EXPECT_EQ(
+          directoryProperties2.Value.SmbProperties.ChangedOn.Value(),
+          directoryProperties1.Value.SmbProperties.ChangedOn.Value());
+      EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
     }
@@ -297,6 +301,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
           directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
+      EXPECT_EQ(
+          directoryProperties2.Value.SmbProperties.ChangedOn.Value(),
+          directoryProperties1.Value.SmbProperties.ChangedOn.Value());
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
