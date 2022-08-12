@@ -386,56 +386,6 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
       GetErrorAndThrow("Error while setting Proxy information.");
     }
   }
-#if 0
-  if (!m_options.ProxyUserName.empty() || !m_options.ProxyPassword.empty())
-  {
-    DWORD proxyAuthSchemes = 0;
-    DWORD proxyAuthSchemeSize = sizeof(proxyAuthSchemes);
-    if (!WinHttpQueryOption(
-            request.get(),
-            WINHTTP_OPTION_DISABLE_PROXY_AUTH_SCHEMES,
-            &proxyAuthSchemes,
-            &proxyAuthSchemeSize))
-    {
-      GetErrorAndThrow("Error while getting disabled proxy auth schemes.");
-    }
-    proxyAuthSchemes &= ~WINHTTP_PROXY_DISABLE_SCHEME_BASIC;
-    if (!WinHttpSetOption(
-            request.get(),
-            WINHTTP_OPTION_DISABLE_PROXY_AUTH_SCHEMES,
-            &proxyAuthSchemes,
-            proxyAuthSchemeSize))
-    {
-      GetErrorAndThrow("Error while setting disabled proxy auth schemes.");
-    }
-  }
-
-  if (!m_options.ProxyUserName.empty())
-  {
-    std::wstring userNameWide{StringToWideString(m_options.ProxyUserName)};
-    if (!WinHttpSetOption(
-            request.get(),
-            WINHTTP_OPTION_PROXY_USERNAME,
-            reinterpret_cast<LPVOID>(const_cast<wchar_t*>(userNameWide.c_str())),
-            static_cast<DWORD>(m_options.ProxyUserName.size())))
-    {
-      GetErrorAndThrow("Error while setting Proxy UserName information.");
-    }
-  }
-
-  if (!m_options.ProxyPassword.empty())
-  {
-    std::wstring passwordWide{StringToWideString(m_options.ProxyPassword)};
-    if (!WinHttpSetOption(
-            request.get(),
-            WINHTTP_OPTION_PROXY_PASSWORD,
-            reinterpret_cast<LPVOID>(const_cast<wchar_t*>(passwordWide.c_str())),
-            static_cast<DWORD>(m_options.ProxyPassword.size())))
-    {
-      GetErrorAndThrow("Error while setting Proxy Password information.");
-    }
-  }
-#endif
   if (!m_options.ProxyUserName.empty() || !m_options.ProxyPassword.empty())
   {
     if (!WinHttpSetCredentials(

@@ -22,7 +22,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     bool AnyTransportOptionsSpecified(TransportOptions const& transportOptions)
     {
       return !(
-          transportOptions.HttpProxy.empty() && transportOptions.ProxyPassword.empty()
+          !transportOptions.HttpProxy.HasValue() && transportOptions.ProxyPassword.empty()
           && transportOptions.ProxyUserName.empty());
     }
     //    std::once_flag createTransportOnce;
@@ -43,12 +43,15 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     if (AnyTransportOptionsSpecified(transportOptions))
     {
       WinHttpTransportOptions httpOptions;
-      if (!transportOptions.HttpProxy.empty())
+      if (transportOptions.HttpProxy.HasValue())
       {
+        // WinHTTP proxy strings are semicolon separated elements, each of which
+        // has the following format:
+        //  ([<scheme>=][<scheme>"://"]<server>[":"<port>])
         std::string proxyString;
-        proxyString = "http=" + transportOptions.HttpProxy;
+        proxyString = "http=" + transportOptions.HttpProxy.Value();
         proxyString += ";";
-        proxyString += "https=" + transportOptions.HttpProxy;
+        proxyString += "https=" + transportOptions.HttpProxy.Value();
         httpOptions.ProxyInformation = proxyString;
       }
       httpOptions.ProxyUserName = transportOptions.ProxyUserName;
@@ -68,7 +71,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     {
       CurlTransportOptions curlOptions;
       curlOptions.EnableCurlTracing = true;
-      if (!transportOptions.HttpProxy.empty())
+      if (!transportOptions.HttpProxy)
       {
         curlOptions.Proxy = transportOptions.HttpProxy;
       }
@@ -98,8 +101,8 @@ TransportPolicy::TransportPolicy(TransportOptions const& options) : m_options(op
 #if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
     if (_detail::AnyTransportOptionsSpecified(options))
     {
-      throw std::runtime_error(
-          "Invalid parameter: Proxies cannot be specified when a transport is specified.");
+      AZURE_ASSERT_MSG(
+          false, "Invalid parameter: Proxies cannot be specified when a transport is specified.");
     }
 #endif
   }

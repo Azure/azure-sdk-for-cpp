@@ -144,7 +144,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @remark The URL for the proxy server to use for this connection.
      */
-    std::string HttpProxy;
+    Azure::Nullable<std::string> HttpProxy;
 
     /**
      * @brief The username to use when authenticating with the proxy server.

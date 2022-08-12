@@ -1554,7 +1554,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       throw Azure::Core::Http::CurlTransportException(
           result,
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set proxy username to:" + options.Proxy.Value() + ". "
+              + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
               + std::string(curl_easy_strerror(result)));
     }
   }
@@ -1565,7 +1565,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       throw Azure::Core::Http::CurlTransportException(
           result,
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set proxy password to:" + options.Proxy.Value() + ". "
+              + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
               + std::string(curl_easy_strerror(result)));
     }
   }
