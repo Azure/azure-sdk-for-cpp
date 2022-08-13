@@ -331,7 +331,7 @@ CURLcode CurlSession::Perform(Context const& context)
     Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Setting proxy authentication header");
     this->m_request.SetHeader(
         "Proxy-Authorization",
-        "Basic " + Azure::Core::Convert::Base64Encode(m_httpProxyUser + ":" + m_httpProxyPassword));
+        "Basic " + Azure::Core::_internal::Convert::Base64Encode(m_httpProxyUser + ":" + m_httpProxyPassword));
   }
 
   // use expect:100 for PUT requests. Server will decide if it can take our request

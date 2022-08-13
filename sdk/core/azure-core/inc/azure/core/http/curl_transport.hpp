@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Http {
    * (if any).
    *
    */
-  struct CurlTransportException : public TransportException
+  struct CurlTransportException final : public TransportException
   {
     /**
      * @brief The CURLError which triggered the transport exception.

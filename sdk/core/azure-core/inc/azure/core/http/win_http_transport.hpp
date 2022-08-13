@@ -101,7 +101,7 @@ namespace Azure { namespace Core { namespace Http {
    * (if any).
    *
    */
-  struct WinHttpTransportException : public TransportException
+  struct WinHttpTransportException final : public TransportException
   {
     /**
      * @brief The Win32 Status code which triggered the transport exception.
@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief When `true`, allows an invalid certificate authority.
      */
-    bool IgnoreUnknownCertificateAuthority = false;
+    bool IgnoreUnknownCertificateAuthority{false};
 
     /**
      * Proxy information.
@@ -139,25 +139,34 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief If True, enables the use of the system default proxy.
      *
-     * @remarks Set this to "true" if you would like to use a local HTTP proxy like "fiddler" to
+     * @remarks Set this to "true" if you would like to use a local HTTP proxy like "Fiddler" to
      * capture and analyze HTTP traffic.
      *
      * Set to "false" by default because it is not recommended to use a proxy for production and
      * Fiddler's proxy interferes with the HTTP functional tests.
      */
-    bool EnableSystemDefaultProxy = false;
+    bool EnableSystemDefaultProxy{false};
+	
     /**
      * @brief Proxy information.
      *
-     * @remark The Proxy Information string is composed of one or more
-     * strings formatted as follows:
+     * @remark The Proxy Information string is composed of a set of elements
+     * formatted as follows:
      * ([<scheme>=][<scheme>"://"]<server>[":"<port>])
      *
      * Each element should be separated with semicolons or whitespace.
      */
-    std::string ProxyInformation{};
-    std::string ProxyUserName{};
-    std::string ProxyPassword{};
+    std::string ProxyInformation;
+
+    /**
+     * @brief User name for proxy authentication.
+     */
+    std::string ProxyUserName;
+
+    /**
+     * @brief Password for proxy authentication.
+     */
+    std::string ProxyPassword;
   };
 
   /**

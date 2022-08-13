@@ -42,14 +42,6 @@ namespace Azure { namespace Core {
     static std::string Base64Encode(const std::vector<uint8_t>& data);
 
     /**
-     * @brief Encodes a string using Base64 encoding.
-     *
-     * @param data The input string that contains data to be encoded.
-     * @return The Base64 encoded contents of the vector.
-     */
-    static std::string Base64Encode(const std::string& data);
-
-    /**
      * @brief Decodes a Base64 encoded data into a vector of binary data.
      *
      * @param text Base64 encoded data to be decoded.
@@ -59,6 +51,31 @@ namespace Azure { namespace Core {
   };
 
   namespace _internal {
+    /**
+     * @brief Used to convert one form of data  into another, for example encoding binary data into
+     * Base64 encoded octets.
+     *
+     * @note Base64 encoded data is a subset of the ASCII encoding (characters 0-127). As such,
+     * it can be considered a subset of UTF-8.
+     */
+    class Convert final {
+    private:
+      // This type currently only contains static methods and hence disallowing instance creation.
+      /**
+       * @brief An instance of `%Convert` class cannot be created.
+       *
+       */
+      Convert() = default;
+
+    public:
+      /**
+       * @brief Encodes a string using Base64 encoding.
+       *
+       * @param data The input string that contains data to be encoded.
+       * @return The Base64 encoded contents of the vector.
+       */
+      static std::string Base64Encode(const std::string& data);
+    };
 
     /**
      * @brief Provides conversion methods for Base64URL.
