@@ -14,6 +14,10 @@
 #include <string>
 #include <thread>
 
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#include <curl/curl.h>
+#endif
+
 namespace Azure { namespace Core { namespace Test {
   namespace {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
@@ -94,9 +98,14 @@ namespace Azure { namespace Core { namespace Test {
 #if defined(CODE_COVERAGE)
       return "http://127.0.0.1:3128";
 #else
-      return "http://"
-          + Azure::Core::_internal::Environment::GetVariable("ANONYMOUSCONTAINERIPV4ADDRESS")
-          + ":3128";
+      std::string anonymousServer{
+          Azure::Core::_internal::Environment::GetVariable("ANONYMOUSCONTAINERIPV4ADDRESS")};
+      if (anonymousServer.empty())
+      {
+        anonymousServer = "127.0.0.1";
+      }
+
+      return "http://" + anonymousServer + ":3128";
 #endif
     }
     std::string HttpProxyServerWithPassword()
@@ -104,9 +113,13 @@ namespace Azure { namespace Core { namespace Test {
 #if defined(CODE_COVERAGE)
       return "http://127.0.0.1:3129";
 #else
-      return "http://"
-          + Azure::Core::_internal::Environment::GetVariable("AUTHENTICATEDCONTAINERIPV4ADDRESS")
-          + ":3129";
+      std::string authenticatedServer{
+          Azure::Core::_internal::Environment::GetVariable("AUTHENTICATEDCONTAINERIPV4ADDRESS")};
+      if (authenticatedServer.empty())
+      {
+        authenticatedServer = "127.0.0.1";
+      }
+      return "http://" + authenticatedServer + ":3129";
 #endif
     }
 
@@ -302,6 +315,10 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if !defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  typedef int CURLcode;
+#endif
+
   TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps_LIVENONLY_)
   {
     // will skip test under some cased where test can't run (usually LIVE only tests)
@@ -332,7 +349,7 @@ namespace Azure { namespace Core { namespace Test {
             response->GetStatusCode(),
             Azure::Core::Http::HttpStatusCode::ProxyAuthenticationRequired);
       }
-      catch (Azure::Core::Http::DetailedTransportException<int> const& ex)
+      catch (Azure::Core::Http::DetailedTransportException<CURLcode> const& ex)
       {
         // CURL returns a connection error which triggers a transport exception.
         // See https://curl.se/mail/lib-2009-07/0078.html for more information.
