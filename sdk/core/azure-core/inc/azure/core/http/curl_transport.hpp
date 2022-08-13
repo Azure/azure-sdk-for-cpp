@@ -25,30 +25,6 @@ namespace Azure { namespace Core { namespace Http {
   } // namespace _detail
 
   /**
-   * @brief A #TransportException which includes the CURL error code which triggered the exception
-   * (if any).
-   *
-   */
-  struct CurlTransportException final : public TransportException
-  {
-    /**
-     * @brief The CURLError which triggered the transport exception.
-     */
-    int TransportError;
-
-    /**
-     * @brief Create a new CurlTransportException wrapping an error and a CURL error code.
-     *
-     * @param status CURLError error code triggering the exception.
-     * @param what Text status describing the exception.
-     */
-    explicit CurlTransportException(int status, std::string const& what)
-        : Azure::Core::Http::TransportException(what), TransportError(status)
-    {
-    }
-  };
-
-  /**
    * @brief The available options to set libcurl SSL options.
    *
    * @remark The SDK will map the enum option to libcurl's specific option. See more info here:

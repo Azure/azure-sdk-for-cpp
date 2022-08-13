@@ -97,31 +97,6 @@ namespace Azure { namespace Core { namespace Http {
   } // namespace _detail
 
   /**
-   * @brief A #TransportException which includes the CURL error code which triggered the exception
-   * (if any).
-   *
-   */
-  struct WinHttpTransportException final : public TransportException
-  {
-    /**
-     * @brief The Win32 Status code which triggered the transport exception.
-     */
-
-    DWORD TransportError;
-
-    /**
-     * @brief Create a new WinHttpTransportException wrapping an error and a Win32 error code.
-     *
-     * @param status Win32 error code triggering the exception.
-     * @param what Text status describing the exception.
-     */
-    explicit WinHttpTransportException(DWORD status, std::string const& what)
-        : Azure::Core::Http::TransportException(what), TransportError(status)
-    {
-    }
-  };
-
-  /**
    * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
    * transport.
    */
@@ -146,7 +121,7 @@ namespace Azure { namespace Core { namespace Http {
      * Fiddler's proxy interferes with the HTTP functional tests.
      */
     bool EnableSystemDefaultProxy{false};
-	
+
     /**
      * @brief Proxy information.
      *

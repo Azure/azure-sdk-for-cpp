@@ -332,7 +332,7 @@ namespace Azure { namespace Core { namespace Test {
             response->GetStatusCode(),
             Azure::Core::Http::HttpStatusCode::ProxyAuthenticationRequired);
       }
-      catch (Azure::Core::Http::CurlTransportException const& ex)
+      catch (Azure::Core::Http::DetailedTransportException<int> const& ex)
       {
         // CURL returns a connection error which triggers a transport exception.
         // See https://curl.se/mail/lib-2009-07/0078.html for more information.
