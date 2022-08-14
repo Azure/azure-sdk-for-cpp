@@ -968,3 +968,21 @@ directive:
     transform: >
       delete $["x-ms-lease-id"];
 ```
+
+### RenameFile/Directory
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=rename"].put.responses["200"].headers
+    transform: >
+      $["x-ms-file-creation-time"].format = "date-time";
+      $["x-ms-file-last-write-time"].format = "date-time";
+      $["x-ms-file-change-time"].format = "date-time";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory&comp=rename"].put.responses["200"].headers
+    transform: >
+      $["x-ms-file-creation-time"].format = "date-time";
+      $["x-ms-file-last-write-time"].format = "date-time";
+      $["x-ms-file-change-time"].format = "date-time";
+```
