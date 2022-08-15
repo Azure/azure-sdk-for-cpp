@@ -259,12 +259,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Storage::Metadata Metadata;
 
-    /**
-     * Sets the file's content type.If this property is not specified on the request, then the
-     * property will be preserved for the file
-     */
-    Nullable<std::string> FileContentType;
-
   };
 
   /**

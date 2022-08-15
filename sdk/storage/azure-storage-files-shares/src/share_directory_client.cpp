@@ -218,7 +218,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.DestinationLeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
-    protocolLayerOptions.FileContentType = options.FileContentType;
     protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
