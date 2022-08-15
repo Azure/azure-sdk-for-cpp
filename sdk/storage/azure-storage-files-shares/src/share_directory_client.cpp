@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     destinationFileUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
 
     auto protocolLayerOptions = _detail::FileClient::RenameFileOptions();
-    protocolLayerOptions.RenameSource =  sourceFileUrl.GetAbsoluteUrl();
+    protocolLayerOptions.RenameSource = sourceFileUrl.GetAbsoluteUrl();
     protocolLayerOptions.ReplaceIfExists = options.ReplaceIfExists;
     protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.DestinationLeaseId = options.AccessConditions.LeaseId;

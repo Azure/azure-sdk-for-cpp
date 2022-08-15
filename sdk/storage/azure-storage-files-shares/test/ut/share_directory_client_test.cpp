@@ -256,21 +256,18 @@ namespace Azure { namespace Storage { namespace Test {
       auto newFileClient
           = baseDirectoryClient
                 .RenameFile(
-                    oldSubdirectoryName + "/" + oldFilename,
-                    otherDirectoryname + "/" + newFilename)
+                    oldSubdirectoryName + "/" + oldFilename, otherDirectoryname + "/" + newFilename)
                 .Value;
       EXPECT_NO_THROW(newFileClient.GetProperties());
       EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
     }
-    //root directory
+    // root directory
     {
       const std::string oldFilename = testName + "14";
       auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
       oldFileClient.Create(512);
       const std::string newFilename = testName + "15";
-      auto newFileClient
-          = baseDirectoryClient.RenameFile(oldFilename, newFilename)
-                .Value;
+      auto newFileClient = baseDirectoryClient.RenameFile(oldFilename, newFilename).Value;
       EXPECT_NO_THROW(newFileClient.GetProperties());
       EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
     }
@@ -302,7 +299,6 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ShareLeaseClient renamedLeaseClient(newFileClient, oldLeaseId);
       renamedLeaseClient.Release();
     }
-
   }
 
   TEST_F(FileShareDirectoryClientTest, RenameSubdirectory)
@@ -415,20 +411,18 @@ namespace Azure { namespace Storage { namespace Test {
       oldSubdirectoryClient.Create();
 
       const std::string otherDirectoryName = testName + "12";
-      auto otherDirectoryClient
-          = rontDirectoryClient.GetSubdirectoryClient(otherDirectoryName);
+      auto otherDirectoryClient = rontDirectoryClient.GetSubdirectoryClient(otherDirectoryName);
       otherDirectoryClient.Create();
       const std::string newSubdirectoryName = testName + "13";
-      auto newSubdirectoryClient
-          = baseDirectoryClient
-                .RenameSubdirectory(
-                    oldMiddleDirectoryName + "/" + oldSubdirectoryName,
-                    otherDirectoryName + "/" + newSubdirectoryName)
-                .Value;
+      auto newSubdirectoryClient = baseDirectoryClient
+                                       .RenameSubdirectory(
+                                           oldMiddleDirectoryName + "/" + oldSubdirectoryName,
+                                           otherDirectoryName + "/" + newSubdirectoryName)
+                                       .Value;
       EXPECT_NO_THROW(newSubdirectoryClient.GetProperties());
       EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
     }
-    //root directory
+    // root directory
     {
       const std::string oldSubdirectoryName = testName + "14";
       auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
@@ -436,10 +430,7 @@ namespace Azure { namespace Storage { namespace Test {
       oldSubdirectoryClient.GetFileClient(testName + "File1").Create(512);
       const std::string newSubdirectoryName = testName + "15";
       auto newSubdirectoryClient
-          = baseDirectoryClient
-                .RenameSubdirectory(
-                    oldSubdirectoryName, newSubdirectoryName)
-                .Value;
+          = baseDirectoryClient.RenameSubdirectory(oldSubdirectoryName, newSubdirectoryName).Value;
       EXPECT_NO_THROW(newSubdirectoryClient.GetProperties());
       EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
     }

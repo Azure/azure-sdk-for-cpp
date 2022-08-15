@@ -258,7 +258,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * A name-value pair to associate with a file storage object.
      */
     Storage::Metadata Metadata;
-
   };
 
   /**
