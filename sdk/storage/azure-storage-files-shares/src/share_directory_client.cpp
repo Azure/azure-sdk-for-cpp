@@ -206,7 +206,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto sourceFileUrl = m_shareDirectoryUrl;
     sourceFileUrl.AppendPath(_internal::UrlEncodePath(fileName));
 
+    const std::string& currentPath = m_shareDirectoryUrl.GetPath();
+    std::string destinationFileShare = currentPath.substr(0, currentPath.find('/'));
     auto destinationFileUrl = m_shareDirectoryUrl;
+    destinationFileUrl.SetPath(_internal::UrlEncodePath(destinationFileShare));
     destinationFileUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
 
     auto protocolLayerOptions = _detail::FileClient::RenameFileOptions();
@@ -216,12 +219,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.DestinationLeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.FileContentType = options.FileContentType;
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    if (!options.SmbProperties.Attributes.GetValues().empty())
-    {
-      protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
-    }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
@@ -255,15 +255,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Response<ShareDirectoryClient> ShareDirectoryClient::RenameSubdirectory(
-      const std::string& directoryName,
+      const std::string& subdirectoryName,
       const std::string& destinationDirectoryPath,
       const RenameDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
     auto sourceDirectoryUrl = m_shareDirectoryUrl;
-    sourceDirectoryUrl.AppendPath(_internal::UrlEncodePath(directoryName));
+    sourceDirectoryUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
 
+    const std::string& currentPath = m_shareDirectoryUrl.GetPath();
+    std::string destinationFileShare = currentPath.substr(0, currentPath.find('/'));
     auto destinationDirectoryUrl = m_shareDirectoryUrl;
+    destinationDirectoryUrl.SetPath(_internal::UrlEncodePath(destinationFileShare));
     destinationDirectoryUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
 
     auto protocolLayerOptions = _detail::DirectoryClient::RenameDirectoryOptions();
@@ -272,12 +275,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.DestinationLeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    if (!options.SmbProperties.Attributes.GetValues().empty())
-    {
-      protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
-    }
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(

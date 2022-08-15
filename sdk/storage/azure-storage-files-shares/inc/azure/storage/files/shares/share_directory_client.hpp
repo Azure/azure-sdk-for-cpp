@@ -117,7 +117,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Renames a file. This API does not support renaming a file
      * from one share to another, or between storage accounts.
      * @param fileName The file that gets renamed.
-     * @param destinationFilePath The path of the file the source file is renaming to.
+     * @param destinationFilePath The path of the file the source file is renaming to. The
+     * destination is an absolute path under the root of the share, without leading slash.
      * @param options Optional parameters to rename a file.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<ShareFileClient> The client targets the renamed file.
@@ -133,6 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * from one share to another, or between storage accounts.
      * @param subdirectoryName The subdirectory that gets renamed.
      * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
+     * The destination is an absolute path under the root of the share, without leading slash.
      * @param options Optional parameters to rename a directory.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<ShareDirectoryClient> The client targets the renamed
@@ -140,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Response<ShareDirectoryClient> RenameSubdirectory(
-        const std::string& directoryName,
+        const std::string& subdirectoryName,
         const std::string& destinationDirectoryPath,
         const RenameDirectoryOptions& options = RenameDirectoryOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
