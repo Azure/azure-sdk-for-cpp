@@ -237,10 +237,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(newProperties = newFileClient.GetProperties().Value);
       EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
       EXPECT_EQ(renameOptions.Metadata, newProperties.Metadata);
-      EXPECT_EQ(properties.CreatedOn.Value(), newProperties.SmbProperties.CreatedOn.Value());
-      EXPECT_EQ(properties.ChangedOn.Value(), newProperties.SmbProperties.ChangedOn.Value());
-      EXPECT_EQ(
-          properties.LastWrittenOn.Value(), newProperties.SmbProperties.LastWrittenOn.Value());
       EXPECT_EQ(properties.Attributes, newProperties.SmbProperties.Attributes);
     }
 
@@ -405,10 +401,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(newProperties = newSubdirectoryClient.GetProperties().Value);
       EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
       EXPECT_EQ(renameOptions.Metadata, newProperties.Metadata);
-      EXPECT_EQ(properties.CreatedOn.Value(), newProperties.SmbProperties.CreatedOn.Value());
-      EXPECT_EQ(properties.ChangedOn.Value(), newProperties.SmbProperties.ChangedOn.Value());
-      EXPECT_EQ(
-          properties.LastWrittenOn.Value(), newProperties.SmbProperties.LastWrittenOn.Value());
     }
 
     // diff directory
