@@ -1,0 +1,1050 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "70192c9a-3b7f-4c09-5876-2d23f2f56353",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:37 GMT",
+        "etag": "\"0x8DA7E71BC366CE8\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "70192c9a-3b7f-4c09-5876-2d23f2f56353",
+        "x-ms-request-id": "027bc41e-d01a-003f-535a-b0a605000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile?restype=share"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "e6cba198-aa71-41b5-6812-23e431d90958",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:37 GMT",
+        "etag": "\"0x8DA7E71BC65DC6D\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e6cba198-aa71-41b5-6812-23e431d90958",
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-08-15T03:53:38.3542893Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:38.3542893Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:38.3542893Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "13199961128260716138*16137673612980802019",
+        "x-ms-request-id": "027bc421-d01a-003f-545a-b0a605000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFilebase?restype=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "6b251bb0-a697-44a8-6d97-12a01e37fa24",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "etag": "\"0x8DA7E71BC92B24D\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "6b251bb0-a697-44a8-6d97-12a01e37fa24",
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-08-15T03:53:38.6481229Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:38.6481229Z",
+        "x-ms-file-id": "11529285414812647424",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:38.6481229Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "13199961128260716138*16137673612980802019",
+        "x-ms-request-id": "027bc423-d01a-003f-555a-b0a605000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1?restype=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "565c5b6c-01f7-4583-4c21-d5f9e75f2015",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "etag": "\"0x8DA7E71BCC07273\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "565c5b6c-01f7-4583-4c21-d5f9e75f2015",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-id": "16140971433240035328",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "027bc425-d01a-003f-565a-b0a605000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "5be585e0-64b5-446c-71be-b80b83809544",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:38 GMT",
+        "etag": "\"0x8DA7E71BCED485A\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:39 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "5be585e0-64b5-446c-71be-b80b83809544",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:39.2417882Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-id": "16140971433240035328",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "027bc426-d01a-003f-575a-b0a605000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile3?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "b4114bc5-ffc7-4729-4625-7c1e70339df4",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "512",
+        "content-type": "application/octet-stream",
+        "date": "Mon, 15 Aug 2022 03:53:39 GMT",
+        "etag": "\"0x8DA7E71BCED485A\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:39 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b4114bc5-ffc7-4729-4625-7c1e70339df4",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:39.2417882Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-id": "16140971433240035328",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:38.9479539Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "027bc429-d01a-003f-585a-b0a605000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile3"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "00c4cb76-f060-4346-54bb-7c92fd8be515",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The specified resource does not exist.",
+        "STATUS_CODE": "404",
+        "date": "Mon, 15 Aug 2022 03:53:39 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "00c4cb76-f060-4346-54bb-7c92fd8be515",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "027bc42b-d01a-003f-5a5a-b0a605000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "c2d3d975-be76-40b5-6246-99d0c520e78e",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:40 GMT",
+        "etag": "\"0x8DA7E71BDFCBC58\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:41 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "c2d3d975-be76-40b5-6246-99d0c520e78e",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-id": "13835093239654252544",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "6881e482-501a-006c-445a-b08531000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile4"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "dfc08176-a8ae-4fc9-6625-24cf183b4af5",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:41 GMT",
+        "etag": "\"0x8DA7E71BE296B33\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:41 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "dfc08176-a8ae-4fc9-6625-24cf183b4af5",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:41.3136179Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:41.3136179Z",
+        "x-ms-file-id": "11529250230440558592",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:41.3136179Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "6881e486-501a-006c-455a-b08531000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile5"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "4e09ea77-7c8f-48ea-781d-ad1972fd084b",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The specified resource already exists.\nRequestId:6881e487-501a-006c-465a-b08531000000\nTime:2022-08-15T03:53:41.6083050Z</Message></Error>",
+        "REASON_PHRASE": "The specified resource already exists.",
+        "STATUS_CODE": "409",
+        "content-length": "228",
+        "content-type": "application/xml",
+        "date": "Mon, 15 Aug 2022 03:53:41 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "4e09ea77-7c8f-48ea-781d-ad1972fd084b",
+        "x-ms-error-code": "ResourceAlreadyExists",
+        "x-ms-request-id": "6881e487-501a-006c-465a-b08531000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile5?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "5ec206a3-1718-4365-4929-7259b3ce0a7c",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:42 GMT",
+        "etag": "\"0x8DA7E71BF16DD35\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:42 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "5ec206a3-1718-4365-4929-7259b3ce0a7c",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:42.8697397Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-id": "13835093239654252544",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "b43efe1c-b01a-0029-565a-b050d2000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile5?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "6bd7c3fe-b226-4039-4b57-694cff23db10",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "512",
+        "content-type": "application/octet-stream",
+        "date": "Mon, 15 Aug 2022 03:53:43 GMT",
+        "etag": "\"0x8DA7E71BF16DD35\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:42 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "6bd7c3fe-b226-4039-4b57-694cff23db10",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:42.8697397Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-id": "13835093239654252544",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:41.0207832Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "b43efe37-b01a-0029-6e5a-b050d2000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile5"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "aab30ba3-9589-4715-42f0-70528e3ddacf",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The specified resource does not exist.",
+        "STATUS_CODE": "404",
+        "date": "Mon, 15 Aug 2022 03:53:43 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "aab30ba3-9589-4715-42f0-70528e3ddacf",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "b43efe45-b01a-0029-7c5a-b050d2000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile4"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "08af9c2a-d48c-4ea4-7750-d52e634ba188",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:44 GMT",
+        "etag": "\"0x8DA7E71C029D316\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:44 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "08af9c2a-d48c-4ea4-7750-d52e634ba188",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-id": "13835163608398430208",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "db440125-b01a-004b-0e5a-b092f5000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile6"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "8698bdd0-0f1f-4bae-6d14-c66866d09465",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:45 GMT",
+        "etag": "\"0x8DA7E71C0DE8A19\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:45 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8698bdd0-0f1f-4bae-6d14-c66866d09465",
+        "x-ms-file-attributes": "ReadOnly | Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:45.8560537Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:45.8560537Z",
+        "x-ms-file-id": "13835075647468208128",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:45.8560537Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "2a8ee9f1-501a-0088-3c5a-b08baf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile7"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "7de20701-12e1-4eb4-6636-2775571ed9c4",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ReadOnlyAttribute</Code><Message>The specified resource is read-only and cannot be modified at this time.\nRequestId:2a8ee9f4-501a-0088-3d5a-b08baf000000\nTime:2022-08-15T03:53:46.2362454Z</Message></Error>",
+        "REASON_PHRASE": "The specified resource is read-only and cannot be modified at this time.",
+        "STATUS_CODE": "409",
+        "content-length": "258",
+        "content-type": "application/xml",
+        "date": "Mon, 15 Aug 2022 03:53:45 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7de20701-12e1-4eb4-6636-2775571ed9c4",
+        "x-ms-error-code": "ReadOnlyAttribute",
+        "x-ms-request-id": "2a8ee9f4-501a-0088-3d5a-b08baf000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile7?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "d2c624fa-d680-44e0-6720-bdaaff04d09b",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:46 GMT",
+        "etag": "\"0x8DA7E71C1D71DF8\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:47 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "d2c624fa-d680-44e0-6720-bdaaff04d09b",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:47.4851320Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-id": "13835163608398430208",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "5063decd-301a-008e-2a5a-b0b810000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile7?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "fb53d5e8-4b9b-4f09-6177-be816e5d73c6",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "512",
+        "content-type": "application/octet-stream",
+        "date": "Mon, 15 Aug 2022 03:53:46 GMT",
+        "etag": "\"0x8DA7E71C1D71DF8\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:47 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "fb53d5e8-4b9b-4f09-6177-be816e5d73c6",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:47.4851320Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-id": "13835163608398430208",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:44.6717206Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "5063ded1-301a-008e-2b5a-b0b810000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile7"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "df73b1ad-260f-4c42-4550-b6152ec8a626",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The specified resource does not exist.",
+        "STATUS_CODE": "404",
+        "date": "Mon, 15 Aug 2022 03:53:47 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "df73b1ad-260f-4c42-4550-b6152ec8a626",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "5063ded3-301a-008e-2c5a-b0b810000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile6"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "d75957a4-bd69-4131-4c77-e5a389b6e0b5",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:49 GMT",
+        "etag": "\"0x8DA7E71C2ECD29C\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:49 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "d75957a4-bd69-4131-4c77-e5a389b6e0b5",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:49.3051036Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:49.3051036Z",
+        "x-ms-file-id": "13835146016212385792",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:49.3051036Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "eae64d9a-601a-0015-295a-b07915000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile8"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "b9084ed6-82a1-4a98-71e8-5e7852770106",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:49 GMT",
+        "etag": "\"0x8DA7E71C322A7EA\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:49 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b9084ed6-82a1-4a98-71e8-5e7852770106",
+        "x-ms-file-attributes": "None",
+        "x-ms-file-change-time": "2022-08-15T03:53:44.9814640Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:44.9814643Z",
+        "x-ms-file-id": "13835146016212385792",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:44.9814643Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8661341311694537746*16137673612980802019",
+        "x-ms-request-id": "eae64d9e-601a-0015-2a5a-b07915000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile9?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "098d373f-eb36-48fe-6a67-ace81f39362e",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "512",
+        "content-type": "application/octet-stream",
+        "date": "Mon, 15 Aug 2022 03:53:49 GMT",
+        "etag": "\"0x8DA7E71C322A7EA\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:49 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "098d373f-eb36-48fe-6a67-ace81f39362e",
+        "x-ms-file-attributes": "None",
+        "x-ms-file-change-time": "2022-08-15T03:53:44.9814640Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:44.9814643Z",
+        "x-ms-file-id": "13835146016212385792",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:44.9814643Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8661341311694537746*16137673612980802019",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-meta0": "value",
+        "x-ms-meta-meta1": "value",
+        "x-ms-meta-meta2": "value",
+        "x-ms-meta-meta3": "value",
+        "x-ms-meta-meta4": "value",
+        "x-ms-request-id": "eae64d9f-601a-0015-2b5a-b07915000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile9"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "2f02b853-7048-459c-4f65-4a07547fb40e",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The specified resource does not exist.",
+        "STATUS_CODE": "404",
+        "date": "Mon, 15 Aug 2022 03:53:50 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "2f02b853-7048-459c-4f65-4a07547fb40e",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "eae64da1-601a-0015-2c5a-b07915000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile8"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "141ce434-1dfc-4074-5562-ae37ed036cf6",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:50 GMT",
+        "etag": "\"0x8DA7E71C4380E84\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:51 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "141ce434-1dfc-4074-5562-ae37ed036cf6",
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-08-15T03:53:51.4758788Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:51.4758788Z",
+        "x-ms-file-id": "13835110831840296960",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:51.4758788Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "13199961128260716138*16137673612980802019",
+        "x-ms-request-id": "27610200-201a-0059-3d5a-b0e925000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile10?restype=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "c3b4b333-5b95-4cb1-41ea-b9fd9ed11629",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:51 GMT",
+        "etag": "\"0x8DA7E71C46643BF\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:51 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "c3b4b333-5b95-4cb1-41ea-b9fd9ed11629",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-id": "11529267822626603008",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-parent-id": "13835110831840296960",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "27610206-201a-0059-3e5a-b0e925000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile10/RenameFile11"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "7798e09d-938f-4fb7-70ae-ec0bc24b3ffc",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:51 GMT",
+        "etag": "\"0x8DA7E71C49451F9\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:52 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7798e09d-938f-4fb7-70ae-ec0bc24b3ffc",
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-08-15T03:53:52.0805369Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:52.0805369Z",
+        "x-ms-file-id": "16140953841053990912",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:52.0805369Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "13199961128260716138*16137673612980802019",
+        "x-ms-request-id": "27610207-201a-0059-3f5a-b0e925000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile12?restype=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "a15ab057-8404-41d5-70aa-a24e8092709b",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:51 GMT",
+        "etag": "\"0x8DA7E71C4CB869A\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:52 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "a15ab057-8404-41d5-70aa-a24e8092709b",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:52.4423322Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-id": "11529267822626603008",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-parent-id": "16140953841053990912",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "27610209-201a-0059-415a-b0e925000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile12/RenameFile13?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "968df3ce-7b0a-493d-60a5-7450f950fd6d",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "512",
+        "content-type": "application/octet-stream",
+        "date": "Mon, 15 Aug 2022 03:53:52 GMT",
+        "etag": "\"0x8DA7E71C4CB869A\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:52 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "968df3ce-7b0a-493d-60a5-7450f950fd6d",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:52.4423322Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-id": "11529267822626603008",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:51.7787071Z",
+        "x-ms-file-parent-id": "16140953841053990912",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "2761020b-201a-0059-435a-b0e925000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile12/RenameFile13"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "02e7969f-ecbb-4e73-7b97-8c9ce619e776",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The specified resource does not exist.",
+        "STATUS_CODE": "404",
+        "date": "Mon, 15 Aug 2022 03:53:52 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "02e7969f-ecbb-4e73-7b97-8c9ce619e776",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "2761020e-201a-0059-455a-b0e925000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile10/RenameFile11"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "62122c20-c362-4d57-4ae4-074391833dc0",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:54 GMT",
+        "etag": "\"0x8DA7E71C6423906\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:54 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "62122c20-c362-4d57-4ae4-074391833dc0",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:54.8979462Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:54.8979462Z",
+        "x-ms-file-id": "13835181200584474624",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:54.8979462Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "af06b6e9-e01a-0069-345a-b057ea000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile14"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "351804bd-ad10-450f-67ea-0040c6b91924",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "date": "Mon, 15 Aug 2022 03:53:54 GMT",
+        "etag": "\"0x8DA7E71C6423906\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:54 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "351804bd-ad10-450f-67ea-0040c6b91924",
+        "x-ms-lease-id": "fc477f5a-ba12-4fa4-573f-376d695a5529",
+        "x-ms-request-id": "af06b70e-e01a-0069-375a-b057ea000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile14?comp=lease"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "e16d5e61-7ef6-453e-7842-ae1a007345f9",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:55 GMT",
+        "etag": "\"0x8DA7E71C6A09F0F\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:55 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e16d5e61-7ef6-453e-7842-ae1a007345f9",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:55.5165967Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:55.5165967Z",
+        "x-ms-file-id": "11529338191370780672",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:55.5165967Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "af06b712-e01a-0069-3a5a-b057ea000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile15"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "bd0af2f5-c9cb-4b6f-5f83-3de3a191587e",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "date": "Mon, 15 Aug 2022 03:53:55 GMT",
+        "etag": "\"0x8DA7E71C6A09F0F\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:55 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "bd0af2f5-c9cb-4b6f-5f83-3de3a191587e",
+        "x-ms-lease-id": "ab26d7cb-c011-4b3b-7f36-4070eb5c982c",
+        "x-ms-request-id": "af06b716-e01a-0069-3b5a-b057ea000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile15?comp=lease"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "9c28fd6d-69ec-42bb-63d4-84a5451c7584",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the file and no lease ID was specified in the request.\nRequestId:af06b717-e01a-0069-3c5a-b057ea000000\nTime:2022-08-15T03:53:56.1167016Z</Message></Error>",
+        "REASON_PHRASE": "There is currently a lease on the file and no lease ID was specified in the request.",
+        "STATUS_CODE": "412",
+        "content-length": "267",
+        "content-type": "application/xml",
+        "date": "Mon, 15 Aug 2022 03:53:55 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "9c28fd6d-69ec-42bb-63d4-84a5451c7584",
+        "x-ms-error-code": "LeaseIdMissing",
+        "x-ms-request-id": "af06b717-e01a-0069-3c5a-b057ea000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile15?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "4e7bbbe7-d753-4566-6651-2951a53478d5",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:57 GMT",
+        "etag": "\"0x8DA7E71C7C2ADFD\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:57 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "4e7bbbe7-d753-4566-6651-2951a53478d5",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-08-15T03:53:57.4175229Z",
+        "x-ms-file-creation-time": "2022-08-15T03:53:54.8979462Z",
+        "x-ms-file-id": "13835181200584474624",
+        "x-ms-file-last-write-time": "2022-08-15T03:53:54.8979462Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "8598604137816897901*16137673612980802019",
+        "x-ms-request-id": "204d6ab6-f01a-0065-015a-b0c0e2000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile15?comp=rename"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "8c9372a9-ba3e-46ae-4d70-9711bf9c8086",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "date": "Mon, 15 Aug 2022 03:53:57 GMT",
+        "etag": "\"0x8DA7E71C7C2ADFD\"",
+        "last-modified": "Mon, 15 Aug 2022 03:53:57 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "8c9372a9-ba3e-46ae-4d70-9711bf9c8086",
+        "x-ms-request-id": "204d6abb-f01a-0065-025a-b0c0e2000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile/RenameFile1/RenameFile15?comp=lease"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "381355ae-6484-4887-4173-9c5e3b0e6cc7",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:57 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "381355ae-6484-4887-4173-9c5e3b0e6cc7",
+        "x-ms-request-id": "204d6abc-f01a-0065-035a-b0c0e2000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile?restype=share"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "85c4eb5d-cf0a-46e5-5521-822f19fab254",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Mon, 15 Aug 2022 03:53:58 GMT",
+        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "85c4eb5d-cf0a-46e5-5521-822f19fab254",
+        "x-ms-request-id": "204d6abd-f01a-0065-045a-b0c0e2000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.file.core.windows.net/filesharedirectoryclienttestrenamefile?restype=share"
+    }
+  ]
+}
