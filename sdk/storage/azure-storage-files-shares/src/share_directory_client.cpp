@@ -197,6 +197,117 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       throw;
     }
   }
+  Azure::Response<ShareFileClient> ShareDirectoryClient::RenameFile(
+      const std::string& fileName,
+      const std::string& destinationFilePath,
+      const RenameFileOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto sourceFileUrl = m_shareDirectoryUrl;
+    sourceFileUrl.AppendPath(_internal::UrlEncodePath(fileName));
+
+    const std::string& currentPath = m_shareDirectoryUrl.GetPath();
+    std::string destinationFileShare = currentPath.substr(0, currentPath.find('/'));
+    auto destinationFileUrl = m_shareDirectoryUrl;
+    destinationFileUrl.SetPath(_internal::UrlEncodePath(destinationFileShare));
+    destinationFileUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
+
+    auto protocolLayerOptions = _detail::FileClient::RenameFileOptions();
+    protocolLayerOptions.RenameSource = sourceFileUrl.GetAbsoluteUrl();
+    protocolLayerOptions.ReplaceIfExists = options.ReplaceIfExists;
+    protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
+    protocolLayerOptions.DestinationLeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    if (options.SmbProperties.CreatedOn.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    if (options.SmbProperties.LastWrittenOn.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    if (options.FilePermission.HasValue())
+    {
+      protocolLayerOptions.FilePermission = options.FilePermission.Value();
+    }
+    else if (options.SmbProperties.PermissionKey.HasValue())
+    {
+      protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
+    }
+
+    auto response = _detail::FileClient::Rename(
+        *m_pipeline, destinationFileUrl, protocolLayerOptions, context);
+
+    auto renamedFileClient = ShareFileClient(destinationFileUrl, m_pipeline);
+    return Azure::Response<ShareFileClient>(
+        std::move(renamedFileClient), std::move(response.RawResponse));
+  }
+
+  Azure::Response<ShareDirectoryClient> ShareDirectoryClient::RenameSubdirectory(
+      const std::string& subdirectoryName,
+      const std::string& destinationDirectoryPath,
+      const RenameDirectoryOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto sourceDirectoryUrl = m_shareDirectoryUrl;
+    sourceDirectoryUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
+
+    const std::string& currentPath = m_shareDirectoryUrl.GetPath();
+    std::string destinationFileShare = currentPath.substr(0, currentPath.find('/'));
+    auto destinationDirectoryUrl = m_shareDirectoryUrl;
+    destinationDirectoryUrl.SetPath(_internal::UrlEncodePath(destinationFileShare));
+    destinationDirectoryUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
+
+    auto protocolLayerOptions = _detail::DirectoryClient::RenameDirectoryOptions();
+    protocolLayerOptions.RenameSource = sourceDirectoryUrl.GetAbsoluteUrl();
+    protocolLayerOptions.ReplaceIfExists = options.ReplaceIfExists;
+    protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
+    protocolLayerOptions.DestinationLeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    if (options.SmbProperties.CreatedOn.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    if (options.SmbProperties.LastWrittenOn.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    if (options.FilePermission.HasValue())
+    {
+      protocolLayerOptions.FilePermission = options.FilePermission.Value();
+    }
+    else if (options.SmbProperties.PermissionKey.HasValue())
+    {
+      protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
+    }
+
+    auto response = _detail::DirectoryClient::Rename(
+        *m_pipeline, destinationDirectoryUrl, protocolLayerOptions, context);
+
+    auto renamedFileClient = ShareDirectoryClient(destinationDirectoryUrl, m_pipeline);
+    return Azure::Response<ShareDirectoryClient>(
+        std::move(renamedFileClient), std::move(response.RawResponse));
+  }
 
   Azure::Response<Models::DeleteDirectoryResult> ShareDirectoryClient::Delete(
       const DeleteDirectoryOptions& options,
