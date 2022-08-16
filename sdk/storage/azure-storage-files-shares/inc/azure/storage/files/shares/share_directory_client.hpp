@@ -139,7 +139,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<ShareDirectoryClient> The client targets the renamed
      * directory.
-     * @remark This request is sent to dfs endpoint.
      */
     Azure::Response<ShareDirectoryClient> RenameSubdirectory(
         const std::string& subdirectoryName,
