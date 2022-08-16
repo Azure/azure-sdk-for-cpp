@@ -56,7 +56,7 @@ std::wstring StringToWideString(const std::string& str)
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
         "Unable to get the required transcoded size for the input string. Error Code: "
-            + std::to_string(error) + ".");
+        + std::to_string(error) + ".");
   }
 
   std::wstring wideStr(sizeNeeded, L'\0');
@@ -66,7 +66,7 @@ std::wstring StringToWideString(const std::string& str)
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
         "Unable to transcode the input string to a wide string. Error Code: "
-            + std::to_string(error) + ".");
+        + std::to_string(error) + ".");
   }
   return wideStr;
 }
@@ -101,7 +101,7 @@ std::string WideStringToString(const std::wstring& wideString)
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
         "Unable to get the required transcoded size for the input wide string. Error Code: "
-            + std::to_string(error) + ".");
+        + std::to_string(error) + ".");
   }
 
   std::string str(sizeNeeded, 0);
@@ -112,7 +112,7 @@ std::string WideStringToString(const std::wstring& wideString)
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
         "Unable to transcode the input wide string to a string. Error Code: "
-            + std::to_string(error) + ".");
+        + std::to_string(error) + ".");
   }
   return str;
 }
@@ -760,7 +760,7 @@ size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context con
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
         "Error while reading available data from the wire. Error Code: " + std::to_string(error)
-            + ".");
+        + ".");
   }
 
   this->m_streamTotalRead += numberOfBytesRead;

@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http {
         {
           throw Http::TransportException(
               "Broken connection. Couldn't get the active sockect for it."
-                  + std::string(curl_easy_strerror(result)));
+              + std::string(curl_easy_strerror(result)));
         }
       }
 

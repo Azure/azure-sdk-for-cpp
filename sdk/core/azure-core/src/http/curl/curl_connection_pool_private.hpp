@@ -18,10 +18,10 @@
 #include <azure/core/http/curl_transport.hpp>
 #include <condition_variable>
 #include <list>
-#include <unordered_map>
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <unordered_map>
 
 #if defined(TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members
@@ -103,7 +103,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      *
      * @remark There might be multiple connections for each host.
      */
-    std::unordered_map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
+    std::unordered_map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
+        ConnectionPoolIndex;
 
     std::mutex ConnectionPoolMutex;
 
