@@ -54,8 +54,7 @@ std::wstring StringToWideString(const std::string& str)
     // ERROR_INVALID_PARAMETER
     // ERROR_NO_UNICODE_TRANSLATION
     DWORD error = GetLastError();
-    throw Azure::Core::Http::DetailedTransportException<DWORD>(
-        error,
+    throw Azure::Core::Http::TransportException(
         "Unable to get the required transcoded size for the input string. Error Code: "
             + std::to_string(error) + ".");
   }
@@ -65,8 +64,7 @@ std::wstring StringToWideString(const std::string& str)
       == 0)
   {
     DWORD error = GetLastError();
-    throw Azure::Core::Http::DetailedTransportException<DWORD>(
-        error,
+    throw Azure::Core::Http::TransportException(
         "Unable to transcode the input string to a wide string. Error Code: "
             + std::to_string(error) + ".");
   }
@@ -101,8 +99,7 @@ std::string WideStringToString(const std::wstring& wideString)
     // ERROR_INVALID_PARAMETER
     // ERROR_NO_UNICODE_TRANSLATION
     DWORD error = GetLastError();
-    throw Azure::Core::Http::DetailedTransportException<DWORD>(
-        error,
+    throw Azure::Core::Http::TransportException(
         "Unable to get the required transcoded size for the input wide string. Error Code: "
             + std::to_string(error) + ".");
   }
@@ -113,8 +110,7 @@ std::string WideStringToString(const std::wstring& wideString)
       == 0)
   {
     DWORD error = GetLastError();
-    throw Azure::Core::Http::DetailedTransportException<DWORD>(
-        error,
+    throw Azure::Core::Http::TransportException(
         "Unable to transcode the input wide string to a string. Error Code: "
             + std::to_string(error) + ".");
   }
@@ -227,7 +223,7 @@ void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWO
   }
   errorMessage += '.';
 
-  throw Azure::Core::Http::DetailedTransportException<DWORD>(error, errorMessage);
+  throw Azure::Core::Http::TransportException(errorMessage);
 }
 
 _detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
@@ -762,8 +758,7 @@ size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context con
     // ERROR_NOT_ENOUGH_MEMORY
 
     DWORD error = GetLastError();
-    throw Azure::Core::Http::DetailedTransportException<DWORD>(
-        error,
+    throw Azure::Core::Http::TransportException(
         "Error while reading available data from the wire. Error Code: " + std::to_string(error)
             + ".");
   }

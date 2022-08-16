@@ -18,7 +18,7 @@
 #include <azure/core/http/curl_transport.hpp>
 #include <condition_variable>
 #include <list>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      *
      * @remark There might be multiple connections for each host.
      */
-    std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
+    std::unordered_map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
 
     std::mutex ConnectionPoolMutex;
 

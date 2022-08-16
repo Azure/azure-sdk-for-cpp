@@ -14,10 +14,6 @@
 #include <string>
 #include <thread>
 
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include <curl/curl.h>
-#endif
-
 namespace Azure { namespace Core { namespace Test {
   namespace {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
@@ -349,11 +345,10 @@ namespace Azure { namespace Core { namespace Test {
             response->GetStatusCode(),
             Azure::Core::Http::HttpStatusCode::ProxyAuthenticationRequired);
       }
-      catch (Azure::Core::Http::DetailedTransportException<CURLcode> const& ex)
+      catch (Azure::Core::Http::TransportException const&)
       {
         // CURL returns a connection error which triggers a transport exception.
         // See https://curl.se/mail/lib-2009-07/0078.html for more information.
-        EXPECT_EQ(ex.TransportError, 56 /* CURLE_RECV_ERROR*/);
       }
     }
     {

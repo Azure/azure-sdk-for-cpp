@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
       std::string const expectedConnectionKey(CreateConnectionKey(
-          AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "00001100"));
+          AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ",0,0,0,0,1,1,0,0"));
 
       {
         // Creating a new connection with default options
@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Now test that using a different connection config won't re-use the same connection
       std::string const secondExpectedKey = AzureSdkHttpbinServer::Schema() + "://"
-          + AzureSdkHttpbinServer::Host() + "0000100200000";
+          + AzureSdkHttpbinServer::Host() + ",0,0,0,0,1,0,0,200000";
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
@@ -162,13 +162,22 @@ namespace Azure { namespace Core { namespace Test {
       {
         std::lock_guard<std::mutex> lock(
             CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-        auto values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                          .ConnectionPoolIndex.begin();
-        EXPECT_EQ(values->second.size(), 1);
-        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
-        values++;
-        EXPECT_EQ(values->second.size(), 1);
-        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+        for (auto& val : Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                             .ConnectionPoolIndex)
+        {
+          EXPECT_EQ(val.second.size(), 1);
+        }
+        // The connection pool should have the two connections we added earlier.
+        EXPECT_NE(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .end(),
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .find(expectedConnectionKey));
+        EXPECT_NE(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .end(),
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .find(secondExpectedKey));
       }
 
       {
@@ -216,13 +225,22 @@ namespace Azure { namespace Core { namespace Test {
       {
         std::lock_guard<std::mutex> lock(
             CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-        auto values = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                          .ConnectionPoolIndex.begin();
-        EXPECT_EQ(values->second.size(), 1);
-        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), secondExpectedKey);
-        values++;
-        EXPECT_EQ(values->second.size(), 1);
-        EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
+        for (auto& val : Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                             .ConnectionPoolIndex)
+        {
+          EXPECT_EQ(val.second.size(), 1);
+        }
+        // The connection pool should have the two connections we added earlier.
+        EXPECT_NE(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .end(),
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .find(expectedConnectionKey));
+        EXPECT_NE(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .end(),
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .find(secondExpectedKey));
       }
       {
         std::lock_guard<std::mutex> lock(
@@ -415,7 +433,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "00001100"));
+            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ",0,0,0,0,1,1,0,0"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -451,7 +469,9 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ":44300001100"));
+            AzureSdkHttpbinServer::Schema(),
+            AzureSdkHttpbinServer::Host(),
+            ":443,0,0,0,0,1,1,0,0"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -488,7 +508,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), "00001100"));
+            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ",0,0,0,0,1,1,0,0"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -523,7 +543,9 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
-            AzureSdkHttpbinServer::Schema(), AzureSdkHttpbinServer::Host(), ":44300001100"));
+            AzureSdkHttpbinServer::Schema(),
+            AzureSdkHttpbinServer::Host(),
+            ":443,0,0,0,0,1,1,0,0"));
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool

@@ -169,8 +169,7 @@ namespace Azure { namespace Core { namespace Http {
 #endif
         if (result != CURLE_OK)
         {
-          throw Http::DetailedTransportException<CURLcode>(
-              result,
+          throw Http::TransportException(
               "Broken connection. Couldn't get the active sockect for it."
                   + std::string(curl_easy_strerror(result)));
         }

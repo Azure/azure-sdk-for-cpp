@@ -68,39 +68,6 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
-  /*********************  Exceptions  **********************/
-  /**
-   * @brief A detailed error while sending the HTTP request with the transport adapter.
-   *
-   * @tparam T Underlying error code. Specific to the transport implementation.
-   *
-   * @note This exception contains the underlying error returned from the transport.
-   * The type error code is specific to the transport implementation and the caller needs to
-   * take care interpreting this value.
-   */
-  template <typename T>
-  class DetailedTransportException final : public Azure::Core::Http::TransportException {
-  public:
-    /**
-     * @brief The Underlying error code which triggered the transport exception.
-     */
-    T TransportError;
-
-    /**
-     * @brief Constructs `%TransportException` with a \p message string.
-     *
-     * @remark The transport policy will throw this error whenever the transport adapter fail to
-     * perform a request.
-     *
-     * @param status Win32 error code triggering the exception.
-     * @param what The explanatory string.
-     */
-    explicit DetailedTransportException(T status, std::string const& what)
-        : TransportException(what), TransportError(status)
-    {
-    }
-  };
-
   /**
    * @brief The range of bytes within an HTTP resource.
    *

@@ -132,8 +132,8 @@ using Azure::Core::Diagnostics::_internal::Log;
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
 void WinSocketSetBuffSize(curl_socket_t socket)
 {
-  ULONG ideal;
-  DWORD ideallen;
+  ULONG ideal{};
+  DWORD ideallen{};
   // WSAloctl would get the ideal size for the socket buffer.
   if (WSAIoctl(socket, SIO_IDEAL_SEND_BACKLOG_QUERY, 0, 0, &ideal, sizeof(ideal), &ideallen, 0, 0)
       == 0)
@@ -228,7 +228,6 @@ using Azure::Core::Http::CurlNetworkConnection;
 using Azure::Core::Http::CurlSession;
 using Azure::Core::Http::CurlTransport;
 using Azure::Core::Http::CurlTransportOptions;
-using Azure::Core::Http::DetailedTransportException;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::RawResponse;
 using Azure::Core::Http::Request;
@@ -278,8 +277,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 
   if (performing != CURLE_OK)
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        performing, "Error while sending request. " + std::string(curl_easy_strerror(performing)));
+    throw Azure::Core::Http::TransportException(
+        "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
   if (HasWebSocketSupport())
   {
@@ -1018,10 +1017,9 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
       }
       default: {
         // Error reading from socket
-        throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-            readResult,
+        throw Azure::Core::Http::TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
-                + ". " + std::string(curl_easy_strerror(readResult)));
+            + ". " + std::string(curl_easy_strerror(readResult)));
       }
     }
   }
@@ -1282,16 +1280,28 @@ size_t CurlSession::ResponseBufferParser::BuildHeader(
 }
 
 namespace {
+// Calculate the connection key.
+// The connection key is a tuple of host, proxy info, TLS info, etc. Basically any characteristics
+// of the connection that should indicate that the connection shouldn't be re-used should be listed
+// the connection key.
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
 {
   std::string key(host);
+  key.append(",");
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
+  key.append(",");
   key.append(options.Proxy ? (options.Proxy->empty() ? "NoProxy" : options.Proxy.Value()) : "0");
+  key.append(",");
   key.append(options.ProxyUsername.empty() ? "0" : options.ProxyUsername);
+  key.append(",");
   key.append(options.ProxyPassword.empty() ? "0" : options.ProxyPassword);
+  key.append(",");
   key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
+  key.append(",");
   key.append(options.SslVerifyPeer ? "1" : "0");
+  key.append(",");
   key.append(options.NoSignal ? "1" : "0");
+  key.append(",");
   // using DefaultConnectionTimeout or 0 result in the same setting
   key.append(
       (options.ConnectionTimeout == Azure::Core::Http::_detail::DefaultConnectionTimeout
@@ -1469,45 +1479,40 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     if (!SetLibcurlOption(
             newHandle, CURLOPT_DEBUGFUNCTION, CurlConnectionPool::CurlLoggingCallback, &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate
-              + std::string(". Could not enable logging callback.")
-              + std::string(curl_easy_strerror(result)));
+          + std::string(". Could not enable logging callback.")
+          + std::string(curl_easy_strerror(result)));
     }
     if (!SetLibcurlOption(newHandle, CURLOPT_VERBOSE, 1, &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate
-              + std::string(". Could not enable verbose logging.")
-              + std::string(curl_easy_strerror(result)));
+          + std::string(". Could not enable verbose logging.")
+          + std::string(curl_easy_strerror(result)));
     }
   }
 
   // Libcurl setup before open connection (url, connect_only, timeout)
   if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-            + std::string(curl_easy_strerror(result)));
+        + std::string(curl_easy_strerror(result)));
   }
 
   if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-            + std::string(curl_easy_strerror(result)));
+        + std::string(curl_easy_strerror(result)));
   }
 
   if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-            + std::string(curl_easy_strerror(result)));
+        + std::string(curl_easy_strerror(result)));
   }
 
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
@@ -1515,22 +1520,20 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
   if (!SetLibcurlOption(newHandle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-            + std::string(curl_easy_strerror(result)));
+        + std::string(curl_easy_strerror(result)));
   }
 
   if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Fail setting connect timeout to: "
-              + std::to_string(options.ConnectionTimeout.count()) + " ms. "
-              + std::string(curl_easy_strerror(result)));
+          + ". Fail setting connect timeout to: "
+          + std::to_string(options.ConnectionTimeout.count()) + " ms. "
+          + std::string(curl_easy_strerror(result)));
     }
   }
 
@@ -1541,11 +1544,10 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_PROXY, options.Proxy->c_str(), &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set proxy to:" + options.Proxy.Value() + ". "
-              + std::string(curl_easy_strerror(result)));
+          + ". Failed to set proxy to:" + options.Proxy.Value() + ". "
+          + std::string(curl_easy_strerror(result)));
     }
   }
 
@@ -1553,22 +1555,20 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.c_str(), &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
-              + std::string(curl_easy_strerror(result)));
+          + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
+          + std::string(curl_easy_strerror(result)));
     }
   }
   if (!options.ProxyPassword.empty())
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.c_str(), &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
-              + std::string(curl_easy_strerror(result)));
+          + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
+          + std::string(curl_easy_strerror(result)));
     }
   }
 
@@ -1576,11 +1576,10 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set CA cert to:" + options.CAInfo + ". "
-              + std::string(curl_easy_strerror(result)));
+          + ". Failed to set CA cert to:" + options.CAInfo + ". "
+          + std::string(curl_easy_strerror(result)));
     }
   }
 
@@ -1592,21 +1591,19 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (!SetLibcurlOption(newHandle, CURLOPT_SSL_OPTIONS, sslOption, &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
-            + std::string(curl_easy_strerror(result)));
+        + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
+        + std::string(curl_easy_strerror(result)));
   }
 
   if (!options.SslVerifyPeer)
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
+          + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
     }
   }
 
@@ -1614,11 +1611,10 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_NOSIGNAL, 1L, &result))
     {
-      throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-          result,
+      throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-              + ". Failed to set NOSIGNAL option for libcurl. "
-              + std::string(curl_easy_strerror(result)));
+          + ". Failed to set NOSIGNAL option for libcurl. "
+          + std::string(curl_easy_strerror(result)));
     }
   }
 
@@ -1627,28 +1623,25 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // The libcurl uses HTTP/2 by default, if it can be negotiated with a server on handshake.
   if (!SetLibcurlOption(newHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set libcurl HTTP/1.1" + ". " + std::string(curl_easy_strerror(result)));
+        + ". Failed to set libcurl HTTP/1.1" + ". " + std::string(curl_easy_strerror(result)));
   }
 
   // Make libcurl to support only TLS v1.2 or later
   if (!SetLibcurlOption(newHandle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        result,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
+        + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
   }
 
   auto performResult = curl_easy_perform(newHandle.get());
   if (performResult != CURLE_OK)
   {
-    throw Azure::Core::Http::DetailedTransportException<CURLcode>(
-        performResult,
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-            + std::string(curl_easy_strerror(performResult)));
+        + std::string(curl_easy_strerror(performResult)));
   }
 
   return std::make_unique<CurlConnection>(std::move(newHandle), connectionKey);
