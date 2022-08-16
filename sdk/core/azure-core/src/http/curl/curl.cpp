@@ -1497,21 +1497,21 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // Libcurl setup before open connection (url, connect_only, timeout)
   if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
-    throw TransportException(
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
   if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
   {
-    throw TransportException(
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
   if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
   {
-    throw TransportException(
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
@@ -1556,7 +1556,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.c_str(), &result))
     {
-      throw Azure::Core::Http::TransportException(
+      throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
           + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
           + std::string(curl_easy_strerror(result)));
@@ -1566,7 +1566,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.c_str(), &result))
     {
-      throw Azure::Core::Http::TransportException(
+      throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
           + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
           + std::string(curl_easy_strerror(result)));
