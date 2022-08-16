@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added support for the `WebSockets` protocol via the `Azure::Core::Http::WebSockets::WebSocket` class.
+- Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.
+
 ### Breaking Changes
 
 ### Bugs Fixed

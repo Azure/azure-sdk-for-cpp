@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief An error while sending the HTTP request with the transport adapter.
    */
-  class TransportException : public Azure::Core::RequestFailedException {
+  class TransportException final : public Azure::Core::RequestFailedException {
   public:
     /**
      * @brief Constructs `%TransportException` with a \p message string.
