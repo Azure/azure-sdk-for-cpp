@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string testName(GetTestName());
     const std::string baseDirectoryName = testName + "1";
-    auto rontDirectoryClient = m_shareClient->GetRootDirectoryClient();
+    auto rootDirectoryClient = m_shareClient->GetRootDirectoryClient();
     auto baseDirectoryClient
         = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(baseDirectoryName);
     baseDirectoryClient.Create();
@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Test {
       oldSubdirectoryClient.Create();
 
       const std::string otherDirectoryName = testName + "12";
-      auto otherDirectoryClient = rontDirectoryClient.GetSubdirectoryClient(otherDirectoryName);
+      auto otherDirectoryClient = rootDirectoryClient.GetSubdirectoryClient(otherDirectoryName);
       otherDirectoryClient.Create();
       const std::string newSubdirectoryName = testName + "13";
       auto newSubdirectoryClient = baseDirectoryClient
