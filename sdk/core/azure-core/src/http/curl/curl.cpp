@@ -231,6 +231,7 @@ using Azure::Core::Http::CurlTransportOptions;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::RawResponse;
 using Azure::Core::Http::Request;
+using Azure::Core::Http::TransportException;
 using Azure::Core::Http::_detail::CurlConnectionPool;
 
 Azure::Core::Http::_detail::CurlConnectionPool
@@ -277,7 +278,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 
   if (performing != CURLE_OK)
   {
-    throw Azure::Core::Http::TransportException(
+    throw TransportException(
         "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
   if (HasWebSocketSupport())
@@ -1017,7 +1018,7 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
       }
       default: {
         // Error reading from socket
-        throw Azure::Core::Http::TransportException(
+        throw TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
             + ". " + std::string(curl_easy_strerror(readResult)));
       }
@@ -1467,7 +1468,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   unique_CURL newHandle(curl_easy_init(), CURL_deleter{});
   if (!newHandle)
   {
-    throw Azure::Core::Http::TransportException(
+    throw TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string("curl_easy_init returned Null"));
   }
@@ -1479,14 +1480,14 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     if (!SetLibcurlOption(
             newHandle, CURLOPT_DEBUGFUNCTION, CurlConnectionPool::CurlLoggingCallback, &result))
     {
-      throw Azure::Core::Http::TransportException(
+      throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate
           + std::string(". Could not enable logging callback.")
           + std::string(curl_easy_strerror(result)));
     }
     if (!SetLibcurlOption(newHandle, CURLOPT_VERBOSE, 1, &result))
     {
-      throw Azure::Core::Http::TransportException(
+      throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate
           + std::string(". Could not enable verbose logging.")
           + std::string(curl_easy_strerror(result)));
@@ -1496,21 +1497,21 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // Libcurl setup before open connection (url, connect_only, timeout)
   if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
-    throw Azure::Core::Http::TransportException(
+    throw TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
   if (port != 0 && !SetLibcurlOption(newHandle, CURLOPT_PORT, port, &result))
   {
-    throw Azure::Core::Http::TransportException(
+    throw TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
 
   if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
   {
-    throw Azure::Core::Http::TransportException(
+    throw TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(result)));
   }
@@ -1639,7 +1640,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   auto performResult = curl_easy_perform(newHandle.get());
   if (performResult != CURLE_OK)
   {
-    throw Azure::Core::Http::TransportException(
+    throw Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string(curl_easy_strerror(performResult)));
   }
