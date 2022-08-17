@@ -107,6 +107,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.Quota = options.ShareQuotaInGiB;
     protocolLayerOptions.AccessTier = options.AccessTier;
+    protocolLayerOptions.EnabledProtocols = options.EnabledProtocols;
+    protocolLayerOptions.RootSquash = options.RootSquash;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -202,6 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareClient::SetSharePropertiesOptions();
     protocolLayerOptions.Quota = options.ShareQuotaInGiB;
     protocolLayerOptions.AccessTier = options.AccessTier;
+    protocolLayerOptions.RootSquash = options.RootSquash;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
