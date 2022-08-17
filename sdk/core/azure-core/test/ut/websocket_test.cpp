@@ -364,6 +364,16 @@ TEST_F(WebSocketTests, PingSendTest)
     Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
         Azure::DateTime{std::chrono::system_clock::now() + 10s});
     EXPECT_THROW(testSocket.ReceiveFrame(receiveContext), Azure::Core::OperationCancelledException);
+
+    // The python websocket implementation sometimes has to be "kicked" to process operations, it's
+    // possible that the "pong" is queued up and has not been sent until the python server receives
+    // a request from the client. This is permitted because the protocol only requires that the
+    // server send a pong when it's convenient.
+    std::vector<uint8_t> sendData = GenerateRandomBytes(0, 10);
+    testSocket.SendFrame(sendData, true /*, context*/);
+    auto response = testSocket.ReceiveFrame();
+    EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
+
     auto statistics = testSocket.GetStatistics();
     GTEST_LOG_(INFO) << "Total bytes sent: " << std::dec << statistics.BytesSent;
     GTEST_LOG_(INFO) << "Total bytes received: " << std::dec << statistics.BytesReceived;
