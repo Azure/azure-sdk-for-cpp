@@ -537,7 +537,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(options.EnabledProtocols.Value(), properties.EnabledProtocols.Value());
     EXPECT_EQ(options.RootSquash.Value(), properties.RootSquash.Value());
 
-    //list shares works
+    // list shares works
     Files::Shares::ListSharesOptions listOptions;
     listOptions.Prefix = shareName;
     std::vector<Files::Shares::Models::ShareItem> shareItems;
@@ -557,7 +557,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(options.EnabledProtocols.Value(), shareItems[0].Details.EnabledProtocols.Value());
     EXPECT_EQ(options.RootSquash.Value(), shareItems[0].Details.RootSquash.Value());
 
-    //set&get properties works
+    // set&get properties works
     auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
     setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::Hot;
     EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
