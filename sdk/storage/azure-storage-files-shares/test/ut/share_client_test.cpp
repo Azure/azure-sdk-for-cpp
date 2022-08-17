@@ -523,14 +523,21 @@ namespace Azure { namespace Storage { namespace Test {
     auto shareName = m_testNameLowercase;
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         PremiumFileConnectionString(), shareName, m_options);
-    EXPECT_NO_THROW(shareClient.Create());
+    // create works
+    Files::Shares::CreateShareOptions options;
+    options.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    options.RootSquash = Files::Shares::Models::ShareRootSquash::AllSquash;
+    EXPECT_NO_THROW(shareClient.Create(options));
     Files::Shares::Models::ShareProperties properties;
     EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.Value());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
     EXPECT_TRUE(properties.ProvisionedBandwidthMBps.HasValue());
+    EXPECT_EQ(options.EnabledProtocols.Value(), properties.EnabledProtocols.Value());
+    EXPECT_EQ(options.RootSquash.Value(), properties.RootSquash.Value());
 
+    //list shares works
     Files::Shares::ListSharesOptions listOptions;
     listOptions.Prefix = shareName;
     std::vector<Files::Shares::Models::ShareItem> shareItems;
@@ -547,7 +554,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(shareItems[0].Details.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(shareItems[0].Details.AccessTierChangedOn.HasValue());
     EXPECT_TRUE(shareItems[0].Details.ProvisionedBandwidthMBps.HasValue());
+    EXPECT_EQ(options.EnabledProtocols.Value(), shareItems[0].Details.EnabledProtocols.Value());
+    EXPECT_EQ(options.RootSquash.Value(), shareItems[0].Details.RootSquash.Value());
 
+    //set&get properties works
     auto setPropertiesOptions = Files::Shares::SetSharePropertiesOptions();
     setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::Hot;
     EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
@@ -556,8 +566,11 @@ namespace Azure { namespace Storage { namespace Test {
     setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::TransactionOptimized;
     EXPECT_THROW(shareClient.SetProperties(setPropertiesOptions), StorageException);
     setPropertiesOptions.AccessTier = Files::Shares::Models::AccessTier::Premium;
+    setPropertiesOptions.RootSquash = Files::Shares::Models::ShareRootSquash::NoRootSquash;
     EXPECT_NO_THROW(shareClient.SetProperties(setPropertiesOptions));
+    EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.Value());
+    EXPECT_EQ(setPropertiesOptions.RootSquash.Value(), properties.RootSquash.Value());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
     shareClient.DeleteIfExists();

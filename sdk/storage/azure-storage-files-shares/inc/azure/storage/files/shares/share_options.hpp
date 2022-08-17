@@ -97,6 +97,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * Specifies the maximum size of the share, in gigabytes.
      */
     Azure::Nullable<int64_t> ShareQuotaInGiB;
+
+    /**
+     * Specifies the enabled protocols on the share. If they're not specified, the default is SMB.
+     */
+    Azure::Nullable<Models::ShareProtocols> EnabledProtocols;
+
+    /**
+     * Specifies the root squashing behavior on the share when NFS is enabled. If it's not
+     * specified, the default is NoRootSquash.
+     */
+    Azure::Nullable<Models::ShareRootSquash> RootSquash;
   };
 
   /**
@@ -143,6 +154,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * Specifies the maximum size of the share, in gigabytes.
      */
     Azure::Nullable<int64_t> ShareQuotaInGiB;
+
+    /**
+     * Specifies the root squashing behavior on the share when NFS is enabled. If it's not
+     * specified, the default is NoRootSquash.
+     */
+    Azure::Nullable<Models::ShareRootSquash> RootSquash;
   };
 
   /**
