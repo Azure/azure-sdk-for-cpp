@@ -1468,7 +1468,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   unique_CURL newHandle(curl_easy_init(), CURL_deleter{});
   if (!newHandle)
   {
-    throw TransportException(
+    throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string("curl_easy_init returned Null"));
   }
