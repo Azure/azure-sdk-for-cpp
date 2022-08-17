@@ -172,6 +172,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST_F(CertificateTests, AddPolicyManagementCertificate_LIVEONLY_)
   {
     CHECK_SKIP_TEST()
+
+    auto adminClient(CreateClient(ServiceInstanceType::Isolated));
+
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
     auto isolatedCertificate(Cryptography::ImportX509Certificate(
         Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
@@ -183,54 +186,48 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::string expectedThumbprint = certificateToAdd->GetThumbprint();
 
     {
-      auto adminClient(CreateClient(ServiceInstanceType::Isolated));
+      auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
+      std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(
+          Cryptography::ImportPrivateKey(
+              Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
 
-      {
-        auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
-        std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(
-            Cryptography::ImportPrivateKey(
-                Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
+      // Create a signing key to be used when signing the request to the service.
+      auto isolatedSigningKey(AttestationSigningKey{
+          isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
 
-        // Create a signing key to be used when signing the request to the service.
-        auto isolatedSigningKey(AttestationSigningKey{
-            isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
+      auto certificatesResult = adminClient.AddIsolatedModeCertificate(
+          certificateToAdd->ExportAsPEM(), isolatedSigningKey);
 
-        auto certificatesResult = adminClient.AddIsolatedModeCertificate(
-            certificateToAdd->ExportAsPEM(), isolatedSigningKey);
+      EXPECT_EQ(
+          Models::PolicyCertificateModification::IsPresent,
+          certificatesResult.Value.Body.CertificateModification);
 
-        EXPECT_EQ(
-            Models::PolicyCertificateModification::IsPresent,
-            certificatesResult.Value.Body.CertificateModification);
-
-        // And the thumbprint indicates which certificate was added.
-        EXPECT_EQ(expectedThumbprint, certificatesResult.Value.Body.CertificateThumbprint);
-      }
+      // And the thumbprint indicates which certificate was added.
+      EXPECT_EQ(expectedThumbprint, certificatesResult.Value.Body.CertificateThumbprint);
     }
-    {
-      // Make sure that the certificate we just added is included in the enumeration.
-      {
-        auto adminClient(CreateClient(ServiceInstanceType::Isolated));
-        auto policyCertificates = adminClient.GetIsolatedModeCertificates();
-        EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
-        bool foundIsolatedCertificate = false;
-        bool foundAddedCertificate = false;
-        for (const auto& signer : policyCertificates.Value.Body.Certificates)
+    // Make sure that the certificate we just added is included in the enumeration.
+    {
+      auto policyCertificates = adminClient.GetIsolatedModeCertificates();
+      EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1ul);
+
+      bool foundIsolatedCertificate = false;
+      bool foundAddedCertificate = false;
+      for (const auto& signer : policyCertificates.Value.Body.Certificates)
+      {
+        auto signerCertificate
+            = Cryptography::ImportX509Certificate(((*signer.CertificateChain)[0]));
+        if (signerCertificate->GetThumbprint() == isolatedCertificate->GetThumbprint())
         {
-          auto signerCertificate
-              = Cryptography::ImportX509Certificate(((*signer.CertificateChain)[0]));
-          if (signerCertificate->GetThumbprint() == isolatedCertificate->GetThumbprint())
-          {
-            foundIsolatedCertificate = true;
-          }
-          if (signerCertificate->GetThumbprint() == expectedThumbprint)
-          {
-            foundAddedCertificate = true;
-          }
+          foundIsolatedCertificate = true;
         }
-        EXPECT_TRUE(foundIsolatedCertificate);
-        EXPECT_TRUE(foundAddedCertificate);
+        if (signerCertificate->GetThumbprint() == expectedThumbprint)
+        {
+          foundAddedCertificate = true;
+        }
       }
+      EXPECT_TRUE(foundIsolatedCertificate);
+      EXPECT_TRUE(foundAddedCertificate);
     }
   }
 
