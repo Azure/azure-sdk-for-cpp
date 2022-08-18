@@ -969,6 +969,16 @@ directive:
       delete $["x-ms-lease-id"];
 ```
 
+### BreakShareLease
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=lease&break"].put.responses["202"].headers
+    transform: >
+      delete $["x-ms-lease-id"];
+```
+
 ### RenameFile/Directory
 
 ```yaml

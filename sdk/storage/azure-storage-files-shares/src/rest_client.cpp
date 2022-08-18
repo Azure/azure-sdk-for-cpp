@@ -1250,7 +1250,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
       response.LeaseTime = std::stoi(pRawResponse->GetHeaders().at("x-ms-lease-time"));
-      response.LeaseId = pRawResponse->GetHeaders().at("x-ms-lease-id");
       return Response<Models::_detail::BreakShareLeaseResult>(
           std::move(response), std::move(pRawResponse));
     }
