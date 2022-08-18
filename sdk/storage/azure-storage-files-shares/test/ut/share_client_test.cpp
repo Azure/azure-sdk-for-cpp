@@ -282,13 +282,13 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(expectedPermission, ret2.Value);
   }
 
-   TEST_F(FileShareClientTest, Lease)
+  TEST_F(FileShareClientTest, Lease)
   {
     {
       std::string leaseId1 = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
       auto lastModified = m_shareClient->GetProperties().Value.LastModified;
       std::chrono::seconds leaseDuration(20);
-      Files::Shares::ShareLeaseClient leaseClient (*m_shareClient, leaseId1);
+      Files::Shares::ShareLeaseClient leaseClient(*m_shareClient, leaseId1);
       auto aLease = leaseClient.Acquire(leaseDuration).Value;
       EXPECT_TRUE(aLease.ETag.HasValue());
       EXPECT_TRUE(aLease.LastModified >= lastModified);
@@ -397,7 +397,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(brokenLease.ETag.HasValue());
       EXPECT_TRUE(brokenLease.LastModified >= properties.LastModified);
       shareSnapshotLeaseClient.Release();
-
     }
 
     EXPECT_THROW(m_shareClient->Delete(), StorageException);
