@@ -29,6 +29,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     /**
+     * @brief Initializes a new instance of the ShareLeaseClient.
+     *
+     * @param shareClient A ShareClient representing the share being leased.
+     * @param leaseId A lease ID. This is not required for break operation.
+     */
+    explicit ShareLeaseClient(ShareClient shareClient, std::string leaseId)
+        : m_shareClient(std::move(shareClient)), m_leaseId(std::move(leaseId))
+    {
+    }
+
+    /**
      * @brief Gets a unique lease ID.
      *
      * @return A unique lease ID.
@@ -64,6 +75,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Response<Models::AcquireLeaseResult> Acquire(
         std::chrono::seconds duration,
         const AcquireLeaseOptions& options = AcquireLeaseOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context());
+
+    /**
+     * @brief Renews the share's previously-acquired lease.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A RenewLeaseResult describing the lease.
+     */
+    Azure::Response<Models::RenewLeaseResult> Renew(
+        const RenewLeaseOptions& options = RenewLeaseOptions(),
         const Azure::Core::Context& context = Azure::Core::Context());
 
     /**
@@ -103,28 +125,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context());
 
   private:
-    /**
-     * @brief Initializes a new instance of the ShareLeaseClient.
-     *
-     * @param shareClient A ShareClient representing the share being leased.
-     * @param leaseId A lease ID. This is not required for break operation.
-     */
-    explicit ShareLeaseClient(ShareClient shareClient, std::string leaseId)
-        : m_shareClient(std::move(shareClient)), m_leaseId(std::move(leaseId))
-    {
-    }
-
-    /**
-     * @brief Renews the file or share's previously-acquired lease.
-     *
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A RenewLeaseResult describing the lease.
-     */
-    Azure::Response<Models::RenewLeaseResult> Renew(
-        const RenewLeaseOptions& options = RenewLeaseOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context());
-
     Azure::Nullable<ShareFileClient> m_fileClient;
     Azure::Nullable<ShareClient> m_shareClient;
     std::mutex m_mutex;

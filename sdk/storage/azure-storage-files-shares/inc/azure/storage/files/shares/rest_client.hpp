@@ -603,10 +603,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Approximate time remaining in the lease period, in seconds.
          */
         int32_t LeaseTime = int32_t();
-        /**
-         * Uniquely identifies a share's lease.
-         */
-        std::string LeaseId;
       };
     } // namespace _detail
     /**
