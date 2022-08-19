@@ -745,6 +745,78 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = directoryNameAClient.ListFilesAndDirectories(options);
       EXPECT_LE(2U, response.Directories.size() + response.Files.size());
     }
+    {
+      // List with include option
+      Files::Shares::ListFilesAndDirectoriesOptions options;
+      options.Include = Files::Shares::Models::ListFilesIncludeType::Timestamps
+          | Files::Shares::Models::ListFilesIncludeType::ETag
+          | Files::Shares::Models::ListFilesIncludeType::Attributes
+          | Files::Shares::Models::ListFilesIncludeType::PermissionKey;
+      options.IncludeExtendedInfo = true;
+      auto directoryNameAClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
+      auto response = directoryNameAClient.ListFilesAndDirectories(options);
+      auto directories = response.Directories;
+      auto files = response.Files;
+      for (const auto& name : directoryNameSetA)
+      {
+        auto iter = std::find_if(
+            directories.begin(),
+            directories.end(),
+            [&name](const Files::Shares::Models::DirectoryItem& item) {
+              return item.Name == name;
+            });
+        auto directoryProperties = directoryNameAClient.GetSubdirectoryClient(name).GetProperties();
+        EXPECT_TRUE(iter->Details.Etag.HasValue());
+        EXPECT_TRUE(iter->Details.LastAccessedOn.HasValue());
+        EXPECT_EQ(iter->Details.LastModified, directoryProperties.Value.LastModified);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.Attributes,
+            directoryProperties.Value.SmbProperties.Attributes);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.FileId, directoryProperties.Value.SmbProperties.FileId);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.ChangedOn.Value(),
+            directoryProperties.Value.SmbProperties.ChangedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.CreatedOn.Value(),
+            directoryProperties.Value.SmbProperties.CreatedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.LastWrittenOn.Value(),
+            directoryProperties.Value.SmbProperties.LastWrittenOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.PermissionKey.Value(),
+            directoryProperties.Value.SmbProperties.PermissionKey.Value());
+      }
+      for (const auto& name : fileNameSetA)
+      {
+        auto iter = std::find_if(
+            files.begin(), files.end(), [&name](const Files::Shares::Models::FileItem& item) {
+              return item.Name == name;
+            });
+        auto fileProperties = directoryNameAClient.GetFileClient(name).GetProperties();
+        EXPECT_TRUE(iter->Details.Etag.HasValue());
+        EXPECT_TRUE(iter->Details.LastAccessedOn.HasValue());
+        EXPECT_EQ(iter->Details.LastModified, fileProperties.Value.LastModified);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.Attributes, fileProperties.Value.SmbProperties.Attributes);
+        EXPECT_EQ(iter->Details.SmbProperties.FileId, fileProperties.Value.SmbProperties.FileId);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.ChangedOn.Value(),
+            fileProperties.Value.SmbProperties.ChangedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.CreatedOn.Value(),
+            fileProperties.Value.SmbProperties.CreatedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.LastWrittenOn.Value(),
+            fileProperties.Value.SmbProperties.LastWrittenOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.PermissionKey.Value(),
+            fileProperties.Value.SmbProperties.PermissionKey.Value());
+      }
+      EXPECT_EQ(
+          response.DirectoryId, directoryNameAClient.GetProperties().Value.SmbProperties.FileId);
+    }
   }
 
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)

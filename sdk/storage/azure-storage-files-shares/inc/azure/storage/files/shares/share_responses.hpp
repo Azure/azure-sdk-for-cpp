@@ -296,6 +296,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * File items.
      */
     std::vector<Models::FileItem> Files;
+    /**
+     * Name of the directory.
+     */
+    std::string DirectoryId;
 
   private:
     void OnNextPage(const Azure::Core::Context& context);

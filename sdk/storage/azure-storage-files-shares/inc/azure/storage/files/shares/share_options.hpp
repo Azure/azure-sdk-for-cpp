@@ -392,6 +392,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+
+    /**
+     * Include this parameter to specify one or more datasets to include in the response.
+     */
+    Nullable<Models::ListFilesIncludeType> Include;
+
+    /**
+     * This header is implicitly assumed to be true if include query parameter is not empty. If
+     * true, the Content-Length property will be up to date.
+     */
+    Nullable<bool> IncludeExtendedInfo;
   };
 
   /**
