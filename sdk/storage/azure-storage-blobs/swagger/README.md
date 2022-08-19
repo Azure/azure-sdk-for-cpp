@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json
 ```
 
 ## ModelFour Options
@@ -102,7 +102,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-10-02"],
+        "enum": ["2021-04-10"],
         "description": "The version used for the operations to Azure storage services."
       };
 ```
@@ -116,6 +116,7 @@ directive:
     transform: >
       $["/?comp=list"].get.operationId = "Service_ListBlobContainers";
       $["/?comp=blobs"].get.operationId = "Service_FindBlobsByTags";
+      $["/{containerName}?restype=container&comp=blobs"].get.operationId = "BlobContainer_FindBlobsByTags";
       $["/{containerName}/{blob}?comp=incrementalcopy"].put.operationId = "PageBlob_StartCopyIncremental";
       $["/{containerName}?restype=container&comp=list&flat"].get.operationId = "BlobContainer_ListBlobs";
       $["/{containerName}?restype=container&comp=list&hierarchy"].get.operationId = "BlobContainer_ListBlobsByHierarchy";
@@ -279,6 +280,7 @@ directive:
       delete $.EncryptionAlgorithm["enum"];
       delete $.EncryptionAlgorithm["x-ms-enum"];
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
+      $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -465,6 +467,54 @@ directive:
       $.LeaseDuration.description = "When a blob is leased, specifies whether the lease is of infinite or fixed duration.";
       $.CopyStatus.description = "Status of the copy operation.";
       $.ArchiveStatus.description = "For blob storage LRS accounts, valid values are rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is not complete then this value indicates that rehydrate is pending and also tells the destination tier.";
+```
+
+### Striped Blob Support
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $
+    transform: >
+      const operations = [
+        "Blob_GetProperties",
+        "Blob_Download",
+        "Blob_SetExpiry",
+        "Blob_SetHTTPHeaders",
+        "Blob_SetMetadata",
+        "Blob_AcquireLease",
+        "Blob_ReleaseLease",
+        "Blob_RenewLease",
+        "Blob_ChangeLease",
+        "Blob_BreakLease",
+        "Blob_CreateSnapshot",
+        "Blob_StartCopyFromUri",
+        "Blob_CopyFromUri",
+        "Blob_Query",
+        "PageBlob_Create",
+        "PageBlob_UploadPages",
+        "PageBlob_ClearPages",
+        "PageBlob_UploadPagesFromUri",
+        "PageBlob_GetPageRanges",
+        "PageBlob_GetPageRangesDiff",
+        "PageBlob_Resize",
+        "PageBlob_UpdateSequenceNumber",
+        "PageBlob_StartCopyIncremental",
+      ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          status_codes.forEach((status_code, i) => {
+            operation.responses[status_code].headers["Last-Modified"]["x-ms-client-default"] = "";
+            operation.responses[status_code].headers["Last-Modified"]["x-nullable"] = true;
+            operation.responses[status_code].headers["ETag"]["x-ms-client-default"] = "";
+            operation.responses[status_code].headers["ETag"]["x-nullable"] = true;
+          });
+        }
+      }
 ```
 
 ### GetBlobServiceProperties
@@ -745,7 +795,12 @@ directive:
       delete $.ListBlobsFlatSegmentResponse.required;
       $.ListBlobsFlatSegmentResponse.properties["NextMarker"]["x-nullable"] = true;
 
+      $.BlobName["x-namespace"] = "_detail";
+      delete $.BlobName.properties["content"]["xml"];
+      $.BlobName["xml"] = {"name": "Name"};
+      $.BlobName.properties["content"]["x-ms-xml"] = {"name": "."};
       $.BlobItemInternal["x-ms-client-name"] = "BlobItem";
+      $.BlobItemInternal["x-namespace"] = "_detail";
       $.BlobItemInternal.properties["Deleted"]["x-ms-client-name"] = "IsDeleted";
       $.BlobItemInternal.properties["Properties"]["x-ms-client-name"] = "Details";
       $.BlobItemInternal.properties["BlobSize"] = $.BlobPropertiesInternal.properties["Content-Length"];
@@ -835,7 +890,7 @@ directive:
       $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
       $.ListBlobsHierarchySegmentResponse.properties["Blobs"] = $.ListBlobsFlatSegmentResponse.properties["Blobs"];
       $.ListBlobsHierarchySegmentResponse.properties["Blobs"]["x-ms-client-name"] = "Items";
-      $.ListBlobsHierarchySegmentResponse.properties["BlobPrefixes"] = {"type": "array", "items": {"type": "string", "xml": {"name": "Name"}}, "x-ms-xml": {"wrapped": true, "name": "Blobs/BlobPrefix"}};
+      $.ListBlobsHierarchySegmentResponse.properties["BlobPrefixes"] = {"type": "array", "items": {"$ref": "#/definitions/BlobName"}, "x-ms-xml": {"wrapped": true, "name": "Blobs/BlobPrefix"}};
       delete $.ListBlobsHierarchySegmentResponse.properties["Marker"];
       delete $.ListBlobsHierarchySegmentResponse.properties["MaxResults"];
       delete $.ListBlobsHierarchySegmentResponse.properties["Segment"];
@@ -1163,6 +1218,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
 ### QueryBlobContent

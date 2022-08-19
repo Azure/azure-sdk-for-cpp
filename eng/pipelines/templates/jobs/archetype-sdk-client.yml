@@ -270,13 +270,14 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
-        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-          displayName: 'Generate BOM'
-          condition: succeededOrFailed()
-          inputs:
-            BuildDropPath: $(Build.SourcesDirectory)/build
+        - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+          - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+            displayName: 'Generate BOM'
+            condition: succeededOrFailed()
+            inputs:
+              BuildDropPath: $(Build.SourcesDirectory)/build
 
-        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-          parameters:
-            ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
-            ArtifactName: 'release_artifact_manifest'
+          - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+            parameters:
+              ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
+              ArtifactName: 'release_artifact_manifest'

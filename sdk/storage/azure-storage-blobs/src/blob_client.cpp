@@ -677,6 +677,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
     }
     protocolLayerOptions.LegalHold = options.HasLegalHold;
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    protocolLayerOptions.CopySourceTags = options.CopySourceTagsMode;
 
     return _detail::BlobClient::CopyFromUri(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
