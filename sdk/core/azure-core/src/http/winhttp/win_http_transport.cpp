@@ -684,7 +684,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   if (majorVersion == 1)
   {
     if (WinHttpQueryHeaders(
-            requestHandle.get()
+            requestHandle.get(),
             WINHTTP_QUERY_STATUS_TEXT,
             WINHTTP_HEADER_NAME_BY_INDEX,
             outputBuffer.data(),
