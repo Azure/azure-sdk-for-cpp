@@ -63,6 +63,28 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     Azure::Nullable<std::string> Proxy;
+
+    /**
+     * @brief Username to be used for proxy connections.
+     *
+     * @remark No validation for the string is done by the Azure SDK. More about this option:
+     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY_USERNAME.html.
+     *
+     * @remark The default value is an empty string (no proxy).
+     *
+     */
+    std::string ProxyUsername;
+
+    /**
+     * @brief Password to be used for proxy connections.
+     *
+     * @remark No validation for the string is done by the Azure SDK. More about this option:
+     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY_PASSWORD.html.
+     *
+     * @remark The default value is an empty string (no proxy).
+     *
+     */
+    std::string ProxyPassword;
     /**
      * @brief The string for the certificate authenticator is sent to libcurl handle directly.
      *
@@ -122,6 +144,11 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
+
+    /**
+     * @brief If set, enables extended tracing from LibCURL.
+     */
+    bool EnableCurlTracing = false;
   };
 
   /**

@@ -17,27 +17,107 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
-std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTransportAdapter()
-{
-  // The order of these checks is important so that WinHTTP is picked over libcurl on Windows, when
-  // both are defined.
+namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _detail {
+  namespace {
+    bool AnyTransportOptionsSpecified(TransportOptions const& transportOptions)
+    {
+      return !(
+          !transportOptions.HttpProxy.HasValue() && transportOptions.ProxyPassword.empty()
+          && transportOptions.ProxyUserName.empty());
+    }
+    //    std::once_flag createTransportOnce;
+    //    std::shared_ptr<HttpTransport> defaultTransport;
+  } // namespace
+
+  std::shared_ptr<HttpTransport> GetTransportAdapter(TransportOptions const& transportOptions)
+  {
+    // The order of these checks is important so that WinHTTP is picked over libcurl on
+    // Windows, when both are defined.
 #if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-  return ::AzureSdkGetCustomHttpTransport();
+    return ::AzureSdkGetCustomHttpTransport();
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  return std::make_shared<Azure::Core::Http::WinHttpTransport>();
+    // Since C++11: If multiple threads attempt to initialize the same static local variable
+    // concurrently, the initialization occurs exactly once. We depend on this behavior to ensure
+    // that the singleton defaultTransport is correctly initialized.
+    static std::shared_ptr<HttpTransport> defaultTransport(std::make_shared<WinHttpTransport>());
+    if (AnyTransportOptionsSpecified(transportOptions))
+    {
+      WinHttpTransportOptions httpOptions;
+      if (transportOptions.HttpProxy.HasValue())
+      {
+        // WinHTTP proxy strings are semicolon separated elements, each of which
+        // has the following format:
+        //  ([<scheme>=][<scheme>"://"]<server>[":"<port>])
+        std::string proxyString;
+        proxyString = "http=" + transportOptions.HttpProxy.Value();
+        proxyString += ";";
+        proxyString += "https=" + transportOptions.HttpProxy.Value();
+        httpOptions.ProxyInformation = proxyString;
+      }
+      httpOptions.ProxyUserName = transportOptions.ProxyUserName;
+      httpOptions.ProxyPassword = transportOptions.ProxyPassword;
+      return std::make_shared<Azure::Core::Http::WinHttpTransport>(httpOptions);
+    }
+    else
+    {
+      //      std::call_once(createTransportOnce, []() {
+      //      defaultTransport = std::make_shared<Azure::Core::Http::WinHttpTransport>();
+      //    });
+      return defaultTransport;
+    }
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  return std::make_shared<Azure::Core::Http::CurlTransport>();
+    static std::shared_ptr<HttpTransport> defaultTransport(std::make_shared<CurlTransport>());
+    if (AnyTransportOptionsSpecified(transportOptions))
+    {
+      CurlTransportOptions curlOptions;
+      curlOptions.EnableCurlTracing = true;
+      if (transportOptions.HttpProxy.HasValue())
+      {
+        curlOptions.Proxy = transportOptions.HttpProxy;
+      }
+      if (!transportOptions.ProxyUserName.empty())
+      {
+        curlOptions.ProxyUsername = transportOptions.ProxyUserName;
+      }
+      if (!transportOptions.ProxyPassword.empty())
+      {
+        curlOptions.ProxyPassword = transportOptions.ProxyPassword;
+      }
+      return std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+    }
+    return defaultTransport;
 #else
-  return std::shared_ptr<HttpTransport>();
+    return std::shared_ptr<HttpTransport>();
 #endif
+  }
+}}}}} // namespace Azure::Core::Http::Policies::_detail
+
+TransportPolicy::TransportPolicy(TransportOptions const& options) : m_options(options)
+{
+  // If there's no transport specified, then we need to create one.
+  // If there is one specified, it's an error to specify other options.
+  if (m_options.Transport)
+  {
+#if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
+    if (_detail::AnyTransportOptionsSpecified(options))
+    {
+      AZURE_ASSERT_MSG(
+          false, "Invalid parameter: Proxies cannot be specified when a transport is specified.");
+    }
+#endif
+  }
+  else
+  {
+    // Configure a transport adapter based on the options and compiler switches.
+    m_options.Transport = _detail::GetTransportAdapter(m_options);
+  }
 }
 
 std::unique_ptr<RawResponse> TransportPolicy::Send(
     Request& request,
-    NextHttpPolicy nextPolicy,
+    NextHttpPolicy,
     Context const& context) const
 {
-  (void)nextPolicy;
   context.ThrowIfCancelled();
 
   /*

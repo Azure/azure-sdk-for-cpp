@@ -364,6 +364,16 @@ TEST_F(WebSocketTests, PingSendTest)
     Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
         Azure::DateTime{std::chrono::system_clock::now() + 10s});
     EXPECT_THROW(testSocket.ReceiveFrame(receiveContext), Azure::Core::OperationCancelledException);
+
+    // The python websocket implementation sometimes has to be "kicked" to process operations, it's
+    // possible that the "pong" is queued up and has not been sent until the python server receives
+    // a request from the client. This is permitted because the protocol only requires that the
+    // server send a pong when it's convenient.
+    std::vector<uint8_t> sendData = GenerateRandomBytes(0, 10);
+    testSocket.SendFrame(sendData, true /*, context*/);
+    auto response = testSocket.ReceiveFrame();
+    EXPECT_EQ(WebSocketFrameType::BinaryFrameReceived, response->FrameType);
+
     auto statistics = testSocket.GetStatistics();
     GTEST_LOG_(INFO) << "Total bytes sent: " << std::dec << statistics.BytesSent;
     GTEST_LOG_(INFO) << "Total bytes received: " << std::dec << statistics.BytesReceived;
@@ -386,7 +396,7 @@ TEST_F(WebSocketTests, PingSendTest)
 TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 {
   constexpr size_t threadCount = 50;
-  constexpr size_t testDataLength = 200000;
+  constexpr size_t testDataLength = 220000;
   constexpr size_t testDataSize = 100;
   constexpr auto testDuration = 10s;
 
@@ -397,12 +407,12 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
   // seed test data for the operations.
   std::vector<std::vector<uint8_t>> testData(testDataLength);
   std::vector<std::vector<uint8_t>> receivedData(testDataLength);
-  std::atomic_size_t iterationCount(0);
+  std::atomic<size_t> iterationCount(0);
 
   // Spin up threadCount threads and hammer the echo server for 10 seconds.
   std::vector<std::thread> threads;
-  std::atomic_int32_t cancellationExceptions{0};
-  std::atomic_int32_t exceptions{0};
+  std::atomic<int32_t> cancellationExceptions{0};
+  std::atomic<int32_t> exceptions{0};
   for (size_t threadIndex = 0; threadIndex < threadCount; threadIndex += 1)
   {
     threads.push_back(std::thread([&]() {
@@ -552,19 +562,19 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
 TEST_F(WebSocketTests, MultiThreadedTestOnMultipleSockets)
 {
   constexpr size_t threadCount = 50;
-  constexpr size_t testDataLength = 200000;
+  constexpr size_t testDataLength = 240000;
   constexpr size_t testDataSize = 100;
   constexpr auto testDuration = 10s;
 
   // seed test data for the operations.
   std::vector<std::vector<uint8_t>> testData(testDataLength);
   std::vector<std::vector<uint8_t>> receivedData(testDataLength);
-  std::atomic_size_t iterationCount(0);
+  std::atomic<size_t> iterationCount(0);
 
   // Spin up threadCount threads and hammer the echo server for 10 seconds.
   std::vector<std::thread> threads;
-  std::atomic_int32_t cancellationExceptions{0};
-  std::atomic_int32_t exceptions{0};
+  std::atomic<int32_t> cancellationExceptions{0};
+  std::atomic<int32_t> exceptions{0};
   for (size_t threadIndex = 0; threadIndex < threadCount; threadIndex += 1)
   {
     threads.push_back(std::thread([&]() {

@@ -497,5 +497,12 @@ namespace Azure { namespace Core {
   {
     return ::Base64Decode(text);
   }
+  namespace _internal {
+
+    std::string Convert::Base64Encode(const std::string& data)
+    {
+      return ::Base64Encode(reinterpret_cast<const uint8_t*>(data.data()), data.size());
+    }
+  } // namespace _internal
 
 }} // namespace Azure::Core

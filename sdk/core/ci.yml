@@ -70,6 +70,16 @@ stages:
           workingDirectory: build
           condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
           displayName: Launch python websocket server (Linux).
+        - pwsh: |
+            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
+            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
+            docker run --rm -d -p 3128:3128 squid-local
+            docker run --rm -d -p 3129:3129 squid-local.passwd
+          displayName: Launch Docker container proxy.
+          # The image we use for MacOS doesn't support docker, so skip on MacOS.
+          # We don't have a squid proxy container for windows, so we only run this on Ubuntu.
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'CODE_COVERAGE'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
           # When the test server receives a request on terminateserver, it shuts down gracefully.
@@ -86,6 +96,12 @@ stages:
                 http://localhost:8000/terminateserver
           displayName: Shutdown WebSocket server.
           condition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
+        - pwsh: |
+            docker ps -q -f ancestor=azsdkengsys.azurecr.io/cpp/squid | ForEach-Object { `
+                docker stop $_ `
+            }
+          displayName: Shutdown Squid Proxy.
+          condition: and(contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'ubuntu'))
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'

@@ -234,7 +234,9 @@ _detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
       WinHttpOpen(
           NULL, // Do not use a fallback user-agent string, and only rely on the header within the
                 // request itself.
-          WINHTTP_ACCESS_TYPE_NO_PROXY,
+          // If the customer asks for it, enable use of the system default HTTP proxy.
+          (m_options.EnableSystemDefaultProxy ? WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY
+                                              : WINHTTP_ACCESS_TYPE_NO_PROXY),
           WINHTTP_NO_PROXY_NAME,
           WINHTTP_NO_PROXY_BYPASS,
           0),
@@ -368,6 +370,32 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     }
   }
 
+  if (!m_options.ProxyInformation.empty())
+  {
+    WINHTTP_PROXY_INFO proxyInfo{};
+    std::wstring proxyWide{StringToWideString(m_options.ProxyInformation)};
+    proxyInfo.dwAccessType = WINHTTP_ACCESS_TYPE_NAMED_PROXY;
+    proxyInfo.lpszProxy = const_cast<LPWSTR>(proxyWide.c_str());
+    proxyInfo.lpszProxyBypass = WINHTTP_NO_PROXY_BYPASS;
+    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_PROXY, &proxyInfo, sizeof(proxyInfo)))
+    {
+      GetErrorAndThrow("Error while setting Proxy information.");
+    }
+  }
+  if (!m_options.ProxyUserName.empty() || !m_options.ProxyPassword.empty())
+  {
+    if (!WinHttpSetCredentials(
+            request.get(),
+            WINHTTP_AUTH_TARGET_PROXY,
+            WINHTTP_AUTH_SCHEME_BASIC,
+            StringToWideString(m_options.ProxyUserName).c_str(),
+            StringToWideString(m_options.ProxyPassword).c_str(),
+            0))
+    {
+      GetErrorAndThrow("Error while setting Proxy credentials.");
+    }
+  }
+
   if (m_options.IgnoreUnknownCertificateAuthority)
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
@@ -379,8 +407,12 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
 
   // If we are supporting WebSockets, then let WinHTTP know that it should
   // prepare to upgrade the HttpRequest to a WebSocket.
+#pragma warning(push)
+// warning C6387: _Param_(3) could be '0'.
+#pragma warning(disable : 6387)
   if (HasWebSocketSupport()
       && !WinHttpSetOption(request.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
+#pragma warning(pop)
   {
     GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
   }
@@ -578,8 +610,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
     DWORD error = GetLastError();
     if (error != ERROR_INSUFFICIENT_BUFFER)
     {
-      throw Azure::Core::Http::TransportException(
-          "Error while querying response headers. Error Code: " + std::to_string(error) + ".");
+      GetErrorAndThrow("Error while querying response headers.", error);
     }
   }
 
