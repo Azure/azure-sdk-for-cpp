@@ -53,6 +53,18 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, std::chrono::milli
   return false;
 }
 
+/**
+ * @brief Calculate the exponential delay needed for this retry.
+ *
+ * @param retryOptions Options controlling the delay algorithm.
+ * @param attempt Which attempt is this?
+ * @param jitterFactor Test hook removing the randomness from the delay algorithm.
+ *
+ * @returns Number of milliseconds to delay.
+ *
+ * @remarks This function calculates the exponential backoff needed for each retry, including a
+ * jitter factor.
+ */
 std::chrono::milliseconds CalculateExponentialDelay(
     RetryOptions const& retryOptions,
     int32_t attempt,

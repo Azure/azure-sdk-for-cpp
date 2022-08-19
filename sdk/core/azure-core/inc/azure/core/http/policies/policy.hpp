@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
-    std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
+    std::chrono::milliseconds RetryDelay = std::chrono::milliseconds(800);
 
     /**
      * @brief The maximum permissible delay between retry attempts.
