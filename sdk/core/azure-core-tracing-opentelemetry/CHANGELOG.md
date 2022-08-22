@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.3 (Unreleased)
+## 1.0.0-beta.4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0-beta.3 (2022-08-04)
+
+### Other Changes
+
+- Removed hard dependency on `opentelemetry-cpp` package version.
 
 ## 1.0.0-beta.2 (2022-06-30)
 

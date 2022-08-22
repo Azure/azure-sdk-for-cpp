@@ -679,17 +679,27 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
   std::string reasonPhrase;
   DWORD sizeOfReasonPhrase = sizeOfHeaders;
 
-  if (WinHttpQueryHeaders(
-          requestHandle.get(),
-          WINHTTP_QUERY_STATUS_TEXT,
-          WINHTTP_HEADER_NAME_BY_INDEX,
-          outputBuffer.data(),
-          &sizeOfReasonPhrase,
-          WINHTTP_NO_HEADER_INDEX))
+  // HTTP/2 does not support reason phrase, refer to
+  // https://www.rfc-editor.org/rfc/rfc7540#section-8.1.2.4.
+  if (majorVersion == 1)
   {
-    start = outputBuffer.begin();
-    reasonPhrase
-        = WideStringToString(std::wstring(start, start + sizeOfReasonPhrase / sizeof(WCHAR)));
+    if (WinHttpQueryHeaders(
+            requestHandle.get(),
+            WINHTTP_QUERY_STATUS_TEXT,
+            WINHTTP_HEADER_NAME_BY_INDEX,
+            outputBuffer.data(),
+            &sizeOfReasonPhrase,
+            WINHTTP_NO_HEADER_INDEX))
+    {
+      // even with HTTP/1.1, we cannot assume that reason phrase is set since it is optional
+      // according to https://www.rfc-editor.org/rfc/rfc2616.html#section-6.1.1.
+      if (sizeOfReasonPhrase > 0)
+      {
+        start = outputBuffer.begin();
+        reasonPhrase
+            = WideStringToString(std::wstring(start, start + sizeOfReasonPhrase / sizeof(WCHAR)));
+      }
+    }
   }
 
   // Allocate the instance of the response on the heap with a shared ptr so this memory gets

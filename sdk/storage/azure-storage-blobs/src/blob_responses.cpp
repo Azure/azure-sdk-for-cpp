@@ -70,8 +70,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   void FindBlobsByTagsPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;
-    *this = m_blobServiceClient->FindBlobsByTags(
-        m_tagFilterSqlExpression, m_operationOptions, context);
+    if (m_blobServiceClient)
+    {
+      *this = m_blobServiceClient->FindBlobsByTags(
+          m_tagFilterSqlExpression, m_operationOptions, context);
+    }
+    else
+    {
+      *this = m_blobContainerClient->FindBlobsByTags(
+          m_tagFilterSqlExpression, m_operationOptions, context);
+    }
   }
 
   void ListBlobsPagedResponse::OnNextPage(const Azure::Core::Context& context)
