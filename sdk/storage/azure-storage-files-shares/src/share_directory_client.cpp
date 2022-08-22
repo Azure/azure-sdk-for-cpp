@@ -427,6 +427,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Include = options.Include;
+    protocolLayerOptions.IncludeExtendedInfo = options.IncludeExtendedInfo;
     auto response = _detail::DirectoryClient::ListFilesAndDirectoriesSegment(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
 
@@ -439,6 +441,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.Prefix = std::move(response.Value.Prefix);
     pagedResponse.Directories = std::move(response.Value.Segment.DirectoryItems);
     pagedResponse.Files = std::move(response.Value.Segment.FileItems);
+    pagedResponse.DirectoryId = response.Value.DirectoryId.ValueOr(std::string());
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
