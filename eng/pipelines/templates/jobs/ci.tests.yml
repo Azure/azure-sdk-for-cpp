@@ -130,8 +130,6 @@ jobs:
         displayName: Validate Clang Format
         condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
 
-        # Moved earlier in the pipeline to make things fail faster.
-      - ${{ parameters.PreTestSteps }}
 
       - ${{ each artifact in parameters.Artifacts }}:
         - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -147,7 +145,7 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-#      - ${{ parameters.PreTestSteps }}
+      - ${{ parameters.PreTestSteps }}
 
       - pwsh: |
           ctest `
