@@ -60,9 +60,9 @@
     {
       "StaticConfigs": {
         "Windows2022": {
-          "OSVmImage": "Windows-2022",
+          "OSVmImage": "windows-2022",
           "Pool": "Azure Pipelines",
-          "CMAKE_GENERATOR": "Visual Studio 16 2019"
+          "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
       },
       "TargetPlatform": {
