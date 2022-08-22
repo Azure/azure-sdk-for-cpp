@@ -297,7 +297,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     std::vector<Models::FileItem> Files;
     /**
-     * Name of the directory.
+     * FileId of the directory.
      */
     std::string DirectoryId;
 

@@ -813,6 +813,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(
             iter->Details.SmbProperties.PermissionKey.Value(),
             fileProperties.Value.SmbProperties.PermissionKey.Value());
+        EXPECT_EQ(1024, iter->Details.FileSize);
       }
       EXPECT_EQ(
           response.DirectoryId, directoryNameAClient.GetProperties().Value.SmbProperties.FileId);
