@@ -41,12 +41,16 @@ function setEnvVar($key, $value) {
 }
 
 function getTargetOs {
+    Write-Host "Get Target OS" $OSVmImage
     if ($OsVMImage.StartsWith('macOS')) {
         return $OsVMImage
     }
 
     if ($OsVMImage -eq "MMS2019") {
         return "win-2019"
+    }
+    if ($OsVMImage -eq "MMS2019") {
+        return "windows-2022"
     }
 
     if ($OsVMImage -eq "MMSUbuntu18.04") {
