@@ -85,8 +85,12 @@ function getToolChain {
         return "AppleClang 12"
     }
 
-    if ($OSVmImage -eq "MMS2019" -or $OSVmImage -eq "windows-2022") {
+    if ($OSVmImage -eq "MMS2019") {
         return "MSVC"
+    }
+
+	if ($OSVmImage -eq "windows-2022") {
+        return "MSVC17"
     }
 
     if ($OSVmImage.Contains("Ubuntu")) {
