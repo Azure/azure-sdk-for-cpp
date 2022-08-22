@@ -97,7 +97,7 @@ stages:
           displayName: Shutdown WebSocket server.
           condition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
         - pwsh: |
-            docker ps -q -f ancestor=azsdkengsys.azurecr.io/cpp/squid | ForEach-Object { `
+            docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `
                 docker stop $_ `
             }
           displayName: Shutdown Squid Proxy.
