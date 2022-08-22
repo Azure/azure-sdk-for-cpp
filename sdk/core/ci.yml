@@ -91,42 +91,43 @@ stages:
         - pwsh: |
             wsl sudo squid
           displayName: Install Squid.
-          # 
           condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
         - pwsh: |
             wsl cp /etc/squid/squid.conf /tmp/
           displayName: Install Squid.
-          # 
           condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
         - pwsh: |
-            wsl cp /etc/squid/squid.conf /tmp/squid.conf; sed -i 's\http_port 3128\http_port 3129\' /tmp/squid.conf; sed -i 's\# pid_filename /var/run/squid.pid\pid_filename /var/run/squid2.pid\' /tmp/squid.conf;
-            displayName: Create /tmp/squid.conf
+            wsl cp /etc/squid/squid.conf /tmp/squid.conf; `
+            sed -i 's\http_port 3128\http_port 3129\' /tmp/squid.conf; `
+            sed -i 's\# pid_filename /var/run/squid.pid\pid_filename /var/run/squid2.pid\' /tmp/squid.conf;
+          displayName: Create /tmp/squid.conf
+          condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
         - pwsh: |
             wsl sudo squid -f /tmp/squid.conf
-            displayName: wsl sudo squid -f /tmp/squid.conf
+          displayName: wsl sudo squid -f /tmp/squid.conf
           condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
             
         - pwsh: |
             wsl ps auxf
-            displayName: wsl ps axuf
+          displayName: wsl ps axuf
           condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
         - pwsh: |
             curl -v http://www.example.org
-            displayName: curl -v http://www.example.org
+          displayName: curl -v http://www.example.org
           condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
         - pwsh: |
             curl -x http://localhost:3128 -v http://www.example.org
-            displayName: curl -x http://localhost:3128 -v http://www.example.org
-          condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
-
-        - script: |
-            curl -x http://localhost:3129 -v http://www.example.org
-            displayName: curl -x http://localhost:3129 -v http://www.example.org
+          displayName: curl -x http://localhost:3128 -v http://www.example.org
           condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
             
+        - script: |
+            curl -x http://localhost:3129 -v http://www.example.org
+          displayName: curl -x http://localhost:3129 -v http://www.example.org
+          condition: and(succeeded(), contains(variables.CmakeArgs['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
           # When the test server receives a request on terminateserver, it shuts down gracefully.
