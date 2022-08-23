@@ -48,9 +48,6 @@ resource anonymousContainerGroup 'Microsoft.ContainerInstance/containerGroups@20
               protocol: 'TCP'
             }
           ]
-          environmentVariables:[
-            { }
-          ]
           resources: {
             requests: {
               cpu: cpuCores
