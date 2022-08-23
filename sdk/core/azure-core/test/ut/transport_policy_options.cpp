@@ -248,7 +248,7 @@ namespace Azure { namespace Core { namespace Test {
   using namespace Azure::Core::Http::Policies::_internal;
 
   // constexpr char SocksProxyServer[] = "socks://98.162.96.41:4145";
-  TEST_F(TransportAdapterOptions, SimpleProxyTests_LIVEONLY_)
+  TEST_F(TransportAdapterOptions, SimpleProxyTests)
   {
     // will skip test under some cased where test can't run (usually LIVE only tests)
     if (GetTestMode() != TestMode::LIVE)
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace Test {
   typedef int CURLcode;
 #endif
 
-  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps_LIVENONLY_)
+  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps)
   {
     // will skip test under some cased where test can't run (usually LIVE only tests)
     if (GetTestMode() != TestMode::LIVE)
@@ -358,7 +358,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttp_LIVEONLY_)
+  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttp)
   {
     // will skip test under some cased where test can't run (usually LIVE only tests)
     if (GetTestMode() != TestMode::LIVE)

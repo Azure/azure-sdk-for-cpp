@@ -62,13 +62,13 @@ stages:
             filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1
             arguments: $(Build.SourcesDirectory)/WebSocketServer.log
             workingDirectory: build/sdk/core/azure-core/test/ut
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
           # It would be nice to collapse this branch with the previous one, but nohup doesn't seem to
           # behave when called from powershell.
         - bash: |
             nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
           workingDirectory: build
-          condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), ne(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
           displayName: Launch python websocket server (Linux).
         - pwsh: |
             docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
@@ -77,7 +77,7 @@ stages:
             docker run --rm -d -p 3129:3129 squid-local.passwd
           displayName: Launch Linux Docker container proxy
           # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'ubuntu'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests)
         - pwsh: |
             eng/scripts/Install-WSL.ps1
           displayName: Install WSL on Windows.
