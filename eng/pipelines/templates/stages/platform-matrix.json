@@ -62,6 +62,7 @@
         "Win2022": {
           "OSVmImage": "windows-2022",
           "Pool": "Azure Pipelines",
+          "RunProxyTests": true,
           "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
       },
@@ -69,7 +70,6 @@
         "Win32Api_debug_tests": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON -DMSVC_USE_STATIC_CRT=ON",
           "BuildArgs": "--parallel 8 --config Debug",
-          "RunProxyTests":  true,
           "PublishMapFiles": "true"
         }
       },
@@ -145,20 +145,17 @@
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
           "CODE_COVERAGE_COLLECT_ONLY": "1",
           "CODE_COVERAGE": "enabled",
-          "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "PublishMapFiles": "true"
         },
         "included": {},
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-          "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "PublishMapFiles": "true"
         },
         "included_samples": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
-          "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "PublishMapFiles": "true"
         }
       }
     },
