@@ -100,9 +100,9 @@ if (MSVC)
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
-if (RUN_PROXY_TESTS)
-message(STATUS "Running proxy tests" )
-add_compile_definitions(RUN_PROXY_TESTS)
+if (DISABLE_PROXY_TESTS)
+message(STATUS "Disabling proxy tests because they cannot be supported on this environment." )
+add_compile_definitions(DISABLE_PROXY_TESTS)
 endif()
 
 # Additional test files to be copied to the output directory.

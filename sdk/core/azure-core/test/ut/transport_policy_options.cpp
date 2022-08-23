@@ -14,6 +14,7 @@
 #include <string>
 #include <thread>
 
+#if !defined(DISABLE_PROXY_TESTS)
 namespace Azure { namespace Core { namespace Test {
   namespace {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
@@ -397,3 +398,4 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 }}} // namespace Azure::Core::Test
+#endif // defined(DISABLE_PROXY_TESTS)
