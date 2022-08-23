@@ -60,7 +60,7 @@ function getTargetOs {
         return "ubuntu-20.04"
     }
 
-    LogError "Could not infer target OS"
+    LogError "Could not infer target OS from " $OSVmImage
 }
 
 function getTargetArchitecture {
@@ -105,7 +105,7 @@ function getToolChain {
         }
         return "g++-7"
     }
-    LogError "Could not infer toolchain"
+    LogError "Could not infer toolchain from " $OSVmImage and $CmakeEnvArg
 }
 
 function getTargetPlatform {
@@ -125,7 +125,7 @@ function getTargetPlatform {
         return 'linux'
     }
 
-    LogError "Could not infer target platform"
+    LogError "Could not infer target platform from " $OSVmImage
 }
 
 function getBuildConfiguration {
