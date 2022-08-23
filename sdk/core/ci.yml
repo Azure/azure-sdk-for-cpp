@@ -95,11 +95,8 @@ stages:
             wsl cp /etc/squid/squid.conf /tmp/
           displayName: Copy squid configuration to temp.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
-        - pwsh: |
-            wsl cp /etc/squid/squid.conf /tmp/squid.conf; `
-            sed -i 's\http_port 3128\http_port 3129\' /tmp/squid.conf; `
-            sed -i 's\ pid_filename /var/run/squid.pid\pid_filename /var/run/squid2.pid\' /tmp/squid.conf;
-          displayName: Configure squid password settings.
+        - script: wsl cp /etc/squid/squid.conf /tmp/squid.conf; sed -i 's\http_port 3128\http_port 3129\' /tmp/squid.conf; sed -i 's\ pid_filename /var/run/squid.pid\pid_filename /var/run/squid2.pid\' /tmp/squid.conf;
+          displayName: Configure squid second instance.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
         - pwsh: |
