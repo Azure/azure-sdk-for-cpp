@@ -17,7 +17,7 @@
     },
     {
       "StaticConfigs": {
-        "_": {
+        "Ubuntu1804": {
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 4",
           "Pool": "azsdk-pool-mms-ubuntu-1804-general",
@@ -25,11 +25,11 @@
         }
       },
       "BuildConfig": {
-        "Linux_x64_gcc5_with_unit_test": {
+        "x64_gcc5_with_unit_test": {
           "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake",
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON"
         },
-        "Linux_x64_with_unit_test": {
+        "x64_with_unit_test": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON",
           "AptDependencies": "gcovr lcov",
           "CODE_COVERAGE": "enabled",
@@ -40,7 +40,7 @@
     },
     {
       "StaticConfigs": {
-        "_": {
+        "Ubuntu20": {
           "BuildArgs": "-j 4",
           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
           "OSVmImage": "MMSUbuntu20.04",
@@ -48,15 +48,15 @@
         }
       },
       "BuildConfiguration": {
-        "Ubuntu20_x64_with_unit_test": {
+        "x64_with_unit_test": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON",
           "AZURE_CORE_ENABLE_JSON_TESTS": 1
         },
-        "Ubuntu20_samples": {
+        "samples": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DCMAKE_BUILD_TYPE=Release ",
           "RunSamples": 1
         },
-        "Ubuntu20_x64_no_rtti": {
+        "x64_no_rtti": {
           "CmakeArgs": " -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release "
         }
       }
@@ -70,7 +70,7 @@
         }
       },
       "BuildConfig": {
-        "Win_x86_with_unit_test_winHttp": {
+        "x86_with_unit_test_winHttp": {
           "VcpkgInstall": "openssl",
           "CMAKE_GENERATOR_PLATFORM": "Win32",
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_PROXY_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
@@ -78,7 +78,7 @@
           "WindowsCtestConfig": "-C Release",
           "BuildArgs": "-v --parallel 8 --config Release"
         },
-        "Win_x86_no_rtti_with_unit_test": {
+        "x86_no_rtti_with_unit_test": {
           "VcpkgInstall": "libxml2 openssl",
           "CMAKE_GENERATOR_PLATFORM": "Win32",
           "CmakeArgs": " -DBUILD_RTTI=OFF -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON",
@@ -86,13 +86,13 @@
           "WindowsCtestConfig": "-C Release",
           "BuildArgs": "-v --parallel 8 --config Release"
         },
-        "Win_x86_with_unit_test_libcurl": {
+        "x86_with_unit_test_libcurl": {
           "CMAKE_GENERATOR_PLATFORM": "Win32",
           "VCPKG_DEFAULT_TRIPLET": "x86-windows-static",
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
           "BuildArgs": "-v --parallel 8"
         },
-        "HSM_Win_x64_with_unit_test_libcurl": {
+        "HSM_x64_with_unit_test_libcurl": {
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
@@ -101,7 +101,7 @@
           "KVLocation": "eastus2",
           "EnableHSM": 1
         },
-        "Win_x64_with_unit_samples_libcurl": {
+        "x64_with_unit_samples_libcurl": {
           "VcpkgInstall": "curl[winssl] openssl",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "CMAKE_GENERATOR_PLATFORM": "x64",
@@ -121,7 +121,7 @@
         }
       },
       "BuildConfig": {
-        "Win2022_x64_with_json_unit_test_winHttp": {
+        "x64_with_json_unit_test_winHttp": {
           "VcpkgInstall": "openssl",
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_PROXY_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
@@ -130,7 +130,7 @@
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "WindowsCtestConfig": "-C Release"
         },
-        "Win2022_x64_with_json_unit_samples_winHttp": {
+        "x64_with_json_unit_samples_winHttp": {
           "VcpkgInstall": "openssl",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "CMAKE_GENERATOR_PLATFORM": "x64",
@@ -140,7 +140,7 @@
           "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"
         },
-        "Win2022_x64_with_unit_test_winHttp": {
+        "x64_with_unit_test_winHttp": {
           "VcpkgInstall": "openssl",
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_PROXY_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
@@ -148,7 +148,7 @@
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "WindowsCtestConfig": "-C Release"
         },
-        "Win2022_x64_with_unit_samples_winHttp": {
+        "x64_with_unit_samples_winHttp": {
           "VcpkgInstall": "openssl",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "CMAKE_GENERATOR_PLATFORM": "x64",
