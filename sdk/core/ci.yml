@@ -89,12 +89,12 @@ stages:
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
         - pwsh: copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy/squid.conf \\wsl$\Ubuntu-20.04\etc\squid\squid.conf
-          displayName: Copy password file to wsl image.
+          displayName: Copy default squid config to wsl image.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
         - script: wsl ls -l /etc/squid
           displayName: Verify squid config.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
-        - script: wsl sudo squid
+        - script: wsl sudo squid -f /etc/squid/squid.conf
           displayName: Launch Squid with the default configuration.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
