@@ -41,7 +41,7 @@ function setEnvVar($key, $value) {
 }
 
 function getTargetOs {
-    if ($OsVMImage.StartsWith('macOS')) {
+    if ($OsVMImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture) {
         return $OsVMImage
     }
 
@@ -64,7 +64,7 @@ function getTargetOs {
 }
 
 function getTargetArchitecture {
-    if ($OSVmImage.StartsWith('macOS')) {
+    if ($OSVmImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture) {
         return "x64"
     }
 
@@ -81,7 +81,7 @@ function getTargetArchitecture {
 }
 
 function getToolChain {
-    if ($OSVmImage.StartsWith('macOS')) {
+    if ($OSVmImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture) {
         return "AppleClang 12"
     }
 
@@ -109,7 +109,7 @@ function getToolChain {
 }
 
 function getTargetPlatform {
-    if ($OSVmImage.StartsWith('macOS')) {
+    if ($OSVmImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture) {
         return "macos"
     }
 
