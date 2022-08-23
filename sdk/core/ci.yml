@@ -98,14 +98,24 @@ stages:
           displayName: Launch Squid with the default configuration.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
-        - pwsh: copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/proxypasswd \\wsl$\Ubuntu-20.04\tmp\proxypasswd
+        - script: |
+            curl -v http://www.example.org
+          displayName: Verify Network access with curl -v http://www.example.org
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+        - script: |
+            curl -x http://localhost:3128 -v http://www.example.org
+          displayName: Verify Anonymous proxy with curl -x http://localhost:3128 -v http://www.example.org
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+            
+
+        - pwsh: copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/proxypasswd //wsl$/Ubuntu-20.04/tmp/proxypasswd
           displayName: Copy password file to wsl image.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
         - pwsh: copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/squid.conf \\wsl$\Ubuntu-20.04\tmp\squid.conf
           displayName: Copy password squid.conf to wsl image.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
-        - script: wsl ls /tmp/squid.conf
+        - script: wsl ls -l /tmp
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
           displayName: Verify squid alternate config.
         - script: wsl sudo squid -f /tmp/squid.conf
@@ -117,16 +127,7 @@ stages:
           displayName: wsl ps axuf
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
-        - script: |
-            curl -v http://www.example.org
-          displayName: curl -v http://www.example.org
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
-        - script: |
-            curl -x http://localhost:3128 -v http://www.example.org
-          displayName: curl -x http://localhost:3128 -v http://www.example.org
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
-            
         - script: |
             curl -x http://localhost:3129 -v http://www.example.org
           displayName: curl -x http://localhost:3129 -v http://www.example.org
