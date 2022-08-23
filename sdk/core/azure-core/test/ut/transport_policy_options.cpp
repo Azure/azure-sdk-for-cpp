@@ -98,6 +98,7 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::_internal::Environment::GetVariable("ANONYMOUSCONTAINERIPV4ADDRESS")};
       if (anonymousServer.empty())
       {
+        GTEST_LOG_(ERROR) << "Could not find value for ANONYMOUSCONTAINERIPV4ADDRESS, Assuming local.";
         anonymousServer = "127.0.0.1";
       }
 
@@ -113,6 +114,8 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::_internal::Environment::GetVariable("AUTHENTICATEDCONTAINERIPV4ADDRESS")};
       if (authenticatedServer.empty())
       {
+        GTEST_LOG_(ERROR)
+            << "Could not find value for AUTHENTICATEDCONTAINERIPV4ADDRESS, Assuming local.";
         authenticatedServer = "127.0.0.1";
       }
       return "http://" + authenticatedServer + ":3129";
