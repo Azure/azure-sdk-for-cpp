@@ -95,8 +95,32 @@ stages:
             wsl cp /etc/squid/squid.conf /tmp/
           displayName: Copy squid configuration to temp.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+        - pwsh: copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/proxypasswd \\wsl$\Ubuntu-20.04\tmp\proxypasswd
+          displayName: Copy password file to wsl image.
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
         - script: wsl cp /etc/squid/squid.conf /tmp/squid.conf; sed -i 's\http_port 3128\http_port 3129\' /tmp/squid.conf; sed -i 's\ pid_filename /var/run/squid.pid\pid_filename /var/run/squid2.pid\' /tmp/squid.conf;
           displayName: Configure squid second instance.
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
+        - script: wsl sed -i 's\#acl AuthUsers proxy_auth REQUIRED\acl AuthUsers proxy_auth REQUIRED\' /tmp/squid.conf
+          displayName: Enable auth proxy in squid.conf.
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
+        - script: wsl sed -i 's\##auth_param basic program.*\auth_param basic program /usr/lib/squid/basic_ncsa_auth /tmp/proxypasswd\' /tmp/squid.conf
+          displayName: Enable auth proxy in squid.conf.
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
+        - script: wsl sed -i 's\##auth_param children 5 startup=5 idle=1\auth_param children 5 startup=5 idle=1\' /tmp/squid.conf
+          displayName: Enable auth proxy in squid.conf.
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
+        - script: wsl sed -i 's\##auth_param basic realm Squid proxy-caching web server\auth_param basic realm Squid proxy-caching web server\' /tmp/squid.conf
+          displayName: Enable auth proxy in squid.conf.
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
+
+        - script: wsl sed -i 's\##auth_param basic credentialsttl 2 hours\auth_param basic credentialsttl 2 hours\' /tmp/squid.conf
+          displayName: Enable auth proxy in squid.conf.
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'RUN_PROXY_TESTS=ON'))
 
         - script: wsl sudo squid -f /tmp/squid.conf
