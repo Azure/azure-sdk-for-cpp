@@ -92,10 +92,12 @@ namespace Azure { namespace Core { namespace Test {
     std::string HttpProxyServer()
     {
 #if defined(CODE_COVERAGE)
+      GTEST_LOG_(INFO) << "Code Coverage server";
       return "http://127.0.0.1:3128";
 #else
       std::string anonymousServer{
           Azure::Core::_internal::Environment::GetVariable("ANONYMOUSCONTAINERIPV4ADDRESS")};
+      GTEST_LOG_(INFO) << "Anonymous server: " << anonymousServer;
       if (anonymousServer.empty())
       {
         GTEST_LOG_(ERROR)
@@ -109,10 +111,12 @@ namespace Azure { namespace Core { namespace Test {
     std::string HttpProxyServerWithPassword()
     {
 #if defined(CODE_COVERAGE)
+      GTEST_LOG_(INFO) << "Code Coverage server";
       return "http://127.0.0.1:3129";
 #else
       std::string authenticatedServer{
           Azure::Core::_internal::Environment::GetVariable("AUTHENTICATEDCONTAINERIPV4ADDRESS")};
+      GTEST_LOG_(INFO) << "Authenticated server: " << authenticatedServer;
       if (authenticatedServer.empty())
       {
         GTEST_LOG_(ERROR)
