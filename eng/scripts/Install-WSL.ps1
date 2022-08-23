@@ -1,5 +1,6 @@
 write-host "WSL install of ubuntu."
 wsl --install -d Ubuntu-20.04
+start-sleep -seconds 5
 
 write-host "Launch WSL."
 [console]::OutputEncoding = New-Object System.Text.UnicodeEncoding
