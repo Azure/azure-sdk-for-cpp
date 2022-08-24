@@ -1,23 +1,23 @@
 {
-    "matrix": {
-        "OSConfig": {
-            "Windows": {
-                "Pool": "azsdk-pool-mms-win-2019-general",
-                "OSVmImage": "MMS2019",
-                "CmakeEnvArg": ""
-            },
-            "Linux": {
-                "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-                "OSVmImage": "MMSUbuntu18.04",
-                "CmakeEnvArg": "",
-                "AptDependencies": "libcurl4-openssl-dev"
-            },
-            "Mac": {
-                "Pool": "Azure Pipelines",
-                "OSVmImage": "macos-11",
-                "CmakeEnvArg": "OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include ",
-                "BrewDependencies": "openssl"
-            }
-        }
+  "matrix": {
+    "OSConfig": {
+      "Windows": {
+        "Pool": "azsdk-pool-mms-win-2019-general",
+        "OSVmImage": "MMS2019",
+        "CmakeEnvArg": ""
+      },
+      "Linux": {
+        "Pool": "azsdk-pool-mms-ubuntu-1804-general",
+        "OSVmImage": "MMSUbuntu18.04",
+        "CmakeEnvArg": "",
+        "AptDependencies": "libcurl4-openssl-dev"
+      },
+      "Mac": {
+        "Pool": "Azure Pipelines",
+        "OSVmImage": "macos-11",
+        "CmakeEnvArg": "OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include ",
+        "BrewDependencies": "openssl"
+      }
     }
+  }
 }
