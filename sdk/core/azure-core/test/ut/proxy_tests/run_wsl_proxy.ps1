@@ -9,7 +9,7 @@ copy localproxy.passwd/proxypasswd //wsl$/Ubuntu-20.04/tmp/proxypasswd
 copy localproxy.passwd/squid.conf \\wsl$\Ubuntu-20.04\tmp\squid.conf
 
 write-host "Verify contents of /etc/squid and /tmp to confirm copy succeeded."
-wsl ls -l /etc/squid; ls -l /tmp
+wsl ls -l /etc/squid /tmp
 
 write-host "Launch anonymous squid server."
 wsl sudo squid -f /etc/squid/squid.conf
