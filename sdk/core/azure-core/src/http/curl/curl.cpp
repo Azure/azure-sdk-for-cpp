@@ -120,7 +120,7 @@ int pollSocketUntilEventOrTimeout(
             pollInterval, std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
             .count());
 #if defined(AZ_PLATFORM_POSIX)
-    result = poll(&poller, 1, pollTimeoutMs);
+    result = poll(&poller, static_cast<nfds_t>(1), pollTimeoutMs);
     if (result < 0 && EINTR == errno)
     {
       continue;
