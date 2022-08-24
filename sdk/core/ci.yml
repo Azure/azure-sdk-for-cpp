@@ -83,38 +83,12 @@ stages:
           displayName: Install WSL on Windows hosts when proxy tests are enabled..
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
-#        - script: wsl sudo apt-get -y install squid
-#          displayName: Install Squid.
-#          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
         - pwsh: |
             dir
             ./run_wsl_proxy.ps1
           displayName: Launch WSL Proxy Server.
           workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
-        #- pwsh: |
-        #    copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy/squid.conf \\wsl$\Ubuntu-20.04\etc\squid\squid.conf
-        #    copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/proxypasswd //wsl$/Ubuntu-20.04/tmp/proxypasswd
-        #    copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/squid.conf \\wsl$\Ubuntu-20.04\tmp\squid.conf
-        #  displayName: Copy default squid config to wsl image.
-        #  condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
-        #- script: wsl ls -l /etc/squid; ls -l /tmp
-        #  displayName: Verify squid config files in /etc/squid and /tmp.
-        #  condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
-        #- script: wsl sudo squid -f /etc/squid/squid.conf
-        #  displayName: Launch Squid with the anonymous configuration.
-        #  condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-        #- script: wsl sudo squid -f /tmp/squid.conf
-        #  displayName: Launch Squid with the authenticated configuration.
-        #  condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-            
-        #- script: wsl ps auxf
-        #  displayName: Verify two squid instances are running.
-        #  condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
           # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
         - pwsh: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/verify_proxy.ps1
