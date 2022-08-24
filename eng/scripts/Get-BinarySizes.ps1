@@ -41,7 +41,7 @@ function setEnvVar($key, $value) {
 }
 
 function getTargetOs {
-    if ($OsVMImage -like 'macOS') {
+    if ($OsVMImage -like 'macOS*') {
         return $OsVMImage
     }
 
@@ -64,7 +64,7 @@ function getTargetOs {
 }
 
 function getTargetArchitecture {
-    if ($OSVmImage -like 'macOS') {
+    if ($OSVmImage -like 'macOS*') {
         return "x64"
     }
 
@@ -81,7 +81,7 @@ function getTargetArchitecture {
 }
 
 function getToolChain {
-    if ($OSVmImage -like 'macOS') {
+    if ($OSVmImage -like 'macOS*') {
         return "AppleClang 12"
     }
 
@@ -109,7 +109,7 @@ function getToolChain {
 }
 
 function getTargetPlatform {
-    if ($OSVmImage -like 'macOS') {
+    if ($OSVmImage -like 'macOS*') {
         return "macos"
     }
 
