@@ -88,6 +88,7 @@ stages:
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - pwsh: |
+            dir
             run_wsl_proxy.ps1
           displayName: Launch WSL Proxy Server.
           workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests

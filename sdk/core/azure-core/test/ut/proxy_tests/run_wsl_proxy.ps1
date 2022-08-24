@@ -1,3 +1,9 @@
+# cspell: words auxf
+wsl sudo apt-get -y install squid
+if (!$?) {
+	write-error "Failed to launch anonymous server."
+}
+
 copy localproxy/squid.conf \\wsl$\Ubuntu-20.04\etc\squid\squid.conf
 copy localproxy.passwd/proxypasswd //wsl$/Ubuntu-20.04/tmp/proxypasswd
 copy localproxy.passwd/squid.conf \\wsl$\Ubuntu-20.04\tmp\squid.conf
