@@ -41,12 +41,15 @@ function setEnvVar($key, $value) {
 }
 
 function getTargetOs {
-    if ($OsVMImage.StartsWith('macOS')) {
+    if ($OsVMImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture)) {
         return $OsVMImage
     }
 
     if ($OsVMImage -eq "MMS2019") {
         return "win-2019"
+    }
+    if ($OsVMImage -eq "windows-2022") {
+        return "win-2022"
     }
 
     if ($OsVMImage -eq "MMSUbuntu18.04") {
@@ -57,11 +60,11 @@ function getTargetOs {
         return "ubuntu-20.04"
     }
 
-    LogError "Could not infer target OS"
+    LogError "Could not infer target OS from " $OSVmImage
 }
 
 function getTargetArchitecture {
-    if ($OSVmImage.StartsWith('macOS')) {
+    if ($OSVmImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture)) {
         return "x64"
     }
 
@@ -78,12 +81,16 @@ function getTargetArchitecture {
 }
 
 function getToolChain {
-    if ($OSVmImage.StartsWith('macOS')) {
+    if ($OSVmImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture)) {
         return "AppleClang 12"
     }
 
     if ($OSVmImage -eq "MMS2019") {
         return "MSVC"
+    }
+
+	if ($OSVmImage -eq "windows-2022") {
+        return "MSVC17"
     }
 
     if ($OSVmImage.Contains("Ubuntu")) {
@@ -98,15 +105,15 @@ function getToolChain {
         }
         return "g++-7"
     }
-    LogError "Could not infer toolchain"
+    LogError "Could not infer toolchain from " $OSVmImage and $CmakeEnvArg
 }
 
 function getTargetPlatform {
-    if ($OSVmImage.StartsWith('macOS')) {
+    if ($OSVmImage.StartsWith('macOS', $true, (Get-Culture).InvariantCulture)) {
         return "macos"
     }
 
-    if ($OSVmImage -eq 'MMS2019') {
+    if ($OSVmImage -eq 'MMS2019' -or $OsVMImage -eq "windows-2022") {
         if (!$env:CMAKE_SYSTEM_NAME -and !$CmakeArgs.Contains('WindowsStore')) {
             return 'win32'
         } elseif ($env:CMAKE_SYSTEM_NAME -eq 'WindowsStore' -or $CmakeArgs.Contains('WindowsStore')) {
@@ -118,7 +125,7 @@ function getTargetPlatform {
         return 'linux'
     }
 
-    LogError "Could not infer target platform"
+    LogError "Could not infer target platform from " $OSVmImage
 }
 
 function getBuildConfiguration {

@@ -20,11 +20,11 @@ RUN apt-get -y update
 
 WORKDIR /
 
-COPY ./squid.conf /etc/squid/squid.conf
-COPY ./proxypasswd /etc/squid/passwords
+COPY ./squid.conf /tmp/squid.conf
+COPY ./proxypasswd /tmp/proxypasswd
 
 EXPOSE 3129
 
 STOPSIGNAL SIGTERM
 
-ENTRYPOINT squid -f /etc/squid/squid.conf && sleep 10 && tail -f /var/log/squid/access.log
+ENTRYPOINT squid -f /tmp/squid.conf && sleep 10 && tail -f /var/log/squid/access.log

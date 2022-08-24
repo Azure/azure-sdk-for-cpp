@@ -147,6 +147,14 @@ namespace Azure { namespace Core {
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
+     * @brief Constructs a `%Context` from another `%Context` instance.
+     *
+     * @param that Another instance to copy.
+     *
+     */
+    Context(Context const& that) = default;
+
+    /**
      * @brief Assigns `%Context` to another `%Context` instance.
      *
      * @param other Another instance to copy.

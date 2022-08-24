@@ -14,6 +14,7 @@
 #include <string>
 #include <thread>
 
+#if !defined(DISABLE_PROXY_TESTS)
 namespace Azure { namespace Core { namespace Test {
   namespace {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
@@ -91,32 +92,30 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string HttpProxyServer()
     {
-#if defined(CODE_COVERAGE)
-      return "http://127.0.0.1:3128";
-#else
       std::string anonymousServer{
           Azure::Core::_internal::Environment::GetVariable("ANONYMOUSCONTAINERIPV4ADDRESS")};
+      GTEST_LOG_(INFO) << "Anonymous server: " << anonymousServer;
       if (anonymousServer.empty())
       {
+        GTEST_LOG_(ERROR)
+            << "Could not find value for ANONYMOUSCONTAINERIPV4ADDRESS, Assuming local.";
         anonymousServer = "127.0.0.1";
       }
 
       return "http://" + anonymousServer + ":3128";
-#endif
     }
     std::string HttpProxyServerWithPassword()
     {
-#if defined(CODE_COVERAGE)
-      return "http://127.0.0.1:3129";
-#else
       std::string authenticatedServer{
           Azure::Core::_internal::Environment::GetVariable("AUTHENTICATEDCONTAINERIPV4ADDRESS")};
+      GTEST_LOG_(INFO) << "Authenticated server: " << authenticatedServer;
       if (authenticatedServer.empty())
       {
+        GTEST_LOG_(ERROR)
+            << "Could not find value for AUTHENTICATEDCONTAINERIPV4ADDRESS, Assuming local.";
         authenticatedServer = "127.0.0.1";
       }
       return "http://" + authenticatedServer + ":3129";
-#endif
     }
 
   protected:
@@ -248,25 +247,9 @@ namespace Azure { namespace Core { namespace Test {
   using namespace Azure::Core::Http::_internal;
   using namespace Azure::Core::Http::Policies::_internal;
 
-#if defined(CODE_COVERAGE)
-#else
-#endif
-
   // constexpr char SocksProxyServer[] = "socks://98.162.96.41:4145";
-  TEST_F(TransportAdapterOptions, SimpleProxyTests_LIVEONLY_)
+  TEST_F(TransportAdapterOptions, SimpleProxyTests)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-#if !defined(CODE_COVERAGE)
-    if (GetTestMode() != TestMode::LIVE)
-    {
-      GTEST_LOG_(INFO) << "Skipping live only test.";
-      GTEST_SKIP();
-    }
-    else
-    {
-      GTEST_LOG_(INFO) << "Running live only test.";
-    }
-#endif
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     std::string myIpAddress;
     {
@@ -315,15 +298,8 @@ namespace Azure { namespace Core { namespace Test {
   typedef int CURLcode;
 #endif
 
-  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps_LIVENONLY_)
+  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-#if !defined(CODE_COVERAGE)
-    if (GetTestMode() != TestMode::LIVE)
-    {
-      GTEST_SKIP();
-    }
-#endif
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
 
     // HTTPS Connections.
@@ -367,15 +343,8 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttp_LIVEONLY_)
+  TEST_F(TransportAdapterOptions, ProxyWithPasswordHttp)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-#if !defined(CODE_COVERAGE)
-    if (GetTestMode() != TestMode::LIVE)
-    {
-      GTEST_SKIP();
-    }
-#endif
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     // HTTP Connections.
     testUrl.SetScheme("http");
@@ -409,3 +378,4 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 }}} // namespace Azure::Core::Test
+#endif // defined(DISABLE_PROXY_TESTS)
