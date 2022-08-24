@@ -62,13 +62,13 @@ stages:
             filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1
             arguments: $(Build.SourcesDirectory)/WebSocketServer.log
             workingDirectory: build/sdk/core/azure-core/test/ut
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
           # It would be nice to collapse this branch with the previous one, but nohup doesn't seem to
           # behave when called from powershell.
         - bash: |
             nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
           workingDirectory: build
-          condition: and(succeeded(), ne(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), ne(contains(variables['Agent.OS'], 'windows')), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
           displayName: Launch python websocket server (Linux).
         - pwsh: |
             docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
@@ -77,48 +77,48 @@ stages:
             docker run --rm -d -p 3129:3129 squid-local.passwd
           displayName: Launch Linux Docker container proxy
           # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - pwsh: eng/scripts/Install-WSL.ps1
           displayName: Install WSL on Windows hosts when proxy tests are enabled..
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - script: wsl sudo apt-get -y install squid
           displayName: Install Squid.
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - pwsh: |
             copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy/squid.conf \\wsl$\Ubuntu-20.04\etc\squid\squid.conf
             copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/proxypasswd //wsl$/Ubuntu-20.04/tmp/proxypasswd
             copy $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd/squid.conf \\wsl$\Ubuntu-20.04\tmp\squid.conf
           displayName: Copy default squid config to wsl image.
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - script: wsl ls -l /etc/squid; ls -l /tmp
           displayName: Verify squid config files in /etc/squid and /tmp.
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - script: wsl sudo squid -f /etc/squid/squid.conf
           displayName: Launch Squid with the anonymous configuration.
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
         - script: wsl sudo squid -f /tmp/squid.conf
           displayName: Launch Squid with the authenticated configuration.
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
             
         - script: wsl ps auxf
           displayName: Verify two squid instances are running.
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
           # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
         - script: curl -v http://www.example.org
           displayName: Verify Network access with curl -v http://www.example.org
-          condition: and(succeeded(), variables.RunProxyTests)
+          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
         - script: curl -x http://localhost:3128 -v http://www.example.org
           displayName: Verify Anonymous proxy with curl -x http://localhost:3128 -v http://www.example.org
-          condition: and(succeeded(), variables.RunProxyTests)
+          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
         - script: curl -x http://localhost:3129 -v http://www.example.org -U user:password
           displayName: Verify authenticated proxy curl -x http://localhost:3129 -v http://www.example.org -U user:password
-          condition: and(succeeded(), variables.RunProxyTests)
+          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
