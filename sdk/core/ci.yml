@@ -83,15 +83,14 @@ stages:
           displayName: Install WSL on Windows hosts when proxy tests are enabled..
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
-        - pwsh: |
-            dir
-            ./run_wsl_proxy.ps1
+        - pwsh: ./run_wsl_proxy.ps1
           displayName: Launch WSL Proxy Server.
           workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
           condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
           # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
-        - pwsh: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/verify_proxy.ps1
+        - pwsh: ./verify_proxy.ps1
+          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
           displayName: Verify Proxy Server Working Correctly.
           condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
@@ -116,7 +115,7 @@ stages:
                 docker stop $_ `
             }
           displayName: Shutdown Squid Proxy.
-          condition: and(contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'ubuntu'))
+          condition: and(contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), variables.RunProxyTests, contains(variables['OSVmImage'], 'linux'))
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
