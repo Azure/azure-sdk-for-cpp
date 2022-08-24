@@ -250,16 +250,6 @@ namespace Azure { namespace Core { namespace Test {
   // constexpr char SocksProxyServer[] = "socks://98.162.96.41:4145";
   TEST_F(TransportAdapterOptions, SimpleProxyTests)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-    if (GetTestMode() != TestMode::LIVE)
-    {
-      GTEST_LOG_(INFO) << "Skipping live only test.";
-      GTEST_SKIP();
-    }
-    else
-    {
-      GTEST_LOG_(INFO) << "Running live only test.";
-    }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     std::string myIpAddress;
     {
@@ -310,11 +300,6 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-    if (GetTestMode() != TestMode::LIVE)
-    {
-      GTEST_SKIP();
-    }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
 
     // HTTPS Connections.
@@ -360,11 +345,6 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, ProxyWithPasswordHttp)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-    if (GetTestMode() != TestMode::LIVE)
-    {
-      GTEST_SKIP();
-    }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     // HTTP Connections.
     testUrl.SetScheme("http");
