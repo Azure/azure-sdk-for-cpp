@@ -207,6 +207,7 @@ directive:
     where: $.parameters
     transform: >
       $.ListSharesInclude.items["x-ms-enum"].name = "ListSharesIncludeFlags";
+      $.ListFilesInclude.items["x-ms-enum"].name = "ListFilesIncludeFlags";
       $.AccessTierOptional.enum.push("Premium");
       $.AccessTierOptional["x-ms-enum"].name = "AccessTier";
       $.AccessTierOptional["x-ms-enum"].modelAsString = false;

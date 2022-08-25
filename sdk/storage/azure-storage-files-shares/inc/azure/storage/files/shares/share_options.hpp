@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * Include this parameter to specify one or more datasets to include in the response.
      */
-    Models::ListFilesIncludeType Include = Models::ListFilesIncludeType ::None;
+    Models::ListFilesIncludeFlags Include = Models::ListFilesIncludeFlags ::None;
 
     /**
      * This header is implicitly assumed to be true if include query parameter is not empty. If

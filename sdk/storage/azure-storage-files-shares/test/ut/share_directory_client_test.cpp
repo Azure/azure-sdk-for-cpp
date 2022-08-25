@@ -748,10 +748,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // List with include option
       Files::Shares::ListFilesAndDirectoriesOptions options;
-      options.Include = Files::Shares::Models::ListFilesIncludeType::Timestamps
-          | Files::Shares::Models::ListFilesIncludeType::ETag
-          | Files::Shares::Models::ListFilesIncludeType::Attributes
-          | Files::Shares::Models::ListFilesIncludeType::PermissionKey;
+      options.Include = Files::Shares::Models::ListFilesIncludeFlags::Timestamps
+          | Files::Shares::Models::ListFilesIncludeFlags::ETag
+          | Files::Shares::Models::ListFilesIncludeFlags::Attributes
+          | Files::Shares::Models::ListFilesIncludeFlags::PermissionKey;
       options.IncludeExtendedInfo = true;
       auto directoryNameAClient
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
