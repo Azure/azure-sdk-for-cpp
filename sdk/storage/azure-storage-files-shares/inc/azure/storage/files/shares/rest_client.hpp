@@ -1030,7 +1030,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    enum class ListFilesIncludeType
+    enum class ListFilesIncludeFlags
     {
       None = 0,
       Timestamps = 1,
@@ -1038,22 +1038,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Attributes = 4,
       PermissionKey = 8,
     };
-    inline ListFilesIncludeType operator|(ListFilesIncludeType lhs, ListFilesIncludeType rhs)
+    inline ListFilesIncludeFlags operator|(ListFilesIncludeFlags lhs, ListFilesIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListFilesIncludeType>;
-      return static_cast<ListFilesIncludeType>(static_cast<type>(lhs) | static_cast<type>(rhs));
+      using type = std::underlying_type_t<ListFilesIncludeFlags>;
+      return static_cast<ListFilesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
     }
-    inline ListFilesIncludeType& operator|=(ListFilesIncludeType& lhs, ListFilesIncludeType rhs)
+    inline ListFilesIncludeFlags& operator|=(ListFilesIncludeFlags& lhs, ListFilesIncludeFlags rhs)
     {
       lhs = lhs | rhs;
       return lhs;
     }
-    inline ListFilesIncludeType operator&(ListFilesIncludeType lhs, ListFilesIncludeType rhs)
+    inline ListFilesIncludeFlags operator&(ListFilesIncludeFlags lhs, ListFilesIncludeFlags rhs)
     {
-      using type = std::underlying_type_t<ListFilesIncludeType>;
-      return static_cast<ListFilesIncludeType>(static_cast<type>(lhs) & static_cast<type>(rhs));
+      using type = std::underlying_type_t<ListFilesIncludeFlags>;
+      return static_cast<ListFilesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
     }
-    inline ListFilesIncludeType& operator&=(ListFilesIncludeType& lhs, ListFilesIncludeType rhs)
+    inline ListFilesIncludeFlags& operator&=(ListFilesIncludeFlags& lhs, ListFilesIncludeFlags rhs)
     {
       lhs = lhs & rhs;
       return lhs;
@@ -2083,7 +2083,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Sharesnapshot;
         Nullable<std::string> Marker;
         Nullable<int32_t> MaxResults;
-        Nullable<Models::ListFilesIncludeType> Include;
+        Nullable<Models::ListFilesIncludeFlags> Include;
         Nullable<bool> IncludeExtendedInfo;
       };
       static Response<Models::_detail::ListFilesAndDirectoriesSegmentResponse>

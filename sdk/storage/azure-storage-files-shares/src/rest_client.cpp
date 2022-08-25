@@ -55,14 +55,14 @@ std::string ListSharesIncludeFlagsToString(
   }
   return ret;
 }
-std::string ListFilesIncludeTypeToString(
-    const Azure::Storage::Files::Shares::Models::ListFilesIncludeType& val)
+std::string ListFilesIncludeFlagsToString(
+    const Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags& val)
 {
-  const Azure::Storage::Files::Shares::Models::ListFilesIncludeType valueList[] = {
-      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::Timestamps,
-      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::ETag,
-      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::Attributes,
-      Azure::Storage::Files::Shares::Models::ListFilesIncludeType::PermissionKey,
+  const Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags valueList[] = {
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::Timestamps,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::ETag,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::Attributes,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::PermissionKey,
   };
   const char* stringList[] = {
       "Timestamps",
@@ -1950,12 +1950,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Include.HasValue()
-          && !ListFilesIncludeTypeToString(options.Include.Value()).empty())
+          && !ListFilesIncludeFlagsToString(options.Include.Value()).empty())
       {
         request.GetUrl().AppendQueryParameter(
             "include",
             _internal::UrlEncodeQueryParameter(
-                ListFilesIncludeTypeToString(options.Include.Value())));
+                ListFilesIncludeFlagsToString(options.Include.Value())));
       }
       if (options.IncludeExtendedInfo.HasValue())
       {
