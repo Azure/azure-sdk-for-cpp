@@ -1,9 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-# We need to know an absolute path to our repo root to do things like referencing ./LICENSE.txt file.
-set(AZ_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
-
 macro(az_vcpkg_integrate)
   # AUTO CMAKE_TOOLCHAIN_FILE:
   # User can call `cmake -DCMAKE_TOOLCHAIN_FILE="path_to_the_toolchain"` as the most specific scenario.
