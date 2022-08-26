@@ -7,7 +7,7 @@
 - Bumped up API version to `2021-06-08`.
 - Added fields `ProvisionedBandwidthMBps`, `EnabledProtocols` and `RootSquash` in `ShareItemDetails` and `ShareProperties`.
 - Added support for listing files with extended information.
-- Added new API:
+- Added new APIs:
   - ShareDirectoryClient::RenameFile()
   - ShareDirectoryClient::RenameSubdirectory()
   - ShareLeaseClient::Renew()
