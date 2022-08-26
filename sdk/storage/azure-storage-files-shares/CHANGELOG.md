@@ -4,6 +4,16 @@
 
 ### Features Added
 
+- Bumped up API version to `2021-06-08`.
+- Added fields `ProvisionedBandwidthMBps`, `EnabledProtocols` and `RootSquash` in `ShareItemDetails` and `ShareProperties`.
+- Added support for listing files with extended information.
+- Added new APIs:
+  - ShareDirectoryClient::RenameFile()
+  - ShareDirectoryClient::RenameSubdirectory()
+  - ShareLeaseClient::Renew()
+- Added support for specifying last written time when uploading file range.
+- Added support for specifying file changed time when creating/copying file or setting file properties.
+
 ### Breaking Changes
 
 ### Bugs Fixed
