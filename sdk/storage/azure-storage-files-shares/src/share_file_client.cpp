@@ -133,6 +133,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
     if (options.Permission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.Permission;
@@ -346,6 +351,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = std::string(FileCopySourceTime);
     }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
     if (options.PermissionCopyMode.HasValue())
     {
       protocolLayerOptions.FilePermissionCopyMode = options.PermissionCopyMode.Value();
@@ -433,6 +443,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = FilePreserveSmbProperties;
     }
+    if (smbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = smbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
     protocolLayerOptions.FileContentLength = options.Size;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     if (options.Permission.HasValue())
@@ -504,6 +519,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMD5 = options.TransactionalContentHash.Value().Value;
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
     return _detail::FileClient::UploadRange(
         *m_pipeline, m_shareFileUrl, content, protocolLayerOptions, context);
   }
@@ -520,6 +536,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::to_string(offset + length - 1);
 
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
     auto response = _detail::FileClient::UploadRange(
         *m_pipeline,
         m_shareFileUrl,
@@ -912,6 +929,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission;
@@ -964,6 +986,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       // for some reason.
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       UploadFileRangeOptions uploadRangeOptions;
+      if (options.SmbProperties.LastWrittenOn.HasValue())
+      {
+        uploadRangeOptions.FileLastWrittenMode
+            = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
+      }
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
 
@@ -1017,6 +1044,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
     }
+    if (options.SmbProperties.ChangedOn.HasValue())
+    {
+      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission;
@@ -1068,6 +1100,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           fileReader.GetHandle(), offset, length);
       UploadFileRangeOptions uploadRangeOptions;
+      if (options.SmbProperties.LastWrittenOn.HasValue())
+      {
+        uploadRangeOptions.FileLastWrittenMode
+            = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
+      }
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
 
@@ -1105,6 +1142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::string("-") + std::to_string(destinationOffset + rangeLength - 1);
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
     if (options.TransactionalContentHash.HasValue())
     {
       AZURE_ASSERT_MSG(

@@ -227,6 +227,12 @@
       ]
     },
     {
+       "filename": "**/sdk/storage/azure-storage-files-shares/**/*",
+       "words": [
+         "mibps"
+        ]
+    },
+    {
       "filename": "**/cmake-modules/**/*",
       "words": [
         "fprofile",

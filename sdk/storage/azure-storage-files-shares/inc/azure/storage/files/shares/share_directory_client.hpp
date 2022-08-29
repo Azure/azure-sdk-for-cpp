@@ -114,6 +114,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Renames a file. This API does not support renaming a file
+     * from one share to another, or between storage accounts.
+     * @param fileName The file that gets renamed.
+     * @param destinationFilePath The path of the file the source file is renaming to. The
+     * destination is an absolute path under the root of the share, without leading slash.
+     * @param options Optional parameters to rename a file.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<ShareFileClient> The client targets the renamed file.
+     */
+    Azure::Response<ShareFileClient> RenameFile(
+        const std::string& fileName,
+        const std::string& destinationFilePath,
+        const RenameFileOptions& options = RenameFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Renames a directory. This API does not support renaming a directory
+     * from one share to another, or between storage accounts.
+     * @param subdirectoryName The subdirectory that gets renamed.
+     * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
+     * The destination is an absolute path under the root of the share, without leading slash.
+     * @param options Optional parameters to rename a directory.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<ShareDirectoryClient> The client targets the renamed
+     * directory.
+     */
+    Azure::Response<ShareDirectoryClient> RenameSubdirectory(
+        const std::string& subdirectoryName,
+        const std::string& destinationDirectoryPath,
+        const RenameDirectoryOptions& options = RenameDirectoryOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Deletes the directory.
      * @param options Optional parameters to delete this directory.
      * @param context Context for cancelling long running operations.
