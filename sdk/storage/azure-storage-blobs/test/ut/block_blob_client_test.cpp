@@ -1387,6 +1387,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(exceptionCaught);
   }
 
+  TEST_F(BlockBlobClientTest, DownloadNonExistingToFile) {
+    const auto testName(GetTestName());
+    auto blockBlobClient = GetBlockBlobClient(testName);
+
+    EXPECT_THROW(blockBlobClient.DownloadTo(testName), StorageException);
+    EXPECT_THROW(ReadFile(testName), std::runtime_error);
+  }
+
   TEST_F(BlockBlobClientTest, DeleteIfExists)
   {
     auto const testName(GetTestName());

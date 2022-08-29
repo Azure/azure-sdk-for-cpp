@@ -111,6 +111,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.DownloadTo(buff.data(), 0));
   }
 
+  TEST_F(FileShareFileClientTest, DownloadNonExistingToFile)
+  {
+    const auto testName(GetTestName());
+    auto fileClient = m_fileShareDirectoryClient->GetFileClient(m_testName);
+
+    EXPECT_THROW(fileClient.DownloadTo(testName), StorageException);
+    EXPECT_THROW(ReadFile(testName), std::runtime_error);
+  }
+
   TEST_F(FileShareFileClientTest, FileMetadata)
   {
     auto metadata1 = GetMetadata();

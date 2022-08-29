@@ -18,6 +18,8 @@
 
 ### Bugs Fixed
 
+- Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
+
 ### Other Changes
 
 ## 12.2.1 (2022-03-09)

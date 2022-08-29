@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Empty file or existing file won't be created/overwritten if the blob to be downloaded doesn't exist.
+
 ### Other Changes
 
 ## 12.6.0-beta.1 (2022-08-09)

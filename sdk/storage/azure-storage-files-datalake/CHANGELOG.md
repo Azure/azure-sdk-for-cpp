@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed a bug where file/directory renaming cannot be authenticated with SAS.
+- Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
 
 ### Other Changes
 
