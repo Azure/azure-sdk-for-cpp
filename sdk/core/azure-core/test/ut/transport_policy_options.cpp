@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Test {
       GTEST_LOG_(INFO) << "Anonymous server: " << anonymousServer;
       if (anonymousServer.empty())
       {
-        GTEST_LOG_(ERROR)
+        GTEST_LOG_(WARNING)
             << "Could not find value for ANONYMOUSCONTAINERIPV4ADDRESS, Assuming local.";
         anonymousServer = "127.0.0.1";
       }
@@ -111,7 +111,7 @@ namespace Azure { namespace Core { namespace Test {
       GTEST_LOG_(INFO) << "Authenticated server: " << authenticatedServer;
       if (authenticatedServer.empty())
       {
-        GTEST_LOG_(ERROR)
+        GTEST_LOG_(WARNING)
             << "Could not find value for AUTHENTICATEDCONTAINERIPV4ADDRESS, Assuming local.";
         authenticatedServer = "127.0.0.1";
       }
@@ -377,5 +377,39 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
   }
+
+  TEST_F(TransportAdapterOptions, DisableCaValidation)
+  {
+    Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
+    // HTTP Connections.
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      transportOptions.EnableCertificateRevocationListCheck = true;
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
+      auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+      EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+    }
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      transportOptions.HttpProxy = HttpProxyServerWithPassword();
+      transportOptions.ProxyUserName = "user";
+      transportOptions.ProxyPassword = "password";
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      // Disable CA checks on proxy pipelines too.
+      transportOptions.EnableCertificateRevocationListCheck = true;
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
+      auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+      checkResponseCode(response->GetStatusCode());
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+      CheckBodyFromBuffer(*response, expectedResponseBodySize);
+    }
+  }
+
 }}} // namespace Azure::Core::Test
 #endif // defined(DISABLE_PROXY_TESTS)

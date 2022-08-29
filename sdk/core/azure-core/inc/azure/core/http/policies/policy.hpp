@@ -144,17 +144,31 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @remark The URL for the proxy server to use for this connection.
      */
-    Azure::Nullable<std::string> HttpProxy;
+    Azure::Nullable<std::string> HttpProxy{};
 
     /**
      * @brief The username to use when authenticating with the proxy server.
      */
-    std::string ProxyUserName;
+    std::string ProxyUserName{};
 
     /**
      * @brief The password to use when authenticating with the proxy server.
      */
-    std::string ProxyPassword;
+    std::string ProxyPassword{};
+
+    /**
+     * @brief Enable TLS Certificate validation against a certificate revocation list.
+     *
+     * @remark Note that by default CRL validation is *disabled*.
+     */
+    bool EnableCertificateRevocationListCheck{false};
+
+    /**
+     * @brief Base64 encoded DER representation of an X.509 certificate expected in the certificate
+     * chain used in TLS connections.
+     */
+    std::string ExpectedTlsRootCertificate{};
+
 #endif // defined(CURL_ADAPTER) || defined(WINHTTP_ADAPTER)
 #endif // !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
 

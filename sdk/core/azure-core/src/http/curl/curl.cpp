@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
+#include <openssl/ssl.h>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -1421,6 +1422,22 @@ int CurlConnectionPool::CurlLoggingCallback(
   return 0;
 }
 
+#if !defined(AZ_PLATFORM_WINDOWS)
+int CurlConnectionPool::CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm)
+{
+  CurlConnectionPool* pool = static_cast<CurlConnectionPool*>(parm);
+  return pool->SslCtxCallback(curl, sslctx);
+}
+
+int CurlConnectionPool::SslCtxCallback(CURL*, void* sslctx)
+{
+  SSL_CTX* ctx = reinterpret_cast<SSL_CTX*>(sslctx);
+  SSL_CTX_get0_CA_list(ctx);
+  return CURLE_OK;
+}
+#endif
+
+
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlConnection(
     Request& request,
     CurlTransportOptions const& options,
@@ -1594,11 +1611,28 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set CA cert file to:" + options.CAInfo + ". "
+          + std::string(curl_easy_strerror(result)));
+    }
+  }
+
+  if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
+  {
+    curl_blob rootCertBlob
+        = {const_cast<void*>(reinterpret_cast<const void*>(
+               options.SslOptions.PemEncodedExpectedRootCertificates.c_str())),
+           options.SslOptions.PemEncodedExpectedRootCertificates.size(),
+           CURL_BLOB_COPY};
+    if (!SetLibcurlOption(newHandle, CURLOPT_CAINFO_BLOB, rootCertBlob, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
           + ". Failed to set CA cert to:" + options.CAInfo + ". "
           + std::string(curl_easy_strerror(result)));
     }
   }
 
+#if defined(AZ_PLATFORM_WINDOWS)
   long sslOption = 0;
   if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
@@ -1612,6 +1646,25 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
         + std::string(curl_easy_strerror(result)));
   }
+#else
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
+  {
+    if (!SetLibcurlOption(
+            newHandle, CURLOPT_SSL_CTX_FUNCTION, CurlConnectionPool::CurlSslCtxCallback, &result))
+    {
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set SSL context callback. " + std::string(curl_easy_strerror(result)));
+    }
+    if (!SetLibcurlOption(newHandle, CURLOPT_SSL_CTX_DATA, this, &result))
+    {
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set SSL context callback data. "
+          + std::string(curl_easy_strerror(result)));
+    }
+  }
+#endif
 
   if (!options.SslVerifyPeer)
   {

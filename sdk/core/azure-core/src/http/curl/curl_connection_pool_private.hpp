@@ -127,6 +127,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         size_t size,
         void* userp);
 
+    static int CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm);
+    int SslCtxCallback(CURL* curl, void* sslctx);
+
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     size_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); }
