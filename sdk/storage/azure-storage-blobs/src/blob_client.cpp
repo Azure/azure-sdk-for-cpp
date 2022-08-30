@@ -419,8 +419,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
 
-    _internal::FileWriter fileWriter(fileName);
-
     auto firstChunk = Download(firstChunkOptions, context);
     const Azure::ETag eTag = firstChunk.Value.Details.ETag;
 
@@ -461,6 +459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     };
 
+    _internal::FileWriter fileWriter(fileName);
     bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk.Value.BodyStream.reset();
 

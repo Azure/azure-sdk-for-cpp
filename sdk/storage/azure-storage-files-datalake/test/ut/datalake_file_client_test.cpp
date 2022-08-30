@@ -349,6 +349,15 @@ namespace Azure { namespace Storage { namespace Test {
     fileClient.Delete();
   }
 
+  TEST_F(DataLakeFileClientTest, DownloadNonExistingToFile)
+  {
+    const auto testName(GetTestName());
+    auto fileClient = m_fileSystemClient->GetFileClient(testName);
+
+    EXPECT_THROW(fileClient.DownloadTo(testName), StorageException);
+    EXPECT_THROW(ReadFile(testName), std::runtime_error);
+  }
+
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
   {
     {

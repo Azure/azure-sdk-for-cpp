@@ -801,8 +801,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
 
-    _internal::FileWriter fileWriter(fileName);
-
     auto firstChunk = Download(firstChunkOptions, context);
     const Azure::ETag etag = firstChunk.Value.Details.ETag;
 
@@ -845,6 +843,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     };
 
+    _internal::FileWriter fileWriter(fileName);
     bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk.Value.BodyStream.reset();
 
