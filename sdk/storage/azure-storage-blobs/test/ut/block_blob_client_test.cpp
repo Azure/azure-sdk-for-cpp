@@ -715,10 +715,12 @@ namespace Azure { namespace Storage { namespace Test {
 
     class DownloadBlockBlob
         : public BlockBlobClientTest,
-          public ::testing::WithParamInterface<BlobConcurrentDownloadParameter> {};
+          public ::testing::WithParamInterface<BlobConcurrentDownloadParameter> {
+    };
 
     class UploadBlockBlob : public BlockBlobClientTest,
-                            public ::testing::WithParamInterface<BlobConcurrentUploadParameter> {};
+                            public ::testing::WithParamInterface<BlobConcurrentUploadParameter> {
+    };
 
 #define APPEND_IF_NOT_NULL(value, suffix, destination) \
   if (value) \
