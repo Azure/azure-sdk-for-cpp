@@ -1,14 +1,10 @@
 # Release History
 
-## 1.8.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.7.2 (2022-09-01)
 
 ### Bugs Fixed
 
-### Other Changes
+- WinHTTP Transport Adapter: Fixed missing reason phrase handling for HTTP/2 responses.
 
 ## 1.7.1 (2022-08-04)
 
