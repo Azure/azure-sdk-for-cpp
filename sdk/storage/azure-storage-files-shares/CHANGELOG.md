@@ -1,6 +1,6 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
+## 12.3.0-beta.1 (2022-09-06)
 
 ### Features Added
 
@@ -14,13 +14,9 @@
 - Added support for specifying last written time when uploading file range.
 - Added support for specifying file changed time when creating/copying file or setting file properties.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
-
-### Other Changes
 
 ## 12.2.1 (2022-03-09)
 
