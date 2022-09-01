@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     if (AnyTransportOptionsSpecified(transportOptions))
     {
       CurlTransportOptions curlOptions;
-      curlOptions.EnableCurlTracing = true;
+//      curlOptions.EnableCurlTracing = true;
       if (transportOptions.HttpProxy.HasValue())
       {
         curlOptions.Proxy = transportOptions.HttpProxy;

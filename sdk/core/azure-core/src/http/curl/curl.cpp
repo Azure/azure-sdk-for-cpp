@@ -1427,6 +1427,8 @@ namespace Azure {
 namespace Core {
   namespace Http {
     namespace _detail {
+#if !defined(AZ_PLATFORM_WINDOWS)
+
       // Helpers to provide RAII wrappers for OpenSSL types.
       template <typename T, void (&Deleter)(T*)> struct openssl_deleter
       {
@@ -1492,7 +1494,7 @@ namespace Core {
 
         return returnValue;
       }
-
+#endif
     } // namespace _detail
 
     namespace {
@@ -1587,7 +1589,7 @@ namespace Core {
 
         int day = -1;
         int sec = -1;
-        if (!ASN1_TIME_diff(&day, &sec, NULL, at))
+        if (!ASN1_TIME_diff(&day, &sec, nullptr, at))
         {
           Log::Write(Logger::Level::Error, "Could not check expiration");
           return false; /* Safe default, invalid */
@@ -1600,94 +1602,6 @@ namespace Core {
         return false; /* Before or same, invalid */
       }
 
-      bool IsCrlValidForCertificate(X509* cert, X509_CRL* crl)
-      {
-        X509_NAME* issuer_cert = cert ? X509_get_issuer_name(cert) : NULL;
-
-        // names don't match up.
-        if (!crl || !issuer_cert)
-        {
-          return false;
-        }
-
-        // names don't match up. probably a hash collision
-        // so lets test if there is another crl on disk.
-        X509_NAME* issuer_crl = X509_CRL_get_issuer(crl);
-        if (0 != X509_NAME_cmp(issuer_crl, issuer_cert))
-        {
-          return false;
-        }
-
-        // Important: At this point, we will DELETE
-        //      a file holding a Crl from disk in case
-        //      the invalid-after date is less than the
-        //      current time.
-        //      This will trigger the re-loading of the
-        //      Crl from the download store, if available.
-        bool valid = IsCrlValid(crl);
-        if (!valid)
-        {
-          Log::Write(Logger::Level::Informational, "crl outdated\n");
-          return false;
-        }
-
-        return true;
-      }
-
-      _detail::openssl_x509_crl LoadCertificateCrlFromFile(X509* cert, const char* suffix)
-      {
-        static bool logCacheUsage = 0;
-
-        char* prefix = NULL;
-        if (NULL == (prefix = getenv("TMP")) && NULL == (prefix = getenv("TEMP"))
-            && NULL == (prefix = getenv("TMPDIR")))
-        {
-          if (!logCacheUsage)
-          {
-            Log::Write(Logger::Level::Informational, "Not using CRL cache directory.");
-          }
-          logCacheUsage = true;
-          return nullptr;
-        }
-
-        // we need the issuer hash to find the file on disk
-        X509_NAME* issuer_cert = cert ? X509_get_issuer_name(cert) : NULL;
-        unsigned long hash = issuer_cert ? X509_NAME_hash(issuer_cert) : 0;
-
-        // try to read from file
-        for (int i = 0; i < 10; i++)
-        {
-          std::stringstream ss;
-          ss << prefix << "/" << std::hex << std::setw(8) << std::setfill('0') << hash << "."
-             << suffix << "." << i;
-
-          // try to read from disk, exit loop, if
-          // none found
-          _detail::openssl_x509_crl crl = LoadCrl(ss.str(), CrlFormat::PEM);
-          if (!crl)
-          {
-            continue;
-          }
-
-          if (!IsCrlValidForCertificate(cert, crl.get()))
-          {
-            Log::Write(Logger::Level::Informational, "DELETE " + ss.str());
-
-#ifdef WIN32
-            _unlink(ss.str().c_str());
-#else
-            unlink(ss.str().c_str());
-#endif
-            crl.release();
-            continue;
-          }
-          Log::Write(Logger::Level::Informational, "Loading CRL from " + ss.str());
-          return crl;
-        }
-
-        return nullptr;
-      }
-
       const char* GetDistributionPointUrl(DIST_POINT* dp)
       {
         GENERAL_NAMES* gens;
@@ -1698,7 +1612,7 @@ namespace Core {
         if (!dp->distpoint)
         {
           Log::Write(Logger::Level::Informational, "returning, dp->distpoint is null");
-          return NULL;
+          return nullptr;
         }
 
         if (dp->distpoint->type != 0)
@@ -1706,7 +1620,7 @@ namespace Core {
           Log::Write(
               Logger::Level::Informational,
               "returning, dp->distpoint->type is " + std::to_string(dp->distpoint->type));
-          return NULL;
+          return nullptr;
         }
 
         gens = dp->distpoint->name.fullname;
@@ -1726,7 +1640,7 @@ namespace Core {
           }
         }
 
-        return NULL;
+        return nullptr;
       }
 
       std::mutex crl_cache_lock;
@@ -1737,7 +1651,7 @@ namespace Core {
         std::unique_lock<std::mutex> lockResult(crl_cache_lock);
 
         // update existing
-        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : NULL;
+        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
         for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
         {
           X509_CRL* cacheEntry = *it;
@@ -1833,98 +1747,8 @@ namespace Core {
         return nullptr;
       }
 
-      bool SaveCrlToFile(std::string const& source, X509_CRL* crl, CrlFormat format)
-      {
-        bool ret = false;
-        _detail::openssl_bio in;
-
-        // null pointer?!
-        if (source.empty())
-        {
-          return false;
-        }
-
-        in = _detail::make_openssl_unique(BIO_new, BIO_s_file());
-        if (!in)
-        {
-          Log::Write(Logger::Level::Error, "could not bio_new for file " + source);
-          return false;
-        }
-
-        // file exists, don't overwrite
-#if defined(WIN32)
-        if (_access(source, 0) != -1)
-#else
-        if (access(source.c_str(), 0) != -1)
-#endif
-        {
-          Log::Write(Logger::Level::Error, "could not not access file " + source);
-          return false;
-        }
-
-        // if cannot open, end
-        if (BIO_write_filename(in.get(), const_cast<char*>(source.c_str())) <= 0)
-        {
-          Log::Write(Logger::Level::Error, "could not write file " + source);
-          return false;
-        }
-
-        if (format == CrlFormat::Asn1)
-        {
-          ret = (i2d_X509_CRL_bio(in.get(), crl) == 1);
-        }
-        else if (format == CrlFormat::PEM)
-        {
-          ret = (PEM_write_bio_X509_CRL(in.get(), crl) == 1);
-        }
-        else
-        {
-          Log::Write(Logger::Level::Error, "bad format specified for crl");
-          return false;
-        }
-
-        if (!ret)
-        {
-          Log::Write(Logger::Level::Error, "unable to save CRL");
-        }
-
-        return ret;
-      }
-
-      bool SaveCertificateCrlToFile(X509* cert, const char* suffix, X509_CRL* crl)
-      {
-
-        char* prefix = NULL;
-        if (NULL == (prefix = getenv("TMP")) && NULL == (prefix = getenv("TEMP"))
-            && NULL == (prefix = getenv("TMPDIR")))
-        {
-          return false;
-        }
-
-        // we need the issuer hash to find the file on disk
-        X509_NAME* issuer_cert = cert ? X509_get_issuer_name(cert) : NULL;
-        unsigned long hash = issuer_cert ? X509_NAME_hash(issuer_cert) : 0;
-
-        for (int i = 0; crl && i < 10; i++)
-        {
-          std::stringstream ss;
-          ss << prefix << "/" << std::hex << std::setw(8) << std::setfill('0') << hash << "."
-             << suffix << "." << i;
-
-          // try to write to disk, exit loop, if
-          // written (note: no file will be overwritten).
-          if (SaveCrlToFile(ss.str(), crl, CrlFormat::PEM))
-          {
-            // written to disk.
-            return true;
-          }
-        }
-        return false;
-      }
-
       _detail::openssl_x509_crl LoadCrlFromCacheAndDistributionPoint(
           X509* cert,
-          const char* suffix,
           STACK_OF(DIST_POINT) * crlDistributionPointStack)
       {
         int i;
@@ -1935,21 +1759,11 @@ namespace Core {
           return crl;
         }
 
-        crl = LoadCertificateCrlFromFile(cert, suffix);
-        if (crl)
-        {
-          // at this point, we got a valid crl from disk that
-          // is not yet in memory cache. So,
-          // save it to the memory cache before returning it.
-          SaveCertificateCrlToMemory(cert, crl);
-          return crl;
-        }
-
         // file was not found on disk cache,
         // so, now loading from web.
         // Walk through the possible CRL distribution points
         // looking for one which has a URL that we can download.
-        const char* urlptr = NULL;
+        const char* urlptr = nullptr;
         for (i = 0; i < sk_DIST_POINT_num(crlDistributionPointStack); i++)
         {
           DIST_POINT* dp = sk_DIST_POINT_value(crlDistributionPointStack, i);
@@ -1974,9 +1788,6 @@ namespace Core {
         {
           // save it to memory
           SaveCertificateCrlToMemory(cert, crl);
-
-          // try to update file in cache
-          SaveCertificateCrlToFile(cert, suffix, crl.get());
         }
 
         return crl;
@@ -2015,7 +1826,7 @@ namespace Core {
           return nullptr;
         }
 
-        crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, "crl", crlDistributionPoint);
+        crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
 
         sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
         if (!crl)
@@ -2030,10 +1841,9 @@ namespace Core {
         // try to download delta Crl
         crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
             X509_get_ext_d2i(currentCertificate, NID_freshest_crl, nullptr, nullptr));
-        if (crlDistributionPoint != NULL)
+        if (crlDistributionPoint != nullptr)
         {
-          crl = LoadCrlFromCacheAndDistributionPoint(
-              currentCertificate, "crlDp", crlDistributionPoint);
+          crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
 
           sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
           if (crl)
@@ -2099,20 +1909,118 @@ namespace Core {
         }
         return openSslLastVerifyFunctionIndex;
       }
-      int GetOpenSSLContextVerifyErrorDetails()
-      {
-        static int openSslVerifyErrorDetails = -1;
-        if (openSslVerifyErrorDetails < 0)
-        {
-          openSslVerifyErrorDetails
-              = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
-        }
-        return openSslVerifyErrorDetails;
-      }
     }
   }
 }
 } // namespace Azure::Core::Http
+
+// OpenSSL X509 Certificate Validation function - based off of the example found at:
+// https://linux.die.net/man/3/x509_store_ctx_set_verify_cb
+//
+int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
+{
+  X509_STORE* certStore = X509_STORE_CTX_get0_store(storeContext);
+  X509* err_cert;
+  int err, depth;
+  _detail::openssl_bio bio_err(_detail::make_openssl_unique(BIO_new, BIO_s_mem()));
+
+  err_cert = X509_STORE_CTX_get_current_cert(storeContext);
+  err = X509_STORE_CTX_get_error(storeContext);
+  depth = X509_STORE_CTX_get_error_depth(storeContext);
+
+  BIO_printf(bio_err.get(), "depth=%d ", depth);
+  if (err_cert)
+  {
+    X509_NAME_print_ex(bio_err.get(), X509_get_subject_name(err_cert), 0, XN_FLAG_ONELINE);
+    BIO_puts(bio_err.get(), "\n");
+  }
+  else
+  {
+    BIO_puts(bio_err.get(), "<no cert>\n");
+  }
+  if (!ok)
+  {
+    BIO_printf(bio_err.get(), "verify error:num=%d: %s\n", err, X509_verify_cert_error_string(err));
+  }
+
+  switch (err)
+  {
+    case X509_V_ERR_UNABLE_TO_GET_CRL:
+      BIO_printf(bio_err.get(), "Unable to retrieve CRL.");
+      break;
+    case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+      BIO_puts(bio_err.get(), "issuer= ");
+      X509_NAME_print_ex(bio_err.get(), X509_get_issuer_name(err_cert), 0, XN_FLAG_ONELINE);
+      BIO_puts(bio_err.get(), "\n");
+      break;
+    case X509_V_ERR_CERT_NOT_YET_VALID:
+    case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
+      BIO_printf(bio_err.get(), "notBefore=");
+      ASN1_TIME_print(bio_err.get(), X509_get_notBefore(err_cert));
+      BIO_printf(bio_err.get(), "\n");
+      break;
+    case X509_V_ERR_CERT_HAS_EXPIRED:
+    case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
+      BIO_printf(bio_err.get(), "notAfter=");
+      ASN1_TIME_print(bio_err.get(), X509_get_notAfter(err_cert));
+      BIO_printf(bio_err.get(), "\n");
+      break;
+    case X509_V_ERR_NO_EXPLICIT_POLICY:
+      policies_print(bio_err.get(), storeContext);
+      break;
+  }
+  if (err == X509_V_OK && ok == 2)
+  {
+    /* print out policies */
+    BIO_printf(bio_err.get(), "verify return:%d\n", ok);
+  }
+
+  //  Handle certificate specific errors here based on configuration options.
+  {
+    if (err == X509_V_ERR_UNABLE_TO_GET_CRL)
+    {
+      if (m_allowFailedCrlRetrieval)
+      {
+        BIO_printf(bio_err.get(), "Ignoring CRL retrieval error by configuration.\n");
+        // Clear the X509 error in the store context, because CURL retrieves it,
+        // and it overwrites the successful result.
+        X509_STORE_CTX_set_error(storeContext, X509_V_OK);
+        // Return true, indicating that things are all good.
+        ok = 1;
+      }
+      else{
+        BIO_printf(bio_err.get(), "Fail TLS negotiation because CRL retrieval is not configured.\n");
+      }
+    }
+  }
+
+  char outputString[128];
+  int len;
+  while ((len = BIO_gets(bio_err.get(), outputString, sizeof(outputString))) >= 0)
+  {
+    if (len == 0)
+    {
+      break;
+    }
+    if (outputString[len - 1] == '\n')
+    {
+      outputString[len - 1] = '\0';
+    }
+    Log::Write(Logger::Level::Informational, std::string(outputString));
+  }
+
+  if (ok)
+  {
+    // We've done our stuff, call the pre-existing callback.
+    auto existingCallback = reinterpret_cast<X509_STORE_CTX_verify_cb>(
+        X509_STORE_get_ex_data(certStore, GetOpenSSLContextLastVerifyFunction()));
+    if (existingCallback != nullptr)
+    {
+      ok = existingCallback(ok, storeContext);
+    }
+  }
+  return (ok);
+}
 
 int CurlConnection::CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm)
 {
@@ -2130,6 +2038,8 @@ int CurlConnection::SslCtxCallback(CURL*, void* sslctx)
   if (m_enableCrlValidation)
   {
 
+    // Store our connection handle in the store extended data so it can be retrieved
+    // in later callbacks. This allows setting options on a per-connection basis.
     X509_STORE_set_ex_data(certStore, GetOpenSSLContextConnectionIndex(), this);
 
     X509_VERIFY_PARAM_set_flags(verifyParam, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
@@ -2140,150 +2050,18 @@ int CurlConnection::SslCtxCallback(CURL*, void* sslctx)
         GetOpenSSLContextLastVerifyFunction(),
         reinterpret_cast<void*>(X509_STORE_get_verify_cb(certStore)));
 
-    _detail::openssl_bio verifyErrorDetails(_detail::make_openssl_unique(BIO_new, BIO_s_mem()));
-    X509_STORE_set_ex_data(
-        certStore, 1, reinterpret_cast<void*>(static_cast<BIO*>(verifyErrorDetails.get())));
-
     X509_STORE_set_verify_cb(certStore, [](int ok, X509_STORE_CTX* storeContext) {
-      X509_STORE *certStore = X509_STORE_CTX_get0_store(storeContext);
-      X509* err_cert;
-      int err, depth;
-      _detail::openssl_bio bio_err(_detail::make_openssl_unique(BIO_new, BIO_s_mem()));
+      X509_STORE* certStore = X509_STORE_CTX_get0_store(storeContext);
 
-      // The first ex_data item is a BIO which can be used to store extended error information.
-      BIO* errorDetails = reinterpret_cast<BIO*>(
-          X509_STORE_get_ex_data(certStore, GetOpenSSLContextVerifyErrorDetails()));
+      CurlConnection* thisConnection = reinterpret_cast<CurlConnection*>(
+          X509_STORE_get_ex_data(certStore, GetOpenSSLContextConnectionIndex()));
 
-      err_cert = X509_STORE_CTX_get_current_cert(storeContext);
-      err = X509_STORE_CTX_get_error(storeContext);
-      depth = X509_STORE_CTX_get_error_depth(storeContext);
-
-      BIO_printf(bio_err.get(), "depth=%d ", depth);
-      if (err_cert)
-      {
-        X509_NAME_print_ex(bio_err.get(), X509_get_subject_name(err_cert), 0, XN_FLAG_ONELINE);
-        BIO_puts(bio_err.get(), "\n");
-      }
-      else
-        BIO_puts(bio_err.get(), "<no cert>\n");
-      if (!ok)
-        BIO_printf(
-            bio_err.get(), "verify error:num=%d:%s\n", err, X509_verify_cert_error_string(err));
-      switch (err)
-      {
-        case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
-          BIO_puts(bio_err.get(), "issuer= ");
-          X509_NAME_print_ex(bio_err.get(), X509_get_issuer_name(err_cert), 0, XN_FLAG_ONELINE);
-          BIO_puts(bio_err.get(), "\n");
-          break;
-        case X509_V_ERR_CERT_NOT_YET_VALID:
-        case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
-          BIO_printf(bio_err.get(), "notBefore=");
-          ASN1_TIME_print(bio_err.get(), X509_get_notBefore(err_cert));
-          BIO_printf(bio_err.get(), "\n");
-          break;
-        case X509_V_ERR_CERT_HAS_EXPIRED:
-        case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
-          BIO_printf(bio_err.get(), "notAfter=");
-          ASN1_TIME_print(bio_err.get(), X509_get_notAfter(err_cert));
-          BIO_printf(bio_err.get(), "\n");
-          break;
-        case X509_V_ERR_NO_EXPLICIT_POLICY:
-          policies_print(bio_err.get(), storeContext);
-          break;
-      }
-      if (err == X509_V_OK && ok == 2)
-        /* print out policies */
-        BIO_printf(bio_err.get(), "verify return:%d\n", ok);
-
-      if (!ok)
-        {
-            if (err == X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN || err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT)
-            {
-                // We want to allow self signed certificates in the certificate chain.
-                BIO_printf(bio_err.get(), "Ignoring self signed certificates in the chain, or at level 0.\n");
-                ok = 1;
-            }
-            else if (err == X509_V_ERR_PATH_LENGTH_EXCEEDED)
-            {
-                BIO_printf(bio_err.get(), "Basic Constraints Path Length exceeded.\n");
-                BIO_printf(bio_err.get(), "Error certificate:\n");
-                X509_print(bio_err.get(), err_cert);
-
-                for (auto i = 0; i < sk_X509_num(X509_STORE_CTX_get0_chain(storeContext)); i += 1)
-                {
-                    BIO_printf(bio_err.get(), "Certificate %d:\n", i);
-                    X509_print(bio_err.get(), sk_X509_value(X509_STORE_CTX_get0_chain(storeContext), i));
-                }
-
-                // Older versions of MAA have a bug which set the path length to an inappropriately small value (0),
-                // we want to allow these errors if the existing path length is 0.
-                // 
-                // The same bug exists in the Intel SGX Root CA certificate - it has a path length of 0 but signs
-                // an intermediary CA certificate. So we simply ignore path length exceeded errors if the path length
-                // is set to 0.
-                if (X509_get_pathlen(err_cert) == 0)
-                {
-                    Log::Write(Logger::Level::Informational, "Ignoring path length exceeded error");
-                    ok = 1;
-                }
-                else
-                {
-                    BIO_printf(errorDetails, "Certificate with name ");
-                    X509_NAME_print_ex(errorDetails, X509_get_subject_name(err_cert), 0, XN_FLAG_ONELINE);
-                    BIO_printf(errorDetails, " has a maximum certificate path length of %d,", X509_get_pathlen(err_cert));
-                    BIO_printf(errorDetails, " but the certificate chain is %d certificates long", sk_X509_num(X509_STORE_CTX_get0_chain(storeContext)));
-                }
-            }
-            else if (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY)
-            {
-                BIO_printf(bio_err.get(), "Unable to find local cert issuer. Error certificate:\n");
-                X509_print(bio_err.get(), err_cert);
-
-                BIO_printf(bio_err.get(), "Certificate chain:\n");
-                for (auto i = 0; i < sk_X509_num(X509_STORE_CTX_get0_chain(storeContext)); i += 1)
-                {
-                    BIO_printf(bio_err.get(), "Certificate %d:\n", i);
-                    X509_print(bio_err.get(), sk_X509_value(X509_STORE_CTX_get0_chain(storeContext), i));
-                }
-
-                BIO_printf(bio_err.get(), "Untrusted list:\n");
-                for (auto i = 0; i < sk_X509_num(X509_STORE_CTX_get0_untrusted(storeContext)); i += 1)
-                {
-                    BIO_printf(bio_err.get(), "Certificate %d:\n", i);
-                    X509_print(bio_err.get(), sk_X509_value(X509_STORE_CTX_get0_untrusted(storeContext), i));
-                }
-            }
-        }
-
-        char outputString[128];
-        int len;
-        while ((len = BIO_gets(bio_err.get(), outputString, sizeof(outputString))) >= 0)
-        {
-            if (len == 0)
-            {
-                break;
-            }
-            if (outputString[len - 1] == '\n')
-            {
-                outputString[len - 1] = '\0';
-            }
-            Log::Write(Logger::Level::Error, std::string(outputString));
-        }
-
-
-        if (ok)
-        {
-            // We've done our stuff, call the pre-existing callback.
-            auto existingCallback = reinterpret_cast<X509_STORE_CTX_verify_cb>(X509_STORE_get_ex_data(certStore, 0));
-            ok = existingCallback(ok, storeContext);
-        }
-        return(ok);
-  });
+      return thisConnection->VerifyCertificateError(ok, storeContext);
+    });
   }
   else
   {
-      X509_VERIFY_PARAM_clear_flags(verifyParam, X509_V_FLAG_CRL_CHECK);
+    X509_VERIFY_PARAM_clear_flags(verifyParam, X509_V_FLAG_CRL_CHECK);
   }
   return CURLE_OK;
 }
@@ -2345,13 +2123,12 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     }
   }
 
-    // Creating a new connection is thread safe. No need to lock mutex here.
-    // No available connection for the pool for the required host. Create one
-    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
+  // Creating a new connection is thread safe. No need to lock mutex here.
+  // No available connection for the pool for the required host. Create one
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
 
-    return std::make_unique<CurlConnection>(request, options, hostDisplayName, connectionKey);
-  }
-
+  return std::make_unique<CurlConnection>(request, options, hostDisplayName, connectionKey);
+}
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
 // first connection to be picked next time some one ask for a connection to the pool (LIFO)
@@ -2416,255 +2193,266 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   }
 }
 
-  CurlConnection::CurlConnection(
-      Request & request,
-      CurlTransportOptions const& options,
-      std::string const& hostDisplayName,
-      std::string const& connectionPropertiesKey)
-      : m_connectionKey(std::move(connectionPropertiesKey))
+CurlConnection::CurlConnection(
+    Request& request,
+    CurlTransportOptions const& options,
+    std::string const& hostDisplayName,
+    std::string const& connectionPropertiesKey)
+    : m_connectionKey(std::move(connectionPropertiesKey))
+{
+  m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURL_deleter{});
+  if (!m_handle)
   {
-    m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURL_deleter{});
-    if (!m_handle)
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string("curl_easy_init returned Null"));
-    }
-    CURLcode result;
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+        + std::string("curl_easy_init returned Null"));
+  }
+  CURLcode result;
 
-    if (options.EnableCurlTracing)
+  if (options.EnableCurlTracing)
+  {
+    if (!SetLibcurlOption(
+            m_handle, CURLOPT_DEBUGFUNCTION, CurlConnection::CurlLoggingCallback, &result))
     {
-      if (!SetLibcurlOption(
-              m_handle, CURLOPT_DEBUGFUNCTION, CurlConnection::CurlLoggingCallback, &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate
-            + std::string(". Could not enable logging callback.")
-            + std::string(curl_easy_strerror(result)));
-      }
-      if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1, &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate
-            + std::string(". Could not enable verbose logging.")
-            + std::string(curl_easy_strerror(result)));
-      }
-    }
-
-    // Libcurl setup before open connection (url, connect_only, timeout)
-    if (!SetLibcurlOption(m_handle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate
+          + std::string(". Could not enable logging callback.")
           + std::string(curl_easy_strerror(result)));
     }
-
-    if (request.GetUrl().GetPort() != 0
-        && !SetLibcurlOption(m_handle, CURLOPT_PORT, request.GetUrl().GetPort(), &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1, &result))
     {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate
+          + std::string(". Could not enable verbose logging.")
           + std::string(curl_easy_strerror(result)));
     }
+  }
 
-    if (!SetLibcurlOption(m_handle, CURLOPT_CONNECT_ONLY, 1L, &result))
+  // Libcurl setup before open connection (url, connect_only, timeout)
+  if (!SetLibcurlOption(m_handle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
+
+  if (request.GetUrl().GetPort() != 0
+      && !SetLibcurlOption(m_handle, CURLOPT_PORT, request.GetUrl().GetPort(), &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
+
+  if (!SetLibcurlOption(m_handle, CURLOPT_CONNECT_ONLY, 1L, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
+
+  //   Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
+  // timeout >= 25 days. Fails as soon as trying to upload any data
+  // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
+  if (!SetLibcurlOption(m_handle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
+
+  if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
     {
       throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Fail setting connect timeout to: "
+          + std::to_string(options.ConnectionTimeout.count()) + " ms. "
           + std::string(curl_easy_strerror(result)));
     }
+  }
 
-    //   Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
-    // timeout >= 25 days. Fails as soon as trying to upload any data
-    // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-    if (!SetLibcurlOption(m_handle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
+  /******************** Curl handle options apply to all connections created
+   * The keepAlive option is managed by the session directly.
+   */
+  if (options.Proxy)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_PROXY, options.Proxy->c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set proxy to:" + options.Proxy.Value() + ". "
           + std::string(curl_easy_strerror(result)));
     }
+  }
 
-    if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
+  if (!options.ProxyUsername.empty())
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.c_str(), &result))
     {
-      if (!SetLibcurlOption(
-              m_handle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
-      {
-        throw Azure::Core::Http::TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Fail setting connect timeout to: "
-            + std::to_string(options.ConnectionTimeout.count()) + " ms. "
-            + std::string(curl_easy_strerror(result)));
-      }
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
+          + std::string(curl_easy_strerror(result)));
     }
+  }
+  if (!options.ProxyPassword.empty())
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.c_str(), &result))
+    {
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
+          + std::string(curl_easy_strerror(result)));
+    }
+  }
 
-    /******************** Curl handle options apply to all connections created
-     * The keepAlive option is managed by the session directly.
-     */
-    if(options.Proxy)
+  if (!options.CAInfo.empty())
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
     {
-      if (!SetLibcurlOption(m_handle, CURLOPT_PROXY, options.Proxy->c_str(), &result))
-      {
-        throw Azure::Core::Http::TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set proxy to:" + options.Proxy.Value() + ". "
-            + std::string(curl_easy_strerror(result)));
-      }
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set CA cert file to:" + options.CAInfo + ". "
+          + std::string(curl_easy_strerror(result)));
     }
+  }
 
-    if (!options.ProxyUsername.empty())
+  if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
+  {
+    curl_blob rootCertBlob
+        = {const_cast<void*>(reinterpret_cast<const void*>(
+               options.SslOptions.PemEncodedExpectedRootCertificates.c_str())),
+           options.SslOptions.PemEncodedExpectedRootCertificates.size(),
+           CURL_BLOB_COPY};
+    if (!SetLibcurlOption(m_handle, CURLOPT_CAINFO_BLOB, rootCertBlob, &result))
     {
-      if (!SetLibcurlOption(
-              m_handle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.c_str(), &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
-            + std::string(curl_easy_strerror(result)));
-      }
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set CA cert to:" + options.CAInfo + ". "
+          + std::string(curl_easy_strerror(result)));
     }
-    if (!options.ProxyPassword.empty())
-    {
-      if (!SetLibcurlOption(
-              m_handle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.c_str(), &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
-            + std::string(curl_easy_strerror(result)));
-      }
-    }
-
-    if (!options.CAInfo.empty())
-    {
-      if (!SetLibcurlOption(m_handle, CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
-      {
-        throw Azure::Core::Http::TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set CA cert file to:" + options.CAInfo + ". "
-            + std::string(curl_easy_strerror(result)));
-      }
-    }
-
-    if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
-    {
-      curl_blob rootCertBlob
-          = {const_cast<void*>(reinterpret_cast<const void*>(
-                 options.SslOptions.PemEncodedExpectedRootCertificates.c_str())),
-             options.SslOptions.PemEncodedExpectedRootCertificates.size(),
-             CURL_BLOB_COPY};
-      if (!SetLibcurlOption(m_handle, CURLOPT_CAINFO_BLOB, rootCertBlob, &result))
-      {
-        throw Azure::Core::Http::TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set CA cert to:" + options.CAInfo + ". "
-            + std::string(curl_easy_strerror(result)));
-      }
-    }
+  }
 
 #if defined(AZ_PLATFORM_WINDOWS)
-    long sslOption = 0;
-    if (!options.SslOptions.EnableCertificateRevocationListCheck)
-    {
-      sslOption |= CURLSSLOPT_NO_REVOKE;
-    }
+  long sslOption = 0;
+  if (!options.SslOptions.EnableCertificateRevocationListCheck)
+  {
+    sslOption |= CURLSSLOPT_NO_REVOKE;
+  }
 
-    if (!SetLibcurlOption(m_handle, CURLOPT_SSL_OPTIONS, sslOption, &result))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
-          + std::string(curl_easy_strerror(result)));
-    }
+  if (!SetLibcurlOption(m_handle, CURLOPT_SSL_OPTIONS, sslOption, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
 #else
-    if (options.SslOptions.EnableCertificateRevocationListCheck)
-    {
-      if (!SetLibcurlOption(
-              m_handle, CURLOPT_SSL_CTX_FUNCTION, CurlConnection::CurlSslCtxCallback, &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set SSL context callback. " + std::string(curl_easy_strerror(result)));
-      }
-      if (!SetLibcurlOption(m_handle, CURLOPT_SSL_CTX_DATA, this, &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set SSL context callback data. "
-            + std::string(curl_easy_strerror(result)));
-      }
-      if (!SetLibcurlOption(m_handle, CURLOPT_SSL_VERIFYSTATUS, 1, &result))
-      {
-        throw TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to enable OCSP chaining. " + std::string(curl_easy_strerror(result)));
-      }
-    }
-    m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
+        if (options.SslOptions.EnableCertificateRevocationListCheck)
+        {
+          if (!SetLibcurlOption(
+                  m_handle, CURLOPT_SSL_CTX_FUNCTION, CurlConnection::CurlSslCtxCallback, &result))
+          {
+            throw TransportException(
+                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+                + ". Failed to set SSL context callback. "
+                + std::string(curl_easy_strerror(result)));
+          }
+          if (!SetLibcurlOption(m_handle, CURLOPT_SSL_CTX_DATA, this, &result))
+          {
+            throw TransportException(
+                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+                + ". Failed to set SSL context callback data. "
+                + std::string(curl_easy_strerror(result)));
+          }
+          //          if (!SetLibcurlOption(m_handle, CURLOPT_SSL_VERIFYSTATUS, 1, &result))
+          //          {
+          //            throw TransportException(
+          //                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          //                + ". Failed to enable OCSP chaining. " +
+          //                std::string(curl_easy_strerror(result)));
+          //          }
+        }
+        m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
+        m_allowFailedCrlRetrieval = options.SslOptions.AllowFailedCrlRetrieval;
 #endif
 
-    if (!options.SslVerifyPeer)
-    {
-      if (!SetLibcurlOption(m_handle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
-      {
-        throw Azure::Core::Http::TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
-      }
-    }
-
-    if (options.NoSignal)
-    {
-      if (!SetLibcurlOption(m_handle, CURLOPT_NOSIGNAL, 1L, &result))
-      {
-        throw Azure::Core::Http::TransportException(
-            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-            + ". Failed to set NOSIGNAL option for libcurl. "
-            + std::string(curl_easy_strerror(result)));
-      }
-    }
-
-    // curl-transport adapter supports only HTTP/1.1
-    // https://github.com/Azure/azure-sdk-for-cpp/issues/2848
-    // The libcurl uses HTTP/2 by default, if it can be negotiated with a server on handshake.
-    if (!SetLibcurlOption(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
+  if (!options.SslVerifyPeer)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed to set libcurl HTTP/1.1" + ". " + std::string(curl_easy_strerror(result)));
+          + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
     }
+  }
 
-    //   Make libcurl to support only TLS v1.2 or later
-    if (!SetLibcurlOption(m_handle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
+  if (options.NoSignal)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_NOSIGNAL, 1L, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
+          + ". Failed to set NOSIGNAL option for libcurl. "
+          + std::string(curl_easy_strerror(result)));
     }
+  }
 
-    auto performResult = curl_easy_perform(m_handle.get());
-    if (performResult != CURLE_OK)
+  // curl-transport adapter supports only HTTP/1.1
+  // https://github.com/Azure/azure-sdk-for-cpp/issues/2848
+  // The libcurl uses HTTP/2 by default, if it can be negotiated with a server on handshake.
+  if (!SetLibcurlOption(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed to set libcurl HTTP/1.1" + ". " + std::string(curl_easy_strerror(result)));
+  }
+
+  //   Make libcurl to support only TLS v1.2 or later
+  if (!SetLibcurlOption(m_handle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
+  }
+
+  auto performResult = curl_easy_perform(m_handle.get());
+  if (performResult != CURLE_OK)
+  {
+    if (performResult == CURLE_SSL_PEER_CERTIFICATE)
+    {
+      curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);
+      throw Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+          + std::string(curl_easy_strerror(performResult))
+          + ". Underlying error: " + X509_verify_cert_error_string(result));
+    }
+    else
     {
       throw Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
           + std::string(curl_easy_strerror(performResult)));
     }
+  }
 
-    //   Get the socket that libcurl is using from handle. Will use this to wait while
-    // reading/writing
-    // into wire
+  //   Get the socket that libcurl is using from handle. Will use this to wait while
+  // reading/writing
+  // into wire
 #if defined(_MSC_VER)
 #pragma warning(push)
 // C26812: The enum type 'CURLcode' is un-scoped. Prefer 'enum class' over 'enum' (Enum.3)
 #pragma warning(disable : 26812)
 #endif
-    result = curl_easy_getinfo(m_handle.get(), CURLINFO_ACTIVESOCKET, &m_curlSocket);
+  result = curl_easy_getinfo(m_handle.get(), CURLINFO_ACTIVESOCKET, &m_curlSocket);
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-    if (result != CURLE_OK)
-    {
-      throw Http::TransportException(
-          "Broken connection. Couldn't get the active sockect for it."
-          + std::string(curl_easy_strerror(result)));
-    }
+  if (result != CURLE_OK)
+  {
+    throw Http::TransportException(
+        "Broken connection. Couldn't get the active sockect for it."
+        + std::string(curl_easy_strerror(result)));
   }
+}

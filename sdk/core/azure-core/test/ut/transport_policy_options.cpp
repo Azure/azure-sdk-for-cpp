@@ -14,6 +14,8 @@
 #include <string>
 #include <thread>
 
+using namespace std::chrono_literals;
+
 #if !defined(DISABLE_PROXY_TESTS)
 namespace Azure { namespace Core { namespace Test {
   namespace {
@@ -391,7 +393,9 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, CheckFailedCrlValidation)
   {
-    Azure::Core::Url testUrl("https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md");
+    //    Azure::Core::Url
+    //    testUrl("https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md");
+    Azure::Core::Url testUrl("https://www.wikipedia.org");
     // For <reasons>, github URLs work just fine if CRL validation is off, but if enabled,
     // they fail. Let's use that fact to verify that CRL validation causes github
     // URLs to fail.
@@ -419,19 +423,63 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-        EXPECT_THROW(pipeline.Send(request, Azure::Core::Context::ApplicationContext), Azure::Core::Http::TransportException);
+        EXPECT_THROW(
+            pipeline.Send(request, Azure::Core::Context::ApplicationContext),
+            Azure::Core::Http::TransportException);
       }
     }
+#if !defined(AZ_PLATFORM_WINDOWS)
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
 
+      // Note that the default is to *disable* CRL checks, because they are disabled
+      // by default. So we test *enabling* CRL validation checks.
+      //
+      // Retrieving the test URL should succeed if we allow failed CRL retrieval because
+      // the certificate for the test URL doesn't contain a CRL distribution points extension,
+      // and by default there is no platform CRL present.
+      Azure::Core::Http::CurlTransportOptions curlOptions;
+      curlOptions.SslOptions.AllowFailedCrlRetrieval = true;
+      curlOptions.SslOptions.EnableCertificateRevocationListCheck = true;
+      transportOptions.Transport = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+    }
+#endif
   }
 
   TEST_F(TransportAdapterOptions, StressCrlCache)
   {
-    Azure::Core::Url testUrl1(AzureSdkHttpbinServer::Get());
-    Azure::Core::Url testUrl2("https://www.microsoft.com/");
-    Azure::Core::Url testUrl3("https://www.example.com/");
-    Azure::Core::Url testUrl4("https://www.wikipedia.org");
-    // HTTP Connections.
+    std::vector<std::string> testUrls{
+        AzureSdkHttpbinServer::Get(),
+        "https://www.microsoft.com/",
+        "https://www.example.com/",
+        "https://www.google.com/"//,
+        //"https://www.wikipedia.org"
+        };
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      // FIrst verify connectivity to the test servers.
+      transportOptions.EnableCertificateRevocationListCheck = false;
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      for (auto const& target : testUrls)
+      {
+        Azure::Core::Url url(target);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+    }
+
+    // Now verify that once we enable CRL checks, we can still access the URLs.
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -440,58 +488,14 @@ namespace Azure { namespace Core { namespace Test {
       transportOptions.EnableCertificateRevocationListCheck = true;
       HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
 
+      for (auto const& target : testUrls)
       {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl1);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl2);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl3);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl4);
+        Azure::Core::Url url(target);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
     }
-
-    {
-      Azure::Core::Http::Policies::TransportOptions transportOptions;
-
-      // Note that the default is to *disable* CRL checks, because they are disabled
-      // by default. So we test *enabling* CRL validation checks.
-      transportOptions.EnableCertificateRevocationListCheck = true;
-      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
-
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl1);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl2);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl3);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl4);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
-      }
-    }
-
 
   }
 

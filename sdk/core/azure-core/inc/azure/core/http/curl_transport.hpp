@@ -39,13 +39,17 @@ namespace Azure { namespace Core { namespace Http {
      * @remark Libcurl does revocation list check by default for SSL backends that supports this
      * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
      * check by default. This ensures that the LibCURL behavior matches the WinHTTP behavior.
-     *
-     * @remark Note that this only works when LibCURL is configured to use schannel as its TLS
-     * provider. That functionally limits this check to Windows only, and then only when schannel is
-     * configured (the default).
-     *
      */
     bool EnableCertificateRevocationListCheck = false;
+
+    /**
+     * @brief This option allows SSL connections to proceed even if there is an error retrieving the Certificate Revocation List.
+     *
+     * @remark Note that this only works when LibCURL is configured to use openssl as its TLS
+     * provider. That functionally limits this check to Linux only, and then only when openssl is
+     * configured (the default).
+     */
+    bool AllowFailedCrlRetrieval = false;
 
     /**
      * @brief A set of PEM encoded X.509 certificates and CRLs describing the certificates used to

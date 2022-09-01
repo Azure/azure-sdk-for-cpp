@@ -25,6 +25,8 @@
 #pragma warning(pop)
 #endif
 
+typedef struct x509_store_ctx_st X509_STORE_CTX;
+
 namespace Azure { namespace Core { namespace Http {
 
   namespace _detail {
@@ -142,7 +144,10 @@ namespace Azure { namespace Core { namespace Http {
     curl_socket_t m_curlSocket;
     std::chrono::steady_clock::time_point m_lastUseTime;
     std::string m_connectionKey;
-    bool m_enableCrlValidation{false}; // CRL validation is disabled by default to be consistent with WinHTTP behavior
+    // CRL validation is disabled by default to be consistent with WinHTTP behavior
+    bool m_enableCrlValidation{false};
+    // Allow the connection to proceed if retrieving the CRL failed.
+    bool m_allowFailedCrlRetrieval{true};
 
     static int CurlLoggingCallback(
         CURL* handle,
@@ -153,6 +158,7 @@ namespace Azure { namespace Core { namespace Http {
 
     static int CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm);
     int SslCtxCallback(CURL* curl, void* sslctx);
+    int VerifyCertificateError(int ok, X509_STORE_CTX* storeContext);
 
   public:
     /**
