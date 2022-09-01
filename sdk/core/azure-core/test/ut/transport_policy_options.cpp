@@ -90,33 +90,8 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::HttpStatusCode code,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok);
 
-    std::string HttpProxyServer()
-    {
-      std::string anonymousServer{
-          Azure::Core::_internal::Environment::GetVariable("ANONYMOUSCONTAINERIPV4ADDRESS")};
-      GTEST_LOG_(INFO) << "Anonymous server: " << anonymousServer;
-      if (anonymousServer.empty())
-      {
-        GTEST_LOG_(WARNING)
-            << "Could not find value for ANONYMOUSCONTAINERIPV4ADDRESS, Assuming local.";
-        anonymousServer = "127.0.0.1";
-      }
-
-      return "http://" + anonymousServer + ":3128";
-    }
-    std::string HttpProxyServerWithPassword()
-    {
-      std::string authenticatedServer{
-          Azure::Core::_internal::Environment::GetVariable("AUTHENTICATEDCONTAINERIPV4ADDRESS")};
-      GTEST_LOG_(INFO) << "Authenticated server: " << authenticatedServer;
-      if (authenticatedServer.empty())
-      {
-        GTEST_LOG_(WARNING)
-            << "Could not find value for AUTHENTICATEDCONTAINERIPV4ADDRESS, Assuming local.";
-        authenticatedServer = "127.0.0.1";
-      }
-      return "http://" + authenticatedServer + ":3129";
-    }
+    std::string HttpProxyServer() { return "http://127.0.0.1:3128"; }
+    std::string HttpProxyServerWithPassword() { return "http://127.0.0.1:3129"; }
 
   protected:
     // Create
@@ -381,10 +356,13 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapterOptions, DisableCaValidation)
   {
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
+    //    Azure::Core::Url testUrl("https://www.microsoft.com/");
     // HTTP Connections.
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
+      // Note that the default is to *disable* CRL checks, because they are disabled
+      // by default. So we test *enabling* CRL validation checks.
       transportOptions.EnableCertificateRevocationListCheck = true;
       HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
 
@@ -398,10 +376,10 @@ namespace Azure { namespace Core { namespace Test {
       transportOptions.HttpProxy = HttpProxyServerWithPassword();
       transportOptions.ProxyUserName = "user";
       transportOptions.ProxyPassword = "password";
-      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
-
       // Disable CA checks on proxy pipelines too.
       transportOptions.EnableCertificateRevocationListCheck = true;
+
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
       auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
@@ -409,6 +387,112 @@ namespace Azure { namespace Core { namespace Test {
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
+  }
+
+  TEST_F(TransportAdapterOptions, CheckFailedCrlValidation)
+  {
+    Azure::Core::Url testUrl("https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md");
+    // For <reasons>, github URLs work just fine if CRL validation is off, but if enabled,
+    // they fail. Let's use that fact to verify that CRL validation causes github
+    // URLs to fail.
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      // Note that the default is to *disable* CRL checks, because they are disabled
+      // by default. So we test *enabling* CRL validation checks.
+      transportOptions.EnableCertificateRevocationListCheck = false;
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+    }
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      // Note that the default is to *disable* CRL checks, because they are disabled
+      // by default. So we test *enabling* CRL validation checks.
+      transportOptions.EnableCertificateRevocationListCheck = true;
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
+        EXPECT_THROW(pipeline.Send(request, Azure::Core::Context::ApplicationContext), Azure::Core::Http::TransportException);
+      }
+    }
+
+  }
+
+  TEST_F(TransportAdapterOptions, StressCrlCache)
+  {
+    Azure::Core::Url testUrl1(AzureSdkHttpbinServer::Get());
+    Azure::Core::Url testUrl2("https://www.microsoft.com/");
+    Azure::Core::Url testUrl3("https://www.example.com/");
+    Azure::Core::Url testUrl4("https://www.wikipedia.org");
+    // HTTP Connections.
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      // Note that the default is to *disable* CRL checks, because they are disabled
+      // by default. So we test *enabling* CRL validation checks.
+      transportOptions.EnableCertificateRevocationListCheck = true;
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl1);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl2);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl3);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl4);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+    }
+
+    {
+      Azure::Core::Http::Policies::TransportOptions transportOptions;
+
+      // Note that the default is to *disable* CRL checks, because they are disabled
+      // by default. So we test *enabling* CRL validation checks.
+      transportOptions.EnableCertificateRevocationListCheck = true;
+      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
+
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl1);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl2);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl3);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl4);
+        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      }
+    }
+
+
   }
 
 }}} // namespace Azure::Core::Test

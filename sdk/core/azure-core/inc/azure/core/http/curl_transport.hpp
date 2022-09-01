@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Http {
      * configured (the default).
      *
      */
-    bool EnableCertificateRevocationListCheck = true;
+    bool EnableCertificateRevocationListCheck = false;
 
     /**
      * @brief A set of PEM encoded X.509 certificates and CRLs describing the certificates used to
