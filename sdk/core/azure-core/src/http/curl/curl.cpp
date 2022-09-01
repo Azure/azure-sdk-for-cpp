@@ -1424,495 +1424,487 @@ int CurlConnection::CurlLoggingCallback(CURL*, curl_infotype type, char* data, s
   return 0;
 }
 #if !defined(AZ_PLATFORM_WINDOWS)
-namespace Azure {
-namespace Core {
-  namespace Http {
-    namespace _detail {
+namespace Azure { namespace Core { namespace Http {
+  namespace _detail {
 
-      // Helpers to provide RAII wrappers for OpenSSL types.
-      template <typename T, void (&Deleter)(T*)> struct openssl_deleter
+    // Helpers to provide RAII wrappers for OpenSSL types.
+    template <typename T, void (&Deleter)(T*)> struct openssl_deleter
+    {
+      void operator()(T* obj) { Deleter(obj); }
+    };
+    template <typename T, void (&FreeFunc)(T*)>
+    using basic_openssl_unique_ptr = std::unique_ptr<T, openssl_deleter<T, FreeFunc>>;
+
+    // *** Given just T, map it to the corresponding FreeFunc:
+    template <typename T> struct type_map_helper;
+    template <> struct type_map_helper<X509>
+    {
+      using type = basic_openssl_unique_ptr<X509, X509_free>;
+    };
+    template <> struct type_map_helper<X509_CRL>
+    {
+      using type = basic_openssl_unique_ptr<X509_CRL, X509_CRL_free>;
+    };
+
+    template <> struct type_map_helper<BIO>
+    {
+      using type = basic_openssl_unique_ptr<BIO, BIO_free_all>;
+    };
+
+    // *** Now users can say openssl_unique_ptr<T> if they want:
+    template <typename T> using openssl_unique_ptr = typename type_map_helper<T>::type;
+
+    // *** Or the current solution's convenience aliases:
+    using openssl_bio = openssl_unique_ptr<BIO>;
+    using openssl_x509 = openssl_unique_ptr<X509>;
+    using openssl_x509_crl = openssl_unique_ptr<X509_CRL>;
+
+    template <typename Api, typename... Args>
+    auto make_openssl_unique(Api& OpensslApi, Args&&... args)
+    {
+      auto raw = OpensslApi(std::forward<Args>(
+          args)...); // forwarding is probably unnecessary, could use const Args&...
+      // check raw
+      using T = std::remove_pointer_t<decltype(raw)>; // no need to request T when we can see
+                                                      // what OpensslApi returned
+      return openssl_unique_ptr<T>{raw};
+    }
+
+    std::string GetOpenSSLError(std::string const& what)
+    {
+      auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
+
+      BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
+      if (ERR_peek_error() != 0)
       {
-        void operator()(T* obj) { Deleter(obj); }
-      };
-      template <typename T, void (&FreeFunc)(T*)>
-      using basic_openssl_unique_ptr = std::unique_ptr<T, openssl_deleter<T, FreeFunc>>;
-
-      // *** Given just T, map it to the corresponding FreeFunc:
-      template <typename T> struct type_map_helper;
-      template <> struct type_map_helper<X509>
+        ERR_print_errors(bio.get());
+      }
+      else
       {
-        using type = basic_openssl_unique_ptr<X509, X509_free>;
-      };
-      template <> struct type_map_helper<X509_CRL>
-      {
-        using type = basic_openssl_unique_ptr<X509_CRL, X509_CRL_free>;
-      };
-
-      template <> struct type_map_helper<BIO>
-      {
-        using type = basic_openssl_unique_ptr<BIO, BIO_free_all>;
-      };
-
-      // *** Now users can say openssl_unique_ptr<T> if they want:
-      template <typename T> using openssl_unique_ptr = typename type_map_helper<T>::type;
-
-      // *** Or the current solution's convenience aliases:
-      using openssl_bio = openssl_unique_ptr<BIO>;
-      using openssl_x509 = openssl_unique_ptr<X509>;
-      using openssl_x509_crl = openssl_unique_ptr<X509_CRL>;
-
-      template <typename Api, typename... Args>
-      auto make_openssl_unique(Api& OpensslApi, Args&&... args)
-      {
-        auto raw = OpensslApi(std::forward<Args>(
-            args)...); // forwarding is probably unnecessary, could use const Args&...
-        // check raw
-        using T = std::remove_pointer_t<decltype(raw)>; // no need to request T when we can see
-                                                        // what OpensslApi returned
-        return openssl_unique_ptr<T>{raw};
+        BIO_printf(bio.get(), "Unknown error.");
       }
 
-      std::string GetOpenSSLError(std::string const& what)
+      uint8_t* bioData;
+      long bufferSize = BIO_get_mem_data(bio.get(), &bioData);
+      std::string returnValue;
+      returnValue.resize(bufferSize);
+      memcpy(&returnValue[0], bioData, bufferSize);
+
+      return returnValue;
+    }
+  } // namespace _detail
+
+  namespace {
+    // int g_ssl_crl_max_size_in_kb = 20;
+    /**
+     * @brief THe Cryptography class provides a set of basic cryptographic primatives required
+     * by the attestation samples.
+     */
+
+    _detail::openssl_x509_crl LoadCrlFromUrl(std::string const& url)
+    {
+      Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
+      auto crl = _detail::make_openssl_unique(X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
+      if (!crl)
       {
-        auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-
-        BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
-        if (ERR_peek_error() != 0)
-        {
-          ERR_print_errors(bio.get());
-        }
-        else
-        {
-          BIO_printf(bio.get(), "Unknown error.");
-        }
-
-        uint8_t* bioData;
-        long bufferSize = BIO_get_mem_data(bio.get(), &bioData);
-        std::string returnValue;
-        returnValue.resize(bufferSize);
-        memcpy(&returnValue[0], bioData, bufferSize);
-
-        return returnValue;
-      }
-#endif
-    } // namespace _detail
-
-    namespace {
-#if !defined(AZ_PLATFORM_WINDOWS)
-      // int g_ssl_crl_max_size_in_kb = 20;
-      /**
-       * @brief THe Cryptography class provides a set of basic cryptographic primatives required
-       * by the attestation samples.
-       */
-
-      _detail::openssl_x509_crl LoadCrlFromUrl(std::string const& url)
-      {
-        Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
-        auto crl
-            = _detail::make_openssl_unique(X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
-        if (!crl)
-        {
-          Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Load CRL"));
-        }
-
-        return crl;
+        Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Load CRL"));
       }
 
-      enum class CrlFormat : int
+      return crl;
+    }
+
+    enum class CrlFormat : int
+    {
+      Http,
+      Asn1,
+      PEM,
+    };
+
+    _detail::openssl_x509_crl LoadCrl(std::string const& source, CrlFormat format)
+    {
+      _detail::openssl_x509_crl x;
+      _detail::openssl_bio in;
+
+      if (format == CrlFormat::Http)
       {
-        Http,
-        Asn1,
-        PEM,
-      };
-
-      _detail::openssl_x509_crl LoadCrl(std::string const& source, CrlFormat format)
-      {
-        _detail::openssl_x509_crl x;
-        _detail::openssl_bio in;
-
-        if (format == CrlFormat::Http)
-        {
-          return LoadCrlFromUrl(source);
-        }
-
-        in = _detail::make_openssl_unique(BIO_new, BIO_s_file());
-        if (!in)
-        {
-          Log::Write(Logger::Level::Error, "could not bio_new for file " + source);
-          return nullptr;
-        }
-
-        if (source.empty())
-        {
-          if (BIO_set_fp(in.get(), stdin, BIO_NOCLOSE) != 1)
-          {
-            Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("open stdin: "));
-          }
-        }
-        else
-        {
-          if (BIO_read_filename(in.get(), const_cast<char*>(source.c_str())) <= 0)
-          {
-            Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Read file: " + source));
-            return nullptr;
-          }
-        }
-
-        if (format == CrlFormat::Asn1)
-        {
-          x = _detail::make_openssl_unique(d2i_X509_CRL_bio, in.get(), nullptr);
-        }
-        else if (format == CrlFormat::PEM)
-        {
-          x = _detail::make_openssl_unique(
-              PEM_read_bio_X509_CRL, in.get(), nullptr, nullptr, nullptr);
-        }
-        else
-        {
-          Log::Write(Logger::Level::Error, "bad input format specified for input crl");
-          return nullptr;
-        }
-
-        if (!x)
-        {
-          Log::Write(
-              Logger::Level::Error, _detail::GetOpenSSLError("unable to load CRL from " + source));
-          return nullptr;
-        }
-
-        return x;
+        return LoadCrlFromUrl(source);
       }
 
-      bool IsCrlValid(X509_CRL* crl)
+      in = _detail::make_openssl_unique(BIO_new, BIO_s_file());
+      if (!in)
       {
-        const ASN1_TIME* at = X509_CRL_get0_nextUpdate(crl);
-
-        int day = -1;
-        int sec = -1;
-        if (!ASN1_TIME_diff(&day, &sec, nullptr, at))
-        {
-          Log::Write(Logger::Level::Error, "Could not check expiration");
-          return false; /* Safe default, invalid */
-        }
-
-        if (day > 0 || sec > 0)
-        {
-          return true; /* Later, valid */
-        }
-        return false; /* Before or same, invalid */
-      }
-
-      const char* GetDistributionPointUrl(DIST_POINT* dp)
-      {
-        GENERAL_NAMES* gens;
-        GENERAL_NAME* gen;
-        int i, nameType;
-        ASN1_STRING* uri;
-
-        if (!dp->distpoint)
-        {
-          Log::Write(Logger::Level::Informational, "returning, dp->distpoint is null");
-          return nullptr;
-        }
-
-        if (dp->distpoint->type != 0)
-        {
-          Log::Write(
-              Logger::Level::Informational,
-              "returning, dp->distpoint->type is " + std::to_string(dp->distpoint->type));
-          return nullptr;
-        }
-
-        gens = dp->distpoint->name.fullname;
-
-        for (i = 0; i < sk_GENERAL_NAME_num(gens); i++)
-        {
-          gen = sk_GENERAL_NAME_value(gens, i);
-          uri = static_cast<ASN1_STRING*>(GENERAL_NAME_get0_value(gen, &nameType));
-
-          if (nameType == GEN_URI && ASN1_STRING_length(uri) > 6)
-          {
-            const char* uptr = reinterpret_cast<const char*>(ASN1_STRING_get0_data(uri));
-            if (strncmp(uptr, "http://", 7) == 0)
-            {
-              return uptr;
-            }
-          }
-        }
-
+        Log::Write(Logger::Level::Error, "could not bio_new for file " + source);
         return nullptr;
       }
 
-      std::mutex crl_cache_lock;
-      std::vector<X509_CRL*> crl_cache;
-
-      bool SaveCertificateCrlToMemory(X509* cert, _detail::openssl_x509_crl const& crl)
+      if (source.empty())
       {
-        std::unique_lock<std::mutex> lockResult(crl_cache_lock);
-
-        // update existing
-        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
-        for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+        if (BIO_set_fp(in.get(), stdin, BIO_NOCLOSE) != 1)
         {
-          X509_CRL* cacheEntry = *it;
-          if (!cacheEntry)
-          {
-            continue;
-          }
-
-          X509_NAME* crl_issuer = X509_CRL_get_issuer(cacheEntry);
-          if (!crl_issuer || !cert_issuer)
-          {
-            continue;
-          }
-
-          // If we are getting a new CRL for an existing CRL, update the
-          // CRL with the new CRL.
-          if (0 == X509_NAME_cmp(crl_issuer, cert_issuer))
-          {
-            // Bump the refcount on the new CRL before adding it to the cache.
-            X509_CRL_free(*it);
-            X509_CRL_up_ref(crl.get());
-            *it = crl.get();
-            return true;
-          }
+          Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("open stdin: "));
         }
-
-        // not found, so try to find slot by purging outdated
-        for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+      }
+      else
+      {
+        if (BIO_read_filename(in.get(), const_cast<char*>(source.c_str())) <= 0)
         {
-          if (!*it)
-          {
-            // set new
-            X509_CRL_free(*it);
-            X509_CRL_up_ref(crl.get());
-            *it = crl.get();
-            return true;
-          }
-
-          if (!IsCrlValid(*it))
-          {
-            // remove stale
-            X509_CRL_free(*it);
-            X509_CRL_up_ref(crl.get());
-            *it = crl.get();
-            return true;
-          }
+          Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Read file: " + source));
+          return nullptr;
         }
-
-        // Clone the certificate and add it to the cache.
-        X509_CRL_up_ref(crl.get());
-        crl_cache.push_back(crl.get());
-        return true;
       }
 
-      _detail::openssl_x509_crl LoadCertificateCrlFromMemory(X509* cert)
+      if (format == CrlFormat::Asn1)
       {
-        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
-
-        std::unique_lock<std::mutex> lockResult(crl_cache_lock);
-
-        for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
-        {
-          X509_CRL* crl = *it;
-          if (!*it)
-          {
-            continue;
-          }
-
-          // names don't match up. probably a hash collision
-          // so lets test if there is another crl on disk.
-          X509_NAME* crl_issuer = X509_CRL_get_issuer(crl);
-          if (!crl_issuer || !cert_issuer)
-          {
-            continue;
-          }
-
-          if (0 != X509_NAME_cmp(crl_issuer, cert_issuer))
-          {
-            continue;
-          }
-
-          if (!IsCrlValid(crl))
-          {
-            Log::Write(Logger::Level::Informational, "Discarding outdated CRL");
-            X509_CRL_free(*it);
-            *it = nullptr;
-            continue;
-          }
-
-          X509_CRL_up_ref(crl);
-          return _detail::openssl_x509_crl(crl);
-        }
+        x = _detail::make_openssl_unique(d2i_X509_CRL_bio, in.get(), nullptr);
+      }
+      else if (format == CrlFormat::PEM)
+      {
+        x = _detail::make_openssl_unique(
+            PEM_read_bio_X509_CRL, in.get(), nullptr, nullptr, nullptr);
+      }
+      else
+      {
+        Log::Write(Logger::Level::Error, "bad input format specified for input crl");
         return nullptr;
       }
 
-      _detail::openssl_x509_crl LoadCrlFromCacheAndDistributionPoint(
-          X509* cert,
-          STACK_OF(DIST_POINT) * crlDistributionPointStack)
+      if (!x)
       {
-        int i;
+        Log::Write(
+            Logger::Level::Error, _detail::GetOpenSSLError("unable to load CRL from " + source));
+        return nullptr;
+      }
 
-        _detail::openssl_x509_crl crl = LoadCertificateCrlFromMemory(cert);
-        if (crl)
+      return x;
+    }
+
+    bool IsCrlValid(X509_CRL* crl)
+    {
+      const ASN1_TIME* at = X509_CRL_get0_nextUpdate(crl);
+
+      int day = -1;
+      int sec = -1;
+      if (!ASN1_TIME_diff(&day, &sec, nullptr, at))
+      {
+        Log::Write(Logger::Level::Error, "Could not check expiration");
+        return false; /* Safe default, invalid */
+      }
+
+      if (day > 0 || sec > 0)
+      {
+        return true; /* Later, valid */
+      }
+      return false; /* Before or same, invalid */
+    }
+
+    const char* GetDistributionPointUrl(DIST_POINT* dp)
+    {
+      GENERAL_NAMES* gens;
+      GENERAL_NAME* gen;
+      int i, nameType;
+      ASN1_STRING* uri;
+
+      if (!dp->distpoint)
+      {
+        Log::Write(Logger::Level::Informational, "returning, dp->distpoint is null");
+        return nullptr;
+      }
+
+      if (dp->distpoint->type != 0)
+      {
+        Log::Write(
+            Logger::Level::Informational,
+            "returning, dp->distpoint->type is " + std::to_string(dp->distpoint->type));
+        return nullptr;
+      }
+
+      gens = dp->distpoint->name.fullname;
+
+      for (i = 0; i < sk_GENERAL_NAME_num(gens); i++)
+      {
+        gen = sk_GENERAL_NAME_value(gens, i);
+        uri = static_cast<ASN1_STRING*>(GENERAL_NAME_get0_value(gen, &nameType));
+
+        if (nameType == GEN_URI && ASN1_STRING_length(uri) > 6)
         {
-          return crl;
-        }
-
-        // file was not found on disk cache,
-        // so, now loading from web.
-        // Walk through the possible CRL distribution points
-        // looking for one which has a URL that we can download.
-        const char* urlptr = nullptr;
-        for (i = 0; i < sk_DIST_POINT_num(crlDistributionPointStack); i++)
-        {
-          DIST_POINT* dp = sk_DIST_POINT_value(crlDistributionPointStack, i);
-
-          urlptr = GetDistributionPointUrl(dp);
-          if (urlptr)
+          const char* uptr = reinterpret_cast<const char*>(ASN1_STRING_get0_data(uri));
+          if (strncmp(uptr, "http://", 7) == 0)
           {
-            // try to load from web, exit loop if
-            // successfully downloaded
-            crl = LoadCrl(urlptr, CrlFormat::Http);
-            if (crl)
-              break;
+            return uptr;
           }
         }
+      }
 
-        if (!urlptr)
+      return nullptr;
+    }
+
+    std::mutex crl_cache_lock;
+    std::vector<X509_CRL*> crl_cache;
+
+    bool SaveCertificateCrlToMemory(X509* cert, _detail::openssl_x509_crl const& crl)
+    {
+      std::unique_lock<std::mutex> lockResult(crl_cache_lock);
+
+      // update existing
+      X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
+      for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+      {
+        X509_CRL* cacheEntry = *it;
+        if (!cacheEntry)
         {
-          Log::Write(Logger::Level::Error, "No CRL dist point qualified for downloading.");
+          continue;
         }
 
-        if (crl)
+        X509_NAME* crl_issuer = X509_CRL_get_issuer(cacheEntry);
+        if (!crl_issuer || !cert_issuer)
         {
-          // save it to memory
-          SaveCertificateCrlToMemory(cert, crl);
+          continue;
         }
 
+        // If we are getting a new CRL for an existing CRL, update the
+        // CRL with the new CRL.
+        if (0 == X509_NAME_cmp(crl_issuer, cert_issuer))
+        {
+          // Bump the refcount on the new CRL before adding it to the cache.
+          X509_CRL_free(*it);
+          X509_CRL_up_ref(crl.get());
+          *it = crl.get();
+          return true;
+        }
+      }
+
+      // not found, so try to find slot by purging outdated
+      for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+      {
+        if (!*it)
+        {
+          // set new
+          X509_CRL_free(*it);
+          X509_CRL_up_ref(crl.get());
+          *it = crl.get();
+          return true;
+        }
+
+        if (!IsCrlValid(*it))
+        {
+          // remove stale
+          X509_CRL_free(*it);
+          X509_CRL_up_ref(crl.get());
+          *it = crl.get();
+          return true;
+        }
+      }
+
+      // Clone the certificate and add it to the cache.
+      X509_CRL_up_ref(crl.get());
+      crl_cache.push_back(crl.get());
+      return true;
+    }
+
+    _detail::openssl_x509_crl LoadCertificateCrlFromMemory(X509* cert)
+    {
+      X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
+
+      std::unique_lock<std::mutex> lockResult(crl_cache_lock);
+
+      for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+      {
+        X509_CRL* crl = *it;
+        if (!*it)
+        {
+          continue;
+        }
+
+        // names don't match up. probably a hash collision
+        // so lets test if there is another crl on disk.
+        X509_NAME* crl_issuer = X509_CRL_get_issuer(crl);
+        if (!crl_issuer || !cert_issuer)
+        {
+          continue;
+        }
+
+        if (0 != X509_NAME_cmp(crl_issuer, cert_issuer))
+        {
+          continue;
+        }
+
+        if (!IsCrlValid(crl))
+        {
+          Log::Write(Logger::Level::Informational, "Discarding outdated CRL");
+          X509_CRL_free(*it);
+          *it = nullptr;
+          continue;
+        }
+
+        X509_CRL_up_ref(crl);
+        return _detail::openssl_x509_crl(crl);
+      }
+      return nullptr;
+    }
+
+    _detail::openssl_x509_crl LoadCrlFromCacheAndDistributionPoint(
+        X509* cert,
+        STACK_OF(DIST_POINT) * crlDistributionPointStack)
+    {
+      int i;
+
+      _detail::openssl_x509_crl crl = LoadCertificateCrlFromMemory(cert);
+      if (crl)
+      {
         return crl;
       }
 
-      /**
-       * @brief Retrieve the CRL associated with the provided store context, if available.
-       *
-       */
-      STACK_OF(X509_CRL) * CrlHttpCallback(const X509_STORE_CTX* context, const X509_NAME*)
+      // file was not found on disk cache,
+      // so, now loading from web.
+      // Walk through the possible CRL distribution points
+      // looking for one which has a URL that we can download.
+      const char* urlptr = nullptr;
+      for (i = 0; i < sk_DIST_POINT_num(crlDistributionPointStack); i++)
       {
-        _detail::openssl_x509_crl crl;
-        STACK_OF(DIST_POINT) * crlDistributionPoint;
+        DIST_POINT* dp = sk_DIST_POINT_value(crlDistributionPointStack, i);
 
-        STACK_OF(X509_CRL)* crlStack = sk_X509_CRL_new_null();
-        if (crlStack == nullptr)
+        urlptr = GetDistributionPointUrl(dp);
+        if (urlptr)
         {
-          Log::Write(Logger::Level::Error, "Failed to allocate STACK_OF(X509_CRL)");
-          return nullptr;
+          // try to load from web, exit loop if
+          // successfully downloaded
+          crl = LoadCrl(urlptr, CrlFormat::Http);
+          if (crl)
+            break;
         }
+      }
 
-        X509* currentCertificate = X509_STORE_CTX_get_current_cert(context);
+      if (!urlptr)
+      {
+        Log::Write(Logger::Level::Error, "No CRL dist point qualified for downloading.");
+      }
 
-        // try to download Crl
-        crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
-            X509_get_ext_d2i(currentCertificate, NID_crl_distribution_points, nullptr, nullptr));
-        if (!crlDistributionPoint
-            && X509_NAME_cmp(
-                   X509_get_issuer_name(currentCertificate),
-                   X509_get_subject_name(currentCertificate))
-                != 0)
-        {
-          Log::Write(
-              Logger::Level::Error,
-              "No CRL distribution points defined on non self-issued cert, CRL check may fail.");
-          return nullptr;
-        }
+      if (crl)
+      {
+        // save it to memory
+        SaveCertificateCrlToMemory(cert, crl);
+      }
 
+      return crl;
+    }
+
+    /**
+     * @brief Retrieve the CRL associated with the provided store context, if available.
+     *
+     */
+    STACK_OF(X509_CRL) * CrlHttpCallback(const X509_STORE_CTX* context, const X509_NAME*)
+    {
+      _detail::openssl_x509_crl crl;
+      STACK_OF(DIST_POINT) * crlDistributionPoint;
+
+      STACK_OF(X509_CRL)* crlStack = sk_X509_CRL_new_null();
+      if (crlStack == nullptr)
+      {
+        Log::Write(Logger::Level::Error, "Failed to allocate STACK_OF(X509_CRL)");
+        return nullptr;
+      }
+
+      X509* currentCertificate = X509_STORE_CTX_get_current_cert(context);
+
+      // try to download Crl
+      crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
+          X509_get_ext_d2i(currentCertificate, NID_crl_distribution_points, nullptr, nullptr));
+      if (!crlDistributionPoint
+          && X509_NAME_cmp(
+                 X509_get_issuer_name(currentCertificate),
+                 X509_get_subject_name(currentCertificate))
+              != 0)
+      {
+        Log::Write(
+            Logger::Level::Error,
+            "No CRL distribution points defined on non self-issued cert, CRL check may fail.");
+        return nullptr;
+      }
+
+      crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
+
+      sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
+      if (!crl)
+      {
+        Log::Write(Logger::Level::Error, "Unable to retrieve CRL, CRL check may fail.");
+        sk_X509_CRL_free(crlStack);
+        return nullptr;
+      }
+
+      sk_X509_CRL_push(crlStack, X509_CRL_dup(crl.get()));
+
+      // try to download delta Crl
+      crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
+          X509_get_ext_d2i(currentCertificate, NID_freshest_crl, nullptr, nullptr));
+      if (crlDistributionPoint != nullptr)
+      {
         crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
 
         sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
-        if (!crl)
+        if (crl)
         {
-          Log::Write(Logger::Level::Error, "Unable to retrieve CRL, CRL check may fail.");
-          sk_X509_CRL_free(crlStack);
-          return nullptr;
-        }
-
-        sk_X509_CRL_push(crlStack, X509_CRL_dup(crl.get()));
-
-        // try to download delta Crl
-        crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
-            X509_get_ext_d2i(currentCertificate, NID_freshest_crl, nullptr, nullptr));
-        if (crlDistributionPoint != nullptr)
-        {
-          crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
-
-          sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
-          if (crl)
-          {
-            sk_X509_CRL_push(crlStack, X509_CRL_dup(crl.get()));
-          }
-        }
-
-        return crlStack;
-      }
-
-      static void nodes_print(BIO* bio_err, const char* name, STACK_OF(X509_POLICY_NODE) * nodes)
-      {
-        X509_POLICY_NODE* node;
-        int i;
-
-        BIO_printf(bio_err, "%s Policies:", name);
-        if (nodes)
-        {
-          BIO_puts(bio_err, "\n");
-          for (i = 0; i < sk_X509_POLICY_NODE_num(nodes); i++)
-          {
-            node = sk_X509_POLICY_NODE_value(nodes, i);
-            X509_POLICY_NODE_print(bio_err, node, 2);
-          }
-        }
-        else
-        {
-          BIO_puts(bio_err, " <empty>\n");
+          sk_X509_CRL_push(crlStack, X509_CRL_dup(crl.get()));
         }
       }
 
-      void policies_print(BIO* bio_err, X509_STORE_CTX* ctx)
+      return crlStack;
+    }
+
+    static void nodes_print(BIO* bio_err, const char* name, STACK_OF(X509_POLICY_NODE) * nodes)
+    {
+      X509_POLICY_NODE* node;
+      int i;
+
+      BIO_printf(bio_err, "%s Policies:", name);
+      if (nodes)
       {
-        X509_POLICY_TREE* tree;
-        int explicit_policy;
-        tree = X509_STORE_CTX_get0_policy_tree(ctx);
-        explicit_policy = X509_STORE_CTX_get_explicit_policy(ctx);
-
-        BIO_printf(bio_err, "Require explicit Policy: %s\n", explicit_policy ? "True" : "False");
-
-        nodes_print(bio_err, "Authority", X509_policy_tree_get0_policies(tree));
-        nodes_print(bio_err, "User", X509_policy_tree_get0_user_policies(tree));
-      }
-
-      int GetOpenSSLContextConnectionIndex()
-      {
-        static int openSslConnectionIndex = -1;
-        if (openSslConnectionIndex < 0)
+        BIO_puts(bio_err, "\n");
+        for (i = 0; i < sk_X509_POLICY_NODE_num(nodes); i++)
         {
-          openSslConnectionIndex
-              = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+          node = sk_X509_POLICY_NODE_value(nodes, i);
+          X509_POLICY_NODE_print(bio_err, node, 2);
         }
-        return openSslConnectionIndex;
       }
-      int GetOpenSSLContextLastVerifyFunction()
+      else
       {
-        static int openSslLastVerifyFunctionIndex = -1;
-        if (openSslLastVerifyFunctionIndex < 0)
-        {
-          openSslLastVerifyFunctionIndex
-              = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
-        }
-        return openSslLastVerifyFunctionIndex;
+        BIO_puts(bio_err, " <empty>\n");
       }
     }
-  }
-}
-} // namespace Azure::Core::Http
+
+    void policies_print(BIO* bio_err, X509_STORE_CTX* ctx)
+    {
+      X509_POLICY_TREE* tree;
+      int explicit_policy;
+      tree = X509_STORE_CTX_get0_policy_tree(ctx);
+      explicit_policy = X509_STORE_CTX_get_explicit_policy(ctx);
+
+      BIO_printf(bio_err, "Require explicit Policy: %s\n", explicit_policy ? "True" : "False");
+
+      nodes_print(bio_err, "Authority", X509_policy_tree_get0_policies(tree));
+      nodes_print(bio_err, "User", X509_policy_tree_get0_user_policies(tree));
+    }
+
+    int GetOpenSSLContextConnectionIndex()
+    {
+      static int openSslConnectionIndex = -1;
+      if (openSslConnectionIndex < 0)
+      {
+        openSslConnectionIndex = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+      }
+      return openSslConnectionIndex;
+    }
+    int GetOpenSSLContextLastVerifyFunction()
+    {
+      static int openSslLastVerifyFunctionIndex = -1;
+      if (openSslLastVerifyFunctionIndex < 0)
+      {
+        openSslLastVerifyFunctionIndex
+            = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+      }
+      return openSslLastVerifyFunctionIndex;
+    }
+  } // namespace
+}}} // namespace Azure::Core::Http
 
 // OpenSSL X509 Certificate Validation function - based off of the example found at:
 // https://linux.die.net/man/3/x509_store_ctx_set_verify_cb
@@ -2352,33 +2344,32 @@ CurlConnection::CurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 #else
-        if (options.SslOptions.EnableCertificateRevocationListCheck)
-        {
-          if (!SetLibcurlOption(
-                  m_handle, CURLOPT_SSL_CTX_FUNCTION, CurlConnection::CurlSslCtxCallback, &result))
-          {
-            throw TransportException(
-                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-                + ". Failed to set SSL context callback. "
-                + std::string(curl_easy_strerror(result)));
-          }
-          if (!SetLibcurlOption(m_handle, CURLOPT_SSL_CTX_DATA, this, &result))
-          {
-            throw TransportException(
-                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-                + ". Failed to set SSL context callback data. "
-                + std::string(curl_easy_strerror(result)));
-          }
-          //          if (!SetLibcurlOption(m_handle, CURLOPT_SSL_VERIFYSTATUS, 1, &result))
-          //          {
-          //            throw TransportException(
-          //                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          //                + ". Failed to enable OCSP chaining. " +
-          //                std::string(curl_easy_strerror(result)));
-          //          }
-        }
-        m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
-        m_allowFailedCrlRetrieval = options.SslOptions.AllowFailedCrlRetrieval;
+  if (options.SslOptions.EnableCertificateRevocationListCheck)
+  {
+    if (!SetLibcurlOption(
+            m_handle, CURLOPT_SSL_CTX_FUNCTION, CurlConnection::CurlSslCtxCallback, &result))
+    {
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set SSL context callback. " + std::string(curl_easy_strerror(result)));
+    }
+    if (!SetLibcurlOption(m_handle, CURLOPT_SSL_CTX_DATA, this, &result))
+    {
+      throw TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set SSL context callback data. "
+          + std::string(curl_easy_strerror(result)));
+    }
+    //          if (!SetLibcurlOption(m_handle, CURLOPT_SSL_VERIFYSTATUS, 1, &result))
+    //          {
+    //            throw TransportException(
+    //                _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+    //                + ". Failed to enable OCSP chaining. " +
+    //                std::string(curl_easy_strerror(result)));
+    //          }
+  }
+  m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
+  m_allowFailedCrlRetrieval = options.SslOptions.AllowFailedCrlRetrieval;
 #endif
 
   if (!options.SslVerifyPeer)
