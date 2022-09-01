@@ -460,9 +460,8 @@ namespace Azure { namespace Core { namespace Test {
         AzureSdkHttpbinServer::Get(),
         "https://www.microsoft.com/",
         "https://www.example.com/",
-        "https://www.google.com/"//,
-        //"https://www.wikipedia.org"
-        };
+        "https://www.google.com/",
+    };
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -496,7 +495,6 @@ namespace Azure { namespace Core { namespace Test {
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
     }
-
   }
 
 }}} // namespace Azure::Core::Test

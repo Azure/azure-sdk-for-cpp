@@ -1423,11 +1423,11 @@ int CurlConnection::CurlLoggingCallback(CURL*, curl_infotype type, char* data, s
   }
   return 0;
 }
+#if !defined(AZ_PLATFORM_WINDOWS)
 namespace Azure {
 namespace Core {
   namespace Http {
     namespace _detail {
-#if !defined(AZ_PLATFORM_WINDOWS)
 
       // Helpers to provide RAII wrappers for OpenSSL types.
       template <typename T, void (&Deleter)(T*)> struct openssl_deleter
@@ -1988,8 +1988,10 @@ int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
         // Return true, indicating that things are all good.
         ok = 1;
       }
-      else{
-        BIO_printf(bio_err.get(), "Fail TLS negotiation because CRL retrieval is not configured.\n");
+      else
+      {
+        BIO_printf(
+            bio_err.get(), "Fail TLS negotiation because CRL retrieval is not configured.\n");
       }
     }
   }
