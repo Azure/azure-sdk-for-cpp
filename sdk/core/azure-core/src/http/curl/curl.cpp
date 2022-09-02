@@ -2414,6 +2414,7 @@ CurlConnection::CurlConnection(
   auto performResult = curl_easy_perform(m_handle.get());
   if (performResult != CURLE_OK)
   {
+#if !defined(AZ_PLATFORM_WINDOWS)
     if (performResult == CURLE_SSL_PEER_CERTIFICATE)
     {
       curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);
@@ -2423,6 +2424,7 @@ CurlConnection::CurlConnection(
           + ". Underlying error: " + X509_verify_cert_error_string(result));
     }
     else
+#endif
     {
       throw Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
