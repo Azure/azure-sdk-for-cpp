@@ -2368,9 +2368,9 @@ CurlConnection::CurlConnection(
     //                std::string(curl_easy_strerror(result)));
     //          }
   }
-  m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
   m_allowFailedCrlRetrieval = options.SslOptions.AllowFailedCrlRetrieval;
 #endif
+  m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
 
   if (!options.SslVerifyPeer)
   {

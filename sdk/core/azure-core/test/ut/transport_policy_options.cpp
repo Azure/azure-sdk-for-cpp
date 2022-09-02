@@ -393,6 +393,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, CheckFailedCrlValidation)
   {
+#if !defined(AZ_PLATFORM_WINDOWS)
     //    Azure::Core::Url
     //    testUrl("https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md");
     Azure::Core::Url testUrl("https://www.wikipedia.org");
@@ -428,7 +429,6 @@ namespace Azure { namespace Core { namespace Test {
             Azure::Core::Http::TransportException);
       }
     }
-#if !defined(AZ_PLATFORM_WINDOWS)
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
