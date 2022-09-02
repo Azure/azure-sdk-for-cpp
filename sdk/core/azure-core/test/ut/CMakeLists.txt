@@ -33,7 +33,10 @@ endif()
 
 include(GoogleTest)
 
+if (NOT WIN32)
 find_package(OpenSSL REQUIRED)
+SET(OPENSSLCRYPTO OpenSSL::Crypto)
+endif()
 
 add_executable (
   azure-core-test
@@ -121,7 +124,7 @@ add_custom_command(TARGET azure-core-test POST_BUILD
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
 target_include_directories (azure-core-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock OpenSSL::Crypto)
+target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock ${OPENSSLCRYPTO})
 
 create_map_file(azure-core-test azure-core-test.map)
 
