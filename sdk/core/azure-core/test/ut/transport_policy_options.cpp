@@ -393,7 +393,10 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, CheckFailedCrlValidation)
   {
-#if !defined(AZ_PLATFORM_WINDOWS)
+    // By default, for the Windows and Mac platforms, Curl uses
+    // SCHANNEL/SECTRANSP for CRL validation. Those SSL protocols
+    // don't have the same behaviors as OpenSSL does.
+#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_MAC)
     //    Azure::Core::Url
     //    testUrl("https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md");
     Azure::Core::Url testUrl("https://www.wikipedia.org");
@@ -454,7 +457,7 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-  TEST_F(TransportAdapterOptions, StressCrlCache)
+  TEST_F(TransportAdapterOptions, MultipleCrlOperations)
   {
     std::vector<std::string> testUrls{
         AzureSdkHttpbinServer::Get(),
@@ -474,7 +477,10 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Url url(target);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+        if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::TemporaryRedirect)
+        {
+          EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+        }
       }
     }
 
