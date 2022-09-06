@@ -2350,7 +2350,7 @@ CurlConnection::CurlConnection(
         + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
         + std::string(curl_easy_strerror(result)));
   }
-#else if !defined(AZ_PLATFORM_MAC)
+#elif !defined(AZ_PLATFORM_MAC)
   if (options.SslOptions.EnableCertificateRevocationListCheck)
   {
     if (!SetLibcurlOption(
