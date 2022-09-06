@@ -477,7 +477,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Url url(target);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-        if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::TemporaryRedirect)
+        if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
         }
