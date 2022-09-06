@@ -1326,6 +1326,13 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(options.NoSignal ? "1" : "0");
   key.append(",");
+  key.append(options.SslOptions.AllowFailedCrlRetrieval ? "FC" : "0");
+  key.append(",");
+  key.append(
+      !options.SslOptions.PemEncodedExpectedRootCertificates.empty() ? std::to_string(
+          std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
+                                                                     : "0");
+  key.append(",");
   // using DefaultConnectionTimeout or 0 result in the same setting
   key.append(
       (options.ConnectionTimeout == Azure::Core::Http::_detail::DefaultConnectionTimeout
