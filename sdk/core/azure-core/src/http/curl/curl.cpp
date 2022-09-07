@@ -1174,6 +1174,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
   return index;
 }
 
+#if 0 // notused?
 // Finds delimiter '\r' as the end of the
 size_t CurlSession::ResponseBufferParser::BuildStatusCode(
     uint8_t const* const buffer,
@@ -1224,6 +1225,7 @@ size_t CurlSession::ResponseBufferParser::BuildStatusCode(
   // Parsing Headers will make sure to move one possition
   return indexOfEndOfStatusLine + 1 - buffer;
 }
+#endif
 
 // Finds delimiter '\r' as the end of the
 size_t CurlSession::ResponseBufferParser::BuildHeader(
@@ -1458,6 +1460,15 @@ namespace Azure { namespace Core { namespace Http {
       using type = basic_openssl_unique_ptr<BIO, BIO_free_all>;
     };
 
+    template <> struct type_map_helper<STACK_OF(X509_CRL)>
+    {
+      static void FreeCrlStack(STACK_OF(X509_CRL) * obj)
+      {
+        sk_X509_CRL_pop_free(obj, X509_CRL_free);
+      }
+      using type = basic_openssl_unique_ptr<STACK_OF(X509_CRL), FreeCrlStack>;
+    };
+
     // *** Now users can say openssl_unique_ptr<T> if they want:
     template <typename T> using openssl_unique_ptr = typename type_map_helper<T>::type;
 
@@ -1465,6 +1476,7 @@ namespace Azure { namespace Core { namespace Http {
     using openssl_bio = openssl_unique_ptr<BIO>;
     using openssl_x509 = openssl_unique_ptr<X509>;
     using openssl_x509_crl = openssl_unique_ptr<X509_CRL>;
+    using openssl_x509_crl_stack = openssl_unique_ptr<STACK_OF(X509_CRL)>;
 
     template <typename Api, typename... Args>
     auto make_openssl_unique(Api& OpensslApi, Args&&... args)
@@ -1536,7 +1548,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         return LoadCrlFromUrl(source);
       }
-
+#if 0
       in = _detail::make_openssl_unique(BIO_new, BIO_s_file());
       if (!in)
       {
@@ -1581,7 +1593,7 @@ namespace Azure { namespace Core { namespace Http {
             Logger::Level::Error, _detail::GetOpenSSLError("unable to load CRL from " + source));
         return nullptr;
       }
-
+#endif
       return x;
     }
 
@@ -1804,7 +1816,9 @@ namespace Azure { namespace Core { namespace Http {
       _detail::openssl_x509_crl crl;
       STACK_OF(DIST_POINT) * crlDistributionPoint;
 
-      STACK_OF(X509_CRL)* crlStack = sk_X509_CRL_new_null();
+      _detail::openssl_x509_crl_stack crlStack = _detail::basic_openssl_unique_ptr<
+          STACK_OF(X509_CRL),
+          _detail::type_map_helper<STACK_OF(X509_CRL)>::FreeCrlStack>(sk_X509_CRL_new_null());
       if (crlStack == nullptr)
       {
         Log::Write(Logger::Level::Error, "Failed to allocate STACK_OF(X509_CRL)");
@@ -1834,11 +1848,10 @@ namespace Azure { namespace Core { namespace Http {
       if (!crl)
       {
         Log::Write(Logger::Level::Error, "Unable to retrieve CRL, CRL check may fail.");
-        sk_X509_CRL_free(crlStack);
         return nullptr;
       }
 
-      sk_X509_CRL_push(crlStack, X509_CRL_dup(crl.get()));
+      sk_X509_CRL_push(crlStack.get(), X509_CRL_dup(crl.get()));
 
       // try to download delta Crl
       crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
@@ -1850,11 +1863,11 @@ namespace Azure { namespace Core { namespace Http {
         sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
         if (crl)
         {
-          sk_X509_CRL_push(crlStack, X509_CRL_dup(crl.get()));
+          sk_X509_CRL_push(crlStack.get(), X509_CRL_dup(crl.get()));
         }
       }
 
-      return crlStack;
+      return crlStack.release();
     }
 
     static void nodes_print(BIO* bio_err, const char* name, STACK_OF(X509_POLICY_NODE) * nodes)
