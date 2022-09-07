@@ -504,7 +504,7 @@ namespace Azure { namespace Core { namespace Test {
         }
       }
     }
-    
+
     // Now verify that once we enable CRL checks, we can still access the URLs.
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
