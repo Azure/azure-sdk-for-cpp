@@ -4,6 +4,7 @@
 #include "azure/core/context.hpp"
 #include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/client_options.hpp"
 #include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include "azure/core/internal/json/json.hpp"
@@ -585,5 +586,116 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
+  class TestProxy {
+    const std::string proxyHttpsCertificate =
+        // cspell:disable
+        "MIIDSDCCAjCgAwIBAgIUIoKu8Oao7j10TLNxaUG2Bs0FrRwwDQYJKoZIhvcNAQEL"
+        "BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIyMDgwNTIxMTcyM1oXDTIzMDgw"
+        "NTIxMTcyM1owFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF"
+        "AAOCAQ8AMIIBCgKCAQEA0UPG7ER++5/9D/qa4SCtt7QvdHwcpidbwktPNU8iRW7V"
+        "pIDPWS4goLp/+7+maT0Z/mqwSO3JDtm/dtdlr3F/5EMgyUExnYcvUixZAiyFyEwj"
+        "j6wnAtNvqsg4rDqBlD17fuqTVsZm9Yo7QYub6p5PeznWYucOxRrczqFCiW4uj0Yk"
+        "GgUHPPmCvhSDKowV8CYRHfkD6R8R4SFkoP3/uejXHxeXoYJNMWq5K0GqGaOZtNFB"
+        "F7QWZHoLrRpZcY4h+DxwP3c+/FdlVcs9nstkF+EnTnwx5IRyKsaWb/pUEmYKvNDz"
+        "wi6qnRUdu+DghZuvyZZDgwoYrSZokcbKumk0MsLC3QIDAQABo4GRMIGOMA8GA1Ud"
+        "EwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgGmMBYGA1UdJQEB/wQMMAoGCCsGAQUF"
+        "BwMBMBcGA1UdEQEB/wQNMAuCCWxvY2FsaG9zdDA6BgorBgEEAYI3VAEBBCwMKkFT"
+        "UC5ORVQgQ29yZSBIVFRQUyBkZXZlbG9wbWVudCBjZXJ0aWZpY2F0ZTANBgkqhkiG"
+        "9w0BAQsFAAOCAQEARX4NxGbycdPVuqvu/CO+/LpWrEm1OcOl7N57/mD5npTIJT78"
+        "TYtXk1J61akumKdf5CaBgCDRcl35LhioFZIMEsiOidffAp6t493xocncFBhIYYrZ"
+        "HS6aKsZKPu8h3wOLpYu+zh7f0Hx6pkHPAfw4+knmQjDYomz/hTwuo/MuT8k6Ee7B"
+        "NGWqxUamLI8bucuf2ZfT1XOq83uWaFF5KwAuVLhpzo39/TmPyYGnaoKRYf9QjabS"
+        "LUjecMNLJFWHUSD4cKHvXJjDYZEiCiy+MdUDytWIsfw0fzAUjz9Qaz8YpZ+fXufM"
+        "MNMNfyJHSMEMFIT2D1UaQiwryXWQWJ93OiSdjA==";
+    // cspell:enable
+
+    struct TestProxyOptions : Azure::Core::_internal::ClientOptions
+    {
+      TestProxyOptions() : Azure::Core::_internal::ClientOptions() {}
+    };
+    std::unique_ptr<HttpPipeline> m_pipeline;
+
+  public:
+    TestProxy(TestProxyOptions options = TestProxyOptions())
+    {
+      if (options.Transport.ExpectedTlsRootCertificate.empty())
+      {
+        options.Transport.ExpectedTlsRootCertificate = proxyHttpsCertificate;
+      }
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies;
+      m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
+          options,
+          "Test Proxy",
+          "2021-11",
+          std::move(perRetryPolicies),
+          std::move(perCallPolicies));
+    }
+
+    Azure::Response<std::string> PostStartRecording(std::string const& recordingFile)
+    {
+      auto request = Azure::Core::Http::Request(
+          Azure::Core::Http::HttpMethod::Post,
+          Azure::Core::Url("https://localhost:5001/record/start"));
+      request.SetHeader("x-recording-file", recordingFile);
+
+      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      auto responseHeaders = response->GetHeaders();
+      auto responseId = responseHeaders.find("x-recording-id");
+      return Azure::Response<std::string>(
+          responseId->second, std::move(response));
+    }
+    Azure::Response<Azure::Core::Http::HttpStatusCode> PostStopRecording(
+        std::string const& recordingId)
+    {
+      auto request = Azure::Core::Http::Request(
+          Azure::Core::Http::HttpMethod::Post,
+          Azure::Core::Url("https://localhost:5001/record/stop"));
+      request.SetHeader("x-recording-id", recordingId);
+
+      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      return Azure::Response<Azure::Core::Http::HttpStatusCode>(
+          response->GetStatusCode(), std::move(response));
+    }
+
+    Azure::Response<Azure::Core::Http::HttpStatusCode> GetAvailableSanitizers()
+    {
+      auto request = Azure::Core::Http::Request(
+          Azure::Core::Http::HttpMethod::Post,
+          Azure::Core::Url("https://localhost:5001/Info/Available"));
+      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      return Azure::Response<Azure::Core::Http::HttpStatusCode>(
+          response->GetStatusCode(), std::move(response));
+    }
+
+    Azure::Response<std::string> RecordGetUrl(
+        std::string const& recordingId,
+        std::string const& urlToRecord)
+    {
+      auto request = Azure::Core::Http::Request(
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://localhost:5001"));
+      request.SetHeader("x-recording-upstream-base-uri", urlToRecord);
+      request.SetHeader("x-recording-id", recordingId);
+      request.SetHeader("x-recording-mode", "record");
+
+      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      return Azure::Response<std::string>(
+          std::string(response->GetBody().begin(), response->GetBody().end()), std::move(response));
+    }
+
+    ~TestProxy() {}
+  };
+
+  TEST_F(TransportAdapterOptions, AccessTestService)
+  {
+    TestProxy proxyServer;
+    std::string recordingId = proxyServer.PostStartRecording("testRecording.json").Value;
+
+    std::string response = proxyServer.RecordGetUrl(recordingId, AzureSdkHttpbinServer::Get()).Value;
+
+    GTEST_LOG_(INFO) << "Response: " << response;
+
+    proxyServer.PostStopRecording(recordingId);
+  }
 }}} // namespace Azure::Core::Test
 #endif // defined(DISABLE_PROXY_TESTS)

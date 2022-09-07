@@ -1225,7 +1225,6 @@ size_t CurlSession::ResponseBufferParser::BuildStatusCode(
   // Parsing Headers will make sure to move one possition
   return indexOfEndOfStatusLine + 1 - buffer;
 }
-#endif
 
 // Finds delimiter '\r' as the end of the
 size_t CurlSession::ResponseBufferParser::BuildHeader(
@@ -1304,6 +1303,7 @@ size_t CurlSession::ResponseBufferParser::BuildHeader(
   // Parsing Headers will make sure to move one position
   return indexOfEndOfStatusLine + 1 - buffer;
 }
+#endif
 
 namespace {
 // Calculate the connection key.
