@@ -2327,7 +2327,7 @@ CurlConnection::CurlConnection(
                options.SslOptions.PemEncodedExpectedRootCertificates.c_str())),
            options.SslOptions.PemEncodedExpectedRootCertificates.size(),
            CURL_BLOB_COPY};
-    if (!SetLibcurlOption(m_handle, CURLOPT_CAINFO_BLOB, rootCertBlob, &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_CAINFO_BLOB, &rootCertBlob, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName

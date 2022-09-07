@@ -508,6 +508,10 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, TestRootCertificate)
   {
+    // On Windows and OSX, setting a root certificate disables the default system certificate store.
+    // That means that if we set the expected certificate, we won't be able to connect to the server
+    // because the certificates root CA is not in the store.
+#if defined(AZ_PLATFORM_LINUX)
     // cspell:disable
     std::string azurewebsitesCertificate
         = "MIIF8zCCBNugAwIBAgIQCq+mxcpjxFFB6jvh98dTFzANBgkqhkiG9w0BAQwFADBh"
@@ -557,6 +561,7 @@ namespace Azure { namespace Core { namespace Test {
       auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
       EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     }
+#endif
   }
 
 }}} // namespace Azure::Core::Test
