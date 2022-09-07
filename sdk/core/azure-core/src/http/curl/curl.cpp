@@ -1816,9 +1816,8 @@ namespace Azure { namespace Core { namespace Http {
       _detail::openssl_x509_crl crl;
       STACK_OF(DIST_POINT) * crlDistributionPoint;
 
-      _detail::openssl_x509_crl_stack crlStack = _detail::basic_openssl_unique_ptr<
-          STACK_OF(X509_CRL),
-          _detail::type_map_helper<STACK_OF(X509_CRL)>::FreeCrlStack>(sk_X509_CRL_new_null());
+      _detail::openssl_x509_crl_stack crlStack
+          = _detail::openssl_x509_crl_stack(sk_X509_CRL_new_null());
       if (crlStack == nullptr)
       {
         Log::Write(Logger::Level::Error, "Failed to allocate STACK_OF(X509_CRL)");
