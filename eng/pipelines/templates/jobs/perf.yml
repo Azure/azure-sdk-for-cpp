@@ -29,18 +29,7 @@ extends:
   parameters:
     Variables:
     - template: /eng/pipelines/templates/variables/globals.yml
-    Language: Java
-    InstallLanguageSteps:
-    - task: JavaToolInstaller@0
-      inputs:
-        versionSpec: '8'
-        jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'PreInstalled'
-      displayName: Install Java 8
-    - script: |
-        java -version
-        mvn --version
-      displayName: Print Java Versions
+    Language: CPP
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
     Services: ${{ parameters.Services }}
     PackageVersions: ${{ parameters.PackageVersions }}
