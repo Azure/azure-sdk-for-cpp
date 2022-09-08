@@ -1174,136 +1174,6 @@ size_t CurlSession::ResponseBufferParser::Parse(
   return index;
 }
 
-#if 0 // notused?
-// Finds delimiter '\r' as the end of the
-size_t CurlSession::ResponseBufferParser::BuildStatusCode(
-    uint8_t const* const buffer,
-    size_t const bufferSize)
-{
-  if (this->state != ResponseParserState::StatusLine)
-  {
-    return 0; // Wrong internal state to call this method.
-  }
-
-  uint8_t endOfStatusLine = '\r';
-  auto endOfBuffer = buffer + bufferSize;
-
-  // Look for the end of status line in buffer
-  auto indexOfEndOfStatusLine = std::find(buffer, endOfBuffer, endOfStatusLine);
-
-  if (indexOfEndOfStatusLine == endOfBuffer)
-  {
-    // did not find the delimiter yet, copy to internal buffer
-    this->m_internalBuffer.append(buffer, endOfBuffer);
-    return bufferSize; // all buffer read and requesting for more
-  }
-
-  // Delimiter found, check if there is data in the internal buffer
-  if (this->m_internalBuffer.size() > 0)
-  {
-    // If the index is same as buffer it means delimiter is at position 0, meaning that
-    // internalBuffer contains the status line and we don't need to add anything else
-    if (indexOfEndOfStatusLine > buffer)
-    {
-      // Append and build response minus the delimiter
-      this->m_internalBuffer.append(buffer, indexOfEndOfStatusLine);
-    }
-    this->m_response = CreateHTTPResponse(this->m_internalBuffer);
-  }
-  else
-  {
-    // Internal Buffer was not required, create response directly from buffer
-    this->m_response = CreateHTTPResponse(std::string(buffer, indexOfEndOfStatusLine));
-  }
-
-  // update control
-  this->state = ResponseParserState::Headers;
-  this->m_internalBuffer.clear();
-
-  // Return the index of the next char to read after delimiter
-  // No need to advance one more char ('\n') (since we might be at the end of the array)
-  // Parsing Headers will make sure to move one possition
-  return indexOfEndOfStatusLine + 1 - buffer;
-}
-
-// Finds delimiter '\r' as the end of the
-size_t CurlSession::ResponseBufferParser::BuildHeader(
-    uint8_t const* const buffer,
-    size_t const bufferSize)
-{
-  if (this->state != ResponseParserState::Headers)
-  {
-    return 0; // can't run this if state is not Headers.
-  }
-
-  uint8_t delimiter = '\r';
-  auto start = buffer;
-  auto endOfBuffer = buffer + bufferSize;
-
-  if (bufferSize == 1 && buffer[0] == '\n')
-  {
-    // rare case of using buffer of size 1 to read. In this case, if the char is next value
-    // after headers or previous header, just consider it as read and return
-    return bufferSize;
-  }
-  else if (bufferSize > 1 && this->m_internalBuffer.size() == 0) // only if nothing in
-                                                                 // buffer, advance
-  {
-    // move offset one possition. This is because readStatusLine and readHeader will read up
-    // to
-    // '\r' then next delimiter is '\n' and we don't care
-    start = buffer + 1;
-  }
-
-  // Look for the end of status line in buffer
-  auto indexOfEndOfStatusLine = std::find(start, endOfBuffer, delimiter);
-
-  if (indexOfEndOfStatusLine == start && this->m_internalBuffer.size() == 0)
-  {
-    // \r found at the start means the end of headers
-    this->m_internalBuffer.clear();
-    this->m_parseCompleted = true;
-    return 1; // can't return more than the found delimiter. On read remaining we need to
-              // also remove first char
-  }
-
-  if (indexOfEndOfStatusLine == endOfBuffer)
-  {
-    // did not find the delimiter yet, copy to internal buffer
-    this->m_internalBuffer.append(start, endOfBuffer);
-    return bufferSize; // all buffer read and requesting for more
-  }
-
-  // Delimiter found, check if there is data in the internal buffer
-  if (this->m_internalBuffer.size() > 0)
-  {
-    // If the index is same as buffer it means delimiter is at position 0, meaning that
-    // internalBuffer contains the status line and we don't need to add anything else
-    if (indexOfEndOfStatusLine > buffer)
-    {
-      // Append and build response minus the delimiter
-      this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
-    }
-    // will throw if header is invalid
-    SetHeader(*m_response, this->m_internalBuffer);
-  }
-  else
-  {
-    // Internal Buffer was not required, create response directly from buffer
-    std::string header(std::string(start, indexOfEndOfStatusLine));
-    // will throw if header is invalid
-    SetHeader(*this->m_response, header);
-  }
-
-  // reuse buffer
-  this->m_internalBuffer.clear();
-
-  // Return the index of the next char to read after delimiter
-  // No need to advance one more char ('\n') (since we might be at the end of the array)
-  // Parsing Headers will make sure to move one position
-  return indexOfEndOfStatusLine + 1 - buffer;
-}
-#endif
 
 namespace {
 // Calculate the connection key.
@@ -1548,52 +1418,6 @@ namespace Azure { namespace Core { namespace Http {
       {
         return LoadCrlFromUrl(source);
       }
-#if 0
-      in = _detail::make_openssl_unique(BIO_new, BIO_s_file());
-      if (!in)
-      {
-        Log::Write(Logger::Level::Error, "could not bio_new for file " + source);
-        return nullptr;
-      }
-
-      if (source.empty())
-      {
-        if (BIO_set_fp(in.get(), stdin, BIO_NOCLOSE) != 1)
-        {
-          Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("open stdin: "));
-        }
-      }
-      else
-      {
-        if (BIO_read_filename(in.get(), const_cast<char*>(source.c_str())) <= 0)
-        {
-          Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Read file: " + source));
-          return nullptr;
-        }
-      }
-
-      if (format == CrlFormat::Asn1)
-      {
-        x = _detail::make_openssl_unique(d2i_X509_CRL_bio, in.get(), nullptr);
-      }
-      else if (format == CrlFormat::PEM)
-      {
-        x = _detail::make_openssl_unique(
-            PEM_read_bio_X509_CRL, in.get(), nullptr, nullptr, nullptr);
-      }
-      else
-      {
-        Log::Write(Logger::Level::Error, "bad input format specified for input crl");
-        return nullptr;
-      }
-
-      if (!x)
-      {
-        Log::Write(
-            Logger::Level::Error, _detail::GetOpenSSLError("unable to load CRL from " + source));
-        return nullptr;
-      }
-#endif
       return x;
     }
 
@@ -1869,42 +1693,6 @@ namespace Azure { namespace Core { namespace Http {
       return crlStack.release();
     }
 
-#if 0
-    void nodes_print(BIO* bio_err, const char* name, STACK_OF(X509_POLICY_NODE) * nodes)
-    {
-      X509_POLICY_NODE* node;
-      int i;
-
-      BIO_printf(bio_err, "%s Policies:", name);
-      if (nodes)
-      {
-        BIO_puts(bio_err, "\n");
-        for (i = 0; i < sk_X509_POLICY_NODE_num(nodes); i++)
-        {
-          node = sk_X509_POLICY_NODE_value(nodes, i);
-          X509_POLICY_NODE_print(bio_err, node, 2);
-        }
-      }
-      else
-      {
-        BIO_puts(bio_err, " <empty>\n");
-      }
-    }
-
-    void policies_print(BIO* bio_err, X509_STORE_CTX* ctx)
-    {
-      X509_POLICY_TREE* tree;
-      int explicit_policy;
-      tree = X509_STORE_CTX_get0_policy_tree(ctx);
-      explicit_policy = X509_STORE_CTX_get_explicit_policy(ctx);
-
-      BIO_printf(bio_err, "Require explicit Policy: %s\n", explicit_policy ? "True" : "False");
-
-      nodes_print(bio_err, "Authority", X509_policy_tree_get0_policies(tree));
-      nodes_print(bio_err, "User", X509_policy_tree_get0_user_policies(tree));
-    }
-#endif
-
     int GetOpenSSLContextConnectionIndex()
     {
       static int openSslConnectionIndex = -1;
@@ -1960,26 +1748,6 @@ int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
   {
     case X509_V_ERR_UNABLE_TO_GET_CRL:
       BIO_printf(bio_err.get(), "Unable to retrieve CRL.");
-      break;
-    case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
-      BIO_puts(bio_err.get(), "issuer= ");
-      X509_NAME_print_ex(bio_err.get(), X509_get_issuer_name(err_cert), 0, XN_FLAG_ONELINE);
-      BIO_puts(bio_err.get(), "\n");
-      break;
-    case X509_V_ERR_CERT_NOT_YET_VALID:
-    case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
-      BIO_printf(bio_err.get(), "notBefore=");
-      ASN1_TIME_print(bio_err.get(), X509_get_notBefore(err_cert));
-      BIO_printf(bio_err.get(), "\n");
-      break;
-    case X509_V_ERR_CERT_HAS_EXPIRED:
-    case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
-      BIO_printf(bio_err.get(), "notAfter=");
-      ASN1_TIME_print(bio_err.get(), X509_get_notAfter(err_cert));
-      BIO_printf(bio_err.get(), "\n");
-      break;
-    case X509_V_ERR_NO_EXPLICIT_POLICY:
-      //      policies_print(bio_err.get(), storeContext);
       break;
   }
   if (err == X509_V_OK && ok == 2)
