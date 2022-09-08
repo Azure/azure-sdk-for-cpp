@@ -590,6 +590,7 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   const std::string TestProxyHttpsCertificate =
       // cspell:disable
       "MIIDSDCCAjCgAwIBAgIUIoKu8Oao7j10TLNxaUG2Bs0FrRwwDQYJKoZIhvcNAQEL"
@@ -763,5 +764,6 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_NO_THROW(proxyServer.PostStopPlayback(recordingId));
   }
+#endif
 
 }}} // namespace Azure::Core::Test
