@@ -12,6 +12,9 @@
 #include "azure/core/http/win_http_transport.hpp"
 #endif
 
+#include <sstream>
+#include <string>
+
 using Azure::Core::Context;
 using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;
@@ -31,10 +34,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
 
     std::string PemEncodeFromBase64(std::string const& base64, std::string const& pemType)
     {
-      std::string rv;
-      rv += "-----BEGIN ";
-      rv += pemType;
-      rv += "-----\r\n ";
+      std::stringstream rv;
+      rv << "-----BEGIN " << pemType << "-----" << std::endl;
       std::string encodedValue(base64);
 
       // Insert crlf characters every 80 characters into the base64 encoded key to make it
@@ -46,11 +47,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
         insertPos += 82; /* 80 characters plus the \r\n we just inserted */
       }
 
-      rv += encodedValue;
-      rv += "\r\n-----END ";
-      rv += pemType;
-      rv += "-----\r\n ";
-      return rv;
+      rv << encodedValue << std::endl << "-----END " << pemType << "-----" << std::endl;
+      return rv.str();
     }
   } // namespace
 
