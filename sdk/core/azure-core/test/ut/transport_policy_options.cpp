@@ -224,6 +224,7 @@ namespace Azure { namespace Core { namespace Test {
   using namespace Azure::Core::Http::_internal;
   using namespace Azure::Core::Http::Policies::_internal;
 
+#if !defined(DISABLE_PROXY_TESTS)
   // constexpr char SocksProxyServer[] = "socks://98.162.96.41:4145";
   TEST_F(TransportAdapterOptions, SimpleProxyTests)
   {
@@ -270,7 +271,6 @@ namespace Azure { namespace Core { namespace Test {
       VerifyIsProxiedResponse(response, myIpAddress);
     }
   }
-#if !defined(DISABLE_PROXY_TESTS)
 
 #if !defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   typedef int CURLcode;
@@ -375,6 +375,7 @@ namespace Azure { namespace Core { namespace Test {
       auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
       EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     }
+#if !defined(DISABLE_PROXY_TESTS)
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -392,6 +393,7 @@ namespace Azure { namespace Core { namespace Test {
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
+#endif
   }
 
   TEST_F(TransportAdapterOptions, CheckFailedCrlValidation)
@@ -588,27 +590,28 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
+  const std::string TestProxyHttpsCertificate =
+      // cspell:disable
+      "MIIDSDCCAjCgAwIBAgIUIoKu8Oao7j10TLNxaUG2Bs0FrRwwDQYJKoZIhvcNAQEL"
+      "BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIyMDgwNTIxMTcyM1oXDTIzMDgw"
+      "NTIxMTcyM1owFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF"
+      "AAOCAQ8AMIIBCgKCAQEA0UPG7ER++5/9D/qa4SCtt7QvdHwcpidbwktPNU8iRW7V"
+      "pIDPWS4goLp/+7+maT0Z/mqwSO3JDtm/dtdlr3F/5EMgyUExnYcvUixZAiyFyEwj"
+      "j6wnAtNvqsg4rDqBlD17fuqTVsZm9Yo7QYub6p5PeznWYucOxRrczqFCiW4uj0Yk"
+      "GgUHPPmCvhSDKowV8CYRHfkD6R8R4SFkoP3/uejXHxeXoYJNMWq5K0GqGaOZtNFB"
+      "F7QWZHoLrRpZcY4h+DxwP3c+/FdlVcs9nstkF+EnTnwx5IRyKsaWb/pUEmYKvNDz"
+      "wi6qnRUdu+DghZuvyZZDgwoYrSZokcbKumk0MsLC3QIDAQABo4GRMIGOMA8GA1Ud"
+      "EwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgGmMBYGA1UdJQEB/wQMMAoGCCsGAQUF"
+      "BwMBMBcGA1UdEQEB/wQNMAuCCWxvY2FsaG9zdDA6BgorBgEEAYI3VAEBBCwMKkFT"
+      "UC5ORVQgQ29yZSBIVFRQUyBkZXZlbG9wbWVudCBjZXJ0aWZpY2F0ZTANBgkqhkiG"
+      "9w0BAQsFAAOCAQEARX4NxGbycdPVuqvu/CO+/LpWrEm1OcOl7N57/mD5npTIJT78"
+      "TYtXk1J61akumKdf5CaBgCDRcl35LhioFZIMEsiOidffAp6t493xocncFBhIYYrZ"
+      "HS6aKsZKPu8h3wOLpYu+zh7f0Hx6pkHPAfw4+knmQjDYomz/hTwuo/MuT8k6Ee7B"
+      "NGWqxUamLI8bucuf2ZfT1XOq83uWaFF5KwAuVLhpzo39/TmPyYGnaoKRYf9QjabS"
+      "LUjecMNLJFWHUSD4cKHvXJjDYZEiCiy+MdUDytWIsfw0fzAUjz9Qaz8YpZ+fXufM"
+      "MNMNfyJHSMEMFIT2D1UaQiwryXWQWJ93OiSdjA==";
+
   class TestProxy {
-    const std::string proxyHttpsCertificate =
-        // cspell:disable
-        "MIIDSDCCAjCgAwIBAgIUIoKu8Oao7j10TLNxaUG2Bs0FrRwwDQYJKoZIhvcNAQEL"
-        "BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIyMDgwNTIxMTcyM1oXDTIzMDgw"
-        "NTIxMTcyM1owFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF"
-        "AAOCAQ8AMIIBCgKCAQEA0UPG7ER++5/9D/qa4SCtt7QvdHwcpidbwktPNU8iRW7V"
-        "pIDPWS4goLp/+7+maT0Z/mqwSO3JDtm/dtdlr3F/5EMgyUExnYcvUixZAiyFyEwj"
-        "j6wnAtNvqsg4rDqBlD17fuqTVsZm9Yo7QYub6p5PeznWYucOxRrczqFCiW4uj0Yk"
-        "GgUHPPmCvhSDKowV8CYRHfkD6R8R4SFkoP3/uejXHxeXoYJNMWq5K0GqGaOZtNFB"
-        "F7QWZHoLrRpZcY4h+DxwP3c+/FdlVcs9nstkF+EnTnwx5IRyKsaWb/pUEmYKvNDz"
-        "wi6qnRUdu+DghZuvyZZDgwoYrSZokcbKumk0MsLC3QIDAQABo4GRMIGOMA8GA1Ud"
-        "EwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgGmMBYGA1UdJQEB/wQMMAoGCCsGAQUF"
-        "BwMBMBcGA1UdEQEB/wQNMAuCCWxvY2FsaG9zdDA6BgorBgEEAYI3VAEBBCwMKkFT"
-        "UC5ORVQgQ29yZSBIVFRQUyBkZXZlbG9wbWVudCBjZXJ0aWZpY2F0ZTANBgkqhkiG"
-        "9w0BAQsFAAOCAQEARX4NxGbycdPVuqvu/CO+/LpWrEm1OcOl7N57/mD5npTIJT78"
-        "TYtXk1J61akumKdf5CaBgCDRcl35LhioFZIMEsiOidffAp6t493xocncFBhIYYrZ"
-        "HS6aKsZKPu8h3wOLpYu+zh7f0Hx6pkHPAfw4+knmQjDYomz/hTwuo/MuT8k6Ee7B"
-        "NGWqxUamLI8bucuf2ZfT1XOq83uWaFF5KwAuVLhpzo39/TmPyYGnaoKRYf9QjabS"
-        "LUjecMNLJFWHUSD4cKHvXJjDYZEiCiy+MdUDytWIsfw0fzAUjz9Qaz8YpZ+fXufM"
-        "MNMNfyJHSMEMFIT2D1UaQiwryXWQWJ93OiSdjA==";
     // cspell:enable
 
     struct TestProxyOptions : Azure::Core::_internal::ClientOptions
@@ -622,7 +625,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       if (options.Transport.ExpectedTlsRootCertificate.empty())
       {
-        options.Transport.ExpectedTlsRootCertificate = proxyHttpsCertificate;
+        options.Transport.ExpectedTlsRootCertificate = TestProxyHttpsCertificate;
       }
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies;
@@ -648,7 +651,7 @@ namespace Azure { namespace Core { namespace Test {
           &postBody);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      auto responseHeaders = response->GetHeaders();
+      auto& responseHeaders = response->GetHeaders();
       auto responseId = responseHeaders.find("x-recording-id");
       return Azure::Response<std::string>(responseId->second, std::move(response));
     }
@@ -665,19 +668,41 @@ namespace Azure { namespace Core { namespace Test {
       return Azure::Response<Azure::Core::Http::HttpStatusCode>(responseCode, std::move(response));
     }
 
-    Azure::Response<Azure::Core::Http::HttpStatusCode> GetAvailableSanitizers()
+    Azure::Response<std::string> PostStartPlayback(std::string const& recordingFile)
+    {
+      std::string proxyServerRequest;
+      proxyServerRequest = "{ \"x-recording-file\": \"";
+      proxyServerRequest += Azure::Core::Url::Encode(recordingFile);
+      proxyServerRequest += "\"}";
+      std::vector<uint8_t> bodyVector{proxyServerRequest.begin(), proxyServerRequest.end()};
+      Azure::Core::IO::MemoryBodyStream postBody(bodyVector);
+      auto request = Azure::Core::Http::Request(
+          Azure::Core::Http::HttpMethod::Post,
+          Azure::Core::Url("https://localhost:5001/playback/start"),
+          &postBody);
+
+      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      auto& responseHeaders = response->GetHeaders();
+      auto responseId = responseHeaders.find("x-recording-id");
+      return Azure::Response<std::string>(responseId->second, std::move(response));
+    }
+
+    Azure::Response<Azure::Core::Http::HttpStatusCode> PostStopPlayback(
+        std::string const& recordingId)
     {
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Post,
-          Azure::Core::Url("https://localhost:5001/Info/Available"));
+          Azure::Core::Url("https://localhost:5001/playback/stop"));
+      request.SetHeader("x-recording-id", recordingId);
+
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      auto responseStatus = response->GetStatusCode();
-      return Azure::Response<Azure::Core::Http::HttpStatusCode>(
-          responseStatus, std::move(response));
+      auto responseCode = response->GetStatusCode();
+      return Azure::Response<Azure::Core::Http::HttpStatusCode>(responseCode, std::move(response));
     }
 
-    Azure::Response<std::string> RecordGetUrl(
+    Azure::Response<std::string> ProxyServerGetUrl(
         std::string const& recordingId,
+        bool isRecording,
         std::string const& urlToRecord)
     {
       Azure::Core::Url targetUrl{urlToRecord};
@@ -687,7 +712,7 @@ namespace Azure { namespace Core { namespace Test {
       request.SetHeader(
           "x-recording-upstream-base-uri", targetUrl.GetScheme() + "://" + targetUrl.GetHost());
       request.SetHeader("x-recording-id", recordingId);
-      request.SetHeader("x-recording-mode", "record");
+      request.SetHeader("x-recording-mode", (isRecording ? "record" : "playback"));
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       std::string responseBody(response->GetBody().begin(), response->GetBody().end());
@@ -713,13 +738,30 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_EQ(Azure::Core::Http::HttpStatusCode::Ok, proxyServer.IsAlive().Value);
 
-    std::string recordingId = proxyServer.PostStartRecording("testRecording.json").Value;
+    std::string recordingId;
+    EXPECT_NO_THROW(recordingId = proxyServer.PostStartRecording("testRecording.json").Value);
 
-    std::string response
-        = proxyServer.RecordGetUrl(recordingId, AzureSdkHttpbinServer::Get()).Value;
+    GTEST_LOG_(INFO) << "Started recording with ID " << recordingId;
 
-    GTEST_LOG_(INFO) << "Response: " << response;
+    std::string response;
+    EXPECT_NO_THROW(
+        response
+        = proxyServer.ProxyServerGetUrl(recordingId, true, AzureSdkHttpbinServer::Get()).Value);
 
-    proxyServer.PostStopRecording(recordingId);
+    GTEST_LOG_(INFO) << "Response for recording " << recordingId << "is: " << response;
+
+    EXPECT_NO_THROW(proxyServer.PostStopRecording(recordingId));
+
+    EXPECT_NO_THROW(recordingId = proxyServer.PostStartPlayback("testRecording.json").Value);
+    GTEST_LOG_(INFO) << "Started playback with ID " << recordingId;
+
+    EXPECT_NO_THROW(
+        response
+        = proxyServer.ProxyServerGetUrl(recordingId, false, AzureSdkHttpbinServer::Get()).Value);
+
+    GTEST_LOG_(INFO) << "Recorded Response for " << recordingId << "is: " << response;
+
+    EXPECT_NO_THROW(proxyServer.PostStopPlayback(recordingId));
   }
+
 }}} // namespace Azure::Core::Test
