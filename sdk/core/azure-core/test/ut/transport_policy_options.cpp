@@ -634,16 +634,21 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Response<std::string> PostStartRecording(std::string const& recordingFile)
     {
+      std::string proxyServerRequest;
+      proxyServerRequest = "{ \"x-recording-file\": \"";
+      proxyServerRequest += Azure::Core::Url::Encode(recordingFile);
+      proxyServerRequest += "\"}";
+      std::vector<uint8_t> bodyVector{proxyServerRequest.begin(), proxyServerRequest.end()};
+      Azure::Core::IO::MemoryBodyStream postBody(bodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Post,
-          Azure::Core::Url("https://localhost:5001/record/start"));
-      request.SetHeader("x-recording-file", recordingFile);
+          Azure::Core::Url("https://localhost:5001/record/start"),
+          &postBody);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       auto responseHeaders = response->GetHeaders();
       auto responseId = responseHeaders.find("x-recording-id");
-      return Azure::Response<std::string>(
-          responseId->second, std::move(response));
+      return Azure::Response<std::string>(responseId->second, std::move(response));
     }
     Azure::Response<Azure::Core::Http::HttpStatusCode> PostStopRecording(
         std::string const& recordingId)
@@ -654,8 +659,8 @@ namespace Azure { namespace Core { namespace Test {
       request.SetHeader("x-recording-id", recordingId);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      return Azure::Response<Azure::Core::Http::HttpStatusCode>(
-          response->GetStatusCode(), std::move(response));
+      auto responseCode = response->GetStatusCode();
+      return Azure::Response<Azure::Core::Http::HttpStatusCode>(responseCode, std::move(response));
     }
 
     Azure::Response<Azure::Core::Http::HttpStatusCode> GetAvailableSanitizers()
@@ -672,15 +677,18 @@ namespace Azure { namespace Core { namespace Test {
         std::string const& recordingId,
         std::string const& urlToRecord)
     {
+      Azure::Core::Url targetUrl{urlToRecord};
       auto request = Azure::Core::Http::Request(
-          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://localhost:5001"));
-      request.SetHeader("x-recording-upstream-base-uri", urlToRecord);
+          Azure::Core::Http::HttpMethod::Get,
+          Azure::Core::Url("https://localhost:5001/" + targetUrl.GetRelativeUrl()));
+      request.SetHeader(
+          "x-recording-upstream-base-uri", targetUrl.GetScheme() + "://" + targetUrl.GetHost());
       request.SetHeader("x-recording-id", recordingId);
       request.SetHeader("x-recording-mode", "record");
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
-      return Azure::Response<std::string>(
-          std::string(response->GetBody().begin(), response->GetBody().end()), std::move(response));
+      std::string responseBody(response->GetBody().begin(), response->GetBody().end());
+      return Azure::Response<std::string>(responseBody, std::move(response));
     }
 
     ~TestProxy() {}
@@ -691,7 +699,8 @@ namespace Azure { namespace Core { namespace Test {
     TestProxy proxyServer;
     std::string recordingId = proxyServer.PostStartRecording("testRecording.json").Value;
 
-    std::string response = proxyServer.RecordGetUrl(recordingId, AzureSdkHttpbinServer::Get()).Value;
+    std::string response
+        = proxyServer.RecordGetUrl(recordingId, AzureSdkHttpbinServer::Get()).Value;
 
     GTEST_LOG_(INFO) << "Response: " << response;
 

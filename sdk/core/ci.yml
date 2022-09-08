@@ -97,7 +97,7 @@ stages:
           # Start the test proxy tool for testing.
         - template: /eng/common/testproxy/test-proxy-tool.yml
           parameters:
-            runProxy: false
+            runProxy: true
             targetVersion: 1.0.0-dev.20220810.2
 
       PostTestSteps:
