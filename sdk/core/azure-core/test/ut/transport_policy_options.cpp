@@ -669,8 +669,9 @@ namespace Azure { namespace Core { namespace Test {
           Azure::Core::Http::HttpMethod::Post,
           Azure::Core::Url("https://localhost:5001/Info/Available"));
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      auto responseStatus = response->GetStatusCode();
       return Azure::Response<Azure::Core::Http::HttpStatusCode>(
-          response->GetStatusCode(), std::move(response));
+          responseStatus, std::move(response));
     }
 
     Azure::Response<std::string> RecordGetUrl(
@@ -691,12 +692,25 @@ namespace Azure { namespace Core { namespace Test {
       return Azure::Response<std::string>(responseBody, std::move(response));
     }
 
+    Azure::Response<Azure::Core::Http::HttpStatusCode> IsAlive()
+    {
+      auto request = Azure::Core::Http::Request(
+          Azure::Core::Http::HttpMethod::Get,
+          Azure::Core::Url("https://localhost:5001/Admin/IsAlive"));
+      auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+      auto statusCode = response->GetStatusCode();
+      return Azure::Response<Azure::Core::Http::HttpStatusCode>(statusCode, std::move(response));
+    }
+
     ~TestProxy() {}
   };
 
-  TEST_F(TransportAdapterOptions, AccessTestService)
+  TEST_F(TransportAdapterOptions, AccessTestProxyServer)
   {
     TestProxy proxyServer;
+
+    EXPECT_EQ(Azure::Core::Http::HttpStatusCode::Ok, proxyServer.IsAlive().Value);
+
     std::string recordingId = proxyServer.PostStartRecording("testRecording.json").Value;
 
     std::string response
