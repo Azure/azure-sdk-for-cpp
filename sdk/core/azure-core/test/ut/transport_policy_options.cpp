@@ -17,7 +17,6 @@
 
 using namespace std::chrono_literals;
 
-#if !defined(DISABLE_PROXY_TESTS)
 namespace Azure { namespace Core { namespace Test {
   namespace {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
@@ -271,6 +270,7 @@ namespace Azure { namespace Core { namespace Test {
       VerifyIsProxiedResponse(response, myIpAddress);
     }
   }
+#if !defined(DISABLE_PROXY_TESTS)
 
 #if !defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   typedef int CURLcode;
@@ -355,6 +355,8 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
   }
+
+#endif // defined(DISABLE_PROXY_TESTS)
 
   TEST_F(TransportAdapterOptions, DisableCaValidation)
   {
@@ -530,9 +532,9 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, TestRootCertificate)
   {
-    // On Windows and OSX, setting a root certificate disables the default system certificate store.
-    // That means that if we set the expected certificate, we won't be able to connect to the server
-    // because the certificates root CA is not in the store.
+    // On Windows and OSX, setting a root certificate disables the default system certificate
+    // store. That means that if we set the expected certificate, we won't be able to connect to
+    // the server because the certificates root CA is not in the store.
 #if defined(AZ_PLATFORM_LINUX)
     // cspell:disable
     std::string azurewebsitesCertificate
@@ -721,4 +723,3 @@ namespace Azure { namespace Core { namespace Test {
     proxyServer.PostStopRecording(recordingId);
   }
 }}} // namespace Azure::Core::Test
-#endif // defined(DISABLE_PROXY_TESTS)

@@ -1869,7 +1869,8 @@ namespace Azure { namespace Core { namespace Http {
       return crlStack.release();
     }
 
-    static void nodes_print(BIO* bio_err, const char* name, STACK_OF(X509_POLICY_NODE) * nodes)
+#if 0
+    void nodes_print(BIO* bio_err, const char* name, STACK_OF(X509_POLICY_NODE) * nodes)
     {
       X509_POLICY_NODE* node;
       int i;
@@ -1902,6 +1903,7 @@ namespace Azure { namespace Core { namespace Http {
       nodes_print(bio_err, "Authority", X509_policy_tree_get0_policies(tree));
       nodes_print(bio_err, "User", X509_policy_tree_get0_user_policies(tree));
     }
+#endif
 
     int GetOpenSSLContextConnectionIndex()
     {
@@ -1977,7 +1979,7 @@ int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
       BIO_printf(bio_err.get(), "\n");
       break;
     case X509_V_ERR_NO_EXPLICIT_POLICY:
-      policies_print(bio_err.get(), storeContext);
+      //      policies_print(bio_err.get(), storeContext);
       break;
   }
   if (err == X509_V_OK && ok == 2)
