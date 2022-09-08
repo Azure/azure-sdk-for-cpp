@@ -1174,7 +1174,6 @@ size_t CurlSession::ResponseBufferParser::Parse(
   return index;
 }
 
-
 namespace {
 // Calculate the connection key.
 // The connection key is a tuple of host, proxy info, TLS info, etc. Basically any characteristics
