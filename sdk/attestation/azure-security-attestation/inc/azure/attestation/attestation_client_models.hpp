@@ -453,7 +453,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      *
      */
-    std::string TpmResult;
+    std::vector<uint8_t> TpmResult;
   };
 
   /**

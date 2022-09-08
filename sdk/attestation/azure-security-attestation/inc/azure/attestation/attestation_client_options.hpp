@@ -262,11 +262,9 @@ namespace Azure { namespace Security { namespace Attestation {
   struct AttestTpmOptions final
   {
     /**
-     * @brief JSON Data to send to the attestation service for TPM attestation.
-     * @details The TPM attestation protocol is defined
-     * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     * @brief Reserved field for future use.
      */
-    std::string Payload;
+    Azure::Nullable<std::string> Reserved;
   };
 
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key

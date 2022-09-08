@@ -238,11 +238,13 @@ namespace Azure { namespace Security { namespace Attestation {
      * until the service responds with a JSON string with a property named {@code "report"}, whose
      * value will be an attestation result token.
      *
+     * @param tpmQuoteToAttest - TPM Quote to be validated by the attestation service.
      * @param options sent to the service for Trusted Platform Module (TPM) attestation.
      * @return attestation response for Trusted Platform Module (TPM) attestation.
      */
     Response<Models::TpmAttestationResult> AttestTpm(
-        AttestTpmOptions const& options,
+        std::vector<uint8_t> const& tpmQuoteToAttest,
+        AttestTpmOptions options = AttestTpmOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
