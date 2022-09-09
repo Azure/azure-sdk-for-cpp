@@ -121,7 +121,7 @@ stages:
                 docker stop $_ `
             }
           displayName: Shutdown Squid Proxy.
-          condition: and(variables.RunProxyTests, contains(variables['OSVmImage'], 'linux'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'linux'))
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
