@@ -32,14 +32,11 @@ parameters:
   - name: TestEnv
     type: object
     default: []
-  - name: EnableTests
-    type: boolean
-    default: false
   - name: PreTestSteps
-    type: object
+    type: steplist
     default: []
   - name: PostTestSteps
-    type: object
+    type: steplist
     default: []
 
 jobs:
@@ -62,7 +59,6 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
-        EnableTests: ${{ parameters.EnableTests }}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 

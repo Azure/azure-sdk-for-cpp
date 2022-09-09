@@ -46,14 +46,11 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
-  - name: EnableTests
-    type: boolean
-    default: false
   - name: PreTestSteps
-    type: object
+    type: steplist
     default: []
   - name: PostTestSteps
-    type: object
+    type: steplist
     default: []
 
 
@@ -147,9 +144,8 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-#      - ${{ if eq(parameters.EnableTests, true) }}:
-      - ${{ if contains(variables.CmakeArgs, 'BUILD_TESTING=ON') }}:
-        - ${{ parameters.PreTestSteps }}
+      - ${{ parameters.PreTestSteps }}
+      
       - pwsh: echo ${{ variables.CmakeArgs }}
         displayName: Dump ${{ variables.CmakeArgs }}
 
@@ -163,9 +159,8 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-#      - ${{ if eq(parameters.EnableTests, true) }}:
-      - ${{ if contains(variables.CmakeArgs, 'BUILD_TESTING=ON') }}:
-        - ${{ parameters.PostTestSteps }}
+        
+      - ${{ parameters.PostTestSteps }}
 
       - task: PublishTestResults@2
         inputs:

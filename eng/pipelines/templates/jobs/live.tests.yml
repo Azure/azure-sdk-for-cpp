@@ -36,14 +36,11 @@ parameters:
 - name: UsePlatformContainer
   type: boolean
   default: false
-- name: EnableTests
-  type: boolean
-  default: false
 - name: PreTestSteps
-  type: object
+  type: steplist
   default: []
 - name: PostTestSteps
-  type: object
+  type: steplist
   default: []
 
 jobs:
@@ -135,8 +132,7 @@ jobs:
         Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
 
-  - ${{ if parameters.EnableTests }}
-    -${{ parameters.PreTestSteps }}
+  -${{ parameters.PreTestSteps }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
@@ -153,8 +149,7 @@ jobs:
       succeeded(),
       ne(variables['RunSamples'], '1'))
 
-  - ${{ if parameters.EnableTests }}
-    - ${{ parameters.PostTestSteps }}
+  - ${{ parameters.PostTestSteps }}
 
   - task: PublishTestResults@2
     inputs:

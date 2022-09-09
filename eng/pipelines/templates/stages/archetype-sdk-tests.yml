@@ -29,14 +29,11 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
-- name: EnableTests
-  type: boolean
-  default: false
 - name: PreTestSteps
-  type: object
+  type: steplist
   default: []
 - name: PostTestSteps
-  type: object
+  type: steplist
   default: []
 
 stages:
@@ -66,6 +63,5 @@ stages:
                 Coverage: ${{ parameters.Coverage}}
                 CoverageReportPath: ${{ parameters.CoverageReportPath}}
                 TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}
-                EnableTests: ${{ parameters.EnableTests}}
                 PreTestSteps: ${{ parameters.PreTestSteps }}
                 PostTestSteps: ${{ parameters.PostTestSteps }}
