@@ -150,6 +150,8 @@ jobs:
 #      - ${{ if eq(parameters.EnableTests, true) }}:
       - ${{ if contains(variables.CmakeArgs, 'BUILD_TESTING=ON') }}:
         - ${{ parameters.PreTestSteps }}
+      - pwsh: echo ${{ variables.CmakeArgs }}
+        displayName: Dump ${{ variables.CmakeArgs }}
 
       - pwsh: |
           ctest `
@@ -161,7 +163,6 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-
 #      - ${{ if eq(parameters.EnableTests, true) }}:
       - ${{ if contains(variables.CmakeArgs, 'BUILD_TESTING=ON') }}:
         - ${{ parameters.PostTestSteps }}
