@@ -29,6 +29,9 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
+- name: EnableTests
+  type: boolean
+  default: false
 - name: PreTestSteps
   type: object
   default: []

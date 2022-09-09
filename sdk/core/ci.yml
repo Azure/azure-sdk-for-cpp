@@ -47,7 +47,7 @@ stages:
           displayName: 'Use Python 3'
           inputs:
             versionSpec: '3'
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: succeeded()
 
         - pwsh: |
             python --version
@@ -62,13 +62,13 @@ stages:
             filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1
             arguments: $(Build.SourcesDirectory)/WebSocketServer.log
             workingDirectory: build/sdk/core/azure-core/test/ut
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'))
           # It would be nice to collapse this branch with the previous one, but nohup doesn't seem to
           # behave when called from powershell.
         - bash: |
             nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
           workingDirectory: build
-          condition: and(succeeded(), not(contains(variables['Agent.OS'], 'windows')), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), not(contains(variables['Agent.OS'], 'windows')))
           displayName: Launch python websocket server (Linux).
         - pwsh: |
             docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
@@ -77,22 +77,22 @@ stages:
             docker run --rm -d -p 3129:3129 squid-local.passwd
           displayName: Launch Linux Docker container proxy
           # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests)
 
         - pwsh: eng/scripts/Install-WSL.ps1
           displayName: Install WSL on Windows hosts when proxy tests are enabled..
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
 
         - pwsh: ./run_wsl_proxy.ps1
           displayName: Launch WSL Proxy Server.
           workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests)
 
           # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
         - pwsh: ./verify_proxy.ps1
           workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
           displayName: Verify Proxy Server Working Correctly.
-          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded(), variables.RunProxyTests)
 
           # Start the test proxy tool for testing. Only start it when previous steps had succeeded and we're enabling testing.
         - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -115,13 +115,12 @@ stages:
                 --header "Sec-WebSocket-Version: 13" `
                 http://localhost:8000/terminateserver
           displayName: Shutdown WebSocket server.
-          condition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
         - pwsh: |
             docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `
                 docker stop $_ `
             }
           displayName: Shutdown Squid Proxy.
-          condition: and(contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), variables.RunProxyTests, contains(variables['OSVmImage'], 'linux'))
+          condition: and(variables.RunProxyTests, contains(variables['OSVmImage'], 'linux'))
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
