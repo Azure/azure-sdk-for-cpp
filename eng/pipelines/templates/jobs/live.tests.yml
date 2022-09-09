@@ -135,7 +135,8 @@ jobs:
         Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
 
-  - ${{ parameters.PreTestSteps }}
+  - ${{ if parameters.EnableTests }}
+    -${{ parameters.PreTestSteps }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
@@ -152,7 +153,8 @@ jobs:
       succeeded(),
       ne(variables['RunSamples'], '1'))
 
-  - ${{ parameters.PostTestSteps }}
+  - ${{ if parameters.EnableTests }}
+    - ${{ parameters.PostTestSteps }}
 
   - task: PublishTestResults@2
     inputs:

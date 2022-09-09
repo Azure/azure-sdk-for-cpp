@@ -105,6 +105,7 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
+          EnableTests: ${{ parameters.EnableTests}}
           PreTestSteps: ${{ parameters.PreTestSteps }}
           PostTestSteps: ${{ parameters.PostTestSteps }}
 
@@ -121,6 +122,7 @@ stages:
         Clouds: ${{ parameters.Clouds }}
         SupportedClouds: ${{ parameters.SupportedClouds }}
         UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
+        EnableTests: ${{ parameters.EnableTests}}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 

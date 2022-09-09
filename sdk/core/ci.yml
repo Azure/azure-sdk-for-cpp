@@ -42,19 +42,20 @@ stages:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
+      EnableTests: contains(variables["CmakeArgs"], "BUILD_TESTING=ON")
       PreTestSteps:
         - task: UsePythonVersion@0
           displayName: 'Use Python 3'
           inputs:
             versionSpec: '3'
-          condition: succeeded()
+          condition: and(succeeded())
 
         - pwsh: |
             python --version
             pip install -r requirements.txt
           workingDirectory: build/sdk/core/azure-core/test/ut
           displayName: Install Python requirements.
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+          condition: and(succeeded())
         - task: PowerShell@2
           displayName: 'Launch python websocket server'
           inputs:
@@ -125,7 +126,6 @@ stages:
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
             ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
-            CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
 
       Artifacts:
         - Name: azure-core
