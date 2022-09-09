@@ -47,14 +47,14 @@ stages:
           displayName: 'Use Python 3'
           inputs:
             versionSpec: '3'
-          condition: and(succeeded())
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
         - pwsh: |
             python --version
             pip install -r requirements.txt
           workingDirectory: build/sdk/core/azure-core/test/ut
           displayName: Install Python requirements.
-          condition: and(succeeded())
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
         - task: PowerShell@2
           displayName: 'Launch python websocket server'
           inputs:
