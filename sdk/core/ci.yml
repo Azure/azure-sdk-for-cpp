@@ -95,7 +95,7 @@ stages:
           condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
           # Start the test proxy tool for testing. Only start it when previous steps had succeeded and we're enabling testing.
-        - ${{ if and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON')) }}:
+        - ${{ if contains(variables.CmakeArgs, 'BUILD_TESTING=ON') }}:
           - template: /eng/common/testproxy/test-proxy-tool.yml
             parameters:
               runProxy: true
