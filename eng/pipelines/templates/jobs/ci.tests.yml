@@ -146,9 +146,6 @@ jobs:
 
       - ${{ parameters.PreTestSteps }}
       
-      - pwsh: echo ${{ variables.CmakeArgs }}
-        displayName: Dump ${{ variables.CmakeArgs }}
-
       - pwsh: |
           ctest `
             -C Debug `
