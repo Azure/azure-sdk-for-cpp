@@ -16,7 +16,8 @@
           "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
           "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
-          "PublishMapFiles": "true"
+          "PublishMapFiles": "true",
+          "EnableTests":  true
         }
       },
       "BuildConfig": {
@@ -43,7 +44,8 @@
         "Win32Api_release_curl": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON ",
           "BuildArgs": "--parallel 8 --config Release",
-          "PublishMapFiles": "true"
+          "PublishMapFiles": "true",
+          "EnableTests": true
         }
       },
       "TargetArchitecture": {
@@ -70,7 +72,8 @@
         "Win32Api_debug_tests": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON -DMSVC_USE_STATIC_CRT=ON",
           "BuildArgs": "--parallel 8 --config Debug",
-          "PublishMapFiles": "true"
+          "PublishMapFiles": "true",
+          "EnableTests": true
         }
       },
       "TargetArchitecture": {
@@ -145,17 +148,20 @@
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
           "CODE_COVERAGE_COLLECT_ONLY": "1",
           "CODE_COVERAGE": "enabled",
-          "PublishMapFiles": "true"
+          "PublishMapFiles": "true",
+          "EnableTests": true
         },
         "included": {},
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-          "PublishMapFiles": "true"
+          "PublishMapFiles": "true",
+          "EnableTests": true
         },
         "included_samples": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
-          "PublishMapFiles": "true"
+          "PublishMapFiles": "true",
+          "EnableTests": true
         }
       }
     },
@@ -170,7 +176,8 @@
           "CXX": "/usr/bin/clang++-11",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "RunProxyTests": true,
+          "EnableTests": true
         }
       },
       "BuildSettings": {

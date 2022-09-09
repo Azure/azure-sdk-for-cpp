@@ -46,6 +46,9 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: EnableTests
+    type: boolean
+    default: true
   - name: PreTestSteps
     type: object
     default: []
@@ -144,7 +147,7 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - ${{ if contains(variables['CMakeArgs'], 'BUILD_TESTING=ON') }}:
+      - ${{ if eq(parameters.EnableTests, true) }}:
         - ${{ parameters.PreTestSteps }}
 
       - pwsh: |
@@ -158,7 +161,7 @@ jobs:
         workingDirectory: build
         displayName: Test
 
-      - ${{ if contains(variables['CMakeArgs'], 'BUILD_TESTING=ON') }}:
+      - ${{ if eq(parameters.EnableTests, true) }}:
         - ${{ parameters.PostTestSteps }}
 
       - task: PublishTestResults@2
