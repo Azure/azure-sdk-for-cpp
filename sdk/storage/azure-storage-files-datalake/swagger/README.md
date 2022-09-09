@@ -9,7 +9,7 @@ package-name: azure-storage-files-datalake
 namespace: Azure::Storage::Files::DataLake
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-main/specification/storage/data-plane/Microsoft.StorageDataLake/stable/2020-06-12/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2021-06-08/DataLakeStorage.json
 ```
 
 ## ModelFour Options
@@ -66,12 +66,10 @@ directive:
       delete $["/{filesystem}"].patch;
       delete $["/{filesystem}"].head;
       delete $["/{filesystem}"].delete;
-      delete $["/{filesystem}?restype=container&comp=list&hierarchy"];
       delete $["/{filesystem}/{path}"].post;
       delete $["/{filesystem}/{path}"].get;
       delete $["/{filesystem}/{path}"].patch;
       delete $["/{filesystem}/{path}?comp=expiry"];
-      delete $["/{filesystem}/{path}?comp=undelete"];
 ```
 
 ### API Version
@@ -89,13 +87,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-02-10"],
+        "enum": ["2021-06-08"],
         "description": "The version used for the operations to Azure storage services."
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2020-02-10";
+      $.ApiVersionParameter.enum[0] = "2021-06-08";
 ```
 
 ### Rename Operations
@@ -123,9 +121,19 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $["x-ms-paths"].*.*.responses.*.headers
+    transform: >
+      for (const h in $) {
+        if (h === "x-ms-encryption-key-sha256") {
+          $[h]["format"] = "byte";
+        }
+      }
+  - from: swagger-document
     where: $.parameters
     transform: >
       $.Continuation["x-ms-client-name"] = "ContinuationToken";
+      $.ListBlobsInclude.items["x-ms-enum"]["name"] = "ListBlobsIncludeFlags";
+      $.EncryptionKeySha256["format"] = "byte";
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -175,6 +183,10 @@ directive:
       $.Path.properties["lastModified"]["format"] = "date-time-rfc1123";
       $.Path.properties["contentLength"]["x-ms-client-name"] = "FileSize";
       $.Path.properties["isDirectory"]["x-ms-client-default"] = false;
+      $.Path.properties["EncryptionScope"]["x-nullable"] = true;
+      $.Path.properties["creationTime"]["x-ms-client-name"] = "CreatedOn";
+      $.Path.properties["expiryTime"]["x-ms-client-name"] = "ExpiresOn";
+      $.Path.properties["expiryTime"]["x-nullable"] = true;
       $.Path.properties["etag"] = {"type": "string", "x-ms-format": "string", "x-ms-client-default": "", "x-ms-client-name": "ETag"};
       delete $.Path.properties["eTag"];
       $.PathList["x-namespace"] = "_detail";
@@ -197,6 +209,8 @@ directive:
     transform: >
       $["201"].headers["Content-Length"]["x-ms-client-name"] = "FileSize";
       $["201"].headers["Content-Length"]["x-nullable"] = true;
+      $["201"].headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["201"].headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["201"].headers["x-ms-continuation"];
       $["201"].schema = {
         "type": "object",
@@ -349,6 +363,8 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      $["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["ETag"];
 ```
 
@@ -360,4 +376,6 @@ directive:
     where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"].headers
     transform: >
       $["Content-Length"]["x-ms-client-name"] = "FileSize";
+      $["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
 ```

@@ -8,6 +8,8 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <azure/core/base64.hpp>
 #include <azure/core/context.hpp>
@@ -21,9 +23,47 @@
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 #include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
+namespace {
+std::string ListBlobsIncludeFlagsToString(
+    const Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags& val)
+{
+  const Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags valueList[] = {
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Copy,
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Deleted,
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Metadata,
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Snapshots,
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Uncommittedblobs,
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Versions,
+      Azure::Storage::Files::DataLake::Models::ListBlobsIncludeFlags::Tags,
+  };
+  const char* stringList[] = {
+      "copy",
+      "deleted",
+      "metadata",
+      "snapshots",
+      "uncommittedblobs",
+      "versions",
+      "tags",
+  };
+  std::string ret;
+  for (size_t i = 0; i < 7; ++i)
+  {
+    if ((val & valueList[i]) == valueList[i])
+    {
+      if (!ret.empty())
+      {
+        ret += ",";
+      }
+      ret += stringList[i];
+    }
+  }
+  return ret;
+}
+} // namespace
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace Models {
     namespace _detail {
@@ -40,6 +80,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     const PublicAccessType PublicAccessType::Path("blob");
     const PathResourceType PathResourceType::Directory("directory");
     const PathResourceType PathResourceType::File("file");
+    const PathExpiryOptions PathExpiryOptions::NeverExpire("NeverExpire");
+    const PathExpiryOptions PathExpiryOptions::RelativeToCreation("RelativeToCreation");
+    const PathExpiryOptions PathExpiryOptions::RelativeToNow("RelativeToNow");
+    const PathExpiryOptions PathExpiryOptions::Absolute("Absolute");
   } // namespace Models
   namespace _detail {
     Response<Models::_detail::PathList> FileSystemClient::ListPaths(
@@ -58,7 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -110,6 +154,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           vectorElement2.Owner = var0["owner"].get<std::string>();
           vectorElement2.Group = var0["group"].get<std::string>();
           vectorElement2.Permissions = var0["permissions"].get<std::string>();
+          if (var0.count("EncryptionScope") != 0)
+          {
+            vectorElement2.EncryptionScope = var0["EncryptionScope"].get<std::string>();
+          }
+          vectorElement2.CreatedOn = var0["creationTime"].get<std::string>();
+          if (var0.count("expiryTime") != 0)
+          {
+            vectorElement2.ExpiresOn = var0["expiryTime"].get<std::string>();
+          }
           if (var0.count("etag") != 0)
           {
             vectorElement2.ETag = var0["etag"].get<std::string>();
@@ -122,6 +175,540 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         response.ContinuationToken = pRawResponse->GetHeaders().at("x-ms-continuation");
       }
       return Response<Models::_detail::PathList>(std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::ListBlobsHierarchySegmentResponse> FileSystemClient::ListBlobHierarchySegment(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const ListFileSystemBlobHierarchySegmentOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      request.GetUrl().AppendQueryParameter("restype", "container");
+      request.GetUrl().AppendQueryParameter("comp", "list");
+      if (options.Prefix.HasValue() && !options.Prefix.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "prefix", _internal::UrlEncodeQueryParameter(options.Prefix.Value()));
+      }
+      if (options.Delimiter.HasValue() && !options.Delimiter.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "delimiter", _internal::UrlEncodeQueryParameter(options.Delimiter.Value()));
+      }
+      if (options.Marker.HasValue() && !options.Marker.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "marker", _internal::UrlEncodeQueryParameter(options.Marker.Value()));
+      }
+      if (options.MaxResults.HasValue())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "maxResults", std::to_string(options.MaxResults.Value()));
+      }
+      if (options.Include.HasValue()
+          && !ListBlobsIncludeFlagsToString(options.Include.Value()).empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "include",
+            _internal::UrlEncodeQueryParameter(
+                ListBlobsIncludeFlagsToString(options.Include.Value())));
+      }
+      request.GetUrl().AppendQueryParameter("showonly", "deleted");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::ListBlobsHierarchySegmentResponse response;
+      {
+        const auto& responseBody = pRawResponse->GetBody();
+        _internal::XmlReader reader(
+            reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+        enum class XmlTagEnum
+        {
+          kUnknown,
+          kEnumerationResults,
+          kPrefix,
+          kMarker,
+          kMaxResults,
+          kDelimiter,
+          kSegment,
+          kBlobPrefixes,
+          kBlobPrefix,
+          kName,
+          kBlobItems,
+          kBlob,
+          kDeleted,
+          kSnapshot,
+          kVersionId,
+          kIsCurrentVersion,
+          kProperties,
+          kCreationTime,
+          kLastModified,
+          kEtag,
+          kContentLength,
+          kContentType,
+          kContentEncoding,
+          kContentLanguage,
+          kContentMD5,
+          kContentDisposition,
+          kCacheControl,
+          kXMsBlobSequenceNumber,
+          kCopyId,
+          kCopySource,
+          kCopyProgress,
+          kCopyCompletionTime,
+          kCopyStatusDescription,
+          kServerEncrypted,
+          kIncrementalCopy,
+          kDestinationSnapshot,
+          kDeletedTime,
+          kRemainingRetentionDays,
+          kAccessTierInferred,
+          kCustomerProvidedKeySha256,
+          kEncryptionScope,
+          kAccessTierChangeTime,
+          kTagCount,
+          kExpiryTime,
+          kSealed,
+          kLastAccessTime,
+          kDeleteTime,
+          kDeletionId,
+          kNextMarker,
+        };
+        const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
+            {"EnumerationResults", XmlTagEnum::kEnumerationResults},
+            {"Prefix", XmlTagEnum::kPrefix},
+            {"Marker", XmlTagEnum::kMarker},
+            {"MaxResults", XmlTagEnum::kMaxResults},
+            {"Delimiter", XmlTagEnum::kDelimiter},
+            {"Segment", XmlTagEnum::kSegment},
+            {"BlobPrefixes", XmlTagEnum::kBlobPrefixes},
+            {"BlobPrefix", XmlTagEnum::kBlobPrefix},
+            {"Name", XmlTagEnum::kName},
+            {"BlobItems", XmlTagEnum::kBlobItems},
+            {"Blob", XmlTagEnum::kBlob},
+            {"Deleted", XmlTagEnum::kDeleted},
+            {"Snapshot", XmlTagEnum::kSnapshot},
+            {"VersionId", XmlTagEnum::kVersionId},
+            {"IsCurrentVersion", XmlTagEnum::kIsCurrentVersion},
+            {"Properties", XmlTagEnum::kProperties},
+            {"Creation-Time", XmlTagEnum::kCreationTime},
+            {"Last-Modified", XmlTagEnum::kLastModified},
+            {"Etag", XmlTagEnum::kEtag},
+            {"Content-Length", XmlTagEnum::kContentLength},
+            {"Content-Type", XmlTagEnum::kContentType},
+            {"Content-Encoding", XmlTagEnum::kContentEncoding},
+            {"Content-Language", XmlTagEnum::kContentLanguage},
+            {"Content-MD5", XmlTagEnum::kContentMD5},
+            {"Content-Disposition", XmlTagEnum::kContentDisposition},
+            {"Cache-Control", XmlTagEnum::kCacheControl},
+            {"x-ms-blob-sequence-number", XmlTagEnum::kXMsBlobSequenceNumber},
+            {"CopyId", XmlTagEnum::kCopyId},
+            {"CopySource", XmlTagEnum::kCopySource},
+            {"CopyProgress", XmlTagEnum::kCopyProgress},
+            {"CopyCompletionTime", XmlTagEnum::kCopyCompletionTime},
+            {"CopyStatusDescription", XmlTagEnum::kCopyStatusDescription},
+            {"ServerEncrypted", XmlTagEnum::kServerEncrypted},
+            {"IncrementalCopy", XmlTagEnum::kIncrementalCopy},
+            {"DestinationSnapshot", XmlTagEnum::kDestinationSnapshot},
+            {"DeletedTime", XmlTagEnum::kDeletedTime},
+            {"RemainingRetentionDays", XmlTagEnum::kRemainingRetentionDays},
+            {"AccessTierInferred", XmlTagEnum::kAccessTierInferred},
+            {"CustomerProvidedKeySha256", XmlTagEnum::kCustomerProvidedKeySha256},
+            {"EncryptionScope", XmlTagEnum::kEncryptionScope},
+            {"AccessTierChangeTime", XmlTagEnum::kAccessTierChangeTime},
+            {"TagCount", XmlTagEnum::kTagCount},
+            {"Expiry-Time", XmlTagEnum::kExpiryTime},
+            {"Sealed", XmlTagEnum::kSealed},
+            {"LastAccessTime", XmlTagEnum::kLastAccessTime},
+            {"DeleteTime", XmlTagEnum::kDeleteTime},
+            {"DeletionId", XmlTagEnum::kDeletionId},
+            {"NextMarker", XmlTagEnum::kNextMarker},
+        };
+        std::vector<XmlTagEnum> xmlPath;
+        Models::BlobPrefix vectorElement1;
+        Models::BlobItemInternal vectorElement2;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == _internal::XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == _internal::XmlNodeType::StartTag)
+          {
+            auto ite = XmlTagEnumMap.find(node.Name);
+            xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
+          }
+          else if (node.Type == _internal::XmlNodeType::Text)
+          {
+            if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kPrefix)
+            {
+              response.Prefix = node.Value;
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kMarker)
+            {
+              response.Marker = node.Value;
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kMaxResults)
+            {
+              response.MaxResults = std::stoi(node.Value);
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kDelimiter)
+            {
+              response.Delimiter = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobPrefixes
+                && xmlPath[3] == XmlTagEnum::kBlobPrefix && xmlPath[4] == XmlTagEnum::kName)
+            {
+              vectorElement1.Name = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kName)
+            {
+              vectorElement2.Name = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kDeleted)
+            {
+              vectorElement2.Deleted = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kSnapshot)
+            {
+              vectorElement2.Snapshot = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kVersionId)
+            {
+              vectorElement2.VersionId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kIsCurrentVersion)
+            {
+              vectorElement2.IsCurrentVersion = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement2.Properties.CreationTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kLastModified)
+            {
+              vectorElement2.Properties.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kEtag)
+            {
+              vectorElement2.Properties.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kContentLength)
+            {
+              vectorElement2.Properties.ContentLength = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kContentType)
+            {
+              vectorElement2.Properties.ContentType = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kContentEncoding)
+            {
+              vectorElement2.Properties.ContentEncoding = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kContentLanguage)
+            {
+              vectorElement2.Properties.ContentLanguage = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kContentMD5)
+            {
+              vectorElement2.Properties.ContentMD5 = Core::Convert::Base64Decode(node.Value);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kContentDisposition)
+            {
+              vectorElement2.Properties.ContentDisposition = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCacheControl)
+            {
+              vectorElement2.Properties.CacheControl = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kXMsBlobSequenceNumber)
+            {
+              vectorElement2.Properties.BlobSequenceNumber = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCopyId)
+            {
+              vectorElement2.Properties.CopyId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCopySource)
+            {
+              vectorElement2.Properties.CopySource = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCopyProgress)
+            {
+              vectorElement2.Properties.CopyProgress = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCopyCompletionTime)
+            {
+              vectorElement2.Properties.CopyCompletionTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCopyStatusDescription)
+            {
+              vectorElement2.Properties.CopyStatusDescription = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kServerEncrypted)
+            {
+              vectorElement2.Properties.ServerEncrypted = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kIncrementalCopy)
+            {
+              vectorElement2.Properties.IncrementalCopy = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kDestinationSnapshot)
+            {
+              vectorElement2.Properties.DestinationSnapshot = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kDeletedTime)
+            {
+              vectorElement2.Properties.DeletedTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kRemainingRetentionDays)
+            {
+              vectorElement2.Properties.RemainingRetentionDays = std::stoi(node.Value);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kAccessTierInferred)
+            {
+              vectorElement2.Properties.AccessTierInferred = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kCustomerProvidedKeySha256)
+            {
+              vectorElement2.Properties.CustomerProvidedKeySha256 = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kEncryptionScope)
+            {
+              vectorElement2.Properties.EncryptionScope = node.Value;
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kAccessTierChangeTime)
+            {
+              vectorElement2.Properties.AccessTierChangeTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kTagCount)
+            {
+              vectorElement2.Properties.TagCount = std::stoi(node.Value);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kExpiryTime)
+            {
+              vectorElement2.Properties.ExpiresOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kSealed)
+            {
+              vectorElement2.Properties.IsSealed = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement2.Properties.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 6 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kProperties
+                && xmlPath[5] == XmlTagEnum::kDeleteTime)
+            {
+              vectorElement2.Properties.DeleteTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob && xmlPath[4] == XmlTagEnum::kDeletionId)
+            {
+              vectorElement2.DeletionId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kNextMarker)
+            {
+              response.NextMarker = node.Value;
+            }
+          }
+          else if (node.Type == _internal::XmlNodeType::Attribute)
+          {
+            if (xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && node.Name == "ServiceEndpoint")
+            {
+              response.ServiceEndpoint = node.Value;
+            }
+            else if (
+                xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && node.Name == "ContainerName")
+            {
+              response.ContainerName = node.Value;
+            }
+          }
+          else if (node.Type == _internal::XmlNodeType::EndTag)
+          {
+            if (xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobPrefixes
+                && xmlPath[3] == XmlTagEnum::kBlobPrefix)
+            {
+              response.Segment.BlobPrefixes.push_back(std::move(vectorElement1));
+              vectorElement1 = Models::BlobPrefix();
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kSegment && xmlPath[2] == XmlTagEnum::kBlobItems
+                && xmlPath[3] == XmlTagEnum::kBlob)
+            {
+              response.Segment.BlobItems.push_back(std::move(vectorElement2));
+              vectorElement2 = Models::BlobItemInternal();
+            }
+            xmlPath.pop_back();
+          }
+        }
+      }
+      return Response<Models::ListBlobsHierarchySegmentResponse>(
+          std::move(response), std::move(pRawResponse));
     }
     Response<Models::CreatePathResult> PathClient::Create(
         Core::Http::_internal::HttpPipeline& pipeline,
@@ -138,7 +725,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Resource.HasValue() && !options.Resource.Value().ToString().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -238,6 +825,46 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "x-ms-source-if-unmodified-since",
             options.SourceIfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      request.SetHeader("x-ms-encryption-algorithm", "AES256");
+      if (options.Owner.HasValue() && !options.Owner.Value().empty())
+      {
+        request.SetHeader("x-ms-owner", options.Owner.Value());
+      }
+      if (options.Group.HasValue() && !options.Group.Value().empty())
+      {
+        request.SetHeader("x-ms-group", options.Group.Value());
+      }
+      if (options.Acl.HasValue() && !options.Acl.Value().empty())
+      {
+        request.SetHeader("x-ms-acl", options.Acl.Value());
+      }
+      if (options.ProposedLeaseId.HasValue() && !options.ProposedLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
+      }
+      if (options.LeaseDuration.HasValue())
+      {
+        request.SetHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.Value()));
+      }
+      if (options.ExpiryOptions.HasValue() && !options.ExpiryOptions.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-expiry-option", options.ExpiryOptions.Value().ToString());
+      }
+      if (options.ExpiresOn.HasValue() && !options.ExpiresOn.Value().empty())
+      {
+        request.SetHeader("x-ms-expiry-time", options.ExpiresOn.Value());
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -251,6 +878,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       if (pRawResponse->GetHeaders().count("Content-Length") != 0)
       {
         response.FileSize = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
+      {
+        response.IsServerEncrypted
+            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
       }
       return Response<Models::CreatePathResult>(std::move(response), std::move(pRawResponse));
     }
@@ -269,7 +906,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Recursive.HasValue())
       {
         request.GetUrl().AppendQueryParameter(
@@ -361,7 +998,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -408,7 +1045,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-acl", options.Acl.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -449,6 +1086,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return Response<Models::_detail::SetAccessControlListRecursiveResult>(
           std::move(response), std::move(pRawResponse));
     }
+    Response<Models::UndeletePathResult> PathClient::Undelete(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const UndeletePathOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
+      request.GetUrl().AppendQueryParameter("comp", "undelete");
+      if (options.UndeleteSource.HasValue() && !options.UndeleteSource.Value().empty())
+      {
+        request.SetHeader("x-ms-undelete-source", options.UndeleteSource.Value());
+      }
+      request.SetHeader("x-ms-version", "2021-06-08");
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::UndeletePathResult response;
+      response.ResourceType = pRawResponse->GetHeaders().at("x-ms-resource-type");
+      return Response<Models::UndeletePathResult>(std::move(response), std::move(pRawResponse));
+    }
     Response<Models::_detail::GetPathAccessControlListResult> PathClient::GetAccessControlList(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
@@ -485,7 +1145,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -572,7 +1232,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      request.SetHeader("x-ms-encryption-algorithm", "AES256");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -584,6 +1256,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
       response.FileSize = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
+      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
+      {
+        response.IsServerEncrypted
+            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
+      }
       return Response<Models::FlushFileResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::AppendFileResult> FileClient::Append(
@@ -617,7 +1299,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      request.SetHeader("x-ms-encryption-algorithm", "AES256");
+      if (options.Flush.HasValue())
+      {
+        request.GetUrl().AppendQueryParameter("flush", options.Flush.Value() ? "true" : "false");
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -639,8 +1337,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
+      {
+        response.IsServerEncrypted
+            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
+      }
       return Response<Models::AppendFileResult>(std::move(response), std::move(pRawResponse));
     }
   } // namespace _detail
