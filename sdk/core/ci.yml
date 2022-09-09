@@ -126,6 +126,7 @@ stages:
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
             ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
+            CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
 
       Artifacts:
         - Name: azure-core
