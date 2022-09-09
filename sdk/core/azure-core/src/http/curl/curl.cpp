@@ -1107,7 +1107,9 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
+          // LCOV_EXCL_START
           AZURE_UNREACHABLE_CODE();
+          // LCOV_EXCL_STOP
         }
         // clean internal buffer
         this->m_internalBuffer.clear();
@@ -1145,7 +1147,9 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
+          // LCOV_EXCL_START
           AZURE_UNREACHABLE_CODE();
+          // LCOV_EXCL_STOP
         }
       }
     }
@@ -1358,6 +1362,9 @@ namespace Azure { namespace Core { namespace Http {
       return openssl_unique_ptr<T>{raw};
     }
 
+    // Disable Code Coverage across GetOpenSSLError because we don't have a good way of forcing
+    // OpenSSL to fail.
+    // LCOV_EXCL_START
     std::string GetOpenSSLError(std::string const& what)
     {
       auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
@@ -1380,6 +1387,8 @@ namespace Azure { namespace Core { namespace Http {
 
       return returnValue;
     }
+    // LCOV_EXCL_STOP
+
   } // namespace _detail
 
   namespace {
