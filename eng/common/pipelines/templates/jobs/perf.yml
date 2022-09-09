@@ -104,11 +104,11 @@ jobs:
 
   - ${{ parameters.InstallLanguageSteps }}
 
-  - template: /eng/common/TestResources/deploy-test-resources.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Location: westus
-      ResourceType: perf
+  #- template: /eng/common/TestResources/deploy-test-resources.yml
+  #  parameters:
+  #    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  #    Location: westus
+  #    ResourceType: perf
 
   - pwsh: |
       set-content -path config.yml -value "WorkingDirectories:"
