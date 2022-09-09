@@ -42,7 +42,7 @@ stages:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
-      EnableTests: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
+#      EnableTests: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
       PreTestSteps:
         - task: UsePythonVersion@0
           displayName: 'Use Python 3'

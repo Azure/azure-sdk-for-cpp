@@ -147,7 +147,8 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - ${{ if eq(parameters.EnableTests, true) }}:
+#      - ${{ if eq(parameters.EnableTests, true) }}:
+      - ${{ if contains(variables.CmakeArgs, "BUILD_TESTING=ON") }}:
         - ${{ parameters.PreTestSteps }}
 
       - pwsh: |
@@ -161,7 +162,8 @@ jobs:
         workingDirectory: build
         displayName: Test
 
-      - ${{ if eq(parameters.EnableTests, true) }}:
+#      - ${{ if eq(parameters.EnableTests, true) }}:
+      - ${{ if contains(variables.CmakeArgs, "BUILD_TESTING=ON") }}:
         - ${{ parameters.PostTestSteps }}
 
       - task: PublishTestResults@2

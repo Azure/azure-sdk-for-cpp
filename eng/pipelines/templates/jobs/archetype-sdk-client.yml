@@ -62,6 +62,7 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
+        EnableTests: ${{ parameters.EnableTests }}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 
