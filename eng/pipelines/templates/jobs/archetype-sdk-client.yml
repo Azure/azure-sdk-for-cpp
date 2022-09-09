@@ -33,10 +33,10 @@ parameters:
     type: object
     default: []
   - name: PreTestSteps
-    type: steplist
+    type: stepList
     default: []
   - name: PostTestSteps
-    type: steplist
+    type: stepList
     default: []
 
 jobs:

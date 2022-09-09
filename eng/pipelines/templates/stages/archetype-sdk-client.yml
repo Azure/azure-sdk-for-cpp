@@ -68,10 +68,10 @@ parameters:
   type: string
   default: ''
 - name: PreTestSteps
-  type: steplist
+  type: stepList
   default: []
 - name: PostTestSteps
-  type: steplist
+  type: stepList
   default: []
 
 
