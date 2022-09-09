@@ -590,7 +590,8 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  // Disable TestProxy test for WinHTTP.
+#if !defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   const std::string TestProxyHttpsCertificate =
       // cspell:disable
       "MIIDSDCCAjCgAwIBAgIUIoKu8Oao7j10TLNxaUG2Bs0FrRwwDQYJKoZIhvcNAQEL"
