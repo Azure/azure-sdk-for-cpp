@@ -95,11 +95,10 @@ stages:
           condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
           # Start the test proxy tool for testing. Only start it when previous steps had succeeded and we're enabling testing.
-        - ${{ if contains(variables.CmakeArgs, 'BUILD_TESTING=ON') }}:
-          - template: /eng/common/testproxy/test-proxy-tool.yml
-            parameters:
-              runProxy: true
-              targetVersion: 1.0.0-dev.20220810.2
+        - template: /eng/common/testproxy/test-proxy-tool.yml
+          parameters:
+            runProxy: true
+            targetVersion: 1.0.0-dev.20220810.2
 
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
