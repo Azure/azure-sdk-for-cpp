@@ -197,7 +197,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
 
 Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     std::vector<uint8_t> const& tpmQuoteToAttest,
-    AttestTpmOptions options,
+    AttestTpmOptions const&,
     Azure::Core::Context const& context) const
 {
   auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));

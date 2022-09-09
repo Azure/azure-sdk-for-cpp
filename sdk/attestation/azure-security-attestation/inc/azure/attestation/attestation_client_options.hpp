@@ -261,10 +261,6 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestTpmOptions final
   {
-    /**
-     * @brief Reserved field for future use.
-     */
-    Azure::Nullable<std::string> Reserved;
   };
 
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key

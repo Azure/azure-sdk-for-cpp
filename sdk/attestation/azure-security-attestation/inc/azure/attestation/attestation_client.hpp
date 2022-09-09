@@ -244,7 +244,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::TpmAttestationResult> AttestTpm(
         std::vector<uint8_t> const& tpmQuoteToAttest,
-        AttestTpmOptions options = AttestTpmOptions{},
+        AttestTpmOptions const& options = AttestTpmOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
