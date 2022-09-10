@@ -1,14 +1,12 @@
 # Release History
 
-## 1.1.0-beta.1 (Unreleased)
-
-### Features Added
+## 2.0.0-beta.1 (Unreleased)
 
 ### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Changed `AttestationClient::AttestTpm` to match `AttestOpenEnclave` and `AttestSgxmEnclave` 
+ - Added `std::vector<uint8_t>` dataToAttest parameter.
+ - Removed `PayLoad` in `TpmAttestationOptions`
+ - Changed `TpmResult` in `TpmAttestationResult` to type `std::vector<uint8_t>`
 
 ## 1.0.0 (2022-07-07)
 
