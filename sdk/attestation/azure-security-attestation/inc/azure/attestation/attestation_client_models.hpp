@@ -448,7 +448,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    */
   struct TpmAttestationResult final
   {
-    /** @brief The JSON encoded value returned from TPM attestation.
+    /** @brief Attestation response data.
+     * 
      * The TPM attestation protocol is defined
      * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      *
