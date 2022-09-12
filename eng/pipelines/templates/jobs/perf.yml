@@ -22,12 +22,12 @@ parameters:
   default: ''
 - name: EnvVars
   type: object
-  default: {
+  default: [
       {key: VCPKG_ROOT,
        value: "/home/user/vcpkg"},
       {key: VCPKG_DEFAULT_TRIPLET,
        value: x64-linux}
-  }
+  ]
 
 extends:
   template: /eng/common/pipelines/templates/jobs/perf.yml
