@@ -234,7 +234,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param dataToAttest - Attestation request data.
      * @param options - Options to the attestation request.
      * @param context - Context for the operation.
-     * 
+     *
      * @return Response<TpmAttestationResult> - The result of the attestation operation
      */
     Response<Models::TpmAttestationResult> AttestTpm(
