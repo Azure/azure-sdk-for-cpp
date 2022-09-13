@@ -8,7 +8,6 @@
 
 #include <cstdint>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 #include <azure/core/context.hpp>
@@ -97,8 +96,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The name of the encryption scope under which the blob is encrypted.
        */
       Nullable<std::string> EncryptionScope;
-      std::string CreatedOn;
-      Nullable<std::string> ExpiresOn;
       std::string ETag;
     };
     namespace _detail {
@@ -120,130 +117,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> ContinuationToken;
       };
     } // namespace _detail
-    struct BlobPrefix final
-    {
-      std::string Name;
-    };
     /**
-     * @brief Properties of a blob.
-     */
-    struct BlobPropertiesInternal final
-    {
-      Nullable<DateTime> CreationTime;
-      DateTime LastModified;
-      ETag Etag;
-      /**
-       * Size in bytes.
-       */
-      Nullable<int64_t> ContentLength;
-      Nullable<std::string> ContentType;
-      Nullable<std::string> ContentEncoding;
-      Nullable<std::string> ContentLanguage;
-      Nullable<std::vector<uint8_t>> ContentMD5;
-      Nullable<std::string> ContentDisposition;
-      Nullable<std::string> CacheControl;
-      Nullable<int64_t> BlobSequenceNumber;
-      Nullable<std::string> CopyId;
-      Nullable<std::string> CopySource;
-      Nullable<std::string> CopyProgress;
-      Nullable<DateTime> CopyCompletionTime;
-      Nullable<std::string> CopyStatusDescription;
-      Nullable<bool> ServerEncrypted;
-      Nullable<bool> IncrementalCopy;
-      Nullable<std::string> DestinationSnapshot;
-      Nullable<DateTime> DeletedTime;
-      Nullable<int32_t> RemainingRetentionDays;
-      Nullable<bool> AccessTierInferred;
-      Nullable<std::string> CustomerProvidedKeySha256;
-      /**
-       * The name of the encryption scope under which the blob is encrypted.
-       */
-      Nullable<std::string> EncryptionScope;
-      Nullable<DateTime> AccessTierChangeTime;
-      Nullable<int32_t> TagCount;
-      Nullable<DateTime> ExpiresOn;
-      Nullable<bool> IsSealed;
-      Nullable<DateTime> LastAccessedOn;
-      Nullable<DateTime> DeleteTime;
-    };
-    /**
-     * @brief An Azure Storage blob.
-     */
-    struct BlobItemInternal final
-    {
-      std::string Name;
-      bool Deleted = bool();
-      std::string Snapshot;
-      Nullable<std::string> VersionId;
-      Nullable<bool> IsCurrentVersion;
-      /**
-       * Properties of a blob.
-       */
-      BlobPropertiesInternal Properties;
-      Nullable<std::string> DeletionId;
-    };
-    struct BlobHierarchyListSegment final
-    {
-      /**
-       * Array of BlobPrefix.
-       */
-      std::vector<BlobPrefix> BlobPrefixes;
-      /**
-       * Array of BlobItemInternal.
-       */
-      std::vector<BlobItemInternal> BlobItems;
-    };
-    /**
-     * @brief Include this parameter to specify one or more datasets to include in the response.
-     */
-    enum class ListBlobsIncludeFlags
-    {
-      None = 0,
-      Copy = 1,
-      Deleted = 2,
-      Metadata = 4,
-      Snapshots = 8,
-      Uncommittedblobs = 16,
-      Versions = 32,
-      Tags = 64,
-    };
-    inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
-    {
-      using type = std::underlying_type_t<ListBlobsIncludeFlags>;
-      return static_cast<ListBlobsIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
-    }
-    inline ListBlobsIncludeFlags& operator|=(ListBlobsIncludeFlags& lhs, ListBlobsIncludeFlags rhs)
-    {
-      lhs = lhs | rhs;
-      return lhs;
-    }
-    inline ListBlobsIncludeFlags operator&(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
-    {
-      using type = std::underlying_type_t<ListBlobsIncludeFlags>;
-      return static_cast<ListBlobsIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
-    }
-    inline ListBlobsIncludeFlags& operator&=(ListBlobsIncludeFlags& lhs, ListBlobsIncludeFlags rhs)
-    {
-      lhs = lhs & rhs;
-      return lhs;
-    }
-    /**
-     * @brief An enumeration of blobs.
-     */
-    struct ListBlobsHierarchySegmentResponse final
-    {
-      std::string ServiceEndpoint;
-      std::string ContainerName;
-      Nullable<std::string> Prefix;
-      Nullable<std::string> Marker;
-      Nullable<int32_t> MaxResults;
-      Nullable<std::string> Delimiter;
-      BlobHierarchyListSegment Segment;
-      Nullable<std::string> NextMarker;
-    };
-    /**
-     * @brief Required only for Create File and Create Directory. The value must be "file" or
-     * "directory".
+     * @brief The type of the resource.  The value may be "file" or "directory".  If not set, the
+     * value is "file".
      */
     class PathResourceType final {
     public:
@@ -254,24 +130,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& ToString() const { return m_value; }
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
-
-    private:
-      std::string m_value;
-    };
-    /**
-     * @brief Required. Indicates mode of the expiry time.
-     */
-    class PathExpiryOptions final {
-    public:
-      PathExpiryOptions() = default;
-      explicit PathExpiryOptions(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const PathExpiryOptions& other) const { return m_value == other.m_value; }
-      bool operator!=(const PathExpiryOptions& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions NeverExpire;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToCreation;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions RelativeToNow;
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathExpiryOptions Absolute;
 
     private:
       std::string m_value;
@@ -386,7 +244,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The type of the resource.  The value may be "file" or "directory".  If not set, the value
        * is "file".
        */
-      std::string ResourceType;
+      Nullable<PathResourceType> ResourceType;
     };
     namespace _detail {
       /**
@@ -487,19 +345,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const Core::Url& url,
           const ListFileSystemPathsOptions& options,
           const Core::Context& context);
-      struct ListFileSystemBlobHierarchySegmentOptions final
-      {
-        Nullable<std::string> Prefix;
-        Nullable<std::string> Delimiter;
-        Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
-        Nullable<Models::ListBlobsIncludeFlags> Include;
-      };
-      static Response<Models::ListBlobsHierarchySegmentResponse> ListBlobHierarchySegment(
-          Core::Http::_internal::HttpPipeline& pipeline,
-          const Core::Url& url,
-          const ListFileSystemBlobHierarchySegmentOptions& options,
-          const Core::Context& context);
     };
     class PathClient final {
     public:
@@ -536,7 +381,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> Acl;
         Nullable<std::string> ProposedLeaseId;
         Nullable<int64_t> LeaseDuration;
-        Nullable<Models::PathExpiryOptions> ExpiryOptions;
         Nullable<std::string> ExpiresOn;
       };
       static Response<Models::CreatePathResult> Create(

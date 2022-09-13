@@ -70,6 +70,7 @@ directive:
       delete $["/{filesystem}/{path}"].get;
       delete $["/{filesystem}/{path}"].patch;
       delete $["/{filesystem}/{path}?comp=expiry"];
+      delete $["/{filesystem}?restype=container&comp=list&hierarchy"];
 ```
 
 ### API Version
@@ -132,7 +133,6 @@ directive:
     where: $.parameters
     transform: >
       $.Continuation["x-ms-client-name"] = "ContinuationToken";
-      $.ListBlobsInclude.items["x-ms-enum"]["name"] = "ListBlobsIncludeFlags";
       $.EncryptionKeySha256["format"] = "byte";
   - from: swagger-document
     where: $.definitions
@@ -184,9 +184,8 @@ directive:
       $.Path.properties["contentLength"]["x-ms-client-name"] = "FileSize";
       $.Path.properties["isDirectory"]["x-ms-client-default"] = false;
       $.Path.properties["EncryptionScope"]["x-nullable"] = true;
-      $.Path.properties["creationTime"]["x-ms-client-name"] = "CreatedOn";
-      $.Path.properties["expiryTime"]["x-ms-client-name"] = "ExpiresOn";
-      $.Path.properties["expiryTime"]["x-nullable"] = true;
+      delete $.Path.properties["creationTime"];
+      delete $.Path.properties["expiryTime"];
       $.Path.properties["etag"] = {"type": "string", "x-ms-format": "string", "x-ms-client-default": "", "x-ms-client-name": "ETag"};
       delete $.Path.properties["eTag"];
       $.PathList["x-namespace"] = "_detail";
@@ -200,10 +199,24 @@ directive:
       delete $["Last-Modified"];
 ```
 
+### ListBlobsByHierarchy
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      $.ListBlobsInclude.items["x-ms-enum"]["name"] = "ListBlobsIncludeFlags";
+```
+
 ### CreatePath
 
 ```yaml
 directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}"].put.parameters
+    transform: >
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/PathExpiryOptionsOptional"))));
   - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}"].put.responses
     transform: >
@@ -220,6 +233,18 @@ directive:
           "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": "", "description": "Indicates if the file or directory was successfully created by this operation."}
         }
       };
+```
+
+
+### SetExpiry
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      delete $["PathExpiryOptions"];
+      delete $["PathExpiryOptionsOptional"];
 ```
 
 ### DeletePath
@@ -265,6 +290,21 @@ directive:
         delete $["x-ms-enum"];
         delete $["enum"];
       }
+```
+
+### UndeletePath
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?comp=undelete"].put.responses
+    transform: >
+      $["200"].headers["x-ms-resource-type"]["enum"] = ["directory", "file"];
+      $["200"].headers["x-ms-resource-type"]["x-ms-enum"] = {
+            "name": "PathResourceType",
+            "modelAsString": false
+        };
+      $["200"].headers["x-ms-resource-type"]["x-nullable"] = true;
 ```
 
 ### GetPathAccessControlList
