@@ -51,6 +51,8 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
     using unique_HINTERNET = std::unique_ptr<void, HINTERNET_deleter>;
+
+    // unique_ptr class wrapping a PCCERT_CHAIN_CONTEXT
     struct HCERTIFICATECHAIN_deleter
     {
       void operator()(PCCERT_CHAIN_CONTEXT handle)
@@ -64,6 +66,7 @@ namespace Azure { namespace Core { namespace Http {
     using unique_CCERT_CHAIN_CONTEXT
         = std::unique_ptr<const CERT_CHAIN_CONTEXT, HCERTIFICATECHAIN_deleter>;
 
+    // unique_ptr class wrapping an HCERTCHAINENGINE handle
     struct HCERTCHAINENGINE_deleter
     {
       void operator()(HCERTCHAINENGINE handle) noexcept
@@ -76,6 +79,7 @@ namespace Azure { namespace Core { namespace Http {
     };
     using unique_HCERTCHAINENGINE = std::unique_ptr<void, HCERTCHAINENGINE_deleter>;
 
+    // unique_ptr class wrapping an HCERTSTORE handle
     struct HCERTSTORE_deleter
     {
     public:
@@ -89,6 +93,7 @@ namespace Azure { namespace Core { namespace Http {
     };
     using unique_HCERTSTORE = std::unique_ptr<void, HCERTSTORE_deleter>;
 
+    // unique_ptr class wrapping a PCCERT_CONTEXT
     struct CERTCONTEXT_deleter
     {
     public:
