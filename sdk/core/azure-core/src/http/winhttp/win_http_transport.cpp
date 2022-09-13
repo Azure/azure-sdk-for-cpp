@@ -206,7 +206,7 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 }
 } // namespace
 
-// For each certificate specified in trustedCertificate, add to certicateStore.
+// For each certificate specified in trustedCertificate, add to certificateStore.
 bool WinHttpTransport::AddCertificatesToStore(
     std::vector<std::string> const& trustedCertificates,
     _detail::unique_HCERTSTORE const& certificateStore)
@@ -406,7 +406,7 @@ void WinHttpTransport::OnHttpStatusOperation(HINTERNET hInternet, DWORD dwIntern
     Log::Write(Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
 
     // To signal to caller that the request is to be terminated, the callback closes the handle.
-	// This ensures that no message is sent to the server.
+    // This ensures that no message is sent to the server.
     WinHttpCloseHandle(hInternet);
 
     // To avoid a double free of this handle record that we've
