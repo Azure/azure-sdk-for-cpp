@@ -213,7 +213,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     // Send the request to the service.
     auto response
         = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
-    auto returnedBody = TpmDataSerializer::Deserialize(response);
+    std::vector<uint8_t> returnedBody{TpmDataSerializer::Deserialize(response)};
     return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
   }
   catch (std::runtime_error const& ex)
