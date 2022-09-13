@@ -4,6 +4,7 @@
 /**
  * @file
  * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
+ * cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
  */
 
 #pragma once
