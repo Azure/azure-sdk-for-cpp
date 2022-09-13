@@ -79,6 +79,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
       }
       httpOptions.ProxyUserName = transportOptions.ProxyUserName;
       httpOptions.ProxyPassword = transportOptions.ProxyPassword;
+      httpOptions.ExpectedTlsRootCertificate = transportOptions.ExpectedTlsRootCertificate;
+      // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
+      // CAs.
+      if (!transportOptions.ExpectedTlsRootCertificate.empty())
+      {
+        httpOptions.IgnoreUnknownCertificateAuthority;
+      }
+
       return std::make_shared<Azure::Core::Http::WinHttpTransport>(httpOptions);
     }
     else

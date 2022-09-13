@@ -3,6 +3,9 @@
 
 #include "azure/core/http/http.hpp"
 
+#include "azure/core/base64.hpp"
+#include "azure/core/diagnostics/logger.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
@@ -11,11 +14,15 @@
 
 #include <Windows.h>
 #include <algorithm>
+#include <sstream>
 #include <string>
+#include <wincrypt.h>
 #include <winhttp.h>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
+using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::Diagnostics::_internal;
 
 namespace {
 
@@ -196,8 +203,267 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 
   return requestHeaderString;
 }
-
 } // namespace
+
+namespace Azure { namespace Core { namespace Http { namespace _detail {
+  struct HCERTIFICATECHAIN_deleter
+  {
+    void operator()(PCCERT_CHAIN_CONTEXT handle)
+    {
+      // unique_ptr class wrapping an HINTERNET handle
+      {
+        CertFreeCertificateChain(handle);
+      }
+    }
+  };
+  using unique_CCERT_CHAIN_CONTEXT
+      = std::unique_ptr<const CERT_CHAIN_CONTEXT, HCERTIFICATECHAIN_deleter>;
+
+  struct HCERTCHAINENGINE_deleter
+  {
+    void operator()(HCERTCHAINENGINE handle) noexcept
+    {
+      if (handle != nullptr)
+      {
+        CertFreeCertificateChainEngine(handle);
+      }
+    }
+  };
+  using unique_HCERTCHAINENGINE = std::unique_ptr<void, HCERTCHAINENGINE_deleter>;
+
+  struct HCERTSTORE_deleter
+  {
+  public:
+    void operator()(HCERTSTORE handle) noexcept
+    {
+      if (handle != nullptr)
+      {
+        CertCloseStore(handle, 0);
+      }
+    }
+  };
+  using unique_HCERTSTORE = std::unique_ptr<void, HCERTSTORE_deleter>;
+
+  struct CERTCONTEXT_deleter
+  {
+  public:
+    void operator()(PCCERT_CONTEXT handle) noexcept
+    {
+      if (handle != nullptr)
+      {
+        CertFreeCertificateContext(handle);
+      }
+    }
+  };
+  using unique_PCCERT_CONTEXT = std::unique_ptr<CERT_CONTEXT const, CERTCONTEXT_deleter>;
+
+  // For each certificate specified in trustedCertificate, add to hCertStore.  Windows API's (namely
+  // CryptStringToBinaryA & CertAddEncodedCertificateToStore) do not handle multiple certificates
+  // at a time in a single call, so add_certificates_to_store() parses the PEM (delimited by
+  // "-----END CERTIFICATE-----") to call Windows API a cert at a time.
+  bool AddCertificateToStore(
+      std::string const& trustedCertificate,
+      _detail::unique_HCERTSTORE const& hCertStore)
+  {
+    auto derCertificate = Azure::Core::Convert::Base64Decode(trustedCertificate);
+
+    if (!CertAddEncodedCertificateToStore(
+            hCertStore.get(),
+            X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+            derCertificate.data(),
+            static_cast<DWORD>(derCertificate.size()),
+            CERT_STORE_ADD_NEW,
+            NULL))
+    {
+      DWORD lastError = GetLastError();
+      Log::Write(
+          Logger::Level::Error,
+          "CertAddEncodedCertificateToStore failed with error " + std::to_string(lastError));
+      return false;
+    }
+
+    return true;
+  }
+
+  // VerifyCertificateInChain determines whether the certificate in pCertContextToVerify
+  // chains up to the PEM represented by trustedCertificate or not.
+  bool VerifyCertificateInChain(
+      std::string const& trustedCertificate,
+      _detail::unique_PCCERT_CONTEXT const& pCertContextToVerify)
+  {
+    DWORD lastError;
+
+    if ((trustedCertificate.empty()) || !pCertContextToVerify)
+    {
+      return false;
+    }
+
+    // Creates an in-memory certificate store that is destroyed at end of this function.
+    _detail::unique_HCERTSTORE hCertStore(CertOpenStore(
+        CERT_STORE_PROV_MEMORY,
+        X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+        0,
+        CERT_STORE_CREATE_NEW_FLAG,
+        nullptr));
+    if (!hCertStore)
+    {
+      lastError = GetLastError();
+      Log::Write(
+          Logger::Level::Error, "CertOpenStore failed with error " + std::to_string(lastError));
+      return false;
+    }
+
+    if (!AddCertificateToStore(trustedCertificate, hCertStore))
+    {
+      Log::Write(Logger::Level::Error, "Cannot add certificates to store");
+      return false;
+    }
+
+    {
+      CERT_CHAIN_ENGINE_CONFIG EngineConfig{};
+      EngineConfig.cbSize = sizeof(EngineConfig);
+      EngineConfig.dwFlags = CERT_CHAIN_ENABLE_CACHE_AUTO_UPDATE | CERT_CHAIN_ENABLE_SHARE_STORE;
+      EngineConfig.hExclusiveRoot = hCertStore.get();
+
+      CERT_CHAIN_PARA ChainPara{};
+      ChainPara.cbSize = sizeof(ChainPara);
+
+      CERT_CHAIN_POLICY_PARA PolicyPara{};
+      PolicyPara.cbSize = sizeof(PolicyPara);
+
+      CERT_CHAIN_POLICY_STATUS PolicyStatus{};
+      PolicyStatus.cbSize = sizeof(PolicyStatus);
+      HCERTCHAINENGINE hEngine;
+      if (!CertCreateCertificateChainEngine(&EngineConfig, &hEngine))
+      {
+        lastError = GetLastError();
+        Log::Write(
+            Logger::Level::Error,
+            "CertCreateCertificateChainEngine failed with error 0x%08x"
+                + std::to_string(lastError));
+        return false;
+      }
+      _detail::unique_HCERTCHAINENGINE hChainEngine(hEngine);
+
+      PCCERT_CHAIN_CONTEXT chainContext;
+      if (!CertGetCertificateChain(
+              hChainEngine.get(),
+              pCertContextToVerify.get(),
+              nullptr,
+              /* pCertContextToVerify->hCertStore */ hCertStore.get(),
+              &ChainPara,
+              0,
+              nullptr,
+              &chainContext))
+      {
+        lastError = GetLastError();
+        Log::Write(
+            Logger::Level::Error,
+            "CertGetCertificateChain failed with error " + std::to_string(lastError));
+        return false;
+      }
+
+      _detail::unique_CCERT_CHAIN_CONTEXT pChainContextToVerify(chainContext);
+      if (!CertVerifyCertificateChainPolicy(
+              CERT_CHAIN_POLICY_SSL, pChainContextToVerify.get(), &PolicyPara, &PolicyStatus))
+      {
+        lastError = GetLastError();
+        Log::Write(
+            Logger::Level::Error,
+            "CertVerifyCertificateChainPolicy failed with error " + std::to_string(lastError));
+        return false;
+      }
+      if (PolicyStatus.dwError != 0)
+      {
+        Log::Write(
+            Logger::Level::Error,
+            "CertVerifyCertificateChainPolicy sets certificateStatus "
+                + std::to_string(PolicyStatus.dwError));
+        return false;
+      }
+    }
+    return true;
+  }
+}}}} // namespace Azure::Core::Http::_detail
+
+void WinHttpTransport::StatusCallback(
+    HINTERNET hInternet,
+    DWORD_PTR dwContext,
+    DWORD dwInternetStatus,
+    LPVOID,
+    DWORD)
+{
+  // If we're called before our context has been set (on Open and Close callbacks), ignore the
+  // status callback.
+  if (dwContext == 0)
+  {
+    return;
+  }
+
+  WinHttpTransport* httpTransport = reinterpret_cast<WinHttpTransport*>(dwContext);
+  httpTransport->OnHttpStatusOperation(hInternet, dwInternetStatus);
+}
+
+/**
+ * @brief HTTP Callback to enable private certificate checks.
+ *
+ * This method is called by WinHTTP when a certificate is received. This method is called multiple
+ * times based on the state of the TLS connection. We are only interested in
+ * WINHTTP_CALLBACK_STATUS_SENDING_REQUEST, which is called during the TLS handshake.
+ *
+ * When called, we verify that the certificate chain sent from the server contains the certificate
+ * the HTTP client was configured with. If it is, we accept the connection, if it is not,
+ * we abort the connection, closing the incoming request handle.
+ */
+void WinHttpTransport::OnHttpStatusOperation(HINTERNET hInternet, DWORD dwInternetStatus)
+{
+  if (dwInternetStatus != WINHTTP_CALLBACK_STATUS_SENDING_REQUEST)
+  {
+    if (dwInternetStatus == WINHTTP_CALLBACK_STATUS_SECURE_FAILURE)
+    {
+      Log::Write(Logger::Level::Error, "Security failure. :(");
+    }
+    // Silently ignore if there's any statuses we get that we can't handle
+    return;
+  }
+
+  // We will only set the Status callback if a root certificate has been set.
+  AZURE_ASSERT(!m_options.ExpectedTlsRootCertificate.empty());
+
+  bool certificateTrusted{false};
+
+  // Ask WinHTTP for the server certificate - this won't be valid outside a status callback.
+  PCCERT_CONTEXT certContext;
+  DWORD bufferLength = sizeof(certContext);
+  if (!WinHttpQueryOption(
+          hInternet,
+          WINHTTP_OPTION_SERVER_CERT_CONTEXT,
+          reinterpret_cast<void*>(&certContext),
+          &bufferLength))
+  {
+    Log::Write(
+        Logger::Level::Error,
+        "Could not retrieve TLS server certificate." + std::to_string(GetLastError()));
+  }
+  else
+  {
+    _detail::unique_PCCERT_CONTEXT pCertContext{certContext};
+
+    certificateTrusted
+        = _detail::VerifyCertificateInChain(m_options.ExpectedTlsRootCertificate, pCertContext);
+  }
+  if (!certificateTrusted)
+  {
+    Log::Write(Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
+
+    // To signal to caller that the request is to be terminated, the callback closes the handle.
+    WinHttpCloseHandle(hInternet);
+
+    // To avoid a double free of this handle record we've
+    // processed close already.
+    m_requestHandleClosed = true;
+  }
+}
 
 void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error)
 {
@@ -275,6 +541,21 @@ _detail::unique_HINTERNET WinHttpTransport::CreateSessionHandle()
           sessionHandle.get(), WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
     GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
+  }
+
+  if (!m_options.ExpectedTlsRootCertificate.empty())
+  {
+
+    // Set the callback function to be called when a server certificate is received.
+    if (WinHttpSetStatusCallback(
+            sessionHandle.get(),
+            &WinHttpTransport::StatusCallback,
+            /* WINHTTP_CALLBACK_FLAG_SEND_REQUEST*/ WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
+            0)
+        == WINHTTP_INVALID_STATUS_CALLBACK)
+    {
+      GetErrorAndThrow("Error while setting up the status callback.");
+    }
   }
 
   return sessionHandle;
@@ -396,7 +677,7 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     }
   }
 
-  if (m_options.IgnoreUnknownCertificateAuthority)
+  if (m_options.IgnoreUnknownCertificateAuthority || !m_options.ExpectedTlsRootCertificate.empty())
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
     if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
@@ -491,7 +772,7 @@ void WinHttpTransport::SendRequest(
           WINHTTP_NO_REQUEST_DATA,
           0,
           streamLength > 0 ? static_cast<DWORD>(streamLength) : 0,
-          0))
+          reinterpret_cast<DWORD_PTR>(this)))
   {
     // Errors include:
     // ERROR_WINHTTP_CANNOT_CONNECT
@@ -729,8 +1010,22 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
   _detail::unique_HINTERNET connectionHandle = CreateConnectionHandle(request.GetUrl(), context);
   _detail::unique_HINTERNET requestHandle
       = CreateRequestHandle(connectionHandle, request.GetUrl(), request.GetMethod());
+  try
+  {
+    SendRequest(requestHandle, request, context);
+  }
+  catch (TransportException&)
+  {
+    // If there was a TLS validation error, then we will have closed the request handle
+    // during the TLS validation callback. So if an exception was thrown, if we force closed the
+    // request handle, clear the handle in the requestHandle to prevent a double free.
+    if (m_requestHandleClosed)
+    {
+      requestHandle.release();
+    }
 
-  SendRequest(requestHandle, request, context);
+    throw;
+  }
 
   ReceiveResponse(requestHandle, context);
 

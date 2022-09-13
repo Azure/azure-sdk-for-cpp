@@ -142,6 +142,13 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Password for proxy authentication.
      */
     std::string ProxyPassword;
+
+    /**
+     * @brief Base64 encoded DER encoded X.509 certificate. If this certificate is sent by the TLS
+     * server, it will be accepted for the connection, even if its not in the known root
+     * certificates.
+     */
+    std::string ExpectedTlsRootCertificate;
   };
 
   /**
@@ -155,6 +162,7 @@ namespace Azure { namespace Core { namespace Http {
     // This should remain immutable and not be modified after calling the ctor, to avoid threading
     // issues.
     _detail::unique_HINTERNET m_sessionHandle;
+    bool m_requestHandleClosed{false};
 
     _detail::unique_HINTERNET CreateSessionHandle();
     _detail::unique_HINTERNET CreateConnectionHandle(
@@ -182,6 +190,14 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
         _detail::unique_HINTERNET& requestHandle,
         HttpMethod requestMethod);
+
+    static void StatusCallback(
+        HINTERNET hInternet,
+        DWORD_PTR dwContext,
+        DWORD dwInternetStatus,
+        LPVOID lpvStatusInformation,
+        DWORD dwStatusInformationLength);
+    void OnHttpStatusOperation(HINTERNET hInternet, DWORD dwInternetStatus);
 
     // Callback to allow a derived transport to extract the request handle. Used for WebSocket
     // transports.

@@ -470,6 +470,8 @@ namespace Azure { namespace Core { namespace Test {
         "https://www.example.com/",
         "https://www.google.com/",
     };
+
+    GTEST_LOG_(INFO) << "Basic test calls.";
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -479,9 +481,12 @@ namespace Azure { namespace Core { namespace Test {
 
       for (auto const& target : testUrls)
       {
+        GTEST_LOG_(INFO) << "Test " << target;
         Azure::Core::Url url(target);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        std::unique_ptr<Azure::Core::Http::RawResponse> response;
+        EXPECT_NO_THROW(
+            response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
         if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
@@ -490,6 +495,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     // Now verify that once we enable CRL checks, we can still access the URLs.
+    GTEST_LOG_(INFO) << "Test with CRL checks enabled";
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -500,9 +506,12 @@ namespace Azure { namespace Core { namespace Test {
 
       for (auto const& target : testUrls)
       {
+        GTEST_LOG_(INFO) << "Test " << target;
         Azure::Core::Url url(target);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        std::unique_ptr<Azure::Core::Http::RawResponse> response;
+        EXPECT_NO_THROW(
+            response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
         if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
@@ -511,6 +520,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     // Now verify that once we enable CRL checks, we can still access the URLs.
+    GTEST_LOG_(INFO) << "Test with CRL checks enabled. Iteration 2.";
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -521,9 +531,12 @@ namespace Azure { namespace Core { namespace Test {
 
       for (auto const& target : testUrls)
       {
+        GTEST_LOG_(INFO) << "Test " << target;
         Azure::Core::Url url(target);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        std::unique_ptr<Azure::Core::Http::RawResponse> response;
+        EXPECT_NO_THROW(
+            response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
         if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
@@ -590,8 +603,6 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-  // Disable TestProxy test for WinHTTP.
-#if !defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   const std::string TestProxyHttpsCertificate =
       // cspell:disable
       "MIIDSDCCAjCgAwIBAgIUIoKu8Oao7j10TLNxaUG2Bs0FrRwwDQYJKoZIhvcNAQEL"
@@ -613,16 +624,65 @@ namespace Azure { namespace Core { namespace Test {
       "LUjecMNLJFWHUSD4cKHvXJjDYZEiCiy+MdUDytWIsfw0fzAUjz9Qaz8YpZ+fXufM"
       "MNMNfyJHSMEMFIT2D1UaQiwryXWQWJ93OiSdjA==";
 
+  const std::string InvalidTestProxyHttpsCertificate
+      = "MIIIujCCBqKgAwIBAgITMwAxS6DhmVCLBf6MWwAAADFLoDANBgkqhkiG9w0BAQwF"
+        "ADBZMQswCQYDVQQGEwJVUzEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9u"
+        "MSowKAYDVQQDEyFNaWNyb3NvZnQgQXp1cmUgVExTIElzc3VpbmcgQ0EgMDEwHhcN"
+        "MjIwMzE0MTgzOTU1WhcNMjMwMzA5MTgzOTU1WjBqMQswCQYDVQQGEwJVUzELMAkG"
+        "A1UECBMCV0ExEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBD"
+        "b3Jwb3JhdGlvbjEcMBoGA1UEAwwTKi5henVyZXdlYnNpdGVzLm5ldDCCASIwDQYJ"
+        "KoZIhvcNAQEBBQADggEPADCCAQoCggEBAM3heDMqn7v8cmh4A9vECuEfuiUnKBIw"
+        "7y0Sf499Z7WW92HDkIvV3eJ6jcyq41f2UJcG8ivCu30eMnYyyI+aRHIedkvOBA2i"
+        "PqG78e99qGTuKCj9lrJGVfeTBJ1VIlPvfuHFv/3JaKIBpRtuqxCdlgsGAJQmvHEn"
+        "vIHUV2jgj4iWNBDoC83ShtWg6qV2ol7yiaClB20Af5byo36jVdMN6vS+/othn3jG"
+        "pn+NP00DWYbP5y4qhs5XLH9wQZaTUPKIaUxmHewErcM0rMAaWl8wMqQTeNYf3l5D"
+        "ax50yuEg9VVjtbDdSmvOkslGpVqsOl1NrmyN7gCvcvcRUQcxIiXJQc0CAwEAAaOC"
+        "BGgwggRkMIIBfwYKKwYBBAHWeQIEAgSCAW8EggFrAWkAdgCt9776fP8QyIudPZwe"
+        "PhhqtGcpXc+xDCTKhYY069yCigAAAX+Jw/reAAAEAwBHMEUCIE8AAjvwO4AffPn7"
+        "un67WykJ2hGB4n8qJE7pk4QYjWW+AiEA/pio1E9ALt30Kh/Ga4gRefH1ILbQ8n4h"
+        "bHFatezIcvYAdwB6MoxU2LcttiDqOOBSHumEFnAyE4VNO9IrwTpXo1LrUgAAAX+J"
+        "w/qlAAAEAwBIMEYCIQCdbj6FOX6wK+dLoqjWKuCgkKSsZsJKpVik6HjlRgomzQIh"
+        "AM7mYp5dBFmNLas3fFcP0rMMK+17n8u0GhFH2KpkPr1SAHYA6D7Q2j71BjUy51co"
+        "vIlryQPTy9ERa+zraeF3fW0GvW4AAAF/icP6jgAABAMARzBFAiAhjTz3PBjqRrpY"
+        "eH7us44lESC7c0dzdTcehTeAwmEyrgIhAOCaqmqA+ercv+39jzFWkctG36bazRFX"
+        "4gGNiKU0bctcMCcGCSsGAQQBgjcVCgQaMBgwCgYIKwYBBQUHAwIwCgYIKwYBBQUH"
+        "AwEwPAYJKwYBBAGCNxUHBC8wLQYlKwYBBAGCNxUIh73XG4Hn60aCgZ0ujtAMh/Da"
+        "HV2ChOVpgvOnPgIBZAIBJTCBrgYIKwYBBQUHAQEEgaEwgZ4wbQYIKwYBBQUHMAKG"
+        "YWh0dHA6Ly93d3cubWljcm9zb2Z0LmNvbS9wa2lvcHMvY2VydHMvTWljcm9zb2Z0"
+        "JTIwQXp1cmUlMjBUTFMlMjBJc3N1aW5nJTIwQ0ElMjAwMSUyMC0lMjB4c2lnbi5j"
+        "cnQwLQYIKwYBBQUHMAGGIWh0dHA6Ly9vbmVvY3NwLm1pY3Jvc29mdC5jb20vb2Nz"
+        "cDAdBgNVHQ4EFgQUiiks5RXI6IIQccflfDtgAHndN7owDgYDVR0PAQH/BAQDAgSw"
+        "MHwGA1UdEQR1MHOCEyouYXp1cmV3ZWJzaXRlcy5uZXSCFyouc2NtLmF6dXJld2Vi"
+        "c2l0ZXMubmV0ghIqLmF6dXJlLW1vYmlsZS5uZXSCFiouc2NtLmF6dXJlLW1vYmls"
+        "ZS5uZXSCFyouc3NvLmF6dXJld2Vic2l0ZXMubmV0MAwGA1UdEwEB/wQCMAAwZAYD"
+        "VR0fBF0wWzBZoFegVYZTaHR0cDovL3d3dy5taWNyb3NvZnQuY29tL3BraW9wcy9j"
+        "cmwvTWljcm9zb2Z0JTIwQXp1cmUlMjBUTFMlMjBJc3N1aW5nJTIwQ0ElMjAwMS5j"
+        "cmwwZgYDVR0gBF8wXTBRBgwrBgEEAYI3TIN9AQEwQTA/BggrBgEFBQcCARYzaHR0"
+        "cDovL3d3dy5taWNyb3NvZnQuY29tL3BraW9wcy9Eb2NzL1JlcG9zaXRvcnkuaHRt"
+        "MAgGBmeBDAECAjAfBgNVHSMEGDAWgBQPIF3XoVeV25LPK9DHwncEznKAdjAdBgNV"
+        "HSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDQYJKoZIhvcNAQEMBQADggIBAKtk"
+        "4nEDfqxbP80uaoBoPaeeX4G/tBNcfpR2sf6soW8atAqGOohdLPcE0n5/KJn+H4u7"
+        "CsZdTJyUVxBxAlpqAc9JABl4urWNbhv4pueGBZXOn5K5Lpup/gp1HhCx4XKFno/7"
+        "T22NVDol4LRLUTeTkrpNyYLU5QYBQpqlFMAcvem/2seiPPYghFtLr5VWVEikUvnf"
+        "wSlECNk84PT7mOdbrX7T3CbG9WEZVmSYxMCS4pwcW3caXoSzUzZ0H1sJndCJW8La"
+        "9tekRKkMVkN558S+FFwaY1yARNqCFeK+yiwvkkkojqHbgwFJgCFWYy37kFR9uPiv"
+        "3sTHvs8IZ5K8TY7rHk3pSMYqoBTODCs7wKGiByWSDMcfAgGBzjt95SKfq0p6sj0C"
+        "+HWFiyKR+PTi2esFP9Vr9sC9jfRM6zwa7KnONqLefHauJPdNMt5l1FQGWvyco4IN"
+        "lwK3Z9FfEOFZA4YcjsqnkNacKZqLjgis3FvD8VPXETgRuffVc75lJxH6WmkwqdXj"
+        "BlU8wOcJyXTmM1ehYpziCpWvGBSEIsFuK6BC/iBnQEuWKdctAdbHIDlLctGgDWjx"
+        "xYDPZ/TtORGL8YaDnj6QHeOURIAHCtt6NCWKV6OR2HtMx+tCEvfi5ION1dyJ9hAX"
+        "+4K9FXc71ab7tdV/GLPkWc8Q0x1nk7ogDYcqKbiF";
+
   class TestProxy {
     // cspell:enable
 
+    std::unique_ptr<HttpPipeline> m_pipeline;
+
+  public:
     struct TestProxyOptions : Azure::Core::_internal::ClientOptions
     {
       TestProxyOptions() : Azure::Core::_internal::ClientOptions() {}
     };
-    std::unique_ptr<HttpPipeline> m_pipeline;
-
-  public:
     TestProxy(TestProxyOptions options = TestProxyOptions())
     {
       if (options.Transport.ExpectedTlsRootCertificate.empty())
@@ -765,6 +825,14 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_NO_THROW(proxyServer.PostStopPlayback(recordingId));
   }
-#endif
+
+  TEST_F(TransportAdapterOptions, TestProxyServerWithInvalidCertificate)
+  {
+    TestProxy::TestProxyOptions options;
+    options.Transport.ExpectedTlsRootCertificate = InvalidTestProxyHttpsCertificate;
+    TestProxy proxyServer(options);
+
+    EXPECT_THROW(proxyServer.IsAlive(), Azure::Core::Http::TransportException);
+  }
 
 }}} // namespace Azure::Core::Test
