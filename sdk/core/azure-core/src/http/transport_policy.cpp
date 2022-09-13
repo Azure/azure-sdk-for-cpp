@@ -86,6 +86,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
         httpOptions.ExpectedTlsRootCertificates.push_back(
             transportOptions.ExpectedTlsRootCertificate);
       }
+      if (transportOptions.EnableCertificateRevocationListCheck)
+      {
+        httpOptions.EnableCertificateRevocationListCheck;
+      }
       // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
       // CAs.
       if (!transportOptions.ExpectedTlsRootCertificate.empty())

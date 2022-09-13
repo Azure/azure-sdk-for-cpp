@@ -176,6 +176,11 @@ namespace Azure { namespace Core { namespace Http {
     bool EnableSystemDefaultProxy{false};
 
     /**
+     * @brief If True, enables checks for certificate revocation.
+     */
+    bool EnableCertificateRevocationListCheck{false};
+
+    /**
      * @brief Proxy information.
      *
      * @remark The Proxy Information string is composed of a set of elements

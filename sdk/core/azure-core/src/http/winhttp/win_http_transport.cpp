@@ -634,6 +634,15 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
     }
   }
 
+  if (m_options.EnableCertificateRevocationListCheck)
+  {
+    DWORD value = WINHTTP_ENABLE_SSL_REVOCATION;
+    if (!WinHttpSetOption(request.get(), WINHTTP_OPTION_ENABLE_FEATURE, &value, sizeof(value)))
+    {
+      GetErrorAndThrow("Error while enabling CRL validation.");
+    }
+  }
+
   // If we are supporting WebSockets, then let WinHTTP know that it should
   // prepare to upgrade the HttpRequest to a WebSocket.
 #pragma warning(push)

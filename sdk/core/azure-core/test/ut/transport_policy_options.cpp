@@ -358,7 +358,7 @@ namespace Azure { namespace Core { namespace Test {
 
 #endif // defined(DISABLE_PROXY_TESTS)
 
-  TEST_F(TransportAdapterOptions, DisableCaValidation)
+  TEST_F(TransportAdapterOptions, DisableCrlValidation)
   {
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     //    Azure::Core::Url testUrl("https://www.microsoft.com/");
@@ -487,7 +487,7 @@ namespace Azure { namespace Core { namespace Test {
         std::unique_ptr<Azure::Core::Http::RawResponse> response;
         EXPECT_NO_THROW(
             response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
-        if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
+        if (response && response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
         }
@@ -512,7 +512,7 @@ namespace Azure { namespace Core { namespace Test {
         std::unique_ptr<Azure::Core::Http::RawResponse> response;
         EXPECT_NO_THROW(
             response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
-        if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
+        if (response && response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
         }
@@ -537,7 +537,7 @@ namespace Azure { namespace Core { namespace Test {
         std::unique_ptr<Azure::Core::Http::RawResponse> response;
         EXPECT_NO_THROW(
             response = pipeline.Send(request, Azure::Core::Context::ApplicationContext));
-        if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
+        if (response && response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::Found)
         {
           EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
         }
