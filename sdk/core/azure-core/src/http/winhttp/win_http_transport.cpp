@@ -296,8 +296,7 @@ bool WinHttpTransport::VerifyCertificatesInChain(
       GetErrorAndThrow("CertGetCertificateChain failed");
     }
     _detail::unique_CCERT_CHAIN_CONTEXT pChainContextToVerify(chainContext);
-	
-	
+
     if (!CertVerifyCertificateChainPolicy(
             CERT_CHAIN_POLICY_SSL, pChainContextToVerify.get(), &PolicyPara, &PolicyStatus))
     {
