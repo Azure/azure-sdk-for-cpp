@@ -2211,7 +2211,7 @@ CurlConnection::CurlConnection(
   auto performResult = curl_easy_perform(m_handle.get());
   if (performResult != CURLE_OK)
   {
-#if !defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZ_PLATFORM_LINUX)
     if (performResult == CURLE_SSL_PEER_CERTIFICATE)
     {
       curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);
