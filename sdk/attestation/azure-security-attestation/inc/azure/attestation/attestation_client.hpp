@@ -231,9 +231,11 @@ namespace Azure { namespace Security { namespace Attestation {
      * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      *
      *
-     * @param dataToAttest - Attestation Request data.
-     * @param options sent to the service for Trusted Platform Module (TPM) attestation.
-     * @return attestation response for Trusted Platform Module (TPM) attestation.
+     * @param dataToAttest - Attestation request data.
+     * @param options - Options to the attestation request.
+     * @param context - Context for the operation.
+     * 
+     * @return Response<TpmAttestationResult> - The result of the attestation operation
      */
     Response<Models::TpmAttestationResult> AttestTpm(
         std::vector<uint8_t> const& dataToAttest,
