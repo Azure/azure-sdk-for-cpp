@@ -223,7 +223,7 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
-     * @brief Perform a single leg
+     * @brief Sends TPM-based attestation data to the service.
      *
      * Attest a TPM based enclave
      *
