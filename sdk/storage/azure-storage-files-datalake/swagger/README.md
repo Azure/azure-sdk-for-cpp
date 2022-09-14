@@ -117,6 +117,53 @@ directive:
       }
 ```
 
+### Return Type namespace
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $
+    transform: >
+      const operations = [
+        "Path_Undelete",
+      ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          status_codes.forEach((status_code, i) => {
+            if (!operation.responses[status_code].schema) {
+              const operationId = operation.operationId;
+              const clientName = operationId.substr(0, operationId.indexOf("_"));
+              const operationName = operationId.substr(operationId.indexOf("_") + 1);
+              let operationWords = operationName.split(/(?=[A-Z])/);
+              operationWords.splice(1, 0, clientName);
+              const defaultReturnTypeName = operationWords.join("") + "Result";
+              operation.responses[status_code].schema = {
+                "type": "object",
+                "x-ms-sealed": false,
+                "x-ms-client-name": defaultReturnTypeName,
+                "x-namespace": "_detail",
+                "properties": {
+                  "__placeHolder": {"type": "integer"}
+                }
+              };
+            } else if (operation.responses[status_code].schema["$ref"]) {
+              let obj = $;
+              for (const p of operation.responses[status_code].schema["$ref"].split("/").slice(1)) {
+                obj = obj[p];
+              }
+              obj["x-namespace"] = "_detail";
+            } else {
+              operation.responses[status_code].schema["x-namespace"] = "_detail";
+            }
+          });
+        }
+      }
+```
+
 ### Global Changes for Definitions, Types etc.
 
 ```yaml
@@ -197,16 +244,6 @@ directive:
       $["x-ms-continuation"]["x-nullable"] = true;
       delete $["ETag"];
       delete $["Last-Modified"];
-```
-
-### ListBlobsByHierarchy
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.parameters
-    transform: >
-      $.ListBlobsInclude.items["x-ms-enum"]["name"] = "ListBlobsIncludeFlags";
 ```
 
 ### CreatePath
@@ -299,11 +336,6 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}?comp=undelete"].put.responses
     transform: >
-      $["200"].headers["x-ms-resource-type"]["enum"] = ["directory", "file"];
-      $["200"].headers["x-ms-resource-type"]["x-ms-enum"] = {
-            "name": "PathResourceType",
-            "modelAsString": false
-        };
       $["200"].headers["x-ms-resource-type"]["x-nullable"] = true;
 ```
 

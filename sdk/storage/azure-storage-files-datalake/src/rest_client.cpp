@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return Response<Models::_detail::SetAccessControlListRecursiveResult>(
           std::move(response), std::move(pRawResponse));
     }
-    Response<Models::UndeletePathResult> PathClient::Undelete(
+    Response<Models::_detail::UndeletePathResult> PathClient::Undelete(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
         const UndeletePathOptions& options,
@@ -518,13 +518,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
-      Models::UndeletePathResult response;
+      Models::_detail::UndeletePathResult response;
       if (pRawResponse->GetHeaders().count("x-ms-resource-type") != 0)
       {
-        response.ResourceType
-            = Models::PathResourceType(pRawResponse->GetHeaders().at("x-ms-resource-type"));
+        response.ResourceType = pRawResponse->GetHeaders().at("x-ms-resource-type");
       }
-      return Response<Models::UndeletePathResult>(std::move(response), std::move(pRawResponse));
+      return Response<Models::_detail::UndeletePathResult>(
+          std::move(response), std::move(pRawResponse));
     }
     Response<Models::_detail::GetPathAccessControlListResult> PathClient::GetAccessControlList(
         Core::Http::_internal::HttpPipeline& pipeline,

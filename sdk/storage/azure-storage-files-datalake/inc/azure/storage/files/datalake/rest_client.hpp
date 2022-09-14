@@ -118,8 +118,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       };
     } // namespace _detail
     /**
-     * @brief The type of the resource.  The value may be "file" or "directory".  If not set, the
-     * value is "file".
+     * @brief Required only for Create File and Create Directory. The value must be "file" or
+     * "directory".
      */
     class PathResourceType final {
     public:
@@ -234,19 +234,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
          */
         Nullable<std::string> ContinuationToken;
       };
-    } // namespace _detail
-    /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::Undelete.
-     */
-    struct UndeletePathResult final
-    {
       /**
-       * The type of the resource.  The value may be "file" or "directory".  If not set, the value
-       * is "file".
+       * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::Undelete.
        */
-      Nullable<PathResourceType> ResourceType;
-    };
-    namespace _detail {
+      struct UndeletePathResult final
+      {
+        /**
+         * The type of the resource.  The value may be "file" or "directory".  If not set, the value
+         * is "file".
+         */
+        Nullable<std::string> ResourceType;
+      };
       /**
        * @brief Response type for
        * #Azure::Storage::Files::DataLake::PathClient::GetAccessControlList.
@@ -440,7 +438,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Nullable<std::string> UndeleteSource;
       };
-      static Response<Models::UndeletePathResult> Undelete(
+      static Response<Models::_detail::UndeletePathResult> Undelete(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const UndeletePathOptions& options,
