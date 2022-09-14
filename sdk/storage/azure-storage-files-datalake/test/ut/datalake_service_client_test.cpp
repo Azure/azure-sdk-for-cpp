@@ -124,6 +124,20 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
       EXPECT_LE(2U, response.FileSystems.size());
     }
+    {
+      // List system type FileSystems
+      Files::DataLake::ListFileSystemsOptions options;
+      options.Include = Files::DataLake::Models::ListFileSystemsIncludeFlags::System;
+      auto response = m_dataLakeServiceClient->ListFileSystems(options);
+      auto fileSystems = response.FileSystems;
+      auto iter = std::find_if(
+          fileSystems.begin(),
+          fileSystems.end(),
+          [&](const Files::DataLake::Models::FileSystemItem& fileSystem) {
+            return fileSystem.Name == "$logs";
+          });
+      EXPECT_NE(fileSystems.end(), iter);
+    }
   }
 
   TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks_LIVEONLY_)
