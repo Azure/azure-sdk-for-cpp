@@ -6,7 +6,7 @@ parameters:
 - name: Tests
   displayName: Tests (regex of tests to run)
   type: string
-  default: '^(jsonsend)|(jsonreceive)|(xmlsend)|(xmlreceive)|(binarydatasend)|(binarydatareceive)$'
+  default: '^(delay)|(jsonreceive)|(xmlsend)|(xmlreceive)|(binarydatasend)|(binarydatareceive)$'
 - name: Arguments
   displayName: Arguments (regex of arguments to run)
   type: string
