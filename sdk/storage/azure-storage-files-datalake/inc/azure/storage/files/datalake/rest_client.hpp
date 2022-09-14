@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2020-02-10";
+    constexpr static const char* ApiVersion = "2021-06-08";
   } // namespace _detail
   namespace Models {
     namespace _detail {
@@ -92,6 +92,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string Owner;
       std::string Group;
       std::string Permissions;
+      /**
+       * The name of the encryption scope under which the blob is encrypted.
+       */
+      Nullable<std::string> EncryptionScope;
       std::string ETag;
     };
     namespace _detail {
@@ -152,6 +156,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The size of the resource in bytes.
        */
       Nullable<int64_t> FileSize;
+      /**
+       * The value of this header is set to true if the contents of the request are successfully
+       * encrypted using the specified algorithm, and false otherwise.
+       */
+      Nullable<bool> IsServerEncrypted;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
+       * returned when the blob was encrypted with a customer-provided key.
+       */
+      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::Delete.
@@ -221,6 +235,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> ContinuationToken;
       };
       /**
+       * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::Undelete.
+       */
+      struct UndeletePathResult final
+      {
+        /**
+         * The type of the resource.  The value may be "file" or "directory".  If not set, the value
+         * is "file".
+         */
+        Nullable<std::string> ResourceType;
+      };
+      /**
        * @brief Response type for
        * #Azure::Storage::Files::DataLake::PathClient::GetAccessControlList.
        */
@@ -267,6 +292,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The size of the resource in bytes.
        */
       int64_t FileSize = int64_t();
+      /**
+       * The value of this header is set to true if the contents of the request are successfully
+       * encrypted using the specified algorithm, and false otherwise.
+       */
+      Nullable<bool> IsServerEncrypted;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
+       * returned when the blob was encrypted with a customer-provided key.
+       */
+      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Append.
@@ -282,7 +317,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
-      bool IsServerEncrypted = bool();
+      Nullable<bool> IsServerEncrypted;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
+       * returned when the blob was encrypted with a customer-provided key.
+       */
+      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     };
   } // namespace Models
   namespace _detail {
@@ -332,6 +372,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ETag SourceIfNoneMatch;
         Nullable<DateTime> SourceIfModifiedSince;
         Nullable<DateTime> SourceIfUnmodifiedSince;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::string> Acl;
+        Nullable<std::string> ProposedLeaseId;
+        Nullable<int64_t> LeaseDuration;
+        Nullable<std::string> ExpiresOn;
       };
       static Response<Models::CreatePathResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -386,6 +434,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const Core::Url& url,
           const SetPathAccessControlListRecursiveOptions& options,
           const Core::Context& context);
+      struct UndeletePathOptions final
+      {
+        Nullable<std::string> UndeleteSource;
+      };
+      static Response<Models::_detail::UndeletePathResult> Undelete(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const UndeletePathOptions& options,
+          const Core::Context& context);
       struct GetPathAccessControlListOptions final
       {
         Nullable<bool> Upn;
@@ -419,6 +476,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ETag IfNoneMatch;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       };
       static Response<Models::FlushFileResult> Flush(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -431,6 +490,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::vector<uint8_t>> TransactionalContentHash;
         Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> LeaseId;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<bool> Flush;
       };
       static Response<Models::AppendFileResult> Append(
           Core::Http::_internal::HttpPipeline& pipeline,
