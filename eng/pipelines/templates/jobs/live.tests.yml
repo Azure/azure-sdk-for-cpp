@@ -132,7 +132,7 @@ jobs:
         Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
 
-  -${{ parameters.PreTestSteps }}
+  - ${{ parameters.PreTestSteps }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
