@@ -30,6 +30,3 @@ extends:
     Arguments: ${{ parameters.Arguments }}
     Iterations: ${{ parameters.Iterations }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
-    InstallLanguageSteps:
-      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
-      - template: /eng/pipelines/templates/steps/vcpkg.yml
