@@ -336,36 +336,25 @@ TEST_F(KeyVaultKeyClient, RecoverOperationResumeToken)
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
 
-  {
-    auto keyResponse
-        = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
-    CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.Value;
-    EXPECT_EQ(keyVaultKey.Name(), keyName);
-  }
+  auto keyResponse
+      = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
+  CheckValidResponse(keyResponse);
+  auto keyVaultKey = keyResponse.Value;
+  EXPECT_EQ(keyVaultKey.Name(), keyName);
   std::string resumeToken;
-  {
-    auto keyResponseLRO = client.StartDeleteKey(keyName);
-    resumeToken = keyResponseLRO.GetResumeToken();
-  }
-  // Resume operation from token
-  {
-    auto resumeOperation
-        = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
-            resumeToken, client);
-    resumeOperation.PollUntilDone(m_testPollingIntervalMs);
-  }
-  {
-    // recover
-    auto recoverOperation = client.StartRecoverDeletedKey(keyName);
-    resumeToken = recoverOperation.GetResumeToken();
-  }
-  {
-    // resume from token
-    auto resumeRecoveryOp
-        = Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
-            resumeToken, client);
-    auto keyResponse = resumeRecoveryOp.PollUntilDone(m_testPollingIntervalMs);
-    auto key = keyResponse.Value;
-  }
+  auto keyResponseLRO = client.StartDeleteKey(keyName);
+  resumeToken = keyResponseLRO.GetResumeToken();
+
+  auto resumeOperation = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
+      resumeToken, client);
+  resumeOperation.PollUntilDone(m_testPollingIntervalMs);
+
+  auto recoverOperation = client.StartRecoverDeletedKey(keyName);
+  resumeToken = recoverOperation.GetResumeToken();
+  // resume from token
+  auto resumeRecoveryOp
+      = Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
+          resumeToken, client);
+  auto recoveredKeyResponse = resumeRecoveryOp.PollUntilDone(m_testPollingIntervalMs);
+  
 }
