@@ -42,4 +42,3 @@ extends:
       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
         parameters: 
           RepoOwner: Microsoft
-      - template: /eng/pipelines/templates/steps/vcpkg.yml
