@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
 
-    for (auto permissions : {
+   for (auto permissions : {
              Sas::DataLakeSasPermissions::All,
              Sas::DataLakeSasPermissions::Read,
              Sas::DataLakeSasPermissions::Write,
@@ -440,6 +440,39 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p.Value.HttpHeaders.ContentDisposition, headers.ContentDisposition);
       EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
       EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
+    }
+
+    // Encryption scope
+    const auto encryptionScope = GetTestEncryptionScope();
+    {
+      auto sasBuilderWithEncryptionScope = fileSasBuilder;
+      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
+      sasBuilderWithEncryptionScope.SetPermissions(Sas::DataLakeSasPermissions::All);
+      auto fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
+          fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(*keyCredential));
+      fileClientEncryptionScopeSas.Create();
+      auto fileProperties = fileClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(fileProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(fileProperties.EncryptionScope.Value(), encryptionScope);
+
+      fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
+          fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
+      fileClientEncryptionScopeSas.Create();
+      fileProperties = fileClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(fileProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(fileProperties.EncryptionScope.Value(), encryptionScope);
+    }
+    {
+      auto sasBuilderWithEncryptionScope = directorySasBuilder;
+      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
+      sasBuilderWithEncryptionScope.SetPermissions(Sas::DataLakeSasPermissions::All);
+      auto directoryClientEncryptionScopeSas = Files::DataLake::DataLakeDirectoryClient(
+          directory1Url
+          + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
+      directoryClientEncryptionScopeSas.Create();
+      auto directoryProperties = directoryClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(directoryProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(directoryProperties.EncryptionScope.Value(), encryptionScope);
     }
   }
 
