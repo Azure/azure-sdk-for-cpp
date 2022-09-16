@@ -134,6 +134,7 @@ namespace Azure { namespace Storage { namespace Test {
           fileSystems.begin(),
           fileSystems.end(),
           [&](const Files::DataLake::Models::FileSystemItem& fileSystem) {
+            std::cout << "fileSystemNameZchang:" << fileSystem.Name << std::endl;
             return fileSystem.Name == "$logs";
           });
       EXPECT_NE(fileSystems.end(), iter);
