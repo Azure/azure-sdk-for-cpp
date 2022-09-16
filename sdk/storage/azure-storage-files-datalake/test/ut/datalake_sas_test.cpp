@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.SetAccessControlList(acls));
     };
 
-   for (auto permissions : {
+    for (auto permissions : {
              Sas::DataLakeSasPermissions::All,
              Sas::DataLakeSasPermissions::Read,
              Sas::DataLakeSasPermissions::Write,
