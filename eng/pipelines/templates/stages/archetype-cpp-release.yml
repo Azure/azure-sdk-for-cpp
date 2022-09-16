@@ -144,6 +144,7 @@ stages:
                         parameters:
                           RepoOwner: Azure
                           RepoName: azure-sdk-vcpkg-betas
+                          SetVcpkgRoot: false
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
