@@ -14,7 +14,7 @@
     {
       "name": "azure-storage-common-cpp",
       "default-features": false,
-      "version>=": "12.2.2"
+      "version>=": "12.3.0"
     },
     {
       "name": "vcpkg-cmake",

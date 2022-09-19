@@ -97,6 +97,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * Specifies the maximum size of the share, in gigabytes.
      */
     Azure::Nullable<int64_t> ShareQuotaInGiB;
+
+    /**
+     * Specifies the enabled protocols on the share. If they're not specified, the default is SMB.
+     */
+    Azure::Nullable<Models::ShareProtocols> EnabledProtocols;
+
+    /**
+     * Specifies the root squashing behavior on the share when NFS is enabled. If it's not
+     * specified, the default is NoRootSquash.
+     */
+    Azure::Nullable<Models::ShareRootSquash> RootSquash;
   };
 
   /**
@@ -143,6 +154,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * Specifies the maximum size of the share, in gigabytes.
      */
     Azure::Nullable<int64_t> ShareQuotaInGiB;
+
+    /**
+     * Specifies the root squashing behavior on the share when NFS is enabled. If it's not
+     * specified, the default is NoRootSquash.
+     */
+    Azure::Nullable<Models::ShareRootSquash> RootSquash;
   };
 
   /**
@@ -210,6 +227,108 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareDirectoryClient::RenameFile.
+   */
+  struct RenameFileOptions final
+  {
+    /**
+     * A boolean value for if the destination file already exists, whether this request will
+     * overwrite the file or not. If true, the rename will succeed and will overwrite the
+     * destination file. If not provided or if false and the destination file does exist, the
+     * request will not overwrite the destination file. If provided and the destination file doesn’t
+     * exist, the rename will succeed.
+     */
+    Azure::Nullable<bool> ReplaceIfExists;
+
+    /**
+     * A boolean value that specifies whether the ReadOnly attribute on a preexisting destination
+     * file should be respected. If true, the rename will succeed, otherwise, a previous file at the
+     * destination with the ReadOnly attribute set will cause the rename to fail. ReplaceIfExists
+     * must also be true.
+     */
+    Azure::Nullable<bool> IgnoreReadOnly;
+
+    /**
+     * Specify the access condition for the path.
+     */
+    LeaseAccessConditions AccessConditions;
+
+    /**
+     * The access condition for source path.
+     */
+    LeaseAccessConditions SourceAccessConditions;
+
+    /**
+     * SMB properties to set for the directory.
+     */
+    Models::FileSmbProperties SmbProperties;
+
+    /**
+     * If specified the permission (security descriptor) shall be set for the directory.
+     * This option can be used if Permission size is <= 8KB, else SmbProperties.PermissionKey
+     * shall be used.A value of preserve may be passed to keep an existing value unchanged.
+     */
+    Azure::Nullable<std::string> FilePermission;
+
+    /**
+     * A name-value pair to associate with a file storage object.
+     */
+    Storage::Metadata Metadata;
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareDirectoryClient::RenameSubdirectory.
+   */
+  struct RenameDirectoryOptions final
+  {
+    /**
+     * A boolean value for if the destination directory already exists, whether this request will
+     * overwrite the file or not. If true, the rename will succeed and will overwrite the
+     * destination directory. If not provided or if false and the destination directory does exist,
+     * the request will not overwrite the destination directory. If provided and the destination
+     * file doesn’t exist, the rename will succeed.
+     */
+    Azure::Nullable<bool> ReplaceIfExists;
+
+    /**
+     * A boolean value that specifies whether the ReadOnly attribute on a preexisting destination
+     * directory should be respected. If true, the rename will succeed, otherwise, a previous file
+     * at the destination with the ReadOnly attribute set will cause the rename to fail.
+     * ReplaceIfExists must also be true.
+     */
+    Azure::Nullable<bool> IgnoreReadOnly;
+
+    /**
+     * Specify the access condition for the path.
+     */
+    LeaseAccessConditions AccessConditions;
+
+    /**
+     * The access condition for source path.
+     */
+    LeaseAccessConditions SourceAccessConditions;
+
+    /**
+     * SMB properties to set for the directory.
+     */
+    Models::FileSmbProperties SmbProperties;
+
+    /**
+     * If specified the permission (security descriptor) shall be set for the directory.
+     * This option can be used if Permission size is <= 8KB, else SmbProperties.PermissionKey
+     * shall be used.A value of preserve may be passed to keep an existing value unchanged.
+     */
+    Azure::Nullable<std::string> FilePermission;
+
+    /**
+     * A name-value pair to associate with a file storage object.
+     */
+    Storage::Metadata Metadata;
+  };
+
+  /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareDirectoryClient::Delete.
    */
   struct DeleteDirectoryOptions final
@@ -273,6 +392,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+
+    /**
+     * Include this parameter to specify one or more datasets to include in the response.
+     */
+    Models::ListFilesIncludeFlags Include = Models::ListFilesIncludeFlags ::None;
+
+    /**
+     * This header is implicitly assumed to be true if include query parameter is not empty. If
+     * true, the Content-Length property will be up to date.
+     */
+    Nullable<bool> IncludeExtendedInfo;
   };
 
   /**
@@ -514,6 +644,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * Specifies if the file last write time should be set to the current time,
+     * or the last write time currently associated with the file should be preserved.
+     */
+    Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
   };
 
   /**
@@ -525,6 +661,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * Specifies if the file last write time should be set to the current time,
+     * or the last write time currently associated with the file should be preserved.
+     */
+    Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
   };
 
   /**
@@ -548,6 +690,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the lease access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * Specifies if the file last write time should be set to the current time,
+     * or the last write time currently associated with the file should be preserved.
+     */
+    Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
   };
 
   /**

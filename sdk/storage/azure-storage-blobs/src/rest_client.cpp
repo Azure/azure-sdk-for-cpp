@@ -6023,8 +6023,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
-      response.SequenceNumber
-          = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
+      {
+        response.SequenceNumber
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
       if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
@@ -6132,8 +6135,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.LastModified = DateTime::Parse(
             pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
       }
-      response.SequenceNumber
-          = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
+      {
+        response.SequenceNumber
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      }
       return Response<Models::ClearPagesResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::UploadPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
@@ -6292,8 +6298,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
-      response.SequenceNumber
-          = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
+      {
+        response.SequenceNumber
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
       if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
