@@ -302,7 +302,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.VersionId = std::move(response.Value.VersionId);
     ret.IsCurrentVersion = std::move(response.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
-    ret.EncryptionScope = std::move(response.Value.EncryptionScope);
     return Azure::Response<Models::PathProperties>(std::move(ret), std::move(response.RawResponse));
   }
 

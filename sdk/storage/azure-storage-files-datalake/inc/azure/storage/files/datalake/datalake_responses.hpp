@@ -381,11 +381,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * A boolean indicates if the path is in its current version.
        */
       Azure::Nullable<bool> IsCurrentVersion;
-
-      /**
-       * The name of the encryption scope under which the blob is encrypted.
-       */
-      Nullable<std::string> EncryptionScope;
     };
 
     /**
