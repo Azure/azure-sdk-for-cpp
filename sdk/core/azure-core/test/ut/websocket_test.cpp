@@ -162,7 +162,8 @@ TEST_F(WebSocketTests, SimpleEcho)
 
 template <size_t N> void EchoRandomData(WebSocket& socket)
 {
-  std::vector<uint8_t> sendData = Azure::Core::Http::_detail::WebSockets::_detail::GenerateRandomBytes(N);
+  std::vector<uint8_t> sendData
+      = Azure::Core::Http::_detail::WebSockets::_detail::GenerateRandomBytes(N);
 
   socket.SendFrame(sendData, true);
 
@@ -872,7 +873,8 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
     Azure::Core::Http::_detail::WebSockets::CurlWebSocketTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = false;
     auto transport
-        = std::make_shared<Azure::Core::Http::_detail::WebSockets::CurlWebSocketTransport>(transportOptions);
+        = std::make_shared<Azure::Core::Http::_detail::WebSockets::CurlWebSocketTransport>(
+            transportOptions);
 
     EXPECT_THROW(transport->NativeCloseSocket(1001, {}, {}), std::runtime_error);
     EXPECT_THROW(transport->NativeGetCloseSocketInformation({}), std::runtime_error);

@@ -121,8 +121,8 @@
           "OSVmImage": "MMSUbuntu18.04",
           "Pool": "azsdk-pool-mms-ubuntu-1804-general",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-          "BuildArgs": "-j 10",
-          "RunProxyTests": true
+          "RunProxyTests": true,
+          "BuildArgs": "-j 10"
         }
       },
       "BuildSettings": {
@@ -169,8 +169,8 @@
           "CC": "/usr/bin/clang-11",
           "CXX": "/usr/bin/clang++-11",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-          "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "RunProxyTests": true,
+          "PublishMapFiles": "true"
         }
       },
       "BuildSettings": {
