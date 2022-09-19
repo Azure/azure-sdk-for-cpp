@@ -16,7 +16,7 @@
 #include <memory>
 #include <mutex>
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace _detail { namespace WebSockets {
 
   /**
    * @brief Concrete implementation of a WebSocket Transport that uses WinHTTP.
@@ -137,4 +137,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     bool HasWebSocketSupport() const override { return true; }
   };
 
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::_detail::WebSockets

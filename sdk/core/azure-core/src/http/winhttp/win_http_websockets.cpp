@@ -23,7 +23,7 @@
 #endif
 #include <shared_mutex>
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace _detail { namespace WebSockets {
 
   void WinHttpWebSocketTransport::OnUpgradedConnection(
       Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle)
@@ -218,4 +218,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     return NativeWebSocketReceiveInformation{frameTypeReceived, buffer};
   }
 
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::_detail::WebSockets

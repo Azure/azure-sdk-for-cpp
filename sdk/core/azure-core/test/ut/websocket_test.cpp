@@ -15,8 +15,8 @@
 // cspell::words closeme flibbityflobbidy
 
 using namespace Azure::Core;
-using namespace Azure::Core::Http::WebSockets;
-using namespace Azure::Core::Http::WebSockets::_internal;
+using namespace Azure::Core::Http::_detail::WebSockets;
+using namespace Azure::Core::Http::_detail::WebSockets::_internal;
 using namespace std::chrono_literals;
 
 constexpr uint16_t UndefinedButLegalCloseReason = 4500;
@@ -162,7 +162,7 @@ TEST_F(WebSocketTests, SimpleEcho)
 
 template <size_t N> void EchoRandomData(WebSocket& socket)
 {
-  std::vector<uint8_t> sendData = Azure::Core::Http::WebSockets::_detail::GenerateRandomBytes(N);
+  std::vector<uint8_t> sendData = Azure::Core::Http::_detail::WebSockets::_detail::GenerateRandomBytes(N);
 
   socket.SendFrame(sendData, true);
 
