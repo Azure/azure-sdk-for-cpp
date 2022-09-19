@@ -450,6 +450,44 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using CopyStatus = Blobs::Models::CopyStatus;
 
     /**
+     * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Query.
+     */
+    struct QueryFileResult final
+    {
+      std::unique_ptr<Core::IO::BodyStream> BodyStream;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * file, including an update of the file's metadata or properties, changes the last-modified
+       * time of the file.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * When a file is leased, specifies whether the lease is of infinite or fixed duration.
+       */
+      Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the file.
+       */
+      Models::LeaseState LeaseState;
+      /**
+       * The current lease status of the file.
+       */
+      Models::LeaseStatus LeaseStatus;
+      /**
+       * The value of this header is set to true if the file data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the file is unencrypted, or if only parts of the file/application metadata are
+       * encrypted).
+       */
+      bool IsServerEncrypted = bool();
+    };
+
+    /**
      * @brief The detailed information returned when downloading a file.
      */
     struct DownloadFileDetails final
