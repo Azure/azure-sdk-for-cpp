@@ -1292,6 +1292,10 @@ directive:
         delete $[status_code].headers["x-ms-blob-content-md5"];
         delete $[status_code].headers["x-ms-content-crc64"];
         $[status_code].headers["x-ms-lease-duration"]["x-nullable"] = true;
+        $[status_code].headers["x-ms-lease-state"]["x-ms-client-default"] = "";
+        $[status_code].headers["x-ms-lease-state"]["x-nullable"] = true;
+        $[status_code].headers["x-ms-lease-status"]["x-ms-client-default"] = "";
+        $[status_code].headers["x-ms-lease-status"]["x-nullable"] = true;
       }
 ```
 

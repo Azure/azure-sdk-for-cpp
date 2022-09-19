@@ -5573,9 +5573,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.LeaseDuration
             = Models::LeaseDurationType(pRawResponse->GetHeaders().at("x-ms-lease-duration"));
       }
-      response.LeaseState = Models::LeaseState(pRawResponse->GetHeaders().at("x-ms-lease-state"));
-      response.LeaseStatus
-          = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
+      if (pRawResponse->GetHeaders().count("x-ms-lease-state") != 0)
+      {
+        response.LeaseState = Models::LeaseState(pRawResponse->GetHeaders().at("x-ms-lease-state"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-status") != 0)
+      {
+        response.LeaseStatus
+            = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
+      }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
       return Response<Models::QueryBlobResult>(std::move(response), std::move(pRawResponse));
