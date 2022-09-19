@@ -1,6 +1,6 @@
 # Release History
 
-## 12.6.0-beta.2 (Unreleased)
+## 12.7.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.6.1 (2022-09-16)
+
+### Other changes
+
+- No public changes in this release.
+
+## 12.6.0 (2022-09-06)
+
+### Features Added
+
+- Features in `12.6.0.beta.1` are now generally available.
+
+### Bugs Fixed
+
+- Empty file or existing file won't be created/overwritten if the blob to be downloaded doesn't exist.
 
 ## 12.6.0-beta.1 (2022-08-09)
 

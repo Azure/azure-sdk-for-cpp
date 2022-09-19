@@ -13,6 +13,12 @@
 
 ### Other Changes
 
+## 1.7.2 (2022-09-01)
+
+### Bugs Fixed
+
+- WinHTTP Transport Adapter: Fixed missing reason phrase handling for HTTP/2 responses.
+
 ## 1.7.1 (2022-08-04)
 
 ### Bugs Fixed

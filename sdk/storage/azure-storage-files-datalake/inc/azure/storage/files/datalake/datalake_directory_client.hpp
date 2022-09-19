@@ -123,7 +123,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Renames a file. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param fileName The file that gets renamed.
-     * @param destinationFilePath The path of the file the source file is renaming to.
+     * @param destinationFilePath The path of the file the source file is renaming to. The
+     * destination is an absolute path under the root of the file system, without leading slash.
      * @param options Optional parameters to rename a file.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<DataLakeFileClient> The client targets the renamed file.
@@ -140,6 +141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        if the destination already exists and has a lease the lease is broken.
      * @param subdirectoryName The subdirectory that gets renamed.
      * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
+     * The destination is an absolute path under the root of the file system, without leading slash.
      * @param options Optional parameters to rename a directory.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<DataLakeDirectoryClient> The client targets the renamed

@@ -515,6 +515,26 @@ directive:
           });
         }
       }
+  - from: swagger-document
+    where: $
+    transform: >
+      const operations = [
+        "PageBlob_UploadPages",
+        "PageBlob_ClearPages",
+        "PageBlob_UploadPagesFromUri",
+      ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          status_codes.forEach((status_code, i) => {
+            operation.responses[status_code].headers["x-ms-blob-sequence-number"]["x-ms-client-default"] = "int64_t()";
+            operation.responses[status_code].headers["x-ms-blob-sequence-number"]["x-nullable"] = true;
+          });
+        }
+      }
 ```
 
 ### GetBlobServiceProperties
