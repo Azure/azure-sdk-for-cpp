@@ -311,6 +311,51 @@ namespace Core { namespace _internal {
      */
     ~PosixTimeConverter() = delete;
   };
+
+  /**
+   * @brief Provides convertion methods for Windows NT filetime to an #Azure::DateTime.
+   *
+   */
+  class NTFileTimeTimeConverter final {
+  public:
+    /**
+     * @brief Converts Windows NT filetime to an #Azure::DateTime.
+     *
+     * @param ntFiletime The number of 100-nanoseconds since 1601-01-01.
+     * @return Calculated #Azure::DateTime.
+     */
+    static DateTime NTFileTimeToDateTime(int64_t ntFiletime)
+    {
+      auto t = DateTime(1601) + Azure::_detail::Clock::duration(ntFiletime);
+      return DateTime(t);
+    }
+
+    /**
+     * @brief Converts a DateTime to Windows NT filetime.
+     *
+     * @param dateTime The `%DateTime` to convert.
+     * @return The number of 100-nanoseconds since 1601-01-01.
+     */
+    static int64_t DateTimeToNTFileTime(DateTime const& dateTime)
+    {
+      return std::chrono::duration_cast<Azure::_detail::Clock::duration>(dateTime - DateTime(1601))
+          .count();
+    }
+
+  private:
+    /**
+     * @brief An instance of `%NTFileTimeTimeConverter` class cannot be created.
+     *
+     */
+    NTFileTimeTimeConverter() = delete;
+
+    /**
+     * @brief An instance of `%NTFileTimeTimeConverter` class cannot be destructed, because no
+     * instance can be created.
+     *
+     */
+    ~NTFileTimeTimeConverter() = delete;
+  };
 }} // namespace Core::_internal
 
 } // namespace Azure

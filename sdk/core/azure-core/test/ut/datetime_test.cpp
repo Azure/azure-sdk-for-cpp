@@ -895,3 +895,44 @@ TEST(DateTime, LeapYear)
   EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 2, 28)));
   EXPECT_THROW(static_cast<void>(DateTime(2021, 2, 29)), std::invalid_argument);
 }
+
+TEST(DateTime, WindowsNTFileTimeConverter)
+{
+  using namespace Azure::Core::_internal;
+
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::DateTimeToNTFileTime(
+          NTFileTimeTimeConverter::NTFileTimeToDateTime(0)),
+      0);
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::DateTimeToNTFileTime(
+          NTFileTimeTimeConverter::NTFileTimeToDateTime(1)),
+      1);
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::DateTimeToNTFileTime(
+          NTFileTimeTimeConverter::NTFileTimeToDateTime(133080315699856412)),
+      133080315699856412);
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::DateTimeToNTFileTime(
+          NTFileTimeTimeConverter::NTFileTimeToDateTime(2650467743995784569)),
+      2650467743995784569);
+
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::NTFileTimeToDateTime(0).ToString(
+          Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::AllDigits),
+      "1601-01-01T00:00:00.0000000Z");
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::NTFileTimeToDateTime(1).ToString(
+          Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::AllDigits),
+      "1601-01-01T00:00:00.0000001Z");
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::NTFileTimeToDateTime(133080315699856412)
+          .ToString(
+              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::AllDigits),
+      "2022-09-19T03:26:09.9856412Z");
+  EXPECT_EQ(
+      NTFileTimeTimeConverter::NTFileTimeToDateTime(2650467743995784569)
+          .ToString(
+              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::AllDigits),
+      "9999-12-31T23:59:59.5784569Z");
+}
