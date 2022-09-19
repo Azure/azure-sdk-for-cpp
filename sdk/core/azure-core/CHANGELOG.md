@@ -8,7 +8,7 @@
 - Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.
 - Added universal support for several TLS options:
   - Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).
-  - Added the ability to enable TLS certificate revocation list checks (off by default)
+  - Added the ability to enable TLS certificate revocation list checks (off by default).
 - Added LibCURL functionality for TLS functionality
     - Allow TLS connection to succeed if CRL retrieval fails.
 
