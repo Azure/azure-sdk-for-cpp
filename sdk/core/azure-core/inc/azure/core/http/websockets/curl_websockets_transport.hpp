@@ -15,7 +15,7 @@
 #include "azure/core/http/websockets/websockets_transport.hpp"
 #include <memory>
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace _detail { namespace WebSockets {
 
   struct CurlWebSocketTransportOptions : public Azure::Core::Http::CurlTransportOptions
   {
@@ -152,4 +152,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>&& upgradedConnection) override;
   };
 
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::_detail::WebSockets

@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace _detail { namespace WebSockets {
   namespace _detail {
     class WebSocketImplementation;
   }
@@ -177,7 +177,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /** @brief Contains the contents of a WebSocket Text frame.*/
     class WebSocketTextFrame : public WebSocketFrame,
                                public std::enable_shared_from_this<WebSocketTextFrame> {
-      friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
+      friend Azure::Core::Http::_detail::WebSockets::_detail::WebSocketImplementation;
 
     private:
     public:
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /** @brief Contains the contents of a WebSocket Binary frame.*/
     class WebSocketBinaryFrame : public WebSocketFrame,
                                  public std::enable_shared_from_this<WebSocketBinaryFrame> {
-      friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
+      friend Azure::Core::Http::_detail::WebSockets::_detail::WebSocketImplementation;
 
     private:
     public:
@@ -229,7 +229,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /** @brief Contains the contents of a WebSocket Close frame.*/
     class WebSocketPeerCloseFrame : public WebSocketFrame,
                                     public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
-      friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
+      friend Azure::Core::Http::_detail::WebSockets::_detail::WebSocketImplementation;
 
     public:
       /** @brief Constructs a new WebSocketPeerCloseFrame */
@@ -397,8 +397,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       WebSocketStatistics GetStatistics() const;
 
     private:
-      std::unique_ptr<Azure::Core::Http::WebSockets::_detail::WebSocketImplementation>
+      std::unique_ptr<Azure::Core::Http::_detail::WebSockets::_detail::WebSocketImplementation>
           m_socketImplementation;
     };
   } // namespace _internal
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::_detail::WebSockets

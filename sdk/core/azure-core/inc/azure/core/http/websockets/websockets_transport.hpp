@@ -11,7 +11,7 @@
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace _detail { namespace WebSockets {
 
   /**
    * @brief Base class for all WebSocket transport implementations.
@@ -201,4 +201,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     WebSocketTransport& operator=(const WebSocketTransport& other) = default;
   };
 
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::_detail::WebSockets
