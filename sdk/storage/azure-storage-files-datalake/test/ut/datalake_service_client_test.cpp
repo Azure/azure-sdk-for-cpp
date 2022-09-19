@@ -126,6 +126,27 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeServiceClientTest, DISABLED_ListSystemFileSystems)
+  {
+    // Disabled temporarily because the test account on the pipeline hasn't system fileSystems.
+    // List system type FileSystems
+    Files::DataLake::ListFileSystemsOptions options;
+    options.Include = Files::DataLake::Models::ListFileSystemsIncludeFlags::System;
+    std::vector<std::string> fileSystems;
+    for (auto pageResult = m_dataLakeServiceClient->ListFileSystems(options); pageResult.HasPage();
+         pageResult.MoveToNextPage())
+    {
+      for (const auto& c : pageResult.FileSystems)
+      {
+        if (c.Name[0] == '$')
+        {
+          fileSystems.push_back(c.Name);
+        }
+      }
+    }
+    EXPECT_FALSE(fileSystems.empty());
+  }
+
   TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks_LIVEONLY_)
   {
     CHECK_SKIP_TEST();
