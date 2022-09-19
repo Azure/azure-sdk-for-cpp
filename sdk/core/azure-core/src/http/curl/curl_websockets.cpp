@@ -25,7 +25,7 @@
 #include <winsock2.h> // for WSAPoll();
 #endif
 
-namespace Azure { namespace Core { namespace Http { namespace WebSockets {
+namespace Azure { namespace Core { namespace Http { namespace _detail { namespace WebSockets {
 
   void CurlWebSocketTransport::Close() { m_upgradedConnection->Shutdown(); }
 
@@ -79,4 +79,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     m_upgradedConnection = std::move(upgradedConnection);
   }
 
-}}}} // namespace Azure::Core::Http::WebSockets
+}}}}} // namespace Azure::Core::Http::_detail::WebSockets

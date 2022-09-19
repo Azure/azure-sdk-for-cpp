@@ -869,10 +869,10 @@ TEST_F(WebSocketTests, CurlTransportCoverage)
 {
   {
 
-    Azure::Core::Http::WebSockets::CurlWebSocketTransportOptions transportOptions;
+    Azure::Core::Http::_detail::WebSockets::CurlWebSocketTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = false;
     auto transport
-        = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
+        = std::make_shared<Azure::Core::Http::_detail::WebSockets::CurlWebSocketTransport>(transportOptions);
 
     EXPECT_THROW(transport->NativeCloseSocket(1001, {}, {}), std::runtime_error);
     EXPECT_THROW(transport->NativeGetCloseSocketInformation({}), std::runtime_error);
