@@ -47,10 +47,10 @@ parameters:
     type: boolean
     default: false
   - name: PreTestSteps
-    type: object
+    type: stepList
     default: []
   - name: PostTestSteps
-    type: object
+    type: stepList
     default: []
 
 
@@ -145,7 +145,7 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - ${{ parameters.PreTestSteps }}
-
+      
       - pwsh: |
           ctest `
             -C Debug `
@@ -156,7 +156,7 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-
+        
       - ${{ parameters.PostTestSteps }}
 
       - task: PublishTestResults@2

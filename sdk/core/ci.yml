@@ -94,6 +94,12 @@ stages:
           displayName: Verify Proxy Server Working Correctly.
           condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
+          # Start the test proxy tool for testing. Only start it when previous steps had succeeded and we're enabling testing.
+        - template: /eng/common/testproxy/test-proxy-tool.yml
+          parameters:
+            runProxy: true
+            targetVersion: 1.0.0-dev.20220810.2
+
       PostTestSteps:
           # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
           # When the test server receives a request on terminateserver, it shuts down gracefully.
@@ -115,7 +121,7 @@ stages:
                 docker stop $_ `
             }
           displayName: Shutdown Squid Proxy.
-          condition: and(contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), variables.RunProxyTests, contains(variables['OSVmImage'], 'linux'))
+          condition: and(variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'linux'))
         - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'

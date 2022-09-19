@@ -38,10 +38,31 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark Libcurl does revocation list check by default for SSL backends that supports this
      * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
-     * check by default.
-     *
+     * check by default. This ensures that the LibCURL behavior matches the WinHTTP behavior.
      */
     bool EnableCertificateRevocationListCheck = false;
+
+    /**
+     * @brief This option allows SSL connections to proceed even if there is an error retrieving the
+     * Certificate Revocation List.
+     *
+     * @remark Note that this only works when LibCURL is configured to use openssl as its TLS
+     * provider. That functionally limits this check to Linux only, and then only when openssl is
+     * configured (the default).
+     */
+    bool AllowFailedCrlRetrieval = false;
+
+    /**
+     * @brief A set of PEM encoded X.509 certificates and CRLs describing the certificates used to
+     * validate the server.
+     *
+     * @remark The Azure SDK will not directly validate these certificates.
+     *
+     * @remark More about this option:
+     * https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO_BLOB.html
+     *
+     */
+    std::string PemEncodedExpectedRootCertificates;
   };
 
   /**
@@ -86,7 +107,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::string ProxyPassword;
     /**
-     * @brief The string for the certificate authenticator is sent to libcurl handle directly.
+     * @brief Path to a PEM encoded file containing the certificate authorities sent to libcurl
+     * handle directly.
      *
      * @remark The Azure SDK will not check if the path is valid or not.
      *
@@ -95,6 +117,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     std::string CAInfo;
+
     /**
      * @brief All HTTP requests will keep the connection channel open to the service.
      *
@@ -106,6 +129,7 @@ namespace Azure { namespace Core { namespace Http {
      * handle. It is `true` by default.
      */
     bool HttpKeepAlive = true;
+
     /**
      * @brief This option determines whether libcurl verifies the authenticity of the peer's
      * certificate.

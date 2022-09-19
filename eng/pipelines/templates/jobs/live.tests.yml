@@ -37,10 +37,10 @@ parameters:
   type: boolean
   default: false
 - name: PreTestSteps
-  type: object
+  type: stepList
   default: []
 - name: PostTestSteps
-  type: object
+  type: stepList
   default: []
 
 jobs:

@@ -4,6 +4,7 @@
 /**
  * @file
  * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
+ * cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
  */
 
 #pragma once
@@ -22,11 +23,13 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
+
 #endif
 
 #include <memory>
 #include <type_traits>
 #include <vector>
+#include <wincrypt.h>
 #include <winhttp.h>
 
 namespace Azure { namespace Core { namespace Http {
@@ -48,6 +51,61 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
     using unique_HINTERNET = std::unique_ptr<void, HINTERNET_deleter>;
+
+    // unique_ptr class wrapping a PCCERT_CHAIN_CONTEXT
+    struct HCERTIFICATECHAIN_deleter
+    {
+      void operator()(PCCERT_CHAIN_CONTEXT handle)
+      {
+        // unique_ptr class wrapping an HINTERNET handle
+        {
+          CertFreeCertificateChain(handle);
+        }
+      }
+    };
+    using unique_CCERT_CHAIN_CONTEXT
+        = std::unique_ptr<const CERT_CHAIN_CONTEXT, HCERTIFICATECHAIN_deleter>;
+
+    // unique_ptr class wrapping an HCERTCHAINENGINE handle
+    struct HCERTCHAINENGINE_deleter
+    {
+      void operator()(HCERTCHAINENGINE handle) noexcept
+      {
+        if (handle != nullptr)
+        {
+          CertFreeCertificateChainEngine(handle);
+        }
+      }
+    };
+    using unique_HCERTCHAINENGINE = std::unique_ptr<void, HCERTCHAINENGINE_deleter>;
+
+    // unique_ptr class wrapping an HCERTSTORE handle
+    struct HCERTSTORE_deleter
+    {
+    public:
+      void operator()(HCERTSTORE handle) noexcept
+      {
+        if (handle != nullptr)
+        {
+          CertCloseStore(handle, 0);
+        }
+      }
+    };
+    using unique_HCERTSTORE = std::unique_ptr<void, HCERTSTORE_deleter>;
+
+    // unique_ptr class wrapping a PCCERT_CONTEXT
+    struct CERTCONTEXT_deleter
+    {
+    public:
+      void operator()(PCCERT_CONTEXT handle) noexcept
+      {
+        if (handle != nullptr)
+        {
+          CertFreeCertificateContext(handle);
+        }
+      }
+    };
+    using unique_PCCERT_CONTEXT = std::unique_ptr<CERT_CONTEXT const, CERTCONTEXT_deleter>;
 
     class WinHttpStream final : public Azure::Core::IO::BodyStream {
     private:
@@ -123,6 +181,11 @@ namespace Azure { namespace Core { namespace Http {
     bool EnableSystemDefaultProxy{false};
 
     /**
+     * @brief If True, enables checks for certificate revocation.
+     */
+    bool EnableCertificateRevocationListCheck{false};
+
+    /**
      * @brief Proxy information.
      *
      * @remark The Proxy Information string is composed of a set of elements
@@ -142,6 +205,13 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Password for proxy authentication.
      */
     std::string ProxyPassword;
+
+    /**
+     * @brief Array of Base64 encoded DER encoded X.509 certificate.  These certificates should form
+     * a chain of certificates which will be used to validate the server certificate sent by the
+     * server.
+     */
+    std::vector<std::string> ExpectedTlsRootCertificates;
   };
 
   /**
@@ -155,6 +225,7 @@ namespace Azure { namespace Core { namespace Http {
     // This should remain immutable and not be modified after calling the ctor, to avoid threading
     // issues.
     _detail::unique_HINTERNET m_sessionHandle;
+    bool m_requestHandleClosed{false};
 
     _detail::unique_HINTERNET CreateSessionHandle();
     _detail::unique_HINTERNET CreateConnectionHandle(
@@ -182,6 +253,34 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
         _detail::unique_HINTERNET& requestHandle,
         HttpMethod requestMethod);
+
+    /*
+     * Callback from WinHTTP called after the TLS certificates are received when the caller sets
+     * expected TLS root certificates.
+     */
+    static void CALLBACK StatusCallback(
+        HINTERNET hInternet,
+        DWORD_PTR dwContext,
+        DWORD dwInternetStatus,
+        LPVOID lpvStatusInformation,
+        DWORD dwStatusInformationLength) noexcept;
+    /*
+     * Callback from WinHTTP called after the TLS certificates are received when the caller sets
+     * expected TLS root certificates.
+     */
+    void OnHttpStatusOperation(HINTERNET hInternet, DWORD dwInternetStatus);
+    /*
+     * Adds the specified trusted certificates to the specified certificate store.
+     */
+    bool AddCertificatesToStore(
+        std::vector<std::string> const& trustedCertificates,
+        _detail::unique_HCERTSTORE const& hCertStore);
+    /*
+     * Verifies that the certificate context is in the trustedCertificates set of certificates.
+     */
+    bool VerifyCertificatesInChain(
+        std::vector<std::string> const& trustedCertificates,
+        _detail::unique_PCCERT_CONTEXT const& serverCertificate);
 
     // Callback to allow a derived transport to extract the request handle. Used for WebSocket
     // transports.
