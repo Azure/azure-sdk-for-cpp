@@ -269,7 +269,7 @@ inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime
 
 namespace Core { namespace _internal {
   /**
-   * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
+   * @brief Provides conversion methods for POSIX time to an #Azure::DateTime.
    *
    */
   class PosixTimeConverter final {
@@ -313,13 +313,13 @@ namespace Core { namespace _internal {
   };
 
   /**
-   * @brief Provides convertion methods for Windows NT filetime to an #Azure::DateTime.
+   * @brief Provides conversion methods for Windows NT FILETIME to an #Azure::DateTime.
    *
    */
   class NTFileTimeTimeConverter final {
   public:
     /**
-     * @brief Converts Windows NT filetime to an #Azure::DateTime.
+     * @brief Converts Windows NT FILETIME to an #Azure::DateTime.
      *
      * @param ntFiletime The number of 100-nanoseconds since 1601-01-01.
      * @return Calculated #Azure::DateTime.
@@ -331,7 +331,7 @@ namespace Core { namespace _internal {
     }
 
     /**
-     * @brief Converts a DateTime to Windows NT filetime.
+     * @brief Converts a DateTime to Windows NT FILETIME.
      *
      * @param dateTime The `%DateTime` to convert.
      * @return The number of 100-nanoseconds since 1601-01-01.
