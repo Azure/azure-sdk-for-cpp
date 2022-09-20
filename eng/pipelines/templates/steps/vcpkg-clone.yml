@@ -15,7 +15,7 @@ steps:
       }
     displayName: Clone vcpkg (${{ parameters.RepoOwner }}/${{ parameters.RepoName }})
 
-  - ${{ if eq(parameters.SetVcpkgRoot, 'true') }}:
+  - ${{ if eq(parameters.SetVcpkgRoot, true) }}:
     - pwsh: |
         $vcpkgRoot = Resolve-Path "${{ parameters.Workspace }}/${{ parameters.RepoName }}"
         Write-Host "Set VCPKG_ROOT: $vcpkgRoot"
