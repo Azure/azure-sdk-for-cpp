@@ -32,7 +32,7 @@ Azure::Response<SecretProperties> RecoverDeletedSecretOperation::PollUntilDoneIn
 std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
 
   try
   {
@@ -123,7 +123,7 @@ Azure::Response<DeletedSecret> DeleteSecretOperation::PollUntilDoneInternal(
 std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
 
   try
   {

@@ -17,7 +17,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
+
   if (!IsDone())
   {
     try

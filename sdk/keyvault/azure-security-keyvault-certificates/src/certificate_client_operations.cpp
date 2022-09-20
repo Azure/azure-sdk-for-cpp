@@ -30,7 +30,7 @@ Azure::Response<CertificateOperationProperties> CreateCertificateOperation::Poll
 std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
 
   try
   {
@@ -149,7 +149,7 @@ Azure::Response<DeletedCertificate> DeleteCertificateOperation::PollUntilDoneInt
 std::unique_ptr<Azure::Core::Http::RawResponse> DeleteCertificateOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
 
   try
   {
@@ -235,7 +235,7 @@ Azure::Response<KeyVaultCertificateWithPolicy> RecoverDeletedCertificateOperatio
 std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedCertificateOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
 
   try
   {
