@@ -4,7 +4,9 @@
 #include "azure/core/context.hpp"
 #include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/policies/policy.hpp"
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include "azure/core/http/win_http_transport.hpp"
+#endif
 #include "azure/core/internal/client_options.hpp"
 #include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
@@ -194,7 +196,6 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<uint8_t> bodyVector = body->ReadToEnd(Azure::Core::Context::ApplicationContext);
     int64_t bodySize = body->Length();
     EXPECT_EQ(bodySize, size);
-    bodySize = bodyVector.size();
 
     if (size > 0)
     { // only for known body size
