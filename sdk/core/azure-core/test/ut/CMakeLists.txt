@@ -109,6 +109,10 @@ message(STATUS "Disabling proxy tests because they cannot be supported on this e
 add_compile_definitions(DISABLE_PROXY_TESTS)
 endif()
 
+if (ENV{BUILD_REASON})
+  add_compile_definitions(IN_CI_PIPELINE)
+endif()
+
 # Additional test files to be copied to the output directory.
 set(TEST_ADDITIONAL_FILES 
     ${CMAKE_CURRENT_LIST_DIR}/requirements.txt 

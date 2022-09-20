@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Http {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
     constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
-    constexpr static size_t DefaultLibcurlReaderSize = 1024;
+    constexpr static size_t DefaultLibcurlReaderSize = 4*1024;
     // Run time error template
     constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";

@@ -4,6 +4,7 @@
 #include "azure/core/context.hpp"
 #include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/policies/policy.hpp"
+#include "azure/core/http/win_http_transport.hpp"
 #include "azure/core/internal/client_options.hpp"
 #include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
@@ -25,13 +26,6 @@ namespace Azure { namespace Core { namespace Test {
   class TransportAdapterOptions : public ::testing::Test {
 
   public:
-    enum class TestMode
-    {
-      UNKNOWN,
-      RECORD,
-      LIVE,
-      PLAYBACK,
-    };
     struct AzureSdkHttpbinServer final
     {
       inline static std::string Get()
@@ -94,45 +88,66 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string HttpProxyServer() { return "http://127.0.0.1:3128"; }
     std::string HttpProxyServerWithPassword() { return "http://127.0.0.1:3129"; }
+    static bool ProxyStatusChecked;
+    static bool IsSquidProxyRunning;
+    static bool IsTestProxyRunning;
 
   protected:
     // Create
-    virtual void SetUp() override {}
-
-    TestMode GetTestMode()
+    virtual void SetUp() override
     {
-      auto value = Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_MODE");
-      GTEST_LOG_(INFO) << "Azure Test Mode: " << value;
-      if (value.empty())
+#if !defined(IN_CI_PIPELINE)
+      if (!ProxyStatusChecked)
       {
-        GTEST_LOG_(INFO) << "Assume Live Test";
-
-        return TestMode::LIVE;
+        Azure::Core::Http::Policies::TransportOptions options;
+        {
+          auto pipeline = CreateHttpPipeline(options);
+          auto request = Azure::Core::Http::Request(
+              Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(HttpProxyServer()), false);
+          try
+          {
+            auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+            IsSquidProxyRunning = true;
+          }
+          catch (Azure::Core::RequestFailedException& rfe)
+          {
+            IsSquidProxyRunning = false;
+            std::cout << "Skipping proxy tests. Error: " << rfe.what() << std::endl;
+          }
+        }
+        {
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+          Azure::Core::Http::CurlTransportOptions curlOptions;
+          curlOptions.SslVerifyPeer = false;
+          options.Transport = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+          Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
+          winHttpOptions.IgnoreUnknownCertificateAuthority = true;
+          options.Transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
+#endif
+          auto pipeline = CreateHttpPipeline(options);
+          auto request = Azure::Core::Http::Request(
+              Azure::Core::Http::HttpMethod::Get,
+              Azure::Core::Url("https://localhost:5001/Admin/IsAlive"));
+          try
+          {
+            pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+            IsTestProxyRunning = true;
+          }
+          catch (Azure::Core::RequestFailedException& rfe)
+          {
+            IsTestProxyRunning = false;
+            std::cout << "Skipping TestProxy tests: " << rfe.what() << std::endl;
+          }
+        }
+        ProxyStatusChecked = true;
       }
-
-      if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-              value, "RECORD"))
-      {
-        GTEST_LOG_(INFO) << "TestMode:: Record.";
-        return TestMode::RECORD;
-      }
-      else if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-                   value, "PLAYBACK"))
-      {
-        GTEST_LOG_(INFO) << "TestMode:: Playback.";
-        return TestMode::PLAYBACK;
-      }
-      else if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-                   value, "LIVE"))
-      {
-        GTEST_LOG_(INFO) << "TestMode:: Live.";
-        return TestMode::LIVE;
-      }
-
-      // unexpected variable value
-      throw std::runtime_error("Invalid environment variable: " + value);
+#endif
     }
   };
+  bool TransportAdapterOptions::ProxyStatusChecked{false};
+  bool TransportAdapterOptions::IsSquidProxyRunning{false};
+  bool TransportAdapterOptions::IsTestProxyRunning{false};
 
   void TransportAdapterOptions::checkResponseCode(
       Azure::Core::Http::HttpStatusCode code,
@@ -228,6 +243,10 @@ namespace Azure { namespace Core { namespace Test {
   // constexpr char SocksProxyServer[] = "socks://98.162.96.41:4145";
   TEST_F(TransportAdapterOptions, SimpleProxyTests)
   {
+    if (!IsSquidProxyRunning)
+    {
+      GTEST_SKIP_("Skipping proxy tests because proxy is not running.");
+    }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     std::string myIpAddress;
     {
@@ -278,6 +297,10 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, ProxyWithPasswordHttps)
   {
+    if (!IsSquidProxyRunning)
+    {
+      GTEST_SKIP_("Skipping proxy tests because proxy is not running.");
+    }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
 
     // HTTPS Connections.
@@ -323,6 +346,10 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, ProxyWithPasswordHttp)
   {
+    if (!IsSquidProxyRunning)
+    {
+      GTEST_SKIP_("Skipping proxy tests because proxy is not running.");
+    }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     // HTTP Connections.
     testUrl.SetScheme("http");
@@ -376,6 +403,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     }
 #if !defined(DISABLE_PROXY_TESTS)
+    if (IsSquidProxyRunning)
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 
@@ -466,7 +494,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     std::vector<std::string> testUrls{
         AzureSdkHttpbinServer::Get(),
-        "https://www.microsoft.com/",
+        "https://twitter.com/",
         "https://www.example.com/",
         "https://www.google.com/",
     };
@@ -796,6 +824,11 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, AccessTestProxyServer)
   {
+    if (!IsTestProxyRunning)
+    {
+      GTEST_SKIP_("Skipping TestProxy tests because TestProxy is not running.");
+    }
+
     TestProxy proxyServer;
 
     EXPECT_EQ(Azure::Core::Http::HttpStatusCode::Ok, proxyServer.IsAlive().Value);
@@ -828,6 +861,11 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, TestProxyServerWithInvalidCertificate)
   {
+    if (!IsTestProxyRunning)
+    {
+      GTEST_SKIP_("Skipping TestProxy tests because TestProxy is not running.");
+    }
+
     TestProxy::TestProxyOptions options;
     options.Transport.ExpectedTlsRootCertificate = InvalidTestProxyHttpsCertificate;
     TestProxy proxyServer(options);
