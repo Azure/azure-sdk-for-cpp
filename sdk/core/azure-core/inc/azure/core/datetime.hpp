@@ -313,30 +313,30 @@ namespace Core { namespace _internal {
   };
 
   /**
-   * @brief Provides conversion methods for Windows NT FILETIME to an #Azure::DateTime.
+   * @brief Provides conversion methods for Win32 FILETIME to an #Azure::DateTime.
    *
    */
-  class NTFileTimeTimeConverter final {
+  class Win32FileTimeConverter final {
   public:
     /**
-     * @brief Converts Windows NT FILETIME to an #Azure::DateTime.
+     * @brief Converts Win32 FILETIME to an #Azure::DateTime.
      *
-     * @param ntFiletime The number of 100-nanoseconds since 1601-01-01.
+     * @param win32Filetime The number of 100-nanoseconds since 1601-01-01.
      * @return Calculated #Azure::DateTime.
      */
-    static DateTime NTFileTimeToDateTime(int64_t ntFiletime)
+    static DateTime Win32FileTimeToDateTime(int64_t win32Filetime)
     {
-      auto t = DateTime(1601) + Azure::_detail::Clock::duration(ntFiletime);
+      auto t = DateTime(1601) + Azure::_detail::Clock::duration(win32Filetime);
       return DateTime(t);
     }
 
     /**
-     * @brief Converts a DateTime to Windows NT FILETIME.
+     * @brief Converts a DateTime to Win32 FILETIME.
      *
      * @param dateTime The `%DateTime` to convert.
      * @return The number of 100-nanoseconds since 1601-01-01.
      */
-    static int64_t DateTimeToNTFileTime(DateTime const& dateTime)
+    static int64_t DateTimeToWin32FileTime(DateTime const& dateTime)
     {
       return std::chrono::duration_cast<Azure::_detail::Clock::duration>(dateTime - DateTime(1601))
           .count();
@@ -344,17 +344,17 @@ namespace Core { namespace _internal {
 
   private:
     /**
-     * @brief An instance of `%NTFileTimeTimeConverter` class cannot be created.
+     * @brief An instance of `%Win32FileTimeConverter` class cannot be created.
      *
      */
-    NTFileTimeTimeConverter() = delete;
+    Win32FileTimeConverter() = delete;
 
     /**
-     * @brief An instance of `%NTFileTimeTimeConverter` class cannot be destructed, because no
+     * @brief An instance of `%Win32FileTimeConverter` class cannot be destructed, because no
      * instance can be created.
      *
      */
-    ~NTFileTimeTimeConverter() = delete;
+    ~Win32FileTimeConverter() = delete;
   };
 }} // namespace Core::_internal
 
