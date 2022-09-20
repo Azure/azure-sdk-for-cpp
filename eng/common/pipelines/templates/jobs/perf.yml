@@ -32,9 +32,7 @@ parameters:
 - name: OperatingSystems
   type: string
   default: 'Linux'
-- name: Language
-  type: string
-  default: ''
+
 - name: InstallLanguageSteps
   type: stepList
   default: []
@@ -63,19 +61,9 @@ parameters:
   type: object
   default: {}
 
-resources:
-  repositories:
-  - repository: azure-sdk-tools
-    type: github
-    endpoint: Azure
-    name: Azure/azure-sdk-tools
-    ref: main
-
-variables:
-- ${{ parameters.Variables }}
 
 jobs:
-- job: Perf
+- job: ${{ parameters.JobName }}
   timeoutInMinutes: 360
   strategy:
     matrix:

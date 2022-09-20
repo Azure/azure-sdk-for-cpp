@@ -196,13 +196,14 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
 }
 
 Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
-    AttestTpmOptions const& attestTpmOptions,
+    std::vector<uint8_t> const& dataToAttest,
+    AttestTpmOptions const&,
     Azure::Core::Context const& context) const
 {
   auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));
   try
   {
-    std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
+    std::string jsonToSend = TpmDataSerializer::Serialize(dataToAttest);
     auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
     Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 
@@ -212,7 +213,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     // Send the request to the service.
     auto response
         = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
-    std::string returnedBody(TpmDataSerializer::Deserialize(response));
+    std::vector<uint8_t> returnedBody{TpmDataSerializer::Deserialize(response)};
     return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
   }
   catch (std::runtime_error const& ex)
