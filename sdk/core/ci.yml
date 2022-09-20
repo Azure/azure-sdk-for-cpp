@@ -43,33 +43,6 @@ stages:
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
       PreTestSteps:
-        - task: UsePythonVersion@0
-          displayName: 'Use Python 3'
-          inputs:
-            versionSpec: '3'
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-
-        - pwsh: |
-            python --version
-            pip install -r requirements.txt
-          workingDirectory: build/sdk/core/azure-core/test/ut
-          displayName: Install Python requirements.
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-        - task: PowerShell@2
-          displayName: 'Launch python websocket server'
-          inputs:
-            pwsh: true
-            filePath: build/sdk/core/azure-core/test/ut/Start-WebSocketServer.ps1
-            arguments: $(Build.SourcesDirectory)/WebSocketServer.log
-            workingDirectory: build/sdk/core/azure-core/test/ut
-          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-          # It would be nice to collapse this branch with the previous one, but nohup doesn't seem to
-          # behave when called from powershell.
-        - bash: |
-            nohup python sdk/core/azure-core/test/ut/websocket_server.py > $(Build.SourcesDirectory)/WebSocketServer.log &
-          workingDirectory: build
-          condition: and(succeeded(), not(contains(variables['Agent.OS'], 'windows')), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-          displayName: Launch python websocket server (Linux).
         - pwsh: |
             docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
             docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -101,32 +74,12 @@ stages:
             targetVersion: 1.0.0-dev.20220810.2
 
       PostTestSteps:
-          # Shut down the test server. This uses curl to send a request to the "terminateserver" websocket endpoint.
-          # When the test server receives a request on terminateserver, it shuts down gracefully.
-        - pwsh: |
-            curl `
-                --include `
-                --no-buffer `
-                --header "Connection: Upgrade" `
-                --header "Upgrade: websocket" `
-                --header "Host: localhost:8000" `
-                --header "Origin: http://localhost:8000" `
-                --header "Sec-WebSocket-Key: eaQZ9ed+LnT0zs5EvI04aQ==" `
-                --header "Sec-WebSocket-Version: 13" `
-                http://localhost:8000/terminateserver
-          displayName: Shutdown WebSocket server.
-          condition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
         - pwsh: |
             docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `
                 docker stop $_ `
             }
           displayName: Shutdown Squid Proxy.
           condition: and(variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'linux'))
-        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-          parameters:
-            ArtifactPath: '$(Build.SourcesDirectory)/WebSocketServer.log'
-            ArtifactName: 'WebSocketLogs-$(Agent.JobName)_attempt_$(System.JobAttempt)'
-            CustomCondition: contains(variables.CmakeArgs, 'BUILD_TESTING=ON')
 
       Artifacts:
         - Name: azure-core

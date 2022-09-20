@@ -42,20 +42,18 @@ if(BUILD_TRANSPORT_CURL)
     src/http/curl/curl_connection_pool_private.hpp
     src/http/curl/curl_connection_private.hpp
     src/http/curl/curl_session_private.hpp
-    src/http/curl/curl_websockets.cpp
    )
   SET(CURL_TRANSPORT_ADAPTER_INC
     inc/azure/core/http/curl_transport.hpp
-    inc/azure/core/http/websockets/curl_websockets_transport.hpp
   )
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC 
     src/http/winhttp/win_http_transport.cpp
-    src/http/winhttp/win_http_websockets.cpp)
+  )
  SET(WIN_TRANSPORT_ADAPTER_INC 
     inc/azure/core/http/win_http_transport.hpp
-    inc/azure/core/http/websockets/win_http_websockets_transport.hpp)
+ )
 endif()
 
 set(
@@ -80,8 +78,6 @@ set(
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
-    inc/azure/core/http/websockets/websockets.hpp
-    inc/azure/core/http/websockets/websockets_transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
@@ -140,8 +136,8 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/http/user_agent.cpp
-    src/http/websockets/websockets.cpp
-    src/http/websockets/websockets_impl.cpp
+    
+    
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/logger.cpp

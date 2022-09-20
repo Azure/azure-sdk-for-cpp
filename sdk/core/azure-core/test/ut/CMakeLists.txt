@@ -86,7 +86,6 @@ add_executable (
     transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
-    websocket_test.cpp
   )
 
 if (MSVC)
@@ -111,9 +110,9 @@ add_compile_definitions(DISABLE_PROXY_TESTS)
 endif()
 
 # Additional test files to be copied to the output directory.
-set(TEST_ADDITIONAL_FILES ${CMAKE_CURRENT_LIST_DIR}/websocket_server.py 
+set(TEST_ADDITIONAL_FILES 
     ${CMAKE_CURRENT_LIST_DIR}/requirements.txt 
-    ${CMAKE_CURRENT_LIST_DIR}/Start-WebSocketServer.ps1
+
 )
 
 add_custom_command(TARGET azure-core-test POST_BUILD
