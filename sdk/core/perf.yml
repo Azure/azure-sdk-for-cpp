@@ -17,7 +17,7 @@ parameters:
   default: '5'
 - name: AdditionalArguments
   displayName: AdditionalArguments (passed to PerfAutomation)
-  type: string
+  type: string 
   default: ' '
 
 extends:
