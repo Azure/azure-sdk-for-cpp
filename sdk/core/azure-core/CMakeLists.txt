@@ -136,8 +136,6 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/http/user_agent.cpp
-    
-    
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/logger.cpp
