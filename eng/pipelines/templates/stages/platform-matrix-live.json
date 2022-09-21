@@ -1,17 +1,21 @@
 {
   "displayNames": {
-    "MacOS": ""
+    "_": ""
   },
   "include": [
     {
       "StaticConfigs": {
-        "x64_with_unit_test": {
+        "macOS-11": {
           "Pool": "Azure Pipelines",
           "OSVmImage": "macos-11",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DDISABLE_PROXY_TESTS=ON ",
-          "AZURE_CORE_ENABLE_JSON_TESTS": 1,
           "BuildArgs": "-j 4"
+        }
+      },
+      "BuildConfig": {
+        "_x64_with_unit_test": {
+          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DDISABLE_PROXY_TESTS=ON ",
+          "AZURE_CORE_ENABLE_JSON_TESTS": 1
         }
       }
     },
@@ -49,7 +53,7 @@
           "RunProxyTests": true
         }
       },
-      "BuildConfiguration": {
+      "BuildConfig": {
         "x64_with_unit_test": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON",
           "AZURE_CORE_ENABLE_JSON_TESTS": 1
