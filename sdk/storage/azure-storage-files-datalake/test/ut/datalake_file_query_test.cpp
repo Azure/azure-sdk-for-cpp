@@ -133,7 +133,7 @@ id,name,price
         R"json({"id":"103","name":"apples","price":"99"}|{"id":"106","name":"lemons","price":"69"}|{"id":"110","name":"bananas","price":"39"}|{"id":"112","name":"sapote,mamey","price":"50"}|)json");
   }
 
-  TEST_F(DataLakeFileClientTest, DISABLED_QueryCsvInputArrowOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryCsvInputArrowOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = m_fileSystemClient->GetFileClient(testName);
@@ -184,7 +184,7 @@ id,name,price
     EXPECT_EQ(data, expectedData);
   }
 
-  TEST_F(DataLakeFileClientTest, DISABLED_QueryParquetInputArrowOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryParquetInputArrowOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = m_fileSystemClient->GetFileClient(testName);
@@ -322,7 +322,7 @@ xx
     auto data = queryResponse.Value.BodyStream->ReadToEnd();
   }
 
-  TEST_F(DataLakeFileClientTest, DISABLED_QueryLargeBlob_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryLargeBlob_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = m_fileSystemClient->GetFileClient(testName);
