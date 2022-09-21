@@ -400,8 +400,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, CustomerProvidedKey_LIVEONLY_)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-    CHECK_SKIP_TEST();
 
     auto getRandomCustomerProvidedKey = [&]() {
       Files::DataLake::EncryptionKey key;
