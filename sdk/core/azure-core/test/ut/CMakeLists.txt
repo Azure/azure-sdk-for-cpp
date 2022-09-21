@@ -109,7 +109,8 @@ message(STATUS "Disabling proxy tests because they cannot be supported on this e
 add_compile_definitions(DISABLE_PROXY_TESTS)
 endif()
 
-if (ENV{BUILD_REASON})
+# If the System.TeamProjectId ADO variable is set, we are running in the pipeline, behave accordingly.
+if (ENV{SYSTEM_TEAMPROJECTID})
   add_compile_definitions(IN_CI_PIPELINE)
 endif()
 
