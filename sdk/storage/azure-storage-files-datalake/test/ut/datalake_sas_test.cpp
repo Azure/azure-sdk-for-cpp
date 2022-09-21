@@ -441,6 +441,39 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p.Value.HttpHeaders.CacheControl, headers.CacheControl);
       EXPECT_EQ(p.Value.HttpHeaders.ContentEncoding, headers.ContentEncoding);
     }
+
+    // Encryption scope
+    const auto encryptionScope = GetTestEncryptionScope();
+    {
+      auto sasBuilderWithEncryptionScope = fileSasBuilder;
+      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
+      sasBuilderWithEncryptionScope.SetPermissions(Sas::DataLakeSasPermissions::All);
+      auto fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
+          fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(*keyCredential));
+      fileClientEncryptionScopeSas.Create();
+      auto pRawResponse = fileClientEncryptionScopeSas.GetProperties().RawResponse;
+      ASSERT_TRUE(pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0);
+      EXPECT_EQ(pRawResponse->GetHeaders().at("x-ms-encryption-scope"), encryptionScope);
+
+      fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
+          fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
+      fileClientEncryptionScopeSas.Create();
+      pRawResponse = fileClientEncryptionScopeSas.GetProperties().RawResponse;
+      ASSERT_TRUE(pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0);
+      EXPECT_EQ(pRawResponse->GetHeaders().at("x-ms-encryption-scope"), encryptionScope);
+    }
+    {
+      auto sasBuilderWithEncryptionScope = directorySasBuilder;
+      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
+      sasBuilderWithEncryptionScope.SetPermissions(Sas::DataLakeSasPermissions::All);
+      auto directoryClientEncryptionScopeSas = Files::DataLake::DataLakeDirectoryClient(
+          directory1Url
+          + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
+      directoryClientEncryptionScopeSas.Create();
+      auto pRawResponse = directoryClientEncryptionScopeSas.GetProperties().RawResponse;
+      ASSERT_TRUE(pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0);
+      EXPECT_EQ(pRawResponse->GetHeaders().at("x-ms-encryption-scope"), encryptionScope);
+    }
   }
 
 }}} // namespace Azure::Storage::Test
