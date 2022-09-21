@@ -339,4 +339,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions, context);
   }
 
+  Azure::Response<Models::QueryFileResult> DataLakeFileClient::Query(
+      const std::string& querySqlExpression,
+      const QueryFileOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    Blobs::QueryBlobOptions blobOptions;
+    blobOptions.InputTextConfiguration = options.InputTextConfiguration;
+    blobOptions.OutputTextConfiguration = options.OutputTextConfiguration;
+    blobOptions.ErrorHandler = options.ErrorHandler;
+    blobOptions.ProgressHandler = options.ProgressHandler;
+    blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
+    blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    auto response
+        = m_blobClient.AsBlockBlobClient().Query(querySqlExpression, blobOptions, context);
+    Models::QueryFileResult ret;
+    ret.BodyStream = std::move(response.Value.BodyStream);
+    ret.ETag = std::move(response.Value.ETag);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.LeaseDuration = std::move(response.Value.LeaseDuration);
+    ret.LeaseState = std::move(response.Value.LeaseState);
+    ret.LeaseStatus = std::move(response.Value.LeaseStatus);
+    ret.IsServerEncrypted = response.Value.IsServerEncrypted;
+    return Azure::Response<Models::QueryFileResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

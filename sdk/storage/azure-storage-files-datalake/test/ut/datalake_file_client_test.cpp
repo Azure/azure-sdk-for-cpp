@@ -29,6 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeFileClientTest::SetUp()
   {
     DataLakeFileSystemClientTest::SetUp();
+    CHECK_SKIP_TEST();
     m_fileName = GetFileSystemValidName();
     m_fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(m_fileName));
@@ -37,6 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileClientTest::TearDown()
   {
+    CHECK_SKIP_TEST();
     m_fileSystemClient->GetFileClient(m_fileName).Delete();
     DataLakeFileSystemClientTest::TearDown();
   }

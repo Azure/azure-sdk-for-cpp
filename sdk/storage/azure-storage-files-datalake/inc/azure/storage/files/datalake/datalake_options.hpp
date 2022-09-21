@@ -21,6 +21,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using PathHttpHeaders = Blobs::Models::BlobHttpHeaders;
     using ListFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
     using SignedIdentifier = Blobs::Models::SignedIdentifier;
+    using FileQueryArrowField = Blobs::Models::BlobQueryArrowField;
+    using FileQueryArrowFieldType = Blobs::Models::BlobQueryArrowFieldType;
     using EncryptionAlgorithmType = Blobs::Models::EncryptionAlgorithmType;
   } // namespace Models
 
@@ -645,4 +647,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using ReleaseLeaseOptions = Blobs::ReleaseLeaseOptions;
   using ChangeLeaseOptions = Blobs::ChangeLeaseOptions;
 
+  using FileQueryInputTextOptions = Blobs::BlobQueryInputTextOptions;
+  using FileQueryOutputTextOptions = Blobs::BlobQueryOutputTextOptions;
+  using FileQueryError = Blobs::BlobQueryError;
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::DataLakeFileClient::Query.
+   */
+  struct QueryFileOptions final
+  {
+    /**
+     * @brief Input text configuration.
+     */
+    FileQueryInputTextOptions InputTextConfiguration;
+    /**
+     * @brief Output text configuration.
+     */
+    FileQueryOutputTextOptions OutputTextConfiguration;
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    PathAccessConditions AccessConditions;
+    /**
+     * @brief Callback for progress handling.
+     */
+    std::function<void(int64_t, int64_t)> ProgressHandler;
+    /**
+     * @brief Callback for error handling. If you don't specify one, the default will be used, which
+     * will ignore all non-fatal errors and throw for fatal errors.
+     */
+    std::function<void(FileQueryError)> ErrorHandler;
+  };
 }}}} // namespace Azure::Storage::Files::DataLake
