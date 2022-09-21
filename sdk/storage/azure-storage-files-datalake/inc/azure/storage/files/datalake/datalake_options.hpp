@@ -21,10 +21,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using PathHttpHeaders = Blobs::Models::BlobHttpHeaders;
     using ListFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
     using SignedIdentifier = Blobs::Models::SignedIdentifier;
+    using EncryptionAlgorithmType = Blobs::Models::EncryptionAlgorithmType;
   } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
+  using EncryptionKey = Blobs::EncryptionKey;
 
   /**
    * @brief Client options used to initialize all DataLake clients.
@@ -44,6 +46,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * API version used by this client.
      */
     std::string ApiVersion;
+
+    /**
+     * @brief Holds the customer provided key used when making requests.
+     */
+    Azure::Nullable<EncryptionKey> CustomerProvidedKey;
   };
 
   /**

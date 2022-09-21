@@ -48,7 +48,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_pathUrl(pathUrl), m_blobClient(
                                 _detail::GetBlobUrlFromUrl(pathUrl),
                                 credential,
-                                _detail::GetBlobClientOptions(options))
+                                _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -76,7 +77,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_pathUrl(pathUrl), m_blobClient(
                                 _detail::GetBlobUrlFromUrl(pathUrl),
                                 credential,
-                                _detail::GetBlobClientOptions(options))
+                                _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -104,7 +106,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUrl,
       const DataLakeClientOptions& options)
       : m_pathUrl(pathUrl),
-        m_blobClient(_detail::GetBlobUrlFromUrl(pathUrl), _detail::GetBlobClientOptions(options))
+        m_blobClient(_detail::GetBlobUrlFromUrl(pathUrl), _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -202,6 +205,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Properties = _detail::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+    }
     return _detail::PathClient::Create(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
   }
 

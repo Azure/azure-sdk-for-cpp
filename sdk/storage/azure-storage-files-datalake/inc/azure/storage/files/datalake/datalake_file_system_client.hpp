@@ -243,13 +243,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
 
     explicit DataLakeFileSystemClient(
         Azure::Core::Url fileSystemUrl,
         Blobs::BlobContainerClient blobContainerClient,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
+        Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>())
         : m_fileSystemUrl(std::move(fileSystemUrl)),
-          m_blobContainerClient(std::move(blobContainerClient)), m_pipeline(std::move(pipeline))
+          m_blobContainerClient(std::move(blobContainerClient)), m_pipeline(std::move(pipeline)),
+          m_customerProvidedKey(std::move(customerProvidedKey))
     {
     }
     friend class DataLakeLeaseClient;

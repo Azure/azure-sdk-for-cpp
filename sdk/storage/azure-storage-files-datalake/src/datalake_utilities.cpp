@@ -96,6 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     blobOptions.SecondaryHostForRetryReads
         = _detail::GetBlobUrlFromUrl(options.SecondaryHostForRetryReads);
     blobOptions.ApiVersion = options.ApiVersion;
+    blobOptions.CustomerProvidedKey = options.CustomerProvidedKey;
     return blobOptions;
   }
 

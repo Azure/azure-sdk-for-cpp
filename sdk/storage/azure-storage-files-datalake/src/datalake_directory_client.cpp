@@ -66,7 +66,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     builder.AppendPath(_internal::UrlEncodePath(fileName));
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(fileName));
-    return DataLakeFileClient(std::move(builder), std::move(blobClient), m_pipeline);
+    return DataLakeFileClient(
+        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
   }
 
   DataLakeDirectoryClient DataLakeDirectoryClient::GetSubdirectoryClient(
@@ -76,7 +77,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     builder.AppendPath(_internal::UrlEncodePath(subdirectoryName));
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
-    return DataLakeDirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
+    return DataLakeDirectoryClient(
+        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
   }
 
   Azure::Response<DataLakeFileClient> DataLakeDirectoryClient::RenameFile(
@@ -119,10 +121,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto response = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    auto renamedBlobClient
-        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedBlobClient = Blobs::BlobClient(
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
     auto renamedFileClient = DataLakeFileClient(
-        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+        std::move(destinationDfsUrl),
+        std::move(renamedBlobClient),
+        m_pipeline,
+        m_customerProvidedKey);
     return Azure::Response<DataLakeFileClient>(
         std::move(renamedFileClient), std::move(response.RawResponse));
   }
@@ -167,10 +172,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto response = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    auto renamedBlobClient
-        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedBlobClient = Blobs::BlobClient(
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
-        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+        std::move(destinationDfsUrl),
+        std::move(renamedBlobClient),
+        m_pipeline,
+        m_customerProvidedKey);
     return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), std::move(response.RawResponse));
   }

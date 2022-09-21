@@ -1,0 +1,46 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "5d22ed71-0afa-4cb3-5797-398079facac4",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Wed, 21 Sep 2022 06:43:09 GMT",
+        "etag": "\"0x8DA9B9C8C0EDDEE\"",
+        "last-modified": "Wed, 21 Sep 2022 06:43:09 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "5d22ed71-0afa-4cb3-5797-398079facac4",
+        "x-ms-request-id": "1d067a95-b01e-0058-4285-cd0af0000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestcustomerprovidedkey?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "f4ae2973-c1f5-443e-7e56-7284e0d78eb3",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Wed, 21 Sep 2022 06:44:43 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f4ae2973-c1f5-443e-7e56-7284e0d78eb3",
+        "x-ms-request-id": "fc8205fe-701e-0025-6f85-cd7bd3000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestcustomerprovidedkey?restype=container"
+    }
+  ]
+}
