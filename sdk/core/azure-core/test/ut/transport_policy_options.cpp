@@ -98,7 +98,12 @@ namespace Azure { namespace Core { namespace Test {
     // Create
     virtual void SetUp() override
     {
-#if !defined(IN_CI_PIPELINE)
+#if defined(IN_CI_PIPELINE)
+      // If we're in the CI pipeline, don't probe for the squid or test proxy running - just assume
+      // they are.
+      IsSquidProxyRunning = true;
+      IsTestProxyRunning = true;
+#else // !defined(IN_CI_PIPELINE)
       if (!ProxyStatusChecked)
       {
         Azure::Core::Http::Policies::TransportOptions options;
