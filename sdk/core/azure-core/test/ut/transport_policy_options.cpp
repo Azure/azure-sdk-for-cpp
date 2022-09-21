@@ -88,8 +88,34 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::HttpStatusCode code,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok);
 
-    std::string HttpProxyServer() { return "http://127.0.0.1:3128"; }
-    std::string HttpProxyServerWithPassword() { return "http://127.0.0.1:3129"; }
+    std::string HttpProxyServer()
+    {
+      std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("SQUID_PROXY_URL")};
+      if (proxyUrl.empty())
+      {
+        proxyUrl = "http://127.0.0.1:3128";
+      }
+      return proxyUrl;
+    }
+    std::string HttpProxyServerWithPassword()
+    {
+      std::string proxyUrl{
+          Azure::Core::_internal::Environment::GetVariable("SQUID_AUTH_PROXY_URL")};
+      if (proxyUrl.empty())
+      {
+        proxyUrl = "http://127.0.0.1:3129";
+      }
+      return proxyUrl;
+    }
+    std::string TestProxyUrl()
+    {
+      std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("PROXY_URL")};
+      if (proxyUrl.empty())
+      {
+        proxyUrl = "https://localhost:5001";
+      }
+      return proxyUrl;
+    }
     static bool ProxyStatusChecked;
     static bool IsSquidProxyRunning;
     static bool IsTestProxyRunning;
@@ -135,7 +161,7 @@ namespace Azure { namespace Core { namespace Test {
           auto pipeline = CreateHttpPipeline(options);
           auto request = Azure::Core::Http::Request(
               Azure::Core::Http::HttpMethod::Get,
-              Azure::Core::Url("https://localhost:5001/Admin/IsAlive"));
+              Azure::Core::Url(TestProxyUrl() + "/Admin/IsAlive"));
           try
           {
             pipeline.Send(request, Azure::Core::Context::ApplicationContext);
@@ -711,6 +737,15 @@ namespace Azure { namespace Core { namespace Test {
     // cspell:enable
 
     std::unique_ptr<HttpPipeline> m_pipeline;
+    std::string TestProxyUrl()
+    {
+      std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("PROXY_URL")};
+      if (proxyUrl.empty())
+      {
+        proxyUrl = "https://localhost:5001";
+      }
+      return proxyUrl;
+    }
 
   public:
     struct TestProxyOptions : Azure::Core::_internal::ClientOptions
@@ -743,7 +778,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::IO::MemoryBodyStream postBody(bodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Post,
-          Azure::Core::Url("https://localhost:5001/record/start"),
+          Azure::Core::Url(TestProxyUrl() + "/record/start"),
           &postBody);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -755,8 +790,7 @@ namespace Azure { namespace Core { namespace Test {
         std::string const& recordingId)
     {
       auto request = Azure::Core::Http::Request(
-          Azure::Core::Http::HttpMethod::Post,
-          Azure::Core::Url("https://localhost:5001/record/stop"));
+          Azure::Core::Http::HttpMethod::Post, Azure::Core::Url(TestProxyUrl() + "/record/stop"));
       request.SetHeader("x-recording-id", recordingId);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -774,7 +808,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::IO::MemoryBodyStream postBody(bodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Post,
-          Azure::Core::Url("https://localhost:5001/playback/start"),
+          Azure::Core::Url(TestProxyUrl() + "/playback/start"),
           &postBody);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -787,8 +821,7 @@ namespace Azure { namespace Core { namespace Test {
         std::string const& recordingId)
     {
       auto request = Azure::Core::Http::Request(
-          Azure::Core::Http::HttpMethod::Post,
-          Azure::Core::Url("https://localhost:5001/playback/stop"));
+          Azure::Core::Http::HttpMethod::Post, Azure::Core::Url(TestProxyUrl() + "/playback/stop"));
       request.SetHeader("x-recording-id", recordingId);
 
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -804,7 +837,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Url targetUrl{urlToRecord};
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("https://localhost:5001/" + targetUrl.GetRelativeUrl()));
+          Azure::Core::Url(TestProxyUrl() + "/" + targetUrl.GetRelativeUrl()));
       request.SetHeader(
           "x-recording-upstream-base-uri", targetUrl.GetScheme() + "://" + targetUrl.GetHost());
       request.SetHeader("x-recording-id", recordingId);
@@ -818,8 +851,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Response<Azure::Core::Http::HttpStatusCode> IsAlive()
     {
       auto request = Azure::Core::Http::Request(
-          Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("https://localhost:5001/Admin/IsAlive"));
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(TestProxyUrl() + "/Admin/IsAlive"));
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       auto statusCode = response->GetStatusCode();
       return Azure::Response<Azure::Core::Http::HttpStatusCode>(statusCode, std::move(response));
