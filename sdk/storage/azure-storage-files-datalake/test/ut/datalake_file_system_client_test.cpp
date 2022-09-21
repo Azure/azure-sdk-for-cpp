@@ -414,38 +414,45 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     const int32_t bufferSize = 1024; // 1KB data size
-    std::vector<uint8_t> buffer(bufferSize, 'x');
-    Azure::Core::IO::MemoryBodyStream bodyStream(buffer.data(), buffer.size());
+    auto buffer = std::make_shared<std::vector<uint8_t>>(bufferSize, 'x');
+    Azure::Core::IO::MemoryBodyStream bodyStream(buffer->data(), buffer->size());
 
-    auto customerProvidedKey = getRandomCustomerProvidedKey();
+    auto customerProvidedKey
+        = std::make_shared<Files::DataLake::EncryptionKey>(getRandomCustomerProvidedKey());
     Files::DataLake::DataLakeClientOptions options;
-    options.CustomerProvidedKey = customerProvidedKey;
-    auto fileServiceClient
-        = Azure::Storage::Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-            AdlsGen2ConnectionString(), options);
-    auto fileSystemClient = fileServiceClient.GetFileSystemClient(m_fileSystemName);
+    options.CustomerProvidedKey = *customerProvidedKey;
+    auto fileServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+        Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), options));
+    auto fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+        fileServiceClient->GetFileSystemClient(m_fileSystemName));
 
     // fileSystem works
     {
       auto fileSystemClientWithoutEncryptionKey
-          = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName);
+          = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+              Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+                  AdlsGen2ConnectionString(), m_fileSystemName));
       // Rename File
       const std::string filename1 = GetTestName() + "file1";
       const std::string filename2 = GetTestName() + "file2";
       const std::string filename3 = GetTestName() + "file3";
       const std::string filename4 = GetTestName() + "file4";
 
-      auto oldFileClient = fileSystemClient.GetFileClient(filename1);
-      oldFileClient.Create();
-      auto newFileClient = fileSystemClient.RenameFile(filename1, filename2).Value;
-      auto properties = newFileClient.GetProperties();
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.Value.EncryptionKeySha256.Value());
+      auto oldFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClient->GetFileClient(filename1));
+      oldFileClient->Create();
+      auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClient->RenameFile(filename1, filename2).Value);
+      auto properties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          newFileClient->GetProperties().Value);
+      EXPECT_EQ(customerProvidedKey->KeyHash, properties->EncryptionKeySha256.Value());
       auto newFileClientWithoutEncryptionKey
-          = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, filename2);
-      EXPECT_THROW(newFileClientWithoutEncryptionKey.GetProperties(), StorageException);
-      EXPECT_NO_THROW(fileSystemClientWithoutEncryptionKey.RenameFile(filename2, filename3));
+          = std::make_shared<Files::DataLake::DataLakeFileClient>(
+              Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
+                  AdlsGen2ConnectionString(), m_fileSystemName, filename2));
+      EXPECT_THROW(newFileClientWithoutEncryptionKey->GetProperties(), StorageException);
+      EXPECT_NO_THROW(fileSystemClientWithoutEncryptionKey->RenameFile(filename2, filename3));
 
       // Rename Directory
       const std::string testName(GetTestName());
@@ -453,29 +460,32 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string newDirectoryName = testName + "dir2";
       const std::string newDirectoryName2 = testName + "dir3";
 
-      auto oldDirectoryClient = fileSystemClient.GetDirectoryClient(oldDirectoryName);
+      auto oldDirectoryClient = fileSystemClient->GetDirectoryClient(oldDirectoryName);
       oldDirectoryClient.Create();
       oldDirectoryClient.GetFileClient(testName + "file3").Create();
       oldDirectoryClient.GetSubdirectoryClient(testName + "dir4").Create();
 
       auto newDirectoryClient
-          = fileSystemClient.RenameDirectory(oldDirectoryName, newDirectoryName).Value;
-      properties = newDirectoryClient.GetProperties();
-      EXPECT_TRUE(properties.Value.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.Value.EncryptionKeySha256.Value());
+          = fileSystemClient->RenameDirectory(oldDirectoryName, newDirectoryName).Value;
+      properties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          newDirectoryClient.GetProperties().Value);
+      EXPECT_TRUE(properties->EncryptionKeySha256.HasValue());
+      EXPECT_EQ(customerProvidedKey->KeyHash, properties->EncryptionKeySha256.Value());
       auto newDirectoryClientWithoutEncryptionKey
           = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, newDirectoryName);
       EXPECT_THROW(newDirectoryClientWithoutEncryptionKey.GetProperties(), StorageException);
-      EXPECT_NO_THROW(fileSystemClientWithoutEncryptionKey.RenameDirectory(
+      EXPECT_NO_THROW(fileSystemClientWithoutEncryptionKey->RenameDirectory(
           newDirectoryName, newDirectoryName2));
 
       auto fileSystemClientWithEncryptionKey
-          = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, options);
-      auto created = fileSystemClientWithEncryptionKey.GetFileClient(filename4).Create().Value;
-      EXPECT_TRUE(created.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, created.EncryptionKeySha256.Value());
+          = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+              Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+                  AdlsGen2ConnectionString(), m_fileSystemName, options));
+      auto created = std::make_shared<Files::DataLake::Models::CreatePathResult>(
+          fileSystemClientWithEncryptionKey->GetFileClient(filename4).Create().Value);
+      EXPECT_TRUE(created->EncryptionKeySha256.HasValue());
+      EXPECT_EQ(customerProvidedKey->KeyHash, created->EncryptionKeySha256.Value());
     }
 
     // path works
@@ -487,9 +497,10 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), m_fileSystemName, pathName, options);
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
       EXPECT_NO_THROW(pathClient.SetMetadata(GetMetadata()));
-      auto properties = pathClient.GetProperties();
-      EXPECT_TRUE(properties.Value.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.Value.EncryptionKeySha256.Value());
+      auto properties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          pathClient.GetProperties().Value);
+      EXPECT_TRUE(properties->EncryptionKeySha256.HasValue());
+      EXPECT_EQ(customerProvidedKey->KeyHash, properties->EncryptionKeySha256.Value());
       auto pathClientWithoutEncryptionKey
           = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, pathName);
@@ -507,23 +518,23 @@ namespace Azure { namespace Storage { namespace Test {
           = pathClientWithEncryptionKey.Create(Files::DataLake::Models::PathResourceType::File)
                 .Value;
       EXPECT_TRUE(created.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, created.EncryptionKeySha256.Value());
+      EXPECT_EQ(customerProvidedKey->KeyHash, created.EncryptionKeySha256.Value());
     }
 
     // file works
     {
       const std::string fileName = "file";
       const std::string fileName2 = "file2";
-      auto fileClient = fileSystemClient.GetFileClient(fileName);
+      auto fileClient = fileSystemClient->GetFileClient(fileName);
       auto fileClientWithoutEncryptionKey
           = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, fileName);
       // upload test
       EXPECT_NO_THROW(fileClient.Create());
-      EXPECT_NO_THROW(fileClient.UploadFrom(buffer.data(), bufferSize));
+      EXPECT_NO_THROW(fileClient.UploadFrom(buffer->data(), bufferSize));
       auto result = fileClient.Download();
-      auto downloaded = ReadBodyStream(result.Value.Body);
-      EXPECT_EQ(buffer, downloaded);
+      auto downloaded = std::make_shared<std::vector<uint8_t>>(ReadBodyStream(result.Value.Body));
+      EXPECT_EQ(*buffer, *downloaded);
       EXPECT_NO_THROW(fileClient.Delete());
       // append test
       EXPECT_NO_THROW(fileClient.Create());
@@ -533,21 +544,23 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(fileClientWithoutEncryptionKey.Append(bodyStream, bufferSize), StorageException);
       EXPECT_NO_THROW(fileClient.Flush(bufferSize));
       result = fileClient.Download();
-      downloaded = ReadBodyStream(result.Value.Body);
-      EXPECT_EQ(buffer, downloaded);
+      downloaded = std::make_shared<std::vector<uint8_t>>(ReadBodyStream(result.Value.Body));
+      EXPECT_EQ(*buffer, *downloaded);
       EXPECT_NO_THROW(fileClient.SetMetadata(GetMetadata()));
-      auto properties = fileClient.GetProperties();
-      EXPECT_TRUE(properties.Value.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, properties.Value.EncryptionKeySha256.Value());
+      auto properties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          fileClient.GetProperties().Value);
+      EXPECT_TRUE(properties->EncryptionKeySha256.HasValue());
+      EXPECT_EQ(customerProvidedKey->KeyHash, properties->EncryptionKeySha256.Value());
       EXPECT_THROW(fileClientWithoutEncryptionKey.Flush(bufferSize), StorageException);
       EXPECT_THROW(fileClientWithoutEncryptionKey.Download(), StorageException);
 
       auto fileClientWithEncryptionKey
           = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, fileName2, options);
-      auto created = fileClientWithEncryptionKey.Create().Value;
-      EXPECT_TRUE(created.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, created.EncryptionKeySha256.Value());
+      auto created = std::make_shared<Files::DataLake::Models::CreatePathResult>(
+          fileClientWithEncryptionKey.Create().Value);
+      EXPECT_TRUE(created->EncryptionKeySha256.HasValue());
+      EXPECT_EQ(customerProvidedKey->KeyHash, created->EncryptionKeySha256.Value());
     }
     // directory works
     {
@@ -559,7 +572,7 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string fileName1 = "file1";
       const std::string fileName2 = "file2";
       const std::string fileName3 = "file3";
-      auto directoryClient = fileSystemClient.GetDirectoryClient(directoryName);
+      auto directoryClient = fileSystemClient->GetDirectoryClient(directoryName);
       auto directoryClientWithoutEncryptionKey
           = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
@@ -569,17 +582,18 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(subdirectoryClient.Create());
       auto fileClient = directoryClient.GetFileClient(fileName1);
       EXPECT_NO_THROW(fileClient.Create());
-      auto subdirectoryProperties = subdirectoryClient.GetProperties();
-      EXPECT_EQ(
-          customerProvidedKey.KeyHash, subdirectoryProperties.Value.EncryptionKeySha256.Value());
+      auto subdirectoryProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          subdirectoryClient.GetProperties().Value);
+      EXPECT_EQ(customerProvidedKey->KeyHash, subdirectoryProperties->EncryptionKeySha256.Value());
       auto fileProperties = fileClient.GetProperties();
-      EXPECT_EQ(customerProvidedKey.KeyHash, fileProperties.Value.EncryptionKeySha256.Value());
+      EXPECT_EQ(customerProvidedKey->KeyHash, fileProperties.Value.EncryptionKeySha256.Value());
 
       // rename file
       auto newFileClient
           = directoryClient.RenameFile(fileName1, directoryName + "/" + fileName2).Value;
-      auto newFileProperties = newFileClient.GetProperties();
-      EXPECT_EQ(customerProvidedKey.KeyHash, newFileProperties.Value.EncryptionKeySha256.Value());
+      auto newFileProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          newFileClient.GetProperties().Value);
+      EXPECT_EQ(customerProvidedKey->KeyHash, newFileProperties->EncryptionKeySha256.Value());
       auto newFileClientWithoutEncryptionKey
           = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName + "/" + fileName2);
@@ -591,9 +605,10 @@ namespace Azure { namespace Storage { namespace Test {
           = directoryClient
                 .RenameSubdirectory(subdirectoryName1, directoryName + "/" + subdirectoryName2)
                 .Value;
-      auto newSubdirectoryProperties = newSubdirectoryClient.GetProperties();
+      auto newSubdirectoryProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
+          newSubdirectoryClient.GetProperties().Value);
       EXPECT_EQ(
-          customerProvidedKey.KeyHash, newSubdirectoryProperties.Value.EncryptionKeySha256.Value());
+          customerProvidedKey->KeyHash, newSubdirectoryProperties->EncryptionKeySha256.Value());
       auto newsubdirectoryClientWithoutEncryptionKey
           = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(),
@@ -606,9 +621,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto directoryClientWithEncryptionKey
           = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName2, options);
-      auto created = directoryClientWithEncryptionKey.Create().Value;
-      EXPECT_TRUE(created.EncryptionKeySha256.HasValue());
-      EXPECT_EQ(customerProvidedKey.KeyHash, created.EncryptionKeySha256.Value());
+      auto created = std::make_shared<Files::DataLake::Models::CreatePathResult>(
+          directoryClientWithEncryptionKey.Create().Value);
+      EXPECT_TRUE(created->EncryptionKeySha256.HasValue());
+      EXPECT_EQ(customerProvidedKey->KeyHash, created->EncryptionKeySha256.Value());
     }
   }
 
