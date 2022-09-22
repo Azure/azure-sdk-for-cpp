@@ -6,6 +6,11 @@
 
 ### Breaking Changes
 
+- Changed `AttestationClient::AttestTpm` to match `AttestOpenEnclave` and `AttestSgxEnclave` 
+ - Added `std::vector<uint8_t>` dataToAttest parameter.
+ - Removed `PayLoad` in `TpmAttestationOptions`
+ - Changed `TpmResult` in `TpmAttestationResult` to type `std::vector<uint8_t>`
+
 ### Bugs Fixed
 
 ### Other Changes
