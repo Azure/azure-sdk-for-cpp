@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(Files::DataLake::Models::LeaseState::Leased, response.Value.LeaseState.Value());
       EXPECT_TRUE(response.Value.LeaseDuration.HasValue());
       EXPECT_EQ(
-          Files::DataLake::Models::LeaseDuration::Fixed, response.Value.LeaseDuration.Value());
+          Files::DataLake::Models::LeaseDurationType::Fixed, response.Value.LeaseDuration.Value());
     }
     // relative expiry
     {
