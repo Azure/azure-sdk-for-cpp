@@ -81,6 +81,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.Flush = options.Flush;
     return _detail::FileClient::Append(
         *m_pipeline, m_pathUrl, content, protocolLayerOptions, context);
   }

@@ -231,8 +231,8 @@ directive:
       $.Path.properties["contentLength"]["x-ms-client-name"] = "FileSize";
       $.Path.properties["isDirectory"]["x-ms-client-default"] = false;
       $.Path.properties["EncryptionScope"]["x-nullable"] = true;
-      delete $.Path.properties["creationTime"];
-      delete $.Path.properties["expiryTime"];
+      $.Path.properties["creationTime"] = {"type": "string", "x-ms-format": "win32filetime", "x-ms-client-name": "CreatedOn", "x-nullable": true};
+      $.Path.properties["expiryTime"] = {"type": "string", "x-ms-format": "win32filetime", "x-ms-client-name": "ExpiresOn", "x-nullable": true};
       $.Path.properties["etag"] = {"type": "string", "x-ms-format": "string", "x-ms-client-default": "", "x-ms-client-name": "ETag"};
       delete $.Path.properties["eTag"];
       $.PathList["x-namespace"] = "_detail";

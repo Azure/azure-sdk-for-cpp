@@ -96,6 +96,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The name of the encryption scope under which the blob is encrypted.
        */
       Nullable<std::string> EncryptionScope;
+      Nullable<DateTime> CreatedOn;
+      Nullable<DateTime> ExpiresOn;
       std::string ETag;
     };
     namespace _detail {

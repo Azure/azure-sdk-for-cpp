@@ -259,6 +259,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the lease access conditions.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * If true, the file will be flushed after the append.
+     */
+    Azure::Nullable<bool> Flush;
   };
 
   /**
@@ -373,6 +378,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
+  using SchedulePathDeletionOptions = ScheduleFileDeletionOptions;
+
   /**
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Create.
    * @remark Some optional parameter is mandatory in certain combination.
@@ -413,6 +420,39 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
      */
     Azure::Nullable<std::string> Permissions;
+
+    /**
+     * The owner of the file or directory.
+     */
+    Azure::Nullable<std::string> Owner;
+
+    /**
+     * The owning group of the file or directory.
+     */
+    Azure::Nullable<std::string> Group;
+
+    /**
+     * Sets POSIX access control rights on files and directories. Each access control entry (ACE)
+     * consists of a scope, a type, a user or group identifier, and permissions.
+     */
+    Azure::Nullable<std::vector<Models::Acl>> acls;
+
+    /**
+     * Proposed LeaseId.
+     */
+    Azure::Nullable<std::string> LeaseId;
+
+    /**
+     * Specifies the duration of the lease, in seconds, or InfiniteLeaseDuration for a lease that
+     * never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot
+     * be changed using renew or change. Does not apply to directories.
+     */
+    Azure::Nullable<std::chrono::seconds> LeaseDuration;
+
+    /**
+     * Optional parameters to schedule the file for deletion.
+     */
+    SchedulePathDeletionOptions ScheduleDeletionOptions;
 
     /**
      * Specify the access condition for the path.

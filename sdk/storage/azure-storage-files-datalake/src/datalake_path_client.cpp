@@ -202,6 +202,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Properties = _detail::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
+    protocolLayerOptions.Owner = options.Owner;
+    protocolLayerOptions.Group = options.Group;
+    protocolLayerOptions.ProposedLeaseId = options.LeaseId;
+    if (options.acls.HasValue())
+    {
+      protocolLayerOptions.Acl = Models::Acl::SerializeAcls(options.acls.Value());
+    }
+    if (options.LeaseDuration.HasValue())
+    {
+      protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
+    }
+    if (options.ScheduleDeletionOptions.ExpiresOn.HasValue())
+    {
+      protocolLayerOptions.ExpiresOn = options.ScheduleDeletionOptions.ExpiresOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc1123);
+    }
+    else if (options.ScheduleDeletionOptions.TimeToExpire.HasValue())
+    {
+      protocolLayerOptions.ExpiresOn
+          = std::to_string(options.ScheduleDeletionOptions.TimeToExpire.Value().count());
+    }
     return _detail::PathClient::Create(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
   }
 
