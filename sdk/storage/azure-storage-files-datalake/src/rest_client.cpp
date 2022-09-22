@@ -286,6 +286,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.Value()));
       }
+      if (options.ExpiryOptions.HasValue() && !options.ExpiryOptions.Value().empty())
+      {
+        request.SetHeader("x-ms-expiry-option", options.ExpiryOptions.Value());
+      }
       if (options.ExpiresOn.HasValue() && !options.ExpiresOn.Value().empty())
       {
         request.SetHeader("x-ms-expiry-time", options.ExpiresOn.Value());

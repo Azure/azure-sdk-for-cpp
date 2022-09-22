@@ -381,6 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> Acl;
         Nullable<std::string> ProposedLeaseId;
         Nullable<int64_t> LeaseDuration;
+        Nullable<std::string> ExpiryOptions;
         Nullable<std::string> ExpiresOn;
       };
       static Response<Models::CreatePathResult> Create(

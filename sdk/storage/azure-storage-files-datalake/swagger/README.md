@@ -251,10 +251,6 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $["x-ms-paths"]["/{filesystem}/{path}"].put.parameters
-    transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/PathExpiryOptionsOptional"))));
-  - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}"].put.responses
     transform: >
       $["201"].headers["Content-Length"]["x-ms-client-name"] = "FileSize";
@@ -281,7 +277,9 @@ directive:
     where: $.parameters
     transform: >
       delete $["PathExpiryOptions"];
-      delete $["PathExpiryOptionsOptional"];
+      delete $.PathExpiryOptionsOptional["enum"];
+      delete $.PathExpiryOptionsOptional["x-ms-enum"];
+
 ```
 
 ### DeletePath

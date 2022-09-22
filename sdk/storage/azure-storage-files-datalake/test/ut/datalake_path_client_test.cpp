@@ -57,6 +57,83 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
+  TEST_F(DataLakePathClientTest, CreateWithOptions)
+  {
+    // owner&group
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "owner_group");
+      Files::DataLake::CreateFileOptions options;
+      options.Group = "$superuser";
+      options.Owner = "$superuser";
+      EXPECT_NO_THROW(client.Create(options));
+      auto response = client.GetAccessControlList();
+      EXPECT_EQ(options.Group.Value(), response.Value.Group);
+      EXPECT_EQ(options.Owner.Value(), response.Value.Owner);
+    }
+    // acl
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acl");
+      Files::DataLake::CreateFileOptions options;
+      auto acls = GetValidAcls();
+      options.Acls = acls;
+      EXPECT_NO_THROW(client.Create(options));
+      auto resultAcls = client.GetAccessControlList().Value.Acls;
+      EXPECT_EQ(resultAcls.size(), acls.size() + 1); // Always append mask::rwx
+      for (const auto& acl : acls)
+      {
+        auto iter = std::find_if(
+            resultAcls.begin(),
+            resultAcls.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_NE(iter, resultAcls.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+    }
+    // lease
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_lease");
+      Files::DataLake::CreateFileOptions options;
+      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseDuration = std::chrono::seconds(20);
+      EXPECT_NO_THROW(client.Create(options));
+      auto response = client.GetProperties();
+      EXPECT_TRUE(response.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, response.Value.LeaseStatus.Value());
+      EXPECT_TRUE(response.Value.LeaseState.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseState::Leased, response.Value.LeaseState.Value());
+      EXPECT_TRUE(response.Value.LeaseDuration.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseDuration::Fixed, response.Value.LeaseDuration.Value());
+    }
+    // relative expiry
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_relative_expiry");
+      Files::DataLake::CreateFileOptions options;
+      options.ScheduleDeletionOptions.TimeToExpire = std::chrono::hours(1);
+      EXPECT_NO_THROW(client.Create(options));
+      auto response = client.GetProperties();
+      DateTime ExpiryTime
+          = response.Value.CreatedOn + options.ScheduleDeletionOptions.TimeToExpire.Value();
+      EXPECT_TRUE(response.Value.ExpiresOn.HasValue());
+      EXPECT_EQ(ExpiryTime, response.Value.ExpiresOn.Value());
+    }
+    // absolute expiry
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_absolute_expiry");
+      Files::DataLake::CreateFileOptions options;
+      options.ScheduleDeletionOptions.ExpiresOn = Azure::DateTime::Parse(
+          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+      EXPECT_NO_THROW(client.Create(options));
+      auto response = client.GetProperties();
+      EXPECT_TRUE(response.Value.ExpiresOn.HasValue());
+      EXPECT_EQ(
+          options.ScheduleDeletionOptions.ExpiresOn.Value(), response.Value.ExpiresOn.Value());
+    }
+  }
+
   TEST_F(DataLakePathClientTest, PathMetadata)
   {
     auto metadata1 = GetMetadata();

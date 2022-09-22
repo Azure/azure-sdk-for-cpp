@@ -205,9 +205,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
     protocolLayerOptions.ProposedLeaseId = options.LeaseId;
-    if (options.acls.HasValue())
+    if (options.Acls.HasValue())
     {
-      protocolLayerOptions.Acl = Models::Acl::SerializeAcls(options.acls.Value());
+      protocolLayerOptions.Acl = Models::Acl::SerializeAcls(options.Acls.Value());
     }
     if (options.LeaseDuration.HasValue())
     {
@@ -215,11 +215,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     if (options.ScheduleDeletionOptions.ExpiresOn.HasValue())
     {
+      protocolLayerOptions.ExpiryOptions
+          = Files::DataLake::ScheduleFileExpiryOriginType::Absolute.ToString();
       protocolLayerOptions.ExpiresOn = options.ScheduleDeletionOptions.ExpiresOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc1123);
     }
     else if (options.ScheduleDeletionOptions.TimeToExpire.HasValue())
     {
+      protocolLayerOptions.ExpiryOptions
+          = Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow.ToString();
       protocolLayerOptions.ExpiresOn
           = std::to_string(options.ScheduleDeletionOptions.TimeToExpire.Value().count());
     }

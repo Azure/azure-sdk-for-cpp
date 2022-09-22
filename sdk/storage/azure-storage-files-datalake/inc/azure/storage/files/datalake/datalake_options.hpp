@@ -510,7 +510,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Sets POSIX access control rights on files and directories. Each access control entry (ACE)
      * consists of a scope, a type, a user or group identifier, and permissions.
      */
-    Azure::Nullable<std::vector<Models::Acl>> acls;
+    Azure::Nullable<std::vector<Models::Acl>> Acls;
 
     /**
      * Proposed LeaseId.

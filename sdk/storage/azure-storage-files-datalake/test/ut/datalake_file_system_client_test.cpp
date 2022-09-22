@@ -289,6 +289,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
+        EXPECT_TRUE(iter->CreatedOn.HasValue());
+        EXPECT_TRUE(iter->ExpiresOn.HasValue());
       }
       for (const auto& name : m_pathNameSetB)
       {
@@ -299,6 +301,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
+        EXPECT_TRUE(iter->CreatedOn.HasValue());
+        EXPECT_TRUE(iter->ExpiresOn.HasValue());
       }
     }
     {
