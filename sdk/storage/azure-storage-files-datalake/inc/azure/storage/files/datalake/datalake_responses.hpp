@@ -194,60 +194,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using ArchiveStatus = Blobs::Models::ArchiveStatus;
 
     /**
-     * @brief An access control object.
-     */
-    struct Acl final
-    {
-      /**
-       * The scope of the ACL.
-       */
-      std::string Scope;
-
-      /**
-       * The type of the ACL.
-       */
-      std::string Type;
-
-      /**
-       * The ID of the ACL.
-       */
-      std::string Id;
-
-      /**
-       * The permissions of the ACL.
-       */
-      std::string Permissions;
-
-      /**
-       * @brief Creates an Acl based on acl input string.
-       * @param aclString the string to be parsed to Acl.
-       * @return Acl
-       */
-      static Acl FromString(const std::string& aclString);
-
-      /**
-       * @brief Creates a string from an Acl.
-       * @param acl the acl object to be serialized to a string.
-       * @return std::string
-       */
-      static std::string ToString(const Acl& acl);
-
-      /**
-       * @brief Creates a vector of Acl from a string that indicates multiple acls.
-       * @param aclsString the string that contains multiple acls.
-       * @return std::vector<Acl>
-       */
-      static std::vector<Acl> DeserializeAcls(const std::string& aclsString);
-
-      /**
-       * @brief Creates a string that contains several Acls.
-       * @param aclsArray the acls to be serialized into a string.
-       * @return std::string
-       */
-      static std::string SerializeAcls(const std::vector<Acl>& aclsArray);
-    };
-
-    /**
      * @brief The properties of the path.
      */
     struct PathProperties final

@@ -245,6 +245,22 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(buffer, downloaded);
   }
 
+  TEST_F(DataLakeFileClientTest, AppendFileWithFlush)
+  {
+    const int32_t bufferSize = 4 * 1024; // 4KB data size
+    std::vector<uint8_t> buffer(bufferSize, 'x');
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
+    auto properties1 = m_fileClient->GetProperties();
+
+    // Append with flush option
+    Files::DataLake::AppendFileOptions options;
+    options.Flush = true;
+    m_fileClient->Append(*bufferStream, 0, options);
+    auto properties2 = m_fileClient->GetProperties();
+    EXPECT_NE(properties1.Value.ETag, properties2.Value.ETag);
+  }
+
   TEST_F(DataLakeFileClientTest, FileReadReturns)
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size

@@ -1,0 +1,184 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "aa58933d-3f62-48d4-521c-b4a6402b0800",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Thu, 22 Sep 2022 06:23:12 GMT",
+        "etag": "\"0x8DA9C62ED0BEB25\"",
+        "last-modified": "Thu, 22 Sep 2022 06:23:12 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "aa58933d-3f62-48d4-521c-b4a6402b0800",
+        "x-ms-request-id": "b34a3186-e01e-0055-644b-cec224000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithflush?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "29b5eac1-eb3e-477f-47a9-0756f1565632",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Thu, 22 Sep 2022 06:23:13 GMT",
+        "etag": "\"0x8DA9C62EDD4DA1A\"",
+        "last-modified": "Thu, 22 Sep 2022 06:23:13 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "29b5eac1-eb3e-477f-47a9-0756f1565632",
+        "x-ms-request-id": "0d674b39-301f-000b-534b-ce29c4000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithflush/datalakefileclienttestappendfilewithflush?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "c123b10c-b02a-4d1a-482b-412e935f7169",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "content-length": "0",
+        "content-type": "application/octet-stream",
+        "date": "Thu, 22 Sep 2022 06:23:13 GMT",
+        "etag": "\"0x8DA9C62EDD4DA1A\"",
+        "last-modified": "Thu, 22 Sep 2022 06:23:13 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "c123b10c-b02a-4d1a-482b-412e935f7169",
+        "x-ms-creation-time": "Thu, 22 Sep 2022 06:23:13 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rw-r-----",
+        "x-ms-request-id": "b34a342d-e01e-0055-444b-cec224000000",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithflush/datalakefileclienttestappendfilewithflush"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "90b96b7c-73f8-4e1b-4951-fd5c2847eecc",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PATCH",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Thu, 22 Sep 2022 06:23:14 GMT",
+        "etag": "\"0x8DA9C62EE33A993\"",
+        "last-modified": "Thu, 22 Sep 2022 06:23:14 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "90b96b7c-73f8-4e1b-4951-fd5c2847eecc",
+        "x-ms-request-id": "0d674b51-301f-000b-6a4b-ce29c4000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithflush/datalakefileclienttestappendfilewithflush?action=append&flush=true&position=0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "14ce5112-d71f-44dd-7120-e89e7a4903c2",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "content-length": "4096",
+        "content-type": "application/octet-stream",
+        "date": "Thu, 22 Sep 2022 06:23:14 GMT",
+        "etag": "\"0x8DA9C62EE33A993\"",
+        "last-modified": "Thu, 22 Sep 2022 06:23:14 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "14ce5112-d71f-44dd-7120-e89e7a4903c2",
+        "x-ms-creation-time": "Thu, 22 Sep 2022 06:23:13 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rw-r-----",
+        "x-ms-request-id": "b34a3531-e01e-0055-324b-cec224000000",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithflush/datalakefileclienttestappendfilewithflush"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "51f29ec1-298b-462c-7dca-b510f2d61611",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Thu, 22 Sep 2022 06:23:14 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "51f29ec1-298b-462c-7dca-b510f2d61611",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-deletion-id": "133083013949561537",
+        "x-ms-request-id": "0d674b69-301f-000b-024b-ce29c4000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithflush/datalakefileclienttestappendfilewithflush"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "21c7f2e4-f23f-4371-61fc-248c7577c236",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Thu, 22 Sep 2022 06:23:15 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "21c7f2e4-f23f-4371-61fc-248c7577c236",
+        "x-ms-request-id": "b34a3666-e01e-0055-504b-cec224000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithflush?restype=container"
+    }
+  ]
+}

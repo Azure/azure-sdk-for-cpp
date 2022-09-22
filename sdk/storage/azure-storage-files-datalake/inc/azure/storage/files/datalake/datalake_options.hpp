@@ -23,6 +23,60 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using SignedIdentifier = Blobs::Models::SignedIdentifier;
     using FileQueryArrowField = Blobs::Models::BlobQueryArrowField;
     using FileQueryArrowFieldType = Blobs::Models::BlobQueryArrowFieldType;
+
+    /**
+     * @brief An access control object.
+     */
+    struct Acl final
+    {
+      /**
+       * The scope of the ACL.
+       */
+      std::string Scope;
+
+      /**
+       * The type of the ACL.
+       */
+      std::string Type;
+
+      /**
+       * The ID of the ACL.
+       */
+      std::string Id;
+
+      /**
+       * The permissions of the ACL.
+       */
+      std::string Permissions;
+
+      /**
+       * @brief Creates an Acl based on acl input string.
+       * @param aclString the string to be parsed to Acl.
+       * @return Acl
+       */
+      static Acl FromString(const std::string& aclString);
+
+      /**
+       * @brief Creates a string from an Acl.
+       * @param acl the acl object to be serialized to a string.
+       * @return std::string
+       */
+      static std::string ToString(const Acl& acl);
+
+      /**
+       * @brief Creates a vector of Acl from a string that indicates multiple acls.
+       * @param aclsString the string that contains multiple acls.
+       * @return std::vector<Acl>
+       */
+      static std::vector<Acl> DeserializeAcls(const std::string& aclsString);
+
+      /**
+       * @brief Creates a string that contains several Acls.
+       * @param aclsArray the acls to be serialized into a string.
+       * @return std::string
+       */
+      static std::string SerializeAcls(const std::vector<Acl>& aclsArray);
+    };
   } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
@@ -378,6 +432,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
+  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::UploadFrom.
+   */
+  struct ScheduleFileDeletionOptions final
+  {
+    /**
+     * The expiry time from the specified origin. Only work if ExpiryOrigin is
+     * ScheduleFileExpiryOriginType::RelativeToCreation or
+     * ScheduleFileExpiryOriginType::RelativeToNow.
+     */
+    Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
+
+    /**
+     * The expiry time in RFC1123 format. Only work if ExpiryOrigin is
+     * ScheduleFileExpiryOriginType::Absolute.
+     */
+    Azure::Nullable<DateTime> ExpiresOn;
+  };
+
   using SchedulePathDeletionOptions = ScheduleFileDeletionOptions;
 
   /**
@@ -651,27 +726,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       int32_t Concurrency = 5;
     } TransferOptions;
-  };
-
-  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
-
-  /**
-   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::UploadFrom.
-   */
-  struct ScheduleFileDeletionOptions final
-  {
-    /**
-     * The expiry time from the specified origin. Only work if ExpiryOrigin is
-     * ScheduleFileExpiryOriginType::RelativeToCreation or
-     * ScheduleFileExpiryOriginType::RelativeToNow.
-     */
-    Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
-
-    /**
-     * The expiry time in RFC1123 format. Only work if ExpiryOrigin is
-     * ScheduleFileExpiryOriginType::Absolute.
-     */
-    Azure::Nullable<DateTime> ExpiresOn;
   };
 
   using AcquireLeaseOptions = Blobs::AcquireLeaseOptions;
