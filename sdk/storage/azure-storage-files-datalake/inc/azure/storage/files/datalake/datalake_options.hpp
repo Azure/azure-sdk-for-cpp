@@ -447,7 +447,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
 
     /**
-     * The expiry time in RFC1123 format. Only work if ExpiryOrigin is
+     * The expiry time in RFC1123 format. Only works if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
      */
     Azure::Nullable<DateTime> ExpiresOn;
