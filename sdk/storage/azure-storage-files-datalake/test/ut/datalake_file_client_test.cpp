@@ -251,14 +251,32 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> buffer(bufferSize, 'x');
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
-    auto properties1 = m_fileClient->GetProperties();
 
     // Append with flush option
-    Files::DataLake::AppendFileOptions options;
-    options.Flush = true;
-    m_fileClient->Append(*bufferStream, 0, options);
-    auto properties2 = m_fileClient->GetProperties();
-    EXPECT_NE(properties1.Value.ETag, properties2.Value.ETag);
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_flush_true");
+      client.Create();
+      auto properties1 = client.GetProperties();
+      Files::DataLake::AppendFileOptions options;
+      options.Flush = true;
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties2 = client.GetProperties();
+      EXPECT_NE(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_EQ(bufferSize, properties2.Value.FileSize);
+    }
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_flush_false");
+      client.Create();
+      auto properties1 = client.GetProperties();
+      Files::DataLake::AppendFileOptions options;
+      options.Flush = false;
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties2 = client.GetProperties();
+      EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_EQ(0ll, properties2.Value.FileSize);
+    }
   }
 
   TEST_F(DataLakeFileClientTest, FileReadReturns)
@@ -426,8 +444,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     class UploadFile : public DataLakeFileClientTest,
-                       public ::testing::WithParamInterface<FileConcurrentUploadParameter> {
-    };
+                       public ::testing::WithParamInterface<FileConcurrentUploadParameter> {};
 
     std::string GetUploadSuffix(const testing::TestParamInfo<UploadFile::ParamType>& info)
     {

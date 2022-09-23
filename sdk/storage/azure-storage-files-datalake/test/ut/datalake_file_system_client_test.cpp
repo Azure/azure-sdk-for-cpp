@@ -335,6 +335,23 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = m_fileSystemClient->ListPaths(true, options);
       EXPECT_LE(2U, response.Paths.size());
     }
+    {
+      // check expiry time
+      const std::string filename = GetTestNameLowerCase() + "check_expiry";
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "check_expiry");
+      Files::DataLake::CreateFileOptions createOptions;
+      createOptions.ScheduleDeletionOptions.ExpiresOn = Azure::DateTime::Parse(
+          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+      client.Create(createOptions);
+
+      auto result = ListAllPaths(false);
+      auto iter = std::find_if(
+          result.begin(), result.end(), [&filename](const Files::DataLake::Models::PathItem& path) {
+            return path.Name == filename;
+          });
+      EXPECT_TRUE(iter->ExpiresOn.HasValue());
+      EXPECT_EQ(createOptions.ScheduleDeletionOptions.ExpiresOn.Value(), iter->ExpiresOn.Value());
+    }
   }
 
   TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
