@@ -216,6 +216,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
     }
+    AZURE_ASSERT_MSG(
+        !(options.ScheduleDeletionOptions.ExpiresOn.HasValue()
+          && options.ScheduleDeletionOptions.TimeToExpire.HasValue()),
+        "ExpiresOn and TimeToExpire are mutually exclusive.");
     if (options.ScheduleDeletionOptions.ExpiresOn.HasValue())
     {
       protocolLayerOptions.ExpiryOptions
