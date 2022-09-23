@@ -23,6 +23,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using SignedIdentifier = Blobs::Models::SignedIdentifier;
     using FileQueryArrowField = Blobs::Models::BlobQueryArrowField;
     using FileQueryArrowFieldType = Blobs::Models::BlobQueryArrowFieldType;
+    using EncryptionAlgorithmType = Blobs::Models::EncryptionAlgorithmType;
 
     /**
      * @brief An access control object.
@@ -81,6 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
+  using EncryptionKey = Blobs::EncryptionKey;
 
   /**
    * @brief Client options used to initialize all DataLake clients.
@@ -100,6 +102,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * API version used by this client.
      */
     std::string ApiVersion;
+
+    /**
+     * @brief Holds the customer provided key used when making requests.
+     */
+    Azure::Nullable<EncryptionKey> CustomerProvidedKey;
   };
 
   /**

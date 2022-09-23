@@ -181,6 +181,8 @@ directive:
     transform: >
       $.Continuation["x-ms-client-name"] = "ContinuationToken";
       $.EncryptionKeySha256["format"] = "byte";
+      delete $.EncryptionAlgorithm["enum"];
+      delete $.EncryptionAlgorithm["x-ms-enum"];
   - from: swagger-document
     where: $.definitions
     transform: >
