@@ -442,7 +442,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::UploadFrom.
+   * @brief Options for scheduling the deletion of a path.
    */
   struct ScheduleFileDeletionOptions final
   {
@@ -450,12 +450,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * The expiry time from the specified origin. Only work if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::RelativeToCreation or
      * ScheduleFileExpiryOriginType::RelativeToNow.
+     * Does not apply to directories.
+     * TimeToExpire and ExpiresOn cannot both be set.
      */
     Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
 
     /**
      * The expiry time in RFC1123 format. Only works if ExpiryOrigin is
      * ScheduleFileExpiryOriginType::Absolute.
+     * Does not apply to directories.
+     * ExpiresOn and TimeToExpire cannot both be set.
      */
     Azure::Nullable<DateTime> ExpiresOn;
   };
