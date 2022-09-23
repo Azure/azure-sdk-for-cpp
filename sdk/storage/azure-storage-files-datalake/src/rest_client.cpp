@@ -253,7 +253,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "x-ms-encryption-key-sha256",
             Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
       }
-      request.SetHeader("x-ms-encryption-algorithm", "AES256");
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
       if (options.Owner.HasValue() && !options.Owner.Value().empty())
       {
         request.SetHeader("x-ms-owner", options.Owner.Value());
@@ -661,7 +664,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "x-ms-encryption-key-sha256",
             Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
       }
-      request.SetHeader("x-ms-encryption-algorithm", "AES256");
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -728,7 +734,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "x-ms-encryption-key-sha256",
             Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
       }
-      request.SetHeader("x-ms-encryption-algorithm", "AES256");
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
       if (options.Flush.HasValue())
       {
         request.GetUrl().AppendQueryParameter("flush", options.Flush.Value() ? "true" : "false");

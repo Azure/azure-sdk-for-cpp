@@ -374,6 +374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<DateTime> SourceIfUnmodifiedSince;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> Owner;
         Nullable<std::string> Group;
         Nullable<std::string> Acl;
@@ -478,6 +479,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<DateTime> IfUnmodifiedSince;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
       };
       static Response<Models::FlushFileResult> Flush(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -492,6 +494,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
         Nullable<bool> Flush;
       };
       static Response<Models::AppendFileResult> Append(

@@ -50,7 +50,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            _detail::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -78,7 +79,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            _detail::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -107,7 +109,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
-                                            _detail::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -129,7 +132,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_fileSystemUrl;
     builder.AppendPath(_internal::UrlEncodePath(fileName));
     auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
-    return DataLakeFileClient(std::move(builder), std::move(blobClient), m_pipeline);
+    return DataLakeFileClient(
+        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
   }
 
   DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
@@ -138,7 +142,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_fileSystemUrl;
     builder.AppendPath(_internal::UrlEncodePath(directoryName));
     return DataLakeDirectoryClient(
-        builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
+        builder,
+        m_blobContainerClient.GetBlobClient(directoryName),
+        m_pipeline,
+        m_customerProvidedKey);
   }
 
   Azure::Response<Models::CreateFileSystemResult> DataLakeFileSystemClient::Create(
@@ -356,10 +363,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    auto renamedBlobClient
-        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedBlobClient = Blobs::BlobClient(
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
     auto renamedFileClient = DataLakeFileClient(
-        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+        std::move(destinationDfsUrl),
+        std::move(renamedBlobClient),
+        m_pipeline,
+        m_customerProvidedKey);
     return Azure::Response<DataLakeFileClient>(
         std::move(renamedFileClient), std::move(result.RawResponse));
   }
@@ -404,10 +414,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    auto renamedBlobClient
-        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedBlobClient = Blobs::BlobClient(
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
-        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+        std::move(destinationDfsUrl),
+        std::move(renamedBlobClient),
+        m_pipeline,
+        m_customerProvidedKey);
     return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), std::move(result.RawResponse));
   }
