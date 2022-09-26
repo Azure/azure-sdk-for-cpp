@@ -192,6 +192,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileSystemClient::ListPaths.
+   */
+  struct ListDeletedPathsOptions final
+  {
+    /**
+     * Gets the paths that have recently been soft deleted in this file system.
+     */
+    Azure::Nullable<std::string> PathPrefix;
+
+    /**
+     * The number of paths returned with each invocation is limited. If the number of paths to be
+     * returned exceeds this limit, a continuation token is returned in the response header
+     * x-ms-continuation. When a continuation token is returned in the response, it must be
+     * specified in a subsequent invocation of the list operation to continue listing the paths.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * An optional value that specifies the maximum number of items to return. If omitted or greater
+     * than 5,000, the response will include up to 5,000 items.
+     */
+    Azure::Nullable<int32_t> PageSizeHint;
+  };
+
+  /**
    * @brief Optional parameters for
    * #Azure::Storage::Files::DataLake::FileSystemClient::GetAccessPolicy.
    */

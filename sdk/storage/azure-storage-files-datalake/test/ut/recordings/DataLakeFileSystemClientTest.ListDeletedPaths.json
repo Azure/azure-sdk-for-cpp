@@ -1,0 +1,334 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "3cf7aba9-e437-4ab4-4cee-72198097ba87",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:05 GMT",
+        "etag": "\"0x8DA9F69420DBD38\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "3cf7aba9-e437-4ab4-4cee-72198097ba87",
+        "x-ms-request-id": "be97020f-a01e-0044-7052-d15890000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestlistdeletedpaths?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "b7421dc7-604f-4384-5ed0-afb925935d7b",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:06 GMT",
+        "etag": "\"0x8DA9F6942E67873\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:06 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b7421dc7-604f-4384-5ed0-afb925935d7b",
+        "x-ms-request-id": "efa84174-001f-002f-4552-d1df64000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_file_deleted?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "f78b80df-1699-4e67-5b29-409d5369b4e1",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:07 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f78b80df-1699-4e67-5b29-409d5369b4e1",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-deletion-id": "133086339672719386",
+        "x-ms-request-id": "efa841dd-001f-002f-2d52-d1df64000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_file_deleted"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "f424b64d-385d-4d4d-7ccf-43a2dc19a05d",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:07 GMT",
+        "etag": "\"0x8DA9F694366BCBC\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:07 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f424b64d-385d-4d4d-7ccf-43a2dc19a05d",
+        "x-ms-request-id": "efa8426f-001f-002f-3f52-d1df64000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_file?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "f33aa0ba-f5e5-421f-61d3-35514d46d8dc",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:07 GMT",
+        "etag": "\"0x8DA9F694396EC98\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:08 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f33aa0ba-f5e5-421f-61d3-35514d46d8dc",
+        "x-ms-request-id": "efa842c1-001f-002f-1152-d1df64000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_dir_deleted?resource=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "ab005b41-2432-4c3a-7f61-e413a866fe5e",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:08 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ab005b41-2432-4c3a-7f61-e413a866fe5e",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-deletion-id": "133086339683639968",
+        "x-ms-request-id": "efa842f9-001f-002f-4952-d1df64000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_dir_deleted?recursive=false"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "7c115f85-8848-4fa5-5f43-501b10d8b217",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:08 GMT",
+        "etag": "\"0x8DA9F6943FBB25C\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:08 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7c115f85-8848-4fa5-5f43-501b10d8b217",
+        "x-ms-request-id": "efa84337-001f-002f-0752-d1df64000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_dir?resource=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "678b1629-04fe-4a90-7f3d-dd8736383def",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://zchangdatalake.blob.core.windows.net/\" ContainerName=\"datalakefilesystemclienttestlistdeletedpaths\"><Blobs><Blob><Name>listdeletedpaths_dir_deleted</Name><DeletionId>133086339683639968</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Mon, 26 Sep 2022 02:46:08 GMT</Creation-Time><Last-Modified>Mon, 26 Sep 2022 02:46:08 GMT</Last-Modified><Expiry-Time>Mon, 03 Oct 2022 02:46:08 GMT</Expiry-Time><Etag>0x8DA9F694396EC98</Etag><ResourceType>directory</ResourceType><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Mon, 26 Sep 2022 02:46:08 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties><OrMetadata /></Blob><Blob><Name>listdeletedpaths_file_deleted</Name><DeletionId>133086339672719386</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Mon, 26 Sep 2022 02:46:06 GMT</Creation-Time><Last-Modified>Mon, 26 Sep 2022 02:46:06 GMT</Last-Modified><Expiry-Time>Mon, 03 Oct 2022 02:46:07 GMT</Expiry-Time><Etag>0x8DA9F6942E67873</Etag><ResourceType>file</ResourceType><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Mon, 26 Sep 2022 02:46:07 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Mon, 26 Sep 2022 02:46:08 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "678b1629-04fe-4a90-7f3d-dd8736383def",
+        "x-ms-request-id": "be9715b0-a01e-0044-6652-d15890000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestlistdeletedpaths?comp=list&restype=container&showonly=deleted"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "d9fc970d-db09-4afa-59e2-67488a1a3c10",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://zchangdatalake.blob.core.windows.net/\" ContainerName=\"datalakefilesystemclienttestlistdeletedpaths\"><MaxResults>1</MaxResults><Blobs><Blob><Name>listdeletedpaths_dir_deleted</Name><DeletionId>133086339683639968</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Mon, 26 Sep 2022 02:46:08 GMT</Creation-Time><Last-Modified>Mon, 26 Sep 2022 02:46:08 GMT</Last-Modified><Expiry-Time>Mon, 03 Oct 2022 02:46:08 GMT</Expiry-Time><Etag>0x8DA9F694396EC98</Etag><ResourceType>directory</ResourceType><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Mon, 26 Sep 2022 02:46:08 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties><OrMetadata /></Blob></Blobs><NextMarker>2!384!MDAwMjQ0IVZCYjR2YWVqcisrVHBxNEJHS2NCR0tFQkwzcGphR0Z1WjJSaGRHRnNZV3RsQVRBeFJEaENNRGd6TlVGR016VkdOak12SkhSeVlYTm9MMlJoZEdGc1lXdGxabWxzWlhONWMzUmxiV05zYVdWdWRIUmxjM1JzYVhOMFpHVnNaWFJsWkhCaGRHaHpBVEF4UkRoRU1UVXlNVVk1TnpoQ09VUUNMMnhwYzNSa1pXeGxkR1ZrY0dGMGFITmZabWxzWlY5a1pXeGxkR1ZrQVRJd01qSXRNRGt0TWpaVU1ESTZORFk2TURjdU1qY3hPVE00TmxvV0FBQUEhMDAwMDI4ITIwMjItMDktMjZUMDI6NDY6MDkuMzI1MzU2OVoh</NextMarker></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Mon, 26 Sep 2022 02:46:09 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "d9fc970d-db09-4afa-59e2-67488a1a3c10",
+        "x-ms-request-id": "be9716b5-a01e-0044-1a52-d15890000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestlistdeletedpaths?comp=list&maxresults=1&restype=container&showonly=deleted"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "e6d947cf-03a2-40d8-45dd-33b84985ca67",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://zchangdatalake.blob.core.windows.net/\" ContainerName=\"datalakefilesystemclienttestlistdeletedpaths\"><Marker>2!384!MDAwMjQ0IVZCYjR2YWVqcisrVHBxNEJHS2NCR0tFQkwzcGphR0Z1WjJSaGRHRnNZV3RsQVRBeFJEaENNRGd6TlVGR016VkdOak12SkhSeVlYTm9MMlJoZEdGc1lXdGxabWxzWlhONWMzUmxiV05zYVdWdWRIUmxjM1JzYVhOMFpHVnNaWFJsWkhCaGRHaHpBVEF4UkRoRU1UVXlNVVk1TnpoQ09VUUNMMnhwYzNSa1pXeGxkR1ZrY0dGMGFITmZabWxzWlY5a1pXeGxkR1ZrQVRJd01qSXRNRGt0TWpaVU1ESTZORFk2TURjdU1qY3hPVE00TmxvV0FBQUEhMDAwMDI4ITIwMjItMDktMjZUMDI6NDY6MDkuMzI1MzU2OVoh</Marker><MaxResults>1</MaxResults><Blobs><Blob><Name>listdeletedpaths_file_deleted</Name><DeletionId>133086339672719386</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Mon, 26 Sep 2022 02:46:06 GMT</Creation-Time><Last-Modified>Mon, 26 Sep 2022 02:46:06 GMT</Last-Modified><Expiry-Time>Mon, 03 Oct 2022 02:46:07 GMT</Expiry-Time><Etag>0x8DA9F6942E67873</Etag><ResourceType>file</ResourceType><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Mon, 26 Sep 2022 02:46:07 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Mon, 26 Sep 2022 02:46:09 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "e6d947cf-03a2-40d8-45dd-33b84985ca67",
+        "x-ms-request-id": "be971796-a01e-0044-4952-d15890000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestlistdeletedpaths?comp=list&marker=2!384!MDAwMjQ0IVZCYjR2YWVqcisrVHBxNEJHS2NCR0tFQkwzcGphR0Z1WjJSaGRHRnNZV3RsQVRBeFJEaENNRGd6TlVGR016VkdOak12SkhSeVlYTm9MMlJoZEdGc1lXdGxabWxzWlhONWMzUmxiV05zYVdWdWRIUmxjM1JzYVhOMFpHVnNaWFJsWkhCaGRHaHpBVEF4UkRoRU1UVXlNVVk1TnpoQ09VUUNMMnhwYzNSa1pXeGxkR1ZrY0dGMGFITmZabWxzWlY5a1pXeGxkR1ZrQVRJd01qSXRNRGt0TWpaVU1ESTZORFk2TURjdU1qY3hPVE00TmxvV0FBQUEhMDAwMDI4ITIwMjItMDktMjZUMDI6NDY6MDkuMzI1MzU2OVoh&maxresults=1&restype=container&showonly=deleted"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "605b37e9-f77a-4c20-72ad-66b4f76acde6",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:09 GMT",
+        "etag": "\"0x8DA9F6944B11B15\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:09 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "605b37e9-f77a-4c20-72ad-66b4f76acde6",
+        "x-ms-request-id": "efa84415-001f-002f-6252-d1df64000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_prefix?resource=directory"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "8face8d2-62ae-4e5c-4dd9-cf74aaf0d676",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:09 GMT",
+        "etag": "\"0x8DA9F6944E44615\"",
+        "last-modified": "Mon, 26 Sep 2022 02:46:10 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8face8d2-62ae-4e5c-4dd9-cf74aaf0d676",
+        "x-ms-request-id": "efa84458-001f-002f-2252-d1df64000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_prefix/file?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "135bf5f2-9e7c-471f-6f6e-07d47a1f763c",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:10 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "135bf5f2-9e7c-471f-6f6e-07d47a1f763c",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-deletion-id": "133086339706103860",
+        "x-ms-request-id": "efa8449a-001f-002f-6352-d1df64000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefilesystemclienttestlistdeletedpaths/listdeletedpaths_prefix/file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "9bae0a34-ab01-430d-6f8d-dd7537f288f8",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://zchangdatalake.blob.core.windows.net/\" ContainerName=\"datalakefilesystemclienttestlistdeletedpaths\"><Prefix>listdeletedpaths_prefix</Prefix><Blobs><Blob><Name>listdeletedpaths_prefix/file</Name><DeletionId>133086339706103860</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Mon, 26 Sep 2022 02:46:10 GMT</Creation-Time><Last-Modified>Mon, 26 Sep 2022 02:46:10 GMT</Last-Modified><Expiry-Time>Mon, 03 Oct 2022 02:46:10 GMT</Expiry-Time><Etag>0x8DA9F6944E44615</Etag><ResourceType>file</ResourceType><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Mon, 26 Sep 2022 02:46:10 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Mon, 26 Sep 2022 02:46:10 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "9bae0a34-ab01-430d-6f8d-dd7537f288f8",
+        "x-ms-request-id": "be971be9-a01e-0044-7e52-d15890000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestlistdeletedpaths?comp=list&prefix=listdeletedpaths_prefix&restype=container&showonly=deleted"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "dd33d50f-f5e5-4419-5d79-4b7ff37e0d33",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Mon, 26 Sep 2022 02:46:11 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "dd33d50f-f5e5-4419-5d79-4b7ff37e0d33",
+        "x-ms-request-id": "be971ce1-a01e-0044-4352-d15890000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefilesystemclienttestlistdeletedpaths?restype=container"
+    }
+  ]
+}

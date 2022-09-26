@@ -239,6 +239,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const RenameDirectoryOptions& options = RenameDirectoryOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Gets the paths that have recently been soft deleted in this file system.
+     * @param options Optional parameters to list deleted paths.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<DataLakePathClient> The client targets the restored path.
+     * @remark This request is sent to Blob endpoint.
+     */
+    ListDeletedPathsPagedResponse ListDeletedPaths(
+        const ListDeletedPathsOptions& options = ListDeletedPathsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restores a soft deleted path.
+     * @param deletedPath The path of the deleted path.
+     * @param deletionId The deletion ID associated with the soft deleted path. You can get soft
+     * deleted paths and their assocaited deletion IDs with ListDeletedPaths.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<DataLakePathClient> The client targets the restored path.
+     * @remark This request is sent to Blob endpoint.
+     */
+    Azure::Response<DataLakePathClient> Undelete(
+        const std::string& deletedPath,
+        const std::string& deletionId,
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;

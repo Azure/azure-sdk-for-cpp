@@ -443,6 +443,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     using SetPathPermissionsResult = SetPathAccessControlListResult;
 
+    /**
+     * @brief A path that has been soft deleted.
+     */
+    struct PathDeletedItem final
+    {
+      /**
+       * The name of the path.
+       */
+      std::string Name;
+
+      /**
+       * The deletion ID associated with the deleted path.
+       */
+      Azure::Nullable<std::string> DeletionId;
+
+      /**
+       * When the path was deleted.
+       */
+      Azure::Nullable<DateTime> DeletedOn;
+
+      /**
+       * The number of days left before the soft deleted path will be permanently deleted.
+       */
+      Azure::Nullable<int64_t> RemainingRetentionDays;
+    };
+
     // FileClient models:
 
     using UploadFileFromResult = Blobs::Models::UploadBlockBlobResult;
@@ -710,6 +736,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
     friend class Azure::Core::PagedResponse<ListPathsPagedResponse>;
+  };
+
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::ListDeletedPaths.
+   */
+  class ListDeletedPathsPagedResponse final
+      : public Azure::Core::PagedResponse<ListDeletedPathsPagedResponse> {
+  public:
+    /**
+     * Path items.
+     */
+    std::vector<Models::PathDeletedItem> DeletedPaths;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<DataLakeFileSystemClient> m_fileSystemClient;
+    ListDeletedPathsOptions m_operationOptions;
+
+    friend class DataLakeFileSystemClient;
+    friend class Azure::Core::PagedResponse<ListDeletedPathsPagedResponse>;
   };
 
   /**
