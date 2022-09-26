@@ -13,7 +13,7 @@
         }
       },
       "BuildConfig": {
-        "_x64_with_unit_test": {
+        "x64_with_unit_test": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DDISABLE_PROXY_TESTS=ON ",
           "AZURE_CORE_ENABLE_JSON_TESTS": 1
         }
