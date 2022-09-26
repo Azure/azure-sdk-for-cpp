@@ -29,7 +29,7 @@ extends:
   parameters:
     Variables:
     - template: /eng/pipelines/templates/variables/globals.yml
-    Language: CPP
+    Language: Cpp
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
     Services: ${{ parameters.Services }}
     PackageVersions: ${{ parameters.PackageVersions }}
