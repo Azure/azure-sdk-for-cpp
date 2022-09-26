@@ -276,6 +276,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           protocolLayerOptionsCopy,
           _internal::WithReplicaStatus(context));
 
+      for (auto& path : response.Value.Paths)
+      {
+        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() == DateTime(1601))
+        {
+          path.ExpiresOn.Reset();
+        }
+      }
+
       ListPathsPagedResponse pagedResponse;
       pagedResponse.Paths = std::move(response.Value.Paths);
       pagedResponse.m_onNextPageFunc = func;
