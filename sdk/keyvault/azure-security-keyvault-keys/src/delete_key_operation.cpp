@@ -54,8 +54,8 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(
   }
   else
   {
-    rawResponse = std::move(m_rawResponse);// this will get moved back into the m_rawResponse on the method return.
-
+    rawResponse = std::move(
+        m_rawResponse); // this will get moved back into the m_rawResponse on the method return.
   }
 
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
