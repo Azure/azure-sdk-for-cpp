@@ -14,6 +14,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakeServiceClient;
+  class DataLakeFileSystemClient;
   class DataLakePathClient;
 
   namespace Models {
