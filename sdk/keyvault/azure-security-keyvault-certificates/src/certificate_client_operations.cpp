@@ -150,7 +150,6 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteCertificateOperation::Poll
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-  
   try
   {
     rawResponse
