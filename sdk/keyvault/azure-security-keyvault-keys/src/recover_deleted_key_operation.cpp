@@ -15,7 +15,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse>
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse = std::move(m_rawResponse);
+  std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
 
   if (!IsDone())
   {
@@ -48,6 +48,10 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
       m_value
           = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(m_value.Name(), *rawResponse);
     }
+  }
+  else
+  {
+    rawResponse = std::move(m_rawResponse); // this will get moved back into the m_rawResponse on the method return.
   }
 
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
