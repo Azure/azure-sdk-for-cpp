@@ -54,21 +54,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string m_value;
     };
     /**
-     * @brief Include this parameter to specify one or more datasets to include in the response.
-     */
-    class ListBlobsShowOnlyType final {
-    public:
-      ListBlobsShowOnlyType() = default;
-      explicit ListBlobsShowOnlyType(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const ListBlobsShowOnlyType& other) const { return m_value == other.m_value; }
-      bool operator!=(const ListBlobsShowOnlyType& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ListBlobsShowOnlyType Deleted;
-
-    private:
-      std::string m_value;
-    };
-    /**
      * @brief Extensible enum used to specify how the service should look for a block ID.
      */
     class BlockType final {

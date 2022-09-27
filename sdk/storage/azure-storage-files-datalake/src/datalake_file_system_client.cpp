@@ -431,10 +431,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::_detail::BlobContainerClient::ListBlobContainerBlobsByHierarchyOptions
         protocolLayerOptions;
-    protocolLayerOptions.Prefix = options.PathPrefix;
+    protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Marker = options.ContinuationToken;
-    protocolLayerOptions.ShowOnly = Blobs::Models::ListBlobsShowOnlyType::Deleted.ToString();
+    protocolLayerOptions.ShowOnly = "deleted";
     auto result = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
 
@@ -450,11 +450,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         pathDeletedItem.Name = std::move(item.Name.Content);
       }
-      pathDeletedItem.DeletedOn = item.Details.DeletedOn;
-      pathDeletedItem.DeletionId = item.DeletionId;
+      pathDeletedItem.DeletedOn = item.Details.DeletedOn.Value();
+      pathDeletedItem.DeletionId = item.DeletionId.Value();
       pathDeletedItem.RemainingRetentionDays = item.Details.RemainingRetentionDays.Value();
 
-      pagedResponse.DeletedPaths.push_back(pathDeletedItem);
+      pagedResponse.DeletedPaths.push_back(std::move(pathDeletedItem));
     }
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_fileSystemClient = std::make_shared<DataLakeFileSystemClient>(*this);
@@ -465,19 +465,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return pagedResponse;
   }
 
-  Azure::Response<DataLakePathClient> DataLakeFileSystemClient::Undelete(
+  Azure::Response<DataLakePathClient> DataLakeFileSystemClient::UndeletePath(
       const std::string& deletedPath,
       const std::string& deletionId,
+      const UndeletePathOptions& options,
       const Azure::Core::Context& context) const
   {
-    std::string undeleteSource = std::string("?") + _detail::DataLakeDeletionId + "=" + deletionId;
+    (void)options;
+    /* cspell:disable-next-line */
+    std::string undeleteSource = "?deletionid=" + deletionId;
 
     auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
     blobUrl.AppendPath(_internal::UrlEncodePath(deletedPath));
 
-    _detail::PathClient::UndeletePathOptions options;
-    options.UndeleteSource = undeleteSource;
-    auto result = _detail::PathClient::Undelete(*m_pipeline, blobUrl, options, context);
+    _detail::PathClient::UndeletePathOptions protocolLayerOptions;
+    protocolLayerOptions.UndeleteSource = undeleteSource;
+    auto result
+        = _detail::PathClient::Undelete(*m_pipeline, blobUrl, protocolLayerOptions, context);
 
     if (result.Value.ResourceType.HasValue()
         && result.Value.ResourceType.Value() == Models::PathResourceType::Directory.ToString())

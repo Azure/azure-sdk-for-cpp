@@ -842,16 +842,11 @@ namespace Azure { namespace Storage { namespace Test {
     nonDeletedDirectoryClient.Create();
 
     {
-      auto paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
+      std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      EXPECT_NO_THROW(paths = std::move(m_fileSystemClient->ListDeletedPaths().DeletedPaths));
       EXPECT_EQ(2, paths.size());
       EXPECT_EQ(deletedDirectoryName, paths[0].Name);
-      EXPECT_TRUE(paths[0].DeletionId.HasValue());
-      EXPECT_TRUE(paths[0].DeletedOn.HasValue());
-      EXPECT_TRUE(paths[0].RemainingRetentionDays.HasValue());
       EXPECT_EQ(deletedFilename, paths[1].Name);
-      EXPECT_TRUE(paths[1].DeletionId.HasValue());
-      EXPECT_TRUE(paths[1].DeletedOn.HasValue());
-      EXPECT_TRUE(paths[1].RemainingRetentionDays.HasValue());
     }
     //  List max result
     {
@@ -878,13 +873,12 @@ namespace Azure { namespace Storage { namespace Test {
       fileClient.Delete();
 
       Files::DataLake::ListDeletedPathsOptions options;
-      options.PathPrefix = directoryName;
-      auto paths = m_fileSystemClient->ListDeletedPaths(options).DeletedPaths;
+      options.Prefix = directoryName;
+      std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      EXPECT_NO_THROW(
+          paths = std::move(m_fileSystemClient->ListDeletedPaths(options).DeletedPaths));
       EXPECT_EQ(1, paths.size());
       EXPECT_EQ(directoryName + "/" + filename, paths[0].Name);
-      EXPECT_TRUE(paths[0].DeletionId.HasValue());
-      EXPECT_TRUE(paths[0].DeletedOn.HasValue());
-      EXPECT_TRUE(paths[0].RemainingRetentionDays.HasValue());
     }
   }
 
@@ -897,36 +891,28 @@ namespace Azure { namespace Storage { namespace Test {
     directoryClient.Create();
     auto subFileClient = m_fileSystemClient->GetFileClient(directoryName + "/" + subFileName);
     subFileClient.Create();
-    std::shared_ptr<Files::DataLake::Models::PathProperties> properties
-        = std::make_shared<Files::DataLake::Models::PathProperties>(
-            directoryClient.GetProperties().Value);
-    std::shared_ptr<Files::DataLake::Models::PathProperties> subFileProperties
-        = std::make_shared<Files::DataLake::Models::PathProperties>(
-            subFileClient.GetProperties().Value);
+    Files::DataLake::Models::PathProperties properties = directoryClient.GetProperties().Value;
+    Files::DataLake::Models::PathProperties subFileProperties = subFileClient.GetProperties().Value;
 
     // recursive works
     {
       directoryClient.DeleteRecursive();
 
       auto paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
-      const std::string deletionId = paths[0].DeletionId.Value();
+      const std::string deletionId = paths[0].DeletionId;
 
-      auto restoredClient = m_fileSystemClient->Undelete(directoryName, deletionId).Value;
+      auto restoredClient = m_fileSystemClient->UndeletePath(directoryName, deletionId).Value;
 
       paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
       EXPECT_EQ(0, paths.size());
-      std::shared_ptr<Files::DataLake::Models::PathProperties> restoredProperties;
-      EXPECT_NO_THROW(
-          restoredProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
-              restoredClient.GetProperties().Value));
-      EXPECT_TRUE(restoredProperties->IsDirectory);
-      EXPECT_EQ(properties->ETag, restoredProperties->ETag);
-      std::shared_ptr<Files::DataLake::Models::PathProperties> restoredSubFileProperties;
-      EXPECT_NO_THROW(
-          restoredSubFileProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
-              subFileClient.GetProperties().Value));
-      EXPECT_TRUE(!restoredSubFileProperties->IsDirectory);
-      EXPECT_EQ(subFileProperties->ETag, restoredSubFileProperties->ETag);
+      Files::DataLake::Models::PathProperties restoredProperties;
+      EXPECT_NO_THROW(restoredProperties = restoredClient.GetProperties().Value);
+      EXPECT_TRUE(restoredProperties.IsDirectory);
+      EXPECT_EQ(properties.ETag, restoredProperties.ETag);
+      Files::DataLake::Models::PathProperties restoredSubFileProperties;
+      EXPECT_NO_THROW(restoredSubFileProperties = subFileClient.GetProperties().Value);
+      EXPECT_TRUE(!restoredSubFileProperties.IsDirectory);
+      EXPECT_EQ(subFileProperties.ETag, restoredSubFileProperties.ETag);
     }
     // not recursive works
     {
@@ -934,31 +920,27 @@ namespace Azure { namespace Storage { namespace Test {
       directoryClient.DeleteEmpty();
 
       auto paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
-      std::string deletionId = paths[0].DeletionId.Value();
+      std::string deletionId = paths[0].DeletionId;
 
       // restore directory
-      auto restoredClient = m_fileSystemClient->Undelete(directoryName, deletionId).Value;
+      auto restoredClient = m_fileSystemClient->UndeletePath(directoryName, deletionId).Value;
       paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
       EXPECT_EQ(1, paths.size()); // not restore subFile
-      std::shared_ptr<Files::DataLake::Models::PathProperties> restoredProperties;
-      EXPECT_NO_THROW(
-          restoredProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
-              restoredClient.GetProperties().Value));
-      EXPECT_TRUE(restoredProperties->IsDirectory);
-      EXPECT_EQ(properties->ETag, restoredProperties->ETag);
+      Files::DataLake::Models::PathProperties restoredProperties;
+      EXPECT_NO_THROW(restoredProperties = restoredClient.GetProperties().Value);
+      EXPECT_TRUE(restoredProperties.IsDirectory);
+      EXPECT_EQ(properties.ETag, restoredProperties.ETag);
       EXPECT_THROW(subFileClient.GetProperties(), StorageException);
 
       // restore file
-      deletionId = paths[0].DeletionId.Value();
+      deletionId = paths[0].DeletionId;
       restoredClient
-          = m_fileSystemClient->Undelete(directoryName + "/" + subFileName, deletionId).Value;
+          = m_fileSystemClient->UndeletePath(directoryName + "/" + subFileName, deletionId).Value;
       paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
       EXPECT_EQ(0, paths.size());
-      EXPECT_NO_THROW(
-          restoredProperties = std::make_shared<Files::DataLake::Models::PathProperties>(
-              restoredClient.GetProperties().Value));
-      EXPECT_TRUE(!restoredProperties->IsDirectory);
-      EXPECT_EQ(subFileProperties->ETag, restoredProperties->ETag);
+      EXPECT_NO_THROW(restoredProperties = restoredClient.GetProperties().Value);
+      EXPECT_FALSE(restoredProperties.IsDirectory);
+      EXPECT_EQ(subFileProperties.ETag, restoredProperties.ETag);
     }
   }
 

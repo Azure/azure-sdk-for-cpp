@@ -254,14 +254,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Restores a soft deleted path.
      * @param deletedPath The path of the deleted path.
      * @param deletionId The deletion ID associated with the soft deleted path. You can get soft
-     * deleted paths and their assocaited deletion IDs with ListDeletedPaths.
+     * deleted paths and their associated deletion IDs with ListDeletedPaths.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<DataLakePathClient> The client targets the restored path.
      * @remark This request is sent to Blob endpoint.
      */
-    Azure::Response<DataLakePathClient> Undelete(
+    Azure::Response<DataLakePathClient> UndeletePath(
         const std::string& deletedPath,
         const std::string& deletionId,
+        const UndeletePathOptions& options = UndeletePathOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:

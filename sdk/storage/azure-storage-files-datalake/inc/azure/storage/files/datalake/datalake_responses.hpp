@@ -27,6 +27,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // ServiceClient models:
 
     using UserDelegationKey = Blobs::Models::UserDelegationKey;
+    using RetentionPolicy = Blobs::Models::RetentionPolicy;
+    using AnalyticsLogging = Blobs::Models::AnalyticsLogging;
+    using Metrics = Blobs::Models::Metrics;
+    using CorsRule = Blobs::Models::CorsRule;
+    using StaticWebsite = Blobs::Models::StaticWebsite;
+    using DataLakeServiceProperties = Blobs::Models::BlobServiceProperties;
+    using SetServicePropertiesResult = Blobs::Models::SetServicePropertiesResult;
 
     /**
      * @brief The detailed information of a file system.
@@ -457,17 +464,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The deletion ID associated with the deleted path.
        */
-      Azure::Nullable<std::string> DeletionId;
+      std::string DeletionId;
 
       /**
        * When the path was deleted.
        */
-      Azure::Nullable<DateTime> DeletedOn;
+      DateTime DeletedOn;
 
       /**
        * The number of days left before the soft deleted path will be permanently deleted.
        */
-      Azure::Nullable<int64_t> RemainingRetentionDays;
+      int64_t RemainingRetentionDays;
     };
 
     // FileClient models:

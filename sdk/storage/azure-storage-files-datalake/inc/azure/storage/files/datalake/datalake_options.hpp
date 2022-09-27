@@ -28,6 +28,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
+  using GetServicePropertiesOptions = Blobs::GetServicePropertiesOptions;
+  using SetServicePropertiesOptions = Blobs::SetServicePropertiesOptions;
   using EncryptionKey = Blobs::EncryptionKey;
 
   /**
@@ -199,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * Gets the paths that have recently been soft deleted in this file system.
      */
-    Azure::Nullable<std::string> PathPrefix;
+    Azure::Nullable<std::string> Prefix;
 
     /**
      * The number of paths returned with each invocation is limited. If the number of paths to be
@@ -214,6 +216,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * than 5,000, the response will include up to 5,000 items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::DataLake::FileSystemClient::UndeletePath.
+   */
+  struct UndeletePathOptions final
+  {
   };
 
   /**

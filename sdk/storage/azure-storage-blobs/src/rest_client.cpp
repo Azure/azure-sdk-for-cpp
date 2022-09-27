@@ -99,7 +99,6 @@ std::string ListBlobsIncludeFlagsToString(
 namespace Azure { namespace Storage { namespace Blobs {
   namespace Models {
     const EncryptionAlgorithmType EncryptionAlgorithmType::Aes256("AES256");
-    const ListBlobsShowOnlyType ListBlobsShowOnlyType::Deleted("deleted");
     const BlockType BlockType::Committed("Committed");
     const BlockType BlockType::Uncommitted("Uncommitted");
     const BlockType BlockType::Latest("Latest");

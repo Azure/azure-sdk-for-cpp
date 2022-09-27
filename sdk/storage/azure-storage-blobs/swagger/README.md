@@ -312,17 +312,6 @@ directive:
         "x-ms-export": true,
         "description": "The algorithm used to produce the encryption key hash. Currently, the only accepted value is \"AES256\". Must be provided if the x-ms-encryption-key header is provided."
       };
-      $.ListBlobsShowOnly = {
-        "type": "string",
-        "enum": ["deleted"],
-        "x-ms-enum": {
-          "name": "ListBlobsShowOnlyType",
-          "modelAsString": false,
-          "values": [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "deleted", "name": "Deleted"}]
-        },
-        "x-ms-export": true,
-        "description": "Include this parameter to specify one or more datasets to include in the response."
-      };
       $.BlockType = {
         "type": "string",
         "enum": ["Committed", "Uncommitted", "Latest"],
