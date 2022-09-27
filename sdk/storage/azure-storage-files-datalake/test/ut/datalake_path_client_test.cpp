@@ -115,10 +115,14 @@ namespace Azure { namespace Storage { namespace Test {
       options.ScheduleDeletionOptions.TimeToExpire = std::chrono::hours(1);
       EXPECT_NO_THROW(client.Create(options));
       auto response = client.GetProperties();
-      DateTime ExpiryTime
-          = response.Value.CreatedOn + options.ScheduleDeletionOptions.TimeToExpire.Value();
+      DateTime leftExpiryTime = response.Value.CreatedOn
+          + options.ScheduleDeletionOptions.TimeToExpire.Value() - std::chrono::seconds(5);
+      DateTime rightExpiryTime = response.Value.CreatedOn
+          + options.ScheduleDeletionOptions.TimeToExpire.Value() + std::chrono::seconds(5);
       EXPECT_TRUE(response.Value.ExpiresOn.HasValue());
-      EXPECT_EQ(ExpiryTime, response.Value.ExpiresOn.Value());
+      EXPECT_TRUE(
+          response.Value.ExpiresOn.Value() > leftExpiryTime
+          && response.Value.ExpiresOn.Value() < rightExpiryTime);
     }
     // absolute expiry
     {
