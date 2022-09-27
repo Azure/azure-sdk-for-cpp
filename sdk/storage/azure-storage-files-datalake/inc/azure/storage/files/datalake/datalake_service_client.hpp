@@ -113,9 +113,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Sets properties for a storage account's Blob service endpoint, including
      * properties for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete
      * settings. You can also use this operation to set the default request version for all incoming
-     * requests to the Blob service that do not have a version specified.
+     * requests to the DataLake service that do not have a version specified.
      *
-     * @param properties The blob service properties.
+     * @param properties The DataLake service properties.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A SetServicePropertiesResult on successfully setting the properties.
@@ -129,12 +129,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
-     * @brief Gets the properties of a storage account's blob service, including properties
+     * @brief Gets the properties of a storage account's datalake service, including properties
      * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A BlobServiceProperties describing the service properties.
+     * @return A DataLakeServiceProperties describing the service properties.
      */
     Azure::Response<Models::DataLakeServiceProperties> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
