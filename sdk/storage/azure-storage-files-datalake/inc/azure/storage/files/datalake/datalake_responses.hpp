@@ -474,7 +474,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The number of days left before the soft deleted path will be permanently deleted.
        */
-      int64_t RemainingRetentionDays;
+      int64_t RemainingRetentionDays = int64_t();
     };
 
     // FileClient models:
