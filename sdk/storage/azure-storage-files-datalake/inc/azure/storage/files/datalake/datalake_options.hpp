@@ -24,6 +24,60 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using FileQueryArrowField = Blobs::Models::BlobQueryArrowField;
     using FileQueryArrowFieldType = Blobs::Models::BlobQueryArrowFieldType;
     using EncryptionAlgorithmType = Blobs::Models::EncryptionAlgorithmType;
+
+    /**
+     * @brief An access control object.
+     */
+    struct Acl final
+    {
+      /**
+       * The scope of the ACL.
+       */
+      std::string Scope;
+
+      /**
+       * The type of the ACL.
+       */
+      std::string Type;
+
+      /**
+       * The ID of the ACL.
+       */
+      std::string Id;
+
+      /**
+       * The permissions of the ACL.
+       */
+      std::string Permissions;
+
+      /**
+       * @brief Creates an Acl based on acl input string.
+       * @param aclString the string to be parsed to Acl.
+       * @return Acl
+       */
+      static Acl FromString(const std::string& aclString);
+
+      /**
+       * @brief Creates a string from an Acl.
+       * @param acl the acl object to be serialized to a string.
+       * @return std::string
+       */
+      static std::string ToString(const Acl& acl);
+
+      /**
+       * @brief Creates a vector of Acl from a string that indicates multiple acls.
+       * @param aclsString the string that contains multiple acls.
+       * @return std::vector<Acl>
+       */
+      static std::vector<Acl> DeserializeAcls(const std::string& aclsString);
+
+      /**
+       * @brief Creates a string that contains several Acls.
+       * @param aclsArray the acls to be serialized into a string.
+       * @return std::string
+       */
+      static std::string SerializeAcls(const std::vector<Acl>& aclsArray);
+    };
   } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
@@ -266,6 +320,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the lease access conditions.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * If true, the file will be flushed after the append.
+     */
+    Azure::Nullable<bool> Flush;
   };
 
   /**
@@ -380,6 +439,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
+  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
+
+  /**
+   * @brief Options for scheduling the deletion of a path.
+   */
+  struct ScheduleFileDeletionOptions final
+  {
+    /**
+     * The expiry time from the specified origin. Only work if ExpiryOrigin is
+     * ScheduleFileExpiryOriginType::RelativeToCreation or
+     * ScheduleFileExpiryOriginType::RelativeToNow.
+     * Does not apply to directories.
+     * TimeToExpire and ExpiresOn cannot both be set.
+     */
+    Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
+
+    /**
+     * The expiry time in RFC1123 format. Only works if ExpiryOrigin is
+     * ScheduleFileExpiryOriginType::Absolute.
+     * Does not apply to directories.
+     * ExpiresOn and TimeToExpire cannot both be set.
+     */
+    Azure::Nullable<DateTime> ExpiresOn;
+  };
+
+  using SchedulePathDeletionOptions = ScheduleFileDeletionOptions;
+
   /**
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Create.
    * @remark Some optional parameter is mandatory in certain combination.
@@ -420,6 +506,39 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
      */
     Azure::Nullable<std::string> Permissions;
+
+    /**
+     * The owner of the file or directory.
+     */
+    Azure::Nullable<std::string> Owner;
+
+    /**
+     * The owning group of the file or directory.
+     */
+    Azure::Nullable<std::string> Group;
+
+    /**
+     * Sets POSIX access control rights on files and directories. Each access control entry (ACE)
+     * consists of a scope, a type, a user or group identifier, and permissions.
+     */
+    Azure::Nullable<std::vector<Models::Acl>> Acls;
+
+    /**
+     * Proposed LeaseId.
+     */
+    Azure::Nullable<std::string> LeaseId;
+
+    /**
+     * Specifies the duration of the lease, in seconds, or InfiniteLeaseDuration for a lease that
+     * never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot
+     * be changed using renew or change. Does not apply to directories.
+     */
+    Azure::Nullable<std::chrono::seconds> LeaseDuration;
+
+    /**
+     * Optional parameters to schedule the file for deletion.
+     */
+    SchedulePathDeletionOptions ScheduleDeletionOptions;
 
     /**
      * Specify the access condition for the path.
@@ -618,27 +737,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       int32_t Concurrency = 5;
     } TransferOptions;
-  };
-
-  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
-
-  /**
-   * @brief Optional parameters for #Azure::Storage::Files::DataLake::FileClient::UploadFrom.
-   */
-  struct ScheduleFileDeletionOptions final
-  {
-    /**
-     * The expiry time from the specified origin. Only work if ExpiryOrigin is
-     * ScheduleFileExpiryOriginType::RelativeToCreation or
-     * ScheduleFileExpiryOriginType::RelativeToNow.
-     */
-    Azure::Nullable<std::chrono::milliseconds> TimeToExpire;
-
-    /**
-     * The expiry time in RFC1123 format. Only work if ExpiryOrigin is
-     * ScheduleFileExpiryOriginType::Absolute.
-     */
-    Azure::Nullable<DateTime> ExpiresOn;
   };
 
   using AcquireLeaseOptions = Blobs::AcquireLeaseOptions;

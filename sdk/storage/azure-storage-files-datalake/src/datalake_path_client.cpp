@@ -205,6 +205,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Properties = _detail::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
+    protocolLayerOptions.Owner = options.Owner;
+    protocolLayerOptions.Group = options.Group;
+    protocolLayerOptions.ProposedLeaseId = options.LeaseId;
+    if (options.Acls.HasValue())
+    {
+      protocolLayerOptions.Acl = Models::Acl::SerializeAcls(options.Acls.Value());
+    }
+    if (options.LeaseDuration.HasValue())
+    {
+      protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
+    }
+    AZURE_ASSERT_MSG(
+        !(options.ScheduleDeletionOptions.ExpiresOn.HasValue()
+          && options.ScheduleDeletionOptions.TimeToExpire.HasValue()),
+        "ExpiresOn and TimeToExpire are mutually exclusive.");
+    if (options.ScheduleDeletionOptions.ExpiresOn.HasValue())
+    {
+      protocolLayerOptions.ExpiryOptions
+          = Files::DataLake::ScheduleFileExpiryOriginType::Absolute.ToString();
+      protocolLayerOptions.ExpiresOn = options.ScheduleDeletionOptions.ExpiresOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc1123);
+    }
+    else if (options.ScheduleDeletionOptions.TimeToExpire.HasValue())
+    {
+      protocolLayerOptions.ExpiryOptions
+          = Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow.ToString();
+      protocolLayerOptions.ExpiresOn
+          = std::to_string(options.ScheduleDeletionOptions.TimeToExpire.Value().count());
+    }
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;

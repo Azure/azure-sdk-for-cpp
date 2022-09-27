@@ -114,6 +114,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             vectorElement2.EncryptionScope = var0["EncryptionScope"].get<std::string>();
           }
+          if (var0.count("creationTime") != 0)
+          {
+            vectorElement2.CreatedOn
+                = Core::_internal::Win32FileTimeConverter::Win32FileTimeToDateTime(
+                    std::stoll(var0["creationTime"].get<std::string>()));
+          }
+          if (var0.count("expiryTime") != 0)
+          {
+            vectorElement2.ExpiresOn
+                = Core::_internal::Win32FileTimeConverter::Win32FileTimeToDateTime(
+                    std::stoll(var0["expiryTime"].get<std::string>()));
+          }
           if (var0.count("etag") != 0)
           {
             vectorElement2.ETag = var0["etag"].get<std::string>();
@@ -276,6 +288,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       if (options.LeaseDuration.HasValue())
       {
         request.SetHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.Value()));
+      }
+      if (options.ExpiryOptions.HasValue() && !options.ExpiryOptions.Value().empty())
+      {
+        request.SetHeader("x-ms-expiry-option", options.ExpiryOptions.Value());
       }
       if (options.ExpiresOn.HasValue() && !options.ExpiresOn.Value().empty())
       {

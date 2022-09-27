@@ -81,6 +81,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.Flush = options.Flush;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;

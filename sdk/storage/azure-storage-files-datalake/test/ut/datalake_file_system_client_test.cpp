@@ -290,6 +290,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
+        EXPECT_TRUE(iter->CreatedOn.HasValue());
+        EXPECT_FALSE(iter->ExpiresOn.HasValue());
       }
       for (const auto& name : m_pathNameSetB)
       {
@@ -300,6 +302,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
+        EXPECT_TRUE(iter->CreatedOn.HasValue());
+        EXPECT_FALSE(iter->ExpiresOn.HasValue());
       }
     }
     {
@@ -330,6 +334,23 @@ namespace Azure { namespace Storage { namespace Test {
       options.PageSizeHint = 2;
       auto response = m_fileSystemClient->ListPaths(true, options);
       EXPECT_LE(2U, response.Paths.size());
+    }
+    {
+      // check expiry time
+      const std::string filename = GetTestNameLowerCase() + "check_expiry";
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "check_expiry");
+      Files::DataLake::CreateFileOptions createOptions;
+      createOptions.ScheduleDeletionOptions.ExpiresOn = Azure::DateTime::Parse(
+          "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
+      client.Create(createOptions);
+
+      auto result = ListAllPaths(false);
+      auto iter = std::find_if(
+          result.begin(), result.end(), [&filename](const Files::DataLake::Models::PathItem& path) {
+            return path.Name == filename;
+          });
+      EXPECT_TRUE(iter->ExpiresOn.HasValue());
+      EXPECT_EQ(createOptions.ScheduleDeletionOptions.ExpiresOn.Value(), iter->ExpiresOn.Value());
     }
   }
 
