@@ -105,8 +105,8 @@ if (MSVC)
 endif()
 
 if (DISABLE_PROXY_TESTS)
-message(STATUS "Disabling proxy tests because they cannot be supported on this environment." )
-add_compile_definitions(DISABLE_PROXY_TESTS)
+  message(STATUS "Disabling proxy tests because they cannot be supported on this environment." )
+  add_compile_definitions(DISABLE_PROXY_TESTS)
 endif()
 
 # If the System.TeamProjectId ADO variable is set, we are running in the pipeline, behave accordingly.
