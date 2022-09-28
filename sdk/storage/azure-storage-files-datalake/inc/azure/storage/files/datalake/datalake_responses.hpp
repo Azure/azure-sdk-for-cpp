@@ -194,6 +194,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using ArchiveStatus = Blobs::Models::ArchiveStatus;
 
     /**
+     * @brief The path item returned when listing the paths.
+     */
+    struct PathItem final
+    {
+      std::string Name;
+      bool IsDirectory = false;
+      DateTime LastModified;
+      int64_t FileSize = int64_t();
+      std::string Owner;
+      std::string Group;
+      std::string Permissions;
+      /**
+       * The name of the encryption scope under which the blob is encrypted.
+       */
+      Nullable<std::string> EncryptionScope;
+      Nullable<DateTime> CreatedOn;
+      Nullable<DateTime> ExpiresOn;
+      std::string ETag;
+    };
+
+    /**
      * @brief The properties of the path.
      */
     struct PathProperties final
