@@ -140,9 +140,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 #if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) || defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     /**
-     * @brief Http Proxies used when making an HTTP connection.
+     * @brief The URL for the proxy server to use for this connection.
      *
-     * @remark The URL for the proxy server to use for this connection.
+     * @remark If an empty string is specified, it instructs the transport to disable all proxies, including
+     * system proxies.
      */
     Azure::Nullable<std::string> HttpProxy{};
 
@@ -154,7 +155,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief The password to use when authenticating with the proxy server.
      */
-    std::string ProxyPassword{};
+    Azure::Nullable<std::string> ProxyPassword{};
 
     /**
      * @brief Enable TLS Certificate validation against a certificate revocation list.

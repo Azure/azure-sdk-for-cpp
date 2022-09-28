@@ -204,7 +204,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Password for proxy authentication.
      */
-    std::string ProxyPassword;
+    Azure::Nullable<std::string> ProxyPassword;
 
     /**
      * @brief Array of Base64 encoded DER encoded X.509 certificate.  These certificates should form

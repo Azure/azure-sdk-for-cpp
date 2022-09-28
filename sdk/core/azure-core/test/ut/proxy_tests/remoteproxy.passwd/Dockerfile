@@ -1,5 +1,6 @@
 #@# vim: set filetype=dockerfile:
-# Code taken from: https://github.com/hinata/nginx-forward-proxy
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
 
 FROM ubuntu/squid
 LABEL maintainer "Larry Osterman<github.com/LarryOsterman>"

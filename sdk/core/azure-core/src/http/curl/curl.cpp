@@ -360,14 +360,14 @@ CURLcode CurlSession::Perform(Context const& context)
   // If we are using an HTTP proxy, connecting to an HTTP resource and it has been configured with a
   // username and password, we want to set the proxy authentication header.
   if (m_httpProxy.HasValue() && m_request.GetUrl().GetScheme() == "http" && !m_httpProxyUser.empty()
-      && !m_httpProxyPassword.empty())
+      && m_httpProxyPassword.HasValue())
   {
     Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Setting proxy authentication header");
     this->m_request.SetHeader(
         "Proxy-Authorization",
         "Basic "
             + Azure::Core::_internal::Convert::Base64Encode(
-                m_httpProxyUser + ":" + m_httpProxyPassword));
+                m_httpProxyUser + ":" + m_httpProxyPassword.Value()));
   }
 
   // use expect:100 for PUT requests. Server will decide if it can take our request
@@ -1200,11 +1200,11 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
   key.append(",");
-  key.append(options.Proxy ? (options.Proxy->empty() ? "NoProxy" : options.Proxy.Value()) : "0");
+  key.append(options.Proxy.ValueOr("NoProxy"));
   key.append(",");
   key.append(options.ProxyUsername.empty() ? "0" : options.ProxyUsername);
   key.append(",");
-  key.append(options.ProxyPassword.empty() ? "0" : options.ProxyPassword);
+  key.append(options.ProxyPassword.ValueOr("0"));
   key.append(",");
   key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
   key.append(",");
@@ -2099,13 +2099,13 @@ CurlConnection::CurlConnection(
           + std::string(curl_easy_strerror(result)));
     }
   }
-  if (!options.ProxyPassword.empty())
+  if (options.ProxyPassword.HasValue())
   {
-    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.c_str(), &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.Value().c_str(), &result))
     {
       throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed to set proxy password to:" + options.ProxyPassword + ". "
+          + ". Failed to set proxy password to:" + options.ProxyPassword.Value() + ". "
           + std::string(curl_easy_strerror(result)));
     }
   }

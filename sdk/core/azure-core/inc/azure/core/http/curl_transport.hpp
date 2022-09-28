@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief The available options to set libcurl SSL options.
    *
    * @remark The SDK will map the enum option to libcurl's specific option. See more info here:
-   * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+   * https://curl.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
    *
    */
   struct CurlTransportSslOptions final
@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The Azure SDK will not directly validate these certificates.
      *
      * @remark More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO_BLOB.html
+     * https://curl.se/libcurl/c/CURLOPT_CAINFO_BLOB.html
      *
      */
     std::string PemEncodedExpectedRootCertificates;
@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Http {
      * proxy settings from the system (use no proxy).
      *
      * @remark No validation for the string is done by the Azure SDK. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html.
+     * https://curl.se/libcurl/c/CURLOPT_PROXY.html.
      *
      * @remark The default value is an empty string (no proxy).
      *
@@ -100,12 +100,12 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Password to be used for proxy connections.
      *
      * @remark No validation for the string is done by the Azure SDK. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY_PASSWORD.html.
+     * https://curl.se/libcurl/c/CURLOPT_PROXYPASSWORD.html.
      *
-     * @remark The default value is an empty string (no proxy).
+     * @remark If a value is provided, the value will be used (this allows the caller to provide an empty password)
      *
      */
-    std::string ProxyPassword;
+    Azure::Nullable<std::string> ProxyPassword;
     /**
      * @brief Path to a PEM encoded file containing the certificate authorities sent to libcurl
      * handle directly.
@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The Azure SDK will not check if the path is valid or not.
      *
      * @remark The default is the built-in system specific path. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO.html
+     * https://curl.se/libcurl/c/CURLOPT_CAINFO.html
      *
      */
     std::string CAInfo;
@@ -135,7 +135,7 @@ namespace Azure { namespace Core { namespace Http {
      * certificate.
      *
      * @remark The default value is `true`. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html
+     * https://curl.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html
      *
      */
     bool SslVerifyPeer = true;
@@ -143,7 +143,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Define the SSL options for the libcurl handle.
      *
-     * @remark See more info here: https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html.
+     * @remark See more info here: https://curl.se/libcurl/c/CURLOPT_SSL_OPTIONS.html.
      * The default option is all options `false`.
      *
      */
@@ -199,10 +199,14 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    // See also:
-    // [Core Guidelines C.35: "A base class destructor should be either public
-    // and virtual or protected and
-    // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
+    /**
+     * @brief Destroys a CurlTransport object.
+     *
+     * See also:
+     * [Core Guidelines C.35: "A base class destructor should be either public
+     * and virtual or protected and
+     * non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
+	*/
     virtual ~CurlTransport() = default;
 
     /**

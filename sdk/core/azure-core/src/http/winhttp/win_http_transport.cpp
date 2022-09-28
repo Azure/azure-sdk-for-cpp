@@ -613,14 +613,14 @@ _detail::unique_HINTERNET WinHttpTransport::CreateRequestHandle(
       GetErrorAndThrow("Error while setting Proxy information.");
     }
   }
-  if (!m_options.ProxyUserName.empty() || !m_options.ProxyPassword.empty())
+  if (!m_options.ProxyUserName.empty() || m_options.ProxyPassword.HasValue())
   {
     if (!WinHttpSetCredentials(
             request.get(),
             WINHTTP_AUTH_TARGET_PROXY,
             WINHTTP_AUTH_SCHEME_BASIC,
             StringToWideString(m_options.ProxyUserName).c_str(),
-            StringToWideString(m_options.ProxyPassword).c_str(),
+            StringToWideString(m_options.ProxyPassword.Value()).c_str(),
             0))
     {
       GetErrorAndThrow("Error while setting Proxy credentials.");

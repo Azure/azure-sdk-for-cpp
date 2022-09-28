@@ -46,8 +46,7 @@ stages:
         - pwsh: |
             docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
             docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
-            docker run --rm -d -p 3128:3128 squid-local
-            docker run --rm -d -p 3129:3129 squid-local.passwd
+            $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/runproxy.ps1
           displayName: Launch Linux Docker container proxy
           # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
           condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
@@ -72,7 +71,8 @@ stages:
           parameters:
             runProxy: true
             targetVersion: 1.0.0-dev.20220810.2
-
+            condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+            
       PostTestSteps:
         - pwsh: |
             docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `

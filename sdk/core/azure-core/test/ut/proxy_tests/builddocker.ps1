@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 pushd .\localproxy
 docker build -t squid-local .
 popd

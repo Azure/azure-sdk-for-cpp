@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     bool AnyTransportOptionsSpecified(TransportOptions const& transportOptions)
     {
       return (
-          transportOptions.HttpProxy.HasValue() || !transportOptions.ProxyPassword.empty()
+          transportOptions.HttpProxy.HasValue() || transportOptions.ProxyPassword.HasValue()
           || !transportOptions.ProxyUserName.empty()
           || transportOptions.EnableCertificateRevocationListCheck
           || !transportOptions.ExpectedTlsRootCertificate.empty());
@@ -112,18 +112,12 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     {
       CurlTransportOptions curlOptions;
       curlOptions.EnableCurlTracing = true;
-      if (transportOptions.HttpProxy.HasValue())
-      {
-        curlOptions.Proxy = transportOptions.HttpProxy;
-      }
+      curlOptions.Proxy = transportOptions.HttpProxy;
       if (!transportOptions.ProxyUserName.empty())
       {
         curlOptions.ProxyUsername = transportOptions.ProxyUserName;
       }
-      if (!transportOptions.ProxyPassword.empty())
-      {
-        curlOptions.ProxyPassword = transportOptions.ProxyPassword;
-      }
+      curlOptions.ProxyPassword = transportOptions.ProxyPassword;
 
       curlOptions.SslOptions.EnableCertificateRevocationListCheck
           = transportOptions.EnableCertificateRevocationListCheck;
