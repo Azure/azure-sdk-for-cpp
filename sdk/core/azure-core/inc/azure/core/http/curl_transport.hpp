@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
 
     /**
-     * @brief If set, enables extended tracing from LibCURL.
+     * @brief If set, enables extended tracing from libcurl.
      */
     bool EnableCurlTracing = false;
   };
