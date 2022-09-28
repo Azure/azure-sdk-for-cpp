@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
      * Certificate Revocation List.
      *
      * @remark Note that this only works when LibCURL is configured to use openssl as its TLS
-     * provider. That functionally limits this check to Linux only, and then only when openssl is
+     * provider. That functionally limits this check to Linux only, and only when openssl is
      * configured (the default).
      */
     bool AllowFailedCrlRetrieval = false;
