@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This option allows SSL connections to proceed even if there is an error retrieving the
      * Certificate Revocation List.
      *
-     * @remark Note that this only works when LibCURL is configured to use openssl as its TLS
+     * @remark Note that this only works when libcurl is configured to use OpenSSL as its TLS
      * provider. That functionally limits this check to Linux only, and only when openssl is
      * configured (the default).
      */
