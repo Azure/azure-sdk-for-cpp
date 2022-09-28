@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark Libcurl does revocation list check by default for SSL backends that supports this
      * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
-     * check by default. This ensures that the LibCURL behavior matches the WinHTTP behavior.
+     * check by default. This ensures that the libcurl behavior matches the WinHTTP behavior.
      */
     bool EnableCertificateRevocationListCheck = false;
 
