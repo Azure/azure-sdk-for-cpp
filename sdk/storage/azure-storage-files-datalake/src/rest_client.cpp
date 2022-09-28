@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                  ? jsonRoot["paths"]
                  : Core::Json::_internal::json::array())
         {
-          Models::PathItem vectorElement2;
+          Models::_detail::PathItem vectorElement2;
           vectorElement2.Name = var0["name"].get<std::string>();
           if (var0.count("isDirectory") != 0)
           {
@@ -116,15 +116,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           if (var0.count("creationTime") != 0)
           {
-            vectorElement2.CreatedOn
-                = Core::_internal::Win32FileTimeConverter::Win32FileTimeToDateTime(
-                    std::stoll(var0["creationTime"].get<std::string>()));
+            vectorElement2.CreatedOn = var0["creationTime"].get<std::string>();
           }
           if (var0.count("expiryTime") != 0)
           {
-            vectorElement2.ExpiresOn
-                = Core::_internal::Win32FileTimeConverter::Win32FileTimeToDateTime(
-                    std::stoll(var0["expiryTime"].get<std::string>()));
+            vectorElement2.ExpiresOn = var0["expiryTime"].get<std::string>();
           }
           if (var0.count("etag") != 0)
           {

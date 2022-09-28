@@ -83,24 +83,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     private:
       std::string m_value;
     };
-    struct PathItem final
-    {
-      std::string Name;
-      bool IsDirectory = false;
-      DateTime LastModified;
-      int64_t FileSize = int64_t();
-      std::string Owner;
-      std::string Group;
-      std::string Permissions;
-      /**
-       * The name of the encryption scope under which the blob is encrypted.
-       */
-      Nullable<std::string> EncryptionScope;
-      Nullable<DateTime> CreatedOn;
-      Nullable<DateTime> ExpiresOn;
-      std::string ETag;
-    };
     namespace _detail {
+      struct PathItem final
+      {
+        std::string Name;
+        bool IsDirectory = false;
+        DateTime LastModified;
+        int64_t FileSize = int64_t();
+        std::string Owner;
+        std::string Group;
+        std::string Permissions;
+        /**
+         * The name of the encryption scope under which the blob is encrypted.
+         */
+        Nullable<std::string> EncryptionScope;
+        Nullable<std::string> CreatedOn;
+        Nullable<std::string> ExpiresOn;
+        std::string ETag;
+      };
       /**
        * @brief Response type for #Azure::Storage::Files::DataLake::FileSystemClient::ListPaths.
        */

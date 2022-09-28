@@ -276,18 +276,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           protocolLayerOptionsCopy,
           _internal::WithReplicaStatus(context));
 
-      const auto emptyExpiresOn
-          = Core::_internal::Win32FileTimeConverter::Win32FileTimeToDateTime(0);
+      ListPathsPagedResponse pagedResponse;
+      const std::string emptyExpiresOnString = "0";
       for (auto& path : response.Value.Paths)
       {
-        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() == emptyExpiresOn)
+        Models::PathItem item;
+        item.Name = std::move(path.Name);
+        item.IsDirectory = path.IsDirectory;
+        item.LastModified = std::move(path.LastModified);
+        item.FileSize = path.FileSize;
+        item.Owner = std::move(path.Owner);
+        item.Group = std::move(path.Group);
+        item.Permissions = std::move(path.Permissions);
+        item.EncryptionScope = path.EncryptionScope;
+        item.ETag = std::move(path.ETag);
+        if (path.CreatedOn.HasValue())
         {
-          path.ExpiresOn.Reset();
+          item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+              std::stoll(path.CreatedOn.Value()));
         }
+        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != emptyExpiresOnString)
+        {
+          item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+              std::stoll(path.ExpiresOn.Value()));
+        }
+        pagedResponse.Paths.push_back(std::move(item));
       }
-
-      ListPathsPagedResponse pagedResponse;
-      pagedResponse.Paths = std::move(response.Value.Paths);
       pagedResponse.m_onNextPageFunc = func;
       pagedResponse.CurrentPageToken = continuationToken;
       pagedResponse.NextPageToken = response.Value.ContinuationToken;
