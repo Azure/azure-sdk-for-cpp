@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Base64 encoded DER representation of an X.509 certificate expected in the certificate
      * chain used in TLS connections.
      *
-     * @remark Note that with the schannel and sectransp crypto backends, settting the
+     * @remark Note that with the schannel and sectransp crypto backends, setting the
      * expected root certificate disables access to the system certificate store.
      * This means that the expected root certificate is the only certificate that will be trusted.
      */
