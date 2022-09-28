@@ -159,7 +159,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief Enable TLS Certificate validation against a certificate revocation list.
      *
-     * @remark Note that by default CRL validation is *disabled*.
+     * @remark Note that by default, CRL validation is *disabled*.
      */
     bool EnableCertificateRevocationListCheck{false};
 
