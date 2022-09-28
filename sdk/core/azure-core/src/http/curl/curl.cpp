@@ -2101,7 +2101,8 @@ CurlConnection::CurlConnection(
   }
   if (options.ProxyPassword.HasValue())
   {
-    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.Value().c_str(), &result))
+    if (!SetLibcurlOption(
+            m_handle, CURLOPT_PROXYPASSWORD, options.ProxyPassword.Value().c_str(), &result))
     {
       throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName

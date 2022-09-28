@@ -142,8 +142,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief The URL for the proxy server to use for this connection.
      *
-     * @remark If an empty string is specified, it instructs the transport to disable all proxies, including
-     * system proxies.
+     * @remark If an empty string is specified, it instructs the transport to disable all proxies,
+     * including system proxies.
      */
     Azure::Nullable<std::string> HttpProxy{};
 

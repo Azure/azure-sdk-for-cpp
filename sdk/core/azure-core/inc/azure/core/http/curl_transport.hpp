@@ -102,7 +102,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark No validation for the string is done by the Azure SDK. More about this option:
      * https://curl.se/libcurl/c/CURLOPT_PROXYPASSWORD.html.
      *
-     * @remark If a value is provided, the value will be used (this allows the caller to provide an empty password)
+     * @remark If a value is provided, the value will be used (this allows the caller to provide an
+     * empty password)
      *
      */
     Azure::Nullable<std::string> ProxyPassword;
@@ -206,7 +207,7 @@ namespace Azure { namespace Core { namespace Http {
      * [Core Guidelines C.35: "A base class destructor should be either public
      * and virtual or protected and
      * non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
-	*/
+     */
     virtual ~CurlTransport() = default;
 
     /**
