@@ -34,8 +34,8 @@ endif()
 include(GoogleTest)
 
 if (NOT WIN32)
-find_package(OpenSSL REQUIRED)
-SET(OPENSSLCRYPTO OpenSSL::Crypto)
+  find_package(OpenSSL REQUIRED)
+  SET(OPENSSLCRYPTO OpenSSL::Crypto)
 endif()
 
 add_executable (
