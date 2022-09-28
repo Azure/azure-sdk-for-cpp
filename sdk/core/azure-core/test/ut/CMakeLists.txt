@@ -117,7 +117,6 @@ endif()
 # Additional test files to be copied to the output directory.
 set(TEST_ADDITIONAL_FILES 
     ${CMAKE_CURRENT_LIST_DIR}/requirements.txt 
-
 )
 
 add_custom_command(TARGET azure-core-test POST_BUILD
