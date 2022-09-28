@@ -198,19 +198,59 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     struct PathItem final
     {
+      /**
+       * The name of the path.
+       */
       std::string Name;
+
+      /**
+       * Indicates whether this path is a directory.
+       */
       bool IsDirectory = false;
+
+      /**
+       * The data and time the path was last modified.
+       */
       DateTime LastModified;
+
+      /**
+       * The size of the file.
+       */
       int64_t FileSize = int64_t();
+
+      /**
+       * The owner of the path.
+       */
       std::string Owner;
+
+      /**
+       * The group of the path.
+       */
       std::string Group;
+
+      /**
+       * The permission of the path.
+       */
       std::string Permissions;
+
       /**
        * The name of the encryption scope under which the blob is encrypted.
        */
       Nullable<std::string> EncryptionScope;
+
+      /**
+       * The creation time of the path.
+       */
       Nullable<DateTime> CreatedOn;
+
+      /**
+       * The expiry time of the path.
+       */
       Nullable<DateTime> ExpiresOn;
+
+      /**
+       * An HTTP entity tag associated with the path.
+       */
       std::string ETag;
     };
 
