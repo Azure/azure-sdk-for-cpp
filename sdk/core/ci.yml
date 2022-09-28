@@ -71,7 +71,7 @@ stages:
           parameters:
             runProxy: true
             targetVersion: 1.0.0-dev.20220810.2
-            condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+            condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
             
       PostTestSteps:
         - pwsh: |
