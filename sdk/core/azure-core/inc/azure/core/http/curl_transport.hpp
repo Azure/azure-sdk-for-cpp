@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Username to be used for proxy connections.
      *
      * @remark No validation for the string is done by the Azure SDK. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY_USERNAME.html.
+     * https://curl.se/libcurl/c/CURLOPT_PROXYUSERNAME.html.
      *
      * @remark The default value is an empty string (no proxy).
      *
