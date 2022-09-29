@@ -23,7 +23,6 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-
 #endif
 
 #include <memory>
@@ -40,7 +39,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
     // unique_ptr class wrapping an HINTERNET handle
-    class HINTERNET_Deleter {
+    class DeleteHINTERNET {
     public:
       void operator()(HINTERNET handle) noexcept
       {
@@ -50,10 +49,12 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_HINTERNET = std::unique_ptr<void, HINTERNET_Deleter>;
-
+    /**
+     * @brief unique_ptr class wrapping an HINTERNET handle
+     */
+    using UniqueHINTERNET = std::unique_ptr<void, DeleteHINTERNET>;
     // unique_ptr class wrapping a PCCERT_CHAIN_CONTEXT
-    struct HCERTIFICATECHAIN_Deleter
+    struct DeleteHCERTIFICATECHAIN
     {
       void operator()(PCCERT_CHAIN_CONTEXT handle)
       {
@@ -63,11 +64,15 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_CCERT_CHAIN_CONTEXT
-        = std::unique_ptr<const CERT_CHAIN_CONTEXT, HCERTIFICATECHAIN_Deleter>;
+
+    /**
+     * @brief unique_ptr class wrapping a "const CERT_CHAIN_CONTEXT" pointer.
+     */
+    using UniqueCCERT_CHAIN_CONTEXT
+        = std::unique_ptr<const CERT_CHAIN_CONTEXT, DeleteHCERTIFICATECHAIN>;
 
     // unique_ptr class wrapping an HCERTCHAINENGINE handle
-    struct HCERTCHAINENGINE_Deleter
+    struct DeleteHCERTCHAINENGINE
     {
       void operator()(HCERTCHAINENGINE handle) noexcept
       {
@@ -77,10 +82,14 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_HCERTCHAINENGINE = std::unique_ptr<void, HCERTCHAINENGINE_Deleter>;
+	
+    /**
+     * @brief unique_ptr class wrapping a "HCERTCHAINENGINE" handle.
+     */
+    using UniqueHCERTCHAINENGINE = std::unique_ptr<void, DeleteHCERTCHAINENGINE>;
 
     // unique_ptr class wrapping an HCERTSTORE handle
-    struct HCERTSTORE_Deleter
+    struct DeleteHCERTSTORE
     {
     public:
       void operator()(HCERTSTORE handle) noexcept
@@ -91,10 +100,13 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_HCERTSTORE = std::unique_ptr<void, HCERTSTORE_Deleter>;
+    /**
+     * @brief unique_ptr class wrapping a "HCERTSTORE" handle.
+     */
+    using UniqueHCERTSTORE = std::unique_ptr<void, DeleteHCERTSTORE>;
 
     // unique_ptr class wrapping a PCCERT_CONTEXT
-    struct CERTCONTEXT_Deleter
+    struct DeleteCERTCONTEXT
     {
     public:
       void operator()(PCCERT_CONTEXT handle) noexcept
@@ -105,11 +117,14 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_PCCERT_CONTEXT = std::unique_ptr<CERT_CONTEXT const, CERTCONTEXT_Deleter>;
+    /**
+     * @brief unique_ptr class wrapping a "PCCERT_CONTEXT" object.
+     */
+    using UniquePCCERT_CONTEXT = std::unique_ptr<CERT_CONTEXT const, DeleteCERTCONTEXT>;
 
     class WinHttpStream final : public Azure::Core::IO::BodyStream {
     private:
-      _detail::unique_HINTERNET m_requestHandle;
+      _detail::UniqueHINTERNET m_requestHandle;
       bool m_isEOF;
 
       /**
@@ -139,7 +154,7 @@ namespace Azure { namespace Core { namespace Http {
       size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
-      WinHttpStream(_detail::unique_HINTERNET& requestHandle, int64_t contentLength)
+      WinHttpStream(_detail::UniqueHINTERNET& requestHandle, int64_t contentLength)
           : m_requestHandle(std::move(requestHandle)), m_contentLength(contentLength),
             m_isEOF(false), m_streamTotalRead(0)
       {
@@ -224,34 +239,34 @@ namespace Azure { namespace Core { namespace Http {
 
     // This should remain immutable and not be modified after calling the ctor, to avoid threading
     // issues.
-    _detail::unique_HINTERNET m_sessionHandle;
+    _detail::UniqueHINTERNET m_sessionHandle;
     bool m_requestHandleClosed{false};
 
-    _detail::unique_HINTERNET CreateSessionHandle();
-    _detail::unique_HINTERNET CreateConnectionHandle(
+    _detail::UniqueHINTERNET CreateSessionHandle();
+    _detail::UniqueHINTERNET CreateConnectionHandle(
         Azure::Core::Url const& url,
         Azure::Core::Context const& context);
-    _detail::unique_HINTERNET CreateRequestHandle(
-        _detail::unique_HINTERNET const& connectionHandle,
+    _detail::UniqueHINTERNET CreateRequestHandle(
+        _detail::UniqueHINTERNET const& connectionHandle,
         Azure::Core::Url const& url,
         Azure::Core::Http::HttpMethod const& method);
     void Upload(
-        _detail::unique_HINTERNET const& requestHandle,
+        _detail::UniqueHINTERNET const& requestHandle,
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context);
     void SendRequest(
-        _detail::unique_HINTERNET const& requestHandle,
+        _detail::UniqueHINTERNET const& requestHandle,
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context);
     void ReceiveResponse(
-        _detail::unique_HINTERNET const& requestHandle,
+        _detail::UniqueHINTERNET const& requestHandle,
         Azure::Core::Context const& context);
     int64_t GetContentLength(
-        _detail::unique_HINTERNET const& requestHandle,
+        _detail::UniqueHINTERNET const& requestHandle,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
-        _detail::unique_HINTERNET& requestHandle,
+        _detail::UniqueHINTERNET& requestHandle,
         HttpMethod requestMethod);
 
     /*
@@ -274,17 +289,17 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool AddCertificatesToStore(
         std::vector<std::string> const& trustedCertificates,
-        _detail::unique_HCERTSTORE const& hCertStore);
+        _detail::UniqueHCERTSTORE const& hCertStore);
     /*
      * Verifies that the certificate context is in the trustedCertificates set of certificates.
      */
     bool VerifyCertificatesInChain(
         std::vector<std::string> const& trustedCertificates,
-        _detail::unique_PCCERT_CONTEXT const& serverCertificate);
+        _detail::UniquePCCERT_CONTEXT const& serverCertificate);
 
     // Callback to allow a derived transport to extract the request handle. Used for WebSocket
     // transports.
-    virtual void OnUpgradedConnection(_detail::unique_HINTERNET const&){};
+    virtual void OnUpgradedConnection(_detail::UniqueHINTERNET const&){};
     /**
      * @brief Throw an exception based on the Win32 Error code
      *

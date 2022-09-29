@@ -53,7 +53,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief std::default_delete for the CURL * type , used for std::unique_ptr
      *
      */
-    struct CURL_Deleter {
+    struct DeleteCURL
+    {
       void operator()(CURL* handle) noexcept
       {
         if (handle != nullptr)
@@ -62,8 +63,7 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_CURL = std::unique_ptr<CURL, CURL_Deleter>;
-
+    using UniqueCURL = std::unique_ptr<CURL, DeleteCURL>;
   } // namespace _detail
 
   /**

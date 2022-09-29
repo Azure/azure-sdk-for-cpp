@@ -2000,7 +2000,7 @@ CurlConnection::CurlConnection(
     std::string const& connectionPropertiesKey)
     : m_connectionKey(connectionPropertiesKey)
 {
-  m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURL_Deleter{});
+  m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURLDeleter{});
   if (!m_handle)
   {
     throw Azure::Core::Http::TransportException(
