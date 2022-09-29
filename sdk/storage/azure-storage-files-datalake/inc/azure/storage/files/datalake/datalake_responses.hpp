@@ -14,6 +14,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakeServiceClient;
+  class DataLakeFileSystemClient;
   class DataLakePathClient;
 
   namespace Models {
@@ -26,6 +27,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // ServiceClient models:
 
     using UserDelegationKey = Blobs::Models::UserDelegationKey;
+    using RetentionPolicy = Blobs::Models::RetentionPolicy;
+    using AnalyticsLogging = Blobs::Models::AnalyticsLogging;
+    using Metrics = Blobs::Models::Metrics;
+    using CorsRule = Blobs::Models::CorsRule;
+    using StaticWebsite = Blobs::Models::StaticWebsite;
+    using DataLakeServiceProperties = Blobs::Models::BlobServiceProperties;
+    using SetServicePropertiesResult = Blobs::Models::SetServicePropertiesResult;
 
     /**
      * @brief The detailed information of a file system.
@@ -192,6 +200,67 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using BreakLeaseResult = Blobs::Models::BreakLeaseResult;
     using RehydratePriority = Blobs::Models::RehydratePriority;
     using ArchiveStatus = Blobs::Models::ArchiveStatus;
+
+    /**
+     * @brief The path item returned when listing the paths.
+     */
+    struct PathItem final
+    {
+      /**
+       * The name of the path.
+       */
+      std::string Name;
+
+      /**
+       * Indicates whether this path is a directory.
+       */
+      bool IsDirectory = false;
+
+      /**
+       * The data and time the path was last modified.
+       */
+      DateTime LastModified;
+
+      /**
+       * The size of the file.
+       */
+      int64_t FileSize = int64_t();
+
+      /**
+       * The owner of the path.
+       */
+      std::string Owner;
+
+      /**
+       * The group of the path.
+       */
+      std::string Group;
+
+      /**
+       * The permission of the path.
+       */
+      std::string Permissions;
+
+      /**
+       * The name of the encryption scope under which the blob is encrypted.
+       */
+      Nullable<std::string> EncryptionScope;
+
+      /**
+       * The creation time of the path.
+       */
+      Nullable<DateTime> CreatedOn;
+
+      /**
+       * The expiry time of the path.
+       */
+      Nullable<DateTime> ExpiresOn;
+
+      /**
+       * An HTTP entity tag associated with the path.
+       */
+      std::string ETag;
+    };
 
     /**
      * @brief The properties of the path.
@@ -388,6 +457,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     };
 
     using SetPathPermissionsResult = SetPathAccessControlListResult;
+
+    /**
+     * @brief A path that has been soft deleted.
+     */
+    struct PathDeletedItem final
+    {
+      /**
+       * The name of the path.
+       */
+      std::string Name;
+
+      /**
+       * The deletion ID associated with the deleted path.
+       */
+      std::string DeletionId;
+
+      /**
+       * When the path was deleted.
+       */
+      DateTime DeletedOn;
+
+      /**
+       * The number of days left before the soft deleted path will be permanently deleted.
+       */
+      int64_t RemainingRetentionDays = int64_t();
+    };
 
     // FileClient models:
 
@@ -656,6 +751,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
     friend class Azure::Core::PagedResponse<ListPathsPagedResponse>;
+  };
+
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::ListDeletedPaths.
+   */
+  class ListDeletedPathsPagedResponse final
+      : public Azure::Core::PagedResponse<ListDeletedPathsPagedResponse> {
+  public:
+    /**
+     * Path items.
+     */
+    std::vector<Models::PathDeletedItem> DeletedPaths;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<DataLakeFileSystemClient> m_fileSystemClient;
+    ListDeletedPathsOptions m_operationOptions;
+
+    friend class DataLakeFileSystemClient;
+    friend class Azure::Core::PagedResponse<ListDeletedPathsPagedResponse>;
   };
 
   /**

@@ -109,6 +109,40 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return m_blobServiceClient.GetUserDelegationKey(expiresOn, options, context);
     }
 
+    /**
+     * @brief Sets properties for a storage account's Blob service endpoint, including
+     * properties for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete
+     * settings. You can also use this operation to set the default request version for all incoming
+     * requests to the DataLake service that do not have a version specified.
+     *
+     * @param properties The DataLake service properties.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A SetServicePropertiesResult on successfully setting the properties.
+     */
+    Azure::Response<Models::SetServicePropertiesResult> SetProperties(
+        Models::DataLakeServiceProperties properties,
+        const SetServicePropertiesOptions& options = SetServicePropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      return m_blobServiceClient.SetProperties(properties, options, context);
+    }
+
+    /**
+     * @brief Gets the properties of a storage account's datalake service, including properties
+     * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A DataLakeServiceProperties describing the service properties.
+     */
+    Azure::Response<Models::DataLakeServiceProperties> GetProperties(
+        const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      return m_blobServiceClient.GetProperties(options, context);
+    }
+
   private:
     Azure::Core::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;

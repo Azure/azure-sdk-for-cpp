@@ -318,6 +318,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
+        EXPECT_TRUE(iter->CreatedOn.HasValue());
+        EXPECT_FALSE(iter->ExpiresOn.HasValue());
       }
       for (const auto& name : m_pathNameSetB)
       {
@@ -840,6 +842,129 @@ namespace Azure { namespace Storage { namespace Test {
         StorageException);
     EXPECT_NO_THROW(
         m_fileSystemClient->GetDirectoryClient(destinationDirectoryName).GetProperties());
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, DISABLED_ListDeletedPaths)
+  {
+    const std::string deletedFilename = GetTestNameLowerCase() + "_file_deleted";
+    const std::string nonDeletedFilename = GetTestNameLowerCase() + "_file";
+    const std::string deletedDirectoryName = GetTestNameLowerCase() + "_dir_deleted";
+    const std::string nonDeletedDirectoryName = GetTestNameLowerCase() + "_dir";
+
+    auto deletedFileClient = m_fileSystemClient->GetFileClient(deletedFilename);
+    auto nonDeletedFileClient = m_fileSystemClient->GetFileClient(nonDeletedFilename);
+    auto deletedDirectoryClient = m_fileSystemClient->GetDirectoryClient(deletedDirectoryName);
+    auto nonDeletedDirectoryClient
+        = m_fileSystemClient->GetDirectoryClient(nonDeletedDirectoryName);
+
+    deletedFileClient.Create();
+    deletedFileClient.Delete();
+    nonDeletedFileClient.Create();
+    deletedDirectoryClient.Create();
+    deletedDirectoryClient.DeleteEmpty();
+    nonDeletedDirectoryClient.Create();
+
+    {
+      std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      EXPECT_NO_THROW(paths = std::move(m_fileSystemClient->ListDeletedPaths().DeletedPaths));
+      EXPECT_EQ(2, paths.size());
+      EXPECT_EQ(deletedDirectoryName, paths[0].Name);
+      EXPECT_EQ(deletedFilename, paths[1].Name);
+    }
+    //  List max result
+    {
+      Files::DataLake::ListDeletedPathsOptions options;
+      options.PageSizeHint = 1;
+      std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      for (auto pageResult = m_fileSystemClient->ListDeletedPaths(options); pageResult.HasPage();
+           pageResult.MoveToNextPage())
+      {
+        paths.insert(paths.end(), pageResult.DeletedPaths.begin(), pageResult.DeletedPaths.end());
+        EXPECT_EQ(1, pageResult.DeletedPaths.size());
+      }
+      EXPECT_EQ(2, paths.size());
+    }
+    // prefix works
+    {
+      const std::string directoryName = GetTestNameLowerCase() + "_prefix";
+      const std::string filename = "file";
+
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+      directoryClient.Create();
+      auto fileClient = directoryClient.GetFileClient(filename);
+      fileClient.Create();
+      fileClient.Delete();
+
+      Files::DataLake::ListDeletedPathsOptions options;
+      options.Prefix = directoryName;
+      std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      EXPECT_NO_THROW(
+          paths = std::move(m_fileSystemClient->ListDeletedPaths(options).DeletedPaths));
+      EXPECT_EQ(1, paths.size());
+      EXPECT_EQ(directoryName + "/" + filename, paths[0].Name);
+    }
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, DISABLED_Undelete)
+  {
+    const std::string directoryName = GetTestNameLowerCase() + "_dir";
+    const std::string subFileName = "sub_file";
+
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+    directoryClient.Create();
+    auto subFileClient = m_fileSystemClient->GetFileClient(directoryName + "/" + subFileName);
+    subFileClient.Create();
+    Files::DataLake::Models::PathProperties properties = directoryClient.GetProperties().Value;
+    Files::DataLake::Models::PathProperties subFileProperties = subFileClient.GetProperties().Value;
+
+    // recursive works
+    {
+      directoryClient.DeleteRecursive();
+
+      auto paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
+      const std::string deletionId = paths[0].DeletionId;
+
+      auto restoredClient = m_fileSystemClient->UndeletePath(directoryName, deletionId).Value;
+
+      paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
+      EXPECT_EQ(0, paths.size());
+      Files::DataLake::Models::PathProperties restoredProperties;
+      EXPECT_NO_THROW(restoredProperties = restoredClient.GetProperties().Value);
+      EXPECT_TRUE(restoredProperties.IsDirectory);
+      EXPECT_EQ(properties.ETag, restoredProperties.ETag);
+      Files::DataLake::Models::PathProperties restoredSubFileProperties;
+      EXPECT_NO_THROW(restoredSubFileProperties = subFileClient.GetProperties().Value);
+      EXPECT_TRUE(!restoredSubFileProperties.IsDirectory);
+      EXPECT_EQ(subFileProperties.ETag, restoredSubFileProperties.ETag);
+    }
+    // not recursive works
+    {
+      subFileClient.Delete();
+      directoryClient.DeleteEmpty();
+
+      auto paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
+      std::string deletionId = paths[0].DeletionId;
+
+      // restore directory
+      auto restoredClient = m_fileSystemClient->UndeletePath(directoryName, deletionId).Value;
+      paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
+      EXPECT_EQ(1, paths.size()); // not restore subFile
+      Files::DataLake::Models::PathProperties restoredProperties;
+      EXPECT_NO_THROW(restoredProperties = restoredClient.GetProperties().Value);
+      EXPECT_TRUE(restoredProperties.IsDirectory);
+      EXPECT_EQ(properties.ETag, restoredProperties.ETag);
+      EXPECT_THROW(subFileClient.GetProperties(), StorageException);
+
+      // restore file
+      deletionId = paths[0].DeletionId;
+      restoredClient
+          = m_fileSystemClient->UndeletePath(directoryName + "/" + subFileName, deletionId).Value;
+      paths = m_fileSystemClient->ListDeletedPaths().DeletedPaths;
+      EXPECT_EQ(0, paths.size());
+      EXPECT_NO_THROW(restoredProperties = restoredClient.GetProperties().Value);
+      EXPECT_FALSE(restoredProperties.IsDirectory);
+      EXPECT_EQ(subFileProperties.ETag, restoredProperties.ETag);
+    }
   }
 
 }}} // namespace Azure::Storage::Test

@@ -276,18 +276,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           protocolLayerOptionsCopy,
           _internal::WithReplicaStatus(context));
 
-      const auto emptyExpiresOn
-          = Core::_internal::Win32FileTimeConverter::Win32FileTimeToDateTime(0);
+      ListPathsPagedResponse pagedResponse;
+      const std::string emptyExpiresOnString = "0";
       for (auto& path : response.Value.Paths)
       {
-        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() == emptyExpiresOn)
+        Models::PathItem item;
+        item.Name = std::move(path.Name);
+        item.IsDirectory = path.IsDirectory;
+        item.LastModified = std::move(path.LastModified);
+        item.FileSize = path.FileSize;
+        item.Owner = std::move(path.Owner);
+        item.Group = std::move(path.Group);
+        item.Permissions = std::move(path.Permissions);
+        item.EncryptionScope = path.EncryptionScope;
+        item.ETag = std::move(path.ETag);
+        if (path.CreatedOn.HasValue())
         {
-          path.ExpiresOn.Reset();
+          item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+              std::stoll(path.CreatedOn.Value()));
         }
+        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != emptyExpiresOnString)
+        {
+          item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+              std::stoll(path.ExpiresOn.Value()));
+        }
+        pagedResponse.Paths.push_back(std::move(item));
       }
-
-      ListPathsPagedResponse pagedResponse;
-      pagedResponse.Paths = std::move(response.Value.Paths);
       pagedResponse.m_onNextPageFunc = func;
       pagedResponse.CurrentPageToken = continuationToken;
       pagedResponse.NextPageToken = response.Value.ContinuationToken;
@@ -433,6 +447,77 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_customerProvidedKey);
     return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), std::move(result.RawResponse));
+  }
+
+  ListDeletedPathsPagedResponse DataLakeFileSystemClient::ListDeletedPaths(
+      const ListDeletedPathsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    Blobs::_detail::BlobContainerClient::ListBlobContainerBlobsByHierarchyOptions
+        protocolLayerOptions;
+    protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.ShowOnly = "deleted";
+    auto result = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
+        *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
+
+    ListDeletedPathsPagedResponse pagedResponse;
+    for (auto& item : result.Value.Items)
+    {
+      Models::PathDeletedItem pathDeletedItem;
+      if (item.Name.Encoded)
+      {
+        pathDeletedItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        pathDeletedItem.Name = std::move(item.Name.Content);
+      }
+      pathDeletedItem.DeletedOn = item.Details.DeletedOn.Value();
+      pathDeletedItem.DeletionId = item.DeletionId.Value();
+      pathDeletedItem.RemainingRetentionDays = item.Details.RemainingRetentionDays.Value();
+
+      pagedResponse.DeletedPaths.push_back(std::move(pathDeletedItem));
+    }
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_fileSystemClient = std::make_shared<DataLakeFileSystemClient>(*this);
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = result.Value.ContinuationToken;
+    pagedResponse.RawResponse = std::move(result.RawResponse);
+
+    return pagedResponse;
+  }
+
+  Azure::Response<DataLakePathClient> DataLakeFileSystemClient::UndeletePath(
+      const std::string& deletedPath,
+      const std::string& deletionId,
+      const UndeletePathOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    /* cspell:disable-next-line */
+    std::string undeleteSource = "?deletionid=" + deletionId;
+
+    auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
+    blobUrl.AppendPath(_internal::UrlEncodePath(deletedPath));
+
+    _detail::PathClient::UndeletePathOptions protocolLayerOptions;
+    protocolLayerOptions.UndeleteSource = undeleteSource;
+    auto result
+        = _detail::PathClient::Undelete(*m_pipeline, blobUrl, protocolLayerOptions, context);
+
+    if (result.Value.ResourceType.HasValue()
+        && result.Value.ResourceType.Value() == Models::PathResourceType::Directory.ToString())
+    {
+      return Azure::Response<DataLakePathClient>(
+          std::move(GetDirectoryClient(deletedPath)), std::move(result.RawResponse));
+    }
+    else
+    {
+      return Azure::Response<DataLakePathClient>(
+          std::move(GetFileClient(deletedPath)), std::move(result.RawResponse));
+    }
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -2310,6 +2310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           kHasVersionsOnly,
           kContentLength,
           kBlobType,
+          kDeletionId,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
             {"EnumerationResults", XmlTagEnum::kEnumerationResults},
@@ -2370,6 +2371,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"HasVersionsOnly", XmlTagEnum::kHasVersionsOnly},
             {"Content-Length", XmlTagEnum::kContentLength},
             {"BlobType", XmlTagEnum::kBlobType},
+            {"DeletionId", XmlTagEnum::kDeletionId},
         };
         std::vector<XmlTagEnum> xmlPath;
         Models::_detail::BlobItem vectorElement1;
@@ -2807,6 +2809,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               vectorElement1.BlobType = Models::BlobType(node.Value);
             }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
+                && xmlPath[3] == XmlTagEnum::kDeletionId)
+            {
+              vectorElement1.DeletionId = node.Value;
+            }
           }
           else if (node.Type == _internal::XmlNodeType::Attribute)
           {
@@ -2908,6 +2917,11 @@ namespace Azure { namespace Storage { namespace Blobs {
                 ListBlobsIncludeFlagsToString(options.Include.Value())));
       }
       request.SetHeader("x-ms-version", "2021-04-10");
+      if (options.ShowOnly.HasValue() && !options.ShowOnly.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "showonly", _internal::UrlEncodeQueryParameter(options.ShowOnly.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2981,6 +2995,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           kHasVersionsOnly,
           kContentLength,
           kBlobType,
+          kDeletionId,
           kBlobPrefix,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -3043,6 +3058,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"HasVersionsOnly", XmlTagEnum::kHasVersionsOnly},
             {"Content-Length", XmlTagEnum::kContentLength},
             {"BlobType", XmlTagEnum::kBlobType},
+            {"DeletionId", XmlTagEnum::kDeletionId},
             {"BlobPrefix", XmlTagEnum::kBlobPrefix},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -3487,6 +3503,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kBlobType)
             {
               vectorElement1.BlobType = Models::BlobType(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
+                && xmlPath[3] == XmlTagEnum::kDeletionId)
+            {
+              vectorElement1.DeletionId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
