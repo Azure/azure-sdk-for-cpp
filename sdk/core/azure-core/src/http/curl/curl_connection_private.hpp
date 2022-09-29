@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class CurlConnection final : public CurlNetworkConnection {
   private:
-    _detail::unique_CURL m_handle;
+    _detail::UniqueCURL m_handle;
     curl_socket_t m_curlSocket;
     std::chrono::steady_clock::time_point m_lastUseTime;
     std::string m_connectionKey;

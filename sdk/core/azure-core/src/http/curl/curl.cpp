@@ -67,7 +67,7 @@ template <typename T>
 #pragma warning(disable : 26812)
 #endif
 inline bool SetLibcurlOption(
-    Azure::Core::Http::_detail::unique_CURL const& handle,
+    Azure::Core::Http::_detail::UniqueCURL const& handle,
     CURLoption option,
     T value,
     CURLcode* outError)
@@ -1156,7 +1156,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE();// LCOV_EXCL_LINE
+          AZURE_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
         }
       }
     }
@@ -2000,7 +2000,7 @@ CurlConnection::CurlConnection(
     std::string const& connectionPropertiesKey)
     : m_connectionKey(connectionPropertiesKey)
 {
-  m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURLDeleter{});
+  m_handle = _detail::UniqueCURL(curl_easy_init());
   if (!m_handle)
   {
     throw Azure::Core::Http::TransportException(
