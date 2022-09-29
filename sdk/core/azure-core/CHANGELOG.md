@@ -8,7 +8,7 @@
 - Added universal support for several TLS options:
   - Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).
   - Added the ability to enable TLS certificate revocation list checks (off by default).
-    - For LibCURL only: Allow TLS connection to succeed if CRL retrieval fails.
+    - For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.
     - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
 
 ### Breaking Changes
