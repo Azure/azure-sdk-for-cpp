@@ -1118,9 +1118,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          // LCOV_EXCL_START
-          AZURE_UNREACHABLE_CODE();
-          // LCOV_EXCL_STOP
+          AZURE_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
         }
         // clean internal buffer
         this->m_internalBuffer.clear();
@@ -1158,9 +1156,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          // LCOV_EXCL_START
-          AZURE_UNREACHABLE_CODE();
-          // LCOV_EXCL_STOP
+          AZURE_UNREACHABLE_CODE();// LCOV_EXCL_LINE
         }
       }
     }
@@ -1200,7 +1196,9 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
   key.append(",");
-  key.append(options.Proxy.ValueOr("NoProxy"));
+  key.append(
+      options.Proxy.HasValue() ? (options.Proxy.Value().empty() ? "NoProxy" : options.Proxy.Value())
+                               : "0");
   key.append(",");
   key.append(options.ProxyUsername.empty() ? "0" : options.ProxyUsername);
   key.append(",");
@@ -2000,9 +1998,9 @@ CurlConnection::CurlConnection(
     CurlTransportOptions const& options,
     std::string const& hostDisplayName,
     std::string const& connectionPropertiesKey)
-    : m_connectionKey(std::move(connectionPropertiesKey))
+    : m_connectionKey(connectionPropertiesKey)
 {
-  m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURL_deleter{});
+  m_handle = _detail::unique_CURL(curl_easy_init(), _detail::CURL_Deleter{});
   if (!m_handle)
   {
     throw Azure::Core::Http::TransportException(

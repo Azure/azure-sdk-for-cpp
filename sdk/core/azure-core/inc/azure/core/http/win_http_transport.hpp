@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
     // unique_ptr class wrapping an HINTERNET handle
-    class HINTERNET_deleter {
+    class HINTERNET_Deleter {
     public:
       void operator()(HINTERNET handle) noexcept
       {
@@ -50,10 +50,10 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_HINTERNET = std::unique_ptr<void, HINTERNET_deleter>;
+    using unique_HINTERNET = std::unique_ptr<void, HINTERNET_Deleter>;
 
     // unique_ptr class wrapping a PCCERT_CHAIN_CONTEXT
-    struct HCERTIFICATECHAIN_deleter
+    struct HCERTIFICATECHAIN_Deleter
     {
       void operator()(PCCERT_CHAIN_CONTEXT handle)
       {
@@ -64,10 +64,10 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
     using unique_CCERT_CHAIN_CONTEXT
-        = std::unique_ptr<const CERT_CHAIN_CONTEXT, HCERTIFICATECHAIN_deleter>;
+        = std::unique_ptr<const CERT_CHAIN_CONTEXT, HCERTIFICATECHAIN_Deleter>;
 
     // unique_ptr class wrapping an HCERTCHAINENGINE handle
-    struct HCERTCHAINENGINE_deleter
+    struct HCERTCHAINENGINE_Deleter
     {
       void operator()(HCERTCHAINENGINE handle) noexcept
       {
@@ -77,10 +77,10 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_HCERTCHAINENGINE = std::unique_ptr<void, HCERTCHAINENGINE_deleter>;
+    using unique_HCERTCHAINENGINE = std::unique_ptr<void, HCERTCHAINENGINE_Deleter>;
 
     // unique_ptr class wrapping an HCERTSTORE handle
-    struct HCERTSTORE_deleter
+    struct HCERTSTORE_Deleter
     {
     public:
       void operator()(HCERTSTORE handle) noexcept
@@ -91,10 +91,10 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_HCERTSTORE = std::unique_ptr<void, HCERTSTORE_deleter>;
+    using unique_HCERTSTORE = std::unique_ptr<void, HCERTSTORE_Deleter>;
 
     // unique_ptr class wrapping a PCCERT_CONTEXT
-    struct CERTCONTEXT_deleter
+    struct CERTCONTEXT_Deleter
     {
     public:
       void operator()(PCCERT_CONTEXT handle) noexcept
@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Http {
         }
       }
     };
-    using unique_PCCERT_CONTEXT = std::unique_ptr<CERT_CONTEXT const, CERTCONTEXT_deleter>;
+    using unique_PCCERT_CONTEXT = std::unique_ptr<CERT_CONTEXT const, CERTCONTEXT_Deleter>;
 
     class WinHttpStream final : public Azure::Core::IO::BodyStream {
     private:
@@ -284,7 +284,6 @@ namespace Azure { namespace Core { namespace Http {
 
     // Callback to allow a derived transport to extract the request handle. Used for WebSocket
     // transports.
-  protected:
     virtual void OnUpgradedConnection(_detail::unique_HINTERNET const&){};
     /**
      * @brief Throw an exception based on the Win32 Error code
