@@ -821,7 +821,7 @@ namespace Azure { namespace Storage { namespace Test {
         m_fileSystemClient->GetDirectoryClient(destinationDirectoryName).GetProperties());
   }
 
-  TEST_F(DataLakeFileSystemClientTest, ListDeletedPaths)
+  TEST_F(DataLakeFileSystemClientTest, DISABLED_ListDeletedPaths)
   {
     const std::string deletedFilename = GetTestNameLowerCase() + "_file_deleted";
     const std::string nonDeletedFilename = GetTestNameLowerCase() + "_file";
@@ -882,7 +882,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, Undelete)
+  TEST_F(DataLakeFileSystemClientTest, DISABLED_Undelete)
   {
     const std::string directoryName = GetTestNameLowerCase() + "_dir";
     const std::string subFileName = "sub_file";
