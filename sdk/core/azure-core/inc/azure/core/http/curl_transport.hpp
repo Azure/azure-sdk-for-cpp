@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark Libcurl does revocation list check by default for SSL backends that supports this
      * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
-     * check by default. This ensures that the LibCURL behavior matches the WinHTTP behavior.
+     * check by default. This ensures that the libcurl behavior matches the WinHTTP behavior.
      */
     bool EnableCertificateRevocationListCheck = false;
 
@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This option allows SSL connections to proceed even if there is an error retrieving the
      * Certificate Revocation List.
      *
-     * @remark Note that this only works when LibCURL is configured to use openssl as its TLS
+     * @remark Note that this only works when libcurl is configured to use OpenSSL as its TLS
      * provider. That functionally limits this check to Linux only, and only when openssl is
      * configured (the default).
      */
@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
 
     /**
-     * @brief If set, enables extended tracing from LibCURL.
+     * @brief If set, enables extended tracing from libcurl.
      */
     bool EnableCurlTracing = false;
   };

@@ -42,7 +42,7 @@ if(BUILD_TRANSPORT_CURL)
     src/http/curl/curl_connection_pool_private.hpp
     src/http/curl/curl_connection_private.hpp
     src/http/curl/curl_session_private.hpp
-   )
+  )
   SET(CURL_TRANSPORT_ADAPTER_INC
     inc/azure/core/http/curl_transport.hpp
   )
