@@ -14,7 +14,8 @@
       "name": "openssl"
     },
     {
-      "name": "wil"
+      "name": "wil",
+      "platform": "windows"
     },
     {
       "name": "opentelemetry-cpp",
