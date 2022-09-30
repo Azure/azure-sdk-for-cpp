@@ -207,6 +207,10 @@
             "kind": "StorageV2",
             "properties": {
                 "isHnsEnabled": true,
+                "deleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                },
                 "cors": {
                     "corsRules": [
                         {

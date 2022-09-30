@@ -50,7 +50,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            _detail::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -78,7 +79,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
                                             credential,
-                                            _detail::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -107,7 +109,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : m_fileSystemUrl(fileSystemUrl), m_blobContainerClient(
                                             _detail::GetBlobUrlFromUrl(fileSystemUrl),
-                                            _detail::GetBlobClientOptions(options))
+                                            _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -129,7 +132,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_fileSystemUrl;
     builder.AppendPath(_internal::UrlEncodePath(fileName));
     auto blobClient = m_blobContainerClient.GetBlobClient(fileName);
-    return DataLakeFileClient(std::move(builder), std::move(blobClient), m_pipeline);
+    return DataLakeFileClient(
+        std::move(builder), std::move(blobClient), m_pipeline, m_customerProvidedKey);
   }
 
   DataLakeDirectoryClient DataLakeFileSystemClient::GetDirectoryClient(
@@ -138,7 +142,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_fileSystemUrl;
     builder.AppendPath(_internal::UrlEncodePath(directoryName));
     return DataLakeDirectoryClient(
-        builder, m_blobContainerClient.GetBlobClient(directoryName), m_pipeline);
+        builder,
+        m_blobContainerClient.GetBlobClient(directoryName),
+        m_pipeline,
+        m_customerProvidedKey);
   }
 
   Azure::Response<Models::CreateFileSystemResult> DataLakeFileSystemClient::Create(
@@ -270,7 +277,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           _internal::WithReplicaStatus(context));
 
       ListPathsPagedResponse pagedResponse;
-      pagedResponse.Paths = std::move(response.Value.Paths);
+      const std::string emptyExpiresOnString = "0";
+      for (auto& path : response.Value.Paths)
+      {
+        Models::PathItem item;
+        item.Name = std::move(path.Name);
+        item.IsDirectory = path.IsDirectory;
+        item.LastModified = std::move(path.LastModified);
+        item.FileSize = path.FileSize;
+        item.Owner = std::move(path.Owner);
+        item.Group = std::move(path.Group);
+        item.Permissions = std::move(path.Permissions);
+        item.EncryptionScope = path.EncryptionScope;
+        item.ETag = std::move(path.ETag);
+        if (path.CreatedOn.HasValue())
+        {
+          item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+              std::stoll(path.CreatedOn.Value()));
+        }
+        if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != emptyExpiresOnString)
+        {
+          item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
+              std::stoll(path.ExpiresOn.Value()));
+        }
+        pagedResponse.Paths.push_back(std::move(item));
+      }
       pagedResponse.m_onNextPageFunc = func;
       pagedResponse.CurrentPageToken = continuationToken;
       pagedResponse.NextPageToken = response.Value.ContinuationToken;
@@ -356,10 +387,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    auto renamedBlobClient
-        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedBlobClient = Blobs::BlobClient(
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
     auto renamedFileClient = DataLakeFileClient(
-        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+        std::move(destinationDfsUrl),
+        std::move(renamedBlobClient),
+        m_pipeline,
+        m_customerProvidedKey);
     return Azure::Response<DataLakeFileClient>(
         std::move(renamedFileClient), std::move(result.RawResponse));
   }
@@ -404,12 +438,86 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    auto renamedBlobClient
-        = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
+    auto renamedBlobClient = Blobs::BlobClient(
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, m_customerProvidedKey);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
-        std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
+        std::move(destinationDfsUrl),
+        std::move(renamedBlobClient),
+        m_pipeline,
+        m_customerProvidedKey);
     return Azure::Response<DataLakeDirectoryClient>(
         std::move(renamedDirectoryClient), std::move(result.RawResponse));
+  }
+
+  ListDeletedPathsPagedResponse DataLakeFileSystemClient::ListDeletedPaths(
+      const ListDeletedPathsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    Blobs::_detail::BlobContainerClient::ListBlobContainerBlobsByHierarchyOptions
+        protocolLayerOptions;
+    protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.ShowOnly = "deleted";
+    auto result = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
+        *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
+
+    ListDeletedPathsPagedResponse pagedResponse;
+    for (auto& item : result.Value.Items)
+    {
+      Models::PathDeletedItem pathDeletedItem;
+      if (item.Name.Encoded)
+      {
+        pathDeletedItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        pathDeletedItem.Name = std::move(item.Name.Content);
+      }
+      pathDeletedItem.DeletedOn = item.Details.DeletedOn.Value();
+      pathDeletedItem.DeletionId = item.DeletionId.Value();
+      pathDeletedItem.RemainingRetentionDays = item.Details.RemainingRetentionDays.Value();
+
+      pagedResponse.DeletedPaths.push_back(std::move(pathDeletedItem));
+    }
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_fileSystemClient = std::make_shared<DataLakeFileSystemClient>(*this);
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = result.Value.ContinuationToken;
+    pagedResponse.RawResponse = std::move(result.RawResponse);
+
+    return pagedResponse;
+  }
+
+  Azure::Response<DataLakePathClient> DataLakeFileSystemClient::UndeletePath(
+      const std::string& deletedPath,
+      const std::string& deletionId,
+      const UndeletePathOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    /* cspell:disable-next-line */
+    std::string undeleteSource = "?deletionid=" + deletionId;
+
+    auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
+    blobUrl.AppendPath(_internal::UrlEncodePath(deletedPath));
+
+    _detail::PathClient::UndeletePathOptions protocolLayerOptions;
+    protocolLayerOptions.UndeleteSource = undeleteSource;
+    auto result
+        = _detail::PathClient::Undelete(*m_pipeline, blobUrl, protocolLayerOptions, context);
+
+    if (result.Value.ResourceType.HasValue()
+        && result.Value.ResourceType.Value() == Models::PathResourceType::Directory.ToString())
+    {
+      return Azure::Response<DataLakePathClient>(
+          std::move(GetDirectoryClient(deletedPath)), std::move(result.RawResponse));
+    }
+    else
+    {
+      return Azure::Response<DataLakePathClient>(
+          std::move(GetFileClient(deletedPath)), std::move(result.RawResponse));
+    }
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

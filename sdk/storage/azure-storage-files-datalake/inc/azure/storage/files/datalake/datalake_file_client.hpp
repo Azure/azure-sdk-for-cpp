@@ -265,12 +265,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const ScheduleFileDeletionOptions& options = ScheduleFileDeletionOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Returns the result of a query against the file.
+     *
+     * @param querySqlExpression The query expression in SQL.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A QueryFileResult describing the query result.
+     */
+    Azure::Response<Models::QueryFileResult> Query(
+        const std::string& querySqlExpression,
+        const QueryFileOptions& options = QueryFileOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     explicit DataLakeFileClient(
         Azure::Core::Url fileUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
-        : DataLakePathClient(std::move(fileUrl), std::move(blobClient), pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
+        Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>())
+        : DataLakePathClient(
+            std::move(fileUrl),
+            std::move(blobClient),
+            pipeline,
+            customerProvidedKey)
     {
     }
 
