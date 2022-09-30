@@ -26,8 +26,8 @@ namespace Azure { namespace Core { namespace _internal {
    *  };
    *
    * This is because WinHttpCloseHandle returns a BOOL, not void, so we need to wrap the call to
-   * WinHttpCloseHandle(). In addition, an HINTERNET is a `void *` type, which means that the std::unique_handle
-   * underlying type needs to be `void`.
+   * WinHttpCloseHandle(). In addition, an HINTERNET is a `void *` type, which means that the
+   * std::unique_handle underlying type needs to be `void`.
    *
    */
 

@@ -1344,8 +1344,7 @@ namespace Azure { namespace Core {
       using type = BasicUniqueHandle<STACK_OF(X509_CRL), FreeCrlStack>;
     };
 
-    template <typename Api, typename... Args>
-    auto MakeUniqueHandle(Api& OpensslApi, Args&&... args)
+    template <typename Api, typename... Args> auto MakeUniqueHandle(Api& OpensslApi, Args&&... args)
     {
       auto raw = OpensslApi(std::forward<Args>(
           args)...); // forwarding is probably unnecessary, could use const Args&...
