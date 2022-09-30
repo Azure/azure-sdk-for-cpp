@@ -17,7 +17,8 @@ steps:
     displayName: Show current path
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} .. > cmake.log
+      cat cmake.log
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
     env:
