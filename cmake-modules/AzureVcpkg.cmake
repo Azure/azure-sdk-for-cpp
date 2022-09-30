@@ -17,6 +17,8 @@ macro(az_vcpkg_integrate)
       set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
           CACHE STRING "")
     else()
+	  message(STATUS "VCPKG_ROOT or VCPKG_INSTALLATION_ROOT is not defined. Will use VCPKG from submodule.")
+	  message(STATUS "AZURE_SDK_DISABLE_AUTO_VCPKG: " $ENV{AZURE_SDK_DISABLE_AUTO_VCPKG})
       # Set AZURE_SDK_DISABLE_AUTO_VCPKG env var to avoid Azure SDK from cloning and setting VCPKG automatically
       # This option delegate package's dependencies installation to user.
       if(NOT DEFINED ENV{AZURE_SDK_DISABLE_AUTO_VCPKG})
@@ -39,6 +41,7 @@ macro(az_vcpkg_integrate)
         endif()
         # use the vcpkg source path 
         set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+        message(STATUS "Set CMAKE_TOOLCHAIN_FILE to: " $ENV{CMAKE_TOOLCHAIN_FILE })
       endif()
     endif()
   endif()
