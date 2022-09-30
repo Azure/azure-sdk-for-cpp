@@ -8,8 +8,7 @@ steps:
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: create working directory
 
-  - pwsh: |
-      Write-Host "ENVs - ${{ parameters.Env }} "
+  - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: ENVs
 
