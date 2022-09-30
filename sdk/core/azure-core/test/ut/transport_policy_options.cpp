@@ -152,6 +152,7 @@ namespace Azure { namespace Core { namespace Test {
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
           Azure::Core::Http::CurlTransportOptions curlOptions;
           curlOptions.SslVerifyPeer = false;
+          curlOptions.EnableCurlTracing = true;
           options.Transport = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
           Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
@@ -507,6 +508,7 @@ namespace Azure { namespace Core { namespace Test {
       // the certificate for the test URL doesn't contain a CRL distribution points extension,
       // and by default there is no platform CRL present.
       Azure::Core::Http::CurlTransportOptions curlOptions;
+      curlOptions.EnableCurlTracing = true;
       curlOptions.SslOptions.AllowFailedCrlRetrieval = true;
       curlOptions.SslOptions.EnableCertificateRevocationListCheck = true;
       transportOptions.Transport = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
