@@ -866,7 +866,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::vector<Files::DataLake::Models::PathDeletedItem> paths;
-      EXPECT_NO_THROW(paths = std::move(m_fileSystemClient->ListDeletedPaths().DeletedPaths));
+      for (auto pageResult = m_fileSystemClient->ListDeletedPaths(); pageResult.HasPage();
+           pageResult.MoveToNextPage())
+      {
+        paths.insert(paths.end(), pageResult.DeletedPaths.begin(), pageResult.DeletedPaths.end());
+      }
       EXPECT_EQ(2, paths.size());
       EXPECT_EQ(deletedDirectoryName, paths[0].Name);
       EXPECT_EQ(deletedFilename, paths[1].Name);
@@ -880,7 +884,7 @@ namespace Azure { namespace Storage { namespace Test {
            pageResult.MoveToNextPage())
       {
         paths.insert(paths.end(), pageResult.DeletedPaths.begin(), pageResult.DeletedPaths.end());
-        EXPECT_EQ(1, pageResult.DeletedPaths.size());
+        EXPECT_LE(pageResult.DeletedPaths.size(), 1);
       }
       EXPECT_EQ(2, paths.size());
     }
@@ -898,8 +902,11 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListDeletedPathsOptions options;
       options.Prefix = directoryName;
       std::vector<Files::DataLake::Models::PathDeletedItem> paths;
-      EXPECT_NO_THROW(
-          paths = std::move(m_fileSystemClient->ListDeletedPaths(options).DeletedPaths));
+      for (auto pageResult = m_fileSystemClient->ListDeletedPaths(options); pageResult.HasPage();
+           pageResult.MoveToNextPage())
+      {
+        paths.insert(paths.end(), pageResult.DeletedPaths.begin(), pageResult.DeletedPaths.end());
+      }
       EXPECT_EQ(1, paths.size());
       EXPECT_EQ(directoryName + "/" + filename, paths[0].Name);
     }

@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             std::move(fileUrl),
             std::move(blobClient),
             pipeline,
-            customerProvidedKey)
+            std::move(customerProvidedKey))
     {
     }
 

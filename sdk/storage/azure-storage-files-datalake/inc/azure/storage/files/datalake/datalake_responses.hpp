@@ -761,7 +761,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : public Azure::Core::PagedResponse<ListDeletedPathsPagedResponse> {
   public:
     /**
-     * Path items.
+     * Deleted path items.
      */
     std::vector<Models::PathDeletedItem> DeletedPaths;
 
