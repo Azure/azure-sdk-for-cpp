@@ -115,8 +115,7 @@ EnvironmentLogLevelListener::GetLogListener()
                   << Azure::DateTime(std::chrono::system_clock::now())
                          .ToString(
                              DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  << " T: " << std::this_thread::get_id() << "] " << LogLevelToConsoleString(level)
-                  << " : " << message << std::endl;
+                  << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
       };
 
   return consoleLogger;

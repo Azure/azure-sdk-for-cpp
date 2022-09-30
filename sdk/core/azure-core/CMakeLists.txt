@@ -36,6 +36,10 @@ if(BUILD_TRANSPORT_CURL)
   message("Libcurl version ${CURL_VERSION_STRING}")
 endif()
 
+if(BUILD_TRANSPORT_WINHTTP)
+  find_package(wil CONFIG REQUIRED)
+endif()
+
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC
     src/http/curl/curl.cpp
@@ -176,7 +180,7 @@ if(BUILD_TRANSPORT_CURL)
   target_link_libraries(azure-core PUBLIC CURL::libcurl)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
-  target_link_libraries(azure-core PRIVATE winhttp)
+  target_link_libraries(azure-core PRIVATE winhttp WIL::WIL)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")

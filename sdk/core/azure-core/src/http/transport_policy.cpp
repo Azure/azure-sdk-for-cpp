@@ -23,7 +23,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 namespace Azure { namespace Core { namespace Http { namespace Policies { namespace _detail {
   namespace {
-    bool AnyTransportOptionsSpecified(TransportOptions const& transportOptions)
+    bool AreTransportOptionsSpecified(TransportOptions const& transportOptions)
     {
       return (
           transportOptions.HttpProxy.HasValue() || transportOptions.ProxyPassword.HasValue()
@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     // concurrently, the initialization occurs exactly once. We depend on this behavior to ensure
     // that the singleton defaultTransport is correctly initialized.
     static std::shared_ptr<HttpTransport> defaultTransport(std::make_shared<WinHttpTransport>());
-    if (AnyTransportOptionsSpecified(transportOptions))
+    if (AreTransportOptionsSpecified(transportOptions))
     {
       WinHttpTransportOptions httpOptions;
       if (transportOptions.HttpProxy.HasValue())
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     }
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     static std::shared_ptr<HttpTransport> defaultTransport(std::make_shared<CurlTransport>());
-    if (AnyTransportOptionsSpecified(transportOptions))
+    if (AreTransportOptionsSpecified(transportOptions))
     {
       CurlTransportOptions curlOptions;
       curlOptions.EnableCurlTracing = true;
@@ -144,7 +144,7 @@ TransportPolicy::TransportPolicy(TransportOptions const& options) : m_options(op
   if (m_options.Transport)
   {
 #if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-    if (_detail::AnyTransportOptionsSpecified(options))
+    if (_detail::AreTransportOptionsSpecified(options))
     {
       AZURE_ASSERT_MSG(
           false, "Invalid parameter: Proxies cannot be specified when a transport is specified.");

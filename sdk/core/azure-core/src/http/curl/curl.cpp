@@ -67,7 +67,7 @@ template <typename T>
 #pragma warning(disable : 26812)
 #endif
 inline bool SetLibcurlOption(
-    Azure::Core::Http::_detail::UniqueCURL const& handle,
+    Azure::Core::_internal::UniqueHandle<CURL> const& handle,
     CURLoption option,
     T value,
     CURLcode* outError)
@@ -829,7 +829,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   auto isTransferEncodingHeaderInResponse = headers.find("transfer-encoding");
   if (isTransferEncodingHeaderInResponse != headers.end())
   {
-    auto headerValue = isTransferEncodingHeaderInResponse->second;
+    auto& headerValue = isTransferEncodingHeaderInResponse->second;
     auto isChunked = headerValue.find("chunked");
 
     if (isChunked != std::string::npos)
@@ -1314,423 +1314,417 @@ int CurlConnection::CurlLoggingCallback(CURL*, curl_infotype type, char* data, s
   }
   return 0;
 }
-#if !defined(AZ_PLATFORM_WINDOWS)
-namespace Azure { namespace Core { namespace Http {
-  namespace _detail {
 
-    // Helpers to provide RAII wrappers for OpenSSL types.
-    template <typename T, void (&Deleter)(T*)> struct openssl_deleter
-    {
-      void operator()(T* obj) { Deleter(obj); }
-    };
-    template <typename T, void (&FreeFunc)(T*)>
-    using basic_openssl_unique_ptr = std::unique_ptr<T, openssl_deleter<T, FreeFunc>>;
+// On Windows and macOS, libcurl uses native crypto backends, this functionality depends on
+// the OpenSSL backend.
+#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_MAC)
+namespace Azure { namespace Core {
+  namespace _internal {
 
-    // *** Given just T, map it to the corresponding FreeFunc:
-    template <typename T> struct type_map_helper;
-    template <> struct type_map_helper<X509>
+    template <> struct UniqueHandleHelper<X509>
     {
-      using type = basic_openssl_unique_ptr<X509, X509_free>;
+      using type = BasicUniqueHandle<X509, X509_free>;
     };
-    template <> struct type_map_helper<X509_CRL>
+    template <> struct UniqueHandleHelper<X509_CRL>
     {
-      using type = basic_openssl_unique_ptr<X509_CRL, X509_CRL_free>;
+      using type = BasicUniqueHandle<X509_CRL, X509_CRL_free>;
     };
 
-    template <> struct type_map_helper<BIO>
+    template <> struct UniqueHandleHelper<BIO>
     {
-      using type = basic_openssl_unique_ptr<BIO, BIO_free_all>;
+      using type = BasicUniqueHandle<BIO, BIO_free_all>;
     };
 
-    template <> struct type_map_helper<STACK_OF(X509_CRL)>
+    template <> struct UniqueHandleHelper<STACK_OF(X509_CRL)>
     {
       static void FreeCrlStack(STACK_OF(X509_CRL) * obj)
       {
         sk_X509_CRL_pop_free(obj, X509_CRL_free);
       }
-      using type = basic_openssl_unique_ptr<STACK_OF(X509_CRL), FreeCrlStack>;
+      using type = BasicUniqueHandle<STACK_OF(X509_CRL), FreeCrlStack>;
     };
 
-    // *** Now users can say openssl_unique_ptr<T> if they want:
-    template <typename T> using openssl_unique_ptr = typename type_map_helper<T>::type;
-
-    // *** Or the current solution's convenience aliases:
-    using openssl_bio = openssl_unique_ptr<BIO>;
-    using openssl_x509 = openssl_unique_ptr<X509>;
-    using openssl_x509_crl = openssl_unique_ptr<X509_CRL>;
-    using openssl_x509_crl_stack = openssl_unique_ptr<STACK_OF(X509_CRL)>;
-
     template <typename Api, typename... Args>
-    auto make_openssl_unique(Api& OpensslApi, Args&&... args)
+    auto MakeUniqueHandle(Api& OpensslApi, Args&&... args)
     {
       auto raw = OpensslApi(std::forward<Args>(
           args)...); // forwarding is probably unnecessary, could use const Args&...
       // check raw
       using T = std::remove_pointer_t<decltype(raw)>; // no need to request T when we can see
                                                       // what OpensslApi returned
-      return openssl_unique_ptr<T>{raw};
+      return UniqueHandle<T>{raw};
     }
+  } // namespace _internal
+  namespace Http {
+    namespace _detail {
 
-    // Disable Code Coverage across GetOpenSSLError because we don't have a good way of forcing
-    // OpenSSL to fail.
-    // LCOV_EXCL_START
-    std::string GetOpenSSLError(std::string const& what)
-    {
-      auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-
-      BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
-      if (ERR_peek_error() != 0)
+      // Disable Code Coverage across GetOpenSSLError because we don't have a good way of forcing
+      // OpenSSL to fail.
+      // LCOV_EXCL_START
+      std::string GetOpenSSLError(std::string const& what)
       {
-        ERR_print_errors(bio.get());
-      }
-      else
-      {
-        BIO_printf(bio.get(), "Unknown error.");
-      }
+        auto bio(Azure::Core::_internal::MakeUniqueHandle(BIO_new, BIO_s_mem()));
 
-      uint8_t* bioData;
-      long bufferSize = BIO_get_mem_data(bio.get(), &bioData);
-      std::string returnValue;
-      returnValue.resize(bufferSize);
-      memcpy(&returnValue[0], bioData, bufferSize);
-
-      return returnValue;
-    }
-    // LCOV_EXCL_STOP
-
-  } // namespace _detail
-
-  namespace {
-    // int g_ssl_crl_max_size_in_kb = 20;
-    /**
-     * @brief THe Cryptography class provides a set of basic cryptographic primatives required
-     * by the attestation samples.
-     */
-
-    _detail::openssl_x509_crl LoadCrlFromUrl(std::string const& url)
-    {
-      Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
-      auto crl = _detail::make_openssl_unique(X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
-      if (!crl)
-      {
-        Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Load CRL"));
-      }
-
-      return crl;
-    }
-
-    enum class CrlFormat : int
-    {
-      Http,
-      Asn1,
-      PEM,
-    };
-
-    _detail::openssl_x509_crl LoadCrl(std::string const& source, CrlFormat format)
-    {
-      _detail::openssl_x509_crl x;
-      _detail::openssl_bio in;
-
-      if (format == CrlFormat::Http)
-      {
-        return LoadCrlFromUrl(source);
-      }
-      return x;
-    }
-
-    bool IsCrlValid(X509_CRL* crl)
-    {
-      const ASN1_TIME* at = X509_CRL_get0_nextUpdate(crl);
-
-      int day = -1;
-      int sec = -1;
-      if (!ASN1_TIME_diff(&day, &sec, nullptr, at))
-      {
-        Log::Write(Logger::Level::Error, "Could not check expiration");
-        return false; /* Safe default, invalid */
-      }
-
-      if (day > 0 || sec > 0)
-      {
-        return true; /* Later, valid */
-      }
-      return false; /* Before or same, invalid */
-    }
-
-    const char* GetDistributionPointUrl(DIST_POINT* dp)
-    {
-      GENERAL_NAMES* gens;
-      GENERAL_NAME* gen;
-      int i, nameType;
-      ASN1_STRING* uri;
-
-      if (!dp->distpoint)
-      {
-        Log::Write(Logger::Level::Informational, "returning, dp->distpoint is null");
-        return nullptr;
-      }
-
-      if (dp->distpoint->type != 0)
-      {
-        Log::Write(
-            Logger::Level::Informational,
-            "returning, dp->distpoint->type is " + std::to_string(dp->distpoint->type));
-        return nullptr;
-      }
-
-      gens = dp->distpoint->name.fullname;
-
-      for (i = 0; i < sk_GENERAL_NAME_num(gens); i++)
-      {
-        gen = sk_GENERAL_NAME_value(gens, i);
-        uri = static_cast<ASN1_STRING*>(GENERAL_NAME_get0_value(gen, &nameType));
-
-        if (nameType == GEN_URI && ASN1_STRING_length(uri) > 6)
+        BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
+        if (ERR_peek_error() != 0)
         {
-          const char* uptr = reinterpret_cast<const char*>(ASN1_STRING_get0_data(uri));
-          if (strncmp(uptr, "http://", 7) == 0)
-          {
-            return uptr;
-          }
+          ERR_print_errors(bio.get());
         }
-      }
-
-      return nullptr;
-    }
-
-    std::mutex crl_cache_lock;
-    std::vector<X509_CRL*> crl_cache;
-
-    bool SaveCertificateCrlToMemory(X509* cert, _detail::openssl_x509_crl const& crl)
-    {
-      std::unique_lock<std::mutex> lockResult(crl_cache_lock);
-
-      // update existing
-      X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
-      for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
-      {
-        X509_CRL* cacheEntry = *it;
-        if (!cacheEntry)
+        else
         {
-          continue;
+          BIO_printf(bio.get(), "Unknown error.");
         }
 
-        X509_NAME* crl_issuer = X509_CRL_get_issuer(cacheEntry);
-        if (!crl_issuer || !cert_issuer)
-        {
-          continue;
-        }
+        uint8_t* bioData;
+        long bufferSize = BIO_get_mem_data(bio.get(), &bioData);
+        std::string returnValue;
+        returnValue.resize(bufferSize);
+        memcpy(&returnValue[0], bioData, bufferSize);
 
-        // If we are getting a new CRL for an existing CRL, update the
-        // CRL with the new CRL.
-        if (0 == X509_NAME_cmp(crl_issuer, cert_issuer))
-        {
-          // Bump the refcount on the new CRL before adding it to the cache.
-          X509_CRL_free(*it);
-          X509_CRL_up_ref(crl.get());
-          *it = crl.get();
-          return true;
-        }
+        return returnValue;
       }
+      // LCOV_EXCL_STOP
 
-      // not found, so try to find slot by purging outdated
-      for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+    } // namespace _detail
+
+    namespace {
+      // int g_ssl_crl_max_size_in_kb = 20;
+      /**
+       * @brief THe Cryptography class provides a set of basic cryptographic primatives required
+       * by the attestation samples.
+       */
+
+      Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCrlFromUrl(std::string const& url)
       {
-        if (!*it)
+        Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
+        auto crl = Azure::Core::_internal::MakeUniqueHandle(
+            X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
+        if (!crl)
         {
-          // set new
-          X509_CRL_free(*it);
-          X509_CRL_up_ref(crl.get());
-          *it = crl.get();
-          return true;
+          Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Load CRL"));
         }
 
-        if (!IsCrlValid(*it))
-        {
-          // remove stale
-          X509_CRL_free(*it);
-          X509_CRL_up_ref(crl.get());
-          *it = crl.get();
-          return true;
-        }
-      }
-
-      // Clone the certificate and add it to the cache.
-      X509_CRL_up_ref(crl.get());
-      crl_cache.push_back(crl.get());
-      return true;
-    }
-
-    _detail::openssl_x509_crl LoadCertificateCrlFromMemory(X509* cert)
-    {
-      X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
-
-      std::unique_lock<std::mutex> lockResult(crl_cache_lock);
-
-      for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
-      {
-        X509_CRL* crl = *it;
-        if (!*it)
-        {
-          continue;
-        }
-
-        // names don't match up. probably a hash collision
-        // so lets test if there is another crl on disk.
-        X509_NAME* crl_issuer = X509_CRL_get_issuer(crl);
-        if (!crl_issuer || !cert_issuer)
-        {
-          continue;
-        }
-
-        if (0 != X509_NAME_cmp(crl_issuer, cert_issuer))
-        {
-          continue;
-        }
-
-        if (!IsCrlValid(crl))
-        {
-          Log::Write(Logger::Level::Informational, "Discarding outdated CRL");
-          X509_CRL_free(*it);
-          *it = nullptr;
-          continue;
-        }
-
-        X509_CRL_up_ref(crl);
-        return _detail::openssl_x509_crl(crl);
-      }
-      return nullptr;
-    }
-
-    _detail::openssl_x509_crl LoadCrlFromCacheAndDistributionPoint(
-        X509* cert,
-        STACK_OF(DIST_POINT) * crlDistributionPointStack)
-    {
-      int i;
-
-      _detail::openssl_x509_crl crl = LoadCertificateCrlFromMemory(cert);
-      if (crl)
-      {
         return crl;
       }
 
-      // file was not found on disk cache,
-      // so, now loading from web.
-      // Walk through the possible CRL distribution points
-      // looking for one which has a URL that we can download.
-      const char* urlptr = nullptr;
-      for (i = 0; i < sk_DIST_POINT_num(crlDistributionPointStack); i++)
+      enum class CrlFormat : int
       {
-        DIST_POINT* dp = sk_DIST_POINT_value(crlDistributionPointStack, i);
+        Http,
+        Asn1,
+        PEM,
+      };
 
-        urlptr = GetDistributionPointUrl(dp);
-        if (urlptr)
+      Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCrl(
+          std::string const& source,
+          CrlFormat format)
+      {
+        Azure::Core::_internal::UniqueHandle<X509_CRL> x;
+        Azure::Core::_internal::UniqueHandle<BIO> in;
+
+        if (format == CrlFormat::Http)
         {
-          // try to load from web, exit loop if
-          // successfully downloaded
-          crl = LoadCrl(urlptr, CrlFormat::Http);
-          if (crl)
-            break;
+          return LoadCrlFromUrl(source);
         }
+        return x;
       }
 
-      if (!urlptr)
+      bool IsCrlValid(X509_CRL* crl)
       {
-        Log::Write(Logger::Level::Error, "No CRL dist point qualified for downloading.");
+        const ASN1_TIME* at = X509_CRL_get0_nextUpdate(crl);
+
+        int day = -1;
+        int sec = -1;
+        if (!ASN1_TIME_diff(&day, &sec, nullptr, at))
+        {
+          Log::Write(Logger::Level::Error, "Could not check expiration");
+          return false; /* Safe default, invalid */
+        }
+
+        if (day > 0 || sec > 0)
+        {
+          return true; /* Later, valid */
+        }
+        return false; /* Before or same, invalid */
       }
 
-      if (crl)
+      const char* GetDistributionPointUrl(DIST_POINT* dp)
       {
-        // save it to memory
-        SaveCertificateCrlToMemory(cert, crl);
-      }
+        GENERAL_NAMES* gens;
+        GENERAL_NAME* gen;
+        int i, nameType;
+        ASN1_STRING* uri;
 
-      return crl;
-    }
+        if (!dp->distpoint)
+        {
+          Log::Write(Logger::Level::Informational, "returning, dp->distpoint is null");
+          return nullptr;
+        }
 
-    /**
-     * @brief Retrieve the CRL associated with the provided store context, if available.
-     *
-     */
-    STACK_OF(X509_CRL) * CrlHttpCallback(const X509_STORE_CTX* context, const X509_NAME*)
-    {
-      _detail::openssl_x509_crl crl;
-      STACK_OF(DIST_POINT) * crlDistributionPoint;
+        if (dp->distpoint->type != 0)
+        {
+          Log::Write(
+              Logger::Level::Informational,
+              "returning, dp->distpoint->type is " + std::to_string(dp->distpoint->type));
+          return nullptr;
+        }
 
-      _detail::openssl_x509_crl_stack crlStack
-          = _detail::openssl_x509_crl_stack(sk_X509_CRL_new_null());
-      if (crlStack == nullptr)
-      {
-        Log::Write(Logger::Level::Error, "Failed to allocate STACK_OF(X509_CRL)");
+        gens = dp->distpoint->name.fullname;
+
+        for (i = 0; i < sk_GENERAL_NAME_num(gens); i++)
+        {
+          gen = sk_GENERAL_NAME_value(gens, i);
+          uri = static_cast<ASN1_STRING*>(GENERAL_NAME_get0_value(gen, &nameType));
+
+          if (nameType == GEN_URI && ASN1_STRING_length(uri) > 6)
+          {
+            const char* uptr = reinterpret_cast<const char*>(ASN1_STRING_get0_data(uri));
+            if (strncmp(uptr, "http://", 7) == 0)
+            {
+              return uptr;
+            }
+          }
+        }
+
         return nullptr;
       }
 
-      X509* currentCertificate = X509_STORE_CTX_get_current_cert(context);
+      std::mutex crl_cache_lock;
+      std::vector<X509_CRL*> crl_cache;
 
-      // try to download Crl
-      crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
-          X509_get_ext_d2i(currentCertificate, NID_crl_distribution_points, nullptr, nullptr));
-      if (!crlDistributionPoint
-          && X509_NAME_cmp(
-                 X509_get_issuer_name(currentCertificate),
-                 X509_get_subject_name(currentCertificate))
-              != 0)
+      bool SaveCertificateCrlToMemory(
+          X509* cert,
+          Azure::Core::_internal::UniqueHandle<X509_CRL> const& crl)
       {
-        Log::Write(
-            Logger::Level::Error,
-            "No CRL distribution points defined on non self-issued cert, CRL check may fail.");
+        std::unique_lock<std::mutex> lockResult(crl_cache_lock);
+
+        // update existing
+        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
+        for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+        {
+          X509_CRL* cacheEntry = *it;
+          if (!cacheEntry)
+          {
+            continue;
+          }
+
+          X509_NAME* crl_issuer = X509_CRL_get_issuer(cacheEntry);
+          if (!crl_issuer || !cert_issuer)
+          {
+            continue;
+          }
+
+          // If we are getting a new CRL for an existing CRL, update the
+          // CRL with the new CRL.
+          if (0 == X509_NAME_cmp(crl_issuer, cert_issuer))
+          {
+            // Bump the refcount on the new CRL before adding it to the cache.
+            X509_CRL_free(*it);
+            X509_CRL_up_ref(crl.get());
+            *it = crl.get();
+            return true;
+          }
+        }
+
+        // not found, so try to find slot by purging outdated
+        for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+        {
+          if (!*it)
+          {
+            // set new
+            X509_CRL_free(*it);
+            X509_CRL_up_ref(crl.get());
+            *it = crl.get();
+            return true;
+          }
+
+          if (!IsCrlValid(*it))
+          {
+            // remove stale
+            X509_CRL_free(*it);
+            X509_CRL_up_ref(crl.get());
+            *it = crl.get();
+            return true;
+          }
+        }
+
+        // Clone the certificate and add it to the cache.
+        X509_CRL_up_ref(crl.get());
+        crl_cache.push_back(crl.get());
+        return true;
+      }
+
+      Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCertificateCrlFromMemory(X509* cert)
+      {
+        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
+
+        std::unique_lock<std::mutex> lockResult(crl_cache_lock);
+
+        for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
+        {
+          X509_CRL* crl = *it;
+          if (!*it)
+          {
+            continue;
+          }
+
+          // names don't match up. probably a hash collision
+          // so lets test if there is another crl on disk.
+          X509_NAME* crl_issuer = X509_CRL_get_issuer(crl);
+          if (!crl_issuer || !cert_issuer)
+          {
+            continue;
+          }
+
+          if (0 != X509_NAME_cmp(crl_issuer, cert_issuer))
+          {
+            continue;
+          }
+
+          if (!IsCrlValid(crl))
+          {
+            Log::Write(Logger::Level::Informational, "Discarding outdated CRL");
+            X509_CRL_free(*it);
+            *it = nullptr;
+            continue;
+          }
+
+          X509_CRL_up_ref(crl);
+          return Azure::Core::_internal::UniqueHandle<X509_CRL>(crl);
+        }
         return nullptr;
       }
 
-      crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
-
-      sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
-      if (!crl)
+      Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCrlFromCacheAndDistributionPoint(
+          X509* cert,
+          STACK_OF(DIST_POINT) * crlDistributionPointStack)
       {
-        Log::Write(Logger::Level::Error, "Unable to retrieve CRL, CRL check may fail.");
-        return nullptr;
+        int i;
+
+        Azure::Core::_internal::UniqueHandle<X509_CRL> crl = LoadCertificateCrlFromMemory(cert);
+        if (crl)
+        {
+          return crl;
+        }
+
+        // file was not found on disk cache,
+        // so, now loading from web.
+        // Walk through the possible CRL distribution points
+        // looking for one which has a URL that we can download.
+        const char* urlptr = nullptr;
+        for (i = 0; i < sk_DIST_POINT_num(crlDistributionPointStack); i++)
+        {
+          DIST_POINT* dp = sk_DIST_POINT_value(crlDistributionPointStack, i);
+
+          urlptr = GetDistributionPointUrl(dp);
+          if (urlptr)
+          {
+            // try to load from web, exit loop if
+            // successfully downloaded
+            crl = LoadCrl(urlptr, CrlFormat::Http);
+            if (crl)
+              break;
+          }
+        }
+
+        if (!urlptr)
+        {
+          Log::Write(Logger::Level::Error, "No CRL dist point qualified for downloading.");
+        }
+
+        if (crl)
+        {
+          // save it to memory
+          SaveCertificateCrlToMemory(cert, crl);
+        }
+
+        return crl;
       }
 
-      sk_X509_CRL_push(crlStack.get(), X509_CRL_dup(crl.get()));
-
-      // try to download delta Crl
-      crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
-          X509_get_ext_d2i(currentCertificate, NID_freshest_crl, nullptr, nullptr));
-      if (crlDistributionPoint != nullptr)
+      /**
+       * @brief Retrieve the CRL associated with the provided store context, if available.
+       *
+       */
+      STACK_OF(X509_CRL) * CrlHttpCallback(const X509_STORE_CTX* context, const X509_NAME*)
       {
+        Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
+        STACK_OF(DIST_POINT) * crlDistributionPoint;
+
+        Azure::Core::_internal::UniqueHandle<STACK_OF(X509_CRL)> crlStack
+            = Azure::Core::_internal::UniqueHandle<STACK_OF(X509_CRL)>(sk_X509_CRL_new_null());
+        if (crlStack == nullptr)
+        {
+          Log::Write(Logger::Level::Error, "Failed to allocate STACK_OF(X509_CRL)");
+          return nullptr;
+        }
+
+        X509* currentCertificate = X509_STORE_CTX_get_current_cert(context);
+
+        // try to download Crl
+        crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
+            X509_get_ext_d2i(currentCertificate, NID_crl_distribution_points, nullptr, nullptr));
+        if (!crlDistributionPoint
+            && X509_NAME_cmp(
+                   X509_get_issuer_name(currentCertificate),
+                   X509_get_subject_name(currentCertificate))
+                != 0)
+        {
+          Log::Write(
+              Logger::Level::Error,
+              "No CRL distribution points defined on non self-issued cert, CRL check may fail.");
+          return nullptr;
+        }
+
         crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
 
         sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
-        if (crl)
+        if (!crl)
         {
-          sk_X509_CRL_push(crlStack.get(), X509_CRL_dup(crl.get()));
+          Log::Write(Logger::Level::Error, "Unable to retrieve CRL, CRL check may fail.");
+          return nullptr;
         }
+
+        sk_X509_CRL_push(crlStack.get(), X509_CRL_dup(crl.get()));
+
+        // try to download delta Crl
+        crlDistributionPoint = static_cast<STACK_OF(DIST_POINT)*>(
+            X509_get_ext_d2i(currentCertificate, NID_freshest_crl, nullptr, nullptr));
+        if (crlDistributionPoint != nullptr)
+        {
+          crl = LoadCrlFromCacheAndDistributionPoint(currentCertificate, crlDistributionPoint);
+
+          sk_DIST_POINT_pop_free(crlDistributionPoint, DIST_POINT_free);
+          if (crl)
+          {
+            sk_X509_CRL_push(crlStack.get(), X509_CRL_dup(crl.get()));
+          }
+        }
+
+        return crlStack.release();
       }
 
-      return crlStack.release();
-    }
-
-    int GetOpenSSLContextConnectionIndex()
-    {
-      static int openSslConnectionIndex = -1;
-      if (openSslConnectionIndex < 0)
+      int GetOpenSSLContextConnectionIndex()
       {
-        openSslConnectionIndex = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+        static int openSslConnectionIndex = -1;
+        if (openSslConnectionIndex < 0)
+        {
+          openSslConnectionIndex
+              = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+        }
+        return openSslConnectionIndex;
       }
-      return openSslConnectionIndex;
-    }
-    int GetOpenSSLContextLastVerifyFunction()
-    {
-      static int openSslLastVerifyFunctionIndex = -1;
-      if (openSslLastVerifyFunctionIndex < 0)
+      int GetOpenSSLContextLastVerifyFunction()
       {
-        openSslLastVerifyFunctionIndex
-            = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+        static int openSslLastVerifyFunctionIndex = -1;
+        if (openSslLastVerifyFunctionIndex < 0)
+        {
+          openSslLastVerifyFunctionIndex
+              = X509_STORE_get_ex_new_index(0, nullptr, nullptr, nullptr, nullptr);
+        }
+        return openSslLastVerifyFunctionIndex;
       }
-      return openSslLastVerifyFunctionIndex;
-    }
-  } // namespace
-}}} // namespace Azure::Core::Http
+    } // namespace
+  } // namespace Http
+}} // namespace Azure::Core
 
 // OpenSSL X509 Certificate Validation function - based off of the example found at:
 // https://linux.die.net/man/3/x509_store_ctx_set_verify_cb
@@ -1740,7 +1734,8 @@ int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
   X509_STORE* certStore = X509_STORE_CTX_get0_store(storeContext);
   X509* err_cert;
   int err, depth;
-  _detail::openssl_bio bio_err(_detail::make_openssl_unique(BIO_new, BIO_s_mem()));
+  Azure::Core::_internal::UniqueHandle<BIO> bio_err(
+      Azure::Core::_internal::MakeUniqueHandle(BIO_new, BIO_s_mem()));
 
   err_cert = X509_STORE_CTX_get_current_cert(storeContext);
   err = X509_STORE_CTX_get_error(storeContext);
@@ -2000,7 +1995,7 @@ CurlConnection::CurlConnection(
     std::string const& connectionPropertiesKey)
     : m_connectionKey(connectionPropertiesKey)
 {
-  m_handle = _detail::UniqueCURL(curl_easy_init());
+  m_handle = Azure::Core::_internal::UniqueHandle<CURL>(curl_easy_init());
   if (!m_handle)
   {
     throw Azure::Core::Http::TransportException(

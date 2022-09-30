@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
 
     /**
-     * @brief If set, enables extended tracing from libcurl.
+     * @brief If set, integrates libcurls internal tracing with Azure logging.
      */
     bool EnableCurlTracing = false;
   };
@@ -183,7 +183,6 @@ namespace Azure { namespace Core { namespace Http {
   private:
     CurlTransportOptions m_options;
 
-  protected:
     /**
      * @brief Called when an HTTP response indicates the connection should be upgraded to
      * a websocket. Takes ownership of the CurlNetworkConnection object.

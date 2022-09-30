@@ -8,15 +8,16 @@
 #include "azure/core/diagnostics/logger.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/strings.hpp"
+#include "azure/core/internal/unique_handle.hpp"
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include "azure/core/http/win_http_transport.hpp"
 #endif
-
 #include <Windows.h>
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include <wil/resource.h> // definitions for wil::unique_cert_chain_context and other RAII type wrappers for Windows types.
 #include <wincrypt.h>
 #include <winhttp.h>
 
@@ -209,14 +210,14 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 // For each certificate specified in trustedCertificate, add to certificateStore.
 bool WinHttpTransport::AddCertificatesToStore(
     std::vector<std::string> const& trustedCertificates,
-    _detail::UniqueHCERTSTORE const& certificateStore)
+    HCERTSTORE certificateStore)
 {
   for (auto const& trustedCertificate : trustedCertificates)
   {
     auto derCertificate = Azure::Core::Convert::Base64Decode(trustedCertificate);
 
     if (!CertAddEncodedCertificateToStore(
-            certificateStore.get(),
+            certificateStore,
             X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
             derCertificate.data(),
             static_cast<DWORD>(derCertificate.size()),
@@ -230,10 +231,10 @@ bool WinHttpTransport::AddCertificatesToStore(
 }
 
 // VerifyCertificateInChain determines whether the certificate in serverCertificate
-// chains up to the PEM represented by trustedCertificate or not.
+// chains up to one of the certificates represented by trustedCertificate or not.
 bool WinHttpTransport::VerifyCertificatesInChain(
     std::vector<std::string> const& trustedCertificates,
-    _detail::UniquePCCERT_CONTEXT const& serverCertificate)
+    PCCERT_CONTEXT serverCertificate)
 {
   if ((trustedCertificates.empty()) || !serverCertificate)
   {
@@ -241,7 +242,7 @@ bool WinHttpTransport::VerifyCertificatesInChain(
   }
 
   // Creates an in-memory certificate store that is destroyed at end of this function.
-  _detail::UniqueHCERTSTORE certificateStore(CertOpenStore(
+  wil::unique_hcertstore certificateStore(CertOpenStore(
       CERT_STORE_PROV_MEMORY,
       X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
       0,
@@ -253,47 +254,48 @@ bool WinHttpTransport::VerifyCertificatesInChain(
   }
 
   // Add the trusted certificates to that store.
-  if (!AddCertificatesToStore(trustedCertificates, certificateStore))
+  if (!AddCertificatesToStore(trustedCertificates, certificateStore.get()))
   {
     Log::Write(Logger::Level::Error, "Cannot add certificates to store");
     return false;
   }
 
-  _detail::UniqueHCERTCHAINENGINE certificateChainEngine;
+  // WIL doesn't declare a convenient wrapper for a HCERTCHAINENGINE, so we define a custom one.
+  wil::unique_any<
+      HCERTCHAINENGINE,
+      decltype(CertFreeCertificateChainEngine),
+      CertFreeCertificateChainEngine>
+      certificateChainEngine;
   {
     CERT_CHAIN_ENGINE_CONFIG EngineConfig{};
     EngineConfig.cbSize = sizeof(EngineConfig);
     EngineConfig.dwFlags = CERT_CHAIN_ENABLE_CACHE_AUTO_UPDATE | CERT_CHAIN_ENABLE_SHARE_STORE;
     EngineConfig.hExclusiveRoot = certificateStore.get();
 
-    HCERTCHAINENGINE engineHandle;
-    if (!CertCreateCertificateChainEngine(&EngineConfig, &engineHandle))
+    if (!CertCreateCertificateChainEngine(&EngineConfig, certificateChainEngine.addressof()))
     {
       GetErrorAndThrow("CertCreateCertificateChainEngine failed");
     }
-    certificateChainEngine.reset(engineHandle);
   }
 
   // Generate a certificate chain using the local chain engine and the certificate store containing
   // the trusted certificates.
-  _detail::UniqueCCERT_CHAIN_CONTEXT chainContextToVerify;
+  wil::unique_cert_chain_context chainContextToVerify;
   {
     CERT_CHAIN_PARA ChainPara{};
     ChainPara.cbSize = sizeof(ChainPara);
-    PCCERT_CHAIN_CONTEXT chainContext;
     if (!CertGetCertificateChain(
             certificateChainEngine.get(),
-            serverCertificate.get(),
+            serverCertificate,
             nullptr,
             certificateStore.get(),
             &ChainPara,
             0,
             nullptr,
-            &chainContext))
+            chainContextToVerify.addressof()))
     {
       GetErrorAndThrow("CertGetCertificateChain failed");
     }
-    chainContextToVerify.reset(chainContext);
   }
 
   // And make sure that the certificate chain which was created matches the SSL chain.
@@ -386,22 +388,20 @@ void WinHttpTransport::OnHttpStatusOperation(HINTERNET hInternet, DWORD dwIntern
   AZURE_ASSERT(!m_options.ExpectedTlsRootCertificates.empty());
 
   // Ask WinHTTP for the server certificate - this won't be valid outside a status callback.
-  _detail::UniquePCCERT_CONTEXT serverCertificate;
+  wil::unique_cert_context serverCertificate;
   {
-    PCCERT_CONTEXT certContext;
-    DWORD bufferLength = sizeof(certContext);
+    DWORD bufferLength = sizeof(PCCERT_CONTEXT);
     if (!WinHttpQueryOption(
             hInternet,
             WINHTTP_OPTION_SERVER_CERT_CONTEXT,
-            reinterpret_cast<void*>(&certContext),
+            reinterpret_cast<void*>(serverCertificate.addressof()),
             &bufferLength))
     {
       GetErrorAndThrow("Could not retrieve TLS server certificate.");
     }
-    serverCertificate.reset(certContext);
   }
 
-  if (!VerifyCertificatesInChain(m_options.ExpectedTlsRootCertificates, serverCertificate))
+  if (!VerifyCertificatesInChain(m_options.ExpectedTlsRootCertificates, serverCertificate.get()))
   {
     Log::Write(Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
 
@@ -442,11 +442,11 @@ void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWO
   throw Azure::Core::Http::TransportException(errorMessage);
 }
 
-_detail::UniqueHINTERNET WinHttpTransport::CreateSessionHandle()
+Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionHandle()
 {
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
-  _detail::UniqueHINTERNET sessionHandle(WinHttpOpen(
+  Azure::Core::_internal::UniqueHandle<HINTERNET> sessionHandle(WinHttpOpen(
       NULL, // Do not use a fallback user-agent string, and only rely on the header within the
             // request itself.
       // If the customer asks for it, enable use of the system default HTTP proxy.
@@ -514,7 +514,7 @@ WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
 {
 }
 
-_detail::UniqueHINTERNET WinHttpTransport::CreateConnectionHandle(
+Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateConnectionHandle(
     Azure::Core::Url const& url,
     Azure::Core::Context const& context)
 {
@@ -525,7 +525,7 @@ _detail::UniqueHINTERNET WinHttpTransport::CreateConnectionHandle(
 
   // Specify an HTTP server.
   // This function always operates synchronously.
-  _detail::UniqueHINTERNET rv(WinHttpConnect(
+  Azure::Core::_internal::UniqueHandle<HINTERNET> rv(WinHttpConnect(
       m_sessionHandle.get(),
       StringToWideString(url.GetHost()).c_str(),
       port == 0 ? INTERNET_DEFAULT_PORT : port,
@@ -546,8 +546,8 @@ _detail::UniqueHINTERNET WinHttpTransport::CreateConnectionHandle(
   return rv;
 }
 
-_detail::UniqueHINTERNET WinHttpTransport::CreateRequestHandle(
-    _detail::UniqueHINTERNET const& connectionHandle,
+Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateRequestHandle(
+    Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
     Azure::Core::Url const& url,
     Azure::Core::Http::HttpMethod const& method)
 {
@@ -560,7 +560,7 @@ _detail::UniqueHINTERNET WinHttpTransport::CreateRequestHandle(
           url.GetScheme(), WebSocketScheme));
 
   // Create an HTTP request handle.
-  _detail::UniqueHINTERNET request(WinHttpOpenRequest(
+  Azure::Core::_internal::UniqueHandle<HINTERNET> request(WinHttpOpenRequest(
       connectionHandle.get(),
       HttpMethodToWideString(requestMethod).c_str(),
       path.empty() ? NULL : StringToWideString(path).c_str(), // Name of the target resource of
@@ -655,7 +655,7 @@ _detail::UniqueHINTERNET WinHttpTransport::CreateRequestHandle(
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
 void WinHttpTransport::Upload(
-    _detail::UniqueHINTERNET const& requestHandle,
+    Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
 {
@@ -695,7 +695,7 @@ void WinHttpTransport::Upload(
 }
 
 void WinHttpTransport::SendRequest(
-    _detail::UniqueHINTERNET const& requestHandle,
+    Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
 {
@@ -763,7 +763,7 @@ void WinHttpTransport::SendRequest(
 }
 
 void WinHttpTransport::ReceiveResponse(
-    _detail::UniqueHINTERNET const& requestHandle,
+    Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
     Azure::Core::Context const& context)
 {
   context.ThrowIfCancelled();
@@ -786,7 +786,7 @@ void WinHttpTransport::ReceiveResponse(
 }
 
 int64_t WinHttpTransport::GetContentLength(
-    _detail::UniqueHINTERNET const& requestHandle,
+    Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
     HttpMethod requestMethod,
     HttpStatusCode responseStatusCode)
 {
@@ -822,7 +822,7 @@ int64_t WinHttpTransport::GetContentLength(
 }
 
 std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
-    _detail::UniqueHINTERNET& requestHandle,
+    Azure::Core::_internal::UniqueHandle<HINTERNET>& requestHandle,
     HttpMethod requestMethod)
 {
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
@@ -960,8 +960,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
 std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
-  _detail::UniqueHINTERNET connectionHandle = CreateConnectionHandle(request.GetUrl(), context);
-  _detail::UniqueHINTERNET requestHandle
+  Azure::Core::_internal::UniqueHandle<HINTERNET> connectionHandle
+      = CreateConnectionHandle(request.GetUrl(), context);
+  Azure::Core::_internal::UniqueHandle<HINTERNET> requestHandle
       = CreateRequestHandle(connectionHandle, request.GetUrl(), request.GetMethod());
   try
   {

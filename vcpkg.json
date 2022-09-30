@@ -14,6 +14,9 @@
       "name": "openssl"
     },
     {
+      "name": "wil"
+    },
+    {
       "name": "opentelemetry-cpp",
       "platform": "!uwp",
       "version>=": "1.3.0"
