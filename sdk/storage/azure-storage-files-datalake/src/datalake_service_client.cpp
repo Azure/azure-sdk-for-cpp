@@ -44,7 +44,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
                                       _detail::GetBlobUrlFromUrl(serviceUrl),
                                       credential,
-                                      _detail::GetBlobClientOptions(options))
+                                      _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -72,7 +73,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
                                       _detail::GetBlobUrlFromUrl(serviceUrl),
                                       credential,
-                                      _detail::GetBlobClientOptions(options))
+                                      _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -101,7 +103,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
                                       _detail::GetBlobUrlFromUrl(serviceUrl),
-                                      _detail::GetBlobClientOptions(options))
+                                      _detail::GetBlobClientOptions(options)),
+        m_customerProvidedKey(options.CustomerProvidedKey)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -124,7 +127,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_serviceUrl;
     builder.AppendPath(_internal::UrlEncodePath(fileSystemName));
     return DataLakeFileSystemClient(
-        builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
+        builder,
+        m_blobServiceClient.GetBlobContainerClient(fileSystemName),
+        m_pipeline,
+        m_customerProvidedKey);
   }
 
   ListFileSystemsPagedResponse DataLakeServiceClient::ListFileSystems(

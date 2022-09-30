@@ -9,7 +9,7 @@ package-name: azure-storage-files-datalake
 namespace: Azure::Storage::Files::DataLake
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-main/specification/storage/data-plane/Microsoft.StorageDataLake/stable/2020-06-12/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2021-06-08/DataLakeStorage.json
 ```
 
 ## ModelFour Options
@@ -66,12 +66,11 @@ directive:
       delete $["/{filesystem}"].patch;
       delete $["/{filesystem}"].head;
       delete $["/{filesystem}"].delete;
-      delete $["/{filesystem}?restype=container&comp=list&hierarchy"];
       delete $["/{filesystem}/{path}"].post;
       delete $["/{filesystem}/{path}"].get;
       delete $["/{filesystem}/{path}"].patch;
       delete $["/{filesystem}/{path}?comp=expiry"];
-      delete $["/{filesystem}/{path}?comp=undelete"];
+      delete $["/{filesystem}?restype=container&comp=list&hierarchy"];
 ```
 
 ### API Version
@@ -89,13 +88,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-02-10"],
+        "enum": ["2021-06-08"],
         "description": "The version used for the operations to Azure storage services."
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2020-02-10";
+      $.ApiVersionParameter.enum[0] = "2021-06-08";
 ```
 
 ### Rename Operations
@@ -118,14 +117,72 @@ directive:
       }
 ```
 
+### Return Type namespace
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $
+    transform: >
+      const operations = [
+        "Path_Undelete",
+      ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          status_codes.forEach((status_code, i) => {
+            if (!operation.responses[status_code].schema) {
+              const operationId = operation.operationId;
+              const clientName = operationId.substr(0, operationId.indexOf("_"));
+              const operationName = operationId.substr(operationId.indexOf("_") + 1);
+              let operationWords = operationName.split(/(?=[A-Z])/);
+              operationWords.splice(1, 0, clientName);
+              const defaultReturnTypeName = operationWords.join("") + "Result";
+              operation.responses[status_code].schema = {
+                "type": "object",
+                "x-ms-sealed": false,
+                "x-ms-client-name": defaultReturnTypeName,
+                "x-namespace": "_detail",
+                "properties": {
+                  "__placeHolder": {"type": "integer"}
+                }
+              };
+            } else if (operation.responses[status_code].schema["$ref"]) {
+              let obj = $;
+              for (const p of operation.responses[status_code].schema["$ref"].split("/").slice(1)) {
+                obj = obj[p];
+              }
+              obj["x-namespace"] = "_detail";
+            } else {
+              operation.responses[status_code].schema["x-namespace"] = "_detail";
+            }
+          });
+        }
+      }
+```
+
 ### Global Changes for Definitions, Types etc.
 
 ```yaml
 directive:
   - from: swagger-document
+    where: $["x-ms-paths"].*.*.responses.*.headers
+    transform: >
+      for (const h in $) {
+        if (h === "x-ms-encryption-key-sha256") {
+          $[h]["format"] = "byte";
+        }
+      }
+  - from: swagger-document
     where: $.parameters
     transform: >
       $.Continuation["x-ms-client-name"] = "ContinuationToken";
+      $.EncryptionKeySha256["format"] = "byte";
+      delete $.EncryptionAlgorithm["enum"];
+      delete $.EncryptionAlgorithm["x-ms-enum"];
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -172,9 +229,13 @@ directive:
     where: $.definitions
     transform: >
       $.Path["x-ms-client-name"] = "PathItem";
+      $.Path["x-namespace"] = "_detail";
       $.Path.properties["lastModified"]["format"] = "date-time-rfc1123";
       $.Path.properties["contentLength"]["x-ms-client-name"] = "FileSize";
       $.Path.properties["isDirectory"]["x-ms-client-default"] = false;
+      $.Path.properties["EncryptionScope"]["x-nullable"] = true;
+      $.Path.properties["creationTime"] = {"type": "string", "x-ms-client-name": "CreatedOn", "x-nullable": true};
+      $.Path.properties["expiryTime"] = {"type": "string", "x-ms-client-name": "ExpiresOn", "x-nullable": true};
       $.Path.properties["etag"] = {"type": "string", "x-ms-format": "string", "x-ms-client-default": "", "x-ms-client-name": "ETag"};
       delete $.Path.properties["eTag"];
       $.PathList["x-namespace"] = "_detail";
@@ -197,6 +258,8 @@ directive:
     transform: >
       $["201"].headers["Content-Length"]["x-ms-client-name"] = "FileSize";
       $["201"].headers["Content-Length"]["x-nullable"] = true;
+      $["201"].headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["201"].headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["201"].headers["x-ms-continuation"];
       $["201"].schema = {
         "type": "object",
@@ -206,6 +269,20 @@ directive:
           "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": "", "description": "Indicates if the file or directory was successfully created by this operation."}
         }
       };
+```
+
+
+### SetExpiry
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      delete $["PathExpiryOptions"];
+      delete $.PathExpiryOptionsOptional["enum"];
+      delete $.PathExpiryOptionsOptional["x-ms-enum"];
+
 ```
 
 ### DeletePath
@@ -251,6 +328,16 @@ directive:
         delete $["x-ms-enum"];
         delete $["enum"];
       }
+```
+
+### UndeletePath
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?comp=undelete"].put.responses
+    transform: >
+      $["200"].headers["x-ms-resource-type"]["x-nullable"] = true;
 ```
 
 ### GetPathAccessControlList
@@ -349,6 +436,8 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      $["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["ETag"];
 ```
 
@@ -360,4 +449,6 @@ directive:
     where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"].headers
     transform: >
       $["Content-Length"]["x-ms-client-name"] = "FileSize";
+      $["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
 ```
