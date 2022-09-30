@@ -17,7 +17,11 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+#pragma warning(push)
+#pragma warning(disable : 6553)
 #include <wil/resource.h> // definitions for wil::unique_cert_chain_context and other RAII type wrappers for Windows types.
+#pragma warning(pop)
+
 #include <wincrypt.h>
 #include <winhttp.h>
 

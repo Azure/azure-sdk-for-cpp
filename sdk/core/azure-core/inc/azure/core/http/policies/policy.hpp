@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
-    std::chrono::milliseconds MaxRetryDelay = std::chrono::minutes(2);
+    std::chrono::milliseconds MaxRetryDelay = std::chrono::seconds(60);
 
     /**
      * @brief The HTTP status codes that indicate when an operation should be retried.
