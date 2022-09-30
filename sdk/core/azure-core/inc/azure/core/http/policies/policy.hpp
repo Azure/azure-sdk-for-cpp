@@ -138,7 +138,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   struct TransportOptions final
   {
 #if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) || defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     /**
      * @brief The URL for the proxy server to use for this connection.
      *
@@ -173,8 +172,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * This means that the expected root certificate is the only certificate that will be trusted.
      */
     std::string ExpectedTlsRootCertificate{};
-
-#endif // defined(CURL_ADAPTER) || defined(WINHTTP_ADAPTER)
 #endif // !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
 
     /**
