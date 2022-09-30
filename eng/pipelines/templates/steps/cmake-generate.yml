@@ -10,7 +10,6 @@ steps:
 
   - pwsh: |
       Write-Host "ENVs - ${{ parameters.Env }} "
-      Get-ChildItem env:
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: ENVs
 
@@ -19,16 +18,9 @@ steps:
     displayName: Show current path
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} .. > cmake.log
+      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
-    env:
-      VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
-
-  - script: |
-      cat cmake.log
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: Type cmake log.
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
 
