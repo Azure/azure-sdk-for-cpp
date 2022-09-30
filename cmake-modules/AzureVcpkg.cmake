@@ -10,10 +10,10 @@ macro(az_vcpkg_integrate)
   #   An env var VCPKG_ROOT or VCPKG_INSTALLATION_ROOT can be set to let Azure SDK to set the VCPKG toolchain automatically.
   #   As the last alternative (default case), Azure SDK will automatically clone VCPKG folder and set toolchain from there.
   if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    if(DEFINED ENV{VCPKG_ROOT})
+    if(DEFINED ENV{VCPKG_ROOT} AND NOT EQUAL "$ENV{VCPKG_ROOT}" "")
       set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
           CACHE STRING "")
-    elseif(DEFINED ENV{VCPKG_INSTALLATION_ROOT})
+    elseif(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND NOT EQUAL "$ENV{VCPKG_INSTALLATION_ROOT}" "")
       set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
           CACHE STRING "")
     else()

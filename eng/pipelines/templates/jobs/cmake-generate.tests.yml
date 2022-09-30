@@ -53,6 +53,7 @@ jobs:
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
     VCPKG_ROOT: ''
+    VCPKG_INSTALLATION_ROOT: ''
 
   steps:
   - checkout: self
