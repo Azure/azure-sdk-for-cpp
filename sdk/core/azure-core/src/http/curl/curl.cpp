@@ -254,6 +254,48 @@ static void CleanupThread()
     // Do actual connections release work here, without holding the mutex.
   }
 }
+
+std::string PemEncodeFromBase64(std::string const& base64, std::string const& pemType)
+{
+  std::stringstream rv;
+  rv << "-----BEGIN " << pemType << "-----" << std::endl;
+  std::string encodedValue(base64);
+
+  // Insert crlf characters every 80 characters into the base64 encoded key to make it
+  // prettier.
+  size_t insertPos = 80;
+  while (insertPos < encodedValue.length())
+  {
+    encodedValue.insert(insertPos, "\r\n");
+    insertPos += 82; /* 80 characters plus the \r\n we just inserted */
+  }
+
+  rv << encodedValue << std::endl << "-----END " << pemType << "-----" << std::endl;
+  return rv.str();
+}
+
+Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions(
+    Azure::Core::Http::Policies::TransportOptions const& transportOptions)
+{
+  Azure::Core::Http::CurlTransportOptions curlOptions;
+  curlOptions.Proxy = transportOptions.HttpProxy;
+  if (!transportOptions.ProxyUserName.empty())
+  {
+    curlOptions.ProxyUsername = transportOptions.ProxyUserName;
+  }
+  curlOptions.ProxyPassword = transportOptions.ProxyPassword;
+
+  curlOptions.SslOptions.EnableCertificateRevocationListCheck
+      = transportOptions.EnableCertificateRevocationListCheck;
+
+  if (!transportOptions.ExpectedTlsRootCertificate.empty())
+  {
+    curlOptions.SslOptions.PemEncodedExpectedRootCertificates
+        = PemEncodeFromBase64(transportOptions.ExpectedTlsRootCertificate, "CERTIFICATE");
+  }
+  return curlOptions;
+}
+
 } // namespace
 
 using Azure::Core::Context;
@@ -270,6 +312,11 @@ using Azure::Core::Http::_detail::CurlConnectionPool;
 
 Azure::Core::Http::_detail::CurlConnectionPool
     Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool;
+
+CurlTransport::CurlTransport(Azure::Core::Http::Policies::TransportOptions const& options)
+    : CurlTransport(CurlTransportOptionsFromTransportOptions(options))
+{
+}
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const& context)
 {

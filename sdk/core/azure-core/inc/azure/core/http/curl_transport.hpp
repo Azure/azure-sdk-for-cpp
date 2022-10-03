@@ -10,6 +10,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 
 namespace Azure { namespace Core { namespace Http {
@@ -198,6 +199,13 @@ namespace Azure { namespace Core { namespace Http {
     CurlTransport(CurlTransportOptions const& options = CurlTransportOptions()) : m_options(options)
     {
     }
+
+    /**
+     * @brief Construct a new CurlTransport object based on common Azure HTTP Transport Options
+     *
+     * @param options Common Azure Core Transport Options.
+     */
+    CurlTransport(Azure::Core::Http::Policies::TransportOptions const& options);
 
     /**
      * @brief Destroys a CurlTransport object.

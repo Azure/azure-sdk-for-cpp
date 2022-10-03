@@ -513,8 +513,53 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
   return sessionHandle;
 }
 
+namespace {
+WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
+    Azure::Core::Http::Policies::TransportOptions const& transportOptions)
+{
+  WinHttpTransportOptions httpOptions;
+  if (transportOptions.HttpProxy.HasValue())
+  {
+    // WinHTTP proxy strings are semicolon separated elements, each of which
+    // has the following format:
+    //  ([<scheme>=][<scheme>"://"]<server>[":"<port>])
+    std::string proxyString;
+    proxyString = "http=" + transportOptions.HttpProxy.Value();
+    proxyString += ";";
+    proxyString += "https=" + transportOptions.HttpProxy.Value();
+    httpOptions.ProxyInformation = proxyString;
+  }
+  httpOptions.ProxyUserName = transportOptions.ProxyUserName;
+  httpOptions.ProxyPassword = transportOptions.ProxyPassword;
+  // Note that WinHTTP accepts a set of root certificates, even though transportOptions only
+  // specifies a single one.
+  if (!transportOptions.ExpectedTlsRootCertificate.empty())
+  {
+    httpOptions.ExpectedTlsRootCertificates.push_back(transportOptions.ExpectedTlsRootCertificate);
+  }
+  if (transportOptions.EnableCertificateRevocationListCheck)
+  {
+    httpOptions.EnableCertificateRevocationListCheck;
+  }
+  // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
+  // CAs.
+  if (!transportOptions.ExpectedTlsRootCertificate.empty())
+  {
+    httpOptions.IgnoreUnknownCertificateAuthority;
+  }
+
+  return httpOptions;
+}
+} // namespace
+
 WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
     : m_options(options), m_sessionHandle(CreateSessionHandle())
+{
+}
+
+WinHttpTransport::WinHttpTransport(
+    Azure::Core::Http::Policies::TransportOptions const& transportOptions)
+    : WinHttpTransport(WinHttpTransportOptionsFromTransportOptions(transportOptions))
 {
 }
 

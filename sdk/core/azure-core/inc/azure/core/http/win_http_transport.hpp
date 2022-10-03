@@ -11,6 +11,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/unique_handle.hpp"
 
@@ -251,6 +252,18 @@ namespace Azure { namespace Core {
        * @param options Optional parameter to override the default settings.
        */
       WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions());
+
+      /**
+       * @brief Constructs `%WinHttpTransport`.
+       *
+       * @param options Optional parameter to override the default settings.
+       */
+      /**
+       * @brief Constructs `%WinHttpTransport` object based on common Azure HTTP Transport Options
+       *
+       * @param options Common Azure Core Transport Options to override the default settings.
+       */
+      WinHttpTransport(Azure::Core::Http::Policies::TransportOptions const& options);
 
       /**
        * @brief Implements the HTTP transport interface to send an HTTP Request and produce an HTTP

@@ -31,25 +31,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
           || transportOptions.EnableCertificateRevocationListCheck
           || !transportOptions.ExpectedTlsRootCertificate.empty());
     }
-
-    std::string PemEncodeFromBase64(std::string const& base64, std::string const& pemType)
-    {
-      std::stringstream rv;
-      rv << "-----BEGIN " << pemType << "-----" << std::endl;
-      std::string encodedValue(base64);
-
-      // Insert crlf characters every 80 characters into the base64 encoded key to make it
-      // prettier.
-      size_t insertPos = 80;
-      while (insertPos < encodedValue.length())
-      {
-        encodedValue.insert(insertPos, "\r\n");
-        insertPos += 82; /* 80 characters plus the \r\n we just inserted */
-      }
-
-      rv << encodedValue << std::endl << "-----END " << pemType << "-----" << std::endl;
-      return rv.str();
-    }
   } // namespace
 
   std::shared_ptr<HttpTransport> GetTransportAdapter(TransportOptions const& transportOptions)
@@ -65,39 +46,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     static std::shared_ptr<HttpTransport> defaultTransport(std::make_shared<WinHttpTransport>());
     if (AreTransportOptionsSpecified(transportOptions))
     {
-      WinHttpTransportOptions httpOptions;
-      if (transportOptions.HttpProxy.HasValue())
-      {
-        // WinHTTP proxy strings are semicolon separated elements, each of which
-        // has the following format:
-        //  ([<scheme>=][<scheme>"://"]<server>[":"<port>])
-        std::string proxyString;
-        proxyString = "http=" + transportOptions.HttpProxy.Value();
-        proxyString += ";";
-        proxyString += "https=" + transportOptions.HttpProxy.Value();
-        httpOptions.ProxyInformation = proxyString;
-      }
-      httpOptions.ProxyUserName = transportOptions.ProxyUserName;
-      httpOptions.ProxyPassword = transportOptions.ProxyPassword;
-      // Note that WinHTTP accepts a set of root certificates, even though transportOptions only
-      // specifies a single one.
-      if (!transportOptions.ExpectedTlsRootCertificate.empty())
-      {
-        httpOptions.ExpectedTlsRootCertificates.push_back(
-            transportOptions.ExpectedTlsRootCertificate);
-      }
-      if (transportOptions.EnableCertificateRevocationListCheck)
-      {
-        httpOptions.EnableCertificateRevocationListCheck;
-      }
-      // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
-      // CAs.
-      if (!transportOptions.ExpectedTlsRootCertificate.empty())
-      {
-        httpOptions.IgnoreUnknownCertificateAuthority;
-      }
-
-      return std::make_shared<Azure::Core::Http::WinHttpTransport>(httpOptions);
+      return std::make_shared<Azure::Core::Http::WinHttpTransport>(transportOptions);
     }
     else
     {
@@ -110,24 +59,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     static std::shared_ptr<HttpTransport> defaultTransport(std::make_shared<CurlTransport>());
     if (AreTransportOptionsSpecified(transportOptions))
     {
-      CurlTransportOptions curlOptions;
-      curlOptions.Proxy = transportOptions.HttpProxy;
-      if (!transportOptions.ProxyUserName.empty())
-      {
-        curlOptions.ProxyUsername = transportOptions.ProxyUserName;
-      }
-      curlOptions.ProxyPassword = transportOptions.ProxyPassword;
-
-      curlOptions.SslOptions.EnableCertificateRevocationListCheck
-          = transportOptions.EnableCertificateRevocationListCheck;
-
-      if (!transportOptions.ExpectedTlsRootCertificate.empty())
-      {
-        curlOptions.SslOptions.PemEncodedExpectedRootCertificates
-            = PemEncodeFromBase64(transportOptions.ExpectedTlsRootCertificate, "CERTIFICATE");
-      }
-
-      return std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+      return std::make_shared<Azure::Core::Http::CurlTransport>(transportOptions);
     }
     return defaultTransport;
 #else
