@@ -10,10 +10,10 @@ if(@BUILD_TRANSPORT_CURL@)
   find_dependency(CURL @CURL_MIN_REQUIRED_VERSION@)
 endif()
 
-if(NOT WIN32)
-  find_dependency(OpenSSL)
-else()
+if(WIN32)
   find_dependency(wil)
+else()
+  find_dependency(OpenSSL)
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/azure-core-cppTargets.cmake")
