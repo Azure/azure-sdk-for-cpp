@@ -279,7 +279,7 @@ Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions
 {
   Azure::Core::Http::CurlTransportOptions curlOptions;
   curlOptions.Proxy = transportOptions.HttpProxy;
-  if (!transportOptions.ProxyUserName.HasValue())
+  if (transportOptions.ProxyUserName.HasValue())
   {
     curlOptions.ProxyUsername = transportOptions.ProxyUserName;
   }

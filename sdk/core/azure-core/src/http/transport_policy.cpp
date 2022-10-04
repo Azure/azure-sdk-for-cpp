@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     {
       return (
           transportOptions.HttpProxy.HasValue() || transportOptions.ProxyPassword.HasValue()
-          || !transportOptions.ProxyUserName.HasValue()
+          || transportOptions.ProxyUserName.HasValue()
           || transportOptions.EnableCertificateRevocationListCheck
           || !transportOptions.ExpectedTlsRootCertificate.empty());
     }
