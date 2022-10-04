@@ -656,13 +656,13 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateRequestH
       GetErrorAndThrow("Error while setting Proxy information.");
     }
   }
-  if (!m_options.ProxyUserName.empty() || m_options.ProxyPassword.HasValue())
+  if (m_options.ProxyUserName.HasValue() || m_options.ProxyPassword.HasValue())
   {
     if (!WinHttpSetCredentials(
             request.get(),
             WINHTTP_AUTH_TARGET_PROXY,
             WINHTTP_AUTH_SCHEME_BASIC,
-            StringToWideString(m_options.ProxyUserName).c_str(),
+            StringToWideString(m_options.ProxyUserName.Value()).c_str(),
             StringToWideString(m_options.ProxyPassword.Value()).c_str(),
             0))
     {

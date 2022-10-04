@@ -142,16 +142,25 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @remark If an empty string is specified, it instructs the transport to disable all proxies,
      * including system proxies.
+     * 
+     * @remark This field is only used if the customer has not specified a default transport adapter.
+     * If the customer has set a Transport adapter, this option is ignored.
      */
     Azure::Nullable<std::string> HttpProxy{};
 
     /**
      * @brief The username to use when authenticating with the proxy server.
+     * 
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
-    std::string ProxyUserName{};
+    Azure::Nullable<std::string> ProxyUserName{};
 
     /**
      * @brief The password to use when authenticating with the proxy server.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
     Azure::Nullable<std::string> ProxyPassword{};
 
@@ -159,6 +168,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Enable TLS Certificate validation against a certificate revocation list.
      *
      * @remark Note that by default, CRL validation is *disabled*.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
     bool EnableCertificateRevocationListCheck{false};
 
@@ -169,6 +181,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @remark Note that with the schannel and sectransp crypto backends, setting the
      * expected root certificate disables access to the system certificate store.
      * This means that the expected root certificate is the only certificate that will be trusted.
+     * 
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
     std::string ExpectedTlsRootCertificate{};
 
@@ -184,6 +199,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @remark When using a custom transport adapter, the implementation for
      * `::AzureSdkGetCustomHttpTransport()` must be linked in the end-user application.
+     *
+     * @remark If the caller specifies a value for Transport, then all the other options in
+     * TransportOptions will be ignored, since the caller will have already configured the transport.
      *
      */
     std::shared_ptr<HttpTransport> Transport;

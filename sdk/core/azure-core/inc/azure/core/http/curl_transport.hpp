@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The default value is an empty string (no proxy).
      *
      */
-    std::string ProxyUsername;
+    Azure::Nullable<std::string> ProxyUsername;
 
     /**
      * @brief Password to be used for proxy connections.

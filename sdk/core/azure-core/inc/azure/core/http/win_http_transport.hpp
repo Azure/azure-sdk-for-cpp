@@ -151,7 +151,7 @@ namespace Azure { namespace Core {
       /**
        * @brief User name for proxy authentication.
        */
-      std::string ProxyUserName;
+      Azure::Nullable<std::string> ProxyUserName;
 
       /**
        * @brief Password for proxy authentication.

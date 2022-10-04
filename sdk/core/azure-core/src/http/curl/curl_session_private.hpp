@@ -365,7 +365,7 @@ namespace Azure { namespace Core { namespace Http {
     bool m_keepAlive = true;
 
     Azure::Nullable<std::string> m_httpProxy;
-    std::string m_httpProxyUser;
+    Azure::Nullable<std::string> m_httpProxyUser;
     Azure::Nullable<std::string> m_httpProxyPassword;
 
     /**

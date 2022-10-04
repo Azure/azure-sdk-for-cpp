@@ -279,7 +279,7 @@ Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions
 {
   Azure::Core::Http::CurlTransportOptions curlOptions;
   curlOptions.Proxy = transportOptions.HttpProxy;
-  if (!transportOptions.ProxyUserName.empty())
+  if (!transportOptions.ProxyUserName.HasValue())
   {
     curlOptions.ProxyUsername = transportOptions.ProxyUserName;
   }
@@ -406,7 +406,7 @@ CURLcode CurlSession::Perform(Context const& context)
   }
   // If we are using an HTTP proxy, connecting to an HTTP resource and it has been configured with a
   // username and password, we want to set the proxy authentication header.
-  if (m_httpProxy.HasValue() && m_request.GetUrl().GetScheme() == "http" && !m_httpProxyUser.empty()
+  if (m_httpProxy.HasValue() && m_request.GetUrl().GetScheme() == "http" && m_httpProxyUser.HasValue()
       && m_httpProxyPassword.HasValue())
   {
     Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Setting proxy authentication header");
@@ -414,7 +414,7 @@ CURLcode CurlSession::Perform(Context const& context)
         "Proxy-Authorization",
         "Basic "
             + Azure::Core::_internal::Convert::Base64Encode(
-                m_httpProxyUser + ":" + m_httpProxyPassword.Value()));
+                m_httpProxyUser.Value() + ":" + m_httpProxyPassword.Value()));
   }
 
   // use expect:100 for PUT requests. Server will decide if it can take our request
@@ -1247,7 +1247,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
       options.Proxy.HasValue() ? (options.Proxy.Value().empty() ? "NoProxy" : options.Proxy.Value())
                                : "0");
   key.append(",");
-  key.append(options.ProxyUsername.empty() ? "0" : options.ProxyUsername);
+  key.append(options.ProxyUsername.ValueOr("0"));
   key.append(",");
   key.append(options.ProxyPassword.ValueOr("0"));
   key.append(",");
@@ -2128,13 +2128,13 @@ CurlConnection::CurlConnection(
     }
   }
 
-  if (!options.ProxyUsername.empty())
+  if (options.ProxyUsername.HasValue())
   {
-    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.c_str(), &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.Value().c_str(), &result))
     {
       throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed to set proxy username to:" + options.ProxyUsername + ". "
+          + ". Failed to set proxy username to:" + options.ProxyUsername.Value() + ". "
           + std::string(curl_easy_strerror(result)));
     }
   }
