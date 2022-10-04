@@ -42,6 +42,45 @@ stages:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 55
+      PreTestSteps:
+        - pwsh: |
+            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
+            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
+            $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/runproxy.ps1
+          displayName: Launch Linux Docker container proxy
+          # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+
+        - pwsh: eng/scripts/Install-WSL.ps1
+          displayName: Install WSL on Windows hosts when proxy tests are enabled..
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+
+        - pwsh: ./run_wsl_proxy.ps1
+          displayName: Launch WSL Proxy Server.
+          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
+          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+
+          # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
+        - pwsh: ./verify_proxy.ps1
+          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
+          displayName: Verify Proxy Server Working Correctly.
+          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+
+          # Start the test proxy tool for testing. Only start it when previous steps had succeeded and we're enabling testing.
+        - template: /eng/common/testproxy/test-proxy-tool.yml
+          parameters:
+            runProxy: true
+            targetVersion: 1.0.0-dev.20220810.2
+            condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+            
+      PostTestSteps:
+        - pwsh: |
+            docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `
+                docker stop $_ `
+            }
+          displayName: Shutdown Squid Proxy.
+          condition: and(variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'linux'))
+
       Artifacts:
         - Name: azure-core
           Path: azure-core

@@ -126,6 +126,19 @@ TEST(Base64, Roundtrip)
   }
 }
 
+TEST(Base64, RoundtripString)
+{
+  for (size_t len : {0, 10, 100, 1000, 10000})
+  {
+    std::string data;
+    data.resize(len);
+    RandomBuffer(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())), data.size());
+
+    std::vector<uint8_t> expected{data.begin(), data.end()};
+    EXPECT_EQ(Convert::Base64Decode(_internal::Convert::Base64Encode(data)), expected);
+  }
+}
+
 TEST(Base64, ValidDecode)
 {
   // cspell::disable

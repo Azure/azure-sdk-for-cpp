@@ -41,8 +41,8 @@ namespace Azure { namespace Core { namespace Test {
       auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                             .ExtractOrCreateCurlConnection(req, options);
 
-      auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-          req, std::move(connection), options.HttpKeepAlive);
+      auto session
+          = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
       session->Perform(Azure::Core::Context::ApplicationContext);
       // Reading all the response
       session->ReadToEnd(Azure::Core::Context::ApplicationContext);

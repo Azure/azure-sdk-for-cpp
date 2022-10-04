@@ -25,6 +25,16 @@
       "Component": {
         "Type": "git",
         "git": {
+          "RepositoryUrl": "https://github.com/microsoft/wil",
+          "CommitHash": "f9284c19c9873664978b873b8858d7dfacc6af1e"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
           "RepositoryUrl": "https://github.com/nlohmann/json",
           "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
         }

@@ -275,6 +275,12 @@ namespace Azure { namespace Core { namespace Http {
     size_t m_sessionTotalRead = 0;
 
     /**
+     * @brief If True, the connection is going to be "upgraded" into a websocket connection, so
+     * block moving the connection to the pool.
+     */
+    bool m_connectionUpgraded = false;
+
+    /**
      * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only
      * used while constructing an HTTP RawResponse without adding a body to it. Customers would
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
@@ -358,6 +364,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool m_keepAlive = true;
 
+    Azure::Nullable<std::string> m_httpProxy;
+    Azure::Nullable<std::string> m_httpProxyUser;
+    Azure::Nullable<std::string> m_httpProxyPassword;
+
     /**
      * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
      * from the wire.
@@ -369,14 +379,25 @@ namespace Azure { namespace Core { namespace Http {
      */
     size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
+    inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const& request);
+    inline std::string GetHeadersAsString(Azure::Core::Http::Request const& request);
+    inline static void SetHeader(
+        Azure::Core::Http::RawResponse& response,
+        std::string const& header);
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request, std::unique_ptr<CurlNetworkConnection> connection, bool keepAlive)
-        : m_connection(std::move(connection)), m_request(request), m_keepAlive(keepAlive)
+    CurlSession(
+        Request& request,
+        std::unique_ptr<CurlNetworkConnection> connection,
+        CurlTransportOptions curlOptions)
+        : m_connection(std::move(connection)), m_request(request),
+          m_keepAlive(curlOptions.HttpKeepAlive), m_httpProxy(curlOptions.Proxy),
+          m_httpProxyUser(curlOptions.ProxyUsername), m_httpProxyPassword(curlOptions.ProxyPassword)
     {
     }
 
@@ -388,7 +409,7 @@ namespace Azure { namespace Core { namespace Http {
       // By not moving the connection back to the pool, it gets destroyed calling the connection
       // destructor to clean libcurl handle and close the connection.
       // IsEOF will also handle a connection that fail to complete an upload request.
-      if (IsEOF() && m_keepAlive)
+      if (IsEOF() && m_keepAlive && !m_connectionUpgraded)
       {
         _detail::CurlConnectionPool::g_curlConnectionPool.MoveConnectionBackToPool(
             std::move(m_connection), m_lastStatusCode);
@@ -418,6 +439,13 @@ namespace Azure { namespace Core { namespace Http {
      * @return The size of the payload.
      */
     int64_t Length() const override { return m_contentLength; }
+
+    /**
+     * @brief Return the network connection if the server indicated that the connection is upgraded.
+     *
+     * @return The network connection, or null if the connection was not upgraded.
+     */
+    std::unique_ptr<CurlNetworkConnection> ExtractConnection();
   };
 
 }}} // namespace Azure::Core::Http
