@@ -29,7 +29,7 @@
           "CommitHash": "f9284c19c9873664978b873b8858d7dfacc6af1e"
         }
       },
-      "DevelopmentDependency": true
+      "DevelopmentDependency": false
     },
     {
       "Component": {
