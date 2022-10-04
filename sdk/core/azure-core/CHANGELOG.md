@@ -13,6 +13,12 @@
 
 ### Breaking Changes
 
+- Updated retry policy timeouts to conform to Azure guidelines.
+  - The default delay between retries is changed from 4 seconds to 800ms.
+  - The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).
+
+  If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in in the `TransportOptions` structure.
+
 ### Bugs Fixed
 
 ### Other Changes
