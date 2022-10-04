@@ -406,8 +406,8 @@ CURLcode CurlSession::Perform(Context const& context)
   }
   // If we are using an HTTP proxy, connecting to an HTTP resource and it has been configured with a
   // username and password, we want to set the proxy authentication header.
-  if (m_httpProxy.HasValue() && m_request.GetUrl().GetScheme() == "http" && m_httpProxyUser.HasValue()
-      && m_httpProxyPassword.HasValue())
+  if (m_httpProxy.HasValue() && m_request.GetUrl().GetScheme() == "http"
+      && m_httpProxyUser.HasValue() && m_httpProxyPassword.HasValue())
   {
     Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Setting proxy authentication header");
     this->m_request.SetHeader(
@@ -2130,7 +2130,8 @@ CurlConnection::CurlConnection(
 
   if (options.ProxyUsername.HasValue())
   {
-    if (!SetLibcurlOption(m_handle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.Value().c_str(), &result))
+    if (!SetLibcurlOption(
+            m_handle, CURLOPT_PROXYUSERNAME, options.ProxyUsername.Value().c_str(), &result))
     {
       throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
