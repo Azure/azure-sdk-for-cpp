@@ -32,7 +32,21 @@ namespace Azure { namespace Perf { namespace Test {
      * @brief Define an empty test.
      *
      */
-    void Run(Azure::Core::Context const&) override {}
+    void Run(Azure::Core::Context const&) override
+    { // Get the option or a default value of 0
+      auto myTestOption = m_options.GetOptionOrDefault("extraOption", 0);
+      (void)myTestOption;
+    }
+
+     /**
+     * @brief Define the test options for the test.
+     *
+     * @return The list of test options.
+     */
+    std::vector<Azure::Perf::TestOption> GetTestOptions() override
+    {
+      return {{"extraOption", {"-e"}, "Example for extended option for test.", 1}};
+    }
 
     /**
      * @brief Get the static Test Metadata for the test.

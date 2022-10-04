@@ -56,7 +56,7 @@ namespace Azure { namespace Perf { namespace Test {
     {
       // Increment the counter and fetch the value, then remove 1 to get the previous-increment
       // value
-      auto instanceCount = _detail::DelayTestInstanceCount.fetch_add(1) - 1;
+      auto instanceCount = _detail::DelayTestInstanceCount.fetch_add(0);
       // default value if option is not parsed is 1000
       auto initialDelay = m_options.GetOptionOrDefault("InitialDelayMs", 1000);
       auto instanceGrowFactor = m_options.GetOptionOrDefault("InstanceGrowthFactor", 1);
@@ -67,7 +67,9 @@ namespace Azure { namespace Perf { namespace Test {
      * @brief The test definition
      *
      */
-    void Run(Azure::Core::Context const&) override { std::this_thread::sleep_for(m_delay); }
+    void Run(Azure::Core::Context const&) override { 
+        std::this_thread::sleep_for(m_delay); 
+    }
 
     /**
      * @brief Define the test options for the test.
@@ -78,16 +80,16 @@ namespace Azure { namespace Perf { namespace Test {
     {
       return {
           {"InitialDelayMs",
-           {"--delay"},
+           {"-m"},
            "Initial delay (in milliseconds). Default to 1000 (1sec)",
            1},
           {"InstanceGrowthFactor",
-           {"--infactor"},
+           {"-n"},
            "Instance growth factor. The delay of instance N will be (InitialDelayMS * "
            "(InstanceGrowthFactor ^ InstanceCount)). Default to 1",
            1},
           {"IterationGrowthFactor",
-           {"--itfactor"},
+           {"-t"},
            "Initial delay (in milliseconds). The delay of iteration N will be (InitialDelayMS * "
            "(IterationGrowthFactor ^ IterationCount)). Default to 1",
            1}};
