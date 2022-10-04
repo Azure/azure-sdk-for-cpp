@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
 
     /**
-     * @brief If set, integrates libcurls internal tracing with Azure logging.
+     * @brief If set, integrates libcurl's internal tracing with Azure logging.
      */
     bool EnableCurlTracing = false;
   };
