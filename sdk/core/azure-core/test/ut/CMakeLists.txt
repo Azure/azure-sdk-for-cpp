@@ -34,8 +34,8 @@ endif()
 include(GoogleTest)
 
 if (NOT WIN32)
-find_package(OpenSSL REQUIRED)
-SET(OPENSSLCRYPTO OpenSSL::Crypto)
+  find_package(OpenSSL REQUIRED)
+  SET(OPENSSLCRYPTO OpenSSL::Crypto)
 endif()
 
 add_executable (
@@ -86,7 +86,6 @@ add_executable (
     transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
-    websocket_test.cpp
   )
 
 if (MSVC)
@@ -106,14 +105,18 @@ if (MSVC)
 endif()
 
 if (DISABLE_PROXY_TESTS)
-message(STATUS "Disabling proxy tests because they cannot be supported on this environment." )
-add_compile_definitions(DISABLE_PROXY_TESTS)
+  message(STATUS "Disabling proxy tests because they cannot be supported on this environment." )
+  add_compile_definitions(DISABLE_PROXY_TESTS)
+endif()
+
+# If the System.TeamProjectId ADO variable is set, we are running in the pipeline, behave accordingly.
+if (ENV{SYSTEM_TEAMPROJECTID})
+  add_compile_definitions(IN_CI_PIPELINE)
 endif()
 
 # Additional test files to be copied to the output directory.
-set(TEST_ADDITIONAL_FILES ${CMAKE_CURRENT_LIST_DIR}/websocket_server.py 
+set(TEST_ADDITIONAL_FILES 
     ${CMAKE_CURRENT_LIST_DIR}/requirements.txt 
-    ${CMAKE_CURRENT_LIST_DIR}/Start-WebSocketServer.ps1
 )
 
 add_custom_command(TARGET azure-core-test POST_BUILD

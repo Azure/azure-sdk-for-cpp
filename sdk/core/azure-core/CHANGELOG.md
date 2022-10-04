@@ -6,8 +6,19 @@
 
 - Added support for the `WebSockets` protocol via the `Azure::Core::Http::WebSockets::WebSocket` class.
 - Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.
+- Added universal support for several TLS options:
+  - Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).
+  - Added the ability to enable TLS certificate revocation list checks (off by default).
+    - For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.
+    - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
 
 ### Breaking Changes
+
+- Updated retry policy timeouts to conform to Azure guidelines.
+  - The default delay between retries is changed from 4 seconds to 800ms.
+  - The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).
+
+  If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in in the `TransportOptions` structure.
 
 ### Bugs Fixed
 

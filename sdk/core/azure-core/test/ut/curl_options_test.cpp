@@ -15,6 +15,7 @@
 #endif
 
 #include <http/curl/curl_connection_pool_private.hpp>
+#include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>
 
 #include "transport_adapter_base_test.hpp"
@@ -93,6 +94,26 @@ namespace Azure { namespace Core { namespace Test {
     // app-destruction
     EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                         .ConnectionPoolIndex.clear());
+  }
+
+  class CurlDerived : public Azure::Core::Http::CurlTransport {
+    std::unique_ptr<Azure::Core::Http::CurlNetworkConnection> m_connection;
+
+  public:
+    void OnUpgradedConnection(
+        std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>&& connection) override
+    {
+      m_connection = std::move(connection);
+    }
+  };
+
+  // Call the base OnUpgradedConnection method from a class derived from CurlTransport - this
+  // primarily is there to increase code coverage.
+  TEST(CurlTransportOptions, OnUpgradedConnection)
+  {
+    CurlDerived derived;
+    std::unique_ptr<Azure::Core::Http::CurlNetworkConnection> connection;
+    derived.OnUpgradedConnection(std::move(connection));
   }
 
   /*

@@ -14,6 +14,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakeServiceClient;
+  class DataLakeFileSystemClient;
   class DataLakePathClient;
 
   namespace Models {
@@ -26,6 +27,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // ServiceClient models:
 
     using UserDelegationKey = Blobs::Models::UserDelegationKey;
+    using RetentionPolicy = Blobs::Models::RetentionPolicy;
+    using AnalyticsLogging = Blobs::Models::AnalyticsLogging;
+    using Metrics = Blobs::Models::Metrics;
+    using CorsRule = Blobs::Models::CorsRule;
+    using StaticWebsite = Blobs::Models::StaticWebsite;
+    using DataLakeServiceProperties = Blobs::Models::BlobServiceProperties;
+    using SetServicePropertiesResult = Blobs::Models::SetServicePropertiesResult;
 
     /**
      * @brief The detailed information of a file system.
@@ -194,57 +202,64 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using ArchiveStatus = Blobs::Models::ArchiveStatus;
 
     /**
-     * @brief An access control object.
+     * @brief The path item returned when listing the paths.
      */
-    struct Acl final
+    struct PathItem final
     {
       /**
-       * The scope of the ACL.
+       * The name of the path.
        */
-      std::string Scope;
+      std::string Name;
 
       /**
-       * The type of the ACL.
+       * Indicates whether this path is a directory.
        */
-      std::string Type;
+      bool IsDirectory = false;
 
       /**
-       * The ID of the ACL.
+       * The data and time the path was last modified.
        */
-      std::string Id;
+      DateTime LastModified;
 
       /**
-       * The permissions of the ACL.
+       * The size of the file.
+       */
+      int64_t FileSize = int64_t();
+
+      /**
+       * The owner of the path.
+       */
+      std::string Owner;
+
+      /**
+       * The group of the path.
+       */
+      std::string Group;
+
+      /**
+       * The permission of the path.
        */
       std::string Permissions;
 
       /**
-       * @brief Creates an Acl based on acl input string.
-       * @param aclString the string to be parsed to Acl.
-       * @return Acl
+       * The name of the encryption scope under which the blob is encrypted.
        */
-      static Acl FromString(const std::string& aclString);
+      Nullable<std::string> EncryptionScope;
 
       /**
-       * @brief Creates a string from an Acl.
-       * @param acl the acl object to be serialized to a string.
-       * @return std::string
+       * The creation time of the path.
        */
-      static std::string ToString(const Acl& acl);
+      Nullable<DateTime> CreatedOn;
 
       /**
-       * @brief Creates a vector of Acl from a string that indicates multiple acls.
-       * @param aclsString the string that contains multiple acls.
-       * @return std::vector<Acl>
+       * The expiry time of the path.
        */
-      static std::vector<Acl> DeserializeAcls(const std::string& aclsString);
+      Nullable<DateTime> ExpiresOn;
 
       /**
-       * @brief Creates a string that contains several Acls.
-       * @param aclsArray the acls to be serialized into a string.
-       * @return std::string
+       * An HTTP entity tag associated with the path.
        */
-      static std::string SerializeAcls(const std::vector<Acl>& aclsArray);
+      std::string ETag;
     };
 
     /**
@@ -443,11 +458,75 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     using SetPathPermissionsResult = SetPathAccessControlListResult;
 
+    /**
+     * @brief A path that has been soft deleted.
+     */
+    struct PathDeletedItem final
+    {
+      /**
+       * The name of the path.
+       */
+      std::string Name;
+
+      /**
+       * The deletion ID associated with the deleted path.
+       */
+      std::string DeletionId;
+
+      /**
+       * When the path was deleted.
+       */
+      DateTime DeletedOn;
+
+      /**
+       * The number of days left before the soft deleted path will be permanently deleted.
+       */
+      int64_t RemainingRetentionDays = int64_t();
+    };
+
     // FileClient models:
 
     using UploadFileFromResult = Blobs::Models::UploadBlockBlobResult;
     using ScheduleFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
     using CopyStatus = Blobs::Models::CopyStatus;
+
+    /**
+     * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Query.
+     */
+    struct QueryFileResult final
+    {
+      std::unique_ptr<Core::IO::BodyStream> BodyStream;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * file, including an update of the file's metadata or properties, changes the last-modified
+       * time of the file.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * When a file is leased, specifies whether the lease is of infinite or fixed duration.
+       */
+      Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the file.
+       */
+      Models::LeaseState LeaseState;
+      /**
+       * The current lease status of the file.
+       */
+      Models::LeaseStatus LeaseStatus;
+      /**
+       * The value of this header is set to true if the file data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the file is unencrypted, or if only parts of the file/application metadata are
+       * encrypted).
+       */
+      bool IsServerEncrypted = bool();
+    };
 
     /**
      * @brief The detailed information returned when downloading a file.
@@ -672,6 +751,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
     friend class Azure::Core::PagedResponse<ListPathsPagedResponse>;
+  };
+
+  /**
+   * @brief Response type for
+   * #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::ListDeletedPaths.
+   */
+  class ListDeletedPathsPagedResponse final
+      : public Azure::Core::PagedResponse<ListDeletedPathsPagedResponse> {
+  public:
+    /**
+     * Deleted path items.
+     */
+    std::vector<Models::PathDeletedItem> DeletedPaths;
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<DataLakeFileSystemClient> m_fileSystemClient;
+    ListDeletedPathsOptions m_operationOptions;
+
+    friend class DataLakeFileSystemClient;
+    friend class Azure::Core::PagedResponse<ListDeletedPathsPagedResponse>;
   };
 
   /**

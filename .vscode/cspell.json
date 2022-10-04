@@ -187,6 +187,12 @@
       ]
     },
     {
+      "filename": "**/sdk/core/azure-core/**",
+      "words": [
+        "TEAMPROJECTID"
+      ]
+    },
+    {
       "filename": "**/sdk/core/azure-core/README.md",
       "words": [
         "myprogram"
@@ -235,10 +241,10 @@
       ]
     },
     {
-       "filename": "**/sdk/storage/azure-storage-files-shares/**/*",
-       "words": [
-         "mibps"
-        ]
+      "filename": "**/sdk/storage/azure-storage-files-shares/**/*",
+      "words": [
+        "mibps"
+      ]
     },
     {
       "filename": "**/cmake-modules/**/*",

@@ -44,7 +44,7 @@ private:
     unsigned char finalHash[EVP_MAX_MD_SIZE];
     if (1 != EVP_DigestFinal(m_context, finalHash, &size))
     {
-      throw std::runtime_error("Crypto error while computing Sha256Hash.");
+      throw std::runtime_error("Crypto error while computing Sha256Hash."); // LCOV_EXCL_LINE
     }
     return std::vector<uint8_t>(std::begin(finalHash), std::begin(finalHash) + size);
   }
@@ -53,7 +53,7 @@ private:
   {
     if (1 != EVP_DigestUpdate(m_context, data, length))
     {
-      throw std::runtime_error("Crypto error while updating Sha256Hash.");
+      throw std::runtime_error("Crypto error while updating Sha256Hash."); // LCOV_EXCL_LINE
     }
   }
 
@@ -62,41 +62,41 @@ public:
   {
     if ((m_context = EVP_MD_CTX_new()) == NULL)
     {
-      throw std::runtime_error("Crypto error while creating EVP context.");
+      throw std::runtime_error("Crypto error while creating EVP context."); // LCOV_EXCL_LINE
     }
     switch (size)
     {
       case SHASize::SHA1: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha1(), NULL))
         {
-          throw std::runtime_error("Crypto error while initializing Sha1Hash.");
+          throw std::runtime_error("Crypto error while initializing Sha1Hash."); // LCOV_EXCL_LINE
         }
         break;
       }
       case SHASize::SHA256: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha256(), NULL))
         {
-          throw std::runtime_error("Crypto error while init Sha256Hash.");
+          throw std::runtime_error("Crypto error while init Sha256Hash."); // LCOV_EXCL_LINE
         }
         break;
       }
       case SHASize::SHA384: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha384(), NULL))
         {
-          throw std::runtime_error("Crypto error while init Sha384Hash.");
+          throw std::runtime_error("Crypto error while init Sha384Hash."); // LCOV_EXCL_LINE
         }
         break;
       }
       case SHASize::SHA512: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha512(), NULL))
         {
-          throw std::runtime_error("Crypto error while init Sha512Hash.");
+          throw std::runtime_error("Crypto error while init Sha512Hash."); // LCOV_EXCL_LINE
         }
         break;
       }
       default:
         // imposible to get here
-        AZURE_UNREACHABLE_CODE();
+        AZURE_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
     }
   }
 

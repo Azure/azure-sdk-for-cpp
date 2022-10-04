@@ -64,7 +64,9 @@ TEST_F(KeyVaultKeyClient, DeleteKey)
     EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
     // poll each second until key is soft-deleted
     // Will throw and fail test if test takes more than 3 minutes (token cancelled)
+    // double polling should not interfere with the outcome
     auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMs, cancelToken);
+    keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMs, cancelToken);
   }
 }
 
@@ -353,6 +355,8 @@ TEST_F(KeyVaultKeyClient, RecoverOperationResumeToken)
     auto resumeOperation
         = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
             resumeToken, client);
+    // double polling should have no impact on the result
+    resumeOperation.PollUntilDone(m_testPollingIntervalMs);
     resumeOperation.PollUntilDone(m_testPollingIntervalMs);
   }
   {
@@ -365,7 +369,9 @@ TEST_F(KeyVaultKeyClient, RecoverOperationResumeToken)
     auto resumeRecoveryOp
         = Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
             resumeToken, client);
+    // double polling should have no impact on the result
     auto keyResponse = resumeRecoveryOp.PollUntilDone(m_testPollingIntervalMs);
+    keyResponse = resumeRecoveryOp.PollUntilDone(m_testPollingIntervalMs);
     auto key = keyResponse.Value;
   }
 }

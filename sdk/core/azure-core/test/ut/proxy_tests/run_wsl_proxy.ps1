@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 # cspell: words auxf
 wsl sudo apt-get -y install squid
 if (!$?) {

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 Write-Host 'EnvVar: ' $env:ANONYMOUSCONTAINERIPV4ADDRESS
 Write-Host 'EnvVar: ' $env:AUTHENTICATEDCONTAINERIPV4ADDRESS
 if ($env:ANONYMOUSCONTAINERIPV4ADDRESS -ne $null) {
