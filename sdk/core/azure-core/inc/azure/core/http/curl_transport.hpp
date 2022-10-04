@@ -204,6 +204,10 @@ namespace Azure { namespace Core { namespace Http {
     // [Core Guidelines C.35: "A base class destructor should be either public
     // and virtual or protected and
     // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
+
+    /**
+     * @brief Destroys a CurlTransport object.
+     */
     virtual ~CurlTransport() = default;
 
     /**
@@ -212,16 +216,6 @@ namespace Azure { namespace Core { namespace Http {
      * @param options Common Azure Core Transport Options.
      */
     CurlTransport(Azure::Core::Http::Policies::TransportOptions const& options);
-
-    /**
-     * @brief Destroys a CurlTransport object.
-     *
-     * See also:
-     * [Core Guidelines C.35: "A base class destructor should be either public
-     * and virtual or protected and
-     * non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
-     */
-    virtual ~CurlTransport() = default;
 
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse

@@ -6,6 +6,7 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/http/websockets/win_http_websockets_transport.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
+#include "azure/core/internal/unique_handle.hpp"
 #include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -26,12 +27,11 @@
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
   void WinHttpWebSocketTransport::OnUpgradedConnection(
-      Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle)
+      Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle)
   {
     // Convert the request handle into a WebSocket handle for us to use later.
-    m_socketHandle = Azure::Core::Http::_detail::unique_HINTERNET(
-        WinHttpWebSocketCompleteUpgrade(requestHandle.get(), 0),
-        Azure::Core::Http::_detail::HINTERNET_deleter{});
+    m_socketHandle = Azure::Core::_internal::UniqueHandle<HINTERNET>(
+        WinHttpWebSocketCompleteUpgrade(requestHandle.get(), 0));
     if (!m_socketHandle)
     {
       GetErrorAndThrow("Error Upgrading HttpRequest handle to WebSocket handle.");

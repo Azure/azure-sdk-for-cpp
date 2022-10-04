@@ -23,13 +23,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    */
   class WinHttpWebSocketTransport : public WebSocketTransport, public WinHttpTransport {
 
-    Azure::Core::Http::_detail::unique_HINTERNET m_socketHandle;
+    Azure::Core::_internal::UniqueHandle<HINTERNET> m_socketHandle;
     std::mutex m_sendMutex;
     std::mutex m_receiveMutex;
 
     // Called by the
     void OnUpgradedConnection(
-        Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle) override;
+        Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle) override;
 
   public:
     /**

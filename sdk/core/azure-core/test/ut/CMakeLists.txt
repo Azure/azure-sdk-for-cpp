@@ -86,6 +86,7 @@ add_executable (
     transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
+    websocket_test.cpp
   )
 
 if (MSVC)

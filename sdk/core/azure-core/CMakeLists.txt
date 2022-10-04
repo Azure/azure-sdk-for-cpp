@@ -224,10 +224,6 @@ if(BUILD_TESTING)
   if(BUILD_TRANSPORT_CURL)
     add_subdirectory(test/libcurl-stress-test)
   endif()
-  
-  if(BUILD_TRANSPORT_CURL)
-    add_subdirectory(test/libcurl-stress-test)
-  endif()
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)

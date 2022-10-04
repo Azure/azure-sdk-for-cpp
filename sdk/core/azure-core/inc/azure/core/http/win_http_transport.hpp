@@ -239,6 +239,8 @@ namespace Azure { namespace Core {
       // Callback to allow a derived transport to extract the request handle. Used for WebSocket
       // transports.
       virtual void OnUpgradedConnection(Azure::Core::_internal::UniqueHandle<HINTERNET> const&){};
+
+    protected:
       /**
        * @brief Throw an exception based on the Win32 Error code
        *
