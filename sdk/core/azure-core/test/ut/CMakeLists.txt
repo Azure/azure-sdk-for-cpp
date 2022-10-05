@@ -119,6 +119,7 @@ endif()
 set(TEST_ADDITIONAL_FILES 
     ${CMAKE_CURRENT_LIST_DIR}/requirements.txt 
 	${CMAKE_CURRENT_LIST_DIR}/websocket_server.py
+	${CMAKE_CURRENT_LIST_DIR}/Start-WebSocketServer.ps1
   )
 
 add_custom_command(TARGET azure-core-test POST_BUILD
