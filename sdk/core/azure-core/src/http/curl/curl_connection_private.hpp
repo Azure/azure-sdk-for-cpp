@@ -40,9 +40,7 @@ namespace Azure { namespace Core {
      */
     template <> struct UniqueHandleHelper<CURL>
     {
-      static void FreeHandle(CURL* obj) { curl_free(obj); }
-
-      using type = BasicUniqueHandle<CURL, FreeHandle>;
+      using type = BasicUniqueHandle<CURL, curl_easy_cleanup>;
     };
   } // namespace _internal
 

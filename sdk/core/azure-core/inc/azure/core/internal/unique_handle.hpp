@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace _internal {
    *
    *  template <> struct UniqueHandleHelper<CURL>
    *  {
-   *    using type = BasicUniqueHandle<CURL, curl_free>;
+   *    using type = BasicUniqueHandle<CURL, curl_easy_cleanup>;
    *  };
    *
    * Note that for some types (HINTERNET for example), the helper needs to be a bit more
