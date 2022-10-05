@@ -1365,6 +1365,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Type of the blob.
          */
         Models::BlobType BlobType;
+        /**
+         * The deletion ID associated with the deleted path.
+         */
+        Nullable<std::string> DeletionId;
       };
     } // namespace _detail
     /**
@@ -3447,6 +3451,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Marker;
         Nullable<int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
+        Nullable<std::string> ShowOnly;
       };
       static Response<Models::_detail::ListBlobsByHierarchyResult> ListBlobsByHierarchy(
           Core::Http::_internal::HttpPipeline& pipeline,

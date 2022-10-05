@@ -365,8 +365,8 @@ namespace Azure { namespace Core { namespace Http {
     bool m_keepAlive = true;
 
     Azure::Nullable<std::string> m_httpProxy;
-    std::string m_httpProxyUser;
-    std::string m_httpProxyPassword;
+    Azure::Nullable<std::string> m_httpProxyUser;
+    Azure::Nullable<std::string> m_httpProxyPassword;
 
     /**
      * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data

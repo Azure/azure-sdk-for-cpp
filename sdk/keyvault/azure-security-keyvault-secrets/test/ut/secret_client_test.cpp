@@ -203,6 +203,8 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
   }
   {
     auto operation = client.StartDeleteSecret(secretName);
+    // double polling should not have an impact on the result
+    operation.PollUntilDone(m_defaultWait);
     operation.PollUntilDone(m_defaultWait);
     EXPECT_EQ(operation.GetResumeToken(), secretName);
     EXPECT_EQ(operation.HasValue(), true);
@@ -216,6 +218,8 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
   }
   {
     auto operation = client.StartRecoverDeletedSecret(secretName);
+    // double polling should not have an impact on the result
+    operation.PollUntilDone(m_defaultWait);
     operation.PollUntilDone(m_defaultWait);
     EXPECT_EQ(operation.GetResumeToken(), secretName);
     EXPECT_EQ(operation.HasValue(), true);

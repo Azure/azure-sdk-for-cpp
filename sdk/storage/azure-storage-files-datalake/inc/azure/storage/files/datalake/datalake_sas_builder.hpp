@@ -294,6 +294,11 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string CorrelationId;
 
     /**
+     * @brief Optional encryption scope to use when sending requests authorized with this SAS url.
+     */
+    std::string EncryptionScope;
+
+    /**
      * @brief Sets the permissions for the filesystem SAS.
      *
      * @param permissions The allowed permissions.

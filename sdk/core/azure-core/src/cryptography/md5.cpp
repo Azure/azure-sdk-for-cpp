@@ -167,7 +167,7 @@ private:
   {
     if (1 != EVP_DigestUpdate(m_context, data, length))
     {
-      throw std::runtime_error("Crypto error while updating Md5Hash.");
+      throw std::runtime_error("Crypto error while updating Md5Hash."); // LCOV_EXCL_LINE
     }
   }
 
@@ -178,7 +178,7 @@ private:
     unsigned char hash[EVP_MAX_MD_SIZE];
     if (1 != EVP_DigestFinal(m_context, hash, &size))
     {
-      throw std::runtime_error("Crypto error while computing Md5Hash.");
+      throw std::runtime_error("Crypto error while computing Md5Hash."); // LCOV_EXCL_LINE
     }
 
     return std::vector<uint8_t>(std::begin(hash), std::begin(hash) + size);
@@ -194,7 +194,7 @@ public:
     }
     if (1 != EVP_DigestInit_ex(m_context, EVP_md5(), NULL))
     {
-      throw std::runtime_error("Crypto error while init Md5Hash.");
+      throw std::runtime_error("Crypto error while init Md5Hash."); // LCOV_EXCL_LINE
     }
   }
 

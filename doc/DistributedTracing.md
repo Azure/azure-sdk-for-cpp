@@ -1,6 +1,4 @@
----
-# cspell:words openetelemetry
----
+<!-- cspell:words openetelemetry -->
 # Distributed Tracing in the C++ SDK
 
 Azure has adopted [W3C Distributed Tracing](https://www.w3.org/TR/trace-context/) as a paradigm for correlating

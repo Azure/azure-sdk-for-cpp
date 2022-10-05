@@ -74,6 +74,49 @@ namespace Azure { namespace Storage { namespace Test {
     container2Client.Delete();
   }
 
+  TEST_F(BlobBatchClientTest, SnapshotVersion)
+  {
+    const std::string testName = GetTestNameLowerCase();
+
+    const std::string containerName1 = testName + "1";
+    const std::string blob1Name = "blockblob1";
+    auto serviceClient = GetClientForTest(testName);
+    auto container1Client = serviceClient.GetBlobContainerClient(containerName1);
+    container1Client.CreateIfNotExists();
+    auto blob1Client = container1Client.GetBlockBlobClient(blob1Name);
+    auto versionId = blob1Client.UploadFrom(nullptr, 0).Value.VersionId.Value();
+    auto snapshotId = blob1Client.CreateSnapshot().Value.Snapshot;
+
+    EXPECT_NO_THROW(blob1Client.WithVersionId(versionId).GetProperties());
+    EXPECT_NO_THROW(blob1Client.WithSnapshot(snapshotId).GetProperties());
+
+    auto batch = serviceClient.CreateBatch();
+    auto r1 = batch.SetBlobAccessTierUrl(
+        blob1Client.WithVersionId(versionId).GetUrl(), Blobs::Models::AccessTier::Cool);
+    auto r2 = batch.SetBlobAccessTierUrl(
+        blob1Client.WithSnapshot(snapshotId).GetUrl(), Blobs::Models::AccessTier::Cool);
+    EXPECT_NO_THROW(serviceClient.SubmitBatch(batch));
+    EXPECT_NO_THROW(r1.GetResponse());
+    EXPECT_NO_THROW(r2.GetResponse());
+    EXPECT_EQ(
+        blob1Client.WithVersionId(versionId).GetProperties().Value.AccessTier.Value(),
+        Blobs::Models::AccessTier::Cool);
+    EXPECT_EQ(
+        blob1Client.WithSnapshot(snapshotId).GetProperties().Value.AccessTier.Value(),
+        Blobs::Models::AccessTier::Cool);
+
+    batch = serviceClient.CreateBatch();
+    auto r3 = batch.DeleteBlobUrl(blob1Client.WithVersionId(versionId).GetUrl());
+    auto r4 = batch.DeleteBlobUrl(blob1Client.WithSnapshot(snapshotId).GetUrl());
+    EXPECT_NO_THROW(serviceClient.SubmitBatch(batch));
+    EXPECT_NO_THROW(r3.GetResponse());
+    EXPECT_NO_THROW(r4.GetResponse());
+    EXPECT_THROW(blob1Client.WithVersionId(versionId).GetProperties(), StorageException);
+    EXPECT_THROW(blob1Client.WithSnapshot(snapshotId).GetProperties(), StorageException);
+
+    container1Client.DeleteIfExists();
+  }
+
   TEST_F(BlobBatchClientTest, SubmitSetTierBatch_LIVEONLY_)
   {
     const std::string testName = GetTestNameLowerCase();

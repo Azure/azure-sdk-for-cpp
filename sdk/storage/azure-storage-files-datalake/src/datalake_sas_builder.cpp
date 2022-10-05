@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2020-02-10";
+    constexpr static const char* SasVersion = "2021-06-08";
 
     std::string DataLakeSasResourceToString(DataLakeSasResource resource)
     {
@@ -138,8 +138,9 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
-        + "\n" + protocol + "\n" + SasVersion + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
-        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + "\n" + protocol + "\n" + SasVersion + "\n" + resource + "\n" + "\n" + EncryptionScope
+        + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n"
+        + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -190,6 +191,10 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
     }
+    if (!EncryptionScope.empty())
+    {
+      builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
+    }
 
     return builder.GetAbsoluteUrl();
   }
@@ -223,8 +228,8 @@ namespace Azure { namespace Storage { namespace Sas {
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n"
         + PreauthorizedAgentObjectId + "\n" + AgentObjectId + "\n" + CorrelationId + "\n"
         + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
-        + resource + "\n" + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
-        + "\n" + ContentLanguage + "\n" + ContentType;
+        + resource + "\n" + "\n" + EncryptionScope + "\n" + CacheControl + "\n" + ContentDisposition
+        + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -291,6 +296,10 @@ namespace Azure { namespace Storage { namespace Sas {
     if (!ContentType.empty())
     {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
+    }
+    if (!EncryptionScope.empty())
+    {
+      builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
     }
     builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));
 

@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
-    std::chrono::milliseconds MaxRetryDelay = std::chrono::minutes(2);
+    std::chrono::milliseconds MaxRetryDelay = std::chrono::seconds(60);
 
     /**
      * @brief The HTTP status codes that indicate when an operation should be retried.
@@ -137,29 +137,40 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    */
   struct TransportOptions final
   {
-#if !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) || defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     /**
-     * @brief Http Proxies used when making an HTTP connection.
+     * @brief The URL for the proxy server to use for this connection.
      *
-     * @remark The URL for the proxy server to use for this connection.
+     * @remark If an empty string is specified, it instructs the transport to disable all proxies,
+     * including system proxies.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
     Azure::Nullable<std::string> HttpProxy{};
 
     /**
      * @brief The username to use when authenticating with the proxy server.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
-    std::string ProxyUserName{};
+    Azure::Nullable<std::string> ProxyUserName{};
 
     /**
      * @brief The password to use when authenticating with the proxy server.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
-    std::string ProxyPassword{};
+    Azure::Nullable<std::string> ProxyPassword{};
 
     /**
      * @brief Enable TLS Certificate validation against a certificate revocation list.
      *
-     * @remark Note that by default CRL validation is *disabled*.
+     * @remark Note that by default, CRL validation is *disabled*.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
     bool EnableCertificateRevocationListCheck{false};
 
@@ -167,14 +178,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Base64 encoded DER representation of an X.509 certificate expected in the certificate
      * chain used in TLS connections.
      *
-     * @remark Note that with the schannel and sectransp crypto backends, settting the
+     * @remark Note that with the schannel and sectransp crypto backends, setting the
      * expected root certificate disables access to the system certificate store.
      * This means that the expected root certificate is the only certificate that will be trusted.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
     std::string ExpectedTlsRootCertificate{};
-
-#endif // defined(CURL_ADAPTER) || defined(WINHTTP_ADAPTER)
-#endif // !defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
 
     /**
      * @brief #Azure::Core::Http::HttpTransport that the transport policy will use to send and
@@ -188,6 +199,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @remark When using a custom transport adapter, the implementation for
      * `::AzureSdkGetCustomHttpTransport()` must be linked in the end-user application.
+     *
+     * @remark If the caller specifies a value for Transport, then all the other options in
+     * TransportOptions will be ignored, since the caller will have already configured the
+     * transport.
      *
      */
     std::shared_ptr<HttpTransport> Transport;

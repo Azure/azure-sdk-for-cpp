@@ -1,0 +1,25 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "4ab022bd-238e-47ef-6d84-52a8364d6bf5",
+        "x-ms-version": "2021-04-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>7</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors /><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>false</Enabled></StaticWebsite><DefaultServiceVersion>2021-06-08</DefaultServiceVersion></StorageServiceProperties>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Tue, 27 Sep 2022 03:01:22 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "4ab022bd-238e-47ef-6d84-52a8364d6bf5",
+        "x-ms-request-id": "03af39bd-601e-0080-031d-d22da9000000",
+        "x-ms-version": "2021-04-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
+    }
+  ]
+}

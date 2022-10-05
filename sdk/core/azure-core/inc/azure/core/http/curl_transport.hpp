@@ -10,6 +10,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 
 namespace Azure { namespace Core { namespace Http {
@@ -28,7 +29,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief The available options to set libcurl SSL options.
    *
    * @remark The SDK will map the enum option to libcurl's specific option. See more info here:
-   * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+   * https://curl.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
    *
    */
   struct CurlTransportSslOptions final
@@ -38,7 +39,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark Libcurl does revocation list check by default for SSL backends that supports this
      * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
-     * check by default. This ensures that the LibCURL behavior matches the WinHTTP behavior.
+     * check by default. This ensures that the libcurl behavior matches the WinHTTP behavior.
      */
     bool EnableCertificateRevocationListCheck = false;
 
@@ -46,8 +47,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This option allows SSL connections to proceed even if there is an error retrieving the
      * Certificate Revocation List.
      *
-     * @remark Note that this only works when LibCURL is configured to use openssl as its TLS
-     * provider. That functionally limits this check to Linux only, and then only when openssl is
+     * @remark Note that this only works when libcurl is configured to use OpenSSL as its TLS
+     * provider. That functionally limits this check to Linux only, and only when openssl is
      * configured (the default).
      */
     bool AllowFailedCrlRetrieval = false;
@@ -59,7 +60,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The Azure SDK will not directly validate these certificates.
      *
      * @remark More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO_BLOB.html
+     * https://curl.se/libcurl/c/CURLOPT_CAINFO_BLOB.html
      *
      */
     std::string PemEncodedExpectedRootCertificates;
@@ -78,7 +79,7 @@ namespace Azure { namespace Core { namespace Http {
      * proxy settings from the system (use no proxy).
      *
      * @remark No validation for the string is done by the Azure SDK. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html.
+     * https://curl.se/libcurl/c/CURLOPT_PROXY.html.
      *
      * @remark The default value is an empty string (no proxy).
      *
@@ -89,23 +90,24 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Username to be used for proxy connections.
      *
      * @remark No validation for the string is done by the Azure SDK. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY_USERNAME.html.
+     * https://curl.se/libcurl/c/CURLOPT_PROXYUSERNAME.html.
      *
      * @remark The default value is an empty string (no proxy).
      *
      */
-    std::string ProxyUsername;
+    Azure::Nullable<std::string> ProxyUsername;
 
     /**
      * @brief Password to be used for proxy connections.
      *
      * @remark No validation for the string is done by the Azure SDK. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_PROXY_PASSWORD.html.
+     * https://curl.se/libcurl/c/CURLOPT_PROXYPASSWORD.html.
      *
-     * @remark The default value is an empty string (no proxy).
+     * @remark If a value is provided, the value will be used (this allows the caller to provide an
+     * empty password)
      *
      */
-    std::string ProxyPassword;
+    Azure::Nullable<std::string> ProxyPassword;
     /**
      * @brief Path to a PEM encoded file containing the certificate authorities sent to libcurl
      * handle directly.
@@ -113,7 +115,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The Azure SDK will not check if the path is valid or not.
      *
      * @remark The default is the built-in system specific path. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO.html
+     * https://curl.se/libcurl/c/CURLOPT_CAINFO.html
      *
      */
     std::string CAInfo;
@@ -135,7 +137,7 @@ namespace Azure { namespace Core { namespace Http {
      * certificate.
      *
      * @remark The default value is `true`. More about this option:
-     * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html
+     * https://curl.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html
      *
      */
     bool SslVerifyPeer = true;
@@ -143,7 +145,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Define the SSL options for the libcurl handle.
      *
-     * @remark See more info here: https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html.
+     * @remark See more info here: https://curl.se/libcurl/c/CURLOPT_SSL_OPTIONS.html.
      * The default option is all options `false`.
      *
      */
@@ -170,7 +172,7 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
 
     /**
-     * @brief If set, enables extended tracing from LibCURL.
+     * @brief If set, integrates libcurl's internal tracing with Azure logging.
      */
     bool EnableCurlTracing = false;
   };
@@ -182,7 +184,6 @@ namespace Azure { namespace Core { namespace Http {
   private:
     CurlTransportOptions m_options;
 
-  protected:
     /**
      * @brief Called when an HTTP response indicates the connection should be upgraded to
      * a websocket. Takes ownership of the CurlNetworkConnection object.
@@ -203,7 +204,18 @@ namespace Azure { namespace Core { namespace Http {
     // [Core Guidelines C.35: "A base class destructor should be either public
     // and virtual or protected and
     // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
+
+    /**
+     * @brief Destroys a CurlTransport object.
+     */
     virtual ~CurlTransport() = default;
+
+    /**
+     * @brief Construct a new CurlTransport object based on common Azure HTTP Transport Options
+     *
+     * @param options Common Azure Core Transport Options.
+     */
+    CurlTransport(Azure::Core::Http::Policies::TransportOptions const& options);
 
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
