@@ -220,17 +220,18 @@ namespace Azure { namespace Core {
        */
       size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
 
-    /**
-     * @brief This method will use libcurl socket to write all the bytes from buffer.
-     *
-     * @remarks Hardcoded timeout is used in case a socket stop responding.
-     *
-     * @param context A context to control the request lifetime.
-     * @param buffer ptr to the data to be sent to wire.
-     * @param bufferSize size of the buffer to send.
-     * @return CURL_OK when response is sent successfully.
-     */
-    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context) override;
+      /**
+       * @brief This method will use libcurl socket to write all the bytes from buffer.
+       *
+       * @remarks Hardcoded timeout is used in case a socket stop responding.
+       *
+       * @param context A context to control the request lifetime.
+       * @param buffer ptr to the data to be sent to wire.
+       * @param bufferSize size of the buffer to send.
+       * @return CURL_OK when response is sent successfully.
+       */
+      CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
+          override;
 
       void Shutdown() override;
     };
