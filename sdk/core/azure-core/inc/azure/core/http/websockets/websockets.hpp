@@ -311,13 +311,12 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
        */
       void Open(Azure::Core::Context const& context = Azure::Core::Context{});
 
-      /** @brief Closes a WebSocket connection to the remote server gracefully.
-       *
-       * @param context Context for the operation.
+      /** @brief Closes a WebSocket connection to the remote server.
        */
-      void Close(Azure::Core::Context const& context = Azure::Core::Context{});
+      void Close();
 
-      /** @brief Closes a WebSocket connection to the remote server with additional context.
+      /** @brief Gracefully closes a WebSocket connection to the remote server with additional
+       * context.
        *
        * @param closeStatus 16 bit WebSocket error code.
        * @param closeReason String describing the reason for closing the socket.

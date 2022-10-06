@@ -48,6 +48,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   {
   }
 
+  WebSocketImplementation::~WebSocketImplementation() { Close(); }
+
   void WebSocketImplementation::Open(Azure::Core::Context const& context)
   {
     if (m_state != SocketState::Invalid && m_state != SocketState::Closed)
@@ -197,6 +199,19 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     m_headers.emplace(std::make_pair(header, headerValue));
   }
 
+  void WebSocketImplementation::Close()
+  {
+    std::unique_lock<std::mutex> lock(m_stateMutex);
+    m_stateOwner = std::this_thread::get_id();
+    // Close the socket - after this point, the m_transport is invalid.
+    m_pingThread.Shutdown();
+    if (m_transport)
+    {
+      m_transport->Close();
+    }
+    m_state = SocketState::Closed;
+  }
+
   void WebSocketImplementation::Close(
       uint16_t closeStatus,
       std::string const& closeReason,
@@ -253,10 +268,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       lock.lock();
       m_stateOwner = std::this_thread::get_id();
     }
-    // Close the socket - after this point, the m_transport is invalid.
-    m_pingThread.Shutdown();
-    m_transport->Close();
-    m_state = SocketState::Closed;
+    lock.unlock();
+    Close();
   }
 
   void WebSocketImplementation::SendFrame(

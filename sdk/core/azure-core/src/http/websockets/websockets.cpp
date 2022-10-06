@@ -21,11 +21,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   {
     m_socketImplementation->Open(context);
   }
-  void WebSocket::Close(Azure::Core::Context const& context)
-  {
-    m_socketImplementation->Close(
-        static_cast<uint16_t>(WebSocketErrorCode::EndpointDisappearing), {}, context);
-  }
+  void WebSocket::Close() { m_socketImplementation->Close(); }
   void WebSocket::Close(
       uint16_t closeStatus,
       std::string const& closeReason,
