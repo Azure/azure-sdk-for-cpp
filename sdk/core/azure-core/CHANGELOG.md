@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.0-beta.1 (Unreleased)
+## 1.8.0-beta.1 (2022-10-06)
 
 ### Features Added
 
@@ -17,11 +17,7 @@
   - The default delay between retries is changed from 4 seconds to 800ms.
   - The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).
 
-  If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in in the `TransportOptions` structure.
-
-### Bugs Fixed
-
-### Other Changes
+  If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in the `RetryOptions` structure.
 
 ## 1.7.2 (2022-09-01)
 
