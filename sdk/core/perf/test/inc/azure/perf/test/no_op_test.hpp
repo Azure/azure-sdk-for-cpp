@@ -38,7 +38,7 @@ namespace Azure { namespace Perf { namespace Test {
       (void)myTestOption;
     }
 
-     /**
+    /**
      * @brief Define the test options for the test.
      *
      * @return The list of test options.

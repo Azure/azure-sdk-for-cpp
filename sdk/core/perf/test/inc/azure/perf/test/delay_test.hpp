@@ -67,9 +67,7 @@ namespace Azure { namespace Perf { namespace Test {
      * @brief The test definition
      *
      */
-    void Run(Azure::Core::Context const&) override { 
-        std::this_thread::sleep_for(m_delay); 
-    }
+    void Run(Azure::Core::Context const&) override { std::this_thread::sleep_for(m_delay); }
 
     /**
      * @brief Define the test options for the test.
@@ -79,10 +77,7 @@ namespace Azure { namespace Perf { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       return {
-          {"InitialDelayMs",
-           {"-m"},
-           "Initial delay (in milliseconds). Default to 1000 (1sec)",
-           1},
+          {"InitialDelayMs", {"-m"}, "Initial delay (in milliseconds). Default to 1000 (1sec)", 1},
           {"InstanceGrowthFactor",
            {"-n"},
            "Instance growth factor. The delay of instance N will be (InitialDelayMS * "
