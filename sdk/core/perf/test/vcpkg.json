@@ -1,0 +1,7 @@
+{
+  "name": "azure-perf-test",
+  "version": "1.0.0",
+  "dependencies": [
+    "azure-core-cpp"
+  ]
+}

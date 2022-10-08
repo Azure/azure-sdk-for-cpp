@@ -7,6 +7,9 @@ project(azure-perf-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 set(
   AZURE_PERF_TEST_HEADER
   inc/azure/perf/test/curl_http_client_get_test.hpp
@@ -37,9 +40,10 @@ target_include_directories(
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
+find_package(azure-core-cpp CONFIG REQUIRED)
 
 # link the `azure-perf` lib together with any other library which will be used for the tests. 
-target_link_libraries(azure-perf-test PRIVATE azure-core azure-perf)
+target_link_libraries(azure-perf-test PRIVATE Azure::azure-core azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-perf-test PROPERTIES FOLDER "Tests/Core")
 
