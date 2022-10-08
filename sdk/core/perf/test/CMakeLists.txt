@@ -42,6 +42,7 @@ target_include_directories(
 )
 find_package(azure-core-cpp CONFIG REQUIRED)
 
+
 # link the `azure-perf` lib together with any other library which will be used for the tests. 
 target_link_libraries(azure-perf-test PRIVATE Azure::azure-core azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
