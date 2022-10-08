@@ -22,6 +22,10 @@
     {
       "name": "vcpkg-cmake-config",
       "host": true
+    },
+    {
+      "name": "wil",
+      "platform": "windows"
     }
   ],
   "default-features": [
