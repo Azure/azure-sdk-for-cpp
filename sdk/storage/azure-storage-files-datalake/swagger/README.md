@@ -258,6 +258,8 @@ directive:
     transform: >
       $["201"].headers["Content-Length"]["x-ms-client-name"] = "FileSize";
       $["201"].headers["Content-Length"]["x-nullable"] = true;
+      $["201"].headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["201"].headers["x-ms-request-server-encrypted"]["x-ms-client-default"] = "bool()";
       $["201"].headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["201"].headers["x-ms-continuation"];
       $["201"].schema = {

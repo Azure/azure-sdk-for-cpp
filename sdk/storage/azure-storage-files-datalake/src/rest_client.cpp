@@ -307,8 +307,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         response.FileSize = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
       }
-      response.IsServerEncrypted
-          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
+      {
+        response.IsServerEncrypted
+            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      }
       if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
       {
         response.EncryptionKeySha256 = Core::Convert::Base64Decode(
