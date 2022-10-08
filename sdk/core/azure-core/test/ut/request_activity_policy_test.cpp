@@ -16,6 +16,7 @@ using namespace Azure::Core::Tracing::_internal;
 using namespace Azure::Core::Tracing;
 
 namespace {
+
 class NoOpPolicy final : public HttpPolicy {
   std::function<std::unique_ptr<RawResponse>(Request&)> m_createResponse{};
 
@@ -209,7 +210,9 @@ TEST(RequestActivityPolicy, Basic)
       // Final policy - equivalent to HTTP policy.
       policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request& request) {
         userAgent = request.GetHeader("user-agent"); // Return success.
-        return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+        auto response = std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+        response->SetHeader("x-ms-request-id", request.GetHeader("x-ms-client-request-id").Value());
+        return response;
       }));
 
       Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, callContext);
@@ -221,6 +224,9 @@ TEST(RequestActivityPolicy, Basic)
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
     EXPECT_EQ("HTTP GET", tracer->GetSpans()[1]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
+    EXPECT_EQ(
+        request.GetHeaders()["x-ms-client-request-id"],
+        tracer->GetSpans()[1]->GetAttributes().at("requestId"));
     std::string expectedUserAgentPrefix{"azsdk-cpp-my-service-cpp/1.0.0.beta-2 ("};
     EXPECT_EQ(expectedUserAgentPrefix, userAgent.Value().substr(0, expectedUserAgentPrefix.size()));
   }
@@ -282,5 +288,55 @@ TEST(RequestActivityPolicy, TryRetries)
     EXPECT_EQ("408", tracer->GetSpans()[1]->GetAttributes().at("http.status_code"));
     EXPECT_EQ("408", tracer->GetSpans()[2]->GetAttributes().at("http.status_code"));
     EXPECT_EQ("200", tracer->GetSpans()[3]->GetAttributes().at("http.status_code"));
+  }
+}
+
+TEST(RequestActivityPolicy, TryFailures)
+{
+  {
+    auto testTracer = std::make_shared<TestTracingProvider>();
+
+    Azure::Core::_internal::ClientOptions clientOptions;
+    clientOptions.Telemetry.TracingProvider = testTracer;
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
+        clientOptions, "my-service-cpp", "1.0b2");
+
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
+    Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
+
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+
+      policies.emplace_back(std::make_unique<RequestIdPolicy>());
+      policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
+
+      // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
+      policies.emplace_back(
+          std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
+      // Final policy - equivalent to HTTP policy.
+      policies.emplace_back(
+          std::make_unique<NoOpPolicy>([&](Request&) -> std::unique_ptr<RawResponse> {
+            throw Azure::Core::Http::TransportException("Throwing exceptions...");
+          }));
+
+      Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+      // Simulate retrying an HTTP operation 3 times on the pipeline:
+      EXPECT_THROW(pipeline.Send(request, callContext), Azure::Core::Http::TransportException);
+    }
+
+    EXPECT_EQ(1ul, testTracer->GetTracers().size());
+    auto& tracer = testTracer->GetTracers().front();
+    EXPECT_EQ(5ul, tracer->GetSpans().size());
+    EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[2]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[3]->GetName());
+    EXPECT_EQ(1, tracer->GetSpans()[1]->GetEvents().size());
+    EXPECT_EQ("Throwing exceptions...", tracer->GetSpans()[1]->GetEvents()[0]);
+    EXPECT_EQ(1, tracer->GetSpans()[2]->GetEvents().size());
+    EXPECT_EQ("Throwing exceptions...", tracer->GetSpans()[2]->GetEvents()[0]);
+    EXPECT_EQ(1, tracer->GetSpans()[3]->GetEvents().size());
+    EXPECT_EQ("Throwing exceptions...", tracer->GetSpans()[3]->GetEvents()[0]);
   }
 }

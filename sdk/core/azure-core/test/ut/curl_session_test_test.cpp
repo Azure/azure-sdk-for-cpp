@@ -41,8 +41,10 @@ namespace Azure { namespace Core { namespace Test {
 
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
+    Azure::Core::Http::CurlTransportOptions transportOptions;
+    transportOptions.HttpKeepAlive = true;
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-        request, std::move(uniqueCurlMock), true);
+        request, std::move(uniqueCurlMock), transportOptions);
 
     EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
   }
@@ -75,8 +77,11 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       // Create the session inside scope so it is released and the connection is moved to the pool
+      Azure::Core::Http::CurlTransportOptions transportOptions;
+      transportOptions.HttpKeepAlive = true;
+
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-          request, std::move(uniqueCurlMock), true);
+          request, std::move(uniqueCurlMock), transportOptions);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
     }
@@ -118,8 +123,10 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       // Create the session inside scope so it is released and the connection is moved to the pool
+      Azure::Core::Http::CurlTransportOptions transportOptions;
+      transportOptions.HttpKeepAlive = true;
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-          request, std::move(uniqueCurlMock), true);
+          request, std::move(uniqueCurlMock), transportOptions);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
       auto r = session->ExtractResponse();
@@ -159,8 +166,10 @@ namespace Azure { namespace Core { namespace Test {
 
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
+    Azure::Core::Http::CurlTransportOptions transportOptions;
+    transportOptions.HttpKeepAlive = true;
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-        request, std::move(uniqueCurlMock), true);
+        request, std::move(uniqueCurlMock), transportOptions);
 
     EXPECT_THROW(session->Perform(Azure::Core::Context::ApplicationContext), std::invalid_argument);
   }
@@ -188,8 +197,10 @@ namespace Azure { namespace Core { namespace Test {
 
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
+    Azure::Core::Http::CurlTransportOptions transportOptions;
+    transportOptions.HttpKeepAlive = true;
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-        request, std::move(uniqueCurlMock), true);
+        request, std::move(uniqueCurlMock), transportOptions);
 
     EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
   }
@@ -217,8 +228,10 @@ namespace Azure { namespace Core { namespace Test {
 
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
+    Azure::Core::Http::CurlTransportOptions transportOptions;
+    transportOptions.HttpKeepAlive = true;
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-        request, std::move(uniqueCurlMock), true);
+        request, std::move(uniqueCurlMock), transportOptions);
 
     EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
   }
@@ -292,8 +305,10 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       // Create the session inside scope so it is released and the connection is moved to the pool
+      Azure::Core::Http::CurlTransportOptions transportOptions;
+      transportOptions.HttpKeepAlive = true;
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-          request, std::move(uniqueCurlMock), true);
+          request, std::move(uniqueCurlMock), transportOptions);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
       auto response = session->ExtractResponse();
@@ -328,8 +343,10 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       // Create the session inside scope so it is released and the connection is moved to the pool
+      Azure::Core::Http::CurlTransportOptions transportOptions;
+      transportOptions.HttpKeepAlive = true;
       auto session = std::make_unique<Azure::Core::Http::CurlSession>(
-          request, std::move(uniqueCurlMock), true);
+          request, std::move(uniqueCurlMock), transportOptions);
 
       auto returnCode = session->Perform(Azure::Core::Context::ApplicationContext);
       EXPECT_EQ(CURLE_SEND_ERROR, returnCode);
