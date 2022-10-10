@@ -10,12 +10,13 @@
 #pragma once
 
 #include "azure/core/context.hpp"
+#include "azure/core/diagnostics/logger.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/unique_handle.hpp"
-
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -28,6 +29,7 @@
 #endif
 
 #include <memory>
+#include <mutex>
 #include <type_traits>
 #include <vector>
 #include <wincrypt.h>
@@ -52,14 +54,84 @@ namespace Azure { namespace Core {
 
   namespace Http {
 
+    struct WinHttpTransportOptions;
     namespace _detail {
 
       constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
       constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
+      class WinHttpAction;
+      class WinHttpRequest;
+      class WinHttpStream;
+
+      class WinHttpRequest {
+        bool m_requestHandleClosed{false};
+        Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
+        std::unique_ptr<WinHttpAction> m_currentAction;
+        std::vector<std::string> m_expectedTlsRootCertificates;
+
+        /*
+         * Callback from WinHTTP called after the TLS certificates are received when the caller sets
+         * expected TLS root certificates.
+         */
+        static void CALLBACK StatusCallback(
+            HINTERNET hInternet,
+            DWORD_PTR dwContext,
+            DWORD dwInternetStatus,
+            LPVOID lpvStatusInformation,
+            DWORD dwStatusInformationLength) noexcept;
+
+        /*
+         * Callback from WinHTTP called after the TLS certificates are received when the caller sets
+         * expected TLS root certificates.
+         */
+        void OnHttpStatusOperation(
+            HINTERNET hInternet,
+            DWORD internetStatus,
+            LPVOID statusInformation,
+            DWORD statusInformationLength);
+
+        /*
+         * Adds the specified trusted certificates to the specified certificate store.
+         */
+        bool AddCertificatesToStore(
+            std::vector<std::string> const& trustedCertificates,
+            HCERTSTORE const hCertStore);
+        /*
+         * Verifies that the certificate context is in the trustedCertificates set of certificates.
+         */
+        bool VerifyCertificatesInChain(
+            std::vector<std::string> const& trustedCertificates,
+            PCCERT_CONTEXT serverCertificate);
+        /**
+         * @brief Throw an exception based on the Win32 Error code
+         *
+         * @param exceptionMessage Message describing error.
+         * @param error Win32 Error code.
+         */
+        void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError());
+
+      public:
+        WinHttpRequest(
+            Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
+            Azure::Core::Url const& url,
+            Azure::Core::Http::HttpMethod const& method,
+            WinHttpTransportOptions const& options);
+
+        ~WinHttpRequest();
+
+        void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
+        void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
+        void ReceiveResponse(Azure::Core::Context const& context);
+        int64_t GetContentLength(HttpMethod requestMethod, HttpStatusCode responseStatusCode);
+        std::unique_ptr<RawResponse> SendRequestAndGetResponse(HttpMethod requestMethod);
+        size_t ReadData(uint8_t* buffer, size_t bufferSize, Azure::Core::Context const& context);
+        void EnableWebSocketsSupport();
+      };
+
       class WinHttpStream final : public Azure::Core::IO::BodyStream {
       private:
-        Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
+        std::unique_ptr<_detail::WinHttpRequest> m_requestHandle;
         bool m_isEOF;
 
         /**
@@ -90,7 +162,7 @@ namespace Azure { namespace Core {
 
       public:
         WinHttpStream(
-            Azure::Core::_internal::UniqueHandle<HINTERNET>& requestHandle,
+            std::unique_ptr<_detail::WinHttpRequest>& requestHandle,
             int64_t contentLength)
             : m_requestHandle(std::move(requestHandle)), m_contentLength(contentLength),
               m_isEOF(false), m_streamTotalRead(0)
@@ -174,69 +246,23 @@ namespace Azure { namespace Core {
     private:
       WinHttpTransportOptions m_options;
 
-      // This should remain immutable and not be modified after calling the ctor, to avoid threading
-      // issues.
+      // This should remain immutable and not be modified after calling the ctor, to avoid
+      // threading issues.
       Azure::Core::_internal::UniqueHandle<HINTERNET> m_sessionHandle;
-      bool m_requestHandleClosed{false};
 
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateSessionHandle();
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateConnectionHandle(
           Azure::Core::Url const& url,
           Azure::Core::Context const& context);
-      Azure::Core::_internal::UniqueHandle<HINTERNET> CreateRequestHandle(
+      std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
           Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
           Azure::Core::Url const& url,
           Azure::Core::Http::HttpMethod const& method);
-      void Upload(
-          Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
-          Azure::Core::Http::Request& request,
-          Azure::Core::Context const& context);
-      void SendRequest(
-          Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
-          Azure::Core::Http::Request& request,
-          Azure::Core::Context const& context);
-      void ReceiveResponse(
-          Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
-          Azure::Core::Context const& context);
-      int64_t GetContentLength(
-          Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle,
-          HttpMethod requestMethod,
-          HttpStatusCode responseStatusCode);
-      std::unique_ptr<RawResponse> SendRequestAndGetResponse(
-          Azure::Core::_internal::UniqueHandle<HINTERNET>& requestHandle,
-          HttpMethod requestMethod);
-
-      /*
-       * Callback from WinHTTP called after the TLS certificates are received when the caller sets
-       * expected TLS root certificates.
-       */
-      static void CALLBACK StatusCallback(
-          HINTERNET hInternet,
-          DWORD_PTR dwContext,
-          DWORD dwInternetStatus,
-          LPVOID lpvStatusInformation,
-          DWORD dwStatusInformationLength) noexcept;
-      /*
-       * Callback from WinHTTP called after the TLS certificates are received when the caller sets
-       * expected TLS root certificates.
-       */
-      void OnHttpStatusOperation(HINTERNET hInternet, DWORD dwInternetStatus);
-      /*
-       * Adds the specified trusted certificates to the specified certificate store.
-       */
-      bool AddCertificatesToStore(
-          std::vector<std::string> const& trustedCertificates,
-          HCERTSTORE const hCertStore);
-      /*
-       * Verifies that the certificate context is in the trustedCertificates set of certificates.
-       */
-      bool VerifyCertificatesInChain(
-          std::vector<std::string> const& trustedCertificates,
-          PCCERT_CONTEXT serverCertificate);
 
       // Callback to allow a derived transport to extract the request handle. Used for WebSocket
       // transports.
-      virtual void OnUpgradedConnection(Azure::Core::_internal::UniqueHandle<HINTERNET> const&){};
+      virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&){};
+
       /**
        * @brief Throw an exception based on the Win32 Error code
        *
@@ -266,8 +292,8 @@ namespace Azure { namespace Core {
       WinHttpTransport(Azure::Core::Http::Policies::TransportOptions const& options);
 
       /**
-       * @brief Implements the HTTP transport interface to send an HTTP Request and produce an HTTP
-       * RawResponse.
+       * @brief Implements the HTTP transport interface to send an HTTP Request and produce an
+       * HTTP RawResponse.
        *
        * @param context A context to control the request lifetime.
        * @param request an HTTP request to be send.
@@ -279,7 +305,7 @@ namespace Azure { namespace Core {
       // [Core Guidelines C.35: "A base class destructor should be either public
       // and virtual or protected and
       // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
-      virtual ~WinHttpTransport() = default;
+      virtual ~WinHttpTransport();
     };
 
   } // namespace Http

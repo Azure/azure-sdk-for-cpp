@@ -311,7 +311,7 @@ namespace Azure { namespace Core { namespace Test {
     // Test that calling getValue again will return empty
     result = std::move(responseT.Value);
     EXPECT_STREQ(result.data(), expectedType.data());
-    result = responseT.Value;
+    result = responseT.Value; // Not 100% sure what this is testing - that std::move works?
     EXPECT_STREQ(result.data(), std::string("").data());
   }
 
