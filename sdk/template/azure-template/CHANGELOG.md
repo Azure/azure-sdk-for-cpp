@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.1 (2022-10-10)
+
+* Try releasing with changelog updated, but `package_version.hpp` not.
+
 ## 1.0.0 (2021-06-03)
 
 * Validate template project ahead of release
