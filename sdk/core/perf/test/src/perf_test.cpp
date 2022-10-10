@@ -23,6 +23,7 @@ int main(int argc, char** argv)
   std::vector<Azure::Perf::TestMetadata> tests{
       Azure::Perf::Test::NoOp::GetTestMetadata(),
       Azure::Perf::Test::ExtendedOptionsTest::GetTestMetadata(),
+      Azure::Perf::Test::Base64Test::GetTestMetadata(),
       Azure::Perf::Test::DelayTest::GetTestMetadata(),
       Azure::Perf::Test::ExceptionTest::GetTestMetadata()};
 
