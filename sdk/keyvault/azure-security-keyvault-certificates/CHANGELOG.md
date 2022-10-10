@@ -1,6 +1,10 @@
 # Release History
 
-## 4.1.0 (2022-10-07)
+## 4.1.0 (2022-10-11)
+
+### Features Added
+
+- Keyvault 7.3 support added for Certificates.
 
 ## 4.1.0-beta.1 (2022-07-07)
 
