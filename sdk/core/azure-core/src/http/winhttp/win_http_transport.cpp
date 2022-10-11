@@ -438,10 +438,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     return true;
   }
 
-  void WinHttpAction::CompleteAction()
-  { // m_actionCompleted.notify_one();
-    SetEvent(m_actionCompleteEvent.get());
-  }
+  void WinHttpAction::CompleteAction() { SetEvent(m_actionCompleteEvent.get()); }
   void WinHttpAction::CompleteActionWithData(DWORD bytesAvailable)
   {
 
@@ -493,8 +490,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     try
     {
-      WinHttpAction* httpRequest = reinterpret_cast<WinHttpAction*>(dwContext);
-      httpRequest->OnHttpStatusOperation(
+      WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
+      httpAction->OnHttpStatusOperation(
           hInternet, internetStatus, statusInformation, statusInformationLength);
     }
     catch (Azure::Core::RequestFailedException& rfe)
@@ -516,12 +513,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @brief HTTP Callback to enable private certificate checks.
    *
    * This method is called by WinHTTP when a certificate is received. This method is called
-   * multiple times based on the state of the TLS connection. We are only interested in
-   * WINHTTP_CALLBACK_STATUS_SENDING_REQUEST, which is called during the TLS handshake.
+   * multiple times based on the state of the TLS connection.
    *
-   * When called, we verify that the certificate chain sent from the server contains the
-   * certificate the HTTP client was configured with. If it is, we accept the connection, if it is
-   * not, we abort the connection, closing the incoming request handle.
+   * Special consideration for the WINHTTP_CALLBACK_STATUS_SENDING_REQUEST - this callback is
+   * called during the TLS connection - if a TLS roto certificate is configured, we verify that the
+   * certificate chain sent from the server contains the certificate the HTTP client was configured
+   * with. If it is, we accept the connection, if it is not, we abort the connection, closing the
+   * incoming request handle.
    */
   void WinHttpAction::OnHttpStatusOperation(
       HINTERNET hInternet,
@@ -548,27 +546,34 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDING_REQUEST)
     {
-      // We will only set the Status callback if a root certificate has been set.
+      // We will only set the Status callback if a root certificate has been set. There is no action
+      // which needs to be completed for this notification.
       m_httpRequest->HandleExpectedTlsRootCertificates(hInternet);
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE)
     {
+      // A WinHttpSendRequest API call has completed, complete the current action.
       CompleteAction();
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE)
     {
+      // A WinHttpWriteData call has completed, complete the current action.
       CompleteAction();
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE)
     {
+      // Headers for an HTTP response are available, complete the current action.
       CompleteAction();
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_READ_COMPLETE)
     {
+      // A WinHttpReadData call has completed. Complete the current action, including the amount of
+      // data read.
       CompleteActionWithData(statusInformationLength);
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
     {
+      // An HINTERNET handle is closing, complete the outstanding close request.
       Log::Write(Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
       CompleteAction();
     }
@@ -612,6 +617,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       }
     }
   }
+
   void WinHttpRequest::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error)
   {
     std::string errorMessage = exceptionMessage + GetErrorMessage(error);
@@ -1311,8 +1317,7 @@ size_t _detail::WinHttpRequest::ReadData(
                 Logger::Level::Verbose,
                 "Read Data read from wire. Size: " + std::to_string(numberOfBytesRead) + ".");
           },
-          context,
-          std::chrono::seconds(60)))
+          context))
   {
     GetErrorAndThrow("Error sending HTTP request asynchronously", m_httpAction->GetStowedError());
   }

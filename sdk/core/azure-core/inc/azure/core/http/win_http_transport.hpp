@@ -9,11 +9,9 @@
 #pragma once
 
 #include "azure/core/context.hpp"
-#include "azure/core/diagnostics/logger.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
-#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/unique_handle.hpp"
 #include "azure/core/platform.hpp"
 
@@ -28,7 +26,6 @@
 #endif
 
 #include <memory>
-#include <mutex>
 #include <type_traits>
 #include <vector>
 #include <wincrypt.h>
@@ -53,7 +50,6 @@ namespace Azure { namespace Core {
 
   namespace Http {
 
-    struct WinHttpTransportOptions;
     namespace _detail {
 
       constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
