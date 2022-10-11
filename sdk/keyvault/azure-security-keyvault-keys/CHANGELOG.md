@@ -1,14 +1,10 @@
 # Release History
 
-## 4.3.0-beta.2 (Unreleased)
+## 4.3.0 (2022-10-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Keyvault 7.3 support added for Keys. 
 
 ## 4.3.0-beta.1 (2022-07-07)
 

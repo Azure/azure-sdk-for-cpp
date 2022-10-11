@@ -1,14 +1,10 @@
 # Release History
 
-## 4.1.0-beta.2 (Unreleased)
+## 4.1.0 (2022-10-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Keyvault 7.3 support added for Secrets.
 
 ## 4.1.0-beta.1 (2022-07-07)
 
