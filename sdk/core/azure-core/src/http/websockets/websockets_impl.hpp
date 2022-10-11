@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   // Generator for random bytes. Used in WebSocketImplementation and tests.
   std::vector<uint8_t> GenerateRandomBytes(size_t vectorSize);
 
-  class WebSocketImplementation {
+  class WebSocketImplementation final {
     enum class SocketState
     {
       Invalid,

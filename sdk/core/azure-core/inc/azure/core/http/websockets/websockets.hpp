@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
      * Note: Some of these statistics are not available if the underlying transport supports native
      * websockets.
      */
-    struct WebSocketStatistics
+    struct WebSocketStatistics final
     {
       /** @brief The number of WebSocket frames sent on this WebSocket. */
       uint32_t FramesSent;
@@ -172,10 +172,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
           : FrameType{frameType}, IsFinalFrame{isFinalFrame}
       {
       }
+      virtual ~WebSocketFrame() {}
     };
 
     /** @brief Contains the contents of a WebSocket Text frame.*/
-    class WebSocketTextFrame : public WebSocketFrame,
+    class WebSocketTextFrame final : public WebSocketFrame,
                                public std::enable_shared_from_this<WebSocketTextFrame> {
       friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
 
@@ -201,7 +202,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     };
 
     /** @brief Contains the contents of a WebSocket Binary frame.*/
-    class WebSocketBinaryFrame : public WebSocketFrame,
+    class WebSocketBinaryFrame final : public WebSocketFrame,
                                  public std::enable_shared_from_this<WebSocketBinaryFrame> {
       friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
 
@@ -227,7 +228,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     };
 
     /** @brief Contains the contents of a WebSocket Close frame.*/
-    class WebSocketPeerCloseFrame : public WebSocketFrame,
+    class WebSocketPeerCloseFrame final : public WebSocketFrame,
                                     public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
       friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
 
@@ -254,7 +255,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       }
     };
 
-    struct WebSocketOptions : Azure::Core::_internal::ClientOptions
+    struct WebSocketOptions final : Azure::Core::_internal::ClientOptions
     {
       /**
        * @brief The set of protocols which are supported by this client
@@ -290,7 +291,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       WebSocketOptions() = default;
     };
 
-    class WebSocket {
+    class WebSocket final {
     public:
       /** @brief Constructs a new instance of a WebSocket with the specified WebSocket options.
        *
