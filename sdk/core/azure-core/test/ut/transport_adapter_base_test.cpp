@@ -375,7 +375,7 @@ namespace Azure { namespace Core { namespace Test {
     cancelThis.Cancel();
     t1.join();
   }
-
+#if 0
   TEST_P(TransportAdapter, cancelRequest)
   {
     Azure::Core::Url hostPath(AzureSdkHttpbinServer::Delay() + "/10"); // 10 seconds delay on server
@@ -387,7 +387,7 @@ namespace Azure { namespace Core { namespace Test {
     // Request will be cancelled 3 seconds after sending the request.
     EXPECT_THROW(m_pipeline->Send(request, cancelThis), Azure::Core::OperationCancelledException);
   }
-
+#endif
   TEST_P(TransportAdapter, cancelTransferDownload)
   {
     // public big blob (321MB)

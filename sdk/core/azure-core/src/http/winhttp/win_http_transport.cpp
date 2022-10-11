@@ -897,11 +897,15 @@ _detail::WinHttpRequest::WinHttpRequest(
  */
 _detail::WinHttpRequest::~WinHttpRequest()
 {
-  Log::Write(
-      Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
 
-  // Close the outstanding request handle, waiting until the handle closing status request comes in.
-  m_httpAction->WaitForAction([this]() { m_requestHandle.reset(); }, Azure::Core::Context{});
+  if (!m_requestHandleClosed)
+  {
+    Log::Write(
+        Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
+    // Close the outstanding request handle, waiting until the handle closing status request comes
+    // in.
+    m_httpAction->WaitForAction([this]() { m_requestHandle.reset(); }, Azure::Core::Context{});
+  }
 }
 
 std::unique_ptr<_detail::WinHttpRequest> WinHttpTransport::CreateRequestHandle(
