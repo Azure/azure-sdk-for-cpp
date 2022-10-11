@@ -55,7 +55,7 @@ namespace Azure { namespace Core {
       constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
       constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
-      // Forward cdeclaration for WinHttpRequest.
+      // Forward declaration for WinHttpRequest.
       class WinHttpRequest;
     } // namespace _detail
 
@@ -127,7 +127,7 @@ namespace Azure { namespace Core {
     private:
       WinHttpTransportOptions m_options;
       const Azure::Core::_internal::UniqueHandle<HINTERNET>
-          m_sessionHandle; // const to ensure immutablity.
+          m_sessionHandle; // const to ensure immutability.
 
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateSessionHandle();
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateConnectionHandle(
