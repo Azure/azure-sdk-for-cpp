@@ -1,8 +1,6 @@
 # Release History
 
-## 1.1.0-beta.1 (Unreleased)
-
-### Features Added
+## 1.1.0-beta.1 (2022-10-11)
 
 ### Breaking Changes
 
@@ -10,10 +8,6 @@
 - Added `std::vector<uint8_t>` dataToAttest parameter.
 - Removed `Payload` in `TpmAttestationOptions`
 - Changed `TpmResult` in `TpmAttestationResult` to type `std::vector<uint8_t>`
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0 (2022-07-07)
 
