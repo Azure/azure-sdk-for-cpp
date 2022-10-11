@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 - Changed `AttestationClient::AttestTpm` to match `AttestOpenEnclave` and `AttestSgxEnclave`.
-- Added `std::vector<uint8_t>` dataToAttest parameter to the AttestTpm() client method.
+- Added `std::vector<uint8_t>` dataToAttest parameter to the `AttestTpm()` client method.
 - Removed `Payload` in `TpmAttestationOptions`.
 - Changed `TpmResult` in `TpmAttestationResult` to type `std::vector<uint8_t>`.
 
