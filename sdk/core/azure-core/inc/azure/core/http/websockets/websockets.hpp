@@ -177,7 +177,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
     /** @brief Contains the contents of a WebSocket Text frame.*/
     class WebSocketTextFrame final : public WebSocketFrame,
-                               public std::enable_shared_from_this<WebSocketTextFrame> {
+                                     public std::enable_shared_from_this<WebSocketTextFrame> {
       friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
 
     private:
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
     /** @brief Contains the contents of a WebSocket Binary frame.*/
     class WebSocketBinaryFrame final : public WebSocketFrame,
-                                 public std::enable_shared_from_this<WebSocketBinaryFrame> {
+                                       public std::enable_shared_from_this<WebSocketBinaryFrame> {
       friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
 
     private:
@@ -228,8 +228,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     };
 
     /** @brief Contains the contents of a WebSocket Close frame.*/
-    class WebSocketPeerCloseFrame final : public WebSocketFrame,
-                                    public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
+    class WebSocketPeerCloseFrame final
+        : public WebSocketFrame,
+          public std::enable_shared_from_this<WebSocketPeerCloseFrame> {
       friend Azure::Core::Http::WebSockets::_detail::WebSocketImplementation;
 
     public:
