@@ -47,4 +47,10 @@
 #define AZ_PLATFORM_WINDOWS
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #define AZ_PLATFORM_POSIX
+#if defined(__APPLE__) || defined(__MACH__)
+#define AZ_PLATFORM_MAC
+#else
+#define AZ_PLATFORM_LINUX
+#endif
+
 #endif

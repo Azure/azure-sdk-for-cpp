@@ -147,15 +147,6 @@ namespace Azure { namespace Core {
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
-     * @brief Assigns `%Context` to another `%Context` instance.
-     *
-     * @param other Another instance to copy.
-     *
-     * @return A reference to this `%Context`.
-     */
-    Context& operator=(const Context& other) = default;
-
-    /**
      * @brief Creates a context with a deadline.
      *
      * @param deadline A point in time after which a context expires.

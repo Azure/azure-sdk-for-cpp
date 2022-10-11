@@ -33,6 +33,12 @@ parameters:
 - name: UsePlatformContainer
   type: boolean
   default: false
+- name: PreTestSteps
+  type: stepList
+  default: []
+- name: PostTestSteps
+  type: stepList
+  default: []
 
 jobs:
 - job: ValidateLive
@@ -127,6 +133,8 @@ jobs:
       Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
 
+  - ${{ parameters.PreTestSteps }}
+
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
     # Visual Studio generator used in CI is a multi-config generator.
@@ -141,6 +149,8 @@ jobs:
     condition: and(
       succeeded(),
       ne(variables['RunSamples'], '1'))
+
+  - ${{ parameters.PostTestSteps }}
 
   - task: PublishTestResults@2
     inputs:
