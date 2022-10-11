@@ -5,6 +5,7 @@
 
 #include "azure/perf/test/delay_test.hpp"
 #include "azure/perf/test/extended_options_test.hpp"
+#include "azure/perf/test/base64_test.hpp"
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/perf/test/curl_http_client_get_test.hpp"
 #endif
