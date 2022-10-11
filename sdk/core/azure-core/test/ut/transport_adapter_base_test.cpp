@@ -370,7 +370,7 @@ namespace Azure { namespace Core { namespace Test {
     std::thread t1(threadRoutine);
 
     // Wait 100 ms so we know upload has started
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     cancelThis.Cancel();
     t1.join();
