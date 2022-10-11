@@ -5,7 +5,6 @@
  * @file
  * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
  */
-// cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
 
 #pragma once
 
@@ -60,122 +59,8 @@ namespace Azure { namespace Core {
       constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
       constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
-      class WinHttpAction;
+      // Forward cdeclaration for WinHttpRequest.
       class WinHttpRequest;
-      class WinHttpStream;
-
-      class WinHttpRequest {
-        bool m_requestHandleClosed{false};
-        Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
-        std::unique_ptr<WinHttpAction> m_currentAction;
-        std::vector<std::string> m_expectedTlsRootCertificates;
-
-        /*
-         * Callback from WinHTTP called after the TLS certificates are received when the caller sets
-         * expected TLS root certificates.
-         */
-        static void CALLBACK StatusCallback(
-            HINTERNET hInternet,
-            DWORD_PTR dwContext,
-            DWORD dwInternetStatus,
-            LPVOID lpvStatusInformation,
-            DWORD dwStatusInformationLength) noexcept;
-
-        /*
-         * Callback from WinHTTP called after the TLS certificates are received when the caller sets
-         * expected TLS root certificates.
-         */
-        void OnHttpStatusOperation(
-            HINTERNET hInternet,
-            DWORD internetStatus,
-            LPVOID statusInformation,
-            DWORD statusInformationLength);
-
-        /*
-         * Adds the specified trusted certificates to the specified certificate store.
-         */
-        bool AddCertificatesToStore(
-            std::vector<std::string> const& trustedCertificates,
-            HCERTSTORE const hCertStore);
-        /*
-         * Verifies that the certificate context is in the trustedCertificates set of certificates.
-         */
-        bool VerifyCertificatesInChain(
-            std::vector<std::string> const& trustedCertificates,
-            PCCERT_CONTEXT serverCertificate);
-        /**
-         * @brief Throw an exception based on the Win32 Error code
-         *
-         * @param exceptionMessage Message describing error.
-         * @param error Win32 Error code.
-         */
-        void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError());
-
-      public:
-        WinHttpRequest(
-            Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
-            Azure::Core::Url const& url,
-            Azure::Core::Http::HttpMethod const& method,
-            WinHttpTransportOptions const& options);
-
-        ~WinHttpRequest();
-
-        void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
-        void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
-        void ReceiveResponse(Azure::Core::Context const& context);
-        int64_t GetContentLength(HttpMethod requestMethod, HttpStatusCode responseStatusCode);
-        std::unique_ptr<RawResponse> SendRequestAndGetResponse(HttpMethod requestMethod);
-        size_t ReadData(uint8_t* buffer, size_t bufferSize, Azure::Core::Context const& context);
-        void EnableWebSocketsSupport();
-      };
-
-      class WinHttpStream final : public Azure::Core::IO::BodyStream {
-      private:
-        std::unique_ptr<_detail::WinHttpRequest> m_requestHandle;
-        bool m_isEOF;
-
-        /**
-         * @brief This is a copy of the value of an HTTP response header `content-length`. The value
-         * is received as string and parsed to size_t. This field avoids parsing the string header
-         * every time from HTTP RawResponse.
-         *
-         * @remark This value is also used to avoid trying to read more data from network than what
-         * we are expecting to.
-         *
-         * @remark A value of -1 means the transfer encoding was chunked.
-         *
-         */
-        int64_t m_contentLength;
-
-        int64_t m_streamTotalRead;
-
-        /**
-         * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
-         * from the wire.
-         *
-         * @param context A context to control the request lifetime.
-         * @param buffer Buffer where data from wire is written to.
-         * @param count The number of bytes to read from the network.
-         * @return The actual number of bytes read from the network.
-         */
-        size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
-
-      public:
-        WinHttpStream(
-            std::unique_ptr<_detail::WinHttpRequest>& requestHandle,
-            int64_t contentLength)
-            : m_requestHandle(std::move(requestHandle)), m_contentLength(contentLength),
-              m_isEOF(false), m_streamTotalRead(0)
-        {
-        }
-
-        /**
-         * @brief Implement #Azure::Core::IO::BodyStream length.
-         *
-         * @return The size of the payload.
-         */
-        int64_t Length() const override { return this->m_contentLength; }
-      };
     } // namespace _detail
 
     /**
@@ -245,10 +130,8 @@ namespace Azure { namespace Core {
     class WinHttpTransport : public HttpTransport {
     private:
       WinHttpTransportOptions m_options;
-
-      // This should remain immutable and not be modified after calling the ctor, to avoid
-      // threading issues.
-      Azure::Core::_internal::UniqueHandle<HINTERNET> m_sessionHandle;
+      const Azure::Core::_internal::UniqueHandle<HINTERNET>
+          m_sessionHandle; // const to ensure immutablity.
 
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateSessionHandle();
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateConnectionHandle(

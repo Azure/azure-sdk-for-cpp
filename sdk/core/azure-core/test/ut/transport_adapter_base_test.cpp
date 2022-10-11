@@ -370,10 +370,22 @@ namespace Azure { namespace Core { namespace Test {
     std::thread t1(threadRoutine);
 
     // Wait 100 ms so we know upload has started
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     cancelThis.Cancel();
     t1.join();
+  }
+
+  TEST_P(TransportAdapter, cancelRequest)
+  {
+    Azure::Core::Url hostPath(AzureSdkHttpbinServer::Delay() + "/10"); // 10 seconds delay on server
+    Azure::Core::Context cancelThis = Azure::Core::Context::ApplicationContext.WithDeadline(
+        std::chrono::system_clock::now() + std::chrono::seconds(3));
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, hostPath);
+
+    // Request will be cancelled 3 seconds after sending the request.
+    EXPECT_THROW(m_pipeline->Send(request, cancelThis), Azure::Core::OperationCancelledException);
   }
 
   TEST_P(TransportAdapter, cancelTransferDownload)
