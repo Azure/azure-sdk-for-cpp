@@ -138,7 +138,7 @@ namespace Azure { namespace Perf {
   void BaseTest::PostSetUp()
   {
 
-      try
+    try
     {
 
       if (!m_proxy.empty())
@@ -211,6 +211,7 @@ namespace Azure { namespace Perf {
     catch (std::exception const& e)
     {
       std::cout << "Exception thrown after setup: " << e.what() << std::endl;
+      throw;
     }
   }
 

@@ -12,6 +12,7 @@
 #include "azure/perf/test/win_http_client_get_test.hpp"
 #endif
 #include "azure/perf/test/exception_test.hpp"
+#include "azure/perf/test/http_pipeline_get_test.hpp"
 #include "azure/perf/test/no_op_test.hpp"
 
 #include <vector>
@@ -24,7 +25,9 @@ int main(int argc, char** argv)
       Azure::Perf::Test::NoOp::GetTestMetadata(),
       Azure::Perf::Test::ExtendedOptionsTest::GetTestMetadata(),
       Azure::Perf::Test::DelayTest::GetTestMetadata(),
-      Azure::Perf::Test::ExceptionTest::GetTestMetadata()};
+      Azure::Perf::Test::ExceptionTest::GetTestMetadata(),
+      Azure::Perf::Test::HttpPipelineGetTest::GetTestMetadata(),
+  };
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   tests.emplace_back(Azure::Perf::Test::CurlHttpClientGetTest::GetTestMetadata());
