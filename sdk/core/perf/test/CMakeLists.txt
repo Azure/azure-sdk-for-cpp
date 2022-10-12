@@ -40,7 +40,7 @@ target_include_directories(
 
 if(DEFINED ENV{VCPKG-AZURE-CORE-CPP})
    find_package(azure-core-cpp $ENV{VCPKG-AZURE-CORE-CPP} EXACT)
-   add_compile_definitions(VCPKG_CORE_VERSION=$ENV{VCPKG-AZURE-CORE-CPP})
+   add_compile_definitions(VCPKG_CORE_VERSION="$ENV{VCPKG-AZURE-CORE-CPP}")
 else()
     add_compile_definitions(VCPKG_CORE_VERSION="source")
 endif()
