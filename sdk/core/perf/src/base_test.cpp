@@ -32,7 +32,7 @@ public:
   ProxyPolicy(ProxyPolicy const& other) : ProxyPolicy{other.m_testContext} {}
 
   // move
-  ProxyPolicy(ProxyPolicy&& other) : m_testContext{other.m_testContext} {}
+  ProxyPolicy(ProxyPolicy&& other) noexcept : m_testContext{other.m_testContext} {}
 
   std::unique_ptr<RawResponse> Send(
       Request& request,
@@ -138,71 +138,79 @@ namespace Azure { namespace Perf {
   void BaseTest::PostSetUp()
   {
 
-    if (!m_proxy.empty())
+      try
     {
-      Azure::Core::_internal::ClientOptions clientOp;
-      clientOp.Retry.MaxRetries = 0;
-      ConfigureInsecureConnection(clientOp);
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
-      Azure::Core::Http::_internal::HttpPipeline pipeline(
-          clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
-      Azure::Core::Context ctx;
 
-      //  Make one call to Run() before starting recording, to avoid capturing one-time setup
-      //  like authorization requests.
-      this->Run(ctx);
-
-      // Send start-record call
+      if (!m_proxy.empty())
       {
-        Azure::Core::Url startRecordReq(m_proxy);
-        startRecordReq.AppendPath("record");
-        startRecordReq.AppendPath("start");
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startRecordReq);
-        auto response = pipeline.Send(request, ctx);
+        Azure::Core::_internal::ClientOptions clientOp;
+        clientOp.Retry.MaxRetries = 0;
+        ConfigureInsecureConnection(clientOp);
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
+        Azure::Core::Http::_internal::HttpPipeline pipeline(
+            clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
+        Azure::Core::Context ctx;
 
-        auto const& headers = response->GetHeaders();
-        auto findHeader = std::find_if(
-            headers.begin(),
-            headers.end(),
-            [](std::pair<std::string const&, std::string const&> h) {
-              return h.first == "x-recording-id";
-            });
-        m_recordId = findHeader->second;
+        //  Make one call to Run() before starting recording, to avoid capturing one-time setup
+        //  like authorization requests.
+        this->Run(ctx);
+
+        // Send start-record call
+        {
+          Azure::Core::Url startRecordReq(m_proxy);
+          startRecordReq.AppendPath("record");
+          startRecordReq.AppendPath("start");
+          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startRecordReq);
+          auto response = pipeline.Send(request, ctx);
+
+          auto const& headers = response->GetHeaders();
+          auto findHeader = std::find_if(
+              headers.begin(),
+              headers.end(),
+              [](std::pair<std::string const&, std::string const&> h) {
+                return h.first == "x-recording-id";
+              });
+          m_recordId = findHeader->second;
+        }
+
+        // Record one call to re-use response on all test runs
+        this->Run(ctx);
+
+        // Stop recording
+        {
+          Azure::Core::Url stopRecordReq(m_proxy);
+          stopRecordReq.AppendPath("record");
+          stopRecordReq.AppendPath("stop");
+          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopRecordReq);
+          request.SetHeader("x-recording-id", m_recordId);
+          pipeline.Send(request, ctx);
+        }
+
+        // Start playback
+        {
+          Azure::Core::Url startPlayback(m_proxy);
+          startPlayback.AppendPath("playback");
+          startPlayback.AppendPath("start");
+          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
+          request.SetHeader("x-recording-id", m_recordId);
+          auto response = pipeline.Send(request, ctx);
+
+          auto const& headers = response->GetHeaders();
+          auto findHeader = std::find_if(
+              headers.begin(),
+              headers.end(),
+              [](std::pair<std::string const&, std::string const&> h) {
+                return h.first == "x-recording-id";
+              });
+          m_recordId = findHeader->second;
+          m_isPlayBackMode = true;
+        }
       }
-
-      // Record one call to re-use response on all test runs
-      this->Run(ctx);
-
-      // Stop recording
-      {
-        Azure::Core::Url stopRecordReq(m_proxy);
-        stopRecordReq.AppendPath("record");
-        stopRecordReq.AppendPath("stop");
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopRecordReq);
-        request.SetHeader("x-recording-id", m_recordId);
-        pipeline.Send(request, ctx);
-      }
-
-      // Start playback
-      {
-        Azure::Core::Url startPlayback(m_proxy);
-        startPlayback.AppendPath("playback");
-        startPlayback.AppendPath("start");
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
-        request.SetHeader("x-recording-id", m_recordId);
-        auto response = pipeline.Send(request, ctx);
-
-        auto const& headers = response->GetHeaders();
-        auto findHeader = std::find_if(
-            headers.begin(),
-            headers.end(),
-            [](std::pair<std::string const&, std::string const&> h) {
-              return h.first == "x-recording-id";
-            });
-        m_recordId = findHeader->second;
-        m_isPlayBackMode = true;
-      }
+    }
+    catch (std::exception const& e)
+    {
+      std::cout << "Exception thrown after setup: " << e.what() << std::endl;
     }
   }
 
