@@ -9,7 +9,6 @@
 #include <azure/core/platform.hpp>
 
 #include <chrono>
-#include <csignal>
 #include <iostream>
 #include <thread>
 
@@ -19,7 +18,7 @@ inline void PrintAvailableTests(std::vector<Azure::Perf::TestMetadata> const& te
 {
   std::cout << "No test name found in the input. Available tests to run:" << std::endl;
   std::cout << std::endl << "Name\t\tDescription" << std::endl << "---\t\t---" << std::endl;
-  for (const auto& test : tests)
+  for (auto const& test : tests)
   {
     std::cout << test.Name << "\t\t" << test.Description << std::endl;
   }
@@ -82,7 +81,7 @@ inline void PrintOptions(
   {
     std::cout << std::endl << "=== Test Options ===" << std::endl;
     Azure::Core::Json::_internal::json optionsAsJson;
-    for (const auto& option : testOptions)
+    for (auto const& option : testOptions)
     {
       try
       {
