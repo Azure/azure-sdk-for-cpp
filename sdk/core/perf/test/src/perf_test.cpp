@@ -18,7 +18,7 @@
 
 int main(int argc, char** argv)
 {
-
+  std::cout << "AZURE_CORE_CPP VERSION " << VCPKG_CORE_VERSION << std::endl;
   // Create the test list
   std::vector<Azure::Perf::TestMetadata> tests{
       Azure::Perf::Test::NoOp::GetTestMetadata(),
