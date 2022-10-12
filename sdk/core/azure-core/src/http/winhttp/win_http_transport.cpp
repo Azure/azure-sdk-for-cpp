@@ -507,7 +507,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
       WinHttpCloseHandle(hInternet);
     }
-    catch (std::exception& ex)
+    catch (std::exception const& ex)
     {
       // If an exception is thrown in the handler, log the error and terminate the connection.
       Log::Write(Logger::Level::Error, "Exception Thrown: " + std::string(ex.what()));
