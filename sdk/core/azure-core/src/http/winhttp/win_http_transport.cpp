@@ -499,7 +499,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       httpAction->OnHttpStatusOperation(
           hInternet, internetStatus, statusInformation, statusInformationLength);
     }
-    catch (Azure::Core::RequestFailedException& rfe)
+    catch (Azure::Core::RequestFailedException const& rfe)
     {
       // If an exception is thrown in the handler, log the error and terminate the connection.
       Log::Write(
