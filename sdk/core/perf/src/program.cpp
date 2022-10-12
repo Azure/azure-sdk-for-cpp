@@ -232,12 +232,7 @@ inline void RunTests(
           bool isCancelled = false;
           // Azure::Context is not good performer for checking cancellation inside the test loop
           auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
-            std::chrono::system_clock::time_point timeoutTime
-                = std::chrono::system_clock::now() + deadLineSeconds;
-            do
-            {
-              std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            } while (std::chrono::system_clock::now() < timeoutTime);
+            std::this_thread::sleep_for(deadLineSeconds);
             isCancelled = true;
           });
           try
