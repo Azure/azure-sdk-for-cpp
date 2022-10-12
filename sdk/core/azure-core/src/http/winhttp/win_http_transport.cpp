@@ -740,7 +740,7 @@ WinHttpTransport::WinHttpTransport(
 {
 }
 
-WinHttpTransport::~WinHttpTransport() {}
+WinHttpTransport::~WinHttpTransport() = default;
 
 Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateConnectionHandle(
     Azure::Core::Url const& url,
