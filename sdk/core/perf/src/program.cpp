@@ -260,34 +260,25 @@ inline void RunTests(
   {
     t.join();
   }
-  bool testPrematurelyCancelled = progressToken.IsCancelled();
 
   // Stop progress
   progressToken.Cancel();
   progressThread.join();
 
-  if (testPrematurelyCancelled)
-  {
-    std::cout << std::endl << "*** TESTS CANCELLED DUE TO EXCEPTION ***" << std::endl;
-  }
-  else
-  {
+  std::cout << std::endl << "=== Results ===";
 
-    std::cout << std::endl << "=== Results ===";
+  auto totalOperations = Sum(completedOperations);
+  auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
+  auto secondsPerOperation = 1 / operationsPerSecond;
+  auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 
-    auto totalOperations = Sum(completedOperations);
-    auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
-    auto secondsPerOperation = 1 / operationsPerSecond;
-    auto weightedAverageSeconds = totalOperations / operationsPerSecond;
-
-    std::cout << std::endl
-              << "Completed " << FormatNumber(totalOperations, false)
-              << " operations in a weighted-average of "
-              << FormatNumber(weightedAverageSeconds, false) << "s ("
-              << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
-              << std::endl
-              << std::endl;
-  }
+  std::cout << std::endl
+            << "Completed " << FormatNumber(totalOperations, false)
+            << " operations in a weighted-average of "
+            << FormatNumber(weightedAverageSeconds, false) << "s ("
+            << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
+            << std::endl
+            << std::endl;
 }
 
 } // namespace
