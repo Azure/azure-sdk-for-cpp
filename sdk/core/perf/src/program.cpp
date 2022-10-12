@@ -214,15 +214,11 @@ inline void RunTests(
         {
           using namespace std::chrono_literals;
           std::this_thread::sleep_for(1000ms);
-          if (!progressToken.IsCancelled())
-          {
-
-            auto total = Sum(completedOperations);
-            auto current = total - lastCompleted;
-            auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
-            lastCompleted = total;
-            std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
-          }
+          auto total = Sum(completedOperations);
+          auto current = total - lastCompleted;
+          auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
+          lastCompleted = total;
+          std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
         }
       });
 
@@ -231,50 +227,38 @@ inline void RunTests(
   auto deadLineSeconds = std::chrono::seconds(durationInSeconds);
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread([index,
-                                &progressToken,
-                                &tests,
-                                &completedOperations,
-                                &lastCompletionTimes,
-                                &deadLineSeconds,
-                                &context]() {
-      bool isCancelled = false;
-      // Azure::Context is not good performer for checking cancellation inside the test loop
-      auto manualCancellation = std::thread([&deadLineSeconds, &progressToken, &isCancelled] {
-        std::chrono::system_clock::time_point timeoutTime
-            = std::chrono::system_clock::now() + deadLineSeconds;
-        do
-        {
-          if (progressToken.IsCancelled())
+    tasks[index] = std::thread(
+        [index, &tests, &completedOperations, &lastCompletionTimes, &deadLineSeconds, &context]() {
+          bool isCancelled = false;
+          // Azure::Context is not good performer for checking cancellation inside the test loop
+          auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
+            std::chrono::system_clock::time_point timeoutTime
+                = std::chrono::system_clock::now() + deadLineSeconds;
+            do
+            {
+              std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            } while (std::chrono::system_clock::now() < timeoutTime);
+            isCancelled = true;
+          });
+          try
           {
-            return;
+
+            RunLoop(
+                context,
+                *tests[index],
+                completedOperations[index],
+                lastCompletionTimes[index],
+                false,
+                isCancelled);
+
+            manualCancellation.join();
           }
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        } while (std::chrono::system_clock::now() < timeoutTime);
-        isCancelled = true;
-      });
-      try
-      {
-
-        RunLoop(
-            context,
-            *tests[index],
-            completedOperations[index],
-            lastCompletionTimes[index],
-            false,
-            isCancelled);
-
-        manualCancellation.join();
-      }
-      catch (std::exception const& ex)
-      {
-        std::cout << "Test failed with exception: " << ex.what() << std::endl;
-        progressToken.Cancel();
-        manualCancellation.join();
-        std::cout << "Cancelling tests." << std::endl;
-        return;
-      }
-    });
+          catch (std::exception const& ex)
+          {
+            std::cout << "Test failed with exception: " << ex.what() << std::endl;
+            throw;
+          }
+        });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -313,8 +297,6 @@ inline void RunTests(
 
 } // namespace
 
-void AbortHandler(int) { std::cerr << "abort() has been called." << std::endl; }
-
 void Azure::Perf::Program::Run(
     Azure::Core::Context const& context,
     std::vector<Azure::Perf::TestMetadata> const& tests,
@@ -322,7 +304,6 @@ void Azure::Perf::Program::Run(
     char** argv)
 {
   // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
-  signal(SIGABRT, AbortHandler);
 #if defined(_DEBUG) && defined(_MSC_VER)
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
@@ -488,6 +469,6 @@ void Azure::Perf::Program::Run(
     {
       std::cout << "Usage: " << testMetadata->Name << " [options]" << std::endl;
     }
-    return;
+    throw;
   }
 }
