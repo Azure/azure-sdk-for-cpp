@@ -417,7 +417,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     context.ThrowIfCancelled();
     ResetEvent(m_actionCompleteEvent.get());
 
-    // Call the provided callback to start the WinHttp action.
+    // Call the provided callback to start the WinHTTP action.
     callback();
 
     DWORD waitResult;
