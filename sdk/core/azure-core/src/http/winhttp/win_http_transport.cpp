@@ -1062,7 +1062,7 @@ void _detail::WinHttpRequest::SendRequest(
       Upload(request, context);
     }
   }
-  catch (TransportException&)
+  catch (TransportException const&)
   {
     // If there was a TLS validation error, then we will have closed the request handle
     // during the TLS validation callback. So if an exception was thrown, if we force closed the
