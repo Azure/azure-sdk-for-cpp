@@ -420,7 +420,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     m_stowedErrorInformation = 0;
     m_bytesAvailable = 0;
 
-    // Call the provided callback to start the WinHttp action.
+    // Call the provided callback to start the WinHTTP action.
     callback();
 
     DWORD waitResult;
@@ -502,7 +502,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       httpAction->OnHttpStatusOperation(
           hInternet, internetStatus, statusInformation, statusInformationLength);
     }
-    catch (Azure::Core::RequestFailedException& rfe)
+    catch (Azure::Core::RequestFailedException const& rfe)
     {
       // If an exception is thrown in the handler, log the error and terminate the connection.
       Log::Write(
@@ -510,7 +510,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
       WinHttpCloseHandle(hInternet);
     }
-    catch (std::exception& ex)
+    catch (std::exception const& ex)
     {
       // If an exception is thrown in the handler, log the error and terminate the connection.
       Log::Write(Logger::Level::Error, "Exception Thrown: " + std::string(ex.what()));
@@ -743,7 +743,7 @@ WinHttpTransport::WinHttpTransport(
 {
 }
 
-WinHttpTransport::~WinHttpTransport() {}
+WinHttpTransport::~WinHttpTransport() = default;
 
 Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateConnectionHandle(
     Azure::Core::Url const& url,
@@ -1065,7 +1065,7 @@ void _detail::WinHttpRequest::SendRequest(
       Upload(request, context);
     }
   }
-  catch (TransportException&)
+  catch (TransportException const&)
   {
     // If there was a TLS validation error, then we will have closed the request handle
     // during the TLS validation callback. So if an exception was thrown, if we force closed the
