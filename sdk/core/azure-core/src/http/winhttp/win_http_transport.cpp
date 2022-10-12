@@ -416,6 +416,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   {
     context.ThrowIfCancelled();
     ResetEvent(m_actionCompleteEvent.get());
+    m_stowedError = 0;
+    m_stowedErrorInformation = 0;
+    m_bytesAvailable = 0;
 
     // Call the provided callback to start the WinHttp action.
     callback();
@@ -1046,7 +1049,7 @@ void _detail::WinHttpRequest::SendRequest(
             },
             context))
     {
-      GetErrorAndThrow("Error while waiting for a send to complete.");
+      GetErrorAndThrow("Error while waiting for a send to complete.", m_httpAction->GetStowedError());
     }
 
     // Chunked transfer encoding is not supported and the content length needs to be known up
@@ -1099,7 +1102,7 @@ void _detail::WinHttpRequest::ReceiveResponse(Azure::Core::Context const& contex
           },
           context))
   {
-    GetErrorAndThrow("Error while receiving a response.");
+    GetErrorAndThrow("Error while receiving a response.", m_httpAction->GetStowedError());
   }
 }
 
