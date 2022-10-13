@@ -50,7 +50,7 @@ bool operator<(CacheKey const& x, CacheKey const& y)
   }
 
   return x.Scopes < y.Scopes;
-};
+}
 
 // The cache itself.
 static std::map<CacheKey, AccessToken> g_cache;
