@@ -286,6 +286,9 @@ void Azure::Perf::Program::Run(
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
+// Declare a signal handler to report unhandled exceptions on Windows - this is not needed for other
+// OS's as they will print the exception to stderr in their terminate() function.
+#if defined(AZ_PLATFORM_WINDOWS)
   signal(SIGABRT, [](int) {
     try
     {
@@ -296,6 +299,8 @@ void Azure::Perf::Program::Run(
       std::cout << "Exception thrown: " << ex.what() << std::endl;
     }
   });
+#endif // AZ_PLATFORM_WINDOWS
+
   // Parse args only to get the test name first
   auto testMetadata = GetTestMetadata(tests, argc, argv);
   auto const& testGenerator = testMetadata->Factory;
