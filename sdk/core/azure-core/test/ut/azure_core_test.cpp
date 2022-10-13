@@ -6,8 +6,8 @@
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include <azure/core/platform.hpp>
 #endif
-#include <iostream>
 #include <csignal>
+#include <iostream>
 
 int main(int argc, char** argv)
 {
