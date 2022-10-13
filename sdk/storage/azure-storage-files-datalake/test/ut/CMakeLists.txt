@@ -18,6 +18,7 @@ add_executable (
     datalake_directory_client_test.hpp
     datalake_file_client_test.cpp
     datalake_file_client_test.hpp
+    datalake_file_query_test.cpp
     datalake_file_system_client_test.cpp
     datalake_file_system_client_test.hpp
     datalake_path_client_test.cpp

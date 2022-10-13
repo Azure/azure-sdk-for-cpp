@@ -93,6 +93,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     *this = m_onNextPageFunc(NextPageToken.Value(), context);
   }
 
+  void ListDeletedPathsPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    *this = m_fileSystemClient->ListDeletedPaths(m_operationOptions, context);
+  }
+
   void SetPathAccessControlListRecursivePagedResponse::OnNextPage(
       const Azure::Core::Context& context)
   {

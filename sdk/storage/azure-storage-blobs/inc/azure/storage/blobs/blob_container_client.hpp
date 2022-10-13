@@ -338,6 +338,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
     friend class BlobContainerBatch;
+    friend class Files::DataLake::DataLakeFileSystemClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

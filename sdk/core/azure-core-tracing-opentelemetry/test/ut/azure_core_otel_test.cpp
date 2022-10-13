@@ -531,6 +531,9 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
     span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error, {});
     span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok, {});
+    EXPECT_THROW(
+        span->SetStatus(static_cast<Azure::Core::Tracing::_internal::SpanStatus>(357), {}),
+        std::runtime_error);
 
     span->End({});
 
@@ -553,7 +556,7 @@ TEST_F(OpenTelemetryTests, SetStatus)
 
     span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error, "Something went wrong.");
 
-    span->End({});
+    span->End(Azure::DateTime(std::chrono::system_clock::now()));
 
     // Return the collected spans.
     auto spans = m_spanData->GetSpans();
