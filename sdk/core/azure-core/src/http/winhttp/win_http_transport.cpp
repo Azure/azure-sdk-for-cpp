@@ -1049,7 +1049,8 @@ void _detail::WinHttpRequest::SendRequest(
             },
             context))
     {
-      GetErrorAndThrow("Error while waiting for a send to complete.", m_httpAction->GetStowedError());
+      GetErrorAndThrow(
+          "Error while waiting for a send to complete.", m_httpAction->GetStowedError());
     }
 
     // Chunked transfer encoding is not supported and the content length needs to be known up
