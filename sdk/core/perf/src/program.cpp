@@ -229,45 +229,50 @@ inline void RunTests(
   auto deadLineSeconds = std::chrono::seconds(durationInSeconds);
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread(
-        [index,&progressToken, &tests, &completedOperations, &lastCompletionTimes, &deadLineSeconds, &context]() {
-          bool isCancelled = false;
-          // Azure::Context is not good performer for checking cancellation inside the test loop
-          auto manualCancellation = std::thread([&deadLineSeconds, &progressToken, &isCancelled] {
-            std::chrono::system_clock::time_point timeoutTime
-                = std::chrono::system_clock::now() + deadLineSeconds;
-            do
-            {
-              if (progressToken.IsCancelled())
-              {
-                return;
-              }
-              std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            } while (std::chrono::system_clock::now() < timeoutTime);
-            isCancelled = true;
-          });
-          try
+    tasks[index] = std::thread([index,
+                                &progressToken,
+                                &tests,
+                                &completedOperations,
+                                &lastCompletionTimes,
+                                &deadLineSeconds,
+                                &context]() {
+      bool isCancelled = false;
+      // Azure::Context is not good performer for checking cancellation inside the test loop
+      auto manualCancellation = std::thread([&deadLineSeconds, &progressToken, &isCancelled] {
+        std::chrono::system_clock::time_point timeoutTime
+            = std::chrono::system_clock::now() + deadLineSeconds;
+        do
+        {
+          if (progressToken.IsCancelled())
           {
-
-            RunLoop(
-                context,
-                *tests[index],
-                completedOperations[index],
-                lastCompletionTimes[index],
-                false,
-                isCancelled);
-
-            manualCancellation.join();
-          }
-          catch (std::exception const& ex)
-          {
-            std::cout << "Test failed with exception: " << ex.what() << std::endl;
-            progressToken.Cancel();
-            manualCancellation.join();
-            std::cout << "Cancelling tests." << std::endl;
             return;
           }
-        });
+          std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        } while (std::chrono::system_clock::now() < timeoutTime);
+        isCancelled = true;
+      });
+      try
+      {
+
+        RunLoop(
+            context,
+            *tests[index],
+            completedOperations[index],
+            lastCompletionTimes[index],
+            false,
+            isCancelled);
+
+        manualCancellation.join();
+      }
+      catch (std::exception const& ex)
+      {
+        std::cout << "Test failed with exception: " << ex.what() << std::endl;
+        progressToken.Cancel();
+        manualCancellation.join();
+        std::cout << "Cancelling tests." << std::endl;
+        return;
+      }
+    });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -282,7 +287,7 @@ inline void RunTests(
 
   if (testPrematurelyCancelled)
   {
-    std::cout << std::endl << "*** TESTS CANCELLED DUE TO EXCEPTION ***" << std::endl; 
+    std::cout << std::endl << "*** TESTS CANCELLED DUE TO EXCEPTION ***" << std::endl;
   }
   else
   {
