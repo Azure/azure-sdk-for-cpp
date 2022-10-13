@@ -27,6 +27,7 @@
 #include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>
 
+#include <csignal>
 #include <cstdlib>
 
 namespace Azure { namespace Core { namespace Test {
@@ -57,6 +58,27 @@ namespace Azure { namespace Core { namespace Test {
 
 int main(int argc, char** argv)
 {
+  // Declare a signal handler to report unhandled exceptions on Windows - this is not needed for
+  // other
+// OS's as they will print the exception to stderr in their terminate() function.
+#if defined(AZ_PLATFORM_WINDOWS)
+  // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
+#if defined(_DEBUG) && defined(_MSC_VER)
+  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+#endif
+
+  signal(SIGABRT, [](int) {
+    try
+    {
+      throw;
+    }
+    catch (std::exception const& ex)
+    {
+      std::cout << "Exception thrown: " << ex.what() << std::endl;
+    }
+  });
+#endif // AZ_PLATFORM_WINDOWS
+
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
   return r;

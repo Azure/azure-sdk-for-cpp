@@ -7,11 +7,7 @@
 #include <azure/core/platform.hpp>
 #endif
 #include <iostream>
-#include <signal.h>
-
-// C Runtime Library errors trigger SIGABRT. Catch that signal handler and report it on the test
-// log.
-void AbortHandler(int signal) { std::cout << "abort() has been called: " << signal << std::endl; }
+#include <csignal>
 
 int main(int argc, char** argv)
 {
@@ -21,7 +17,25 @@ int main(int argc, char** argv)
   signal(SIGPIPE, SIG_IGN);
 #endif
 
-  signal(SIGABRT, AbortHandler);
+// Declare a signal handler to report unhandled exceptions on Windows - this is not needed for other
+// OS's as they will print the exception to stderr in their terminate() function.
+#if defined(AZ_PLATFORM_WINDOWS)
+  // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
+#if defined(_DEBUG) && defined(_MSC_VER)
+  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+#endif
+
+  signal(SIGABRT, [](int) {
+    try
+    {
+      throw;
+    }
+    catch (std::exception const& ex)
+    {
+      std::cout << "Exception thrown: " << ex.what() << std::endl;
+    }
+  });
+#endif // AZ_PLATFORM_WINDOWS
 
   testing::InitGoogleTest(&argc, argv);
   auto r = RUN_ALL_TESTS();
