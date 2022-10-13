@@ -98,9 +98,9 @@ jobs:
         Commitish: ${{ parameters.ToolsRepoCommitish }}
         WorkingDirectory: $(System.DefaultWorkingDirectory)/azure-sdk-tools
 
-  #- template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-  #  parameters:
-  #    AgentImage: $(OSVmImage)
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+    parameters:
+      AgentImage: $(OSVmImage)
       
   - ${{ parameters.InstallLanguageSteps }}
 
