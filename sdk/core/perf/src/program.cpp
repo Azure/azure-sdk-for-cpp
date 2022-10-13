@@ -6,8 +6,10 @@
 
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
+#include <azure/core/platform.hpp>
 
 #include <chrono>
+#include <csignal>
 #include <iostream>
 #include <thread>
 
@@ -17,7 +19,7 @@ inline void PrintAvailableTests(std::vector<Azure::Perf::TestMetadata> const& te
 {
   std::cout << "No test name found in the input. Available tests to run:" << std::endl;
   std::cout << std::endl << "Name\t\tDescription" << std::endl << "---\t\t---" << std::endl;
-  for (const auto& test : tests)
+  for (auto const& test : tests)
   {
     std::cout << test.Name << "\t\t" << test.Description << std::endl;
   }
@@ -80,7 +82,7 @@ inline void PrintOptions(
   {
     std::cout << std::endl << "=== Test Options ===" << std::endl;
     Azure::Core::Json::_internal::json optionsAsJson;
-    for (const auto& option : testOptions)
+    for (auto const& option : testOptions)
     {
       try
       {
@@ -229,50 +231,25 @@ inline void RunTests(
   auto deadLineSeconds = std::chrono::seconds(durationInSeconds);
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread([index,
-                                &progressToken,
-                                &tests,
-                                &completedOperations,
-                                &lastCompletionTimes,
-                                &deadLineSeconds,
-                                &context]() {
-      bool isCancelled = false;
-      // Azure::Context is not good performer for checking cancellation inside the test loop
-      auto manualCancellation = std::thread([&deadLineSeconds, &progressToken, &isCancelled] {
-        std::chrono::system_clock::time_point timeoutTime
-            = std::chrono::system_clock::now() + deadLineSeconds;
-        do
-        {
-          if (progressToken.IsCancelled())
-          {
-            return;
-          }
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        } while (std::chrono::system_clock::now() < timeoutTime);
-        isCancelled = true;
-      });
-      try
-      {
+    tasks[index] = std::thread(
+        [index, &tests, &completedOperations, &lastCompletionTimes, &deadLineSeconds, &context]() {
+          bool isCancelled = false;
+          // Azure::Context is not good performer for checking cancellation inside the test loop
+          auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
+            std::this_thread::sleep_for(deadLineSeconds);
+            isCancelled = true;
+          });
 
-        RunLoop(
-            context,
-            *tests[index],
-            completedOperations[index],
-            lastCompletionTimes[index],
-            false,
-            isCancelled);
+          RunLoop(
+              context,
+              *tests[index],
+              completedOperations[index],
+              lastCompletionTimes[index],
+              false,
+              isCancelled);
 
-        manualCancellation.join();
-      }
-      catch (std::exception const& ex)
-      {
-        std::cout << "Test failed with exception: " << ex.what() << std::endl;
-        progressToken.Cancel();
-        manualCancellation.join();
-        std::cout << "Cancelling tests." << std::endl;
-        return;
-      }
-    });
+          manualCancellation.join();
+        });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -317,8 +294,47 @@ void Azure::Perf::Program::Run(
     int argc,
     char** argv)
 {
-  Azure::Perf::TestMetadata const* testMetadata = nullptr;
-  try
+  // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
+#if defined(_DEBUG) && defined(_MSC_VER)
+  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+#endif
+
+// Declare a signal handler to report unhandled exceptions on Windows - this is not needed for other
+// OS's as they will print the exception to stderr in their terminate() function.
+#if defined(AZ_PLATFORM_WINDOWS)
+  signal(SIGABRT, [](int) {
+    try
+    {
+      throw;
+    }
+    catch (std::exception const& ex)
+    {
+      std::cout << "Exception thrown: " << ex.what() << std::endl;
+    }
+  });
+#endif // AZ_PLATFORM_WINDOWS
+
+  // Parse args only to get the test name first
+  auto testMetadata = GetTestMetadata(tests, argc, argv);
+  auto const& testGenerator = testMetadata->Factory;
+  if (testMetadata == nullptr)
+  {
+    // Wrong input. Print what are the options.
+    PrintAvailableTests(tests);
+
+    return;
+  }
+
+  // Initial test to get it's options, we can use a dummy parser results
+  argagg::parser_results argResults;
+  auto test = testGenerator(Azure::Perf::TestOptions(argResults));
+  auto testOptions = test->GetTestOptions();
+  argResults = Azure::Perf::Program::ArgParser::Parse(argc, argv, testOptions);
+  // ReCreate Test with parsed results
+  test = testGenerator(Azure::Perf::TestOptions(argResults));
+  GlobalTestOptions options = Azure::Perf::Program::ArgParser::Parse(argResults);
+
+  if (options.JobStatistics)
   {
     // Parse args only to get the test name first
     testMetadata = GetTestMetadata(tests, argc, argv);
@@ -378,16 +394,8 @@ void Azure::Perf::Program::Run(
 
     /******************** Set up ******************************/
     {
-      std::vector<std::thread> tasks(parallelTasks);
-      for (int i = 0; i < parallelTasks; i++)
-      {
-        tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Setup(); });
-      }
-      // Wait for all tests to complete setUp
-      for (auto& t : tasks)
-      {
-        t.join();
-      }
+      std::cout << " - Creating test recordings for each test using test-proxies..." << std::endl;
+      std::cout << " - Enabling test-proxy playback" << std::endl;
     }
 
     // instrument test for recordings if the env is set up.
@@ -417,20 +425,20 @@ void Azure::Perf::Program::Run(
       RunTests(context, parallelTest, options, "Warmup", true);
     }
 
-    /******************** Tests ******************************/
-    std::string iterationInfo;
-    try
+  /******************** Tests ******************************/
+  std::string iterationInfo;
+  for (int iteration = 0; iteration < options.Iterations; iteration++)
+  {
+    if (iteration > 0)
     {
-      for (int iteration = 0; iteration < options.Iterations; iteration++)
-      {
-        if (iteration > 0)
-        {
-          iterationInfo.append(FormatNumber(iteration));
-        }
-        RunTests(context, parallelTest, options, "Test" + iterationInfo);
-      }
+      iterationInfo.append(FormatNumber(iteration));
     }
-    catch (std::exception const& error)
+    RunTests(context, parallelTest, options, "Test" + iterationInfo);
+  }
+
+  std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;
+  {
+    if (!options.TestProxies.empty())
     {
       std::cout << "Error: " << error.what();
     }

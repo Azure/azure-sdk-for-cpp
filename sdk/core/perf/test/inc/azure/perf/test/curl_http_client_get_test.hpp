@@ -36,7 +36,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     void GlobalSetup() override
     {
-      _detail::HttpClient = std::make_unique<Azure::Core::Http::CurlTransport>();
+      m_httpClient = std::make_unique<Azure::Core::Http::CurlTransport>();
     }
 
     /**

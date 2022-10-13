@@ -691,11 +691,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
       response.FileSize = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
-      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
-      {
-        response.IsServerEncrypted
-            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
-      }
+      response.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
       if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
       {
         response.EncryptionKeySha256 = Core::Convert::Base64Decode(
@@ -775,11 +772,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
-      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
-      {
-        response.IsServerEncrypted
-            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
-      }
+      response.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
       if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
       {
         response.EncryptionKeySha256 = Core::Convert::Base64Decode(
