@@ -35,7 +35,7 @@ namespace Azure { namespace Identity { namespace _detail {
      *
      * @return Authentication token.
      *
-     * @ret Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */
     static Core::Credentials::AccessToken GetToken(
         std::string const& tenantId,
