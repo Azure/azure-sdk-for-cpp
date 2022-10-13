@@ -49,9 +49,7 @@ namespace Azure { namespace Perf { namespace Test {
      * @brief Set up the HTTP client
      *
      */
-    void GlobalSetup() override
-    {
-    }
+    void GlobalSetup() override {}
 
     /**
      * @brief Get the static Test Metadata for the test.
