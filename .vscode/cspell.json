@@ -11,11 +11,13 @@
     "*.exe",
     "*.a",
     "*.lib",
-    "*.yaml",  
-    "**/libcurl-stress-test/README.md", 
+    "*.yaml",
+    "**/libcurl-stress-test/README.md",
     ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
+    "ci.yml",
+    "squid.conf*",
     "eng/common/**/*",
     "json.hpp",
     "Dockerfile",
@@ -34,6 +36,8 @@
     "Aloctl",
     "azcore",
     "azsdk",
+    "azsdkengsys",
+    "azurecr",
     "azuresdk",
     "azuresdkforcpp",
     "centralus",
@@ -80,19 +84,21 @@
     "Lohmann",
     "LPBYTE",
     "LPSTR",
+    "LPWSTR",
     "MHSM",
     "moxygen",
     "MSRC",
     "ncus",
     "Niels",
     "nlohmann",
-    "nostd",
     "noclean",
     "NOCLOSE",
     "NOCRLF",
+    "nohup",
     "NOLINT",
     "NOMINMAX",
     "northcentralus",
+    "nostd",
     "NTSTATUS",
     "okhttp",
     "opentelemetry",
@@ -100,7 +106,9 @@
     "PBYTE",
     "pdbs",
     "Piotrowski",
+    "pscredential",
     "PUCHAR",
+    "PVOID",
     "pwsh",
     "Ragrs",
     "Ragzrs",
@@ -121,22 +129,22 @@
     "stoll",
     "stoull",
     "STREQ",
+    "uaenorth",
     "uksouth",
     "undeleted",
     "unscoped",
     "unskipped",
     "UPNs",
-    "uaenorth",
     "usgov",
     "usgoviowa",
     "usgovvirginia",
-    "westcentralus",
     "vcpkg",
     "Viet",
     "Viktor",
     "vusg",
     "Wdocumentation",
     "Werror",
+    "westcentralus",
     "westus",
     "Wextra",
     "Wgnu",
@@ -176,6 +184,12 @@
       "words": [
         "SECG",
         "SECP"
+      ]
+    },
+    {
+      "filename": "**/sdk/core/azure-core/**",
+      "words": [
+        "TEAMPROJECTID"
       ]
     },
     {
@@ -224,6 +238,12 @@
       "filename": "**/sdk/storage/azure-storage-queues/src/rest_client.cpp",
       "words": [
         "numofmessages"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/azure-storage-files-shares/**/*",
+      "words": [
+        "mibps"
       ]
     },
     {

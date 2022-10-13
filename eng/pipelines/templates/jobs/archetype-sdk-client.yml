@@ -32,6 +32,12 @@ parameters:
   - name: TestEnv
     type: object
     default: []
+  - name: PreTestSteps
+    type: stepList
+    default: []
+  - name: PostTestSteps
+    type: stepList
+    default: []
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -53,6 +59,8 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
+        PreTestSteps: ${{ parameters.PreTestSteps }}
+        PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:

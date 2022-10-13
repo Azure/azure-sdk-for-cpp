@@ -2,9 +2,6 @@ parameters:
 - name: Location
   type: string
   default: ''
-- name: SubscriptionConfiguration
-  type: string
-  default: $(sub-config-azure-cloud-test-resources)
 - name: ServiceDirectory
   type: string
   default: not-specified
@@ -36,6 +33,12 @@ parameters:
 - name: UsePlatformContainer
   type: boolean
   default: false
+- name: PreTestSteps
+  type: stepList
+  default: []
+- name: PostTestSteps
+  type: stepList
+  default: []
 
 jobs:
 - job: ValidateLive
@@ -109,7 +112,7 @@ jobs:
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
     displayName: Install coverage tools
     # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
-    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
+    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled)
     condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
@@ -119,12 +122,18 @@ jobs:
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
 
+  - template: /eng/common/TestResources/build-test-resource-config.yml
+    parameters:
+      SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+      SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      ${{ if or(parameters.Location, parameters.CloudConfig.Location) }}:
-        Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
-      SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+      Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+      SubscriptionConfiguration: $(SubscriptionConfiguration)
+
+  - ${{ parameters.PreTestSteps }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
@@ -140,6 +149,8 @@ jobs:
     condition: and(
       succeeded(),
       ne(variables['RunSamples'], '1'))
+
+  - ${{ parameters.PostTestSteps }}
 
   - task: PublishTestResults@2
     inputs:
@@ -191,9 +202,9 @@ jobs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
     displayName: Publish Code Coverage to DevOps
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))    
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+      SubscriptionConfiguration: $(SubscriptionConfiguration)

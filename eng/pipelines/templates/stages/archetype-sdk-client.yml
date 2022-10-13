@@ -67,6 +67,12 @@ parameters:
 - name: UnsupportedClouds
   type: string
   default: ''
+- name: PreTestSteps
+  type: stepList
+  default: []
+- name: PostTestSteps
+  type: stepList
+  default: []
 
 
 stages:
@@ -96,6 +102,8 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
+          PreTestSteps: ${{ parameters.PreTestSteps }}
+          PostTestSteps: ${{ parameters.PostTestSteps }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
@@ -110,6 +118,8 @@ stages:
         Clouds: ${{ parameters.Clouds }}
         SupportedClouds: ${{ parameters.SupportedClouds }}
         UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
+        PreTestSteps: ${{ parameters.PreTestSteps }}
+        PostTestSteps: ${{ parameters.PostTestSteps }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
     - template: archetype-cpp-release.yml

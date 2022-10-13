@@ -46,6 +46,7 @@ usage: azure-perf-test testName [options]
 >Note: You can use the option `-h` to print out the available options for a test name.
 
 The next options can be used for any test:
+
 | Option     | Activators | Description | Default | Example |
 | ---------- | ---        | ---| ---| --- |
 | Duration   | -d, --duration   | Duration of the test in seconds                  | 10    | -d 5

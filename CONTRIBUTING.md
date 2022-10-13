@@ -15,7 +15,7 @@ Thank you for your interest in contributing to Azure SDK for C++.
 - **DO** submit all code changes via pull requests (PRs) rather than through a direct commit. PRs will be reviewed and potentially merged by the repo maintainers after a peer review that includes at least one maintainer.
 - **DO** review your own PR to make sure there aren't any unintended changes or commits before submitting it.
 - **DO NOT** submit "work in progress" PRs. A PR should only be submitted when it is considered ready for review and subsequent merging by the contributor.
-  - If the change is work-in-progress or an experiment, **DO** start if off as a temporary draft PR.
+  - If the change is work-in-progress or an experiment, **DO** start it off as a temporary draft PR.
 - **DO** give PRs short-but-descriptive names (e.g. "Improve code coverage for Azure.Core by 10%", not "Fix #1234") and add a description which explains why the change is being made.
 - **DO** refer to any relevant issues, and include [keywords](https://docs.github.com/articles/closing-issues-via-commit-messages/) that automatically close issues when the PR is merged.
 - **DO** tag any users that should know about and/or review the change.
@@ -48,13 +48,13 @@ Codespaces is new technology that allows you to use a container as your developm
 ### GitHub Codespaces
 
 1. From the Azure SDK GitHub repo, click on the "Code -> Open with Codespaces" button.
-1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#building-and-testing).
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building the project](#building-the-project).
 
 ### VS Code Codespaces
 
 1. Install the [VS Code Remote Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
 1. When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select "Remote-Containers: Open Folder in Container..."
-1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#building-and-testing).
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building the project](#building-the-project).
 
 ## Full Local Setup
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
+## 12.4.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,30 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.3.0 (2022-10-11)
+
+### Features Added
+
+- New features in `12.3.0-beta.1` are now generally available.
+
+## 12.3.0-beta.1 (2022-09-06)
+
+### Features Added
+
+- Bumped up API version to `2021-06-08`.
+- Added fields `ProvisionedBandwidthMBps`, `EnabledProtocols` and `RootSquash` in `ShareItemDetails` and `ShareProperties`.
+- Added support for listing files with extended information.
+- Added new APIs:
+  - ShareDirectoryClient::RenameFile()
+  - ShareDirectoryClient::RenameSubdirectory()
+  - ShareLeaseClient::Renew()
+- Added support for specifying last written time when uploading file range.
+- Added support for specifying file changed time when creating/copying file or setting file properties.
+
+### Bugs Fixed
+
+- Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
 
 ## 12.2.1 (2022-03-09)
 

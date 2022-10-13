@@ -273,6 +273,15 @@ directive:
           {"value": "legalhold", "name": "LegalHold"},
           {"value": "deletedwithversions", "name": "DeletedWithVersions"}
       ];
+      $["ListBlobsShowOnly"]= {
+        "name": "showonly",
+        "x-ms-client-name": "ShowOnly",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "description": "Include this parameter to specify one or more datasets to include in the response."
+      };
       $.DeleteSnapshots["x-ms-enum"]["name"] = "DeleteSnapshotsOption";
       $.DeleteSnapshots["x-ms-enum"]["values"] = [{"value": "include", "name": "IncludeSnapshots"},{"value":"only", "name": "OnlySnapshots"}];
       $.BlobExpiryOptions["x-ms-enum"]["name"] = "ScheduleBlobExpiryOriginType";
@@ -512,6 +521,26 @@ directive:
             operation.responses[status_code].headers["Last-Modified"]["x-nullable"] = true;
             operation.responses[status_code].headers["ETag"]["x-ms-client-default"] = "";
             operation.responses[status_code].headers["ETag"]["x-nullable"] = true;
+          });
+        }
+      }
+  - from: swagger-document
+    where: $
+    transform: >
+      const operations = [
+        "PageBlob_UploadPages",
+        "PageBlob_ClearPages",
+        "PageBlob_UploadPagesFromUri",
+      ];
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          if (!operations.includes($["x-ms-paths"][url][verb].operationId)) continue;
+          const operation = $["x-ms-paths"][url][verb];
+
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          status_codes.forEach((status_code, i) => {
+            operation.responses[status_code].headers["x-ms-blob-sequence-number"]["x-ms-client-default"] = "int64_t()";
+            operation.responses[status_code].headers["x-ms-blob-sequence-number"]["x-nullable"] = true;
           });
         }
       }
@@ -809,6 +838,7 @@ directive:
       $.BlobItemInternal.properties["BlobType"] = $.BlobPropertiesInternal.properties["BlobType"];
       $.BlobItemInternal.properties["BlobType"]["x-ms-xml"] = {"name": "Properties/BlobType"};
       delete $.BlobPropertiesInternal.properties["BlobType"];
+      $.BlobItemInternal.properties["DeletionId"] = {"type": "string"};
       $.BlobItemInternal.required.push("BlobType", "BlobSize");
       $.BlobItemInternal.properties["Name"].description = "Blob name.";
       $.BlobItemInternal.properties["Deleted"].description = "Indicates whether this blob was deleted.";
@@ -817,6 +847,7 @@ directive:
       $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
       $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
       $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
+      $.BlobItemInternal.properties["DeletionId"].description = "The deletion ID associated with the deleted path.";
 
       $.BlobPropertiesInternal.properties["Etag"]["x-ms-client-name"] = "ETag";
       $.BlobPropertiesInternal["x-ms-client-name"] = "BlobItemDetails";
@@ -896,6 +927,10 @@ directive:
       delete $.ListBlobsHierarchySegmentResponse.properties["Segment"];
       delete $.ListBlobsHierarchySegmentResponse.required;
       $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-nullable"] = true;
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&hierarchy"].get.parameters
+    transform: >
+      $.push({"$ref": "#/parameters/ListBlobsShowOnly"});
 ```
 
 ### DownloadBlob
@@ -1292,6 +1327,10 @@ directive:
         delete $[status_code].headers["x-ms-blob-content-md5"];
         delete $[status_code].headers["x-ms-content-crc64"];
         $[status_code].headers["x-ms-lease-duration"]["x-nullable"] = true;
+        $[status_code].headers["x-ms-lease-state"]["x-ms-client-default"] = "";
+        $[status_code].headers["x-ms-lease-state"]["x-nullable"] = true;
+        $[status_code].headers["x-ms-lease-status"]["x-ms-client-default"] = "";
+        $[status_code].headers["x-ms-lease-status"]["x-nullable"] = true;
       }
 ```
 
