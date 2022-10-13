@@ -31,8 +31,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string clientId,
         std::string authorityHost,
         Core::Credentials::TokenCredentialOptions const& options)
-        : m_clientId(std::move(clientId)), m_authorityHost(std::move(authorityHost)),
-          TokenCredentialImpl(options)
+        : TokenCredentialImpl(options), m_clientId(std::move(clientId)),
+          m_authorityHost(std::move(authorityHost))
     {
     }
 
