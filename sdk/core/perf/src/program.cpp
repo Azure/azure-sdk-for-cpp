@@ -214,15 +214,11 @@ inline void RunTests(
         {
           using namespace std::chrono_literals;
           std::this_thread::sleep_for(1000ms);
-          if (!progressToken.IsCancelled())
-          {
-
-            auto total = Sum(completedOperations);
-            auto current = total - lastCompleted;
-            auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
-            lastCompleted = total;
-            std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
-          }
+          auto total = Sum(completedOperations);
+          auto current = total - lastCompleted;
+          auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
+          lastCompleted = total;
+          std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
         }
       });
 
@@ -256,34 +252,25 @@ inline void RunTests(
   {
     t.join();
   }
-  bool testPrematurelyCancelled = progressToken.IsCancelled();
 
   // Stop progress
   progressToken.Cancel();
   progressThread.join();
 
-  if (testPrematurelyCancelled)
-  {
-    std::cout << std::endl << "*** TESTS CANCELLED DUE TO EXCEPTION ***" << std::endl;
-  }
-  else
-  {
+  std::cout << std::endl << "=== Results ===";
 
-    std::cout << std::endl << "=== Results ===";
+  auto totalOperations = Sum(completedOperations);
+  auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
+  auto secondsPerOperation = 1 / operationsPerSecond;
+  auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 
-    auto totalOperations = Sum(completedOperations);
-    auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
-    auto secondsPerOperation = 1 / operationsPerSecond;
-    auto weightedAverageSeconds = totalOperations / operationsPerSecond;
-
-    std::cout << std::endl
-              << "Completed " << FormatNumber(totalOperations, false)
-              << " operations in a weighted-average of "
-              << FormatNumber(weightedAverageSeconds, false) << "s ("
-              << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
-              << std::endl
-              << std::endl;
-  }
+  std::cout << std::endl
+            << "Completed " << FormatNumber(totalOperations, false)
+            << " operations in a weighted-average of "
+            << FormatNumber(weightedAverageSeconds, false) << "s ("
+            << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
+            << std::endl
+            << std::endl;
 }
 
 } // namespace
@@ -336,94 +323,80 @@ void Azure::Perf::Program::Run(
 
   if (options.JobStatistics)
   {
-    // Parse args only to get the test name first
-    testMetadata = GetTestMetadata(tests, argc, argv);
-    auto const& testGenerator = testMetadata->Factory;
-    if (testMetadata == nullptr)
+    std::cout << std::endl << "Application started." << std::endl;
+  }
+
+  // Print test metadata
+  std::cout << std::endl << "Running test: " << testMetadata->Name;
+  std::cout << std::endl << "Description: " << testMetadata->Description << std::endl;
+
+  // Print options
+  PrintOptions(options, testOptions, argResults);
+
+  // Create parallel pool of tests
+  int const parallelTasks = options.Parallel;
+  std::vector<std::unique_ptr<Azure::Perf::PerfTest>> parallelTest(parallelTasks);
+  for (int i = 0; i < parallelTasks; i++)
+  {
+    parallelTest[i] = testGenerator(Azure::Perf::TestOptions(argResults));
+    // Let the test know it should use a proxy
+    if (!options.TestProxies.empty())
     {
-      // Wrong input. Print what are the options.
-      PrintAvailableTests(tests);
-
-      return;
+      // Take the corresponding proxy from the list in round robin
+      parallelTest[i]->SetTestProxy(options.TestProxies[i % options.TestProxies.size()]);
     }
-
-    // Initial test to get it's options, we can use a dummy parser results
-    argagg::parser_results argResults;
-    auto test = testGenerator(Azure::Perf::TestOptions(argResults));
-    auto testOptions = test->GetTestOptions();
-    argResults = Azure::Perf::Program::ArgParser::Parse(argc, argv, testOptions);
-    // ReCreate Test with parsed results
-    test = testGenerator(Azure::Perf::TestOptions(argResults));
-    GlobalTestOptions options = Azure::Perf::Program::ArgParser::Parse(argResults);
-
-    if (options.JobStatistics)
+    if (options.Insecure)
     {
-      std::cout << std::endl << "Application started." << std::endl;
+      parallelTest[i]->AllowInsecureConnections(true);
     }
+  }
 
-    // Print test metadata
-    std::cout << std::endl << "Running test: " << testMetadata->Name;
-    std::cout << std::endl << "Description: " << testMetadata->Description << std::endl;
+  /******************** Global Set up ******************************/
+  std::cout << std::endl << "=== Global Setup ===" << std::endl;
+  test->GlobalSetup();
 
-    // Print options
-    PrintOptions(options, testOptions, argResults);
+  std::cout << std::endl << "=== Test Setup ===" << std::endl;
 
-    // Create parallel pool of tests
-    int const parallelTasks = options.Parallel;
-    std::vector<std::unique_ptr<Azure::Perf::PerfTest>> parallelTest(parallelTasks);
+  /******************** Set up ******************************/
+  {
+    std::vector<std::thread> tasks(parallelTasks);
     for (int i = 0; i < parallelTasks; i++)
     {
-      parallelTest[i] = testGenerator(Azure::Perf::TestOptions(argResults));
-      // Let the test know it should use a proxy
-      if (!options.TestProxies.empty())
-      {
-        // Take the corresponding proxy from the list in round robin
-        parallelTest[i]->SetTestProxy(options.TestProxies[i % options.TestProxies.size()]);
-      }
-      if (options.Insecure)
-      {
-        parallelTest[i]->AllowInsecureConnections(true);
-      }
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Setup(); });
     }
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
+  }
 
-    /******************** Global Set up ******************************/
-    std::cout << std::endl << "=== Global Setup ===" << std::endl;
-    test->GlobalSetup();
-
-    std::cout << std::endl << "=== Test Setup ===" << std::endl;
-
-    /******************** Set up ******************************/
+  // instrument test for recordings if the env is set up.
+  std::cout << std::endl << "=== Post Setup ===" << std::endl;
+  {
+    if (!options.TestProxies.empty())
     {
       std::cout << " - Creating test recordings for each test using test-proxies..." << std::endl;
       std::cout << " - Enabling test-proxy playback" << std::endl;
     }
 
-    // instrument test for recordings if the env is set up.
-    std::cout << std::endl << "=== Post Setup ===" << std::endl;
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
     {
-      if (!options.TestProxies.empty())
-      {
-        std::cout << " - Creating test recordgins for each test using test-proxies..." << std::endl;
-        std::cout << " - Enabling test-proxy playback" << std::endl;
-      }
-
-      std::vector<std::thread> tasks(parallelTasks);
-      for (int i = 0; i < parallelTasks; i++)
-      {
-        tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PostSetUp(); });
-      }
-      // Wait for all tests to complete setUp
-      for (auto& t : tasks)
-      {
-        t.join();
-      }
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PostSetUp(); });
     }
-
-    /******************** WarmUp ******************************/
-    if (options.Warmup)
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
     {
-      RunTests(context, parallelTest, options, "Warmup", true);
+      t.join();
     }
+  }
+
+  /******************** WarmUp ******************************/
+  if (options.Warmup)
+  {
+    RunTests(context, parallelTest, options, "Warmup", true);
+  }
 
   /******************** Tests ******************************/
   std::string iterationInfo;
@@ -440,53 +413,35 @@ void Azure::Perf::Program::Run(
   {
     if (!options.TestProxies.empty())
     {
-      std::cout << "Error: " << error.what();
+      std::cout << " - Deleting test recordings from test-proxies..." << std::endl;
+      std::cout << " - Disabling test-proxy playback" << std::endl;
     }
 
-    std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
     {
-      if (!options.TestProxies.empty())
-      {
-        std::cout << " - Deleting test recordings from test-proxies..." << std::endl;
-        std::cout << " - Disabling test-proxy playback" << std::endl;
-      }
-
-      std::vector<std::thread> tasks(parallelTasks);
-      for (int i = 0; i < parallelTasks; i++)
-      {
-        tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PreCleanUp(); });
-      }
-      // Wait for all tests to complete setUp
-      for (auto& t : tasks)
-      {
-        t.join();
-      }
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PreCleanUp(); });
     }
-
-    /******************** Clean up ******************************/
-    if (!options.NoCleanup)
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
     {
-      std::cout << std::endl << "=== Cleanup ===" << std::endl;
-      std::vector<std::thread> tasks(parallelTasks);
-      for (int i = 0; i < parallelTasks; i++)
-      {
-        tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Cleanup(); });
-      }
-      for (auto& t : tasks)
-      {
-        t.join();
-      }
-      test->GlobalCleanup();
+      t.join();
     }
   }
-  catch (std::exception& e)
-  {
-    std::cout << "Error parsing options: " << e.what() << std::endl;
 
-    if (testMetadata)
+  /******************** Clean up ******************************/
+  if (!options.NoCleanup)
+  {
+    std::cout << std::endl << "=== Cleanup ===" << std::endl;
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
     {
-      std::cout << "Usage: " << testMetadata->Name << " [options]" << std::endl;
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Cleanup(); });
     }
-    return;
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
+    test->GlobalCleanup();
   }
 }
