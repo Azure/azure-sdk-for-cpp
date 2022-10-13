@@ -3,9 +3,11 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 
+#include "private/token_cache.hpp"
 #include "private/token_credential_impl.hpp"
 
 #include <sstream>
+#include <utility>
 
 using namespace Azure::Identity;
 
@@ -13,29 +15,33 @@ std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 ClientSecretCredential::ClientSecretCredential(
-    std::string const& tenantId,
-    std::string const& clientId,
+    std::string tenantId,
+    std::string clientId,
     std::string const& clientSecret,
-    std::string const& authorityHost,
+    std::string authorityHost,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : m_tokenCredentialImpl(std::make_unique<_detail::TokenCredentialImpl>(options)),
-      m_isAdfs(tenantId == "adfs")
+      m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
+      m_authorityHost(std::move(authorityHost))
 {
   using Azure::Core::Url;
-  m_requestUrl = Url(authorityHost);
-  m_requestUrl.AppendPath(tenantId);
+
+  m_isAdfs = (m_tenantId == "adfs");
+
+  m_requestUrl = Url(m_authorityHost);
+  m_requestUrl.AppendPath(m_tenantId);
   m_requestUrl.AppendPath(m_isAdfs ? "oauth2/token" : "oauth2/v2.0/token");
 
   std::ostringstream body;
-  body << "grant_type=client_credentials&client_id=" << Url::Encode(clientId)
+  body << "grant_type=client_credentials&client_id=" << Url::Encode(m_clientId)
        << "&client_secret=" << Url::Encode(clientSecret);
 
   m_requestBody = body.str();
 }
 
 ClientSecretCredential::ClientSecretCredential(
-    std::string const& tenantId,
-    std::string const& clientId,
+    std::string tenantId,
+    std::string clientId,
     std::string const& clientSecret,
     ClientSecretCredentialOptions const& options)
     : ClientSecretCredential(tenantId, clientId, clientSecret, options.AuthorityHost, options)
@@ -45,7 +51,7 @@ ClientSecretCredential::ClientSecretCredential(
 ClientSecretCredential::ClientSecretCredential(
     std::string tenantId,
     std::string clientId,
-    std::string clientSecret,
+    std::string const& clientSecret,
     Core::Credentials::TokenCredentialOptions const& options)
     : ClientSecretCredential(
         tenantId,
@@ -62,28 +68,39 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  return m_tokenCredentialImpl->GetToken(context, [&]() {
-    using _detail::TokenCredentialImpl;
-    using Azure::Core::Http::HttpMethod;
+  using _detail::TokenCache;
+  using _detail::TokenCredentialImpl;
 
-    std::ostringstream body;
-    body << m_requestBody;
+  std::string scopesStr;
+  {
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, m_isAdfs);
+    }
+  }
+
+  return TokenCache::GetToken(m_tenantId, m_clientId, m_authorityHost, scopesStr, [&]() {
+    return m_tokenCredentialImpl->GetToken(context, [&]() {
+      using Azure::Core::Http::HttpMethod;
+
+      std::ostringstream body;
+      body << m_requestBody;
+
+      if (!scopesStr.empty())
       {
-        body << "&scope=" << TokenCredentialImpl::FormatScopes(scopes, m_isAdfs);
+        body << "&scope=" << scopesStr;
       }
-    }
 
-    auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
-        HttpMethod::Post, m_requestUrl, body.str());
+      auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
+          HttpMethod::Post, m_requestUrl, body.str());
 
-    if (m_isAdfs)
-    {
-      request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
-    }
+      if (m_isAdfs)
+      {
+        request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
+      }
 
-    return request;
+      return request;
+    });
   });
 }

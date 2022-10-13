@@ -61,6 +61,8 @@ namespace Azure { namespace Core { namespace Credentials {
      * @param tokenRequestContext A context to get the token in.
      * @param context A context to control the request lifetime.
      *
+     * @return Authentication token.
+     *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */
     virtual AccessToken GetToken(
