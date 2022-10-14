@@ -29,31 +29,69 @@
 namespace Azure { namespace Storage { namespace _internal {
 
 #if defined(AZ_PLATFORM_WINDOWS)
-  FileReader::FileReader(const std::string& filename)
+  std::wstring Utf8ToWide(const std::string& narrow)
   {
     int sizeNeeded = MultiByteToWideChar(
         CP_UTF8,
         MB_ERR_INVALID_CHARS,
-        filename.data(),
-        static_cast<int>(filename.length()),
+        narrow.data(),
+        static_cast<int>(narrow.length()),
         nullptr,
         0);
     if (sizeNeeded == 0)
     {
-      throw std::runtime_error("Invalid filename.");
+      throw std::runtime_error("Failed to convert utf8 to wide chars.");
     }
-    std::wstring filenameW(sizeNeeded, L'\0');
+    std::wstring wide(sizeNeeded, L'\0');
     if (MultiByteToWideChar(
             CP_UTF8,
             MB_ERR_INVALID_CHARS,
-            filename.data(),
-            static_cast<int>(filename.length()),
-            &filenameW[0],
+            narrow.data(),
+            static_cast<int>(narrow.length()),
+            &wide[0],
             sizeNeeded)
         == 0)
     {
-      throw std::runtime_error("Invalid filename.");
+      throw std::runtime_error("Failed to convert utf8 to wide chars.");
     }
+    return wide;
+  }
+
+  std::string Utf8ToNarrow(const std::wstring& wide)
+  {
+    int sizeNeeded = WideCharToMultiByte(
+        CP_UTF8,
+        WC_ERR_INVALID_CHARS,
+        &wide[0],
+        static_cast<int>(wide.length()),
+        NULL,
+        0,
+        NULL,
+        NULL);
+    if (sizeNeeded == 0)
+    {
+      throw std::runtime_error("Failed to convert utf8 to multi-bytes.");
+    }
+    std::string narrow(sizeNeeded, '\0');
+    if (WideCharToMultiByte(
+            CP_UTF8,
+            WC_ERR_INVALID_CHARS,
+            &wide[0],
+            static_cast<int>(wide.length()),
+            &narrow[0],
+            sizeNeeded,
+            NULL,
+            NULL)
+        == 0)
+    {
+      throw std::runtime_error("Failed to convert utf8 to multi-bytes.");
+    }
+    return narrow;
+  }
+
+  FileReader::FileReader(const std::string& filename)
+  {
+    const std::wstring filenameW = Utf8ToWide(filename);
 
     HANDLE fileHandle;
 
@@ -113,29 +151,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-    int sizeNeeded = MultiByteToWideChar(
-        CP_UTF8,
-        MB_ERR_INVALID_CHARS,
-        filename.data(),
-        static_cast<int>(filename.length()),
-        nullptr,
-        0);
-    if (sizeNeeded == 0)
-    {
-      throw std::runtime_error("Invalid filename.");
-    }
-    std::wstring filenameW(sizeNeeded, L'\0');
-    if (MultiByteToWideChar(
-            CP_UTF8,
-            MB_ERR_INVALID_CHARS,
-            filename.data(),
-            static_cast<int>(filename.length()),
-            &filenameW[0],
-            sizeNeeded)
-        == 0)
-    {
-      throw std::runtime_error("Invalid filename.");
-    }
+    const std::wstring filenameW = Utf8ToWide(filename);
 
     HANDLE fileHandle;
 

@@ -7,7 +7,7 @@
 
 #include <azure/storage/blobs.hpp>
 
-namespace Azure { namespace Storage { namespace DataMovement {
+namespace Azure { namespace Storage { namespace Blobs {
 
   class BlobFolder final {
   public:
@@ -15,29 +15,33 @@ namespace Azure { namespace Storage { namespace DataMovement {
         const std::string& connectionString,
         const std::string& blobContainerName,
         const std::string& blobName,
-        const Blobs::BlobClientOptions& options = Blobs::BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     explicit BlobFolder(
         const std::string& blobUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
-        const Blobs::BlobClientOptions& options = Blobs::BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     explicit BlobFolder(
         const std::string& blobUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const Blobs::BlobClientOptions& options = Blobs::BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     explicit BlobFolder(
         const std::string& blobUrl,
-        const Blobs::BlobClientOptions& options = Blobs::BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
+
+    std::string GetUrl() const { return m_blobUrl.GetAbsoluteUrl(); }
 
     BlobFolder GetBlobFolder(const std::string& folderName) const;
 
-    Blobs::BlobClient GetBlobClient(const std::string& blobName) const;
+    BlobClient GetBlobClient(const std::string& blobName) const;
+
+  private:
+    Core::Url m_blobUrl;
+    std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
+    Nullable<EncryptionKey> m_customerProvidedKey;
+    Nullable<std::string> m_encryptionScope;
   };
 
-  BlobFolder GetBlobFolderFromBlobContainer(
-      const Blobs::BlobContainerClient& blobContainerClient,
-      const std::string& folderName);
-
-}}} // namespace Azure::Storage::DataMovement
+}}} // namespace Azure::Storage::Blobs
