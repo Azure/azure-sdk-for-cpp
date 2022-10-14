@@ -1,7 +1,7 @@
 {
   "name": "azure-sdk-for-cpp",
   "version": "1.5.0",
-  "builtin-baseline": "f0aa678b7471497f1adedcc99f40e1599ad22f69",
+  "builtin-baseline": "659b6b5eeacb50ffe25856413960d231ce1a4b58",
   "dependencies": [
     {
       "name": "curl"
@@ -21,12 +21,6 @@
     {
       "name": "wil",
       "platform": "windows"
-    }
-  ],
-  "overrides": [
-    {
-      "name": "zlib",
-      "version": "1.2.12#2"
     }
   ]
 }
