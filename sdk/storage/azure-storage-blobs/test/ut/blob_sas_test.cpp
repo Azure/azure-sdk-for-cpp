@@ -584,6 +584,36 @@ namespace Azure { namespace Storage { namespace Test {
       options.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
       blobClient0.Delete(options);
     }
+
+    // Encryption scope
+    const auto encryptionScope = GetTestEncryptionScope();
+    {
+      auto sasBuilderWithEncryptionScope = blobSasBuilder;
+      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
+      auto blobClientEncryptionScopeSas = Blobs::AppendBlobClient(
+          blobUrl + sasBuilderWithEncryptionScope.GenerateSasToken(*keyCredential));
+      blobClientEncryptionScopeSas.Create();
+      auto blobProperties = blobClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(blobProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(blobProperties.EncryptionScope.Value(), encryptionScope);
+
+      blobClientEncryptionScopeSas = Blobs::AppendBlobClient(
+          blobUrl + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
+      blobClientEncryptionScopeSas.Create();
+      blobProperties = blobClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(blobProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(blobProperties.EncryptionScope.Value(), encryptionScope);
+    }
+    {
+      auto sasBuilderWithEncryptionScope = accountSasBuilder;
+      sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
+      auto blobClientEncryptionScopeSas = Blobs::AppendBlobClient(
+          blobUrl + sasBuilderWithEncryptionScope.GenerateSasToken(*keyCredential));
+      blobClientEncryptionScopeSas.Create();
+      auto blobProperties = blobClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(blobProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(blobProperties.EncryptionScope.Value(), encryptionScope);
+    }
   }
 
 }}} // namespace Azure::Storage::Test

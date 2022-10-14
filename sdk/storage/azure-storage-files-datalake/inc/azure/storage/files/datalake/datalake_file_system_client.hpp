@@ -239,17 +239,46 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const RenameDirectoryOptions& options = RenameDirectoryOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Gets the paths that have recently been soft deleted in this file system.
+     * @param options Optional parameters to list deleted paths.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<DataLakePathClient> The client targets the restored path.
+     * @remark This request is sent to Blob endpoint.
+     */
+    ListDeletedPathsPagedResponse ListDeletedPaths(
+        const ListDeletedPathsOptions& options = ListDeletedPathsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restores a soft deleted path.
+     * @param deletedPath The path of the deleted path.
+     * @param deletionId The deletion ID associated with the soft deleted path. You can get soft
+     * deleted paths and their associated deletion IDs with ListDeletedPaths.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<DataLakePathClient> The client targets the restored path.
+     * @remark This request is sent to Blob endpoint.
+     */
+    Azure::Response<DataLakePathClient> UndeletePath(
+        const std::string& deletedPath,
+        const std::string& deletionId,
+        const UndeletePathOptions& options = UndeletePathOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_fileSystemUrl;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
 
     explicit DataLakeFileSystemClient(
         Azure::Core::Url fileSystemUrl,
         Blobs::BlobContainerClient blobContainerClient,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
+        Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>())
         : m_fileSystemUrl(std::move(fileSystemUrl)),
-          m_blobContainerClient(std::move(blobContainerClient)), m_pipeline(std::move(pipeline))
+          m_blobContainerClient(std::move(blobContainerClient)), m_pipeline(std::move(pipeline)),
+          m_customerProvidedKey(std::move(customerProvidedKey))
     {
     }
     friend class DataLakeLeaseClient;

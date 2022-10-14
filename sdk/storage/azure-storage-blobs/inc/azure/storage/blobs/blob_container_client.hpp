@@ -12,6 +12,7 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   class BlobLeaseClient;
+  class BlobContainerBatch;
 
   /**
    * The BlobContainerClient allows you to manipulate Azure Storage containers and their
@@ -284,25 +285,60 @@ namespace Azure { namespace Storage { namespace Blobs {
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief The Filter Blobs operation enables callers to list blobs in a container whose
+     * tags match a given search expression.
+     *
+     * @param tagFilterSqlExpression The where parameter enables the caller to query blobs
+     * whose tags match a given expression. The given expression must evaluate to true for a blob to
+     * be returned in the results. The [OData - ABNF] filter syntax rule defines the formal grammar
+     * for the value of the where query parameter, however, only a subset of the OData filter syntax
+     * is supported in the Blob service.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A FindBlobsByTagsPagedResponse describing the blobs.
+     */
+    FindBlobsByTagsPagedResponse FindBlobsByTags(
+        const std::string& tagFilterSqlExpression,
+        const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates a new batch object to collect subrequests that can be submitted together via
+     * SubmitBatch.
+     *
+     * @return A new batch object.
+     */
+    BlobContainerBatch CreateBatch() const;
+
+    /**
+     * @brief Submits a batch of subrequests.
+     *
+     * @param batch The batch object containing subrequests.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A SubmitBlobBatchResult.
+     * @remark This function will throw only if there's something wrong with the batch request
+     * (parent request).
+     */
+    Response<Models::SubmitBlobBatchResult> SubmitBatch(
+        const BlobContainerBatch& batch,
+        const SubmitBlobBatchOptions& options = SubmitBlobBatchOptions(),
+        const Core::Context& context = Core::Context()) const;
+
   private:
     Azure::Core::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Nullable<std::string> m_encryptionScope;
 
-    explicit BlobContainerClient(
-        Azure::Core::Url blobContainerUrl,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        Azure::Nullable<EncryptionKey> customerProvidedKey,
-        Azure::Nullable<std::string> encryptionScope)
-        : m_blobContainerUrl(std::move(blobContainerUrl)), m_pipeline(std::move(pipeline)),
-          m_customerProvidedKey(std::move(customerProvidedKey)),
-          m_encryptionScope(std::move(encryptionScope))
-    {
-    }
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchRequestPipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchSubrequestPipeline;
 
     friend class BlobServiceClient;
     friend class BlobLeaseClient;
+    friend class BlobContainerBatch;
+    friend class Files::DataLake::DataLakeFileSystemClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

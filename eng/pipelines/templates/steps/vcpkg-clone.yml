@@ -3,6 +3,7 @@ parameters:
   RepoOwner: not-set
   RepoName: vcpkg
   PRBranchName: not-set
+  SetVcpkgRoot: true
 
 steps:
   - pwsh: |
@@ -13,6 +14,13 @@ steps:
         exit $LASTEXITCODE
       }
     displayName: Clone vcpkg (${{ parameters.RepoOwner }}/${{ parameters.RepoName }})
+
+  - ${{ if eq(parameters.SetVcpkgRoot, true) }}:
+    - pwsh: |
+        $vcpkgRoot = Resolve-Path "${{ parameters.Workspace }}/${{ parameters.RepoName }}"
+        Write-Host "Set VCPKG_ROOT: $vcpkgRoot"
+        Write-Host "##vso[task.setvariable variable=VCPKG_ROOT]$vcpkgRoot"
+      displayName: Set VCPKG_ROOT
 
   # Check out the PR branch if it's already in remote. Ignore failures.
   - pwsh: |

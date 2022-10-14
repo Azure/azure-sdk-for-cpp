@@ -10,7 +10,9 @@ if(@BUILD_TRANSPORT_CURL@)
   find_dependency(CURL @CURL_MIN_REQUIRED_VERSION@)
 endif()
 
-if(NOT WIN32)
+if(WIN32)
+  find_dependency(wil)
+else()
   find_dependency(OpenSSL)
 endif()
 

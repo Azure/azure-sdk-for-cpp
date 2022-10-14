@@ -46,6 +46,13 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: PreTestSteps
+    type: stepList
+    default: []
+  - name: PostTestSteps
+    type: stepList
+    default: []
+
 
 jobs:
   - job:
@@ -137,6 +144,8 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - ${{ parameters.PreTestSteps }}
+      
       - pwsh: |
           ctest `
             -C Debug `
@@ -147,6 +156,8 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
+        
+      - ${{ parameters.PostTestSteps }}
 
       - task: PublishTestResults@2
         inputs:
@@ -260,13 +271,14 @@ jobs:
         displayName: Set bom file artifact name
         condition: succeededOrFailed()
 
-      - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-        displayName: 'Generate BOM'
-        condition: succeededOrFailed()
-        inputs:
-          BuildDropPath: $(Build.ArtifactStagingDirectory)
+      - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+          displayName: 'Generate BOM'
+          condition: succeededOrFailed()
+          inputs:
+            BuildDropPath: $(Build.ArtifactStagingDirectory)
 
-      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-        parameters:
-          ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-          ArtifactName: 'bom_manifest_$(BomArtifactName)'
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+            ArtifactName: 'bom_manifest_$(BomArtifactName)'

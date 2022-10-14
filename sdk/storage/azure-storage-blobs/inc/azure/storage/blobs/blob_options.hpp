@@ -574,6 +574,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Indicates whether the destination blob has a legal hold.
      */
     Azure::Nullable<bool> HasLegalHold;
+
+    /**
+     * Indicates the tags on the destination blob should be copied from source or replaced by Tags
+     * in this option. Default is to replace.
+     */
+    Models::BlobCopySourceTagsMode CopySourceTagsMode;
   };
 
   /**
@@ -932,6 +938,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * If the two hashes do not match, the operation will fail.
      */
     Azure::Nullable<ContentHash> TransactionalContentHash;
+
+    /**
+     * Indicates the tags on the destination blob should be copied from source or replaced by Tags
+     * in this option. Default is to replace.
+     */
+    Models::BlobCopySourceTagsMode CopySourceTagsMode;
   };
 
   /**
@@ -1481,6 +1493,13 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::DeleteImmutabilityPolicy.
    */
   struct DeleteBlobImmutabilityPolicyOptions final
+  {
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobBatchClient::SubmitBatch.
+   */
+  struct SubmitBlobBatchOptions final
   {
   };
 

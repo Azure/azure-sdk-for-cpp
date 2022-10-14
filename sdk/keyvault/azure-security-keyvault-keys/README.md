@@ -376,18 +376,18 @@ Headers:
 
 Several Azure Key Vault keys client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-- [Sample1_HelloWorld.md][hello_world_sample] - for working with Azure Key Vault, including:
+- [sample1_hello_world.md][hello_world_sample] - for working with Azure Key Vault, including:
 
   - Create a key
   - Get an existing key
   - Update an existing key
   - Delete a key
 
-- [Sample2_BackupAndRestore.md][backup_and_restore_sample] - Contains the code snippets working with Azure Key Vault keys, including:
+- [sample2_backup_and_restore.md][backup_and_restore_sample] - Contains the code snippets working with Azure Key Vault keys, including:
 
   - Backup and recover a key
 
-- [Sample3_GetKeys.md][get_keys_sample] - Example code for working with Azure Key Vault keys, including:
+- [sample3_get_keys.md][get_keys_sample] - Example code for working with Azure Key Vault keys, including:
 
   - Create keys
   - List all keys in the Key Vault
@@ -396,17 +396,22 @@ Several Azure Key Vault keys client library samples are available to you in this
   - Delete keys from the Key Vault
   - List deleted keys in the Key Vault
 
-<!-- - [Sample4_EncryptDecrypt.md][encrypt_decrypt_sample] - Example code for performing cryptographic operations with Azure Key Vault keys, including:
+- [sample4_encrypt_decrypt.md][encrypt_decrypt_sample] - Example code for performing cryptographic operations with Azure Key Vault keys, including:
 
   - Encrypt and Decrypt data with the CryptographyClient
 
-- [Sample5_SignVerify.md][sign_verify_sample] - Example code for working with Azure Key Vault keys, including:
+- [sample5_sign_verify.md][sign_verify_sample] - Example code for working with Azure Key Vault keys, including:
 
   - Sign a precalculated digest and verify the signature with Sign and Verify
   - Sign raw data and verify the signature with SignData and VerifyData
 
-- [Sample6_WrapUnwrap.md][wrap_unwrap_sample] - Example code for working with Azure Key Vault keys, including:
-  - Wrap and Unwrap a symmetric key -->
+- [sample6_wrap_unwrap.md][wrap_unwrap_sample] - Example code for working with Azure Key Vault keys, including:
+  - Wrap and Unwrap a symmetric key 
+
+- [sample7_key_rotation.md][key_rotation_sample] - Example code for working with Azure Key Vault keys, including:
+  - Define Rotation policy
+  - Apply rotation policy
+  - Rotate key
 
 ### Additional Documentation
 
@@ -434,15 +439,19 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [azure_sub]: https://azure.microsoft.com/free/
+<!-- ----------------SAMPLES ---------------- -->
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample1_hello_world.md
 [backup_and_restore_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample2_backup_and_restore.md
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [get_keys_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample3_get_keys.md
+[encrypt_decrypt_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample4_encrypt_decrypt.md
+[sign_verify_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample5_sign_verify.md
+[wrap_unwrap_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample6_wrap_unwrap.md
+[key_rotation_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample7_key_rotation.md
 
-<!-- [encrypt_decrypt_sample]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample4_EncryptDecrypt.md -->
-<!-- [sign_verify_sample]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample5_SignVerify.md -->
-<!-- [wrap_unwrap_sample]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample6_WrapUnwrap.md -->
+<!-- ----------------SAMPLES ---------------- -->
 
-[hello_world_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/samples/sample1_hello_world.md
+
 [key_client_class]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client.hpp
 [crypto_client_class]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/src/cryptography/cryptography_client.cpp
 [key_client_vcpkg_package]: https://github.com/microsoft/vcpkg/tree/master/ports/azure-security-keyvault-keys-cpp

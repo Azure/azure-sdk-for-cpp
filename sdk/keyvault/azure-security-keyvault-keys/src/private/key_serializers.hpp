@@ -115,4 +115,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Core::Json::_internal::json const& jsonParser);
   };
 
+  /**************** Key Properties ************/
+  class KeyRotationPolicySerializer final {
+  public:
+    static KeyRotationPolicy KeyRotationPolicyDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+    static KeyRotationPolicy KeyRotationPolicyDeserialize(std::vector<uint8_t> const& body);
+
+    static std::string KeyRotationPolicySerialize(KeyRotationPolicy const& rotationPolicy);
+  };
+
+  /**************** GetRandomBytes ************/
+  class GetRandomBytesSerializer final {
+  public:
+    static std::string GetRandomBytesOptionsSerialize(GetRandomBytesOptions const& options);
+    static std::vector<uint8_t> GetRandomBytesResponseDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+  };
+
+  /**************** KeyReleaseOptionsSerializer  ************/
+  class KeyReleaseOptionsSerializer final {
+  public:
+    static std::string KeyReleaseOptionsSerialize(KeyReleaseOptions const& keyReleaseOptions);
+    static ReleaseKeyResult KeyReleaseOptionsDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+  };
+
+  /**************** KeyReleasePolicySerializer  ************/
+  class KeyReleasePolicySerializer final {
+  public:
+    static Azure::Core::Json::_internal::json KeyReleasePolicySerialize(
+        KeyReleasePolicy const& policy);
+    static KeyReleasePolicy KeyReleasePolicyDeserialize(
+        Azure::Core::Json::_internal::json const& rawResponse);
+  };
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

@@ -32,7 +32,7 @@ public:
   ProxyPolicy(ProxyPolicy const& other) : ProxyPolicy{other.m_testContext} {}
 
   // move
-  ProxyPolicy(ProxyPolicy&& other) : m_testContext{other.m_testContext} {}
+  ProxyPolicy(ProxyPolicy&& other) noexcept : m_testContext{other.m_testContext} {}
 
   std::unique_ptr<RawResponse> Send(
       Request& request,

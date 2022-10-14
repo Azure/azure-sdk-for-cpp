@@ -36,11 +36,13 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
         find_package(azure-core-cpp REQUIRED)
       endif()
     endif()
-    find_package(opentelemetry-cpp "1.3.0" CONFIG REQUIRED)
+    find_package(opentelemetry-cpp CONFIG REQUIRED)
 
     set(
       AZURE_CORE_OPENTELEMETRY_HEADER
+        inc/azure/core/tracing/opentelemetry/internal/apiview.hpp
         inc/azure/core/tracing/opentelemetry/opentelemetry.hpp
+        src/opentelemetry_private.hpp
     )
 
     set(
@@ -79,13 +81,13 @@ if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
   az_vcpkg_export(
     azure-core-tracing-opentelemetry
     CORE_TRACING_OPENTELEMETRY
-    "azure/core/tracing/opentelemetry/dll_import_export.hpp"
+    azure/core/tracing/opentelemetry/dll_import_export.hpp
   )
 
   az_rtti_setup(
     azure-core-tracing-opentelemetry
     CORE_TRACING_OPENTELEMETRY
-    "azure/core/tracing/opentelemetry/rtti.hpp"
+    azure/core/tracing/opentelemetry/rtti.hpp
   )
 endif()
 

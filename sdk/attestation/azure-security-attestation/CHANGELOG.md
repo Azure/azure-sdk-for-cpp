@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.4 (Unreleased)
+## 1.1.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,21 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.1.0-beta.1 (2022-10-11)
+
+### Breaking Changes
+
+- Changed `AttestationClient::AttestTpm` to match `AttestOpenEnclave` and `AttestSgxEnclave`:
+  - Added `std::vector<uint8_t>` dataToAttest parameter to the `AttestTpm()` client method.
+  - Removed `Payload` in `TpmAttestationOptions`.
+  - Changed `TpmResult` in `TpmAttestationResult` to type `std::vector<uint8_t>`.
+
+## 1.0.0 (2022-07-07)
+
+### Breaking Changes
+
+- Renamed `Version` field to `ApiVersion` and removed the `ServiceVersion` enumeration.
 
 ## 1.0.0-beta.3 (2022-06-07)
 

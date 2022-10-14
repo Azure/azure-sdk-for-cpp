@@ -35,25 +35,30 @@ Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
       std::string("The environment variable ") + envVarName + " contains an invalid URL.");
 }
 
+template <typename T>
 std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
     std::string const& clientId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    Azure::Core::Credentials::TokenCredentialOptions const& options,
+    const char* endpointVarName,
+    const char* secretVarName)
 {
-  constexpr auto EndpointVarName = "MSI_ENDPOINT";
-  auto msiEndpoint = Environment::GetVariable(EndpointVarName);
-  auto msiSecret = Environment::GetVariable("MSI_SECRET");
+  auto msiEndpoint = Environment::GetVariable(endpointVarName);
+  auto msiSecret = Environment::GetVariable(secretVarName);
 
   return (msiEndpoint.empty() || msiSecret.empty())
       ? nullptr
-      : std::unique_ptr<ManagedIdentitySource>(new AppServiceManagedIdentitySource(
-          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName), msiSecret));
+      : std::unique_ptr<ManagedIdentitySource>(
+          new T(clientId, options, ParseEndpointUrl(msiEndpoint, endpointVarName), msiSecret));
 }
 
 AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options,
     Azure::Core::Url endpointUrl,
-    std::string const& secret)
+    std::string const& secret,
+    std::string const& apiVersion,
+    std::string const& secretHeaderName,
+    std::string const& clientIdHeaderName)
     : ManagedIdentitySource(options),
       m_request(Azure::Core::Http::HttpMethod::Get, std::move(endpointUrl))
 {
@@ -61,15 +66,15 @@ AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
     using Azure::Core::Url;
     auto& url = m_request.GetUrl();
 
-    url.AppendQueryParameter("api-version", "2017-09-01");
+    url.AppendQueryParameter("api-version", apiVersion);
 
     if (!clientId.empty())
     {
-      url.AppendQueryParameter("clientid", clientId);
+      url.AppendQueryParameter(clientIdHeaderName, clientId);
     }
   }
 
-  m_request.SetHeader("secret", secret);
+  m_request.SetHeader(secretHeaderName, secret);
 }
 
 Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
@@ -88,6 +93,22 @@ Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
 
     return request;
   });
+}
+
+std::unique_ptr<ManagedIdentitySource> AppServiceV2017ManagedIdentitySource::Create(
+    std::string const& clientId,
+    Core::Credentials::TokenCredentialOptions const& options)
+{
+  return AppServiceManagedIdentitySource::Create<AppServiceV2017ManagedIdentitySource>(
+      clientId, options, "MSI_ENDPOINT", "MSI_SECRET");
+}
+
+std::unique_ptr<ManagedIdentitySource> AppServiceV2019ManagedIdentitySource::Create(
+    std::string const& clientId,
+    Core::Credentials::TokenCredentialOptions const& options)
+{
+  return AppServiceManagedIdentitySource::Create<AppServiceV2019ManagedIdentitySource>(
+      clientId, options, "IDENTITY_ENDPOINT", "IDENTITY_HEADER");
 }
 
 std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(

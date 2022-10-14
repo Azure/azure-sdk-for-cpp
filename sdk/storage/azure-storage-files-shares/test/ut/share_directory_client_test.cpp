@@ -138,6 +138,304 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareDirectoryClientTest, RenameFile)
+  {
+    const std::string testName(GetTestName());
+    const std::string baseDirectoryName = testName + "1";
+    auto rootDirectoryClient = m_shareClient->GetRootDirectoryClient();
+    auto baseDirectoryClient
+        = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+    // base test
+    {
+      const std::string oldFilename = testName + "2";
+      auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+      const std::string newFilename = testName + "3";
+      auto newFileClient
+          = baseDirectoryClient.RenameFile(oldFilename, baseDirectoryName + "/" + newFilename)
+                .Value;
+      EXPECT_NO_THROW(newFileClient.GetProperties());
+      EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+    }
+
+    // overwrite
+    {
+      const std::string oldFilename = testName + "4";
+      auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+      const std::string newFilename = testName + "5";
+      auto newFileClient = baseDirectoryClient.GetFileClient(newFilename);
+      newFileClient.Create(512);
+      EXPECT_THROW(
+          baseDirectoryClient.RenameFile(oldFilename, baseDirectoryName + "/" + newFilename),
+          StorageException);
+
+      Files::Shares::RenameFileOptions options;
+      options.ReplaceIfExists = true;
+      EXPECT_NO_THROW(
+          newFileClient
+          = baseDirectoryClient
+                .RenameFile(oldFilename, baseDirectoryName + "/" + newFilename, options)
+                .Value);
+      EXPECT_NO_THROW(newFileClient.GetProperties());
+      EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+    }
+    // overwrite readOnly
+    {
+      const std::string oldFilename = testName + "6";
+      auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+      const std::string newFilename = testName + "7";
+      Files::Shares::CreateFileOptions createOptions;
+      Files::Shares::Models::FileSmbProperties properties;
+      properties.Attributes = Files::Shares::Models::FileAttributes::ReadOnly;
+      createOptions.SmbProperties = properties;
+      auto newFileClient = baseDirectoryClient.GetFileClient(newFilename);
+      newFileClient.Create(512, createOptions);
+      Files::Shares::RenameFileOptions renameOptions;
+      renameOptions.ReplaceIfExists = true;
+      EXPECT_THROW(
+          baseDirectoryClient.RenameFile(
+              oldFilename, baseDirectoryName + "/" + newFilename, renameOptions),
+          StorageException);
+
+      renameOptions.IgnoreReadOnly = true;
+      EXPECT_NO_THROW(
+          newFileClient
+          = baseDirectoryClient
+                .RenameFile(oldFilename, baseDirectoryName + "/" + newFilename, renameOptions)
+                .Value);
+      EXPECT_NO_THROW(newFileClient.GetProperties());
+      EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+    }
+    // with options
+    {
+      std::string permission
+          = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
+            "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
+            "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
+
+      const std::string oldFilename = testName + "8";
+      auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+      const std::string newFilename = testName + "9";
+      Files::Shares::RenameFileOptions renameOptions;
+      renameOptions.Metadata = GetMetadata();
+      renameOptions.FilePermission = permission;
+      Files::Shares::Models::FileSmbProperties properties;
+      properties.ChangedOn = std::chrono::system_clock::now();
+      properties.CreatedOn = std::chrono::system_clock::now();
+      properties.LastWrittenOn = std::chrono::system_clock::now();
+      properties.Attributes = Files::Shares::Models::FileAttributes::None;
+      renameOptions.SmbProperties = properties;
+      auto newFileClient
+          = baseDirectoryClient
+                .RenameFile(oldFilename, baseDirectoryName + "/" + newFilename, renameOptions)
+                .Value;
+      Files::Shares::Models::FileProperties newProperties;
+      EXPECT_NO_THROW(newProperties = newFileClient.GetProperties().Value);
+      EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+      EXPECT_EQ(renameOptions.Metadata, newProperties.Metadata);
+      EXPECT_EQ(properties.Attributes, newProperties.SmbProperties.Attributes);
+    }
+
+    // diff directory
+    {
+      const std::string oldSubdirectoryName = testName + "10";
+      auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+      const std::string oldFilename = testName + "11";
+      auto oldFileClient = oldSubdirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+
+      const std::string otherDirectoryname = testName + "12";
+      auto otherDirectoryClient = rootDirectoryClient.GetSubdirectoryClient(otherDirectoryname);
+      otherDirectoryClient.Create();
+      const std::string newFilename = testName + "13";
+      auto newFileClient
+          = baseDirectoryClient
+                .RenameFile(
+                    oldSubdirectoryName + "/" + oldFilename, otherDirectoryname + "/" + newFilename)
+                .Value;
+      EXPECT_NO_THROW(newFileClient.GetProperties());
+      EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+    }
+    // root directory
+    {
+      const std::string oldFilename = testName + "14";
+      auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+      const std::string newFilename = testName + "15";
+      auto newFileClient = baseDirectoryClient.RenameFile(oldFilename, newFilename).Value;
+      EXPECT_NO_THROW(newFileClient.GetProperties());
+      EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+    }
+    // lease
+    {
+      const std::string oldFilename = testName + "16";
+      auto oldFileClient = baseDirectoryClient.GetFileClient(oldFilename);
+      oldFileClient.Create(512);
+      const std::string oldLeaseId = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
+      Files::Shares::ShareLeaseClient oldLeaseClient(oldFileClient, oldLeaseId);
+      oldLeaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
+      const std::string newFilename = testName + "17";
+      auto newFileClient = baseDirectoryClient.GetFileClient(newFilename);
+      newFileClient.Create(512);
+      const std::string newLeaseId = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
+      Files::Shares::ShareLeaseClient newLeaseClient(newFileClient, newLeaseId);
+      newLeaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration);
+
+      Files::Shares::RenameFileOptions options;
+      options.ReplaceIfExists = true;
+      EXPECT_THROW(
+          baseDirectoryClient.RenameFile(
+              oldFilename, baseDirectoryName + "/" + newFilename, options),
+          StorageException);
+      options.SourceAccessConditions.LeaseId = oldLeaseId;
+      options.AccessConditions.LeaseId = newLeaseId;
+      EXPECT_NO_THROW(baseDirectoryClient.RenameFile(
+          oldFilename, baseDirectoryName + "/" + newFilename, options));
+      Files::Shares::ShareLeaseClient renamedLeaseClient(newFileClient, oldLeaseId);
+      renamedLeaseClient.Release();
+    }
+  }
+
+  TEST_F(FileShareDirectoryClientTest, RenameSubdirectory)
+  {
+    const std::string testName(GetTestName());
+    const std::string baseDirectoryName = testName + "1";
+    auto rootDirectoryClient = m_shareClient->GetRootDirectoryClient();
+    auto baseDirectoryClient
+        = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(baseDirectoryName);
+    baseDirectoryClient.Create();
+    // base test
+    {
+      const std::string oldSubdirectoryName = testName + "2";
+      auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+      oldSubdirectoryClient.GetFileClient(testName + "File1").Create(512);
+      const std::string newSubdirectoryName = testName + "3";
+      auto newSubdirectoryClient
+          = baseDirectoryClient
+                .RenameSubdirectory(
+                    oldSubdirectoryName, baseDirectoryName + "/" + newSubdirectoryName)
+                .Value;
+      EXPECT_NO_THROW(newSubdirectoryClient.GetProperties());
+      EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
+    }
+
+    // overwrite
+    {
+      const std::string oldSubdirectoryName = testName + "4";
+      auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+      const std::string existFilename = testName + "5";
+      auto existFileClient = baseDirectoryClient.GetFileClient(existFilename);
+      existFileClient.Create(512);
+      EXPECT_THROW(
+          baseDirectoryClient.RenameSubdirectory(
+              oldSubdirectoryName, baseDirectoryName + "/" + existFilename),
+          StorageException);
+
+      Files::Shares::RenameDirectoryOptions options;
+      options.ReplaceIfExists = true;
+      EXPECT_NO_THROW(baseDirectoryClient.RenameSubdirectory(
+          oldSubdirectoryName, baseDirectoryName + "/" + existFilename, options));
+      EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
+    }
+    // overwrite readOnly
+    {
+      const std::string oldSubdirectoryName = testName + "6";
+      auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+      const std::string existFilename = testName + "7";
+      Files::Shares::CreateFileOptions createOptions;
+      Files::Shares::Models::FileSmbProperties properties;
+      properties.Attributes = Files::Shares::Models::FileAttributes::ReadOnly;
+      createOptions.SmbProperties = properties;
+      auto existFileClient = baseDirectoryClient.GetFileClient(existFilename);
+      existFileClient.Create(512, createOptions);
+      Files::Shares::RenameDirectoryOptions renameOptions;
+      renameOptions.ReplaceIfExists = true;
+      EXPECT_THROW(
+          baseDirectoryClient.RenameSubdirectory(
+              oldSubdirectoryName, baseDirectoryName + "/" + existFilename, renameOptions),
+          StorageException);
+
+      renameOptions.IgnoreReadOnly = true;
+      EXPECT_NO_THROW(baseDirectoryClient.RenameSubdirectory(
+          oldSubdirectoryName, baseDirectoryName + "/" + existFilename, renameOptions));
+      EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
+    }
+    // with options
+    {
+      std::string permission
+          = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
+            "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
+            "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
+
+      const std::string oldSubdirectoryName = testName + "8";
+      auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+      const std::string newSubdirectoryName = testName + "9";
+      Files::Shares::RenameDirectoryOptions renameOptions;
+      renameOptions.Metadata = GetMetadata();
+      renameOptions.FilePermission = permission;
+      Files::Shares::Models::FileSmbProperties properties;
+      properties.ChangedOn = std::chrono::system_clock::now();
+      properties.CreatedOn = std::chrono::system_clock::now();
+      properties.LastWrittenOn = std::chrono::system_clock::now();
+      renameOptions.SmbProperties = properties;
+      auto newSubdirectoryClient = baseDirectoryClient
+                                       .RenameSubdirectory(
+                                           oldSubdirectoryName,
+                                           baseDirectoryName + "/" + newSubdirectoryName,
+                                           renameOptions)
+                                       .Value;
+      Files::Shares::Models::DirectoryProperties newProperties;
+      EXPECT_NO_THROW(newProperties = newSubdirectoryClient.GetProperties().Value);
+      EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
+      EXPECT_EQ(renameOptions.Metadata, newProperties.Metadata);
+    }
+
+    // diff directory
+    {
+      const std::string oldMiddleDirectoryName = testName + "10";
+      auto oldMiddleDirectoryClient
+          = baseDirectoryClient.GetSubdirectoryClient(oldMiddleDirectoryName);
+      oldMiddleDirectoryClient.Create();
+      const std::string oldSubdirectoryName = testName + "11";
+      auto oldSubdirectoryClient
+          = oldMiddleDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+
+      const std::string otherDirectoryName = testName + "12";
+      auto otherDirectoryClient = rootDirectoryClient.GetSubdirectoryClient(otherDirectoryName);
+      otherDirectoryClient.Create();
+      const std::string newSubdirectoryName = testName + "13";
+      auto newSubdirectoryClient = baseDirectoryClient
+                                       .RenameSubdirectory(
+                                           oldMiddleDirectoryName + "/" + oldSubdirectoryName,
+                                           otherDirectoryName + "/" + newSubdirectoryName)
+                                       .Value;
+      EXPECT_NO_THROW(newSubdirectoryClient.GetProperties());
+      EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
+    }
+    // root directory
+    {
+      const std::string oldSubdirectoryName = testName + "14";
+      auto oldSubdirectoryClient = baseDirectoryClient.GetSubdirectoryClient(oldSubdirectoryName);
+      oldSubdirectoryClient.Create();
+      oldSubdirectoryClient.GetFileClient(testName + "File1").Create(512);
+      const std::string newSubdirectoryName = testName + "15";
+      auto newSubdirectoryClient
+          = baseDirectoryClient.RenameSubdirectory(oldSubdirectoryName, newSubdirectoryName).Value;
+      EXPECT_NO_THROW(newSubdirectoryClient.GetProperties());
+      EXPECT_THROW(oldSubdirectoryClient.GetProperties(), StorageException);
+    }
+  }
+
   TEST_F(FileShareDirectoryClientTest, DirectoryMetadata)
   {
     auto metadata1 = GetMetadata();
@@ -250,6 +548,7 @@ namespace Azure { namespace Storage { namespace Test {
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreatedOn = std::chrono::system_clock::now();
     properties.LastWrittenOn = std::chrono::system_clock::now();
+    properties.ChangedOn = std::chrono::system_clock::now();
     properties.PermissionKey
         = m_fileShareDirectoryClient->GetProperties().Value.SmbProperties.PermissionKey;
     {
@@ -274,6 +573,9 @@ namespace Azure { namespace Storage { namespace Test {
           directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
           directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
       EXPECT_EQ(
+          directoryProperties2.Value.SmbProperties.ChangedOn.Value(),
+          directoryProperties1.Value.SmbProperties.ChangedOn.Value());
+      EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
     }
@@ -297,6 +599,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.LastWrittenOn.Value(),
           directoryProperties1.Value.SmbProperties.LastWrittenOn.Value());
+      EXPECT_EQ(
+          directoryProperties2.Value.SmbProperties.ChangedOn.Value(),
+          directoryProperties1.Value.SmbProperties.ChangedOn.Value());
       EXPECT_EQ(
           directoryProperties2.Value.SmbProperties.Attributes,
           directoryProperties1.Value.SmbProperties.Attributes);
@@ -439,6 +744,79 @@ namespace Azure { namespace Storage { namespace Test {
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
       auto response = directoryNameAClient.ListFilesAndDirectories(options);
       EXPECT_LE(2U, response.Directories.size() + response.Files.size());
+    }
+    {
+      // List with include option
+      Files::Shares::ListFilesAndDirectoriesOptions options;
+      options.Include = Files::Shares::Models::ListFilesIncludeFlags::Timestamps
+          | Files::Shares::Models::ListFilesIncludeFlags::ETag
+          | Files::Shares::Models::ListFilesIncludeFlags::Attributes
+          | Files::Shares::Models::ListFilesIncludeFlags::PermissionKey;
+      options.IncludeExtendedInfo = true;
+      auto directoryNameAClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryNameA);
+      auto response = directoryNameAClient.ListFilesAndDirectories(options);
+      auto directories = response.Directories;
+      auto files = response.Files;
+      for (const auto& name : directoryNameSetA)
+      {
+        auto iter = std::find_if(
+            directories.begin(),
+            directories.end(),
+            [&name](const Files::Shares::Models::DirectoryItem& item) {
+              return item.Name == name;
+            });
+        auto directoryProperties = directoryNameAClient.GetSubdirectoryClient(name).GetProperties();
+        EXPECT_TRUE(iter->Details.Etag.HasValue());
+        EXPECT_TRUE(iter->Details.LastAccessedOn.HasValue());
+        EXPECT_EQ(iter->Details.LastModified, directoryProperties.Value.LastModified);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.Attributes,
+            directoryProperties.Value.SmbProperties.Attributes);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.FileId, directoryProperties.Value.SmbProperties.FileId);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.ChangedOn.Value(),
+            directoryProperties.Value.SmbProperties.ChangedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.CreatedOn.Value(),
+            directoryProperties.Value.SmbProperties.CreatedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.LastWrittenOn.Value(),
+            directoryProperties.Value.SmbProperties.LastWrittenOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.PermissionKey.Value(),
+            directoryProperties.Value.SmbProperties.PermissionKey.Value());
+      }
+      for (const auto& name : fileNameSetA)
+      {
+        auto iter = std::find_if(
+            files.begin(), files.end(), [&name](const Files::Shares::Models::FileItem& item) {
+              return item.Name == name;
+            });
+        auto fileProperties = directoryNameAClient.GetFileClient(name).GetProperties();
+        EXPECT_TRUE(iter->Details.Etag.HasValue());
+        EXPECT_TRUE(iter->Details.LastAccessedOn.HasValue());
+        EXPECT_EQ(iter->Details.LastModified, fileProperties.Value.LastModified);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.Attributes, fileProperties.Value.SmbProperties.Attributes);
+        EXPECT_EQ(iter->Details.SmbProperties.FileId, fileProperties.Value.SmbProperties.FileId);
+        EXPECT_EQ(
+            iter->Details.SmbProperties.ChangedOn.Value(),
+            fileProperties.Value.SmbProperties.ChangedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.CreatedOn.Value(),
+            fileProperties.Value.SmbProperties.CreatedOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.LastWrittenOn.Value(),
+            fileProperties.Value.SmbProperties.LastWrittenOn.Value());
+        EXPECT_EQ(
+            iter->Details.SmbProperties.PermissionKey.Value(),
+            fileProperties.Value.SmbProperties.PermissionKey.Value());
+        EXPECT_EQ(1024, iter->Details.FileSize);
+      }
+      EXPECT_EQ(
+          response.DirectoryId, directoryNameAClient.GetProperties().Value.SmbProperties.FileId);
     }
   }
 

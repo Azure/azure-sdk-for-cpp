@@ -70,6 +70,10 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeyS
       jwk.CurveName, destJson, _detail::CurveNamePropertyName, [](KeyCurveName const& value) {
         return value.ToString();
       });
+  if (jwk.Id.length() > 0)
+  {
+    destJson[_detail::KeyIdPropertyName] = jwk.Id;
+  }
 
   // fields
   WriteJsonIfVectorHasData(jwk.N, destJson, _detail::NPropertyName);

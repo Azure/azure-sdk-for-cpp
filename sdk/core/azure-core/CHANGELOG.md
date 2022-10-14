@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.0-beta.2 (Unreleased)
+## 1.8.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,50 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.0-beta.1 (2022-10-06)
+
+### Features Added
+
+- Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.
+- Added universal support for several TLS options:
+  - Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).
+  - Added the ability to enable TLS certificate revocation list checks (off by default).
+    - For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.
+    - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
+
+### Breaking Changes
+
+- Updated retry policy timeouts to conform to Azure guidelines.
+  - The default delay between retries is changed from 4 seconds to 800ms.
+  - The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).
+
+  If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in the `RetryOptions` structure.
+
+## 1.7.2 (2022-09-01)
+
+### Bugs Fixed
+
+- WinHTTP Transport Adapter: Fixed missing reason phrase handling for HTTP/2 responses.
+
+## 1.7.1 (2022-08-04)
+
+### Bugs Fixed
+
+- [[#3794]](https://github.com/Azure/azure-sdk-for-cpp/issues/3794) Fix memory leak in `CurlTransport`.
+- [[#3692]](https://github.com/Azure/azure-sdk-for-cpp/issues/3692) Interrupted poll calls cause spurious HTTP request failures. (A community contribution, courtesy of _[johnwheffner](https://github.com/johnwheffner)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- John Heffner _([GitHub](https://github.com/johnwheffner))_
+
+## 1.7.0 (2022-06-30)
+
+### Features Added
+
+- Added prototypes and initial service support for Distributed Tracing.
 
 ## 1.7.0-beta.1 (2022-06-02)
 

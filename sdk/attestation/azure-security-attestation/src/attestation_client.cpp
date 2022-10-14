@@ -31,21 +31,19 @@ AttestationClient::AttestationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options)
-    : m_endpoint(endpoint), m_credentials(credential),
+    : m_endpoint(endpoint), m_apiVersion(options.ApiVersion),
       m_tokenValidationOptions(options.TokenValidationOptions),
       m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
   {
-    m_credentials = credential;
     Azure::Core::Credentials::TokenRequestContext const tokenContext
         = {{"https://attest.azure.net/.default"}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
-  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
@@ -198,13 +196,14 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
 }
 
 Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
-    AttestTpmOptions const& attestTpmOptions,
+    std::vector<uint8_t> const& dataToAttest,
+    AttestTpmOptions const&,
     Azure::Core::Context const& context) const
 {
   auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));
   try
   {
-    std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
+    std::string jsonToSend = TpmDataSerializer::Serialize(dataToAttest);
     auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
     Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 
@@ -214,7 +213,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     // Send the request to the service.
     auto response
         = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
-    std::string returnedBody(TpmDataSerializer::Deserialize(response));
+    std::vector<uint8_t> returnedBody{TpmDataSerializer::Deserialize(response)};
     return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
   }
   catch (std::runtime_error const& ex)

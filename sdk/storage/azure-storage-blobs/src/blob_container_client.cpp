@@ -14,12 +14,94 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 #include "azure/storage/blobs/append_blob_client.hpp"
+#include "azure/storage/blobs/blob_batch.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 
 #include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+  namespace {
+    Models::BlobItem BlobItemConversion(Models::_detail::BlobItem& item)
+    {
+      Models::BlobItem blobItem;
+      if (item.Name.Encoded)
+      {
+        blobItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        blobItem.Name = std::move(item.Name.Content);
+      }
+      blobItem.IsDeleted = item.IsDeleted;
+      blobItem.Snapshot = std::move(item.Snapshot);
+      blobItem.VersionId = std::move(item.VersionId);
+      blobItem.IsCurrentVersion = item.IsCurrentVersion;
+      blobItem.Details = std::move(item.Details);
+      blobItem.HasVersionsOnly = item.HasVersionsOnly;
+      blobItem.BlobSize = item.BlobSize;
+      blobItem.BlobType = std::move(item.BlobType);
+      if (blobItem.Details.AccessTier.HasValue()
+          && !blobItem.Details.IsAccessTierInferred.HasValue())
+      {
+        blobItem.Details.IsAccessTierInferred = false;
+      }
+      if (blobItem.VersionId.HasValue())
+      {
+        if (!blobItem.HasVersionsOnly.HasValue())
+        {
+          blobItem.HasVersionsOnly = false;
+        }
+        if (!blobItem.IsCurrentVersion.HasValue())
+        {
+          blobItem.IsCurrentVersion = false;
+        }
+      }
+      if (blobItem.BlobType == Models::BlobType::AppendBlob
+          && !blobItem.Details.IsSealed.HasValue())
+      {
+        blobItem.Details.IsSealed = false;
+      }
+      if (blobItem.Details.CopyStatus.HasValue() && !blobItem.Details.IsIncrementalCopy.HasValue())
+      {
+        blobItem.Details.IsIncrementalCopy = false;
+      }
+      {
+        /*
+         * Object replication metadata is in the following format.
+         * <OrMetadata>
+         *   <or-{policy_id}_{rule_id}>replication status</>
+         *   <...>
+         * </OrMetadata>
+         *
+         * We'll convert the metadata to a vector of policies, each policy being a vector of rules.
+         */
+        std::map<std::string, std::vector<Models::ObjectReplicationRule>> orPropertiesMap;
+        for (auto& policy : blobItem.Details.ObjectReplicationSourceProperties)
+        {
+          for (auto& rule : policy.Rules)
+          {
+            auto underscorePos = rule.RuleId.find('_', 3);
+            std::string policyId
+                = std::string(rule.RuleId.begin() + 3, rule.RuleId.begin() + underscorePos);
+            std::string ruleId = rule.RuleId.substr(underscorePos + 1);
+            rule.RuleId = ruleId;
+            orPropertiesMap[policyId].emplace_back(std::move(rule));
+          }
+        }
+        blobItem.Details.ObjectReplicationSourceProperties.clear();
+        for (auto& property : orPropertiesMap)
+        {
+          Models::ObjectReplicationPolicy policy;
+          policy.PolicyId = property.first;
+          policy.Rules = std::move(property.second);
+          blobItem.Details.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
+        }
+      }
+      return blobItem;
+    }
+  } // namespace
 
   BlobContainerClient BlobContainerClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -48,8 +130,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       : BlobContainerClient(blobContainerUrl, options)
   {
     BlobClientOptions newOptions = options;
-    newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<_internal::SharedKeyPolicy>(credential));
+    auto sharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
+    newOptions.PerRetryPolicies.emplace_back(sharedKeyAuthPolicy->Clone());
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -58,6 +140,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+
+    m_batchRequestPipeline
+        = _detail::ConstructBatchRequestPolicy(perRetryPolicies, perOperationPolicies, newOptions);
+
+    m_batchSubrequestPipeline
+        = _detail::ConstructBatchSubrequestPolicy(nullptr, std::move(sharedKeyAuthPolicy), options);
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::BlobServicePackageName,
@@ -77,15 +166,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
         m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> tokenAuthPolicy;
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
-      perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
+      tokenAuthPolicy = std::make_unique<
+          Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
+          credential, tokenContext);
+      perRetryPolicies.emplace_back(tokenAuthPolicy->Clone());
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+
+    m_batchRequestPipeline
+        = _detail::ConstructBatchRequestPolicy(perRetryPolicies, perOperationPolicies, options);
+
+    m_batchSubrequestPipeline
+        = _detail::ConstructBatchSubrequestPolicy(std::move(tokenAuthPolicy), nullptr, options);
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::BlobServicePackageName,
@@ -107,6 +205,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+
+    m_batchRequestPipeline
+        = _detail::ConstructBatchRequestPolicy(perRetryPolicies, perOperationPolicies, options);
+
+    m_batchSubrequestPipeline = _detail::ConstructBatchSubrequestPolicy(nullptr, nullptr, options);
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::BlobServicePackageName,
@@ -248,61 +352,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl,
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
-    for (auto& i : response.Value.Items)
-    {
-      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
-      {
-        i.Details.IsAccessTierInferred = false;
-      }
-      if (i.VersionId.HasValue())
-      {
-        if (!i.HasVersionsOnly.HasValue())
-        {
-          i.HasVersionsOnly = false;
-        }
-        if (!i.IsCurrentVersion.HasValue())
-        {
-          i.IsCurrentVersion = false;
-        }
-      }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed.HasValue())
-      {
-        i.Details.IsSealed = false;
-      }
-      if (i.Details.CopyStatus.HasValue() && !i.Details.IsIncrementalCopy.HasValue())
-      {
-        i.Details.IsIncrementalCopy = false;
-      }
-      {
-        std::map<std::string, std::vector<Models::ObjectReplicationRule>> orPropertiesMap;
-        for (auto& policy : i.Details.ObjectReplicationSourceProperties)
-        {
-          for (auto& rule : policy.Rules)
-          {
-            auto underscorePos = rule.RuleId.find('_', 3);
-            std::string policyId
-                = std::string(rule.RuleId.begin() + 3, rule.RuleId.begin() + underscorePos);
-            std::string ruleId = rule.RuleId.substr(underscorePos + 1);
-            rule.RuleId = ruleId;
-            orPropertiesMap[policyId].emplace_back(std::move(rule));
-          }
-        }
-        i.Details.ObjectReplicationSourceProperties.clear();
-        for (auto& property : orPropertiesMap)
-        {
-          Models::ObjectReplicationPolicy policy;
-          policy.PolicyId = property.first;
-          policy.Rules = std::move(property.second);
-          i.Details.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
-        }
-      }
-    }
 
     ListBlobsPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Blobs = std::move(response.Value.Items);
+    for (auto& i : response.Value.Items)
+    {
+      pagedResponse.Blobs.push_back(BlobItemConversion(i));
+    }
     pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
@@ -328,55 +386,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl,
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
-    for (auto& i : response.Value.Items)
-    {
-      if (i.Details.AccessTier.HasValue() && !i.Details.IsAccessTierInferred.HasValue())
-      {
-        i.Details.IsAccessTierInferred = false;
-      }
-      if (i.VersionId.HasValue())
-      {
-        if (!i.HasVersionsOnly.HasValue())
-        {
-          i.HasVersionsOnly = false;
-        }
-        if (!i.IsCurrentVersion.HasValue())
-        {
-          i.IsCurrentVersion = false;
-        }
-      }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed.HasValue())
-      {
-        i.Details.IsSealed = false;
-      }
-      if (i.Details.CopyStatus.HasValue() && !i.Details.IsIncrementalCopy.HasValue())
-      {
-        i.Details.IsIncrementalCopy = false;
-      }
-      {
-        std::map<std::string, std::vector<Models::ObjectReplicationRule>> orPropertiesMap;
-        for (auto& policy : i.Details.ObjectReplicationSourceProperties)
-        {
-          for (auto& rule : policy.Rules)
-          {
-            auto underscorePos = rule.RuleId.find('_', 3);
-            std::string policyId
-                = std::string(rule.RuleId.begin() + 3, rule.RuleId.begin() + underscorePos);
-            std::string ruleId = rule.RuleId.substr(underscorePos + 1);
-            rule.RuleId = ruleId;
-            orPropertiesMap[policyId].emplace_back(std::move(rule));
-          }
-        }
-        i.Details.ObjectReplicationSourceProperties.clear();
-        for (auto& property : orPropertiesMap)
-        {
-          Models::ObjectReplicationPolicy policy;
-          policy.PolicyId = property.first;
-          policy.Rules = std::move(property.second);
-          i.Details.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
-        }
-      }
-    }
 
     ListBlobsByHierarchyPagedResponse pagedResponse;
 
@@ -384,8 +393,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
     pagedResponse.Delimiter = std::move(response.Value.Delimiter);
-    pagedResponse.Blobs = std::move(response.Value.Items);
-    pagedResponse.BlobPrefixes = std::move(response.Value.BlobPrefixes);
+    for (auto& i : response.Value.Items)
+    {
+      pagedResponse.Blobs.push_back(BlobItemConversion(i));
+    }
+    for (auto& i : response.Value.BlobPrefixes)
+    {
+      if (i.Encoded)
+      {
+        pagedResponse.BlobPrefixes.push_back(Core::Url::Decode(i.Content));
+      }
+      else
+      {
+        pagedResponse.BlobPrefixes.push_back(std::move(i.Content));
+      }
+    }
     pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_delimiter = delimiter;
@@ -444,4 +466,52 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blockBlobClient), std::move(response.RawResponse));
   }
 
+  FindBlobsByTagsPagedResponse BlobContainerClient::FindBlobsByTags(
+      const std::string& tagFilterSqlExpression,
+      const FindBlobsByTagsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobContainerClient::FindBlobContainerBlobsByTagsOptions protocolLayerOptions;
+    protocolLayerOptions.Where = tagFilterSqlExpression;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    auto response = _detail::BlobContainerClient::FindBlobsByTags(
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+
+    FindBlobsByTagsPagedResponse pagedResponse;
+    pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
+    pagedResponse.TaggedBlobs = std::move(response.Value.Items);
+    pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_tagFilterSqlExpression = tagFilterSqlExpression;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+
+    return pagedResponse;
+  }
+
+  BlobContainerBatch BlobContainerClient::CreateBatch() const { return BlobContainerBatch(*this); }
+
+  Response<Models::SubmitBlobBatchResult> BlobContainerClient::SubmitBatch(
+      const BlobContainerBatch& batch,
+      const SubmitBlobBatchOptions& options,
+      const Core::Context& context) const
+  {
+    (void)options;
+
+    _detail::BlobContainerClient::SubmitBlobContainerBatchOptions protocolLayerOptions;
+    _detail::StringBodyStream bodyStream(std::string{});
+    auto response = _detail::BlobContainerClient::SubmitBatch(
+        *m_batchRequestPipeline,
+        m_blobContainerUrl,
+        bodyStream,
+        protocolLayerOptions,
+        context.WithValue(_detail::s_containerBatchKey, &batch));
+    return Azure::Response<Models::SubmitBlobBatchResult>(
+        Models::SubmitBlobBatchResult(), std::move(response.RawResponse));
+  }
 }}} // namespace Azure::Storage::Blobs

@@ -27,7 +27,9 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 
   {
     auto response = client.StartDeleteCertificate(certificateName);
+    // double polling should not have an impact on the result
     auto result = response.PollUntilDone(m_defaultWait);
+    result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
@@ -64,8 +66,9 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
 
     auto fromToken
         = CreateCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
-
+    // double polling should not have an impact on the result
     auto result = fromToken.PollUntilDone(m_defaultWait);
+    result = fromToken.PollUntilDone(m_defaultWait);
 
     auto cert = client.GetCertificate(certificateName);
     EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
@@ -192,7 +195,9 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
   }
   {
     auto response = client.StartRecoverDeletedCertificate(certificateName);
+    // double polling should not have an impact on the result
     auto result = response.PollUntilDone(m_defaultWait);
+    result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
   }
   {
@@ -887,4 +892,14 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
       }
     }
   }
+}
+
+TEST_F(KeyVaultCertificateClientTest, ServiceVersion)
+{
+  auto credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
+  // 7.3
+  EXPECT_NO_THROW(auto options = CertificateClientOptions(); CertificateClient certificateClient(
+                      "http://account.vault.azure.net", credential, options);
+                  EXPECT_EQ(options.ApiVersion, "7.3"););
 }

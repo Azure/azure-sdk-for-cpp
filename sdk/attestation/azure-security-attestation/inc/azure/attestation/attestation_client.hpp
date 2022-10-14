@@ -223,32 +223,25 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
-     * @brief Perform a single leg
-     *
-     * Processes attestation evidence from a VBS enclave, producing an attestation result.
-     *
+     * @brief Sends TPM-based attestation data to the service.
      * The TPM attestation protocol is defined
      * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      *
-     * Unlike OpenEnclave reports and SGX enclave quotes, TPM attestation is implemented using
-     * JSON encoded strings.
      *
-     * The client formats a string serialized JSON request to the
-     * service, which responds with a JSON response. The serialized JSON object exchange continues
-     * until the service responds with a JSON string with a property named {@code "report"}, whose
-     * value will be an attestation result token.
+     * @param dataToAttest - Attestation request data.
+     * @param options - Options to the attestation request.
+     * @param context - Context for the operation.
      *
-     * @param options sent to the service for Trusted Platform Module (TPM) attestation.
-     * @return attestation response for Trusted Platform Module (TPM) attestation.
+     * @return Response<TpmAttestationResult> - The result of the attestation operation
      */
     Response<Models::TpmAttestationResult> AttestTpm(
-        AttestTpmOptions const& options,
+        std::vector<uint8_t> const& dataToAttest,
+        AttestTpmOptions const& options = AttestTpmOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
     std::vector<Models::AttestationSigner> m_attestationSigners;

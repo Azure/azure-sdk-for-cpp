@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Jinming-Hu/azure-storage-api-specs/main/Microsoft.FileStorage/preview/2020-02-10/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-06-08/file.json
 ```
 
 ## ModelFour Options
@@ -79,13 +79,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-02-10"],
+        "enum": ["2021-06-08"],
         "description": "The version used for the operations to Azure storage services."
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2020-02-10";
+      $.ApiVersionParameter.enum[0] = "2021-06-08";
 ```
 
 ### Rename Operations
@@ -159,6 +159,8 @@ directive:
         "File_StartCopy",
         "Directory_ForceCloseHandles",
         "File_ForceCloseHandles",
+        "Directory_Rename",
+        "File_Rename",
       ];
       for (const url in $["x-ms-paths"]) {
         for (const verb in $["x-ms-paths"][url]) {
@@ -205,6 +207,7 @@ directive:
     where: $.parameters
     transform: >
       $.ListSharesInclude.items["x-ms-enum"].name = "ListSharesIncludeFlags";
+      $.ListFilesInclude.items["x-ms-enum"].name = "ListFilesIncludeFlags";
       $.AccessTierOptional.enum.push("Premium");
       $.AccessTierOptional["x-ms-enum"].name = "AccessTier";
       $.AccessTierOptional["x-ms-enum"].modelAsString = false;
@@ -214,6 +217,11 @@ directive:
       $.MaxResults["x-ms-client-name"] = "MaxResults";
       delete $.FileCreationTime.format;
       delete $.FileLastWriteTime.format;
+      $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
+      $.ShareEnabledProtocols["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
+      $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
+      delete $.FileChangeTime.format;
+      $.FileLastWriteTimeMode["x-ms-enum"]["values"] = [{"value": "now", "name": "Now"},{"value": "preserve", "name": "Preserve"}];
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -296,6 +304,9 @@ directive:
         "description": "Standard HTTP properties supported files."
       };
       $.SharePermission["x-namespace"] = "_detail";
+      $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
+      $.ShareEnabledProtocols["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
+      $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
@@ -388,16 +399,18 @@ directive:
     where: $.definitions
     transform: >
       $.ListSharesResponse.properties["ShareItems"]["x-ms-xml"] = {"name": "Shares"};
-      $.ShareItemDetails = $.ShareProperties;
-      delete $.ShareProperties;
+      $.ShareItemDetails = $.SharePropertiesInternal;
+      delete $.SharePropertiesInternal;
       $.ShareItemDetails.properties["Quota"]["format"] = "int64";
       $.ShareItemDetails.properties["AccessTierChangeTime"]["x-ms-client-name"] = "AccessTierChangedOn";
       $.ShareItemDetails.properties["AccessTier"] = {"$ref": "#/definitions/AccessTier"};
       $.ShareItemDetails.properties["DeletedTime"]["x-ms-client-name"] = "DeletedOn";
       $.ShareItemDetails.required.push("RemainingRetentionDays", "LeaseStatus", "LeaseState", "LeaseDuration");
-      $.ShareItem.properties["Details"] = {"$ref": "#/definitions/ShareItemDetails", "x-ms-xml": {"name": "Properties"}};
-      delete $.ShareItem.properties["Properties"];
-      delete $.ShareItem.required;
+      $.ShareItemInternal.properties["Details"] = {"$ref": "#/definitions/ShareItemDetails", "x-ms-xml": {"name": "Properties"}};
+      $.ShareItemInternal["x-ms-client-name"] = "ShareItem";
+      $.ShareItemDetails.properties["ProvisionedBandwidthMiBps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
+      delete $.ShareItemInternal.properties["Properties"];
+      delete $.ShareItemInternal.required;
 ```
 
 ### CreateShare
@@ -441,6 +454,13 @@ directive:
       $["x-ms-access-tier-transition-state"]["x-nullable"] = true;
       $["x-ms-access-tier-transition-state"].description = "Returns the transition state between access tiers, when present.";
       $["x-ms-share-provisioned-iops"].description = "Returns the current share provisioned IOPS.";
+      $["x-ms-share-provisioned-bandwidth-mibps"]["x-nullable"] = true;
+      $["x-ms-share-provisioned-bandwidth-mibps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
+      $["x-ms-enabled-protocols"]["x-nullable"] = true;
+      $["x-ms-root-squash"]["x-nullable"] = true;
+      $["x-ms-enabled-protocols"]["enum"] = ["Smb", "Nfs"];
+      $["x-ms-enabled-protocols"]["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
+      $["x-ms-enabled-protocols"]["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
@@ -503,18 +523,48 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $.parameters
+    transform: >
+      $.ListFilesInclude["items"]["x-ms-enum"]["values"] = [{"name": "Timestamps", "value": "Timestamps"}, {"name": "ETag", "value": "Etag"}, {"name": "Attributes", "value": "Attributes"}, {"name": "PermissionKey", "value": "PermissionKey"},];
+  - from: swagger-document
     where: $.definitions
     transform: >
       $.ListFilesAndDirectoriesSegmentResponse.properties["Segment"]["x-ms-xml"] = {"name": "Entries"};
       $.FileItemDetails = $.FileProperty;
       $.FileItemDetails.properties["Content-Length"]["x-ms-client-name"] = "FileSize";
+      $.FileItemDetails.properties["SmbProperties"] = {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": "."}};
+      $.FileItemDetails.properties["LastAccessTime"]["x-ms-client-name"] = "LastAccessedOn";
+      $.FileItemDetails.properties["LastAccessTime"]["x-nullable"] = true;
+      $.FileSmbProperties.properties["PermissionKey"]["x-ms-xml"] = {"name": "../PermissionKey"};
+      $.FileSmbProperties.properties["Attributes"]["x-ms-xml"] = {"name": "../Attributes"};
+      $.FileSmbProperties.properties["CreatedOn"]["x-ms-xml"] = {"name": "CreationTime"};
+      $.FileSmbProperties.properties["LastWrittenOn"]["x-ms-xml"] = {"name": "LastWriteTime"};
+      $.FileSmbProperties.properties["ChangedOn"]["x-ms-xml"] = {"name": "ChangeTime"};
+      $.FileSmbProperties.properties["FileId"]["x-ms-xml"] = {"name": "../FileId"};
+      $.FileSmbProperties.properties["ParentFileId"]["x-ms-xml"] = {"name": ""};
+      delete $.FileItemDetails.properties["CreationTime"];
+      delete $.FileItemDetails.properties["LastWriteTime"];
+      delete $.FileItemDetails.properties["ChangeTime"];
+      delete $.FileItemDetails.required;
       delete $.FileProperty;
-      $.FileItem.properties["Details"] = {"$ref": "#/definitions/FileItemDetails"};
       delete $.FileItem.properties["Properties"];
+      delete $.FileItem.properties["FileId"];
+      delete $.FileItem.properties["Attributes"];
+      delete $.FileItem.properties["PermissionKey"];
       delete $.FileItem.required;
+      $.FileItem.properties["Details"] = {"$ref": "#/definitions/FileItemDetails", "x-ms-xml" : {"name": "Properties"}};
+      
+      delete $.DirectoryItem.properties["Properties"];
+      delete $.DirectoryItem.properties["FileId"];
+      delete $.DirectoryItem.properties["Attributes"];
+      delete $.DirectoryItem.properties["PermissionKey"];
+      delete $.DirectoryItem.required;
+      $.DirectoryItemDetails = JSON.parse(JSON.stringify($.FileItemDetails));
+      delete $.DirectoryItemDetails.properties["Content-Length"];
+      $.DirectoryItem.properties["Details"] = {"$ref": "#/definitions/DirectoryItemDetails", "x-ms-xml" : {"name": "Properties"}};
+      
       $.FilesAndDirectoriesListSegment.properties["DirectoryItems"]["x-ms-xml"] = {"name": "."};
       $.FilesAndDirectoriesListSegment.properties["FileItems"]["x-ms-xml"] = {"name": "."};
-      $.FileItem.properties["Details"]["x-ms-xml"] = {"name": "Properties"};
 ```
 
 ### ListHandles
@@ -862,6 +912,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-request-server-encrypted"]["x-ms-client-default"] = false;
       $["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      delete $["x-ms-file-last-write-time"];
 ```
 
 ### UploadFileRangeFromUri
@@ -876,6 +927,7 @@ directive:
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-request-server-encrypted"]["x-ms-client-default"] = false;
       $["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      delete $["x-ms-file-last-write-time"];
 ```
 
 ### GetFileRangeList
@@ -916,4 +968,32 @@ directive:
     where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=lease&break"].put.responses["202"].headers
     transform: >
       delete $["x-ms-lease-id"];
+```
+
+### BreakShareLease
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=lease&break"].put.responses["202"].headers
+    transform: >
+      delete $["x-ms-lease-id"];
+```
+
+### RenameFile/Directory
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=rename"].put.responses["200"].headers
+    transform: >
+      $["x-ms-file-creation-time"].format = "date-time";
+      $["x-ms-file-last-write-time"].format = "date-time";
+      $["x-ms-file-change-time"].format = "date-time";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory&comp=rename"].put.responses["200"].headers
+    transform: >
+      $["x-ms-file-creation-time"].format = "date-time";
+      $["x-ms-file-last-write-time"].format = "date-time";
+      $["x-ms-file-change-time"].format = "date-time";
 ```

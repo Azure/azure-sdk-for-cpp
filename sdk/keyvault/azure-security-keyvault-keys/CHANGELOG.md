@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0-beta.1 (Unreleased)
+## 4.4.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,23 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.3.0 (2022-10-11)
+
+### Features Added
+
+- Keyvault 7.3 support added for Keys. 
+
+## 4.3.0-beta.1 (2022-07-07)
+
+### Features Added
+
+- Keyvault 7.3 support added for Keys. 
+
+### Breaking Changes
+
+- Removed ServiceVersion type, replaced with ApiVersion field in the KeyClientOptions type.
+
 
 ## 4.2.0 (2021-10-05)
 

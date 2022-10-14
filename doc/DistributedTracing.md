@@ -1,6 +1,4 @@
----
-# cspell:words openetelemetry
----
+<!-- cspell:words openetelemetry -->
 # Distributed Tracing in the C++ SDK
 
 Azure has adopted [W3C Distributed Tracing](https://www.w3.org/TR/trace-context/) as a paradigm for correlating
@@ -85,7 +83,7 @@ functions as an abstract class integration between OpenTelemetry and Azure Core:
 
 ```c++
 std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
-      = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(CreateOpenTelemetryProvider());
+      = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(CreateOpenTelemetryProvider());
 ```
 
 To finish the integration with Azure clients, there are two mechanisms to integrate OpenTelemetry into a client application:
@@ -110,7 +108,7 @@ the service client.
 
 ```c++
 auto tracerProvider(CreateOpenTelemetryProvider());
-auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(tracerProvider));
+auto provider(Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
 ServiceClientOptions clientOptions;
 clientOptions.Telemetry.TracingProvider = provider;

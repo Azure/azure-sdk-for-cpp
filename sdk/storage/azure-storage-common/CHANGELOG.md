@@ -1,6 +1,6 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
+## 12.4.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,19 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.3.0 (2022-09-06)
+
+### Features Added
+
+- Features in `12.3.0-beta.1` are now generally available.
+
+## 12.3.0-beta.1 (2022-08-09)
+
+### Features Added
+
+- Added support for encryption scope SAS (`ses` query parameter in SAS token).
+- Added support for permanent delete permission in SAS.
 
 ## 12.2.4 (2022-06-07)
 

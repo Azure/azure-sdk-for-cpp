@@ -1,23 +1,23 @@
 {
-    "matrix": {
-        "CmakeEnvArg": "",
-        "OSConfig": {
-            "Linux": {
-                "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-                "OSVmImage": "MMSUbuntu18.04",
-                "AptDependencies": "libcurl4-openssl-dev",
-                "VCPKG_DEFAULT_TRIPLET": "x64-linux"
-            },
-            "Windows": {
-                "Pool": "azsdk-pool-mms-win-2019-general",
-                "OSVmImage": "MMS2019",
-                "VCPKG_DEFAULT_TRIPLET": "x64-windows"
-            },
-            "Mac": {
-                "Pool": "Azure Pipelines",
-                "OSVmImage": "macOS-10.15",
-                "VCPKG_DEFAULT_TRIPLET": "x64-osx"
-            }
-        }
+  "matrix": {
+    "CmakeEnvArg": "",
+    "OSConfig": {
+      "Linux": {
+        "Pool": "azsdk-pool-mms-ubuntu-1804-general",
+        "OSVmImage": "MMSUbuntu18.04",
+        "AptDependencies": "libcurl4-openssl-dev",
+        "VCPKG_DEFAULT_TRIPLET": "x64-linux"
+      },
+      "Windows": {
+        "Pool": "azsdk-pool-mms-win-2019-general",
+        "OSVmImage": "MMS2019",
+        "VCPKG_DEFAULT_TRIPLET": "x64-windows"
+      },
+      "Mac": {
+        "Pool": "Azure Pipelines",
+        "OSVmImage": "macos-11",
+        "VCPKG_DEFAULT_TRIPLET": "x64-osx"
+      }
     }
+  }
 }

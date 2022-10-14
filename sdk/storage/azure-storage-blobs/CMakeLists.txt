@@ -32,15 +32,16 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.4" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.3.0" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.4" REQUIRED)
+    find_package(azure-storage-common-cpp "12.3.0" REQUIRED)
   endif()
 endif()
 
 set(
   AZURE_STORAGE_BLOBS_HEADER
     inc/azure/storage/blobs/append_blob_client.hpp
+    inc/azure/storage/blobs/blob_batch.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
     inc/azure/storage/blobs/blob_lease_client.hpp
@@ -49,6 +50,7 @@ set(
     inc/azure/storage/blobs/blob_sas_builder.hpp
     inc/azure/storage/blobs/blob_service_client.hpp
     inc/azure/storage/blobs/block_blob_client.hpp
+    inc/azure/storage/blobs/deferred_response.hpp
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
@@ -61,6 +63,7 @@ set(
 set(
   AZURE_STORAGE_BLOBS_SOURCE
     src/append_blob_client.cpp
+    src/blob_batch.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_lease_client.cpp

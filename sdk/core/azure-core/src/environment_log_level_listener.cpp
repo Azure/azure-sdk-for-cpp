@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <thread>
 
 using Azure::Core::_internal::Environment;
 using namespace Azure::Core::Diagnostics;

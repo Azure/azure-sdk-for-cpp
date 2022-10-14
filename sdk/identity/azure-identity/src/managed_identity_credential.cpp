@@ -15,7 +15,8 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   using namespace Azure::Identity::_detail;
   static std::unique_ptr<ManagedIdentitySource> (*managedIdentitySourceCreate[])(
       std::string const& clientId, TokenCredentialOptions const& options)
-      = {AppServiceManagedIdentitySource::Create,
+      = {AppServiceV2019ManagedIdentitySource::Create,
+         AppServiceV2017ManagedIdentitySource::Create,
          CloudShellManagedIdentitySource::Create,
          AzureArcManagedIdentitySource::Create,
          ImdsManagedIdentitySource::Create};

@@ -59,9 +59,62 @@
       "inheritEnvironments": [ "msvc_x86" ],
       "variables": [
         {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
           "name": "VCPKG_TARGET_TRIPLET",
           "value": "x86-windows-static",
           "type": "STRING"
+        },
+        {
+          "name": "MSVC_USE_STATIC_CRT",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "name": "x86-Release-static_curl",
+      "generator": "Ninja",
+      "configurationType": "MinSizeRel",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "VCPKG_TARGET_TRIPLET",
+          "value": "x86-windows-static",
+          "type": "STRING"
+        },
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "DISABLE_PROXY_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_PERFORMANCE_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "RUN_LONG_UNIT_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_CURL",
+          "value": "True",
+          "type": "BOOL"
         },
         {
           "name": "MSVC_USE_STATIC_CRT",
@@ -227,6 +280,110 @@
         },
         {
           "name": "BUILD_PERFORMANCE_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "name": "x64-DebugWithPerfTest",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "VCPKG_TARGET_TRIPLET",
+          "value": "x64-windows-static",
+          "type": "STRING"
+        },
+        {
+          "name": "INSTALL_GTEST",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SAMPLES",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_PERFORMANCE_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_WINHTTP",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_CURL",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "MSVC_USE_STATIC_CRT",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "name": "x64-ReleaseWithPerfTest",
+      "generator": "Ninja",
+      "configurationType": "RelWithDebInfo",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "VCPKG_TARGET_TRIPLET",
+          "value": "x64-windows-static",
+          "type": "STRING"
+        },
+        {
+          "name": "INSTALL_GTEST",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SAMPLES",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_PERFORMANCE_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_WINHTTP",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_CURL",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "MSVC_USE_STATIC_CRT",
           "value": "True",
           "type": "BOOL"
         }

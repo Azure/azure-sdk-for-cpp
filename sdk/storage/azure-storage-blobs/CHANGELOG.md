@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.2 (Unreleased)
+## 12.7.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,55 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.6.2 (2022-10-11)
+
+### Other Changes
+
+- No public changes in this release.
+
+## 12.6.1 (2022-09-16)
+
+### Other changes
+
+- No public changes in this release.
+
+## 12.6.0 (2022-09-06)
+
+### Features Added
+
+- Features in `12.6.0.beta.1` are now generally available.
+
+### Bugs Fixed
+
+- Empty file or existing file won't be created/overwritten if the blob to be downloaded doesn't exist.
+
+## 12.6.0-beta.1 (2022-08-09)
+
+### Features Added
+
+- Bumped up API version to `2021-04-10`.
+- Added support for encryption scope SAS (`ses` query parameter in SAS token).
+- Added encryption scope support for `BlobClient::CopyFromUri()`.
+- Added support for filtering blobs on container level.
+- Added support for tags copy mode (replace or copy from source) when copying blobs from URL.
+- Added support for permanent delete permission in SAS.
+
+### Bugs Fixed
+
+- Fixed listing blobs failure when blob name contains invalid characters in xml.
+
+## 12.5.0 (2022-08-08)
+
+### Features Added
+
+- Features in `12.5.0.beta1` and `12.5.0.beta2` are now generally available.
+
+## 12.5.0-beta.2 (2022-07-07)
+
+### Features Added
+
+- Added support for Blob Batch.
 
 ## 12.5.0-beta.1 (2022-06-07)
 

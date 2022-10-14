@@ -163,6 +163,56 @@ namespace Azure { namespace Storage {
         std::string LeaseId;
       };
 
+      /**
+       * @brief An Azure Storage blob.
+       */
+      struct BlobItem final
+      {
+        /**
+         * Blob name.
+         */
+        std::string Name;
+        /**
+         * Indicates whether this blob was deleted.
+         */
+        bool IsDeleted = bool();
+        /**
+         * A string value that uniquely identifies a blob snapshot.
+         */
+        std::string Snapshot;
+        /**
+         * A string value that uniquely identifies a blob version.
+         */
+        Nullable<std::string> VersionId;
+        /**
+         * Indicates if this is the current version of the blob.
+         */
+        Nullable<bool> IsCurrentVersion;
+        /**
+         * Properties of a blob.
+         */
+        BlobItemDetails Details;
+        /**
+         * Indicates that this root blob has been deleted, but it has versions that are active.
+         */
+        Nullable<bool> HasVersionsOnly;
+        /**
+         * Size in bytes.
+         */
+        int64_t BlobSize = int64_t();
+        /**
+         * Type of the blob.
+         */
+        Models::BlobType BlobType;
+      };
+
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobBatchClient::SubmitBatch.
+       */
+      struct SubmitBlobBatchResult final
+      {
+      };
+
     } // namespace Models
 
     /**
@@ -260,10 +310,12 @@ namespace Azure { namespace Storage {
       void OnNextPage(const Azure::Core::Context& context);
 
       std::shared_ptr<BlobServiceClient> m_blobServiceClient;
+      std::shared_ptr<BlobContainerClient> m_blobContainerClient;
       FindBlobsByTagsOptions m_operationOptions;
       std::string m_tagFilterSqlExpression;
 
       friend class BlobServiceClient;
+      friend class BlobContainerClient;
       friend class Azure::Core::PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 

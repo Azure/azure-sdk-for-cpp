@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                  ? jsonRoot["paths"]
                  : Core::Json::_internal::json::array())
         {
-          Models::PathItem vectorElement2;
+          Models::_detail::PathItem vectorElement2;
           vectorElement2.Name = var0["name"].get<std::string>();
           if (var0.count("isDirectory") != 0)
           {
@@ -110,6 +110,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           vectorElement2.Owner = var0["owner"].get<std::string>();
           vectorElement2.Group = var0["group"].get<std::string>();
           vectorElement2.Permissions = var0["permissions"].get<std::string>();
+          if (var0.count("EncryptionScope") != 0)
+          {
+            vectorElement2.EncryptionScope = var0["EncryptionScope"].get<std::string>();
+          }
+          if (var0.count("creationTime") != 0)
+          {
+            vectorElement2.CreatedOn = var0["creationTime"].get<std::string>();
+          }
+          if (var0.count("expiryTime") != 0)
+          {
+            vectorElement2.ExpiresOn = var0["expiryTime"].get<std::string>();
+          }
           if (var0.count("etag") != 0)
           {
             vectorElement2.ETag = var0["etag"].get<std::string>();
@@ -138,7 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Resource.HasValue() && !options.Resource.Value().ToString().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -238,6 +250,49 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "x-ms-source-if-unmodified-since",
             options.SourceIfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
+      if (options.Owner.HasValue() && !options.Owner.Value().empty())
+      {
+        request.SetHeader("x-ms-owner", options.Owner.Value());
+      }
+      if (options.Group.HasValue() && !options.Group.Value().empty())
+      {
+        request.SetHeader("x-ms-group", options.Group.Value());
+      }
+      if (options.Acl.HasValue() && !options.Acl.Value().empty())
+      {
+        request.SetHeader("x-ms-acl", options.Acl.Value());
+      }
+      if (options.ProposedLeaseId.HasValue() && !options.ProposedLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
+      }
+      if (options.LeaseDuration.HasValue())
+      {
+        request.SetHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.Value()));
+      }
+      if (options.ExpiryOptions.HasValue() && !options.ExpiryOptions.Value().empty())
+      {
+        request.SetHeader("x-ms-expiry-option", options.ExpiryOptions.Value());
+      }
+      if (options.ExpiresOn.HasValue() && !options.ExpiresOn.Value().empty())
+      {
+        request.SetHeader("x-ms-expiry-time", options.ExpiresOn.Value());
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -251,6 +306,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       if (pRawResponse->GetHeaders().count("Content-Length") != 0)
       {
         response.FileSize = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-request-server-encrypted") != 0)
+      {
+        response.IsServerEncrypted
+            = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
       }
       return Response<Models::CreatePathResult>(std::move(response), std::move(pRawResponse));
     }
@@ -269,7 +334,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       if (options.Recursive.HasValue())
       {
         request.GetUrl().AppendQueryParameter(
@@ -361,7 +426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -408,7 +473,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-acl", options.Acl.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -449,6 +514,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return Response<Models::_detail::SetAccessControlListRecursiveResult>(
           std::move(response), std::move(pRawResponse));
     }
+    Response<Models::_detail::UndeletePathResult> PathClient::Undelete(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const UndeletePathOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
+      request.GetUrl().AppendQueryParameter("comp", "undelete");
+      if (options.UndeleteSource.HasValue() && !options.UndeleteSource.Value().empty())
+      {
+        request.SetHeader("x-ms-undelete-source", options.UndeleteSource.Value());
+      }
+      request.SetHeader("x-ms-version", "2021-06-08");
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::UndeletePathResult response;
+      if (pRawResponse->GetHeaders().count("x-ms-resource-type") != 0)
+      {
+        response.ResourceType = pRawResponse->GetHeaders().at("x-ms-resource-type");
+      }
+      return Response<Models::_detail::UndeletePathResult>(
+          std::move(response), std::move(pRawResponse));
+    }
     Response<Models::_detail::GetPathAccessControlListResult> PathClient::GetAccessControlList(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
@@ -485,7 +577,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -572,7 +664,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -584,6 +691,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
       response.FileSize = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
+      response.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
+      }
       return Response<Models::FlushFileResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::AppendFileResult> FileClient::Append(
@@ -617,7 +731,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2020-02-10");
+      request.SetHeader("x-ms-version", "2021-06-08");
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
+      if (options.Flush.HasValue())
+      {
+        request.GetUrl().AppendQueryParameter("flush", options.Flush.Value() ? "true" : "false");
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -641,6 +774,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
+      }
       return Response<Models::AppendFileResult>(std::move(response), std::move(pRawResponse));
     }
   } // namespace _detail

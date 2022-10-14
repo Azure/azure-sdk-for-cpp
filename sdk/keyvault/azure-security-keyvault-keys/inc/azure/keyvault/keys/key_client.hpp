@@ -190,6 +190,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param options The #GetPropertiesOfKeysOptions object to for setting the operation
      * up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return KeyPropertiesPagedResponse
      */
     KeyPropertiesPagedResponse GetPropertiesOfKeys(
         GetPropertiesOfKeysOptions const& options = GetPropertiesOfKeysOptions(),
@@ -212,6 +213,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param options The #GetPropertiesOfKeyVersionsOptions object to for setting the
      * operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return KeyPropertiesPagedResponse
      */
     KeyPropertiesPagedResponse GetPropertiesOfKeyVersions(
         std::string const& name,
@@ -235,6 +237,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Security::KeyVault::Keys::DeleteKeyOperation StartDeleteKey(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Releases a key.
+     *
+     * @remark The release key operation is applicable to all key types. The target key must be
+     * marked exportable. This operation requires the keys/release permission.
+     *
+     * @param name The name of the key.
+     * @param options The options for the key release operation.
+     * @param context A cancellation token controlling the request lifetime.
+     * @return ReleaseKeyResult object.
+     */
+    Azure::Response<ReleaseKeyResult> ReleaseKey(
+        std::string const& name,
+        KeyReleaseOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -283,6 +301,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<PurgedKey>
      */
     Azure::Response<PurgedKey> PurgeDeletedKey(
         std::string const& name,
@@ -342,6 +361,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult>
      */
     Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult> BackupKey(
         std::string const& name,
@@ -364,6 +384,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param backup The backup blob associated with a key.
      * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyVaultKey>
      */
     Azure::Response<KeyVaultKey> RestoreKeyBackup(
         std::vector<uint8_t> const& backup,
@@ -398,9 +419,68 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param importKeyOptions The key import configuration object containing information about
      * the #JsonWebKey being imported.
      * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyVaultKey>
      */
     Azure::Response<KeyVaultKey> ImportKey(
         ImportKeyOptions const& importKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates a new key version, stores it, then returns key parameters, attributes and
+     * policy to the client.
+     *
+     * @remark The operation will rotate the key based on the key policy. It requires the
+     * keys/rotate permission.
+     *
+     * @param name The name of the key
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyVaultKey>
+     */
+    Azure::Response<KeyVaultKey> RotateKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Lists the policy for a key.
+     *
+     * @remark The GetKeyRotationPolicy operation returns the specified key policy resources in the
+     * specified key vault. This operation requires the keys/get permission.
+     *
+     * @param name The name of the key in a given key vault.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyRotationPolicy>
+     */
+    Azure::Response<KeyRotationPolicy> GetKeyRotationPolicy(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Updates the rotation policy for a key.
+     *
+     * @remark Set specified members in the key policy. Leave others as undefined. This operation
+     * requires the keys/update permission.
+     *
+     * @param name The name of the key in a given key vault.
+     * @param rotationPolicy The policy for the key.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyRotationPolicy>
+     */
+    Azure::Response<KeyRotationPolicy> UpdateKeyRotationPolicy(
+        std::string const& name,
+        KeyRotationPolicy const& rotationPolicy,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Get the requested number of bytes containing random values.
+     *
+     * @remark Get the requested number of bytes containing random values from a managed HSM.
+     *
+     * @param options The request object to get random bytes.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<GetRandomBytesResult>
+     */
+    Azure::Response<GetRandomBytesResult> GetRandomBytes(
+        GetRandomBytesOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

@@ -36,6 +36,10 @@ if(BUILD_TRANSPORT_CURL)
   message("Libcurl version ${CURL_VERSION_STRING}")
 endif()
 
+if(BUILD_TRANSPORT_WINHTTP)
+  find_package(wil CONFIG REQUIRED)
+endif()
+
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC
     src/http/curl/curl.cpp
@@ -48,8 +52,12 @@ if(BUILD_TRANSPORT_CURL)
   )
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
-  SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
-  SET(WIN_TRANSPORT_ADAPTER_INC inc/azure/core/http/win_http_transport.hpp)
+  SET(WIN_TRANSPORT_ADAPTER_SRC 
+    src/http/winhttp/win_http_transport.cpp
+  )
+ SET(WIN_TRANSPORT_ADAPTER_INC 
+    inc/azure/core/http/win_http_transport.hpp
+ )
 endif()
 
 set(
@@ -89,6 +97,7 @@ set(
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/internal/tracing/service_tracing.hpp
+    inc/azure/core/internal/tracing/tracing_impl.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
@@ -171,7 +180,7 @@ if(BUILD_TRANSPORT_CURL)
   target_link_libraries(azure-core PUBLIC CURL::libcurl)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
-  target_link_libraries(azure-core PRIVATE winhttp)
+  target_link_libraries(azure-core PRIVATE winhttp WIL::WIL)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
@@ -203,6 +212,10 @@ if(BUILD_TESTING)
     add_subdirectory(test/nlohmann-json-test)
   endif()
   add_subdirectory(test/fault-injector)
+  
+  if(BUILD_TRANSPORT_CURL)
+    add_subdirectory(test/libcurl-stress-test)
+  endif()
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)

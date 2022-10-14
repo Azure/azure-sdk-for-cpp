@@ -295,13 +295,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Url m_pathUrl;
     Blobs::BlobClient m_blobClient;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
 
     explicit DataLakePathClient(
         Azure::Core::Url pathUrl,
         Blobs::BlobClient blobClient,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
+        Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>())
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
-          m_pipeline(std::move(pipeline))
+          m_pipeline(std::move(pipeline)), m_customerProvidedKey(std::move(customerProvidedKey))
     {
     }
 

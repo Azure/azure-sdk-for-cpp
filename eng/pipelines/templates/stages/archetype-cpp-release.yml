@@ -108,7 +108,7 @@ stages:
                       - pwsh: |
                           $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
                           if ('$(VcpkgForkBranchName)') {
-                            Write-Host "Using queue time branch name" 
+                            Write-Host "Using queue time branch name"
                             $branchName = '$(VcpkgForkBranchName)'
                           } 
                           Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
@@ -144,6 +144,7 @@ stages:
                         parameters:
                           RepoOwner: Azure
                           RepoName: azure-sdk-vcpkg-betas
+                          SetVcpkgRoot: false
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
@@ -164,14 +165,12 @@ stages:
                           CommitMsg: Update vcpkg-configuration.json
                           BaseRepoBranch: $(DefaultBranch)
 
-                      # Set $(HasChanges) to $true so that
-                      # create-pull-request.yml completes the push and PR
-                      # submission steps. This is contegnent upon
-                      # `$(PublishToVcpkg)` being `true`. `$(PublishToVcpkg)` is
-                      # set in `vcpkg-publish.yml`
-                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
-                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
-                        displayName: Set $(HasChanges) to $true for create-pull-request.yml
+                      # Set $(HasChanges) to $(PublishToVcpkg) so that
+                      # create-pull-request.yml creates or does not create a PR
+                      # based on the deicision of the step that determines
+                      # whether to publish to vcpkg.
+                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$(PublishToVcpkg)"
+                        displayName: Set $(HasChanges) to $(PublishToVcpkg) for create-pull-request.yml
 
                       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
                         parameters:

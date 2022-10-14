@@ -29,6 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeFileClientTest::SetUp()
   {
     DataLakeFileSystemClientTest::SetUp();
+    CHECK_SKIP_TEST();
     m_fileName = GetFileSystemValidName();
     m_fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(m_fileName));
@@ -37,6 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileClientTest::TearDown()
   {
+    CHECK_SKIP_TEST();
     m_fileSystemClient->GetFileClient(m_fileName).Delete();
     DataLakeFileSystemClientTest::TearDown();
   }
@@ -243,6 +245,40 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(buffer, downloaded);
   }
 
+  TEST_F(DataLakeFileClientTest, AppendFileWithFlush)
+  {
+    const int32_t bufferSize = 4 * 1024; // 4KB data size
+    std::vector<uint8_t> buffer(bufferSize, 'x');
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
+
+    // Append with flush option
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_flush_true");
+      client.Create();
+      auto properties1 = client.GetProperties();
+      Files::DataLake::AppendFileOptions options;
+      options.Flush = true;
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties2 = client.GetProperties();
+      EXPECT_NE(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_EQ(bufferSize, properties2.Value.FileSize);
+    }
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_flush_false");
+      client.Create();
+      auto properties1 = client.GetProperties();
+      Files::DataLake::AppendFileOptions options;
+      options.Flush = false;
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties2 = client.GetProperties();
+      EXPECT_EQ(properties1.Value.ETag, properties2.Value.ETag);
+      EXPECT_EQ(0ll, properties2.Value.FileSize);
+    }
+  }
+
   TEST_F(DataLakeFileClientTest, FileReadReturns)
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
@@ -347,6 +383,15 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> buff;
     EXPECT_NO_THROW(fileClient.DownloadTo(buff.data(), 0));
     fileClient.Delete();
+  }
+
+  TEST_F(DataLakeFileClientTest, DownloadNonExistingToFile)
+  {
+    const auto testName(GetTestName());
+    auto fileClient = m_fileSystemClient->GetFileClient(testName);
+
+    EXPECT_THROW(fileClient.DownloadTo(testName), StorageException);
+    EXPECT_THROW(ReadFile(testName), std::runtime_error);
   }
 
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)

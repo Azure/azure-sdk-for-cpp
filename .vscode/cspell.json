@@ -11,9 +11,13 @@
     "*.exe",
     "*.a",
     "*.lib",
+    "*.yaml",
+    "**/libcurl-stress-test/README.md",
     ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
+    "ci.yml",
+    "squid.conf*",
     "eng/common/**/*",
     "json.hpp",
     "Dockerfile",
@@ -32,6 +36,8 @@
     "Aloctl",
     "azcore",
     "azsdk",
+    "azsdkengsys",
+    "azurecr",
     "azuresdk",
     "azuresdkforcpp",
     "centralus",
@@ -78,6 +84,7 @@
     "Lohmann",
     "LPBYTE",
     "LPSTR",
+    "LPWSTR",
     "MHSM",
     "moxygen",
     "MSRC",
@@ -88,9 +95,11 @@
     "noclean",
     "NOCLOSE",
     "NOCRLF",
+    "nohup",
     "NOLINT",
     "NOMINMAX",
     "northcentralus",
+    "nostd",
     "NTSTATUS",
     "okhttp",
     "opentelemetry",
@@ -98,7 +107,9 @@
     "PBYTE",
     "pdbs",
     "Piotrowski",
+    "pscredential",
     "PUCHAR",
+    "PVOID",
     "pwsh",
     "Ragrs",
     "Ragzrs",
@@ -110,6 +121,7 @@
     "sasia",
     "scus",
     "SDDL",
+    "sdpath",
     "serializers",
     "Seriot",
     "southcentralus",
@@ -118,6 +130,7 @@
     "stoll",
     "stoull",
     "STREQ",
+    "uaenorth",
     "uksouth",
     "undeleted",
     "unscoped",
@@ -132,6 +145,7 @@
     "vusg",
     "Wdocumentation",
     "Werror",
+    "westcentralus",
     "westus",
     "Wextra",
     "Wgnu",
@@ -174,6 +188,12 @@
       ]
     },
     {
+      "filename": "**/sdk/core/azure-core/**",
+      "words": [
+        "TEAMPROJECTID"
+      ]
+    },
+    {
       "filename": "**/sdk/core/azure-core/README.md",
       "words": [
         "myprogram"
@@ -187,6 +207,8 @@
         "davidchisnall",
         "Gabor",
         "Gyimesi",
+        "Heffner",
+        "johnwheffner",
         "Joubert",
         "juchem",
         "lordgamez",
@@ -217,6 +239,12 @@
       "filename": "**/sdk/storage/azure-storage-queues/src/rest_client.cpp",
       "words": [
         "numofmessages"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/azure-storage-files-shares/**/*",
+      "words": [
+        "mibps"
       ]
     },
     {
