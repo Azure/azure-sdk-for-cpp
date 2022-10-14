@@ -109,6 +109,9 @@ az_rtti_setup(
 )
 
 if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+
   # tests
   if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)

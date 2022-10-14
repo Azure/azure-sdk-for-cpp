@@ -13,6 +13,7 @@
 #include <azure/core/credentials/credentials.hpp>
 
 #include <chrono>
+#include <functional>
 #include <map>
 #include <shared_mutex>
 #include <string>
@@ -69,6 +70,14 @@ namespace Azure { namespace Identity { namespace _detail {
      *
      */
     static std::shared_timed_mutex Mutex;
+
+#if defined(TESTING_BUILD)
+    /**
+     * @brief A function that gets called before write lock is acquired.
+     *
+     */
+    static std::function<void()> OnBeforeWriteLock;
+#endif
   };
 
   inline bool TokenCache::Internals::CacheKey::operator<(

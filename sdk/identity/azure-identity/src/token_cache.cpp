@@ -17,6 +17,10 @@ decltype(TokenCache::Internals::Cache) TokenCache::Internals::Cache;
 decltype(TokenCache::Internals::Expirations) TokenCache::Internals::Expirations;
 decltype(TokenCache::Internals::Mutex) TokenCache::Internals::Mutex;
 
+#if defined(TESTING_BUILD)
+decltype(TokenCache::Internals::OnBeforeWriteLock) TokenCache::Internals::OnBeforeWriteLock;
+#endif
+
 AccessToken TokenCache::GetToken(
     std::string const& tenantId,
     std::string const& clientId,
@@ -37,6 +41,13 @@ AccessToken TokenCache::GetToken(
       return found->second;
     }
   }
+
+#if defined(TESTING_BUILD)
+  if (TokenCache::Internals::OnBeforeWriteLock != nullptr)
+  {
+    TokenCache::Internals::OnBeforeWriteLock();
+  }
+#endif
 
   std::unique_lock<std::shared_timed_mutex> writeLock(Internals::Mutex);
 
