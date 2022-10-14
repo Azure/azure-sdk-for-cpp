@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "private/token_cache.hpp"
+#include "token_cache.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 
