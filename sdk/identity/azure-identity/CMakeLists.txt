@@ -61,6 +61,7 @@ set(
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
     src/private/token_cache.hpp
+    src/private/token_cache_internals.hpp
     src/private/token_credential_impl.hpp
     src/chained_token_credential.cpp
     src/client_certificate_credential.cpp

@@ -15,10 +15,10 @@
 
 namespace Azure { namespace Identity { namespace _detail {
   /**
-   * @brief Implements common tasks such as token parsing.
+   * @brief Implements an access token cache.
    *
    */
-  class TokenCache {
+  class TokenCache final {
   private:
     TokenCache() = delete;
     ~TokenCache() = delete;
@@ -43,5 +43,11 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& authorityHost,
         std::string const& scopes,
         std::function<Core::Credentials::AccessToken()> const& getNewToken);
+
+    /**
+     * @brief Provides access to internal aspects of the cache as a test hook.
+     *
+     */
+    class Internals;
   };
 }}} // namespace Azure::Identity::_detail
