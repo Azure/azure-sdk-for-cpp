@@ -31,13 +31,6 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     /**
-     * @brief Items that are this far away from expiration should not get returned from the cache,
-     * new one should be obtained instead.
-     *
-     */
-    static constexpr auto RefreshBeforeExpiration = std::chrono::minutes(2);
-
-    /**
      * @brief Represents a unique set of characteristics that are used to distinguish between cache
      * entries.
      *

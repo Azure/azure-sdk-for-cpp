@@ -28,6 +28,10 @@ AccessToken TokenCache::GetToken(
     std::string const& scopes,
     std::function<AccessToken()> const& getNewToken)
 {
+  // If cached token expires in less than MinExpiry from now, it's cached value won't be returned,
+  // newer value will be requested.
+  constexpr auto MinExpiry = std::chrono::minutes(3);
+
   Internals::CacheKey const key{tenantId, clientId, authorityHost, scopes};
 
   {
@@ -35,8 +39,7 @@ AccessToken TokenCache::GetToken(
 
     auto found = Internals::Cache.find(key);
     if (found != Internals::Cache.end()
-        && found->second.ExpiresOn
-            > std::chrono::system_clock::now() + Internals::RefreshBeforeExpiration)
+        && found->second.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
     {
       return found->second;
     }
@@ -56,8 +59,7 @@ AccessToken TokenCache::GetToken(
   {
     auto found = Internals::Cache.find(key);
     if (found != Internals::Cache.end()
-        && found->second.ExpiresOn
-            > std::chrono::system_clock::now() + Internals::RefreshBeforeExpiration)
+        && found->second.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
     {
       return found->second;
     }
@@ -74,7 +76,7 @@ AccessToken TokenCache::GetToken(
         Internals::Expirations.begin(),
         Internals::Expirations.end(),
         decltype(Internals::Expirations)::value_type{
-            std::chrono::system_clock::now() + Internals::RefreshBeforeExpiration, {}},
+            std::chrono::system_clock::now() + MinExpiry, {}},
         expirationPredicate);
 
     if (lastExpired != Internals::Expirations.begin())
