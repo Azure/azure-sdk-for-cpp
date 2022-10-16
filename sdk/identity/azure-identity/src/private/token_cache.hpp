@@ -49,5 +49,13 @@ namespace Azure { namespace Identity { namespace _detail {
      *
      */
     class Internals;
+
+#if defined(TESTING_BUILD)
+    /**
+     * @brief Clears token cache. Intended to only be used in tests.
+     *
+     */
+    static void Clear();
+#endif
   };
 }}} // namespace Azure::Identity::_detail

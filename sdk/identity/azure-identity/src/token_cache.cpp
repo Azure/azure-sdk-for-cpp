@@ -72,31 +72,23 @@ AccessToken TokenCache::GetToken(
   {
     // Expirations vector is sorted from the the past to the future.
     // Find the last expired entry.
-    auto const lastExpired = std::upper_bound(
+    auto const firstUnexpired = std::upper_bound(
         Internals::Expirations.begin(),
         Internals::Expirations.end(),
         decltype(Internals::Expirations)::value_type{
             std::chrono::system_clock::now() + MinExpiry, {}},
         expirationPredicate);
 
-    if (lastExpired != Internals::Expirations.begin())
+    if (firstUnexpired != Internals::Expirations.begin())
     {
       // All the enries in expirations vector starting from the beginning and including the one
       // found above, are expired.
-      for (auto e = Internals::Expirations.begin(); e != lastExpired; ++e)
+      for (auto e = Internals::Expirations.begin(); e != firstUnexpired; ++e)
       {
         Internals::Cache.erase(e->second);
       }
 
-      if (lastExpired != Internals::Expirations.end())
-      {
-        Internals::Cache.erase(lastExpired->second);
-        Internals::Expirations.erase(Internals::Expirations.begin(), lastExpired + 1);
-      }
-      else
-      {
-        Internals::Expirations.clear();
-      }
+      Internals::Expirations.erase(Internals::Expirations.begin(), firstUnexpired);
     }
   }
 
@@ -120,3 +112,12 @@ AccessToken TokenCache::GetToken(
 
   return newToken;
 }
+
+#if defined(TESTING_BUILD)
+void TokenCache::Clear()
+{
+  std::unique_lock<std::shared_timed_mutex> writeLock(Internals::Mutex);
+  Internals::Cache.clear();
+  Internals::Expirations.clear();
+}
+#endif

@@ -13,6 +13,8 @@
 
 #include <azure/identity.hpp>
 
+#include "private/token_cache.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -63,6 +65,7 @@ namespace Azure { namespace Identity { namespace Test {
      */
     void Run(Azure::Core::Context const& context) override
     {
+      _detail::TokenCache::Clear();
       auto t = m_credential->GetToken(m_tokenRequestContext, context);
     }
 
