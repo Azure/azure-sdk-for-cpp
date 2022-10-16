@@ -22,37 +22,76 @@
 #include <windows.h>
 #endif
 
+#include <algorithm>
 #include <limits>
 #include <stdexcept>
 
 namespace Azure { namespace Storage { namespace _internal {
 
 #if defined(AZ_PLATFORM_WINDOWS)
-  FileReader::FileReader(const std::string& filename)
+  std::wstring Utf8ToWide(const std::string& narrow)
   {
     int sizeNeeded = MultiByteToWideChar(
         CP_UTF8,
         MB_ERR_INVALID_CHARS,
-        filename.data(),
-        static_cast<int>(filename.length()),
+        narrow.data(),
+        static_cast<int>(narrow.length()),
         nullptr,
         0);
     if (sizeNeeded == 0)
     {
-      throw std::runtime_error("Invalid filename.");
+      throw std::runtime_error("Failed to convert utf8 to wide chars.");
     }
-    std::wstring filenameW(sizeNeeded, L'\0');
+    std::wstring wide(sizeNeeded, L'\0');
     if (MultiByteToWideChar(
             CP_UTF8,
             MB_ERR_INVALID_CHARS,
-            filename.data(),
-            static_cast<int>(filename.length()),
-            &filenameW[0],
+            narrow.data(),
+            static_cast<int>(narrow.length()),
+            &wide[0],
             sizeNeeded)
         == 0)
     {
-      throw std::runtime_error("Invalid filename.");
+      throw std::runtime_error("Failed to convert utf8 to wide chars.");
     }
+    return wide;
+  }
+
+  std::string Utf8ToNarrow(const std::wstring& wide)
+  {
+    int sizeNeeded = WideCharToMultiByte(
+        CP_UTF8,
+        WC_ERR_INVALID_CHARS,
+        &wide[0],
+        static_cast<int>(wide.length()),
+        NULL,
+        0,
+        NULL,
+        NULL);
+    if (sizeNeeded == 0)
+    {
+      throw std::runtime_error("Failed to convert utf8 to multi-bytes.");
+    }
+    std::string narrow(sizeNeeded, '\0');
+    if (WideCharToMultiByte(
+            CP_UTF8,
+            WC_ERR_INVALID_CHARS,
+            &wide[0],
+            static_cast<int>(wide.length()),
+            &narrow[0],
+            sizeNeeded,
+            NULL,
+            NULL)
+        == 0)
+    {
+      throw std::runtime_error("Failed to convert utf8 to multi-bytes.");
+    }
+    return narrow;
+  }
+
+  FileReader::FileReader(const std::string& filename)
+  {
+    const std::wstring filenameW = Utf8ToWide(filename);
 
     HANDLE fileHandle;
 
@@ -87,31 +126,33 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileReader::~FileReader() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
-  FileWriter::FileWriter(const std::string& filename)
+  size_t FileReader::Read(uint8_t* buffer, size_t length, int64_t offset) const
   {
-    int sizeNeeded = MultiByteToWideChar(
-        CP_UTF8,
-        MB_ERR_INVALID_CHARS,
-        filename.data(),
-        static_cast<int>(filename.length()),
-        nullptr,
-        0);
-    if (sizeNeeded == 0)
+    length = std::min(length, static_cast<size_t>(std::max(0LL, m_fileSize - offset)));
+    if (length > std::numeric_limits<DWORD>::max())
     {
-      throw std::runtime_error("Invalid filename.");
+      throw std::runtime_error("Failed to read file.");
     }
-    std::wstring filenameW(sizeNeeded, L'\0');
-    if (MultiByteToWideChar(
-            CP_UTF8,
-            MB_ERR_INVALID_CHARS,
-            filename.data(),
-            static_cast<int>(filename.length()),
-            &filenameW[0],
-            sizeNeeded)
-        == 0)
+
+    OVERLAPPED overlapped;
+    std::memset(&overlapped, 0, sizeof(overlapped));
+    overlapped.Offset = static_cast<DWORD>(static_cast<uint64_t>(offset));
+    overlapped.OffsetHigh = static_cast<DWORD>(static_cast<uint64_t>(offset) >> 32);
+
+    DWORD bytesRead;
+    BOOL ret = ReadFile(
+        static_cast<HANDLE>(m_handle), buffer, static_cast<DWORD>(length), &bytesRead, &overlapped);
+    if (!ret)
     {
-      throw std::runtime_error("Invalid filename.");
+      throw std::runtime_error("Failed to read file.");
     }
+    return bytesRead;
+  }
+
+  FileWriter::FileWriter(const std::string& filename, bool truncate)
+  {
+    DWORD creationDisposition = truncate ? CREATE_ALWAYS : OPEN_ALWAYS;
+    const std::wstring filenameW = Utf8ToWide(filename);
 
     HANDLE fileHandle;
 
@@ -122,12 +163,16 @@ namespace Azure { namespace Storage { namespace _internal {
         GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         nullptr,
-        CREATE_ALWAYS,
+        creationDisposition,
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 #else
     fileHandle = CreateFile2(
-        filenameW.data(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, CREATE_ALWAYS, NULL);
+        filenameW.data(),
+        GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        creationDisposition,
+        NULL);
 #endif
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
@@ -138,7 +183,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::~FileWriter() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
-  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
+  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset) const
   {
     if (length > std::numeric_limits<DWORD>::max())
     {
@@ -180,10 +225,29 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileReader::~FileReader() { close(m_handle); }
 
-  FileWriter::FileWriter(const std::string& filename)
+  size_t FileReader::Read(uint8_t* buffer, size_t length, int64_t offset) const
   {
-    m_handle = open(
-        filename.data(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
+    {
+      throw std::runtime_error("Failed to read file.");
+    }
+    length = std::min<size_t>(length, m_fileSize - offset);
+    ssize_t bytesRead = pread(m_handle, buffer, length, static_cast<off_t>(offset));
+    if (bytesRead < 0)
+    {
+      throw std::runtime_error("Failed to read file.");
+    }
+    return bytesRead;
+  }
+
+  FileWriter::FileWriter(const std::string& filename, bool truncate)
+  {
+    int flags = O_WRONLY | O_CREAT;
+    if (truncate)
+    {
+      flags |= O_TRUNC;
+    }
+    m_handle = open(filename.data(), flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if (m_handle == -1)
     {
       throw std::runtime_error("Failed to open file.");
@@ -192,7 +256,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::~FileWriter() { close(m_handle); }
 
-  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
+  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset) const
   {
     if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
     {
