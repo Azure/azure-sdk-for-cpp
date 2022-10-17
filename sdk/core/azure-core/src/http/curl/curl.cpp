@@ -43,8 +43,8 @@
 #include <openssl/safestack.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
-#include <openssl/x509v3.h>
 #include <openssl/x509_vfy.h>
+#include <openssl/x509v3.h>
 #include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
