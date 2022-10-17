@@ -18,12 +18,12 @@ argagg::parser_results Azure::Perf::Program::ArgParser::Parse(
   // Option Name, Activate options, display message and number of expected args.
   argagg::parser argParser;
   auto optionsMetadata = Azure::Perf::GlobalTestOptions::GetOptionMetadata();
-  for (auto option : testOptions)
+  for (auto const& option : testOptions)
   {
     argParser.definitions.push_back(
         {option.Name, option.Activators, option.DisplayMessage, option.ExpectedArgs});
   }
-  for (auto option : optionsMetadata)
+  for (auto const& option : optionsMetadata)
   {
     argParser.definitions.push_back(
         {option.Name, option.Activators, option.DisplayMessage, option.ExpectedArgs});

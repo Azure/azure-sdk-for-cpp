@@ -6,23 +6,23 @@
 
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
+#include <azure/core/platform.hpp>
 
 #include <chrono>
+#include <csignal>
 #include <iostream>
 #include <thread>
 
 namespace {
 
-inline std::unique_ptr<Azure::Perf::PerfTest> PrintAvailableTests(
-    std::vector<Azure::Perf::TestMetadata> const& tests)
+inline void PrintAvailableTests(std::vector<Azure::Perf::TestMetadata> const& tests)
 {
   std::cout << "No test name found in the input. Available tests to run:" << std::endl;
   std::cout << std::endl << "Name\t\tDescription" << std::endl << "---\t\t---" << std::endl;
-  for (auto test : tests)
+  for (auto const& test : tests)
   {
     std::cout << test.Name << "\t\t" << test.Description << std::endl;
   }
-  return nullptr;
 }
 
 inline Azure::Perf::TestMetadata const* GetTestMetadata(
@@ -37,14 +37,17 @@ inline Azure::Perf::TestMetadata const* GetTestMetadata(
   argagg::parser argParser;
   auto args = argParser.parse(argc, argv, true);
 
-  auto testName = std::string(args.pos[0]);
-
-  for (auto& test : tests)
+  if (!args.pos.empty())
   {
-    if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-            test.Name, testName))
+    auto testName = std::string(args.pos[0]);
+
+    for (auto& test : tests)
     {
-      return &test;
+      if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              test.Name, testName))
+      {
+        return &test;
+      }
     }
   }
   return nullptr;
@@ -79,12 +82,13 @@ inline void PrintOptions(
   {
     std::cout << std::endl << "=== Test Options ===" << std::endl;
     Azure::Core::Json::_internal::json optionsAsJson;
-    for (auto option : testOptions)
+    for (auto const& option : testOptions)
     {
       try
       {
-        optionsAsJson[option.Name]
-            = option.SensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
+        auto optionName{option.Name};
+        optionsAsJson[optionName]
+            = option.SensitiveData ? "***" : parsedArgs[optionName].as<std::string>();
       }
       catch (std::out_of_range const&)
       {
@@ -199,14 +203,14 @@ inline void RunTests(
   std::vector<std::chrono::nanoseconds> lastCompletionTimes(parallelTestsCount);
 
   /********************* Progress Reporter ******************************/
-  Azure::Core::Context progresToken;
+  Azure::Core::Context progressToken;
   uint64_t lastCompleted = 0;
   auto progressThread = std::thread(
-      [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progresToken]() {
+      [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progressToken]() {
         std::cout << std::endl
                   << "=== " << title << " ===" << std::endl
                   << "Current\t\tTotal\t\tAverage" << std::endl;
-        while (!progresToken.IsCancelled())
+        while (!progressToken.IsCancelled())
         {
           using namespace std::chrono_literals;
           std::this_thread::sleep_for(1000ms);
@@ -228,7 +232,6 @@ inline void RunTests(
           bool isCancelled = false;
           // Azure::Context is not good performer for checking cancellation inside the test loop
           auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
-            using namespace std::chrono_literals;
             std::this_thread::sleep_for(deadLineSeconds);
             isCancelled = true;
           });
@@ -251,7 +254,7 @@ inline void RunTests(
   }
 
   // Stop progress
-  progresToken.Cancel();
+  progressToken.Cancel();
   progressThread.join();
 
   std::cout << std::endl << "=== Results ===";
@@ -278,6 +281,26 @@ void Azure::Perf::Program::Run(
     int argc,
     char** argv)
 {
+  // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
+#if defined(_DEBUG) && defined(_MSC_VER)
+  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+#endif
+
+// Declare a signal handler to report unhandled exceptions on Windows - this is not needed for other
+// OS's as they will print the exception to stderr in their terminate() function.
+#if defined(AZ_PLATFORM_WINDOWS)
+  signal(SIGABRT, [](int) {
+    try
+    {
+      throw;
+    }
+    catch (std::exception const& ex)
+    {
+      std::cout << "Exception thrown: " << ex.what() << std::endl;
+    }
+  });
+#endif // AZ_PLATFORM_WINDOWS
+
   // Parse args only to get the test name first
   auto testMetadata = GetTestMetadata(tests, argc, argv);
   auto const& testGenerator = testMetadata->Factory;
@@ -285,8 +308,10 @@ void Azure::Perf::Program::Run(
   {
     // Wrong input. Print what are the options.
     PrintAvailableTests(tests);
+
     return;
   }
+
   // Initial test to get it's options, we can use a dummy parser results
   argagg::parser_results argResults;
   auto test = testGenerator(Azure::Perf::TestOptions(argResults));
@@ -351,7 +376,7 @@ void Azure::Perf::Program::Run(
   {
     if (!options.TestProxies.empty())
     {
-      std::cout << " - Creating test recordgins for each test using test-proxies..." << std::endl;
+      std::cout << " - Creating test recordings for each test using test-proxies..." << std::endl;
       std::cout << " - Enabling test-proxy playback" << std::endl;
     }
 
@@ -375,20 +400,13 @@ void Azure::Perf::Program::Run(
 
   /******************** Tests ******************************/
   std::string iterationInfo;
-  try
+  for (int iteration = 0; iteration < options.Iterations; iteration++)
   {
-    for (int iteration = 0; iteration < options.Iterations; iteration++)
+    if (iteration > 0)
     {
-      if (iteration > 0)
-      {
-        iterationInfo.append(FormatNumber(iteration));
-      }
-      RunTests(context, parallelTest, options, "Test" + iterationInfo);
+      iterationInfo.append(FormatNumber(iteration));
     }
-  }
-  catch (std::exception const& error)
-  {
-    std::cout << "Error: " << error.what();
+    RunTests(context, parallelTest, options, "Test" + iterationInfo);
   }
 
   std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;
