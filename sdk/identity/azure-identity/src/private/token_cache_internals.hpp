@@ -76,30 +76,6 @@ namespace Azure { namespace Identity { namespace _detail {
   inline bool TokenCache::Internals::CacheKey::operator<(
       TokenCache::Internals::CacheKey const& other) const
   {
-    {
-      auto const compare = TenantId.compare(other.TenantId);
-      if (compare != 0)
-      {
-        return compare < 0;
-      }
-    }
-
-    {
-      auto const compare = ClientId.compare(other.ClientId);
-      if (compare != 0)
-      {
-        return compare < 0;
-      }
-    }
-
-    {
-      auto const compare = AuthorityHost.compare(other.AuthorityHost);
-      if (compare != 0)
-      {
-        return compare < 0;
-      }
-    }
-
-    return Scopes < other.Scopes;
+    return std::tie(TenantId, ClientId, AuthorityHost, Scopes) < std::tie(other.TenantId, other.ClientId, other.AuthorityHost, other.Scopes);
   }
 }}} // namespace Azure::Identity::_detail
