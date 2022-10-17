@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   /**
    * @brief An outstanding WinHTTP action. This object is used to process asynchronous WinHTTP actions.
    *
-   * The WinHttpRequest object has a WinHttpAction associated it to convert asynchronous WinHTTP
+   * The WinHttpRequest object has a WinHttpAction associated with it to convert asynchronous WinHTTP
    * operations to synchronous operations.
    *
    */
