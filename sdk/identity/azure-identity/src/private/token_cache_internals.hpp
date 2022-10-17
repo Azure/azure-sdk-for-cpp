@@ -76,6 +76,7 @@ namespace Azure { namespace Identity { namespace _detail {
   inline bool TokenCache::Internals::CacheKey::operator<(
       TokenCache::Internals::CacheKey const& other) const
   {
-    return std::tie(TenantId, ClientId, AuthorityHost, Scopes) < std::tie(other.TenantId, other.ClientId, other.AuthorityHost, other.Scopes);
+    return std::tie(TenantId, ClientId, AuthorityHost, Scopes)
+        < std::tie(other.TenantId, other.ClientId, other.AuthorityHost, other.Scopes);
   }
 }}} // namespace Azure::Identity::_detail
