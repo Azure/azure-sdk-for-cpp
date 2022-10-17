@@ -37,11 +37,13 @@
 #include "curl_session_private.hpp"
 
 #if defined(AZ_PLATFORM_POSIX)
+#include <openssl/asn1t.h>
 #include <openssl/err.h>
 #include <openssl/http.h>
 #include <openssl/safestack.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
+#include <openssl/x509v3.h>
 #include <openssl/x509_vfy.h>
 #include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
