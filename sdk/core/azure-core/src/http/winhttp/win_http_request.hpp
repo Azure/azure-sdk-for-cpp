@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 // cspell:words PCCERT HCERTSTORE
 
 /**
@@ -21,13 +22,17 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   class WinHttpRequest;
   /**
-   * @brief An outstanding WinHTTP action. This object is used to process asynchronous WinHTTP actions.
+   * @brief An outstanding WinHTTP action. This object is used to process asynchronous WinHTTP
+   * actions.
    *
    * The WinHttpRequest object has a WinHttpAction associated it to convert asynchronous WinHTTP
    * operations to synchronous operations.
    *
    */
   class WinHttpAction final {
+    // Mark WinHttpRequest as friend because it needs to have access to StatusCallback when it
+    // registers
+    // for notifications.
     friend class WinHttpRequest;
 
     // Containing HTTP request, used during the status operation callback.

@@ -26,6 +26,10 @@ int main(int argc, char** argv)
 #endif
 
   signal(SIGABRT, [](int) {
+    // Rethrow any exceptions on the current stack - this will cause any pending exceptions to be
+    // thrown so we can catch them and report them to the caller. This is needed because the
+    // terminate() function on Windows calls abort() which normally silently terminates without
+    // reporting the exception.
     try
     {
       throw;
