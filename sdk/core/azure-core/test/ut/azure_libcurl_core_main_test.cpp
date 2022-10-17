@@ -70,6 +70,10 @@ int main(int argc, char** argv)
   signal(SIGABRT, [](int) {
     try
     {
+      // Rethrow any exceptions on the current stack - this will cause any pending exceptions to be
+      // thrown so we can catch them and report them to the caller. This is needed because the
+      // terminate() function on Windows calls abort() which normally pops up UI terminates without
+      // reporting the exception.
       throw;
     }
     catch (std::exception const& ex)

@@ -25,14 +25,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @brief An outstanding WinHTTP action. This object is used to process asynchronous WinHTTP
    * actions.
    *
-   * The WinHttpRequest object has a WinHttpAction associated with it to convert asynchronous WinHTTP
-   * operations to synchronous operations.
+   * The WinHttpRequest object has a WinHttpAction associated with it to convert asynchronous
+   * WinHTTP operations to synchronous operations.
    *
    */
   class WinHttpAction final {
-    // Mark WinHttpRequest as friend because it needs to have access to StatusCallback when it
-    // registers
-    // for notifications.
+    // The WinHttpRequest class is friend because it needs to have access to StatusCallback when it
+    // registers for notifications, but there's no other reason to make it public.
     friend class WinHttpRequest;
 
     // Containing HTTP request, used during the status operation callback.

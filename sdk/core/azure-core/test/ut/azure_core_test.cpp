@@ -24,11 +24,11 @@ int main(int argc, char** argv)
 #if defined(_DEBUG) && defined(_MSC_VER)
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
-
+  
   signal(SIGABRT, [](int) {
     // Rethrow any exceptions on the current stack - this will cause any pending exceptions to be
     // thrown so we can catch them and report them to the caller. This is needed because the
-    // terminate() function on Windows calls abort() which normally silently terminates without
+    // terminate() function on Windows calls abort() which normally pops up UI terminates without
     // reporting the exception.
     try
     {
