@@ -107,8 +107,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           {"vaultUrl", {"--vaultUrl"}, "The Key Vault Account.", 1, false},
           {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, false},
           {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, false},
-          {"Secret", {"--secret"}, "The secret for authentication.", 1, false, true},
-          {"Required", {"-r"}, "The platform needs at least one reuqired param", 1, true}};
+          {"Secret", {"--secret"}, "The secret for authentication.", 1, false, true}};
     }
 
     /**
