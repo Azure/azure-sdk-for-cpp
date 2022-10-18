@@ -34,8 +34,9 @@ target_include_directories(
 include(PerfTest)
 
 SetPerfDeps(azure-identity-cpp "VCPKG-AZURE-IDENTITY-CPP" "VCPKG_IDENTITY_VERSION")
-SetPerfDeps(azure-security-keyvault-keys-cpp "VCPKG-AZURE-SECURITY-KEYVAULT-KEYS-CPP" "VCPKG_KEYS_VERSION")
-
+#SetPerfDeps(azure-security-keyvault-keys-cpp "VCPKG-AZURE-SECURITY-KEYVAULT-KEYS-CPP" "VCPKG_KEYS_VERSION")
+find_package(azure-security-keyvault-keys-cpp "4.1.0")
+add_compile_definitions(VCPKG_KEYS_VERSION="4.1.0")
 # link the `azure-perf` lib together with any other library which will be used for the tests. 
 target_link_libraries(azure-security-keyvault-keys-perf PRIVATE Azure::azure-identity  Azure::azure-security-keyvault-keys azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
