@@ -59,7 +59,6 @@ TEST(TokenCache, GetReuseRefresh)
   TokenCache::Clear();
 
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 0UL);
-  EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
   auto const Yesterday = Tomorrow - 48h;
@@ -73,7 +72,6 @@ TEST(TokenCache, GetReuseRefresh)
     });
 
     EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
     EXPECT_EQ(token1.ExpiresOn, Tomorrow);
     EXPECT_EQ(token1.Token, "T1");
@@ -87,15 +85,13 @@ TEST(TokenCache, GetReuseRefresh)
     });
 
     EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
     EXPECT_EQ(token1.ExpiresOn, token2.ExpiresOn);
     EXPECT_EQ(token1.Token, token2.Token);
   }
 
   {
-    TokenCache::Internals::Cache[{"A", "B", "C", "D"}].ExpiresOn = Yesterday;
-    TokenCache::Internals::Expirations[0].first = Yesterday;
+    TokenCache::Internals::Cache[{"A", "B", "C", "D"}]->AccessToken.ExpiresOn = Yesterday;
 
     auto const token = TokenCache::GetToken("A", "B", "C", "D", [=]() {
       AccessToken result;
@@ -105,197 +101,66 @@ TEST(TokenCache, GetReuseRefresh)
     });
 
     EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
     EXPECT_EQ(token.ExpiresOn, Tomorrow + 1min);
     EXPECT_EQ(token.Token, "T3");
   }
 }
 
-TEST(TokenCache, CleanupExpired)
+TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
 {
   TokenCache::Clear();
 
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 0UL);
-  EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
   auto const Yesterday = Tomorrow - 48h;
 
-  {
-    auto const token = TokenCache::GetToken("AAA", "AAA", "AAA", "AAA", [=]() {
+  TokenCache::Internals::OnBeforeCacheWriteLock = [=]() {
+    TokenCache::Internals::OnBeforeCacheWriteLock = nullptr;
+    static_cast<void>(TokenCache::GetToken("A", "B", "C", "D", [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
       return result;
-    });
+    }));
+  };
 
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
+  auto const token = TokenCache::GetToken("A", "B", "C", "D", [=]() {
+    EXPECT_FALSE("getNewToken does not get invoked when the fresh value was inserted just before "
+                 "acquiring cache write lock");
+    AccessToken result;
+    result.Token = "T2";
+    result.ExpiresOn = Tomorrow + 1min;
+    return result;
+  });
 
-    EXPECT_EQ(token.ExpiresOn, Tomorrow);
-    EXPECT_EQ(token.Token, "T1");
-  }
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
 
-  {
-    auto const token = TokenCache::GetToken("BBB", "BBB", "BBB", "BBB", [=]() {
-      AccessToken result;
-      result.Token = "T2";
-      result.ExpiresOn = Tomorrow + 1min;
-      return result;
-    });
-
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 2UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
-
-    EXPECT_EQ(token.ExpiresOn, Tomorrow + 1min);
-    EXPECT_EQ(token.Token, "T2");
-  }
-
-  {
-    auto const token = TokenCache::GetToken("ccc", "ccc", "ccc", "ccc", [=]() {
-      AccessToken result;
-      result.Token = "T3";
-      result.ExpiresOn = Tomorrow - 1min;
-      return result;
-    });
-
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 3UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
-
-    EXPECT_EQ(token.ExpiresOn, Tomorrow - 1min);
-    EXPECT_EQ(token.Token, "T3");
-  }
-
-  {
-    auto const token = TokenCache::GetToken("ddd", "ddd", "ddd", "ddd", [=]() {
-      AccessToken result;
-      result.Token = "T4";
-      result.ExpiresOn = Tomorrow - 2min;
-      return result;
-    });
-
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 4UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
-
-    EXPECT_EQ(token.ExpiresOn, Tomorrow - 2min);
-    EXPECT_EQ(token.Token, "T4");
-  }
-
-  {
-    EXPECT_EQ(TokenCache::Internals::Expirations[0].second.TenantId, "ddd");
-    EXPECT_EQ(TokenCache::Internals::Expirations[1].second.TenantId, "ccc");
-    EXPECT_EQ(TokenCache::Internals::Expirations[2].second.TenantId, "AAA");
-    EXPECT_EQ(TokenCache::Internals::Expirations[3].second.TenantId, "BBB");
-
-    EXPECT_EQ(TokenCache::Internals::Expirations[0].first, Tomorrow - 2min);
-    EXPECT_EQ(TokenCache::Internals::Expirations[1].first, Tomorrow - 1min);
-    EXPECT_EQ(TokenCache::Internals::Expirations[2].first, Tomorrow);
-    EXPECT_EQ(TokenCache::Internals::Expirations[3].first, Tomorrow + 1min);
-
-    TokenCache::Internals::Cache[{"ddd", "ddd", "ddd", "ddd"}].ExpiresOn = Yesterday - 1min;
-    TokenCache::Internals::Expirations[0].first = Yesterday - 1min;
-
-    TokenCache::Internals::Cache[{"ccc", "ccc", "ccc", "ccc"}].ExpiresOn = Yesterday;
-    TokenCache::Internals::Expirations[1].first = Yesterday;
-  }
-
-  // Getting cached nonexpiring token does not trigger cache cleanup.
-  {
-    auto const token = TokenCache::GetToken("AAA", "AAA", "AAA", "AAA", [=]() {
-      AccessToken result;
-      result.Token = "T5";
-      result.ExpiresOn = Tomorrow + 2min;
-      return result;
-    });
-
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 4UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
-
-    EXPECT_EQ(token.ExpiresOn, Tomorrow);
-    EXPECT_EQ(token.Token, "T1");
-  }
-
-  // Getting an expired token does clean up the cache.
-  {
-    auto const token = TokenCache::GetToken("ccc", "ccc", "ccc", "ccc", [=]() {
-      AccessToken result;
-      result.Token = "T6";
-      result.ExpiresOn = Tomorrow + 3min;
-      return result;
-    });
-
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 3UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
-
-    EXPECT_EQ(token.ExpiresOn, Tomorrow + 3min);
-    EXPECT_EQ(token.Token, "T6");
-
-    EXPECT_EQ(TokenCache::Internals::Expirations[0].second.TenantId, "AAA");
-    EXPECT_EQ(TokenCache::Internals::Expirations[1].second.TenantId, "BBB");
-    EXPECT_EQ(TokenCache::Internals::Expirations[2].second.TenantId, "ccc");
-
-    EXPECT_EQ(TokenCache::Internals::Expirations[0].first, Tomorrow);
-    EXPECT_EQ(TokenCache::Internals::Expirations[1].first, Tomorrow + 1min);
-    EXPECT_EQ(TokenCache::Internals::Expirations[2].first, Tomorrow + 3min);
-  }
-
-  // Appending new token to the cache also does trigger cache cleanup.
-  {
-    // Prepare: expire cache items
-    {
-      TokenCache::Internals::Cache[{"AAA", "AAA", "AAA", "AAA"}].ExpiresOn = Yesterday - 3min;
-      TokenCache::Internals::Expirations[0].first = Yesterday - 3min;
-
-      TokenCache::Internals::Cache[{"BBB", "BBB", "BBB", "BBB"}].ExpiresOn = Yesterday - 2min;
-      TokenCache::Internals::Expirations[1].first = Yesterday - 2min;
-    }
-
-    auto const token = TokenCache::GetToken("EeE", "EeE", "EeE", "EeE", [=]() {
-      AccessToken result;
-      result.Token = "T7";
-      result.ExpiresOn = Tomorrow + 4min;
-      return result;
-    });
-
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), 2UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
-
-    EXPECT_EQ(token.ExpiresOn, Tomorrow + 4min);
-    EXPECT_EQ(token.Token, "T7");
-
-    EXPECT_EQ(TokenCache::Internals::Expirations[0].second.TenantId, "ccc");
-    EXPECT_EQ(TokenCache::Internals::Expirations[1].second.TenantId, "EeE");
-
-    EXPECT_EQ(TokenCache::Internals::Expirations[0].first, Tomorrow + 3min);
-    EXPECT_EQ(TokenCache::Internals::Expirations[1].first, Tomorrow + 4min);
-  }
+  EXPECT_EQ(token.ExpiresOn, Tomorrow);
+  EXPECT_EQ(token.Token, "T1");
 }
 
-TEST(TokenCache, WasUpdatedBeforeWriteLock)
+TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
 {
   TokenCache::Clear();
 
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 0UL);
-  EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
   auto const Yesterday = Tomorrow - 48h;
 
   {
-    TokenCache::Internals::OnBeforeWriteLock = [=]() {
-      TokenCache::Internals::OnBeforeWriteLock = nullptr;
-      static_cast<void>(TokenCache::GetToken("A", "B", "C", "D", [=]() {
-        AccessToken result;
-        result.Token = "T1";
-        result.ExpiresOn = Tomorrow;
-        return result;
-      }));
+    TokenCache::Internals::OnBeforeItemWriteLock = [=]() {
+      TokenCache::Internals::OnBeforeItemWriteLock = nullptr;
+      auto const item = TokenCache::Internals::Cache[{"A", "B", "C", "D"}];
+      item->AccessToken.Token = "T1";
+      item->AccessToken.ExpiresOn = Tomorrow;
     };
 
     auto const token = TokenCache::GetToken("A", "B", "C", "D", [=]() {
       EXPECT_FALSE("getNewToken does not get invoked when the fresh value was inserted just before "
-                   "acquiring write lock");
+                   "acquiring item write lock");
       AccessToken result;
       result.Token = "T2";
       result.ExpiresOn = Tomorrow + 1min;
@@ -303,7 +168,6 @@ TEST(TokenCache, WasUpdatedBeforeWriteLock)
     });
 
     EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
     EXPECT_EQ(token.ExpiresOn, Tomorrow);
     EXPECT_EQ(token.Token, "T1");
@@ -313,17 +177,11 @@ TEST(TokenCache, WasUpdatedBeforeWriteLock)
   {
     TokenCache::Clear();
 
-    TokenCache::Internals::OnBeforeWriteLock = [=]() {
-      TokenCache::Internals::OnBeforeWriteLock = nullptr;
-      static_cast<void>(TokenCache::GetToken("A", "B", "C", "D", [=]() {
-        AccessToken result;
-        result.Token = "T3";
-        result.ExpiresOn = Tomorrow + 2min;
-        return result;
-      }));
-
-      TokenCache::Internals::Cache[{"A", "B", "C", "D"}].ExpiresOn = Yesterday;
-      TokenCache::Internals::Expirations[0].first = Yesterday;
+    TokenCache::Internals::OnBeforeItemWriteLock = [=]() {
+      TokenCache::Internals::OnBeforeItemWriteLock = nullptr;
+      auto const item = TokenCache::Internals::Cache[{"A", "B", "C", "D"}];
+      item->AccessToken.Token = "T3";
+      item->AccessToken.ExpiresOn = Yesterday;
     };
 
     auto const token = TokenCache::GetToken("A", "B", "C", "D", [=]() {
@@ -334,7 +192,6 @@ TEST(TokenCache, WasUpdatedBeforeWriteLock)
     });
 
     EXPECT_EQ(TokenCache::Internals::Cache.size(), 1UL);
-    EXPECT_EQ(TokenCache::Internals::Cache.size(), TokenCache::Internals::Expirations.size());
 
     EXPECT_EQ(token.ExpiresOn, Tomorrow + 3min);
     EXPECT_EQ(token.Token, "T4");

@@ -12,12 +12,12 @@
 
 #include <azure/core/credentials/credentials.hpp>
 
-#include <chrono>
 #include <functional>
 #include <map>
+#include <memory>
 #include <shared_mutex>
 #include <string>
-#include <vector>
+#include <tuple>
 
 namespace Azure { namespace Identity { namespace _detail {
   /**
@@ -42,41 +42,48 @@ namespace Azure { namespace Identity { namespace _detail {
       std::string AuthorityHost; ///< Authority Host.
       std::string Scopes; ///< Authentication Scopes as a single string.
 
-      bool operator<(TokenCache::Internals::CacheKey const& other) const;
+      bool operator<(TokenCache::Internals::CacheKey const& other) const
+      {
+        return std::tie(TenantId, ClientId, AuthorityHost, Scopes)
+            < std::tie(other.TenantId, other.ClientId, other.AuthorityHost, other.Scopes);
+      }
+    };
+
+    /**
+     * @brief Represents immediate cache value (token) and a synchronization primitive to handle its
+     * updates.
+     *
+     */
+    struct CacheValue
+    {
+      std::shared_timed_mutex ElementMutex;
+      Core::Credentials::AccessToken AccessToken;
     };
 
     /**
      * @brief The cache itself.
      *
      */
-    static std::map<CacheKey, Core::Credentials::AccessToken> Cache;
+    static std::map<CacheKey, std::shared_ptr<CacheValue>> Cache;
 
     /**
-     * @brief Vector of expiration for the cache entries, from earliest to the latest.
+     * @brief Mutex to access the cache container.
      *
      */
-    static std::vector<std::pair<decltype(Core::Credentials::AccessToken::ExpiresOn), CacheKey>>
-        Expirations;
-
-    /**
-     * @brief Cache and Expirations are kept in sync. The mutex is for accessing both of them.
-     *
-     */
-    static std::shared_timed_mutex Mutex;
+    static std::shared_timed_mutex CacheMutex;
 
 #if defined(TESTING_BUILD)
     /**
-     * @brief A function that gets called before write lock is acquired.
+     * A test hook that gets invoked before cache write lock gets acquired.
      *
      */
-    static std::function<void()> OnBeforeWriteLock;
+    static std::function<void()> OnBeforeCacheWriteLock;
+
+    /**
+     * A test hook that gets invoked before item write lock gets acquired.
+     *
+     */
+    static std::function<void()> OnBeforeItemWriteLock;
 #endif
   };
-
-  inline bool TokenCache::Internals::CacheKey::operator<(
-      TokenCache::Internals::CacheKey const& other) const
-  {
-    return std::tie(TenantId, ClientId, AuthorityHost, Scopes)
-        < std::tie(other.TenantId, other.ClientId, other.AuthorityHost, other.Scopes);
-  }
 }}} // namespace Azure::Identity::_detail

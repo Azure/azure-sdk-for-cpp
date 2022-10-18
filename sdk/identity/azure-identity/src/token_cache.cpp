@@ -4,22 +4,62 @@
 #include "private/token_cache.hpp"
 #include "private/token_cache_internals.hpp"
 
-#include <algorithm>
 #include <chrono>
 #include <mutex>
-#include <utility>
 
 using Azure::Identity::_detail::TokenCache;
 
 using Azure::Core::Credentials::AccessToken;
 
 decltype(TokenCache::Internals::Cache) TokenCache::Internals::Cache;
-decltype(TokenCache::Internals::Expirations) TokenCache::Internals::Expirations;
-decltype(TokenCache::Internals::Mutex) TokenCache::Internals::Mutex;
+decltype(TokenCache::Internals::CacheMutex) TokenCache::Internals::CacheMutex;
 
 #if defined(TESTING_BUILD)
-decltype(TokenCache::Internals::OnBeforeWriteLock) TokenCache::Internals::OnBeforeWriteLock;
+decltype(TokenCache::Internals::OnBeforeCacheWriteLock)
+    TokenCache::Internals::OnBeforeCacheWriteLock;
+
+decltype(TokenCache::Internals::OnBeforeItemWriteLock) TokenCache::Internals::OnBeforeItemWriteLock;
 #endif
+
+namespace {
+// If cached token expires in less than MinExpiry from now, it's cached value won't be returned,
+// newer value will be requested.
+constexpr auto MinExpiry = std::chrono::minutes(3);
+
+std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
+    TokenCache::Internals::CacheKey const key)
+{
+  {
+    std::shared_lock<std::shared_timed_mutex> cacheReadLock(TokenCache::Internals::CacheMutex);
+
+    auto const found = TokenCache::Internals::Cache.find(key);
+    if (found != TokenCache::Internals::Cache.end())
+    {
+      return found->second;
+    }
+  }
+
+#if defined(TESTING_BUILD)
+  if (TokenCache::Internals::OnBeforeCacheWriteLock != nullptr)
+  {
+    TokenCache::Internals::OnBeforeCacheWriteLock();
+  }
+#endif
+
+  std::unique_lock<std::shared_timed_mutex> cacheWriteLock(TokenCache::Internals::CacheMutex);
+
+  // Search cache for the second time, in case the item was inserted between releasing the read lock
+  // and acquiring the write lock.
+  auto const found = TokenCache::Internals::Cache.find(key);
+  if (found != TokenCache::Internals::Cache.end())
+  {
+    return found->second;
+  }
+
+  // Insert the blank valule value and return it.
+  return TokenCache::Internals::Cache[key] = std::make_shared<TokenCache::Internals::CacheValue>();
+}
+} // namespace
 
 AccessToken TokenCache::GetToken(
     std::string const& tenantId,
@@ -28,96 +68,44 @@ AccessToken TokenCache::GetToken(
     std::string const& scopes,
     std::function<AccessToken()> const& getNewToken)
 {
-  // If cached token expires in less than MinExpiry from now, it's cached value won't be returned,
-  // newer value will be requested.
-  constexpr auto MinExpiry = std::chrono::minutes(3);
-
-  Internals::CacheKey const key{tenantId, clientId, authorityHost, scopes};
+  auto const item = GetOrCreateValue({tenantId, clientId, authorityHost, scopes});
 
   {
-    std::shared_lock<std::shared_timed_mutex> readLock(Internals::Mutex);
+    std::shared_lock<std::shared_timed_mutex> itemReadLock(item->ElementMutex);
 
-    auto found = Internals::Cache.find(key);
-    if (found != Internals::Cache.end()
-        && found->second.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
+    if (item->AccessToken.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
     {
-      return found->second;
+      return item->AccessToken;
     }
   }
 
-#if defined(TESTING_BUILD)
-  if (TokenCache::Internals::OnBeforeWriteLock != nullptr)
   {
-    TokenCache::Internals::OnBeforeWriteLock();
-  }
+#if defined(TESTING_BUILD)
+    if (TokenCache::Internals::OnBeforeItemWriteLock != nullptr)
+    {
+      TokenCache::Internals::OnBeforeItemWriteLock();
+    }
 #endif
 
-  std::unique_lock<std::shared_timed_mutex> writeLock(Internals::Mutex);
+    std::unique_lock<std::shared_timed_mutex> itemWriteLock(item->ElementMutex);
 
-  // Search cache for the second time in case a new entry was appended between releasing readLock
-  // and acquiring writeLock.
-  {
-    auto found = Internals::Cache.find(key);
-    if (found != Internals::Cache.end()
-        && found->second.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
+    // Check the expiration for the second time, in case it just got updated, after releasing the
+    // itemReadLock, and before acquiring itemWriteLock.
+    if (item->AccessToken.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
     {
-      return found->second;
+      return item->AccessToken;
     }
+
+    auto const newToken = getNewToken();
+    item->AccessToken = newToken;
+    return newToken;
   }
-
-  // Clean up expired and expiring cache entries
-  auto const expirationPredicate
-      = [](decltype(Internals::Expirations)::value_type const& x,
-           decltype(Internals::Expirations)::value_type const& y) { return x.first < y.first; };
-  {
-    // Expirations vector is sorted from the the past to the future.
-    // Find the last expired entry.
-    auto const firstUnexpired = std::upper_bound(
-        Internals::Expirations.begin(),
-        Internals::Expirations.end(),
-        decltype(Internals::Expirations)::value_type{
-            std::chrono::system_clock::now() + MinExpiry, {}},
-        expirationPredicate);
-
-    if (firstUnexpired != Internals::Expirations.begin())
-    {
-      // All the enries in expirations vector starting from the beginning and including the one
-      // found above, are expired.
-      for (auto e = Internals::Expirations.begin(); e != firstUnexpired; ++e)
-      {
-        Internals::Cache.erase(e->second);
-      }
-
-      Internals::Expirations.erase(Internals::Expirations.begin(), firstUnexpired);
-    }
-  }
-
-  auto const newToken = getNewToken();
-  Internals::Cache[key] = newToken;
-
-  {
-    auto const expiry = std::make_pair(newToken.ExpiresOn, key);
-
-    // Expirations vector is sorted from the past to the future.
-    // Insert the new entry there to the right place.
-    // Tokens that expire before it, will come before, and these that expire after, will come after.
-    Internals::Expirations.insert(
-        std::upper_bound(
-            Internals::Expirations.begin(),
-            Internals::Expirations.end(),
-            expiry,
-            expirationPredicate),
-        expiry);
-  }
-
-  return newToken;
 }
 
 #if defined(TESTING_BUILD)
 void TokenCache::Clear()
 {
-  std::unique_lock<std::shared_timed_mutex> writeLock(Internals::Mutex);
+  std::unique_lock<std::shared_timed_mutex> cacheWriteLock(TokenCache::Internals::CacheMutex);
   Internals::Cache.clear();
-  Internals::Expirations.clear();
 }
 #endif
