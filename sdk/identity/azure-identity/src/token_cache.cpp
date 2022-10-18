@@ -22,9 +22,16 @@ decltype(TokenCache::Internals::OnBeforeItemWriteLock) TokenCache::Internals::On
 #endif
 
 namespace {
-// If cached token expires in less than MinExpiry from now, it's cached value won't be returned,
-// newer value will be requested.
-constexpr auto MinExpiry = std::chrono::minutes(3);
+bool IsFresh(
+    std::shared_ptr<TokenCache::Internals::CacheValue> const& item,
+    std::chrono::system_clock::time_point now)
+{
+  // If cached token expires in less than MinExpiry from now, it's cached value won't be returned,
+  // newer value will be requested.
+  constexpr auto MinExpiry = std::chrono::minutes(3);
+
+  return item->AccessToken.ExpiresOn > now + MinExpiry;
+}
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
     TokenCache::Internals::CacheKey const key)
@@ -56,6 +63,38 @@ std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
     return found->second;
   }
 
+  // Clean up cache from expired items (once every N insertions).
+  {
+    auto const cacheSize = TokenCache::Internals::Cache.size();
+
+    // N: cacheSize (before insertion) is >= 32 and is a power of two.
+    if (cacheSize >= 32 && (cacheSize & (cacheSize - 1)) == 0)
+    {
+      auto now = std::chrono::system_clock::now();
+
+      auto iter = TokenCache::Internals::Cache.begin();
+      while (iter != TokenCache::Internals::Cache.end())
+      {
+        // Should we end up erasing the element, iterator to current will become invalid, after
+        // which we can't increment it. So we copy current, and safely advance the loop iterator.
+        auto const curr = iter;
+        ++iter;
+
+        // We will try to obtain a write lock, but in a non-blocking way. We only lock it if no one
+        // was holding it for read and write at a time. If it's busy in any way, we don't wait, but
+        // move on.
+        auto const item = curr->second;
+        {
+          std::unique_lock<std::shared_timed_mutex> lock(item->ElementMutex, std::defer_lock);
+          if (lock.try_lock() && !IsFresh(item, now))
+          {
+            TokenCache::Internals::Cache.erase(curr);
+          }
+        }
+      }
+    }
+  }
+
   // Insert the blank value value and return it.
   return TokenCache::Internals::Cache[key] = std::make_shared<TokenCache::Internals::CacheValue>();
 }
@@ -73,7 +112,7 @@ AccessToken TokenCache::GetToken(
   {
     std::shared_lock<std::shared_timed_mutex> itemReadLock(item->ElementMutex);
 
-    if (item->AccessToken.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
+    if (IsFresh(item, std::chrono::system_clock::now()))
     {
       return item->AccessToken;
     }
@@ -91,7 +130,7 @@ AccessToken TokenCache::GetToken(
 
     // Check the expiration for the second time, in case it just got updated, after releasing the
     // itemReadLock, and before acquiring itemWriteLock.
-    if (item->AccessToken.ExpiresOn > std::chrono::system_clock::now() + MinExpiry)
+    if (IsFresh(item, std::chrono::system_clock::now()))
     {
       return item->AccessToken;
     }

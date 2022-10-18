@@ -196,3 +196,105 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
     EXPECT_EQ(token.Token, "T4");
   }
 }
+
+TEST(TokenCache, ExpiredCleanup)
+{
+  DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
+  auto const Yesterday = Tomorrow - 48h;
+
+  TokenCache::Clear();
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 0UL);
+
+  for (auto i = 1; i <= 65; ++i)
+  {
+    auto const n = std::to_string(i);
+    static_cast<void>(TokenCache::GetToken(n, n, n, n, [=]() {
+      AccessToken result;
+      result.Token = "T1";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    }));
+  }
+
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 65UL);
+
+  for (auto i = 1; i <= 3; ++i)
+  {
+    auto const n = std::to_string(i);
+    TokenCache::Internals::Cache[{n, n, n, n}]->AccessToken.ExpiresOn = Yesterday;
+  }
+
+  for (auto i = 66; i <= 128; ++i)
+  {
+    auto const n = std::to_string(i);
+    static_cast<void>(TokenCache::GetToken(n, n, n, n, [=]() {
+      AccessToken result;
+      result.Token = "T1";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    }));
+  }
+
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 128UL);
+
+  for (auto i = 1; i <= 3; ++i)
+  {
+    auto const n = std::to_string(i);
+    EXPECT_NE(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
+  }
+
+  static_cast<void>(TokenCache::GetToken("129", "129", "129", "129", [=]() {
+    AccessToken result;
+    result.Token = "T1";
+    result.ExpiresOn = Tomorrow;
+    return result;
+  }));
+
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 126UL);
+
+  for (auto i = 1; i <= 3; ++i)
+  {
+    auto const n = std::to_string(i);
+    EXPECT_EQ(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
+  }
+
+  for (auto i = 2; i <= 3; ++i)
+  {
+    auto const n = std::to_string(i);
+    static_cast<void>(TokenCache::GetToken(n, n, n, n, [=]() {
+      AccessToken result;
+      result.Token = "T2";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    }));
+  }
+
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 128UL);
+
+  for (auto i = 21; i <= 129; ++i)
+  {
+    auto const n = std::to_string(i);
+    TokenCache::Internals::Cache[{n, n, n, n}]->AccessToken.ExpiresOn = Yesterday;
+  }
+
+  static_cast<void>(TokenCache::GetToken("1", "1", "1", "1", [=]() {
+    AccessToken result;
+    result.Token = "T2";
+    result.ExpiresOn = Tomorrow;
+    return result;
+  }));
+
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 20UL);
+
+  for (auto i = 1; i <= 20; ++i)
+  {
+    auto const n = std::to_string(i);
+    EXPECT_NE(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
+  }
+
+  for (auto i = 21; i <= 128; ++i)
+  {
+    auto const n = std::to_string(i);
+    EXPECT_EQ(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
+  }
+}
