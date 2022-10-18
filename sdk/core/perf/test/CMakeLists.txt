@@ -37,14 +37,9 @@ target_include_directories(
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
+include(PerfTest)
 
-if(DEFINED ENV{VCPKG-AZURE-CORE-CPP})
-   find_package(azure-core-cpp $ENV{VCPKG-AZURE-CORE-CPP} EXACT)
-   add_compile_definitions(VCPKG_CORE_VERSION="$ENV{VCPKG-AZURE-CORE-CPP}")
-else()
-    add_compile_definitions(VCPKG_CORE_VERSION="source")
-endif()
-
+SetPerfDeps(azure-core-cpp "VCPKG-AZURE-CORE-CPP" "VCPKG_CORE_VERSION")
 
 # link the `azure-perf` lib together with any other library which will be used for the tests. 
 target_link_libraries(azure-perf-test PRIVATE Azure::azure-core azure-perf)

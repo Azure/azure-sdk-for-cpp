@@ -1,0 +1,8 @@
+macro(SetPerfDeps PACKAGE VAR_TRIGGER VAR_RESULT)
+    if(DEFINED ENV{${VAR_TRIGGER}})
+        find_package(${PACKAGE} $ENV{${VAR_TRIGGER}} EXACT)
+        add_compile_definitions(${VAR_RESULT}="$ENV{${VAR_TRIGGER}}")
+    else()
+        add_compile_definitions(${VAR_RESULT}="source")
+    endif()
+endmacro()
