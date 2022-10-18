@@ -274,7 +274,7 @@ TEST(TokenCache, ExpiredCleanup)
     TokenCache::Internals::Cache[{n, n, n, n}]->AccessToken.ExpiresOn = Yesterday;
   }
 
-  // Re-add items 2 and 3. Adding them should not trigger cleanup. Adter adding, cache should get to
+  // Re-add items 2 and 3. Adding them should not trigger cleanup. After adding, cache should get to
   // 128 items (with numbers from 2 to 129, and number 1 missing).
   for (auto i = 2; i <= 3; ++i)
   {
