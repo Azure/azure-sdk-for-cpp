@@ -7,6 +7,8 @@
 
 int main(int argc, char** argv)
 {
+  std::cout << "AZURE_IDENTITY VERSION " << VCPKG_IDENTITY_VERSION << std::endl;
+  std::cout << "AZURE_SECURITY_KEYVAULT_KEYS_CPP VERSION " << VCPKG_KEYS_VERSION << std::endl;
 
   // Create the test list
   std::vector<Azure::Perf::TestMetadata> tests{
