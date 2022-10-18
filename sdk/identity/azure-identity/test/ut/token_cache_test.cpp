@@ -3,6 +3,8 @@
 
 #include "private/token_cache_internals.hpp"
 
+#include <mutex>
+
 #include <gtest/gtest.h>
 
 using Azure::DateTime;
@@ -216,14 +218,17 @@ TEST(TokenCache, ExpiredCleanup)
     }));
   }
 
+  // Simply: we added 64+1 token, none of them has expired. None are expected to be cleaned up.
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 65UL);
 
+  // Let's expire 3 of them, with numbers from 1 to 3.
   for (auto i = 1; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
     TokenCache::Internals::Cache[{n, n, n, n}]->AccessToken.ExpiresOn = Yesterday;
   }
 
+  // Add tokens up to 128 total. When 129th gets added, clean up should get triggered.
   for (auto i = 66; i <= 128; ++i)
   {
     auto const n = std::to_string(i);
@@ -237,12 +242,14 @@ TEST(TokenCache, ExpiredCleanup)
 
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 128UL);
 
+  // Count is at 128. Tokens from 1 to 3 are still in cache even though they are expired.
   for (auto i = 1; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
     EXPECT_NE(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
   }
 
+  // One more addition to the cache and cleanup for the expired ones will get triggered.
   static_cast<void>(TokenCache::GetToken("129", "129", "129", "129", [=]() {
     AccessToken result;
     result.Token = "T1";
@@ -250,14 +257,25 @@ TEST(TokenCache, ExpiredCleanup)
     return result;
   }));
 
+  // We were at 128 before we added 1 more, and now we're at 126. 3 were deleted, 1 was added.
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 126UL);
 
+  // Items from 1 to 3 should no longer be in the cache.
   for (auto i = 1; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
     EXPECT_EQ(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
   }
 
+  // Let's expire items from 21 all the way up to 129.
+  for (auto i = 21; i <= 129; ++i)
+  {
+    auto const n = std::to_string(i);
+    TokenCache::Internals::Cache[{n, n, n, n}]->AccessToken.ExpiresOn = Yesterday;
+  }
+
+  // Re-add items 2 and 3. Adding them should not trigger cleanup. Adter adding, cache should get to
+  // 128 items (with numbers from 2 to 129, and number 1 missing).
   for (auto i = 2; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
@@ -269,14 +287,26 @@ TEST(TokenCache, ExpiredCleanup)
     }));
   }
 
+  // Cache is now at 128 again (items from 2 to 129). Adding 1 more will trigger cleanup.
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 128UL);
 
-  for (auto i = 21; i <= 129; ++i)
-  {
-    auto const n = std::to_string(i);
-    TokenCache::Internals::Cache[{n, n, n, n}]->AccessToken.ExpiresOn = Yesterday;
-  }
+  // Now let's lock some of the items for reading, and some for writing. Cleanup should not block on
+  // token release, but will simply move on, without doing anything to the ones that were locked.
+  // Out of 4 locked, two are expired, so they should get cleared under normla circumstances, but
+  // this time they will remain in the cache.
+  std::shared_lock<std::shared_timed_mutex> readLockForUnexpired(
+      TokenCache::Internals::Cache[{"2", "2", "2", "2"}]->ElementMutex);
 
+  std::shared_lock<std::shared_timed_mutex> readLockForExpired(
+      TokenCache::Internals::Cache[{"127", "127", "127", "127"}]->ElementMutex);
+
+  std::unique_lock<std::shared_timed_mutex> writeLockForUnexpired(
+      TokenCache::Internals::Cache[{"3", "3", "3", "3"}]->ElementMutex);
+
+  std::unique_lock<std::shared_timed_mutex> writeLockForExpired(
+      TokenCache::Internals::Cache[{"128", "128", "128", "128"}]->ElementMutex);
+
+  // Count is at 128. Inserting the 129th element, and it will trigger cleanup.
   static_cast<void>(TokenCache::GetToken("1", "1", "1", "1", [=]() {
     AccessToken result;
     result.Token = "T2";
@@ -284,7 +314,8 @@ TEST(TokenCache, ExpiredCleanup)
     return result;
   }));
 
-  EXPECT_EQ(TokenCache::Internals::Cache.size(), 20UL);
+  // These should be 20 unexpired items + two that are expired but were locked, so 22 total.
+  EXPECT_EQ(TokenCache::Internals::Cache.size(), 22UL);
 
   for (auto i = 1; i <= 20; ++i)
   {
@@ -292,7 +323,15 @@ TEST(TokenCache, ExpiredCleanup)
     EXPECT_NE(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
   }
 
-  for (auto i = 21; i <= 128; ++i)
+  EXPECT_NE(
+      TokenCache::Internals::Cache.find({"127", "127", "127", "127"}),
+      TokenCache::Internals::Cache.end());
+
+  EXPECT_NE(
+      TokenCache::Internals::Cache.find({"128", "128", "128", "128"}),
+      TokenCache::Internals::Cache.end());
+
+  for (auto i = 21; i <= 126; ++i)
   {
     auto const n = std::to_string(i);
     EXPECT_EQ(TokenCache::Internals::Cache.find({n, n, n, n}), TokenCache::Internals::Cache.end());
