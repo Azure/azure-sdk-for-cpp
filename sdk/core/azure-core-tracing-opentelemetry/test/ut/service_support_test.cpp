@@ -262,10 +262,10 @@ protected:
     {
       EXPECT_EQ(
           expectedSpanContents["library"]["name"].get<std::string>(),
-          span->GetInstrumentationLibrary().GetName());
+          span->GetInstrumentationScope().GetName());
       EXPECT_EQ(
           expectedSpanContents["library"]["version"].get<std::string>(),
-          span->GetInstrumentationLibrary().GetVersion());
+          span->GetInstrumentationScope().GetVersion());
     }
     return true;
   }
@@ -502,10 +502,10 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
           "my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     }
 
-    EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());
-    EXPECT_EQ("my-service", spans[1]->GetInstrumentationLibrary().GetName());
-    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationLibrary().GetVersion());
-    EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationLibrary().GetVersion());
+    EXPECT_EQ("my-service", spans[0]->GetInstrumentationScope().GetName());
+    EXPECT_EQ("my-service", spans[1]->GetInstrumentationScope().GetName());
+    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationScope().GetVersion());
+    EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationScope().GetVersion());
 
     // The trace ID for the inner and outer requests must be the same, the parent-id/span-id must be
     // different.
