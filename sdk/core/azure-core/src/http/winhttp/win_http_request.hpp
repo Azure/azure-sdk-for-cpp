@@ -38,6 +38,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     WinHttpRequest* m_httpRequest{};
     std::mutex m_actionCompleteMutex;
     wil::unique_event m_actionCompleteEvent;
+    DWORD m_expectedStatus{};
     DWORD m_stowedError{};
     DWORD_PTR m_stowedErrorInformation{};
     DWORD m_bytesAvailable{};
@@ -82,12 +83,12 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @brief WaitForAction - Waits for an action to complete.
      *
      * @remarks The WaitForAction method waits until an action initiated by the `callback` function
-     * has completed. Every pingDuration milliseconds, it checks to see if the context specified for
-     the
-     * request has been cancelled (or times out).
+     * has completed. Every pollDuration milliseconds, it checks to see if the context specified for
+     * therequest has been cancelled (or times out).
      *
      * @param callback - Callback used to initiate an action. Always called in the waiting thread.
-     * @param pingDuration - The time to wait for a ping to complete.
+     * @param expectedCallbackStatus - Wait until the expectedStatus event occurs.
+     * @param pollDuration - The time to wait for a ping to complete.
      * @param context - Context for the operation.
      *
      * @returns true if the action completed normally, false if there was an error.
@@ -97,8 +98,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      */
     bool WaitForAction(
         std::function<void()> callback,
+        DWORD expectedCallbackStatus,
         Azure::Core::Context const& context,
-        Azure::DateTime::duration const& pingDuration = std::chrono::milliseconds(800));
+        Azure::DateTime::duration const& pollDuration = std::chrono::milliseconds(800));
 
     /**
      * @brief Notify a caller that the action has completed successfully.

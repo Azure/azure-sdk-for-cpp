@@ -412,11 +412,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    */
   bool WinHttpAction::WaitForAction(
       std::function<void()> callback,
+      DWORD expectedCallbackStatus,
       Azure::Core::Context const& context,
       Azure::DateTime::duration const& pollInterval)
   {
     context.ThrowIfCancelled();
     ResetEvent(m_actionCompleteEvent.get());
+    m_expectedStatus = expectedCallbackStatus;
     m_stowedError = 0;
     m_stowedErrorInformation = 0;
     m_bytesAvailable = 0;
@@ -559,32 +561,35 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       // which needs to be completed for this notification.
       m_httpRequest->HandleExpectedTlsRootCertificates(hInternet);
     }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE)
+    else if (internetStatus == m_expectedStatus)
     {
-      // A WinHttpSendRequest API call has completed, complete the current action.
-      CompleteAction();
-    }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE)
-    {
-      // A WinHttpWriteData call has completed, complete the current action.
-      CompleteAction();
-    }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE)
-    {
-      // Headers for an HTTP response are available, complete the current action.
-      CompleteAction();
-    }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_READ_COMPLETE)
-    {
-      // A WinHttpReadData call has completed. Complete the current action, including the amount of
-      // data read.
-      CompleteActionWithData(statusInformationLength);
-    }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
-    {
-      // An HINTERNET handle is closing, complete the outstanding close request.
-      Log::Write(Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
-      CompleteAction();
+      if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE)
+      {
+        // A WinHttpSendRequest API call has completed, complete the current action.
+        CompleteAction();
+      }
+      else if (internetStatus == WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE)
+      {
+        // A WinHttpWriteData call has completed, complete the current action.
+        CompleteAction();
+      }
+      else if (internetStatus == WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE)
+      {
+        // Headers for an HTTP response are available, complete the current action.
+        CompleteAction();
+      }
+      else if (internetStatus == WINHTTP_CALLBACK_STATUS_READ_COMPLETE)
+      {
+        // A WinHttpReadData call has completed. Complete the current action, including the amount
+        // of data read.
+        CompleteActionWithData(statusInformationLength);
+      }
+      else if (internetStatus == WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
+      {
+        // An HINTERNET handle is closing, complete the outstanding close request.
+        Log::Write(Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
+        CompleteAction();
+      }
     }
   }
 
@@ -919,7 +924,10 @@ _detail::WinHttpRequest::~WinHttpRequest()
         Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
     // Close the outstanding request handle, waiting until the handle closing status request comes
     // in.
-    m_httpAction->WaitForAction([this]() { m_requestHandle.reset(); }, Azure::Core::Context{});
+    m_httpAction->WaitForAction(
+        [this]() { m_requestHandle.reset(); },
+        WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
+        Azure::Core::Context{});
   }
 }
 
@@ -977,6 +985,7 @@ void _detail::WinHttpRequest::Upload(
                 GetErrorAndThrow("Error while uploading/sending data.");
               }
             },
+            WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE,
             context))
 
     {
@@ -1048,6 +1057,7 @@ void _detail::WinHttpRequest::SendRequest(
                 }
               }
             },
+            WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE,
             context))
     {
       GetErrorAndThrow(
@@ -1102,6 +1112,7 @@ void _detail::WinHttpRequest::ReceiveResponse(Azure::Core::Context const& contex
               GetErrorAndThrow("Error while receiving a response.");
             }
           },
+          WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE,
           context))
   {
     GetErrorAndThrow("Error while receiving a response.", m_httpAction->GetStowedError());
@@ -1327,6 +1338,7 @@ size_t _detail::WinHttpRequest::ReadData(
                 Logger::Level::Verbose,
                 "Read Data read from wire. Size: " + std::to_string(numberOfBytesRead) + ".");
           },
+          WINHTTP_CALLBACK_STATUS_READ_COMPLETE,
           context))
   {
     GetErrorAndThrow("Error sending HTTP request asynchronously", m_httpAction->GetStowedError());
