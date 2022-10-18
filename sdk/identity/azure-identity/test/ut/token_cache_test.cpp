@@ -114,7 +114,6 @@ TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
   EXPECT_EQ(TokenCache::Internals::Cache.size(), 0UL);
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
-  auto const Yesterday = Tomorrow - 48h;
 
   TokenCache::Internals::OnBeforeCacheWriteLock = [=]() {
     TokenCache::Internals::OnBeforeCacheWriteLock = nullptr;
