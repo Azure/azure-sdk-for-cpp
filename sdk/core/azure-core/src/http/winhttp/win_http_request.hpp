@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @param request Http Request associated with the action.
      */
     WinHttpAction(WinHttpRequest* request)
-		// Create a non-inheritable anonymous manual reset event intialized as unset.
+        // Create a non-inheritable anonymous manual reset event intialized as unset.
         : m_httpRequest(request), m_actionCompleteEvent(CreateEvent(nullptr, TRUE, FALSE, nullptr))
     {
       if (!m_actionCompleteEvent)
@@ -82,7 +82,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @brief WaitForAction - Waits for an action to complete.
      *
      * @remarks The WaitForAction method waits until an action initiated by the `callback` function
-     * has completed. Every pingDuration milliseconds, it checks to see if the context specified for the
+     * has completed. Every pingDuration milliseconds, it checks to see if the context specified for
+     the
      * request has been cancelled (or times out).
      *
      * @param callback - Callback used to initiate an action. Always called in the waiting thread.
