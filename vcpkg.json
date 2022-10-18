@@ -22,5 +22,11 @@
       "name": "wil",
       "platform": "windows"
     }
+  ],
+  "overrides": [
+    {
+      "name": "opentelemetry-cpp",
+      "version": "1.0.3"
+    }
   ]
 }
