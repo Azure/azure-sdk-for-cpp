@@ -15,10 +15,8 @@ decltype(TokenCache::Internals::Cache) TokenCache::Internals::Cache;
 decltype(TokenCache::Internals::CacheMutex) TokenCache::Internals::CacheMutex;
 
 #if defined(TESTING_BUILD)
-decltype(TokenCache::Internals::OnBeforeCacheWriteLock)
-    TokenCache::Internals::OnBeforeCacheWriteLock;
-
-decltype(TokenCache::Internals::OnBeforeItemWriteLock) TokenCache::Internals::OnBeforeItemWriteLock;
+std::function<void()> TokenCache::Internals::OnBeforeCacheWriteLock;
+std::function<void()> TokenCache::Internals::OnBeforeItemWriteLock;
 #endif
 
 namespace {
