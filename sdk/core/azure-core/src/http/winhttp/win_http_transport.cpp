@@ -331,6 +331,7 @@ bool _detail::WinHttpRequest::VerifyCertificatesInChain(
 
 namespace {
 
+// If the `internetStatus` value has `id` bit set, then append the name of `id` to the string `rv`.
 #define APPEND_ENUM_STRING(id) \
   if (internetStatus & (id)) \
   { \
@@ -368,7 +369,7 @@ std::string InternetStatusToString(DWORD internetStatus)
   //  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_GETPROXYSETTINGS_COMPLETE);
   if (internetStatus & 0x08000000)
   {
-    rv += "WINHTTP_CALLBACK_STATUS_GETPROXYSETTINGS_COMPLETE ";
+    rv += std::string("WINHTTP_CALLBACK_STATUS_GETPROXYSETTINGS_COMPLETE") + " ";
   }
   APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_SETTINGS_WRITE_COMPLETE);
   APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_SETTINGS_READ_COMPLETE);

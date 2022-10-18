@@ -126,8 +126,8 @@ namespace Azure { namespace Core {
     class WinHttpTransport : public HttpTransport {
     private:
       WinHttpTransportOptions m_options;
-      const Azure::Core::_internal::UniqueHandle<HINTERNET>
-          m_sessionHandle; // const to ensure immutability.
+      // m_sessionhandle is const to ensure immutability.
+      const Azure::Core::_internal::UniqueHandle<HINTERNET> m_sessionHandle;
 
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateSessionHandle();
       Azure::Core::_internal::UniqueHandle<HINTERNET> CreateConnectionHandle(
