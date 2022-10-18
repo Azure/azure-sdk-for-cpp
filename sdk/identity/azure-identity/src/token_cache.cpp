@@ -56,7 +56,7 @@ std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
     return found->second;
   }
 
-  // Insert the blank valule value and return it.
+  // Insert the blank value value and return it.
   return TokenCache::Internals::Cache[key] = std::make_shared<TokenCache::Internals::CacheValue>();
 }
 } // namespace
