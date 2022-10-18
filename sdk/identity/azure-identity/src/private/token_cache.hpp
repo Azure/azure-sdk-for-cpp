@@ -19,7 +19,6 @@ namespace Azure { namespace Identity { namespace _detail {
    *
    */
   class TokenCache final {
-  private:
     TokenCache() = delete;
     ~TokenCache() = delete;
 

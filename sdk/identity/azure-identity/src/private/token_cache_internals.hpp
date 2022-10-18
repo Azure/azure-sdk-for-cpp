@@ -25,7 +25,6 @@ namespace Azure { namespace Identity { namespace _detail {
    *
    */
   class TokenCache::Internals final {
-  private:
     Internals() = delete;
     ~Internals() = delete;
 
