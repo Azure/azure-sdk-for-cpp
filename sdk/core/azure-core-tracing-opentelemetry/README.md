@@ -61,8 +61,7 @@ After this, the SDK API implementations will be able to retrieve the tracer prov
 
 ```cpp
 // Start by creating an OpenTelemetry Provider.
-auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
-m_spanData = exporter->GetData();
+auto exporter = std::make_unique<MySpanExporter>();
 
 // simple processor
 auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
