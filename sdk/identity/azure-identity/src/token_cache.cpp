@@ -32,7 +32,7 @@ bool IsFresh(
 }
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
-    TokenCache::Internals::CacheKey const key)
+    TokenCache::Internals::CacheKey const& key)
 {
   {
     std::shared_lock<std::shared_timed_mutex> cacheReadLock(TokenCache::Internals::CacheMutex);
