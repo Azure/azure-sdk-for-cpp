@@ -323,6 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders = std::move(response.Value.HttpHeaders);
     ret.IsServerEncrypted = response.Value.IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(response.Value.EncryptionKeySha256);
+    ret.EncryptionScope = std::move(response.Value.EncryptionScope);
     ret.CopyId = std::move(response.Value.CopyId);
     ret.CopySource = std::move(response.Value.CopySource);
     ret.CopyStatus = std::move(response.Value.CopyStatus);
