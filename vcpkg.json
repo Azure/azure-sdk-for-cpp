@@ -24,9 +24,5 @@
     }
   ],
   "overrides": [
-    {
-      "name": "opentelemetry-cpp",
-      "version": "1.4.1"
-    }
   ]
 }
