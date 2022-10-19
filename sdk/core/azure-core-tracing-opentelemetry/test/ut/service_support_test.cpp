@@ -8,6 +8,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
 
+#include "test_exporter.hpp" // Span Exporter used for OpenTelemetry tests.
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
 // the warnings across the includes.
@@ -16,8 +17,8 @@
 #pragma warning(disable : 4244)
 #pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
-#include <opentelemetry/exporters/memory/in_memory_span_data.h>
-#include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
+//#include <opentelemetry/exporters/memory/in_memory_span_data.h>
+//#include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
 #include <opentelemetry/exporters/ostream/span_exporter.h>
 #include <opentelemetry/sdk/common/global_log_handler.h>
 #include <opentelemetry/sdk/trace/exporter.h>
@@ -100,6 +101,7 @@ protected:
   opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>
   CreateOpenTelemetryProvider()
   {
+	#if 0
 #if USE_MEMORY_EXPORTER
     auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
     m_spanData = exporter->GetData();
@@ -107,6 +109,9 @@ protected:
     // logging exporter
     auto exporter = std::make_unique<opentelemetry::exporter::trace::OStreamSpanExporter>();
 #endif
+	#else
+    auto exporter = std::make_unique<TestExporter>();
+	#endif
 
     // simple processor
     auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
