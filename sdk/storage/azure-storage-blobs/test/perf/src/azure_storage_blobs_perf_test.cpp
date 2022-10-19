@@ -16,6 +16,7 @@
 
 int main(int argc, char** argv)
 {
+  std::cout << "Azure-storage-blobs VERSION " << VCPKG_STORAGE_BLOB_VERSION << std::endl;
 
   // Create the test list
   std::vector<Azure::Perf::TestMetadata> tests
