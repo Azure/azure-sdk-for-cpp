@@ -24,9 +24,7 @@ int main(int argc, char** argv)
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
-  signal(
-      SIGABRT,
-      Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
+  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
 #endif // AZ_PLATFORM_WINDOWS
 
   testing::InitGoogleTest(&argc, argv);
