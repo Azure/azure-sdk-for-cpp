@@ -11,7 +11,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
    * any non-test code.
    *
    * The GlobalExceptionHandler class is used to catch any unhandled exceptions and report them as a
-   * part of test collateral, it is intended to be called as a SIGBRT handler set by:
+   * part of test collateral, it is intended to be called as a SIGABRT handler set by:
    *
    * ```
    *  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler);
