@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
    * ```
    *  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler);
    * ```
-   * 
+   *
    */
   struct GlobalExceptionHandler
   {
