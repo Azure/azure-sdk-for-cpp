@@ -449,20 +449,28 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     return true;
   }
 
-  void WinHttpAction::CompleteAction() { SetEvent(m_actionCompleteEvent.get()); }
+  void WinHttpAction::CompleteAction()
+  {
+    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+  }
   void WinHttpAction::CompleteActionWithData(DWORD bytesAvailable)
   {
-
+    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+    // state before the lock is released.
+    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     m_bytesAvailable = bytesAvailable;
-    SetEvent(m_actionCompleteEvent.get());
   }
   void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
   {
+    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+    // state before the lock is released.
+    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     m_stowedErrorInformation = stowedErrorInformation;
     m_stowedError = stowedError;
-    SetEvent(m_actionCompleteEvent.get());
   }
 
   DWORD WinHttpAction::GetStowedError()
