@@ -37,19 +37,21 @@ add_executable (
 
 create_per_service_target_build(storage azure-storage-blobs-perf)
 
+include(PerfTest)
+SETPERFDEPS(azure-storage-blobs-cpp VCPKG_STORAGE_BLOB_VERSION)
+
 # Include the headers from the project.
-#target_include_directories(
-#  azure-storage-blobs-perf
-#    PUBLIC
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-#)
+target_include_directories(
+  azure-storage-blobs-perf
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+)
 
 if (MSVC)
     # allow msvc to use getenv()
     target_compile_options(azure-storage-blobs-perf PUBLIC /wd4996)
 endif()
-include(PerfTest)
-SETPERFDEPS(azure-storage-blobs-cpp VCPKG_STORAGE_BLOB_VERSION)
+
 
 # link the `azure-perf` lib together with any other library which will be used for the tests. 
 target_link_libraries(azure-storage-blobs-perf PRIVATE Azure::azure-storage-blobs azure-perf)
