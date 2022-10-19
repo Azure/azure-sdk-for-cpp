@@ -3,9 +3,8 @@
 
 #include <gtest/gtest.h>
 
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include <azure/core/platform.hpp>
-#endif
+#include "azure/core/internal/diagnostics/global_exception.hpp"
+#include "azure/core/platform.hpp"
 #include <csignal>
 #include <iostream>
 
@@ -25,20 +24,9 @@ int main(int argc, char** argv)
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
-  signal(SIGABRT, [](int) {
-    // Rethrow any exceptions on the current stack - this will cause any pending exceptions to be
-    // thrown so we can catch them and report them to the caller. This is needed because the
-    // terminate() function on Windows calls abort() which normally pops up UI terminates without
-    // reporting the exception.
-    try
-    {
-      throw;
-    }
-    catch (std::exception const& ex)
-    {
-      std::cout << "Exception thrown: " << ex.what() << std::endl;
-    }
-  });
+  signal(
+      SIGABRT,
+      Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
 #endif // AZ_PLATFORM_WINDOWS
 
   testing::InitGoogleTest(&argc, argv);

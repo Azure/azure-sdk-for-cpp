@@ -411,7 +411,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    *
    */
   bool WinHttpAction::WaitForAction(
-      std::function<void()> callback,
+      std::function<void()> initiateAction,
       DWORD expectedCallbackStatus,
       Azure::Core::Context const& context,
       Azure::DateTime::duration const& pollInterval)
@@ -424,7 +424,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     m_bytesAvailable = 0;
 
     // Call the provided callback to start the WinHTTP action.
-    callback();
+    initiateAction();
 
     DWORD waitResult;
     do
@@ -589,6 +589,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         // An HINTERNET handle is closing, complete the outstanding close request.
         Log::Write(Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
         CompleteAction();
+      }
+      else
+      {
+        Log::Write(
+            Logger::Level::Error,
+            "Received expected status " + InternetStatusToString(internetStatus)
+                + " but it was not handled.");
       }
     }
   }

@@ -86,7 +86,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * has completed. Every pollDuration milliseconds, it checks to see if the context specified for
      * therequest has been cancelled (or times out).
      *
-     * @param callback - Callback used to initiate an action. Always called in the waiting thread.
+     * @param initiateAction - Function called to initiate an action. Always called in the waiting
+     *        thread.
      * @param expectedCallbackStatus - Wait until the expectedStatus event occurs.
      * @param pollDuration - The time to wait for a ping to complete.
      * @param context - Context for the operation.
@@ -97,7 +98,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * GetStowedError() and GetStowedErrorInformation()
      */
     bool WaitForAction(
-        std::function<void()> callback,
+        std::function<void()> initiateAction,
         DWORD expectedCallbackStatus,
         Azure::Core::Context const& context,
         Azure::DateTime::duration const& pollDuration = std::chrono::milliseconds(800));

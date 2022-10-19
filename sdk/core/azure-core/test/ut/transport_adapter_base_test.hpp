@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     inline static std::string Get() { return Schema() + "://" + Host() + "/get"; }
     inline static std::string Headers() { return Schema() + "://" + Host() + "/headers"; }
-    inline static std::string WithPort() { return Schema() + "://" + Host() + ":443/get"; }
+    inline static std::string GetWithPort() { return Schema() + "://" + Host() + ":443/get"; }
     inline static std::string Put() { return Schema() + "://" + Host() + "/put"; }
     inline static std::string Delete() { return Schema() + "://" + Host() + "/delete"; }
     inline static std::string Patch() { return Schema() + "://" + Host() + "/patch"; }
