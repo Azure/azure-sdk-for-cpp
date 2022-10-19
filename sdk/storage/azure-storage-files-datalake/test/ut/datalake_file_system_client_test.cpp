@@ -686,19 +686,17 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
       auto fileClient = fileSystemClient.GetFileClient(pathName);
-      auto fileInfo = fileClient.Create();
+      fileClient.Create();
+      Files::DataLake::ListPathsOptions listOptions;
+      for (auto page = fileSystemClient.ListPaths(false, listOptions); page.HasPage();
+           page.MoveToNextPage())
       {
-        Files::DataLake::ListPathsOptions listOptions;
-        for (auto page = fileSystemClient.ListPaths(false, listOptions); page.HasPage();
-             page.MoveToNextPage())
+        for (auto& path : page.Paths)
         {
-          for (auto& path : page.Paths)
+          if (path.Name == pathName)
           {
-            if (path.Name == pathName)
-            {
-              EXPECT_TRUE(path.EncryptionScope.HasValue());
-              EXPECT_EQ(path.EncryptionScope.Value(), testEncryptionScope);
-            }
+            EXPECT_TRUE(path.EncryptionScope.HasValue());
+            EXPECT_EQ(path.EncryptionScope.Value(), testEncryptionScope);
           }
         }
       }
