@@ -104,11 +104,10 @@ public:
    * @param attributes the attributes associated with the link
    */
   void AddLink(
-      const opentelemetry::trace::SpanContext& span_context,
-      const opentelemetry::common::KeyValueIterable& attributes) noexcept override
-  {
-    span_context;
-    attributes;
+      const opentelemetry::trace::SpanContext&,
+      const opentelemetry::common::KeyValueIterable&) noexcept override{
+      // TODO, when we use this, we need to test this.
+      // NO-OP since this exporter silences link data.
   };
 
   /**
@@ -149,7 +148,6 @@ public:
   void SetResource(const opentelemetry::sdk::resource::Resource& resource) noexcept override
   {
     m_resource = std::make_unique<opentelemetry::sdk::resource::Resource>(resource);
-    resource;
   };
 
   /**
