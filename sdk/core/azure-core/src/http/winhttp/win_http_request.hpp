@@ -89,7 +89,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @param initiateAction - Function called to initiate an action. Always called in the waiting
      *        thread.
      * @param expectedCallbackStatus - Wait until the expectedStatus event occurs.
-     * @param pollDuration - The time to wait for a ping to complete.
+     * @param pollDuration - The time to wait for a ping to complete. Defaults to 800ms because it
+     *        seems like a reasonable minimum responsiveness value (also this is the default retry
+     *        policy delay).
      * @param context - Context for the operation.
      *
      * @returns true if the action completed normally, false if there was an error.
