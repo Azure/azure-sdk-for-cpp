@@ -527,10 +527,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapterOptions, MultipleCrlOperations)
   {
     std::vector<std::string> testUrls{
-        AzureSdkHttpbinServer::Get(),
-        "https://www.wikipedia.org",
-        "https://www.example.com/",
-        "https://www.google.com/",
+        AzureSdkHttpbinServer::Get(), // Uses a Microsoft certificate.
+        //        "https://www.wikipedia.org", // Uses a LetsEncrypt Certificate
+        "https://aws.com", // Uses a Starfield Technologies certificate.
+        "https://www.example.com/", // Uses a DigiCert certificate.
+        "https://www.google.com/", // Uses a google certificate.
     };
 
     GTEST_LOG_(INFO) << "Basic test calls.";
