@@ -86,5 +86,5 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"help", {"-h", "--help"}, "Display help information.", 0},
-      {"Sync", {"-s", "--sync", "Runs sync version of test, not implemented"},0}};
+      {"Sync", {"-s", "--sync"}, "Runs sync version of test, not implemented", 0}};
 }
