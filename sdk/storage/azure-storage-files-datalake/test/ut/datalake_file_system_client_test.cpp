@@ -646,6 +646,67 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileSystemClientTest, EncryptionScope)
+  {
+    auto const& testEncryptionScope = GetTestEncryptionScope();
+    // without EncryptionScope
+    {
+      auto properties = m_fileSystemClient->GetProperties().Value;
+      EXPECT_EQ(properties.DefaultEncryptionScope, AccountEncryptionKey);
+      EXPECT_EQ(properties.PreventEncryptionScopeOverride, false);
+    }
+    // with EncryptionScope
+    {
+      std::string fileSystemName = GetFileSystemValidName() + "1";
+      std::string pathName = GetTestName() + "1";
+      auto fileSystemClient = m_dataLakeServiceClient->GetFileSystemClient(fileSystemName);
+      Files::DataLake::CreateFileSystemOptions createOptions;
+      createOptions.DefaultEncryptionScope = testEncryptionScope;
+      createOptions.PreventEncryptionScopeOverride = true;
+      EXPECT_NO_THROW(fileSystemClient.Create(createOptions));
+      auto properties = fileSystemClient.GetProperties().Value;
+      EXPECT_EQ(properties.DefaultEncryptionScope, createOptions.DefaultEncryptionScope.Value());
+      EXPECT_EQ(
+          properties.PreventEncryptionScopeOverride,
+          createOptions.PreventEncryptionScopeOverride.Value());
+      Files::DataLake::ListFileSystemsOptions listFileSystemOptions;
+      listFileSystemOptions.Prefix = fileSystemName;
+      auto fileSystems
+          = m_dataLakeServiceClient->ListFileSystems(listFileSystemOptions).FileSystems;
+      for (auto& fileSystem : fileSystems)
+      {
+        if (fileSystem.Name == fileSystemName)
+        {
+          EXPECT_EQ(
+              fileSystem.Details.DefaultEncryptionScope,
+              createOptions.DefaultEncryptionScope.Value());
+          EXPECT_EQ(
+              fileSystem.Details.PreventEncryptionScopeOverride,
+              createOptions.PreventEncryptionScopeOverride.Value());
+        }
+      }
+      auto fileClient = fileSystemClient.GetFileClient(pathName);
+      fileClient.Create();
+      Files::DataLake::ListPathsOptions listOptions;
+      for (auto page = fileSystemClient.ListPaths(false, listOptions); page.HasPage();
+           page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          if (path.Name == pathName)
+          {
+            EXPECT_TRUE(path.EncryptionScope.HasValue());
+            EXPECT_EQ(path.EncryptionScope.Value(), testEncryptionScope);
+          }
+        }
+      }
+      auto fileProperties = fileClient.GetProperties().Value;
+      EXPECT_TRUE(fileProperties.EncryptionScope.HasValue());
+      EXPECT_EQ(fileProperties.EncryptionScope.Value(), testEncryptionScope);
+      fileSystemClient.Delete();
+    }
+  }
+
   TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy_LIVEONLY_)
   {
     CHECK_SKIP_TEST();

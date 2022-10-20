@@ -443,7 +443,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     // Encryption scope
-    const auto encryptionScope = GetTestEncryptionScope();
+    const std::string encryptionScope = GetTestEncryptionScope();
     {
       auto sasBuilderWithEncryptionScope = fileSasBuilder;
       sasBuilderWithEncryptionScope.EncryptionScope = encryptionScope;
@@ -451,16 +451,16 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
           fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(*keyCredential));
       fileClientEncryptionScopeSas.Create();
-      auto pRawResponse = fileClientEncryptionScopeSas.GetProperties().RawResponse;
-      ASSERT_TRUE(pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0);
-      EXPECT_EQ(pRawResponse->GetHeaders().at("x-ms-encryption-scope"), encryptionScope);
+      auto properties = fileClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(properties.EncryptionScope.HasValue());
+      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
 
       fileClientEncryptionScopeSas = Files::DataLake::DataLakeFileClient(
           fileUrl + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
       fileClientEncryptionScopeSas.Create();
-      pRawResponse = fileClientEncryptionScopeSas.GetProperties().RawResponse;
-      ASSERT_TRUE(pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0);
-      EXPECT_EQ(pRawResponse->GetHeaders().at("x-ms-encryption-scope"), encryptionScope);
+      properties = fileClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(properties.EncryptionScope.HasValue());
+      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
     }
     {
       auto sasBuilderWithEncryptionScope = directorySasBuilder;
@@ -470,9 +470,9 @@ namespace Azure { namespace Storage { namespace Test {
           directory1Url
           + sasBuilderWithEncryptionScope.GenerateSasToken(userDelegationKey, accountName));
       directoryClientEncryptionScopeSas.Create();
-      auto pRawResponse = directoryClientEncryptionScopeSas.GetProperties().RawResponse;
-      ASSERT_TRUE(pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0);
-      EXPECT_EQ(pRawResponse->GetHeaders().at("x-ms-encryption-scope"), encryptionScope);
+      auto properties = directoryClientEncryptionScopeSas.GetProperties().Value;
+      ASSERT_TRUE(properties.EncryptionScope.HasValue());
+      EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
     }
   }
 

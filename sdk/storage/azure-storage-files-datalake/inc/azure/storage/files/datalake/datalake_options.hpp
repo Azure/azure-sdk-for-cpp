@@ -175,6 +175,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * The public access type of the file system.
      */
     Models::PublicAccessType AccessType = Models::PublicAccessType::None;
+
+    /**
+     * @brief The encryption scope to use as the default on the filesystem.
+     */
+    Azure::Nullable<std::string> DefaultEncryptionScope;
+
+    /**
+     * @brief If true, prevents any file upload from specifying a different encryption
+     * scope.
+     */
+    Azure::Nullable<bool> PreventEncryptionScopeOverride;
   };
 
   /**

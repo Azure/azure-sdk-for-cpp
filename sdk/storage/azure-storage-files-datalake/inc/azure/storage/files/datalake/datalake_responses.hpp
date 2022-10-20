@@ -84,6 +84,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The lease status of the file system.
        */
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
+
+      /**
+       * The default encryption scope for the file system.
+       */
+      std::string DefaultEncryptionScope = "$account-encryption-key";
+
+      /**
+       * Indicates whether the filesystem's default encryption scope can be overriden.
+       */
+      bool PreventEncryptionScopeOverride = false;
     }; // struct FileSystemItemDetails
 
     /**
@@ -141,6 +151,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The Metadata of the file system.
        */
       Storage::Metadata Metadata;
+
+      /**
+       * The default encryption scope for the file system.
+       */
+      std::string DefaultEncryptionScope = "$account-encryption-key";
+
+      /**
+       * Indicates whether the filesystem's default encryption scope can be overriden.
+       */
+      bool PreventEncryptionScopeOverride = false;
     };
 
     /**
@@ -321,6 +341,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The encryption key's SHA256.
        */
       Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+
+      /**
+       * Returns the name of the encryption scope used to encrypt the path contents and application
+       * metadata.  Note that the absence of this header implies use of the default account
+       * encryption scope.
+       */
+      Nullable<std::string> EncryptionScope;
 
       /**
        * The copy ID of the path, if the path is created from a copy operation.
