@@ -528,7 +528,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     std::vector<std::string> testUrls{
         AzureSdkHttpbinServer::Get(),
-        "https://twitter.com/",
+        "https://www.wikipedia.org",
         "https://www.example.com/",
         "https://www.google.com/",
     };
