@@ -64,7 +64,7 @@ public:
 
   /**
    * Set an attribute of a span.
-   * @param name the name of the attribute
+   * @param key the name of the attribute
    * @param value the attribute value
    */
   void SetAttribute(
@@ -100,8 +100,6 @@ public:
 
   /**
    * Add a link to a span.
-   * @param span_context the span context of the linked span
-   * @param attributes the attributes associated with the link
    */
   void AddLink(
       const opentelemetry::trace::SpanContext&,
@@ -143,7 +141,7 @@ public:
 
   /**
    * Set Resource of the span
-   * @param Resource the resource to set
+   * @param resource the resource to set
    */
   void SetResource(const opentelemetry::sdk::resource::Resource& resource) noexcept override
   {
@@ -237,7 +235,6 @@ public:
 
   /**
    * Shut down the exporter.
-   * @param timeout an optional timeout.
    * @return return the status of the operation.
    */
   bool Shutdown(std::chrono::microseconds) noexcept override { return true; }
