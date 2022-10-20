@@ -96,12 +96,12 @@ class CustomLogHandler : public opentelemetry::sdk::common::internal_log::LogHan
 class OpenTelemetryServiceTests : public Azure::Core::Test::TestBase {
 private:
 protected:
-  std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> m_spanData;
+  std::shared_ptr<TestExporter::TestData> m_spanData;
 
   opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>
   CreateOpenTelemetryProvider()
   {
-	#if 0
+#if 0
 #if USE_MEMORY_EXPORTER
     auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
     m_spanData = exporter->GetData();
@@ -109,9 +109,10 @@ protected:
     // logging exporter
     auto exporter = std::make_unique<opentelemetry::exporter::trace::OStreamSpanExporter>();
 #endif
-	#else
+#else
     auto exporter = std::make_unique<TestExporter>();
-	#endif
+    m_spanData = exporter->GetTestData();
+#endif
 
     // simple processor
     auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
@@ -148,7 +149,7 @@ protected:
   }
 
   bool VerifySpan(
-      std::unique_ptr<opentelemetry::sdk::trace::SpanData> const& span,
+      std::unique_ptr<RecordedSpan> const& span,
       std::string const& expectedSpanContentsJson)
   {
     Azure::Core::Json::_internal::json expectedSpanContents(
@@ -204,7 +205,7 @@ protected:
 
       EXPECT_EQ(expectedAttributes.size(), attributes.size());
 
-      for (const auto& foundAttribute : attributes)
+      for (auto const& foundAttribute : attributes)
       {
         EXPECT_TRUE(expectedAttributes.contains(foundAttribute.first));
         switch (foundAttribute.second.index())
@@ -224,7 +225,7 @@ protected:
             std::regex expectedRegex(expectedVal);
             GTEST_LOG_(INFO) << "expected Regex: " << expectedVal << std::endl;
             GTEST_LOG_(INFO) << "actual val: " << actualVal << std::endl;
-            EXPECT_TRUE(std::regex_match(actualVal, expectedRegex));
+            EXPECT_TRUE(std::regex_match(std::string(actualVal), expectedRegex));
             break;
           }
           case opentelemetry::common::kTypeDouble: {
@@ -332,7 +333,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
       EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
     }
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(1ul, spans.size());
 
     VerifySpan(spans[0], R"(
@@ -372,7 +373,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
     }
 
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(1ul, spans.size());
 
     VerifySpan(spans[0], R"(
@@ -420,7 +421,7 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
     }
 
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(1ul, spans.size());
 
     VerifySpan(spans[0], R"(
@@ -481,7 +482,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
       }
     }
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(2ul, spans.size());
 
     // Because Nested API goes out of scope before My API, it will be logged first in the
@@ -681,7 +682,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
         myServiceClient.GetConfigurationString("Fred");
       }
       // Now let's verify what was logged via OpenTelemetry.
-      auto spans = m_spanData->GetSpans();
+      auto const& spans = m_spanData->ExtractSpans();
       EXPECT_EQ(2ul, spans.size());
 
       VerifySpan(spans[0], R"(
@@ -727,7 +728,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
       myServiceClient.GetConfigurationString("George");
     }
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(0ul, spans.size());
   }
 }
