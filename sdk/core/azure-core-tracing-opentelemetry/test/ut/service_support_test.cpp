@@ -1,37 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#define USE_MEMORY_EXPORTER 1
-#include "azure/core/internal/tracing/service_tracing.hpp"
-#include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+#include <gtest/gtest.h>
+
+#include <chrono>
+#include <regex>
+
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/test/test_base.hpp>
+#include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
 
 #include "test_exporter.hpp" // Span Exporter used for OpenTelemetry tests.
-#if defined(_MSC_VER)
-// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
-// the warnings across the includes.
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4244)
-#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
-#endif
-//#include <opentelemetry/exporters/memory/in_memory_span_data.h>
-//#include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
-#include <opentelemetry/exporters/ostream/span_exporter.h>
 #include <opentelemetry/sdk/common/global_log_handler.h>
-#include <opentelemetry/sdk/trace/exporter.h>
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
-#include <opentelemetry/trace/propagation/http_trace_context.h>
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-#include <chrono>
-#include <gtest/gtest.h>
-#include <regex>
 
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
@@ -101,18 +86,8 @@ protected:
   opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>
   CreateOpenTelemetryProvider()
   {
-#if 0
-#if USE_MEMORY_EXPORTER
-    auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
-    m_spanData = exporter->GetData();
-#else
-    // logging exporter
-    auto exporter = std::make_unique<opentelemetry::exporter::trace::OStreamSpanExporter>();
-#endif
-#else
     auto exporter = std::make_unique<TestExporter>();
     m_spanData = exporter->GetTestData();
-#endif
 
     // simple processor
     auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
