@@ -39,7 +39,6 @@ extends:
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
     EnvVars: ${{ parameters.EnvVars}}
     InstallLanguageSteps:
-      - template: /eng/pipelines/templates/steps/vcpkg.yml
-      #/eng/pipelines/templates/steps/vcpkg-clone.yml
-        parameters: 
-          RepoOwner: Microsoft
+      - pwsh: |
+          Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+        displayName: Set Vcpkg Variables
