@@ -34,7 +34,7 @@ namespace Azure { namespace Identity { namespace _detail {
      * entries.
      *
      */
-    struct CacheKey
+    struct CacheKey final
     {
       std::string TenantId; ///< Tenant ID.
       std::string ClientId; ///< Client ID.
@@ -53,7 +53,7 @@ namespace Azure { namespace Identity { namespace _detail {
      * updates.
      *
      */
-    struct CacheValue
+    struct CacheValue final
     {
       std::shared_timed_mutex ElementMutex;
       Core::Credentials::AccessToken AccessToken;
