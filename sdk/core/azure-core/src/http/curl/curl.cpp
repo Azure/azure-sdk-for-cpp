@@ -47,12 +47,12 @@
 #include <openssl/asn1t.h>
 #include <openssl/err.h>
 // For OpenSSL > 3.0, we can use the new API to get the certificate's OCSP URL.
-#if USE_OPENSSL_3
+#if defined(USE_OPENSSL_3)
 #include <openssl/http.h>
 #endif
-#if USE_OPENSSL_1
+#if defined(USE_OPENSSL_1)
 #include <openssl/ocsp.h>
-#endif // USE_OPENSSL_1
+#endif // defined(USE_OPENSSL_1)
 #include <openssl/safestack.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
@@ -1399,6 +1399,12 @@ namespace Azure { namespace Core {
     {
       using type = BasicUniqueHandle<BIO, BIO_free_all>;
     };
+#if defined(USE_OPENSSL_1)
+    template <> struct UniqueHandleHelper<OCSP_REQ_CTX>
+    {
+      using type = BasicUniqueHandle<OCSP_REQ_CTX, OCSP_REQ_CTX_free>;
+    };
+#endif // USE_OPENSSL_1
 
     template <> struct UniqueHandleHelper<STACK_OF(X509_CRL)>
     {
@@ -1462,133 +1468,83 @@ namespace Azure { namespace Core {
       {
         Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
         Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
-#if USE_OPENSSL3
+#if defined(USE_OPENSSL3)
         crl = Azure::Core::_internal::MakeUniqueHandle(
             X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
 #else
-    char *host = NULL, *port = NULL, *path = NULL;
-    Azure::Core::_internal::UniqueHandle<BIO> bio;
-    OCSP_REQ_CTX *rctx = NULL;
-    int use_ssl, rv = 0;
-    if (!OCSP_parse_url(url, &host, &port, &path, &use_ssl))
-    {
-        goto error;
-    }
-
-    if (use_ssl)
-    {
-        Log::Write(Logger::Level::Error, ("CRL HTTPS not supported\n");
-        return nullptr;
-    }
-
-    const char* proxyHostnamePort;
-    const char* usernamePassword;
-    platform_get_http_proxy(&proxyHostnamePort, &usernamePassword);
-    bool isHostnameSet = (proxyHostnamePort && *proxyHostnamePort);
-
-    if (isHostnameSet)
-    {
-        LogInfo("Performing CRL download via proxy%s.\n",
-            usernamePassword && *usernamePassword
-                ? " (with authentication)"
-                : "");
-    }
-
-    bio = Azure::Core::_internal::MakeUniqueHandle(BIO_new_connect, isHostnameSet ? proxyHostnamePort : host);
-    if (!bio || (!isHostnameSet && !BIO_set_conn_port(bio, port)))
-    {
-        goto error;
-    }
-
-    rctx = OCSP_REQ_CTX_new(bio, 1024 * 1024);
-    if (!rctx)
-    {
-        goto error;
-    }
-
-    OCSP_set_max_response_length(rctx, g_ssl_crl_max_size_in_kb * 1024);
-
-    if (!OCSP_REQ_CTX_http(rctx, "GET", isHostnameSet ? url : path))
-    {
-        goto error;
-    }
-
-    if (!OCSP_REQ_CTX_add1_header(rctx, "Host", host))
-    {
-        goto error;
-    }
-
-    // add the auth header for proxy, if necessary
-    if (usernamePassword && *usernamePassword)
-    {
-        char authData[1256];
-
-        BIO *bioPlain = BIO_new(BIO_f_base64());
-
-        if (!bioPlain)
+        std::string host, port, path;
+        Azure::Core::_internal::UniqueHandle<BIO> bio;
+        int use_ssl, rv = 0;
         {
-            goto error;
+          char *host_ptr, *port_ptr, *path_ptr;
+        if (!OCSP_parse_url(url.c_str(), &host_ptr, &port_ptr, &path_ptr, &use_ssl))
+        {
+            Log::Write(Logger::Level::Error, "Failure parsing URL");
+            return nullptr;
+        }
+        host = host_ptr;
+        port = port_ptr;
+        path = path_ptr;
         }
 
-        BIO_set_flags(bioPlain, BIO_FLAGS_BASE64_NO_NL);
-
-        BIO* bioBase64 = BIO_new(BIO_s_mem());
-
-        if (!bioBase64)
+        if (use_ssl)
         {
-            BIO_free_all(bioBase64);
-            goto error;
+            Log::Write(Logger::Level::Error, "CRL HTTPS not supported");
+            return nullptr;
         }
 
-        BIO_push(bioPlain, bioBase64);
-
-        int result = BIO_write(bioPlain, usernamePassword, (int)strlen(usernamePassword));
-        if (result <= 0)
+        bio = Azure::Core::_internal::MakeUniqueHandle(BIO_new_connect, host.c_str());
+        if (!bio)
         {
-            BIO_pop(bioPlain);
-            BIO_free_all(bioBase64);
-            BIO_free_all(bioPlain);
-            goto error;
+            Log::Write(Logger::Level::Error, "BIO_new_connect failed");
+            return nullptr;
+        }
+        if (!BIO_set_conn_port(bio.get(), const_cast<char *>(port.c_str())))
+        {
+            Log::Write(Logger::Level::Error, "BIO_set_conn_port failed");
+            return nullptr;
         }
 
-        BIO_flush(bioPlain);
-
-        char* realmBase64;
-        long length = BIO_get_mem_data(bioBase64, &realmBase64);
-
-        sprintf_s(authData, sizeof(authData), "Basic %.*s", length, realmBase64);
-
-        BIO_pop(bioPlain);
-        BIO_free_all(bioBase64);
-        BIO_free_all(bioPlain);
-
-        if (!OCSP_REQ_CTX_add1_header(rctx, "Proxy-Authorization", authData))
+        auto requestContext = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
+        if (!requestContext)
         {
-            goto error;
+            Log::Write(Logger::Level::Error, "OCSP_REQ_CTX_new failed");
+            return nullptr;
         }
-    }
 
-    do
-    {
-        rv = X509_CRL_http_nbio(rctx, pcrl);
-    } while (rv == -1);
+    //    OCSP_set_max_response_length(requestContext.get(), g_ssl_crl_max_size_in_kb * 1024);
 
-error:
-    if (host) OPENSSL_free(host);
-    if (path) OPENSSL_free(path);
-    if (port) OPENSSL_free(port);
-    if (bio)  BIO_free_all(bio);
-    if (rctx) OCSP_REQ_CTX_free(rctx);
-
-    if (rv != 1)
-    {
-        if (bio)
+        if (!OCSP_REQ_CTX_http(requestContext.get(), "GET", url.c_str()))
         {
-            LogError("Error loading CRL from %s\n", url);
+            Log::Write(Logger::Level::Error, "OCSP_REQ_CTX_http failed");
+            return nullptr;
         }
-    }
 
-    return rv;
+        if (!OCSP_REQ_CTX_add1_header(requestContext.get(), "Host", host.c_str()))
+        {
+            Log::Write(Logger::Level::Error, "OCSP_REQ_add1_header failed");
+            return nullptr;
+        }
+
+        do
+        {
+          X509_CRL* crl_ptr = nullptr;
+          rv = X509_CRL_http_nbio(requestContext.get(), &crl_ptr);
+          if (rv == 1)
+          {
+            crl.reset(crl_ptr);
+            break;
+          }
+        } while (rv == -1);
+
+        if (rv != 1)
+        {
+          if (bio.get())
+          {
+              Log::Write(Logger::Level::Error, "Error loading CRL from " + url);
+              return nullptr;
+          }
+        }
 
 #endif
         if (!crl)
