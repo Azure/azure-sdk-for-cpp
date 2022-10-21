@@ -20,11 +20,6 @@
           "name": "MSVC_USE_STATIC_CRT",
           "value": "True",
           "type": "BOOL"
-        },
-        {
-          "name": "BUILD_PERFORMANCE_TESTS",
-          "value": "True",
-          "type": "BOOL"
         }
       ]
     },
