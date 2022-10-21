@@ -24,8 +24,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     {
       // Rethrow any exceptions on the current stack - this will cause any pending exceptions to
       // be thrown so we can catch them and report them to the caller. This is needed because the
-      // terminate() function on Windows calls abort() which normally pops up UI terminates
-      // without reporting the exception.
+      // terminate() function on Windows calls abort() which normally pops up a modal dialog box
+      // after which it terminates the application without reporting the exception.
       try
       {
         throw;
