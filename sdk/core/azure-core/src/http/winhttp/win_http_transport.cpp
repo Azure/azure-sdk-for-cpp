@@ -547,7 +547,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * multiple times based on the state of the TLS connection.
    *
    * Special consideration for the WINHTTP_CALLBACK_STATUS_SENDING_REQUEST - this callback is
-   * called during the TLS connection - if a TLS roto certificate is configured, we verify that the
+   * called during the TLS connection - if a TLS root certificate is configured, we verify that the
    * certificate chain sent from the server contains the certificate the HTTP client was configured
    * with. If it is, we accept the connection, if it is not, we abort the connection, closing the
    * incoming request handle.
