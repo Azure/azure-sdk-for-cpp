@@ -335,7 +335,7 @@ namespace {
 #define APPEND_ENUM_STRING(id) \
   if (internetStatus & (id)) \
   { \
-    rv += std::string(#id) + " "; \
+    rv += #id " "; \
   }
 std::string InternetStatusToString(DWORD internetStatus)
 {
@@ -405,6 +405,18 @@ std::string GetErrorMessage(DWORD error)
 } // namespace
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
+
+  bool WinHttpAction::RegisterWinHttpStatusCallback(
+      Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle)
+  {
+    return (
+        WinHttpSetStatusCallback(
+            internetHandle.get(),
+            &WinHttpAction::StatusCallback,
+            WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
+            0)
+        != WINHTTP_INVALID_STATUS_CALLBACK);
+  }
 
   /**
    * Wait for an action to complete.
@@ -914,12 +926,7 @@ _detail::WinHttpRequest::WinHttpRequest(
   // Set the callback function to be called whenever the state of the request handle changes.
   m_httpAction = std::make_unique<_detail::WinHttpAction>(this);
 
-  if (WinHttpSetStatusCallback(
-          m_requestHandle.get(),
-          &WinHttpAction::StatusCallback,
-          WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
-          0)
-      == WINHTTP_INVALID_STATUS_CALLBACK)
+  if (!m_httpAction->RegisterWinHttpStatusCallback(m_requestHandle))
   {
     GetErrorAndThrow("Error while setting up the status callback.");
   }

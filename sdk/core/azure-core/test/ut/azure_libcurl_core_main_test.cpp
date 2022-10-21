@@ -58,8 +58,7 @@ namespace Azure { namespace Core { namespace Test {
 int main(int argc, char** argv)
 {
   // Declare a signal handler to report unhandled exceptions on Windows - this is not needed for
-  // other
-// OS's as they will print the exception to stderr in their terminate() function.
+  // other OS's as they will print the exception to stderr in their terminate() function.
 #if defined(AZ_PLATFORM_WINDOWS)
   // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
 #if defined(_DEBUG) && defined(_MSC_VER)

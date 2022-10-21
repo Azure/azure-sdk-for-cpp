@@ -526,9 +526,11 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapterOptions, MultipleCrlOperations)
   {
+    // LetsEncrypt certificates don't contain a distribution point URL extension. While this seems
+    // to work when run locally, it fails in the CI pipeline. "https://www.wikipedia.org" uses a
+    // LetsEncrypt certificate, so when testing manually, it is important to add it to the list.
     std::vector<std::string> testUrls{
         AzureSdkHttpbinServer::Get(), // Uses a Microsoft/DigiCert certificate.
-        //        "https://www.wikipedia.org", // Uses a LetsEncrypt Certificate
         "https://aws.amazon.com", // Uses a Amazon/Starfield Technologies certificate.
         "https://www.example.com/", // Uses a DigiCert certificate.
         "https://www.google.com/", // Uses a google certificate.

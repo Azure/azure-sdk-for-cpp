@@ -30,9 +30,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    *
    */
   class WinHttpAction final {
-    // The WinHttpRequest class is friend because it needs to have access to StatusCallback when it
-    // registers for notifications, but there's no other reason to make it public.
-    friend class WinHttpRequest;
 
     // Containing HTTP request, used during the status operation callback.
     WinHttpRequest* m_httpRequest{};
@@ -79,6 +76,16 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         throw std::runtime_error("Error creating Action Complete Event.");
       }
     }
+
+    /**
+     * Register the WinHTTP Status callback used by the action.
+     *
+     * @param internetHandle HINTERNET to register the callback.
+     * @returns The status of the operation.
+     */
+    bool RegisterWinHttpStatusCallback(
+        Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle);
+
     /**
      * @brief WaitForAction - Waits for an action to complete.
      *
