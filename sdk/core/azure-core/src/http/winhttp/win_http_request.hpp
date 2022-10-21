@@ -91,7 +91,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      *
      * @remarks The WaitForAction method waits until an action initiated by the `callback` function
      * has completed. Every pollDuration milliseconds, it checks to see if the context specified for
-     * therequest has been cancelled (or times out).
+     * the request has been cancelled (or times out).
      *
      * @param initiateAction - Function called to initiate an action. Always called in the waiting
      *        thread.
