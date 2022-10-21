@@ -32,9 +32,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   class WinHttpAction final {
 
     // Containing HTTP request, used during the status operation callback.
-    WinHttpRequest* m_httpRequest{};
-    std::mutex m_actionCompleteMutex;
+    WinHttpRequest* const m_httpRequest{};
     wil::unique_event m_actionCompleteEvent;
+    // Mutex protecting all mutable members of the class.
+    std::mutex m_actionCompleteMutex;
     DWORD m_expectedStatus{};
     DWORD m_stowedError{};
     DWORD_PTR m_stowedErrorInformation{};
@@ -147,20 +148,20 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      */
     bool AddCertificatesToStore(
         std::vector<std::string> const& trustedCertificates,
-        HCERTSTORE const hCertStore);
+        HCERTSTORE const hCertStore) const;
     /*
      * Verifies that the certificate context is in the trustedCertificates set of certificates.
      */
     bool VerifyCertificatesInChain(
         std::vector<std::string> const& trustedCertificates,
-        PCCERT_CONTEXT serverCertificate);
+        PCCERT_CONTEXT serverCertificate) const;
     /**
      * @brief Throw an exception based on the Win32 Error code
      *
      * @param exceptionMessage Message describing error.
      * @param error Win32 Error code.
      */
-    void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError());
+    void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError()) const;
 
   public:
     WinHttpRequest(

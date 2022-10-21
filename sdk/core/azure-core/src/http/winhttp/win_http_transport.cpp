@@ -216,7 +216,7 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 // For each certificate specified in trustedCertificate, add to certificateStore.
 bool _detail::WinHttpRequest::AddCertificatesToStore(
     std::vector<std::string> const& trustedCertificates,
-    HCERTSTORE certificateStore)
+    HCERTSTORE certificateStore) const
 {
   for (auto const& trustedCertificate : trustedCertificates)
   {
@@ -240,7 +240,7 @@ bool _detail::WinHttpRequest::AddCertificatesToStore(
 // chains up to one of the certificates represented by trustedCertificate or not.
 bool _detail::WinHttpRequest::VerifyCertificatesInChain(
     std::vector<std::string> const& trustedCertificates,
-    PCCERT_CONTEXT serverCertificate)
+    PCCERT_CONTEXT serverCertificate) const
 {
   if ((trustedCertificates.empty()) || !serverCertificate)
   {
@@ -428,7 +428,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Azure::Core::Context const& context,
       Azure::DateTime::duration const& pollInterval)
   {
+    // Before doing any work, check to make sure that the context hasn't already been cancelled.
     context.ThrowIfCancelled();
+
+    // By definition, there cannot be any actions outstanding at this point because we have not
+    // yet called initiateAction. So it's safe to reset our state here.
     ResetEvent(m_actionCompleteEvent.get());
     m_expectedStatus = expectedCallbackStatus;
     m_stowedError = 0;
@@ -447,6 +451,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
               std::chrono::duration_cast<std::chrono::milliseconds>(pollInterval).count()));
       if (waitResult == WAIT_TIMEOUT)
       {
+        // If the request was cancelled while we were waiting, throw an exception.
         context.ThrowIfCancelled();
       }
       else if (waitResult != WAIT_OBJECT_0)
@@ -583,39 +588,37 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
     else if (internetStatus == m_expectedStatus)
     {
-      if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE)
+      switch (internetStatus)
       {
-        // A WinHttpSendRequest API call has completed, complete the current action.
-        CompleteAction();
-      }
-      else if (internetStatus == WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE)
-      {
-        // A WinHttpWriteData call has completed, complete the current action.
-        CompleteAction();
-      }
-      else if (internetStatus == WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE)
-      {
-        // Headers for an HTTP response are available, complete the current action.
-        CompleteAction();
-      }
-      else if (internetStatus == WINHTTP_CALLBACK_STATUS_READ_COMPLETE)
-      {
-        // A WinHttpReadData call has completed. Complete the current action, including the amount
-        // of data read.
-        CompleteActionWithData(statusInformationLength);
-      }
-      else if (internetStatus == WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
-      {
-        // An HINTERNET handle is closing, complete the outstanding close request.
-        Log::Write(Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
-        CompleteAction();
-      }
-      else
-      {
-        Log::Write(
-            Logger::Level::Error,
-            "Received expected status " + InternetStatusToString(internetStatus)
-                + " but it was not handled.");
+        case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
+          // A WinHttpSendRequest API call has completed, complete the current action.
+          CompleteAction();
+          break;
+        case WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE:
+          // A WinHttpWriteData call has completed, complete the current action.
+          CompleteAction();
+          break;
+        case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
+          // Headers for an HTTP response are available, complete the current action.
+          CompleteAction();
+          break;
+        case WINHTTP_CALLBACK_STATUS_READ_COMPLETE:
+          // A WinHttpReadData call has completed. Complete the current action, including the amount
+          // of data read.
+          CompleteActionWithData(statusInformationLength);
+          break;
+        case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
+          // An HINTERNET handle is closing, complete the outstanding close request.
+          Log::Write(
+              Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
+          CompleteAction();
+          break;
+        default:
+          Log::Write(
+              Logger::Level::Error,
+              "Received expected status " + InternetStatusToString(internetStatus)
+                  + " but it was not handled.");
+          break;
       }
     }
   }
@@ -624,7 +627,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   {
     if (!m_expectedTlsRootCertificates.empty())
     {
-
       // Ask WinHTTP for the server certificate - this won't be valid outside a status callback.
       wil::unique_cert_context serverCertificate;
       {
@@ -659,7 +661,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
   }
 
-  void WinHttpRequest::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error)
+  void WinHttpRequest::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error) const
   {
     std::string errorMessage = exceptionMessage + GetErrorMessage(error);
 
@@ -785,6 +787,7 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateConnecti
   // If port is 0, i.e. INTERNET_DEFAULT_PORT, it uses port 80 for HTTP and port 443 for HTTPS.
   uint16_t port = url.GetPort();
 
+  // Before doing any work, check to make sure that the context hasn't already been cancelled.
   context.ThrowIfCancelled();
 
   // Specify an HTTP server.
@@ -933,19 +936,16 @@ _detail::WinHttpRequest::WinHttpRequest(
 }
 
 /*
- * Explicit destructor for WinHttpRequest. This is declared outside
- * the class definition because otherwise the WinHttpAction class needs to be
- * fully declared in win_http_transport.hpp.
+ * Destructor for WinHTTP request. Closes the request handle.
  */
 _detail::WinHttpRequest::~WinHttpRequest()
 {
-
   if (!m_requestHandleClosed)
   {
     Log::Write(
         Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
-    // Close the outstanding request handle, waiting until the handle closing status request comes
-    // in.
+
+    // Close the outstanding request handle, waiting until the HANDLE_CLOSING status is received.
     m_httpAction->WaitForAction(
         [this]() { m_requestHandle.reset(); },
         WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
@@ -994,8 +994,6 @@ void _detail::WinHttpRequest::Upload(
 
     DWORD dwBytesWritten = 0;
 
-    context.ThrowIfCancelled();
-
     if (!m_httpAction->WaitForAction(
             [&]() { // Write data to the server.
               if (!WinHttpWriteData(
@@ -1036,15 +1034,14 @@ void _detail::WinHttpRequest::SendRequest(
 
   int64_t streamLength = request.GetBodyStream()->Length();
 
-  context.ThrowIfCancelled();
-
   try
   {
     if (!m_httpAction->WaitForAction(
             [&]() {
               {
-
                 // Send a request.
+                // NB: DO NOT CHANGE THE TYPE OF THE CONTEXT PARAMETER WITHOUT UPDATING THE
+                // HttpAction::StatusCallback method.
                 if (!WinHttpSendRequest(
                         m_requestHandle.get(),
                         requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS
@@ -1054,7 +1051,8 @@ void _detail::WinHttpRequest::SendRequest(
                         0,
                         streamLength > 0 ? static_cast<DWORD>(streamLength) : 0,
                         reinterpret_cast<DWORD_PTR>(
-                            m_httpAction.get()))) // Context for WinHTTP status callbacks.
+                            m_httpAction
+                                .get()))) // Context for WinHTTP status callbacks for this request.
                 {
                   // Errors include:
                   // ERROR_WINHTTP_CANNOT_CONNECT
@@ -1114,8 +1112,6 @@ void _detail::WinHttpRequest::SendRequest(
 
 void _detail::WinHttpRequest::ReceiveResponse(Azure::Core::Context const& context)
 {
-  context.ThrowIfCancelled();
-
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
   // been received.
