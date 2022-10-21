@@ -1545,7 +1545,6 @@ namespace Azure { namespace Core {
               return nullptr;
           }
         }
-
 #endif
         if (!crl)
         {
