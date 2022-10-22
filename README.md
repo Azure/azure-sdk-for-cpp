@@ -324,6 +324,40 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 
 > NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 
+## OpenSSL Version
+
+Several packages within the Azure SDK for C++ use the OpenSSL library. By default, the Azure SDK will use whatever the most recent version of OpenSSL is within the VCPKG repository.
+
+If you need to use a specific version of OpenSSL, you can use the vcpkg custom ports feature to specify the version of OpenSSL to use. 
+For example, if you want to use OpenSSL 1.1.1, you should create a folder named `vcpkg-custom-ports` next to to your vcpkg.json file.
+
+Navigate to your clone of the vcpkg vcpkg repo and execute "git checkout 3b3bd424827a1f7f4813216f6b32b6c61e386b2e" - this will reset your repo to the last version of OpenSSL 1.1.1
+in vcpkg. Then, copy the contents of the `ports/openssl` folder from the vcpkg repo to the `vcpkg-custom-ports` folder you created earlier:
+
+```sh
+cd <your vcpkg repo>
+git checkout 3b3bd424827a1f7f4813216f6b32b6c61e386b2e
+cd ports
+cp -r openssl <the location of the vcpkg-custom-ports directory listed above>
+```
+
+This will copy the port information for OpenSSL 1.1.1n to your vcpkg-custom-ports directory.
+
+Once that is done, you can install the custom port of OpenSSL 1.1.1n using the vcpkg tool:
+```sh
+vcpkg install --overlay-ports=<path to the vcpkg-custom-ports above>
+```
+
+If you are building using CMAKE, you can instruct CMAKE to apply the overlay ports using the following command line switches:
+```sh
+vcpkg -DVCPG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=<path to the vcpkg-custom-ports above> -DVCPKG_MANIFEST_DIR=<path to the directory containing the vcpkg.json file>
+```
+
+
+In addition, if you need to consume OpenSSL from a dynamic linked library/shared object, you can set the VCPKG triplet to reflect that you want to build the library with dynamic 
+entries.Set the VCPKG_you can set the environment variable to `x64-windows-static` or `x64-windows-dynamic` depending on whether you want to use the static or dynamic version of OpenSSL. 
+Similarly you can use the x64-linux-dynamic and x64-linux-static triplet to specify consumption of libraries as a shared object or dynamic.
+
 ## Need help
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
