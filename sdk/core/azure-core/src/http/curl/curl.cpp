@@ -1468,7 +1468,7 @@ namespace Azure { namespace Core {
       {
         Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
         Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
-#if defined(USE_OPENSSL3)
+#if defined(USE_OPENSSL_3)
         crl = Azure::Core::_internal::MakeUniqueHandle(
             X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
 #else
@@ -1811,7 +1811,7 @@ namespace Azure { namespace Core {
        * @brief Retrieve the CRL associated with the provided store context, if available.
        *
        */
-#if USE_OPENSSL_3
+#if defined(USE_OPENSSL_3)
       STACK_OF(X509_CRL) * CrlHttpCallback(const X509_STORE_CTX* context, const X509_NAME*)
 #else
       STACK_OF(X509_CRL) * CrlHttpCallback(X509_STORE_CTX* context, X509_NAME*)
