@@ -352,7 +352,7 @@ vcpkg install --overlay-ports=<path to the vcpkg-custom-ports above>
 If you are building using CMAKE, you can instruct CMAKE to apply the overlay ports using the following command line switches:
 
 ```sh
-vcpkg -DVCPG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=<path to the vcpkg-custom-ports above> -DVCPKG_MANIFEST_DIR=<path to the directory containing the vcpkg.json file>
+vcpkg -DVCPKG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=<path to the vcpkg-custom-ports above> -DVCPKG_MANIFEST_DIR=<path to the directory containing the vcpkg.json file>
 ```
 
 In addition, if you need to consume OpenSSL from a dynamic linked library/shared object, you can set the VCPKG triplet to reflect that you want to build the library with dynamic 
