@@ -1473,78 +1473,98 @@ namespace Azure { namespace Core {
             X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
 #else
         std::string host, port, path;
-        Azure::Core::_internal::UniqueHandle<BIO> bio;
-        int use_ssl, rv = 0;
+        int use_ssl;
         {
           char *host_ptr, *port_ptr, *path_ptr;
-        if (!OCSP_parse_url(url.c_str(), &host_ptr, &port_ptr, &path_ptr, &use_ssl))
-        {
+          if (!OCSP_parse_url(url.c_str(), &host_ptr, &port_ptr, &path_ptr, &use_ssl))
+          {
             Log::Write(Logger::Level::Error, "Failure parsing URL");
             return nullptr;
-        }
-        host = host_ptr;
-        port = port_ptr;
-        path = path_ptr;
+          }
+          host = host_ptr;
+          port = port_ptr;
+          path = path_ptr;
         }
 
         if (use_ssl)
         {
-            Log::Write(Logger::Level::Error, "CRL HTTPS not supported");
-            return nullptr;
+          Log::Write(Logger::Level::Error, "CRL HTTPS not supported");
+          return nullptr;
         }
-
-        bio = Azure::Core::_internal::MakeUniqueHandle(BIO_new_connect, host.c_str());
+        Azure::Core::_internal::UniqueHandle<BIO> bio{
+            Azure::Core::_internal::MakeUniqueHandle(BIO_new_connect, host.c_str())};
         if (!bio)
         {
-            Log::Write(Logger::Level::Error, "BIO_new_connect failed");
-            return nullptr;
+          Log::Write(
+              Logger::Level::Error,
+              "BIO_new_connect failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
         }
-        if (!BIO_set_conn_port(bio.get(), const_cast<char *>(port.c_str())))
+        if (!BIO_set_conn_port(bio.get(), const_cast<char*>(port.c_str())))
         {
-            Log::Write(Logger::Level::Error, "BIO_set_conn_port failed");
-            return nullptr;
+          Log::Write(
+              Logger::Level::Error,
+              "BIO_set_conn_port failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
         }
 
-        auto requestContext = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
+        auto requestContext
+            = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
         if (!requestContext)
         {
-            Log::Write(Logger::Level::Error, "OCSP_REQ_CTX_new failed");
-            return nullptr;
+          Log::Write(
+              Logger::Level::Error,
+              "OCSP_REQ_CTX_new failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
         }
 
-    //    OCSP_set_max_response_length(requestContext.get(), g_ssl_crl_max_size_in_kb * 1024);
+        // By default the OCSP APIs limit the CRL length to 1M, that isn't sufficient
+        // for many web sites, so increase it to 10M.
+        OCSP_set_max_response_length(requestContext.get(), 10 * 1024 * 1024);
 
         if (!OCSP_REQ_CTX_http(requestContext.get(), "GET", url.c_str()))
         {
-            Log::Write(Logger::Level::Error, "OCSP_REQ_CTX_http failed");
-            return nullptr;
+          Log::Write(
+              Logger::Level::Error,
+              "OCSP_REQ_CTX_http failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
         }
 
         if (!OCSP_REQ_CTX_add1_header(requestContext.get(), "Host", host.c_str()))
         {
-            Log::Write(Logger::Level::Error, "OCSP_REQ_add1_header failed");
-            return nullptr;
+          Log::Write(
+              Logger::Level::Error,
+              "OCSP_REQ_add1_header failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
         }
 
-        do
         {
           X509_CRL* crl_ptr = nullptr;
-          rv = X509_CRL_http_nbio(requestContext.get(), &crl_ptr);
-          if (rv == 1)
+          int rv;
+          do
           {
-            crl.reset(crl_ptr);
-            break;
-          }
-        } while (rv == -1);
+            rv = X509_CRL_http_nbio(requestContext.get(), &crl_ptr);
+          } while (rv == -1);
 
-        if (rv != 1)
-        {
-          if (bio.get())
+          if (rv != 1)
           {
-              Log::Write(Logger::Level::Error, "Error loading CRL from " + url);
-              return nullptr;
+            if (ERR_peek_error() == 0)
+            {
+              Log::Write(
+                  Logger::Level::Error,
+                  "X509_CRL_http_nbio failed, possible because CRL is too long.");
+            }
+            else
+            {
+              Log::Write(
+                  Logger::Level::Error,
+                  "X509_CRL_http_nbio failed" + _detail::GetOpenSSLError("Load CRL"));
+            }
+            return nullptr;
           }
+          crl.reset(crl_ptr);
         }
+
 #endif
         if (!crl)
         {
