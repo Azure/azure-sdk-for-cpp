@@ -344,15 +344,16 @@ cp -r openssl <the location of the vcpkg-custom-ports directory listed above>
 This will copy the port information for OpenSSL 1.1.1n to your vcpkg-custom-ports directory.
 
 Once that is done, you can install the custom port of OpenSSL 1.1.1n using the vcpkg tool:
+
 ```sh
 vcpkg install --overlay-ports=<path to the vcpkg-custom-ports above>
 ```
 
 If you are building using CMAKE, you can instruct CMAKE to apply the overlay ports using the following command line switches:
+
 ```sh
 vcpkg -DVCPG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=<path to the vcpkg-custom-ports above> -DVCPKG_MANIFEST_DIR=<path to the directory containing the vcpkg.json file>
 ```
-
 
 In addition, if you need to consume OpenSSL from a dynamic linked library/shared object, you can set the VCPKG triplet to reflect that you want to build the library with dynamic 
 entries.Set the VCPKG_you can set the environment variable to `x64-windows-static` or `x64-windows-dynamic` depending on whether you want to use the static or dynamic version of OpenSSL. 
