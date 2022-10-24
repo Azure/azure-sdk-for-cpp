@@ -153,7 +153,7 @@ in the above mentioned folder resided the test defintion file "tests.yml".
 
 ### The tests exists in other languages
 
-If the test exists in other languages then making the CPP version visible to the framework requires adding under **Service**/**Languages** an entry with the name **CPP** followed by the pakages and versions available for the testing(this ties into the CMakeLists SetPerfDeps macro).
+If the test exists in other languages then making the CPP version visible to the framework requires adding an entry with the name **CPP** under **Service**/**Languages**  followed by the pakages and versions available for the testing(this ties into the CMakeLists SetPerfDeps macro).
 
 Next under the **Tests**/**Test** node with the desired name add the CPP test name. In this section mind the aArguments list , this ies with the regex in the cpp sdk pipeline.yml definition. 
 
