@@ -76,6 +76,8 @@ jobs:
       value: ""
     - name: CmakeArgs
       value: ""
+    - name: VcpkgArgs
+      value: ""
 # Apply to all services running public pipeline
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
@@ -142,6 +144,7 @@ jobs:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           GenerateArgs: "$(CmakeArgs)"
           BuildArgs: "$(BuildArgs)"
+          VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
 
       - ${{ parameters.PreTestSteps }}
@@ -223,6 +226,7 @@ jobs:
             -OsVMImage '$(OSVmImage)'
             -CmakeEnvArg '$(CmakeEnvArg)'
             -BuildArgs '$(BuildArgs)'
+            -VcpkgArgs '$(VcpkgArgs)'
             -Job '$(Agent.JobName)'
             -BuildReason '$(Build.Reason)'
             -SourceBranch '$(Build.SourceBranch)'

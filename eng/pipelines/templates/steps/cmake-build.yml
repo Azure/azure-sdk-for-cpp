@@ -3,6 +3,7 @@ parameters:
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
+  VcpkgArgs: ''
   ServiceDirectory: ''
 
 
@@ -23,13 +24,13 @@ steps:
 
 # Core should build all cmake tagets
   - ${{ if and(eq(parameters.Build, true), eq(parameters.ServiceDirectory, 'core')) }}:
-    - script: cmake --build . ${{ parameters.BuildArgs }}
+    - script: cmake --build . ${{ parameters.VcpkgArgs }} ${{ parameters.BuildArgs }}
       workingDirectory: build
       displayName: cmake build All
 
 # Non-core services define the list of targets to build
   - ${{ if and(eq(parameters.Build, true) , ne(parameters.ServiceDirectory, 'core')) }}:
-    - pwsh: cmake --build . ${{ parameters.BuildArgs }} --target (Get-Content ${{ parameters.ServiceDirectory }}-targets-build.txt)
+    - pwsh: cmake --build . ${{ parameters.VcpkgArgs }} ${{ parameters.BuildArgs }} --target (Get-Content ${{ parameters.ServiceDirectory }}-targets-build.txt)
       workingDirectory: build
       displayName: cmake build Targets
 
