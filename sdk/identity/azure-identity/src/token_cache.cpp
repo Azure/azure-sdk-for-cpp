@@ -9,6 +9,7 @@
 
 using Azure::Identity::_detail::TokenCache;
 
+using Azure::DateTime;
 using Azure::Core::Credentials::AccessToken;
 
 decltype(TokenCache::Internals::Cache) TokenCache::Internals::Cache;
@@ -22,15 +23,15 @@ std::function<void()> TokenCache::Internals::OnBeforeItemWriteLock;
 namespace {
 bool IsFresh(
     std::shared_ptr<TokenCache::Internals::CacheValue> const& item,
-    Azure::DateTime::duration minimumExpiration,
+    DateTime::duration minimumExpiration,
     std::chrono::system_clock::time_point now)
 {
-  return item->AccessToken.ExpiresOn > (now + minimumExpiration);
+  return item->AccessToken.ExpiresOn > DateTime(now + minimumExpiration);
 }
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
     TokenCache::Internals::CacheKey const& key,
-    Azure::DateTime::duration minimumExpiration)
+    DateTime::duration minimumExpiration)
 {
   {
     std::shared_lock<std::shared_timed_mutex> cacheReadLock(TokenCache::Internals::CacheMutex);
