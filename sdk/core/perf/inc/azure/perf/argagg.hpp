@@ -1436,7 +1436,7 @@ inline fmt_ostream::~fmt_ostream() { output << fmt_string(this->str()); }
 
 inline std::string lstrip(const std::string& text)
 {
-  auto result = text;
+  std::string result = text;
 
   result.erase(result.begin(), std::find_if(result.begin(), result.end(), [](int ch) {
                  return !std::isspace(ch);
@@ -1447,7 +1447,7 @@ inline std::string lstrip(const std::string& text)
 
 inline std::string rstrip(const std::string& text)
 {
-  auto result = text;
+  std::string result = text;
 
   result.erase(
       std::find_if(result.rbegin(), result.rend(), [](int ch) { return !std::isspace(ch); }).base(),

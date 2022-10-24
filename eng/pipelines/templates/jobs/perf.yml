@@ -39,6 +39,7 @@ extends:
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
     EnvVars: ${{ parameters.EnvVars}}
     InstallLanguageSteps:
-      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+      - template: /eng/pipelines/templates/steps/vcpkg.yml
+      #/eng/pipelines/templates/steps/vcpkg-clone.yml
         parameters: 
           RepoOwner: Microsoft

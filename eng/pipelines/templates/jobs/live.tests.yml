@@ -135,8 +135,6 @@ jobs:
 
   - ${{ parameters.PreTestSteps }}
 
-  - ${{ parameters.PreTestSteps }}
-
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest
     # Visual Studio generator used in CI is a multi-config generator.
