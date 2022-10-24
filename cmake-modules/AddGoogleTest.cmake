@@ -78,7 +78,8 @@ macro(add_gtest TESTNAME)
         else()
             gtest_discover_tests(${TESTNAME}
                 TEST_PREFIX "${TESTNAME}."
-                PROPERTIES FOLDER "Tests")
+                PROPERTIES FOLDER "Tests"
+                DISCOVERY_TIMEOUT 600)
         endif()
     else()
         add_test(${TESTNAME} ${TESTNAME})
