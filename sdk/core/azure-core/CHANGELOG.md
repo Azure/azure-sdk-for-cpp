@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Added support for Identity token caching.
+- Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
 
 ## 1.8.0-beta.1 (2022-10-06)
 
