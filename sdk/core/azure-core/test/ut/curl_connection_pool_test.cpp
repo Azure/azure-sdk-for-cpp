@@ -467,7 +467,7 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         // Request with port
-        std::string const authority(AzureSdkHttpbinServer::WithPort());
+        std::string const authority(AzureSdkHttpbinServer::GetWithPort());
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(
@@ -543,7 +543,7 @@ namespace Azure { namespace Core { namespace Test {
       }
       {
         // Request with port
-        std::string const authority(AzureSdkHttpbinServer::WithPort());
+        std::string const authority(AzureSdkHttpbinServer::GetWithPort());
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey(CreateConnectionKey(

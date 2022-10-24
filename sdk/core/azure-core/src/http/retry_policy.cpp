@@ -176,6 +176,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     // we proceed immediately if it is 0.
     if (retryAfter.count() > 0)
     {
+      // Before sleeping, check to make sure that the context hasn't already been cancelled.
       context.ThrowIfCancelled();
       std::this_thread::sleep_for(retryAfter);
     }

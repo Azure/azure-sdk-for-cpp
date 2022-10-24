@@ -97,6 +97,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
     NextHttpPolicy,
     Context const& context) const
 {
+  // Before doing any work, check to make sure that the context hasn't already been cancelled.
   context.ThrowIfCancelled();
 
   /*

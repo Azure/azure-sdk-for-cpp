@@ -54,10 +54,11 @@ endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC 
     src/http/winhttp/win_http_transport.cpp
+    src/http/winhttp/win_http_request.hpp
   )
- SET(WIN_TRANSPORT_ADAPTER_INC 
+  SET(WIN_TRANSPORT_ADAPTER_INC 
     inc/azure/core/http/win_http_transport.hpp
- )
+  )
 endif()
 
 set(
