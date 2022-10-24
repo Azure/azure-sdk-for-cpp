@@ -28,7 +28,7 @@ E.G.
 
 As any other CPP project you will need a **CMakeLists.txt** file , along side **src** and **inc** folders
 
-#### Inc
+#### Contents of the **inc** directory
 
 Under inc folder create a subfolder structure following your namespace hierarchy ending with another test folder since these are in the ...Test namespace.
 
@@ -44,13 +44,13 @@ The class will inherit from the **PerfTest** base  class and will override sever
 - Constructor(Azure::Perf::TestOptions options) : PerfTest(options)
   Options field are passed from the perf test framework and constain the various options defined for running the test.
 - void Run(Azure::Core::Context const&) override {...}.
-  Runs the actual test code. We recommend doing as little extra work here besides the actual relevant code to be measured. Avoid assert, if etc methods as ant extra work will skew the data.
+  Runs the actual test code. It is strongly recommended that the test code does as little extra work here as possible, it should consist solely of the actual test invocation. The test code should all assert, conditional statements ("if"/"else") or unnecessary method calls as any extra work will skew the data.
 - std::vector<Azure::Perf::TestOption> GetTestOptions() override 
   Defines the various parameters for the test run that can be passed to the test from the performance framework. The perf framework uses these params to run various combinations(e.g. blob size)
 - static Azure::Perf::TestMetadata GetTestMetadata()
   Returns TestMetadate object used to identify the test. 
 
-#### Src 
+#### Contents of the **src** directory
 
 Contains one cpp file that contains the main method defintion 
 
@@ -153,7 +153,7 @@ in the above mentioned folder resided the test defintion file "tests.yml".
 
 ### The tests exists in other languages
 
-If the test exists in other languages then making the CPP version visible to the framework requires adding under **Service**/**Languages** an entry with the name **CPP** followed by the pakages and versions available for the testing(this ties into the CMakeLists SetPerfDeps macro).
+If the test exists in other languages then making the CPP version visible to the framework requires adding an entry with the name **CPP** under **Service**/**Languages**  followed by the pakages and versions available for the testing(this ties into the CMakeLists SetPerfDeps macro).
 
 Next under the **Tests**/**Test** node with the desired name add the CPP test name. In this section mind the aArguments list , this ies with the regex in the cpp sdk pipeline.yml definition. 
 
