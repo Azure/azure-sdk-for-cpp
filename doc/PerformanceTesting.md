@@ -12,7 +12,7 @@ E.G. https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-stor
 
 Performance tests are located under **"test/perf"** folder under the service folder(e.g. alongside ut folder).
 
-The perf test folder should be added in the parent CMakeLists.txt guarded by the **BUILD_PERF_TEST** flag.
+The perf test folder should be added in the parent CMakeLists.txt guarded by the **BUILD_PERFORMANCE_TESTS** flag.
 
 E.G.
 
