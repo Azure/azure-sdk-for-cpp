@@ -19,7 +19,7 @@ param(
     [string] $BuildArgs,
 
     [Parameter()]
-	[string] $VcpkgArgs
+	[string] $VcpkgArgs,
 
     [Parameter()]
     [string] $Job,
