@@ -50,7 +50,7 @@ The class will inherit from the **PerfTest** base  class and will override sever
 - static Azure::Perf::TestMetadata GetTestMetadata()
   Returns TestMetadate object used to identify the test. 
 
-#### Src 
+#### Contents of the **src** directory
 
 Contains one cpp file that contains the main method defintion 
 
