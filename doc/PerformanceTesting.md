@@ -28,7 +28,7 @@ E.G.
 
 As any other CPP project you will need a **CMakeLists.txt** file , along side **src** and **inc** folders
 
-#### Inc
+#### Contents of the **inc** directory
 
 Under inc folder create a subfolder structure following your namespace hierarchy ending with another test folder since these are in the ...Test namespace.
 
