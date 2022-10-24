@@ -25,7 +25,7 @@ bool IsFresh(
     Azure::DateTime::duration minimumExpiration,
     std::chrono::system_clock::time_point now)
 {
-  return item->AccessToken.ExpiresOn >= (now + minimumExpiration);
+  return item->AccessToken.ExpiresOn > (now + minimumExpiration);
 }
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(

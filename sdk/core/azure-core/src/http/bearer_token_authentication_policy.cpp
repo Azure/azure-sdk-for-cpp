@@ -21,10 +21,7 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     if (std::chrono::system_clock::now()
         > (m_accessToken.ExpiresOn - m_tokenRequestContext.MinimumExpiration))
     {
-      auto tokenRequestContext = m_tokenRequestContext;
-      tokenRequestContext.MinimumExpiration += std::chrono::minutes(1);
-
-      m_accessToken = m_credential->GetToken(tokenRequestContext, context);
+      m_accessToken = m_credential->GetToken(m_tokenRequestContext, context);
     }
 
     request.SetHeader("authorization", "Bearer " + m_accessToken.Token);

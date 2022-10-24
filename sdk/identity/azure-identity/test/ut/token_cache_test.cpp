@@ -66,7 +66,7 @@ TEST(TokenCache, GetReuseRefresh)
   auto const Yesterday = Tomorrow - 48h;
 
   {
-    auto const token1 = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+    auto const token1 = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -78,7 +78,7 @@ TEST(TokenCache, GetReuseRefresh)
     EXPECT_EQ(token1.ExpiresOn, Tomorrow);
     EXPECT_EQ(token1.Token, "T1");
 
-    auto const token2 = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+    auto const token2 = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
       EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
       AccessToken result;
       result.Token = "T2";
@@ -95,7 +95,7 @@ TEST(TokenCache, GetReuseRefresh)
   {
     TokenCache::Internals::Cache[{"A", "B", "C", "D"}]->AccessToken.ExpiresOn = Yesterday;
 
-    auto const token = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+    auto const token = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
       AccessToken result;
       result.Token = "T3";
       result.ExpiresOn = Tomorrow + 1min;
@@ -119,7 +119,7 @@ TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
 
   TokenCache::Internals::OnBeforeCacheWriteLock = [=]() {
     TokenCache::Internals::OnBeforeCacheWriteLock = nullptr;
-    static_cast<void>(TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+    static_cast<void>(TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -127,7 +127,7 @@ TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
     }));
   };
 
-  auto const token = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+  auto const token = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
     EXPECT_FALSE("getNewToken does not get invoked when the fresh value was inserted just before "
                  "acquiring cache write lock");
     AccessToken result;
@@ -159,7 +159,7 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
       item->AccessToken.ExpiresOn = Tomorrow;
     };
 
-    auto const token = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+    auto const token = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
       EXPECT_FALSE("getNewToken does not get invoked when the fresh value was inserted just before "
                    "acquiring item write lock");
       AccessToken result;
@@ -185,7 +185,7 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
       item->AccessToken.ExpiresOn = Yesterday;
     };
 
-    auto const token = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+    auto const token = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
       AccessToken result;
       result.Token = "T4";
       result.ExpiresOn = Tomorrow + 3min;
@@ -210,7 +210,7 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 1; i <= 65; ++i)
   {
     auto const n = std::to_string(i);
-    static_cast<void>(TokenCache::GetToken(n, n, n, n, 3min, [=]() {
+    static_cast<void>(TokenCache::GetToken(n, n, n, n, 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -232,7 +232,7 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 66; i <= 128; ++i)
   {
     auto const n = std::to_string(i);
-    static_cast<void>(TokenCache::GetToken(n, n, n, n, 3min, [=]() {
+    static_cast<void>(TokenCache::GetToken(n, n, n, n, 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -250,7 +250,7 @@ TEST(TokenCache, ExpiredCleanup)
   }
 
   // One more addition to the cache and cleanup for the expired ones will get triggered.
-  static_cast<void>(TokenCache::GetToken("129", "129", "129", "129", 3min, [=]() {
+  static_cast<void>(TokenCache::GetToken("129", "129", "129", "129", 2min, [=]() {
     AccessToken result;
     result.Token = "T1";
     result.ExpiresOn = Tomorrow;
@@ -279,7 +279,7 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 2; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
-    static_cast<void>(TokenCache::GetToken(n, n, n, n, 3min, [=]() {
+    static_cast<void>(TokenCache::GetToken(n, n, n, n, 2min, [=]() {
       AccessToken result;
       result.Token = "T2";
       result.ExpiresOn = Tomorrow;
@@ -307,7 +307,7 @@ TEST(TokenCache, ExpiredCleanup)
       TokenCache::Internals::Cache[{"128", "128", "128", "128"}]->ElementMutex);
 
   // Count is at 128. Inserting the 129th element, and it will trigger cleanup.
-  static_cast<void>(TokenCache::GetToken("1", "1", "1", "1", 3min, [=]() {
+  static_cast<void>(TokenCache::GetToken("1", "1", "1", "1", 2min, [=]() {
     AccessToken result;
     result.Token = "T2";
     result.ExpiresOn = Tomorrow;
@@ -346,7 +346,7 @@ TEST(TokenCache, MinimumExpiration)
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
 
-  auto const token1 = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+  auto const token1 = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
     AccessToken result;
     result.Token = "T1";
     result.ExpiresOn = Tomorrow;
@@ -379,7 +379,7 @@ TEST(TokenCache, MultithreadedAccess)
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
 
-  auto const token1 = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+  auto const token1 = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
     AccessToken result;
     result.Token = "T1";
     result.ExpiresOn = Tomorrow;
@@ -400,7 +400,7 @@ TEST(TokenCache, MultithreadedAccess)
 
       // Parallel threads read both the container and the item we're accessing, and we can access it
       // in parallel as well.
-      auto const token2 = TokenCache::GetToken("A", "B", "C", "D", 3min, [=]() {
+      auto const token2 = TokenCache::GetToken("A", "B", "C", "D", 2min, [=]() {
         EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
         AccessToken result;
         result.Token = "T2";
@@ -416,7 +416,7 @@ TEST(TokenCache, MultithreadedAccess)
 
     // The cache is unlocked, but one item is being read in a parallel thread, which does not
     // prevent new items (with different key) from being appended to cache.
-    auto const token3 = TokenCache::GetToken("E", "F", "G", "H", 3min, [=]() {
+    auto const token3 = TokenCache::GetToken("E", "F", "G", "H", 2min, [=]() {
       AccessToken result;
       result.Token = "T3";
       result.ExpiresOn = Tomorrow + 2h;
@@ -435,7 +435,7 @@ TEST(TokenCache, MultithreadedAccess)
 
     // The cache is unlocked, but one item is being written in a parallel thread, which does not
     // prevent new items (with different key) from being appended to cache.
-    auto const token3 = TokenCache::GetToken("I", "J", "K", "L", 3min, [=]() {
+    auto const token3 = TokenCache::GetToken("I", "J", "K", "L", 2min, [=]() {
       AccessToken result;
       result.Token = "T4";
       result.ExpiresOn = Tomorrow + 3h;
