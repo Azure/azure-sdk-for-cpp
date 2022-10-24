@@ -18,10 +18,13 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
   {
     std::lock_guard<std::mutex> lock(m_accessTokenMutex);
 
-    // Refresh the token in 2 or less minutes before the actual expiration.
-    if (std::chrono::system_clock::now() > (m_accessToken.ExpiresOn - std::chrono::minutes(2)))
+    if (std::chrono::system_clock::now()
+        > (m_accessToken.ExpiresOn - m_tokenRequestContext.MinimumExpiration))
     {
-      m_accessToken = m_credential->GetToken(m_tokenRequestContext, context);
+      auto tokenRequestContext = m_tokenRequestContext;
+      tokenRequestContext.MinimumExpiration += std::chrono::minutes(1);
+
+      m_accessToken = m_credential->GetToken(tokenRequestContext, context);
     }
 
     request.SetHeader("authorization", "Bearer " + m_accessToken.Token);

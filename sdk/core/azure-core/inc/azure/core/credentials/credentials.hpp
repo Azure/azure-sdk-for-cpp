@@ -48,6 +48,12 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     std::vector<std::string> Scopes;
+
+    /**
+     * @brief Minimum token expiration suggestion.
+     *
+     */
+    DateTime::duration MinimumExpiration = std::chrono::minutes(2);
   };
 
   /**

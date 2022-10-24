@@ -22,17 +22,15 @@ std::function<void()> TokenCache::Internals::OnBeforeItemWriteLock;
 namespace {
 bool IsFresh(
     std::shared_ptr<TokenCache::Internals::CacheValue> const& item,
+    Azure::DateTime::duration minimumExpiration,
     std::chrono::system_clock::time_point now)
 {
-  // If cached token expires in less than MinExpiry from now, it's cached value won't be returned,
-  // newer value will be requested.
-  constexpr auto MinExpiry = std::chrono::minutes(3);
-
-  return item->AccessToken.ExpiresOn > now + MinExpiry;
+  return item->AccessToken.ExpiresOn >= (now + minimumExpiration);
 }
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
-    TokenCache::Internals::CacheKey const& key)
+    TokenCache::Internals::CacheKey const& key,
+    Azure::DateTime::duration minimumExpiration)
 {
   {
     std::shared_lock<std::shared_timed_mutex> cacheReadLock(TokenCache::Internals::CacheMutex);
@@ -66,6 +64,11 @@ std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
     auto const cacheSize = TokenCache::Internals::Cache.size();
 
     // N: cacheSize (before insertion) is >= 32 and is a power of two.
+    // 32 as a starting point does not have any special meaning.
+    //
+    // Power of 2 trick:
+    // https://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/
+
     if (cacheSize >= 32 && (cacheSize & (cacheSize - 1)) == 0)
     {
       auto now = std::chrono::system_clock::now();
@@ -84,7 +87,7 @@ std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
         auto const item = curr->second;
         {
           std::unique_lock<std::shared_timed_mutex> lock(item->ElementMutex, std::defer_lock);
-          if (lock.try_lock() && !IsFresh(item, now))
+          if (lock.try_lock() && !IsFresh(item, minimumExpiration, now))
           {
             TokenCache::Internals::Cache.erase(curr);
           }
@@ -103,14 +106,16 @@ AccessToken TokenCache::GetToken(
     std::string const& clientId,
     std::string const& authorityHost,
     std::string const& scopes,
+    DateTime::duration minimumExpiration,
     std::function<AccessToken()> const& getNewToken)
 {
-  auto const item = GetOrCreateValue({tenantId, clientId, authorityHost, scopes});
+  auto const item
+      = GetOrCreateValue({tenantId, clientId, authorityHost, scopes}, minimumExpiration);
 
   {
     std::shared_lock<std::shared_timed_mutex> itemReadLock(item->ElementMutex);
 
-    if (IsFresh(item, std::chrono::system_clock::now()))
+    if (IsFresh(item, minimumExpiration, std::chrono::system_clock::now()))
     {
       return item->AccessToken;
     }
@@ -128,7 +133,7 @@ AccessToken TokenCache::GetToken(
 
     // Check the expiration for the second time, in case it just got updated, after releasing the
     // itemReadLock, and before acquiring itemWriteLock.
-    if (IsFresh(item, std::chrono::system_clock::now()))
+    if (IsFresh(item, minimumExpiration, std::chrono::system_clock::now()))
     {
       return item->AccessToken;
     }

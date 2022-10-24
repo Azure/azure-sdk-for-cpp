@@ -80,27 +80,37 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
     }
   }
 
-  return TokenCache::GetToken(m_tenantId, m_clientId, m_authorityHost, scopesStr, [&]() {
-    return m_tokenCredentialImpl->GetToken(context, [&]() {
-      using Azure::Core::Http::HttpMethod;
+  // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda argument
+  // when they are being executed. They are not supposed to keep a reference to lambda argument to
+  // call it later. Therefore, any capture made here will outlive the possible time frame when the
+  // lambda might get called.
+  return TokenCache::GetToken(
+      m_tenantId,
+      m_clientId,
+      m_authorityHost,
+      scopesStr,
+      tokenRequestContext.MinimumExpiration,
+      [&]() {
+        return m_tokenCredentialImpl->GetToken(context, [&]() {
+          using Azure::Core::Http::HttpMethod;
 
-      std::ostringstream body;
-      body << m_requestBody;
+          std::ostringstream body;
+          body << m_requestBody;
 
-      if (!scopesStr.empty())
-      {
-        body << "&scope=" << scopesStr;
-      }
+          if (!scopesStr.empty())
+          {
+            body << "&scope=" << scopesStr;
+          }
 
-      auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
-          HttpMethod::Post, m_requestUrl, body.str());
+          auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
+              HttpMethod::Post, m_requestUrl, body.str());
 
-      if (m_isAdfs)
-      {
-        request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
-      }
+          if (m_isAdfs)
+          {
+            request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
+          }
 
-      return request;
-    });
-  });
+          return request;
+        });
+      });
 }

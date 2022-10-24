@@ -9,6 +9,7 @@
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/datetime.hpp>
 
 #include <functional>
 #include <string>
@@ -41,6 +42,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& authorityHost,
         std::string const& scopes,
+        DateTime::duration minimumExpiration,
         std::function<Core::Credentials::AccessToken()> const& getNewToken);
 
     /**
