@@ -122,7 +122,7 @@
       "StaticConfigs": {
         "Win2022": {
           "Pool": "azsdk-pool-mms-win-2022-general",
-          "OSVmImage": "MMS2022Compliant",
+          "OSVmImage": "MMS2022TLS",
           "CMAKE_GENERATOR": "Visual Studio 17 2022",
           "RunProxyTests": true
         }
