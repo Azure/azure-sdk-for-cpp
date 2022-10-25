@@ -26,8 +26,7 @@ bool IsFresh(
     DateTime::duration minimumExpiration,
     std::chrono::system_clock::time_point now)
 {
-  return item->AccessToken.ExpiresOn
-      > (now + static_cast<std::chrono::system_clock::duration>(minimumExpiration));
+  return item->AccessToken.ExpiresOn > (DateTime(now) + minimumExpiration);
 }
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
