@@ -4,6 +4,7 @@
 #include "azure/perf/program.hpp"
 #include "azure/perf/argagg.hpp"
 
+#include <azure/core/internal/diagnostics/global_exception.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/platform.hpp>
@@ -286,19 +287,10 @@ void Azure::Perf::Program::Run(
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
-// Declare a signal handler to report unhandled exceptions on Windows - this is not needed for other
-// OS's as they will print the exception to stderr in their terminate() function.
+  // Declare a signal handler to report unhandled exceptions on Windows - this is not needed for
+  // other OS's as they will print the exception to stderr in their terminate() function.
 #if defined(AZ_PLATFORM_WINDOWS)
-  signal(SIGABRT, [](int) {
-    try
-    {
-      throw;
-    }
-    catch (std::exception const& ex)
-    {
-      std::cout << "Exception thrown: " << ex.what() << std::endl;
-    }
-  });
+  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
 #endif // AZ_PLATFORM_WINDOWS
 
   // Parse args only to get the test name first

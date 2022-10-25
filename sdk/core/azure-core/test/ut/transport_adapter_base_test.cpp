@@ -311,7 +311,7 @@ namespace Azure { namespace Core { namespace Test {
     // Test that calling getValue again will return empty
     result = std::move(responseT.Value);
     EXPECT_STREQ(result.data(), expectedType.data());
-    result = responseT.Value;
+    result = responseT.Value; // Not 100% sure what this is testing - that std::move works?
     EXPECT_STREQ(result.data(), std::string("").data());
   }
 
@@ -374,6 +374,18 @@ namespace Azure { namespace Core { namespace Test {
 
     cancelThis.Cancel();
     t1.join();
+  }
+
+  TEST_P(TransportAdapter, cancelRequest)
+  {
+    Azure::Core::Url hostPath(AzureSdkHttpbinServer::Delay() + "/10"); // 10 seconds delay on server
+    Azure::Core::Context cancelThis = Azure::Core::Context::ApplicationContext.WithDeadline(
+        std::chrono::system_clock::now() + std::chrono::seconds(3));
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, hostPath);
+
+    // Request will be cancelled 3 seconds after sending the request.
+    EXPECT_THROW(m_pipeline->Send(request, cancelThis), Azure::Core::OperationCancelledException);
   }
 
   TEST_P(TransportAdapter, cancelTransferDownload)

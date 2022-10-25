@@ -150,7 +150,7 @@ int pollSocketUntilEventOrTimeout(
   auto deadline = now + std::chrono::milliseconds(timeout);
   while (now < deadline)
   {
-    // check cancelation
+    // Before doing any work, check to make sure that the context hasn't already been cancelled.
     context.ThrowIfCancelled();
     int pollTimeoutMs = static_cast<int>(
         std::min(

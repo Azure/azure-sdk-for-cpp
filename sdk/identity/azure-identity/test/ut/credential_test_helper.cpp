@@ -3,6 +3,7 @@
 
 #include "credential_test_helper.hpp"
 
+#include "private/token_cache_internals.hpp"
 #include <azure/core/internal/environment.hpp>
 
 #include <stdlib.h>
@@ -70,6 +71,8 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
     std::vector<TokenRequestSimulationServerResponse> const& responses,
     GetTokenCallback getToken)
 {
+  Azure::Identity::_detail::TokenCache::Clear();
+
   using Azure::Core::Context;
   using Azure::Core::Http::HttpStatusCode;
   using Azure::Core::Http::RawResponse;
