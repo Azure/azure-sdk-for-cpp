@@ -6,6 +6,8 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 namespace {
 
@@ -490,6 +492,7 @@ namespace Azure { namespace Core {
 
   std::string Convert::Base64Encode(const std::vector<uint8_t>& data)
   {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return ::Base64Encode(data.data(), data.size());
   }
 
