@@ -23,10 +23,11 @@ std::function<void()> TokenCache::Internals::OnBeforeItemWriteLock;
 namespace {
 bool IsFresh(
     std::shared_ptr<TokenCache::Internals::CacheValue> const& item,
-    std::chrono::system_clock::duration minimumExpiration,
+    DateTime::duration minimumExpiration,
     std::chrono::system_clock::time_point now)
 {
-  return item->AccessToken.ExpiresOn > (now + minimumExpiration);
+  return item->AccessToken.ExpiresOn
+      > (now + static_cast<std::chrono::system_clock::duration>(minimumExpiration));
 }
 
 std::shared_ptr<TokenCache::Internals::CacheValue> GetOrCreateValue(
