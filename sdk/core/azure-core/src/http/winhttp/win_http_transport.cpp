@@ -17,10 +17,14 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
-#pragma warning(push)
+
+#if defined(_MSC_VER)
+// Disable warning C6553: The annotation for function 'SetThreadpoolTimer' on _Param_(4) does not
+// apply to a value type.
+// Restoring this warning after including the header does not work, so it is disabled until EOF.
 #pragma warning(disable : 6553)
+#endif
 #include <wil/resource.h> // definitions for wil::unique_cert_chain_context and other RAII type wrappers for Windows types.
-#pragma warning(pop)
 
 #include <wincrypt.h>
 #include <winhttp.h>
