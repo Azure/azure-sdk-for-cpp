@@ -7,6 +7,8 @@
 #include <azure/perf.hpp>
 #include <vector>
 
+using namespace Azure::Core;
+
 namespace Azure { namespace Perf { namespace Test {
 
   class Base64Test : public Azure::Perf::PerfTest {
@@ -16,15 +18,16 @@ namespace Azure { namespace Perf { namespace Test {
   public:
     Base64Test(Azure::Perf::TestOptions options) : PerfTest(options)
     {
+      int maxLength = 7;
       for (uint8_t i = 0; i < maxLength; i++)
       {
-        data.push_back(i + 1);
+        m_data.push_back(i + 1);
       }
     }
 
     void Run(Azure::Core::Context const&) override
     {
-      Convert::Base64Encode(data);
+      Convert::Base64Encode(m_data);
     }
 
     static Azure::Perf::TestMetadata GetTestMetadata()
