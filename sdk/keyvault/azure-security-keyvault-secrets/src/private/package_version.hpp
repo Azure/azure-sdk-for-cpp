@@ -22,20 +22,27 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
   /**
    * @brief Provides version information.
-   *
    */
   class PackageVersion final {
   public:
-    /// Major numeric identifier.
+    /**
+     * @brief Major numeric identifier.
+     */
     static constexpr int32_t Major = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MAJOR;
 
-    /// Minor numeric identifier.
+    /**
+     * @brief Minor numeric identifier.
+     */
     static constexpr int32_t Minor = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MINOR;
 
-    /// Patch numeric identifier.
+    /**
+     * @brief Patch numeric identifier.
+     */
     static constexpr int32_t Patch = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PATCH;
 
-    /// Indicates whether the SDK is in a pre-release state.
+    /**
+     * @brief Indicates whether the SDK is in a pre-release state.
+     */
     static constexpr bool IsPreRelease
         = sizeof(AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PRERELEASE) != sizeof("");
 
