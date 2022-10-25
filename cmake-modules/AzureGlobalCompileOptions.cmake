@@ -12,7 +12,7 @@ if(MSVC)
   string(REGEX REPLACE "/W3" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
   #https://stackoverflow.com/questions/37527946/warning-unreferenced-inline-function-has-been-removed
-  add_compile_options(/permissive- /W4 ${WARNINGS_AS_ERRORS_FLAG} /wd5031 /wd4668 /wd4820 /wd4255 /wd4710 /wd6553)
+  add_compile_options(/permissive- /W4 ${WARNINGS_AS_ERRORS_FLAG} /wd5031 /wd4668 /wd4820 /wd4255 /wd4710)
 
   # NOTE: Static analysis will slow building time considerably and it is run during CI gates.
   # It is better to turn in on to debug errors reported by CI than have it ON all the time. 
