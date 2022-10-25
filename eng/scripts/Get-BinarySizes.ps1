@@ -48,7 +48,7 @@ function getTargetOs {
     if ($OsVMImage -eq "MMS2019") {
         return "win-2019"
     }
-    if ($OsVMImage -eq "windows-2022") {
+    if ($OsVMImage -match "windows-2022|MMS2022") {
         return "win-2022"
     }
 
@@ -89,7 +89,7 @@ function getToolChain {
         return "MSVC"
     }
 
-	if ($OSVmImage -eq "windows-2022") {
+	if ($OSVmImage -match "windows-2022|MMS2022") {
         return "MSVC17"
     }
 
