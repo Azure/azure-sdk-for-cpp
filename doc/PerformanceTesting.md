@@ -44,7 +44,7 @@ The class will inherit from the **PerfTest** base  class and will override sever
 - Constructor(Azure::Perf::TestOptions options) : PerfTest(options)
   Options field are passed from the perf test framework and constain the various options defined for running the test.
 - void Run(Azure::Core::Context const&) override {...}.
-  Runs the actual test code. It is strongly recommended that the test code does as little extra work here as possible, it should consist solely of the actual test invocation. The test code should all assert, conditional statements ("if"/"else") or unnecessary method calls as any extra work will skew the data.
+  Runs the actual test code. It is strongly recommended that the test code does as little extra work here as possible, it should consist solely of the actual test invocation. The test code should remove all assert, conditional statements ("if"/"else") or any other unnecessary work as any extra work will skew the results.
 - std::vector<Azure::Perf::TestOption> GetTestOptions() override 
   Defines the various parameters for the test run that can be passed to the test from the performance framework. The perf framework uses these params to run various combinations(e.g. blob size)
 - static Azure::Perf::TestMetadata GetTestMetadata()
