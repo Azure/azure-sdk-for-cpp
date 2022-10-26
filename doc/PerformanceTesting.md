@@ -83,7 +83,7 @@ SETPERFDEPS(azure-storage-blobs-cpp VCPKG_SERVICE_VERSION)
 
 The crucial part here is the SETPERFDEPS cmake macro.
 The perf framework will set an environment variable based on the service name with the value representing a version, thus allowing to run the tests against diffrent VCPKG published versions. If the env is not defined then the test will build against the current source code of the service. 
-There can be multiple set perf for each dependency of the service ( e.g. identity, storage). There is a bug in the main perf framework that causes some issues with multiple packages with different major versions, but it will get fixed.
+There can be multiple set perf for each dependency of the service ( e.g. identity, storage). 
 
 ## Pipeline definition
 The file should be named `perf.yml`, and should be located in the service directory that is to be tested, for consistency and to keep service related resources in the service folder. 
