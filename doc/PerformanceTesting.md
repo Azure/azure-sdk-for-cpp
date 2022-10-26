@@ -159,7 +159,7 @@ If the test exists in other languages then making the CPP version visible to the
 
 Next under the **Tests**/**Test** node with the desired name add the CPP test name. In this section mind the aArguments list , this ies with the regex in the cpp sdk pipeline.yml definition. 
 
-### The test does not exist in other laguages
+### The test does not exist in other languages
 
 In this case you are the first to add the required nodes. The defintion is fairly simple and straightforward. 
 
