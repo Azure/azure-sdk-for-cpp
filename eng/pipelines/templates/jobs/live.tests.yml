@@ -118,7 +118,7 @@ jobs:
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      GenerateArgs: $(CmakeArgs)
+      GenerateArgs: "$(CmakeArgs) -DBUILD_TESTING=OFF"
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
 
