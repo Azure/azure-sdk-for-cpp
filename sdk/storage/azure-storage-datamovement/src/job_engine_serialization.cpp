@@ -254,6 +254,15 @@ namespace Azure { namespace Storage {
       object["destination"] = Destination;
       object["object_size"] = ObjectSize;
       object["chunk_size"] = ChunkSize;
+      if (SourceType != ResourceType::Unspecified)
+      {
+        object["source_type"] = static_cast<std::underlying_type_t<ResourceType>>(SourceType);
+      }
+      if (DestinationType != ResourceType::Unspecified)
+      {
+        object["destination_type"]
+            = static_cast<std::underlying_type_t<ResourceType>>(DestinationType);
+      }
       if (!ExtendedAttributes.empty())
       {
         object["extended"] = ExtendedAttributes;
@@ -270,6 +279,14 @@ namespace Azure { namespace Storage {
       ret.Destination = object["destination"].get<std::string>();
       ret.ObjectSize = object["object_size"].get<int64_t>();
       ret.ChunkSize = object["chunk_size"].get<int64_t>();
+      if (object.count("source_type") != 0)
+      {
+        ret.SourceType = static_cast<ResourceType>(object["source_type"].get<int32_t>());
+      }
+      if (object.count("destination_type") != 0)
+      {
+        ret.DestinationType = static_cast<ResourceType>(object["destination_type"].get<int32_t>());
+      }
       if (object.count("extended") != 0)
       {
         for (const auto& pair : object["extended"].items())

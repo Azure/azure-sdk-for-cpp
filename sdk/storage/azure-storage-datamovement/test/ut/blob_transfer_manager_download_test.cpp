@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <azure/storage/blobs.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/datamovement/blob_folder.hpp>
 #include <azure/storage/datamovement/blob_transfer_manager.hpp>
 #include <azure/storage/datamovement/filesystem.hpp>
@@ -222,6 +223,82 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(files, destFiles);
     _internal::Remove(localDir);
     _internal::Remove(destDir);
+    containerClient.DeleteIfExists();
+  }
+
+  TEST_F(BlobTransferManagerTest, SinglePageBlobDownload_LIVEONLY_)
+  {
+    const auto testName = GetTestNameLowerCase();
+    auto blobServiceClient = GetClientForTest(testName);
+    auto containerClient = blobServiceClient.GetBlobContainerClient(GetContainerValidName());
+    containerClient.CreateIfNotExists();
+    auto blobClient = containerClient.GetPageBlobClient(testName);
+
+    const std::string tempFilename = "localfile" + testName;
+    const std::string tempFilename2 = "localfile" + testName + "2";
+
+    struct TestOptions
+    {
+      int64_t blobSize;
+      std::vector<int64_t> ranges;
+    };
+
+    std::vector<TestOptions> testOptions;
+    testOptions.push_back(TestOptions{0, {}});
+    testOptions.push_back(TestOptions{512, {}});
+    testOptions.push_back(TestOptions{24_MB + 1024, {}});
+    testOptions.push_back(TestOptions{512, {0, 512}});
+    testOptions.push_back(TestOptions{1536, {512, 512}});
+    testOptions.push_back(TestOptions{4096, {0, 512, 512, 512, 1536, 512, 3072, 512}});
+    testOptions.push_back(TestOptions{24_MB, {512, 3_MB, 15_MB, 4_MB, 19_MB, 4_MB, 23_MB, 1_MB}});
+    testOptions.push_back(
+        TestOptions{24_MB, {1_MB, 4_MB, 5_MB, 4_MB, 9_MB, 4_MB, 13_MB, 4_MB, 17_MB, 4_MB}});
+
+    for (const auto& testOption : testOptions)
+    {
+      blobClient.Create(testOption.blobSize);
+      auto writer = std::make_unique<Azure::Storage::_internal::FileWriter>(tempFilename2);
+      if (testOption.blobSize > 0)
+      {
+        writer->Write(reinterpret_cast<const uint8_t*>("\0"), 1, testOption.blobSize - 1);
+      }
+      for (size_t i = 0; i < testOption.ranges.size(); i += 2)
+      {
+        int64_t offset = testOption.ranges[i];
+        int64_t length = testOption.ranges[i + 1];
+        auto content = RandomBuffer(static_cast<size_t>(length));
+        writer->Write(content.data(), content.size(), offset);
+        auto stream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+        blobClient.UploadPages(offset, stream);
+      }
+      writer.reset();
+
+      Blobs::BlobTransferManager m;
+      auto job = m.ScheduleDownload(blobClient, tempFilename);
+      EXPECT_FALSE(job.Id.empty());
+      EXPECT_EQ(job.SourceUrl, blobClient.GetUrl());
+      EXPECT_FALSE(job.DestinationUrl.empty());
+      EXPECT_EQ(job.Type, TransferType::SingleDownload);
+
+      auto jobStatus = job.WaitHandle.get();
+      EXPECT_EQ(jobStatus, JobStatus::Succeeded);
+
+      auto b1 = ReadFile(tempFilename);
+      auto b2 = ReadFile(tempFilename2);
+      ASSERT_EQ(b1.size(), b2.size());
+      for (size_t i = 0; i < b1.size(); ++i)
+      {
+        if (b1[i] != b2[i])
+        {
+          std::cout << i << std::endl;
+        }
+        ASSERT_EQ(b1[i], b2[i]);
+      }
+      EXPECT_EQ(ReadFile(tempFilename), ReadFile(tempFilename2));
+      DeleteFile(tempFilename);
+      DeleteFile(tempFilename2);
+    }
+
     containerClient.DeleteIfExists();
   }
 

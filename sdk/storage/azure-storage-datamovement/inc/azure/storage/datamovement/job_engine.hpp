@@ -94,9 +94,18 @@ namespace Azure { namespace Storage {
      */
     struct TaskModel final
     {
+      enum class ResourceType
+      {
+        Unspecified,
+        BlockBlob,
+        AppendBlob,
+        PageBlob,
+      };
       int32_t NumSubtasks = 0;
       std::string Source;
       std::string Destination;
+      ResourceType SourceType = ResourceType::Unspecified;
+      ResourceType DestinationType = ResourceType::Unspecified;
       int64_t ObjectSize = -1;
       int64_t ChunkSize = -1;
       std::map<std::string, std::string> ExtendedAttributes;

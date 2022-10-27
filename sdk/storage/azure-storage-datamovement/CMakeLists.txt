@@ -53,6 +53,7 @@ set(
   inc/azure/storage/datamovement/task_shared_status.hpp
   inc/azure/storage/datamovement/tasks/async_copy_blob_task.hpp
   inc/azure/storage/datamovement/tasks/download_blob_to_file_task.hpp
+  inc/azure/storage/datamovement/tasks/download_page_blob_to_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
   inc/azure/storage/datamovement/transfer_engine.hpp
   inc/azure/storage/datamovement/utilities.hpp
@@ -72,6 +73,7 @@ set(
   src/task_shared_status.cpp
   src/tasks/async_copy_blob_task.cpp
   src/tasks/download_blob_to_file_task.cpp
+  src/tasks/download_page_blob_to_file_task.cpp
   src/tasks/upload_blob_from_file_task.cpp
   src/transfer_engine.cpp
   src/utilities.cpp

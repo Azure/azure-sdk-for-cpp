@@ -7,10 +7,12 @@
 #include <vector>
 
 #include <azure/core/azure_assert.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/datamovement/tasks/async_copy_blob_task.hpp"
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
+#include "azure/storage/datamovement/tasks/download_page_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
 
@@ -48,6 +50,108 @@ namespace Azure { namespace Storage { namespace _detail {
       }
 
       _internal::CreateDirectory(dirPath);
+    }
+
+    void PageBlobTaskDecoration(TaskModel& task, const Blobs::PageBlobClient& pageBlobClient)
+    {
+      auto subtasksDescription = Core::Json::_internal::json::array();
+
+      std::vector<Azure::Core::Http::HttpRange> subtaskRanges;
+      int64_t subtaskDownloadSize = 0;
+      int64_t totalDownloadSize = 0;
+
+      auto flushSubtask = [&]() {
+        auto description = Core::Json::_internal::json::array();
+        for (const auto& range : subtaskRanges)
+        {
+          description.push_back(range.Offset);
+          description.push_back(range.Length.Value());
+        }
+        subtaskRanges.clear();
+        if (!description.empty())
+        {
+          subtasksDescription.push_back(std::move(description));
+        }
+        totalDownloadSize += subtaskDownloadSize;
+        subtaskDownloadSize = 0;
+      };
+      std::function<void(const Azure::Core::Http::HttpRange&)> addRange;
+      addRange = [&](const Azure::Core::Http::HttpRange& range) {
+        constexpr int64_t MergeThreshold = 512;
+        AZURE_ASSERT(range.Length.Value() > 0);
+        int64_t distance = subtaskRanges.empty()
+            ? std::numeric_limits<int64_t>::max()
+            : range.Offset - (subtaskRanges.back().Offset + subtaskRanges.back().Length.Value());
+
+        if (range.Length.Value() > task.ChunkSize)
+        {
+          if (distance > 0 && distance <= MergeThreshold
+              && task.ChunkSize - subtaskDownloadSize > distance)
+          {
+            Azure::Core::Http::HttpRange newRange;
+            newRange.Offset = range.Offset - distance;
+            newRange.Length = distance + range.Length.Value();
+            addRange(newRange);
+          }
+          else if (task.ChunkSize - subtaskDownloadSize > 0)
+          {
+            Azure::Core::Http::HttpRange newRange;
+            newRange.Offset = range.Offset;
+            newRange.Length = task.ChunkSize - subtaskDownloadSize;
+            addRange(newRange);
+            Azure::Core::Http::HttpRange newRange2;
+            newRange2.Offset = range.Offset + newRange.Length.Value();
+            newRange2.Length = range.Length.Value() - newRange.Length.Value();
+            addRange(newRange2);
+          }
+          else
+          {
+            flushSubtask();
+            addRange(range);
+          }
+        }
+        else
+        { // range.Length.Value() <= task.ChunkSize
+          if (distance <= MergeThreshold
+              && subtaskDownloadSize + distance + range.Length.Value() <= task.ChunkSize)
+          {
+            subtaskRanges.back().Length.Value() += distance + range.Length.Value();
+            subtaskDownloadSize += distance + range.Length.Value();
+          }
+          else if (
+              distance > MergeThreshold
+              && subtaskDownloadSize + range.Length.Value() <= task.ChunkSize)
+          {
+            subtaskRanges.push_back(range);
+            subtaskDownloadSize += range.Length.Value();
+          }
+          else
+          {
+            flushSubtask();
+            addRange(range);
+          }
+        }
+      };
+
+      for (auto rangePage = pageBlobClient.GetPageRanges(); rangePage.HasPage();
+           rangePage.MoveToNextPage())
+      {
+        for (const auto& range : rangePage.PageRanges)
+        {
+          addRange(range);
+        }
+      }
+      flushSubtask();
+
+      if (totalDownloadSize < task.ObjectSize)
+      {
+        if (subtasksDescription.empty())
+        {
+          subtasksDescription.push_back(Core::Json::_internal::json::array());
+        }
+        task.ExtendedAttributes["page_ranges"] = subtasksDescription.dump();
+        task.NumSubtasks = static_cast<int32_t>(subtasksDescription.size());
+      }
     }
   } // namespace
 
@@ -146,7 +250,8 @@ namespace Azure { namespace Storage { namespace _detail {
       // TODO: It's not a good idea to invoke a network request when generating tasks, as this
       // function is executed in single thread so it's likely to become a bottleneck. Find some way
       // to optimize this. This also applies to downloading directory, downloading page blob etc.
-      int64_t fileSize = m_model.Source.m_blobClient.Value().GetProperties().Value.BlobSize;
+      auto blobProperties = m_model.Source.m_blobClient.Value().GetProperties().Value;
+      int64_t fileSize = blobProperties.BlobSize;
 
       TaskModel task;
       task.ObjectSize = fileSize;
@@ -154,6 +259,19 @@ namespace Azure { namespace Storage { namespace _detail {
       task.NumSubtasks
           = static_cast<int32_t>((fileSize + g_UploadBlockSize - 1) / g_DownloadBlockSize);
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
+      if (blobProperties.BlobType == Blobs::Models::BlobType::BlockBlob)
+      {
+        task.SourceType = TaskModel::ResourceType::BlockBlob;
+      }
+      else if (blobProperties.BlobType == Blobs::Models::BlobType::AppendBlob)
+      {
+        task.SourceType = TaskModel::ResourceType::AppendBlob;
+      }
+      else if (blobProperties.BlobType == Blobs::Models::BlobType::PageBlob)
+      {
+        task.SourceType = TaskModel::ResourceType::PageBlob;
+        PageBlobTaskDecoration(task, m_model.Source.m_blobClient.Value().AsPageBlobClient());
+      }
       taskGenerated(std::move(task));
     }
     else if (
@@ -209,6 +327,19 @@ namespace Azure { namespace Storage { namespace _detail {
             task.NumSubtasks = static_cast<int32_t>(
                 (blobItem.BlobSize + g_DownloadBlockSize - 1) / g_DownloadBlockSize);
             task.NumSubtasks = std::max(task.NumSubtasks, 1);
+            if (blobItem.BlobType == Blobs::Models::BlobType::BlockBlob)
+            {
+              task.SourceType = TaskModel::ResourceType::BlockBlob;
+            }
+            else if (blobItem.BlobType == Blobs::Models::BlobType::AppendBlob)
+            {
+              task.SourceType = TaskModel::ResourceType::AppendBlob;
+            }
+            else if (blobItem.BlobType == Blobs::Models::BlobType::PageBlob)
+            {
+              task.SourceType = TaskModel::ResourceType::PageBlob;
+              PageBlobTaskDecoration(task, m_model.Source.m_blobClient.Value().AsPageBlobClient());
+            }
           }
           else
           {
@@ -321,43 +452,90 @@ namespace Azure { namespace Storage { namespace _detail {
         std::string destination = _internal::JoinPath(
             _internal::PathFromUrl(m_model.Destination.m_url), taskModel.Destination);
 
-        auto context = std::make_shared<Blobs::_detail::DownloadRangeToMemoryTask::TaskContext>(
-            source, destination);
-        context->TransferEngine = m_rootTask->SharedStatus->TransferEngine;
-        context->FileSize = taskModel.ObjectSize;
-        context->NumChunks = static_cast<int>(
-            (taskModel.ObjectSize + taskModel.ChunkSize - 1) / taskModel.ChunkSize);
-        context->NumChunks = std::max(context->NumChunks, 1);
-
-        context->NumDownloadedChunks = 0;
-        std::string doneBits;
-
-        if (taskModel.ExtendedAttributes.count("_subtasks") != 0)
+        if (taskModel.ExtendedAttributes.count("page_ranges") == 0)
         {
-          doneBits = taskModel.ExtendedAttributes.at("_subtasks");
-        }
-        for (int i = 0; i < context->NumChunks; ++i)
-        {
-          if (!doneBits.empty() && doneBits[i] != '0')
+          auto context = std::make_shared<Blobs::_detail::DownloadRangeToMemoryTask::TaskContext>(
+              source, destination);
+          context->TransferEngine = m_rootTask->SharedStatus->TransferEngine;
+          context->FileSize = taskModel.ObjectSize;
+          context->NumChunks = static_cast<int>(
+              (taskModel.ObjectSize + taskModel.ChunkSize - 1) / taskModel.ChunkSize);
+          context->NumChunks = std::max(context->NumChunks, 1);
+
+          context->NumDownloadedChunks = 0;
+          std::string doneBits;
+
+          if (taskModel.ExtendedAttributes.count("_subtasks") != 0)
           {
-            context->NumDownloadedChunks.fetch_add(1, std::memory_order_relaxed);
+            doneBits = taskModel.ExtendedAttributes.at("_subtasks");
+          }
+          for (int i = 0; i < context->NumChunks; ++i)
+          {
+            if (!doneBits.empty() && doneBits[i] != '0')
+            {
+              context->NumDownloadedChunks.fetch_add(1, std::memory_order_relaxed);
+              ++bitmapOffset;
+              continue;
+            }
+            auto task = m_rootTask->CreateTask<Blobs::_detail::DownloadRangeToMemoryTask>(
+                _internal::TaskType::NetworkDownload);
+            task->Context = context;
+            task->Offset = i * taskModel.ChunkSize;
+            if (context->OffsetToWrite == -1)
+            {
+              context->OffsetToWrite = task->Offset;
+            }
+            task->Length = static_cast<size_t>(
+                std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize));
+            task->MemoryCost = task->Length;
+            task->JournalContext = JournalContext{jobPart, bitmapOffset};
+            tasks.push_back(std::move(task));
             ++bitmapOffset;
-            continue;
           }
-          auto task = m_rootTask->CreateTask<Blobs::_detail::DownloadRangeToMemoryTask>(
-              _internal::TaskType::NetworkDownload);
-          task->Context = context;
-          task->Offset = i * taskModel.ChunkSize;
-          if (context->OffsetToWrite == -1)
+        }
+        else
+        {
+          auto context
+              = std::make_shared<Blobs::_detail::DownloadPageBlobRangeToMemoryTask::TaskContext>(
+                  source.AsPageBlobClient(), destination);
+          context->FileSize = taskModel.ObjectSize;
+          context->NumChunks = taskModel.NumSubtasks;
+
+          context->NumDownloadedChunks = 0;
+          std::string doneBits;
+
+          if (taskModel.ExtendedAttributes.count("_subtasks") != 0)
           {
-            context->OffsetToWrite = task->Offset;
+            doneBits = taskModel.ExtendedAttributes.at("_subtasks");
           }
-          task->Length = static_cast<size_t>(
-              std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize));
-          task->MemoryCost = task->Length;
-          task->JournalContext = JournalContext{jobPart, bitmapOffset};
-          tasks.emplace_back(std::move(task));
-          ++bitmapOffset;
+          auto pageRanges
+              = Core::Json::_internal::json::parse(taskModel.ExtendedAttributes.at("page_ranges"));
+          AZURE_ASSERT(pageRanges.size() == context->NumChunks);
+          AZURE_ASSERT(pageRanges.size() == taskModel.NumSubtasks);
+          for (int i = 0; i < context->NumChunks; ++i)
+          {
+            if (!doneBits.empty() && doneBits[i] != '0')
+            {
+              context->NumDownloadedChunks.fetch_add(1, std::memory_order_relaxed);
+              ++bitmapOffset;
+              continue;
+            }
+            auto task = m_rootTask->CreateTask<Blobs::_detail::DownloadPageBlobRangeToMemoryTask>(
+                _internal::TaskType::NetworkDownload);
+            task->Context = context;
+            task->MemoryCost = 0;
+            for (int j = 0; j < pageRanges[i].size(); j += 2)
+            {
+              Azure::Core::Http::HttpRange range;
+              range.Offset = pageRanges[i][j];
+              range.Length = pageRanges[i][j + 1];
+              task->MemoryCost += range.Length.Value();
+              task->Ranges.push_back(std::move(range));
+            }
+            task->JournalContext = JournalContext{jobPart, bitmapOffset};
+            tasks.push_back(std::move(task));
+            ++bitmapOffset;
+          }
         }
       }
     }
