@@ -5,6 +5,7 @@
 #include "azure/core/http/websockets/websockets.hpp"
 #include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/json/json.hpp"
+#include "azure/core/platform.hpp"
 #include <chrono>
 #include <gtest/gtest.h>
 #include <list>
@@ -887,6 +888,7 @@ TEST_F(WebSocketTests, LibWebSocketOrgIncrement)
   }
 }
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(WebSocketTests, ProxyTestLibWebSocketOrgIncrement)
 {
   {
@@ -909,6 +911,7 @@ TEST_F(WebSocketTests, ProxyTestLibWebSocketOrgIncrement)
     incrementProtocol.ConsumeUntilClosed();
   }
 }
+#endif // AZ_PLATFORM_MAC
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 TEST_F(WebSocketTests, CurlTransportCoverage)
