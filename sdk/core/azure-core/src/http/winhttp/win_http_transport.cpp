@@ -815,9 +815,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           break;
         default:
           Log::Write(
-              Logger::Level::Error,
-              "Received expected status " + InternetStatusToString(internetStatus)
-                  + " but it was not handled.");
+              Logger::Level::Error, "Ignoring status " + InternetStatusToString(internetStatus));
           break;
       }
     }
@@ -847,13 +845,25 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         Log::Write(
             Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
 
-        // To signal to caller that the request is to be terminated, the callback closes the
-        // handle. This ensures that no message is sent to the server.
-        WinHttpCloseHandle(hInternet);
-
-        // To avoid a double free of this handle record that we've
-        // already closed the handle.
+        // We need to block the primary thread until we receive the
+        // WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING event (otherwise we could receive notifications
+        // after we've destroyed the WinHttpRequest object, which would be ... bad. Unfortunately
+        // we're about to close the handle (to trigger the cancellation of any outstanding send
+        // requests). And we cannot wait for the handle to close on the current thread because we're
+        // inside a WinHTTP callback.
+        //
+        // To resolve this issue, we post the close handle to another thread and then on the main
+        // thread, in the destructor of the WinHttpRequest object, we wait for the newly created
+        // thread to exit.
+        //
         m_requestHandleClosed = true;
+
+        m_handleCloseThread = std::thread([this, hInternet] {
+          m_httpAction->WaitForAction(
+              [hInternet]() { WinHttpCloseHandle(hInternet); },
+              WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
+              Azure::Core::Context{});
+        });
 
         // And we're done processing the request, return because there's nothing
         // else to do.
@@ -1141,7 +1151,18 @@ _detail::WinHttpRequest::WinHttpRequest(
  */
 _detail::WinHttpRequest::~WinHttpRequest()
 {
-  if (!m_requestHandleClosed)
+  if (m_requestHandleClosed)
+  {
+    Log::Write(
+        Logger::Level::Verbose,
+        "WinHttpRequest::~WinHttpRequest. Waiting for close handle to exit.");
+    if (m_handleCloseThread.joinable())
+    {
+
+      m_handleCloseThread.join();
+    }
+  }
+  else
   {
     Log::Write(
         Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");

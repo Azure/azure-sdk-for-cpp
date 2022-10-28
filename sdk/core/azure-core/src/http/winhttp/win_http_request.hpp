@@ -296,6 +296,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
     std::unique_ptr<WinHttpAction> m_httpAction;
     std::vector<std::string> m_expectedTlsRootCertificates;
+    // Thread used to asynchronously close a request handle if the expected root certificate does
+    // not match.
+    std::thread m_handleCloseThread;
 
     /*
      * Adds the specified trusted certificates to the specified certificate store.
