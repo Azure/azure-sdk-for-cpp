@@ -59,6 +59,8 @@ namespace Azure { namespace Identity {
      * @param tokenRequestContext A context to get the token in.
      * @param context A context to control the request lifetime.
      *
+     * @return Authentication token.
+     *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */
     Core::Credentials::AccessToken GetToken(

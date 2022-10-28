@@ -11,9 +11,14 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace Azure { namespace Identity { namespace _detail {
   class ManagedIdentitySource : protected TokenCredentialImpl {
+  private:
+    std::string m_clientId;
+    std::string m_authorityHost;
+
   public:
     virtual Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
@@ -22,10 +27,17 @@ namespace Azure { namespace Identity { namespace _detail {
   protected:
     static Core::Url ParseEndpointUrl(std::string const& url, char const* envVarName);
 
-    explicit ManagedIdentitySource(Core::Credentials::TokenCredentialOptions const& options)
-        : TokenCredentialImpl(options)
+    explicit ManagedIdentitySource(
+        std::string clientId,
+        std::string authorityHost,
+        Core::Credentials::TokenCredentialOptions const& options)
+        : TokenCredentialImpl(options), m_clientId(std::move(clientId)),
+          m_authorityHost(std::move(authorityHost))
     {
     }
+
+    std::string const& GetClientId() const { return m_clientId; }
+    std::string const& GetAuthorityHost() const { return m_authorityHost; }
   };
 
   class AppServiceManagedIdentitySource : public ManagedIdentitySource {

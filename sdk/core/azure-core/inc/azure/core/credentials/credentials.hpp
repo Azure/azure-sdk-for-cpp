@@ -48,6 +48,12 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     std::vector<std::string> Scopes;
+
+    /**
+     * @brief Minimum token expiration suggestion.
+     *
+     */
+    DateTime::duration MinimumExpiration = std::chrono::minutes(2);
   };
 
   /**
@@ -60,6 +66,8 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @param tokenRequestContext A context to get the token in.
      * @param context A context to control the request lifetime.
+     *
+     * @return Authentication token.
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */

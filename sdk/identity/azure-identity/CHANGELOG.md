@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added token caching.
+
 ### Breaking Changes
 
 ### Bugs Fixed

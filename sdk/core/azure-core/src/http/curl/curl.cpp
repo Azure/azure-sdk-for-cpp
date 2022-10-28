@@ -37,24 +37,39 @@
 #include "curl_session_private.hpp"
 
 #if defined(AZ_PLATFORM_POSIX)
+#include <openssl/opensslv.h>
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#define USE_OPENSSL_1
+#else
+#define USE_OPENSSL_3
+#endif // OPENSSL_VERSION_NUMBER < 0x30000000L
+
 #include <openssl/asn1t.h>
 #include <openssl/err.h>
+// For OpenSSL > 3.0, we can use the new API to get the certificate's OCSP URL.
+#if defined(USE_OPENSSL_3)
 #include <openssl/http.h>
+#endif
+#if defined(USE_OPENSSL_1)
+#include <openssl/ocsp.h>
+#endif // defined(USE_OPENSSL_1)
 #include <openssl/safestack.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
 #include <openssl/x509v3.h>
+#endif // AZ_PLATFORM_POSIX
+
+#if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
-#endif
+#endif // AZ_PLATFORM_POSIX/AZ_PLATFORM_WINDOWS
 
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
-#include <openssl/ssl.h>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -1383,6 +1398,12 @@ namespace Azure { namespace Core {
     {
       using type = BasicUniqueHandle<BIO, BIO_free_all>;
     };
+#if defined(USE_OPENSSL_1)
+    template <> struct UniqueHandleHelper<OCSP_REQ_CTX>
+    {
+      using type = BasicUniqueHandle<OCSP_REQ_CTX, OCSP_REQ_CTX_free>;
+    };
+#endif // USE_OPENSSL_1
 
     template <> struct UniqueHandleHelper<STACK_OF(X509_CRL)>
     {
@@ -1445,8 +1466,105 @@ namespace Azure { namespace Core {
       Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCrlFromUrl(std::string const& url)
       {
         Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
-        auto crl = Azure::Core::_internal::MakeUniqueHandle(
+        Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
+#if defined(USE_OPENSSL_3)
+        crl = Azure::Core::_internal::MakeUniqueHandle(
             X509_CRL_load_http, url.c_str(), nullptr, nullptr, 5);
+#else
+        std::string host, port, path;
+        int use_ssl;
+        {
+          char *host_ptr, *port_ptr, *path_ptr;
+          if (!OCSP_parse_url(url.c_str(), &host_ptr, &port_ptr, &path_ptr, &use_ssl))
+          {
+            Log::Write(Logger::Level::Error, "Failure parsing URL");
+            return nullptr;
+          }
+          host = host_ptr;
+          port = port_ptr;
+          path = path_ptr;
+        }
+
+        if (use_ssl)
+        {
+          Log::Write(Logger::Level::Error, "CRL HTTPS not supported");
+          return nullptr;
+        }
+        Azure::Core::_internal::UniqueHandle<BIO> bio{
+            Azure::Core::_internal::MakeUniqueHandle(BIO_new_connect, host.c_str())};
+        if (!bio)
+        {
+          Log::Write(
+              Logger::Level::Error,
+              "BIO_new_connect failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
+        }
+        if (!BIO_set_conn_port(bio.get(), const_cast<char*>(port.c_str())))
+        {
+          Log::Write(
+              Logger::Level::Error,
+              "BIO_set_conn_port failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
+        }
+
+        auto requestContext
+            = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
+        if (!requestContext)
+        {
+          Log::Write(
+              Logger::Level::Error,
+              "OCSP_REQ_CTX_new failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
+        }
+
+        // By default the OCSP APIs limit the CRL length to 1M, that isn't sufficient
+        // for many web sites, so increase it to 10M.
+        OCSP_set_max_response_length(requestContext.get(), 10 * 1024 * 1024);
+
+        if (!OCSP_REQ_CTX_http(requestContext.get(), "GET", url.c_str()))
+        {
+          Log::Write(
+              Logger::Level::Error,
+              "OCSP_REQ_CTX_http failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
+        }
+
+        if (!OCSP_REQ_CTX_add1_header(requestContext.get(), "Host", host.c_str()))
+        {
+          Log::Write(
+              Logger::Level::Error,
+              "OCSP_REQ_add1_header failed" + _detail::GetOpenSSLError("Load CRL"));
+          return nullptr;
+        }
+
+        {
+          X509_CRL* crl_ptr = nullptr;
+          int rv;
+          do
+          {
+            rv = X509_CRL_http_nbio(requestContext.get(), &crl_ptr);
+          } while (rv == -1);
+
+          if (rv != 1)
+          {
+            if (ERR_peek_error() == 0)
+            {
+              Log::Write(
+                  Logger::Level::Error,
+                  "X509_CRL_http_nbio failed, possible because CRL is too long.");
+            }
+            else
+            {
+              Log::Write(
+                  Logger::Level::Error,
+                  "X509_CRL_http_nbio failed" + _detail::GetOpenSSLError("Load CRL"));
+            }
+            return nullptr;
+          }
+          crl.reset(crl_ptr);
+        }
+
+#endif
         if (!crl)
         {
           Log::Write(Logger::Level::Error, _detail::GetOpenSSLError("Load CRL"));
@@ -1692,7 +1810,11 @@ namespace Azure { namespace Core {
        * @brief Retrieve the CRL associated with the provided store context, if available.
        *
        */
+#if defined(USE_OPENSSL_3)
       STACK_OF(X509_CRL) * CrlHttpCallback(const X509_STORE_CTX* context, const X509_NAME*)
+#else
+      STACK_OF(X509_CRL) * CrlHttpCallback(X509_STORE_CTX* context, X509_NAME*)
+#endif
       {
         Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
         STACK_OF(DIST_POINT) * crlDistributionPoint;

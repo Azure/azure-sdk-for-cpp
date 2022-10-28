@@ -24,16 +24,24 @@ namespace Azure { namespace Storage { namespace Common { namespace _detail {
    */
   class PackageVersion final {
   public:
-    /// Major numeric identifier.
+    /**
+     * @brief Major numeric identifier.
+     */
     static constexpr int Major = AZURE_STORAGE_COMMON_VERSION_MAJOR;
 
-    /// Minor numeric identifier.
+    /**
+     * @brief Minor numeric identifier.
+     */
     static constexpr int Minor = AZURE_STORAGE_COMMON_VERSION_MINOR;
 
-    /// Patch numeric identifier.
+    /**
+     * @brief Patch numeric identifier.
+     */
     static constexpr int Patch = AZURE_STORAGE_COMMON_VERSION_PATCH;
 
-    /// Indicates whether the SDK is in a pre-release state.
+    /**
+     * @brief Indicates whether the SDK is in a pre-release state.
+     */
     static constexpr bool IsPreRelease
         = sizeof(AZURE_STORAGE_COMMON_VERSION_PRERELEASE) != sizeof("");
 

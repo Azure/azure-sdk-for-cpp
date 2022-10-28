@@ -20,6 +20,64 @@
           "name": "MSVC_USE_STATIC_CRT",
           "value": "True",
           "type": "BOOL"
+        },
+        {
+          "name": "VCPKG_MANIFEST_MODE",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "name": "x64-DebugWithTests-OpenSSL111",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "VCPKG_TARGET_TRIPLET",
+          "value": "x64-windows-static",
+          "type": "STRING"
+        },
+        {
+          "name": "MSVC_USE_STATIC_CRT",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "VCPKG_MANIFEST_MODE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "VCPKG_OVERLAY_PORTS",
+          "value": "${projectDir}\\vcpkg-custom-ports",
+          "type": "STRING"
+        },
+        {
+          "name": "INSTALL_GTEST",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_CURL",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SAMPLES",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },
