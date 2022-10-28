@@ -65,13 +65,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         }
       }
 
-      /** 
-      * @brief Start an HttpOperation.
-      * 
-      * StartOperation is called before starting an HttpOperation. It resets the internal state of the
-      * HTTP Operation to a known state, and ensures that WaitForSingleObject will block (by resetting the operation
-      * complete event to the not-signalled state).
-      */
+      /**
+       * @brief Start an HttpOperation.
+       *
+       * StartOperation is called before starting an HttpOperation. It resets the internal state of
+       * the HTTP Operation to a known state, and ensures that WaitForSingleObject will block (by
+       * resetting the operation complete event to the not-signalled state).
+       */
       void StartOperation()
       {
         // Reset the internal operation state.
