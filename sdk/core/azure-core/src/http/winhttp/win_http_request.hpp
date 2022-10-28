@@ -31,15 +31,112 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    */
   class WinHttpAction final {
 
+    // An HttpOperation reflects an outstanding WinHTTP action. The WinHttpAction object allows for
+    // several classes of HttpOperation to be in progress at the same time. Those roughly are:
+    //
+    // 1) Receive Operations
+    //  2) Send Operations
+    // 3) Close Operations (used only for WebSocket handles).
+    // 4) Handle Closing operations
+    // There can be only one operation outstanding at a time for each category of operation.
+    class HttpOperation {
+      wil::unique_event m_operationCompleteEvent;
+      // Mutex protecting all mutable members of the class.
+      std::mutex m_operationStateMutex;
+      // Bitmap of expected status operations.
+      std::atomic<DWORD> m_expectedStatus{};
+      bool m_operationStarted{};
+      DWORD m_stowedError{};
+      DWORD_PTR m_stowedErrorInformation{};
+      DWORD m_bytesAvailable{};
+      WINHTTP_WEB_SOCKET_STATUS m_webSocketStatus{};
+      DWORD m_operationMutexOwner{};
+
+    public:
+      HttpOperation() : m_operationCompleteEvent(CreateEvent(nullptr, TRUE, FALSE, nullptr))
+      {
+        if (!m_operationCompleteEvent)
+        {
+          throw std::runtime_error("Error creating Action Complete Event.");
+        }
+      }
+      void ResetState()
+      {
+        // Reset the internal operation state.
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        assert(!m_operationStarted);
+        m_stowedError = ERROR_SUCCESS;
+        m_stowedErrorInformation = static_cast<DWORD_PTR>(-1);
+        m_bytesAvailable = 0;
+        m_webSocketStatus.dwBytesTransferred = 0;
+        m_webSocketStatus.eBufferType = WINHTTP_WEB_SOCKET_BINARY_FRAGMENT_BUFFER_TYPE;
+        m_operationStarted = true;
+
+        // Reset the manual operation complete event so we will block until it's set to the
+        // signalled state.
+        m_operationCompleteEvent.ResetEvent();
+      }
+      void SetEvent()
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        if (m_operationStarted)
+        {
+          m_operationStarted = false;
+          m_operationCompleteEvent.SetEvent();
+        }
+      }
+      DWORD WaitForSingleObject(DWORD waitTimeout)
+      {
+        return ::WaitForSingleObject(m_operationCompleteEvent.get(), waitTimeout);
+      }
+      void UpdateStowedError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        m_stowedError = stowedError;
+        m_stowedErrorInformation = stowedErrorInformation;
+      }
+      void UpdateBytesAvailable(DWORD bytesAvailable)
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        m_bytesAvailable = bytesAvailable;
+      }
+      void UpdateWebSocketStatus(WINHTTP_WEB_SOCKET_STATUS* webSocketStatus)
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        m_webSocketStatus = *webSocketStatus;
+      }
+
+      DWORD GetStowedError()
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        return m_stowedError;
+      }
+      DWORD_PTR GetStowedErrorInformation()
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        return m_stowedErrorInformation;
+      }
+      DWORD GetBytesAvailable()
+      {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        return m_bytesAvailable;
+      }
+      WINHTTP_WEB_SOCKET_STATUS const* GetWebSocketStatus() {
+        std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        return &m_webSocketStatus;
+		
+      }
+    };
+
     // Containing HTTP request, used during the status operation callback.
     WinHttpRequest* const m_httpRequest{};
-    wil::unique_event m_actionCompleteEvent;
-    // Mutex protecting all mutable members of the class.
-    std::mutex m_actionCompleteMutex;
-    DWORD m_expectedStatus{};
-    DWORD m_stowedError{};
-    DWORD_PTR m_stowedErrorInformation{};
-    DWORD m_bytesAvailable{};
+    // True if this action is for a websocket transport.
+    const bool m_isWebSocketAction{false};
+
+    HttpOperation m_sendOperation;
+    HttpOperation m_receiveOperation;
+    HttpOperation m_closeOperation;
+    HttpOperation m_handleClosingOperation;
 
     /*
      * Callback from WinHTTP called after the TLS certificates are received when the caller sets
@@ -62,20 +159,23 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         LPVOID statusInformation,
         DWORD statusInformationLength);
 
+    HttpOperation& OperationFromActionStatus(DWORD callbackStatus);
+    HttpOperation& OperationFromAsyncResult(DWORD_PTR asyncResult);
+
   public:
     /**
      * @brief Create a new WinHttpAction object associated with a specific WinHttpRequest.
      *
      * @param request Http Request associated with the action.
+     *
+     * @remarks If the WinHttpRequest object is null, this is a hint that the WinHttpAction is
+     * associated with a WebSocket request, since WebSocket operations don't have an associated
+     * WinHttpRequest object.
      */
     WinHttpAction(WinHttpRequest* request)
         // Create a non-inheritable anonymous manual reset event intialized as unset.
-        : m_httpRequest(request), m_actionCompleteEvent(CreateEvent(nullptr, TRUE, FALSE, nullptr))
+        : m_httpRequest(request), m_isWebSocketAction(request == nullptr)
     {
-      if (!m_actionCompleteEvent)
-      {
-        throw std::runtime_error("Error creating Action Complete Event.");
-      }
     }
 
     /**
@@ -85,6 +185,14 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @returns The status of the operation.
      */
     bool RegisterWinHttpStatusCallback(
+        Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle);
+    /**
+     * Unregisters the WinHTTP Status callback used by the action.
+     *
+     * @param internetHandle HINTERNET to register the callback.
+     * @returns The status of the operation.
+     */
+    bool UnregisterWinHttpStatusCallback(
         Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle);
 
     /**
@@ -114,24 +222,69 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         Azure::DateTime::duration const& pollDuration = std::chrono::milliseconds(800));
 
     /**
-     * @brief Notify a caller that the action has completed successfully.
+     * @brief Notify a caller that a close action has completed successfully.
+     *
+     * @remarks Completes a wait operation initiated by WaitForAction, for a close operation.
+     *
+     * @note This function is only used for WebSocket transports.
+     *
      */
-    void CompleteAction();
+    void CompleteCloseAction(DWORD actionToComplete);
+    /**
+     * @brief Notify a caller that the underlying HTTP request handle has been closed.
+     *
+     * @remarks Completes a wait operation initiated by WaitForAction, for a close operation.
+     */
+    void CompleteHandleCloseAction(DWORD actionToComplete);
+
+    /**
+     * @brief Notify a caller that the action has completed successfully.
+     *
+     * @remarks Completes a wait operation initiated by WaitForAction, for send operations.
+     */
+    void CompleteSendAction(DWORD actionToComplete);
+
+    /**
+     * @brief Notify a caller that the action has completed successfully.
+     *
+     * @remarks Completes a wait operation initiated by WaitForAction, for receive operations.
+     */
+    void CompleteReceiveAction(DWORD actionToComplete);
 
     /**
      * @brief Notify a caller that the action has completed successfully and reflect the bytes
      * available
      */
-    void CompleteActionWithData(DWORD bytesAvailable);
+    void CompleteReceiveActionWithData(DWORD actionToComplete, DWORD bytesAvailable);
+
+    /**
+     * @brief Notify a caller that the WebSocket action has completed successfully.
+     */
+    void CompleteSendActionWithWebSocketStatus(
+        DWORD actionToComplete,
+        LPVOID statusInformation,
+        DWORD statusInformationLength);
+    /**
+     * @brief Notify a caller that the WebSocket action has completed successfully.
+     */
+    void CompleteReceiveActionWithWebSocketStatus(
+        DWORD actionToComplete,
+        LPVOID statusInformation,
+        DWORD statusInformationLength);
 
     /**
      * @brief Notify a caller that the action has completed with an error and save the error code
      * and information.
+     *
+     * @param actionToComplete - event received.
+     * @param stowedErrorInformation - stowed error information from WinHTTP.
+     * @param stowedError - Win32 error code.
      */
     void CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError);
-    DWORD GetStowedError();
-    DWORD_PTR GetStowedErrorInformation();
-    DWORD GetBytesAvailable();
+    DWORD GetStowedError(DWORD actionToComplete);
+    DWORD_PTR GetStowedErrorInformation(DWORD actionToComplete);
+    DWORD GetBytesAvailable(DWORD actionToComplete);
+    WINHTTP_WEB_SOCKET_STATUS const* const GetWebSocketStatus(DWORD actionToComplete);
   };
 
   /**
@@ -180,6 +333,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     size_t ReadData(uint8_t* buffer, size_t bufferSize, Azure::Core::Context const& context);
     void EnableWebSocketsSupport();
     void HandleExpectedTlsRootCertificates(HINTERNET hInternet);
+    HINTERNET const GetRequestHandle() { return m_requestHandle.get(); }
   };
 
   class WinHttpStream final : public Azure::Core::IO::BodyStream {

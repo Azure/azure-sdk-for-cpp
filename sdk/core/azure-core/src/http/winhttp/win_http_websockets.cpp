@@ -8,6 +8,7 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/unique_handle.hpp"
 #include "azure/core/platform.hpp"
+#include "win_http_request.hpp"
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
@@ -24,17 +25,34 @@
 #endif
 #include <shared_mutex>
 
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
+
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
+  WinHttpWebSocketTransport::WinHttpWebSocketTransport(
+      Azure::Core::Http::Policies::TransportOptions const& options)
+      : WinHttpTransport(options), m_httpAction(std::make_unique<_detail::WinHttpAction>(nullptr))
+  {
+  }
+
+  WinHttpWebSocketTransport::~WinHttpWebSocketTransport() { Close(); }
+
   void WinHttpWebSocketTransport::OnUpgradedConnection(
-      Azure::Core::_internal::UniqueHandle<HINTERNET> const& requestHandle)
+      std::unique_ptr<Azure::Core::Http::_detail::WinHttpRequest> const& requestHandle)
   {
     // Convert the request handle into a WebSocket handle for us to use later.
-    m_socketHandle = Azure::Core::_internal::UniqueHandle<HINTERNET>(
-        WinHttpWebSocketCompleteUpgrade(requestHandle.get(), 0));
+    m_socketHandle
+        = Azure::Core::_internal::UniqueHandle<HINTERNET>(WinHttpWebSocketCompleteUpgrade(
+            requestHandle->GetRequestHandle(), reinterpret_cast<DWORD_PTR>(m_httpAction.get())));
     if (!m_socketHandle)
     {
       GetErrorAndThrow("Error Upgrading HttpRequest handle to WebSocket handle.");
+    }
+    // Register the WebSocket action with WinHTTP.
+    if (!m_httpAction->RegisterWinHttpStatusCallback(m_socketHandle))
+    {
+      GetErrorAndThrow("Error registering for notifications on the websocket handle.");
     }
   }
 
@@ -48,7 +66,23 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
   /**
    * @brief  Close the WebSocket cleanly.
    */
-  void WinHttpWebSocketTransport::Close() { m_socketHandle.reset(); }
+  void WinHttpWebSocketTransport::Close()
+  {
+    if (m_socketHandle)
+    {
+      Log::Write(
+          Logger::Level::Verbose,
+          "WinHttpWebSocketTransport::Close. Closing handle synchronously.");
+      //      m_httpAction->UnregisterWinHttpStatusCallback(m_socketHandle);
+      // Close the outstanding request handle. While WinHttpCloseHandle is synchronous,
+      // the WinHttpCloseHandle documentation strongly recommends waiting until the handle closed
+      // callback is received before allowing the CLose to proceed.
+      m_httpAction->WaitForAction(
+          [&]() { m_socketHandle.reset(); },
+          WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
+          Azure::Core::Context{});
+    }
+  }
 
   // Native WebSocket support methods.
   /**
@@ -66,21 +100,34 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       std::string const& disconnectReason,
       Azure::Core::Context const& context)
   {
-    context.ThrowIfCancelled();
-
-    auto err = WinHttpWebSocketClose(
-        m_socketHandle.get(),
-        status,
-        disconnectReason.empty()
-            ? nullptr
-            : reinterpret_cast<PVOID>(const_cast<char*>(disconnectReason.c_str())),
-        static_cast<DWORD>(disconnectReason.size()));
-    if (err != 0)
+    if (!m_httpAction->WaitForAction(
+            [&]() {
+              auto err = WinHttpWebSocketClose(
+                  m_socketHandle.get(),
+                  status,
+                  disconnectReason.empty()
+                      ? nullptr
+                      : reinterpret_cast<PVOID>(const_cast<char*>(disconnectReason.c_str())),
+                  static_cast<DWORD>(disconnectReason.size()));
+              if (err != 0)
+              {
+                GetErrorAndThrow("WinHttpWebSocketClose() failed", err);
+              }
+            },
+            WINHTTP_CALLBACK_STATUS_CLOSE_COMPLETE,
+            context))
     {
-      GetErrorAndThrow("WinHttpWebSocketClose() failed", err);
+      // Close calls can trigger operation cancelled errors, so ignore them since they're expected
+      // from close calls.
+      if ((m_httpAction->GetStowedError(WINHTTP_CALLBACK_STATUS_CLOSE_COMPLETE) != 0)
+          && (m_httpAction->GetStowedError(WINHTTP_CALLBACK_STATUS_CLOSE_COMPLETE)
+              != ERROR_WINHTTP_OPERATION_CANCELLED))
+      {
+        GetErrorAndThrow(
+            "Error Closing WebSocket handle synchronously",
+            m_httpAction->GetStowedError(WINHTTP_CALLBACK_STATUS_CLOSE_COMPLETE));
+      }
     }
-
-    context.ThrowIfCancelled();
 
     // Make sure that the server responds gracefully to the close request.
     auto closeInformation = NativeGetCloseSocketInformation(context);
@@ -118,7 +165,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         &closeReasonLength);
     if (err != 0)
     {
-      GetErrorAndThrow("WinHttpGetCloseStatus() failed", err);
+      GetErrorAndThrow("WinHttpWebSocketQueryCloseStatus() failed", err);
     }
     return NativeWebSocketCloseInformation{closeStatus, std::string(closeReason)};
   }
@@ -137,7 +184,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
       std::vector<uint8_t> const& frameData,
       Azure::Core::Context const& context)
   {
-    context.ThrowIfCancelled();
     WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType;
     switch (frameType)
     {
@@ -158,43 +204,67 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
             "Unknown frame type: " + std::to_string(static_cast<uint32_t>(frameType)));
         break;
     }
+
     // Lock the socket to prevent concurrent writes. WinHTTP gets annoyed if
     // there are multiple WinHttpWebSocketSend requests outstanding.
     std::lock_guard<std::mutex> lock(m_sendMutex);
-    auto err = WinHttpWebSocketSend(
-        m_socketHandle.get(),
-        bufferType,
-        reinterpret_cast<PVOID>(const_cast<uint8_t*>(frameData.data())),
-        static_cast<DWORD>(frameData.size()));
-    if (err != 0)
+    m_sendMutexOwner = GetCurrentThreadId();
+    if (!m_httpAction->WaitForAction(
+            [&]() {
+              auto err = WinHttpWebSocketSend(
+                  m_socketHandle.get(),
+                  bufferType,
+                  reinterpret_cast<PVOID>(const_cast<uint8_t*>(frameData.data())),
+                  static_cast<DWORD>(frameData.size()));
+              if (err != 0)
+              {
+                GetErrorAndThrow("WinHttpWebSocketSend() failed", err);
+              }
+            },
+            WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE,
+            context))
     {
-      GetErrorAndThrow("WinHttpWebSocketSend() failed", err);
+      GetErrorAndThrow(
+          "Error Sending WebSocket synchronously",
+          m_httpAction->GetStowedError(WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE));
     }
   }
 
   WinHttpWebSocketTransport::NativeWebSocketReceiveInformation
   WinHttpWebSocketTransport::NativeReceiveFrame(Azure::Core::Context const& context)
   {
-    WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType;
+    WINHTTP_WEB_SOCKET_BUFFER_TYPE bufferType{};
     NativeWebSocketFrameType frameTypeReceived;
-    DWORD bufferBytesRead;
+    DWORD bufferBytesRead{};
     std::vector<uint8_t> buffer(128);
-    context.ThrowIfCancelled();
+
     std::lock_guard<std::mutex> lock(m_receiveMutex);
-
-    auto err = WinHttpWebSocketReceive(
-        m_socketHandle.get(),
-        reinterpret_cast<PVOID>(buffer.data()),
-        static_cast<DWORD>(buffer.size()),
-        &bufferBytesRead,
-        &bufferType);
-    if (err != 0 && err != ERROR_INSUFFICIENT_BUFFER)
+    m_receiveMutexOwner = GetCurrentThreadId();
+    if (!m_httpAction->WaitForAction(
+            [&]() {
+              auto err = WinHttpWebSocketReceive(
+                  m_socketHandle.get(),
+                  reinterpret_cast<PVOID>(buffer.data()),
+                  static_cast<DWORD>(buffer.size()),
+                  &bufferBytesRead,
+                  &bufferType);
+              if (err != 0 && err != ERROR_INSUFFICIENT_BUFFER)
+              {
+                GetErrorAndThrow("WinHttpWebSocketReceive() failed", err);
+              }
+            },
+            WINHTTP_CALLBACK_STATUS_READ_COMPLETE,
+            context))
     {
-      GetErrorAndThrow("WinHttpWebSocketReceive() failed", err);
+      GetErrorAndThrow(
+          "Error Receiving WebSocket frame synchronously",
+          m_httpAction->GetStowedError(WINHTTP_CALLBACK_STATUS_READ_COMPLETE));
     }
-    buffer.resize(bufferBytesRead);
 
-    switch (bufferType)
+    buffer.resize(m_httpAction->GetWebSocketStatus(WINHTTP_CALLBACK_STATUS_READ_COMPLETE)
+                      ->dwBytesTransferred);
+
+    switch (m_httpAction->GetWebSocketStatus(WINHTTP_CALLBACK_STATUS_READ_COMPLETE)->eBufferType)
     {
       case WINHTTP_WEB_SOCKET_UTF8_MESSAGE_BUFFER_TYPE:
         frameTypeReceived = NativeWebSocketFrameType::Text;

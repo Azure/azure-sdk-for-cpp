@@ -144,6 +144,7 @@ namespace Azure { namespace Core {
       // transports.
       virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&){};
 
+    protected: // Protected to allow WebSocketTransport to access this for error reporting.
       /**
        * @brief Throw an exception based on the Win32 Error code
        *
