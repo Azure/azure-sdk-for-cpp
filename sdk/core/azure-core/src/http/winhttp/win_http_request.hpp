@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // several classes of HttpOperation to be in progress at the same time. Those roughly are:
     //
     // 1) Receive Operations
-    //  2) Send Operations
+    // 2) Send Operations
     // 3) Close Operations (used only for WebSocket handles).
     // 4) Handle Closing operations
     // There can be only one operation outstanding at a time for each category of operation.
@@ -61,7 +61,15 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           throw std::runtime_error("Error creating Action Complete Event.");
         }
       }
-      void ResetState()
+
+      /** 
+      * @brief Start an HttpOperation.
+      * 
+      * StartOperation is called before starting an HttpOperation. It resets the internal state of the
+      * HTTP Operation to a known state, and ensures that WaitForSingleObject will block (by resetting the operation
+      * complete event to the not-signalled state).
+      */
+      void StartOperation()
       {
         // Reset the internal operation state.
         std::unique_lock<std::mutex> lock(m_operationStateMutex);
@@ -77,9 +85,16 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         // signalled state.
         m_operationCompleteEvent.ResetEvent();
       }
-      void SetEvent()
+
+      /**
+       * @brief Mark an HttpOperation as complete.
+       */
+      void CompleteOperation()
       {
         std::unique_lock<std::mutex> lock(m_operationStateMutex);
+        // Note that we cannot assert that m_operationStarted is true here.
+        // That's because WinHTTP calls the status callback with an AsyncAction of 0
+        // to reflect that all outstanding calls need to fail with an error.
         if (m_operationStarted)
         {
           m_operationStarted = false;

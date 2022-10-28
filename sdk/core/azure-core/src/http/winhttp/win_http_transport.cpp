@@ -525,7 +525,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     auto& operationToWait{OperationFromActionStatus(expectedCallbackStatus)};
 
-    operationToWait.ResetState();
+    operationToWait.StartOperation();
 
     // Call the provided callback to start the WinHTTP action.
     initiateAction();
@@ -561,28 +561,28 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   {
     Log::Write(Logger::Level::Verbose, "CompleteCloseAction. ");
     auto& operationToWait = OperationFromActionStatus(actionToComplete);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
 
   void WinHttpAction::CompleteHandleCloseAction(DWORD actionToComplete)
   {
     Log::Write(Logger::Level::Verbose, "CompleteHandleClose: ");
     auto& operationToWait = OperationFromActionStatus(actionToComplete);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
 
   void WinHttpAction::CompleteSendAction(DWORD actionToComplete)
   {
     Log::Write(Logger::Level::Verbose, "CompleteSendAction. ");
     auto& operationToWait = OperationFromActionStatus(actionToComplete);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
   void WinHttpAction::CompleteReceiveAction(DWORD actionToComplete)
   {
     Log::Write(Logger::Level::Verbose, "CompleteReceiveAction. ");
 
     auto& operationToWait = OperationFromActionStatus(actionToComplete);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
 
   void WinHttpAction::CompleteReceiveActionWithData(DWORD actionToComplete, DWORD bytesAvailable)
@@ -593,7 +593,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // state before the lock is released.
     auto& operationToWait = OperationFromActionStatus(actionToComplete);
     operationToWait.UpdateBytesAvailable(bytesAvailable);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
 
   void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
@@ -606,15 +606,15 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     if (stowedErrorInformation == 0)
     {
       m_sendOperation.UpdateStowedError(stowedErrorInformation, stowedError);
-      m_sendOperation.SetEvent();
+      m_sendOperation.CompleteOperation();
       m_receiveOperation.UpdateStowedError(stowedErrorInformation, stowedError);
-      m_receiveOperation.SetEvent();
+      m_receiveOperation.CompleteOperation();
     }
     else
     {
       auto& operationToWait = OperationFromAsyncResult(stowedErrorInformation);
       operationToWait.UpdateStowedError(stowedErrorInformation, stowedError);
-      operationToWait.SetEvent();
+      operationToWait.CompleteOperation();
     }
   }
 
@@ -633,7 +633,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     WINHTTP_WEB_SOCKET_STATUS* webSocketStatus
         = static_cast<WINHTTP_WEB_SOCKET_STATUS*>(statusInformation);
     operationToWait.UpdateWebSocketStatus(webSocketStatus);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
   void WinHttpAction::CompleteSendActionWithWebSocketStatus(
       DWORD actionToComplete,
@@ -649,7 +649,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     WINHTTP_WEB_SOCKET_STATUS* webSocketStatus
         = static_cast<WINHTTP_WEB_SOCKET_STATUS*>(statusInformation);
     operationToWait.UpdateWebSocketStatus(webSocketStatus);
-    operationToWait.SetEvent();
+    operationToWait.CompleteOperation();
   }
 
   DWORD WinHttpAction::GetStowedError(DWORD actionToComplete)
