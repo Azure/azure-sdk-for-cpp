@@ -858,6 +858,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         //
         m_requestHandleClosed = true;
 
+        // Complete any outstanding actions with secure failure errors. Note that "0" is
+        // a sentinal which means "Complete all outstanding actions".
+        m_httpAction->CompleteActionWithError(0, ERROR_WINHTTP_SECURE_FAILURE);
+
+        // Start a thread to synchronously close the handle and wait for the handle to close.
+        // If m_requestHandleClosed is set, we'll block waiting on this thread in the destructor
+        // of the WinHttpRequest.
         m_handleCloseThread = std::thread([this, hInternet] {
           m_httpAction->WaitForAction(
               [hInternet]() { WinHttpCloseHandle(hInternet); },

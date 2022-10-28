@@ -149,15 +149,15 @@ namespace Azure { namespace Core { namespace Test {
           }
         }
         {
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+          Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
+          winHttpOptions.IgnoreUnknownCertificateAuthority = true;
+          options.Transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
+#elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
           Azure::Core::Http::CurlTransportOptions curlOptions;
           curlOptions.SslVerifyPeer = false;
           curlOptions.EnableCurlTracing = true;
           options.Transport = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-          Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
-          winHttpOptions.IgnoreUnknownCertificateAuthority = true;
-          options.Transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
           auto pipeline = CreateHttpPipeline(options);
           auto request = Azure::Core::Http::Request(
