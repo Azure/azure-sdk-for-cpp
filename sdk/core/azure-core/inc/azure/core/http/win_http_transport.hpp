@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+// cspell : words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
+
 /**
  * @file
  * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
- * cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
  */
 
 #pragma once
