@@ -11,6 +11,7 @@
 ### Other Changes
 
 - Added the ability to consume version 1.1.1n of OpenSSL.
+- Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
 
 ## 1.8.0-beta.1 (2022-10-06)
 

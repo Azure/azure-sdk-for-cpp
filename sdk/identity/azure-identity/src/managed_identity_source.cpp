@@ -3,6 +3,8 @@
 
 #include "private/managed_identity_source.hpp"
 
+#include "private/token_cache.hpp"
+
 #include <azure/core/internal/environment.hpp>
 
 #include <fstream>
@@ -59,7 +61,7 @@ AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
     std::string const& apiVersion,
     std::string const& secretHeaderName,
     std::string const& clientIdHeaderName)
-    : ManagedIdentitySource(options),
+    : ManagedIdentitySource(clientId, endpointUrl.GetHost(), options),
       m_request(Azure::Core::Http::HttpMethod::Get, std::move(endpointUrl))
 {
   {
@@ -81,18 +83,37 @@ Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  return TokenCredentialImpl::GetToken(context, [&]() {
-    auto request = std::make_unique<TokenRequest>(m_request);
+  std::string scopesStr;
+  {
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
-      {
-        request->HttpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
-      }
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, true);
     }
+  }
 
-    return request;
-  });
+  // TokenCache::GetToken() and TokenCredentialImpl::GetToken() can only use the lambda argument
+  // when they are being executed. They are not supposed to keep a reference to lambda argument to
+  // call it later. Therefore, any capture made here will outlive the possible time frame when the
+  // lambda might get called.
+  return TokenCache::GetToken(
+      std::string(),
+      GetClientId(),
+      GetAuthorityHost(),
+      scopesStr,
+      tokenRequestContext.MinimumExpiration,
+      [&]() {
+        return TokenCredentialImpl::GetToken(context, [&]() {
+          auto request = std::make_unique<TokenRequest>(m_request);
+
+          if (!scopesStr.empty())
+          {
+            request->HttpRequest.GetUrl().AppendQueryParameter("resource", scopesStr);
+          }
+
+          return request;
+        });
+      });
 }
 
 std::unique_ptr<ManagedIdentitySource> AppServiceV2017ManagedIdentitySource::Create(
@@ -128,7 +149,7 @@ CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options,
     Azure::Core::Url endpointUrl)
-    : ManagedIdentitySource(options), m_url(std::move(endpointUrl))
+    : ManagedIdentitySource(clientId, endpointUrl.GetHost(), options), m_url(std::move(endpointUrl))
 {
   using Azure::Core::Url;
   if (!clientId.empty())
@@ -141,28 +162,47 @@ Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  return TokenCredentialImpl::GetToken(context, [&]() {
-    using Azure::Core::Url;
-    using Azure::Core::Http::HttpMethod;
-
-    std::string resource;
+  std::string scopesStr;
+  {
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
-      {
-        resource = "resource=" + FormatScopes(scopes, true);
-        if (!m_body.empty())
-        {
-          resource += "&";
-        }
-      }
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, true);
     }
+  }
 
-    auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource + m_body);
-    request->HttpRequest.SetHeader("Metadata", "true");
+  // TokenCache::GetToken() and TokenCredentialImpl::GetToken() can only use the lambda argument
+  // when they are being executed. They are not supposed to keep a reference to lambda argument to
+  // call it later. Therefore, any capture made here will outlive the possible time frame when the
+  // lambda might get called.
+  return TokenCache::GetToken(
+      std::string(),
+      GetClientId(),
+      GetAuthorityHost(),
+      scopesStr,
+      tokenRequestContext.MinimumExpiration,
+      [&]() {
+        return TokenCredentialImpl::GetToken(context, [&]() {
+          using Azure::Core::Url;
+          using Azure::Core::Http::HttpMethod;
 
-    return request;
-  });
+          std::string resource;
+
+          if (!scopesStr.empty())
+          {
+            resource = "resource=" + scopesStr;
+            if (!m_body.empty())
+            {
+              resource += "&";
+            }
+          }
+
+          auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource + m_body);
+          request->HttpRequest.SetHeader("Metadata", "true");
+
+          return request;
+        });
+      });
 }
 
 std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
@@ -194,7 +234,8 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
 AzureArcManagedIdentitySource::AzureArcManagedIdentitySource(
     Azure::Core::Credentials::TokenCredentialOptions const& options,
     Azure::Core::Url endpointUrl)
-    : ManagedIdentitySource(options), m_url(std::move(endpointUrl))
+    : ManagedIdentitySource(std::string(), endpointUrl.GetHost(), options),
+      m_url(std::move(endpointUrl))
 {
 
   m_url.AppendQueryParameter("api-version", "2019-11-01");
@@ -204,6 +245,15 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
+  std::string scopesStr;
+  {
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
+    {
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, true);
+    }
+  }
+
   auto const createRequest = [&]() {
     using Azure::Core::Http::HttpMethod;
     using Azure::Core::Http::Request;
@@ -212,59 +262,70 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
     {
       auto& httpRequest = request->HttpRequest;
       httpRequest.SetHeader("Metadata", "true");
+
+      if (!scopesStr.empty())
       {
-        auto const& scopes = tokenRequestContext.Scopes;
-        if (!scopes.empty())
-        {
-          httpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
-        }
+        httpRequest.GetUrl().AppendQueryParameter("resource", scopesStr);
       }
     }
 
     return request;
   };
 
-  return TokenCredentialImpl::GetToken(
-      context,
-      createRequest,
-      [&](auto const statusCode, auto const& response) -> std::unique_ptr<TokenRequest> {
-        using Core::Credentials::AuthenticationException;
-        using Core::Http::HttpStatusCode;
+  // TokenCache::GetToken() and TokenCredentialImpl::GetToken() can only use the lambda argument
+  // when they are being executed. They are not supposed to keep a reference to lambda argument to
+  // call it later. Therefore, any capture made here will outlive the possible time frame when the
+  // lambda might get called.
+  return TokenCache::GetToken(
+      std::string(),
+      GetClientId(),
+      GetAuthorityHost(),
+      scopesStr,
+      tokenRequestContext.MinimumExpiration,
+      [&]() {
+        return TokenCredentialImpl::GetToken(
+            context,
+            createRequest,
+            [&](auto const statusCode, auto const& response) -> std::unique_ptr<TokenRequest> {
+              using Core::Credentials::AuthenticationException;
+              using Core::Http::HttpStatusCode;
 
-        if (statusCode != HttpStatusCode::Unauthorized)
-        {
-          return nullptr;
-        }
+              if (statusCode != HttpStatusCode::Unauthorized)
+              {
+                return nullptr;
+              }
 
-        auto const& headers = response.GetHeaders();
-        auto authHeader = headers.find("WWW-Authenticate");
-        if (authHeader == headers.end())
-        {
-          throw AuthenticationException(
-              "Did not receive expected WWW-Authenticate header "
-              "in the response from Azure Arc Managed Identity Endpoint.");
-        }
+              auto const& headers = response.GetHeaders();
+              auto authHeader = headers.find("WWW-Authenticate");
+              if (authHeader == headers.end())
+              {
+                throw AuthenticationException(
+                    "Did not receive expected WWW-Authenticate header "
+                    "in the response from Azure Arc Managed Identity Endpoint.");
+              }
 
-        constexpr auto ChallengeValueSeparator = '=';
-        auto const& challenge = authHeader->second;
-        auto eq = challenge.find(ChallengeValueSeparator);
-        if (eq == std::string::npos
-            || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
-        {
-          throw AuthenticationException("The WWW-Authenticate header in the response from Azure "
-                                        "Arc Managed Identity Endpoint "
-                                        "did not match the expected format.");
-        }
+              constexpr auto ChallengeValueSeparator = '=';
+              auto const& challenge = authHeader->second;
+              auto eq = challenge.find(ChallengeValueSeparator);
+              if (eq == std::string::npos
+                  || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
+              {
+                throw AuthenticationException(
+                    "The WWW-Authenticate header in the response from Azure Arc "
+                    "Managed Identity Endpoint did not match the expected format.");
+              }
 
-        auto request = createRequest();
-        std::ifstream secretFile(challenge.substr(eq + 1));
-        request->HttpRequest.SetHeader(
-            "Authorization",
-            "Basic "
-                + std::string(
-                    std::istreambuf_iterator<char>(secretFile), std::istreambuf_iterator<char>()));
+              auto request = createRequest();
+              std::ifstream secretFile(challenge.substr(eq + 1));
+              request->HttpRequest.SetHeader(
+                  "Authorization",
+                  "Basic "
+                      + std::string(
+                          std::istreambuf_iterator<char>(secretFile),
+                          std::istreambuf_iterator<char>()));
 
-        return request;
+              return request;
+            });
       });
 }
 
@@ -278,7 +339,7 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentitySource(options),
+    : ManagedIdentitySource(clientId, std::string(), options),
       m_request(
           Azure::Core::Http::HttpMethod::Get,
           Azure::Core::Url("http://169.254.169.254/metadata/identity/oauth2/token"))
@@ -302,16 +363,35 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  return TokenCredentialImpl::GetToken(context, [&]() {
-    auto request = std::make_unique<TokenRequest>(m_request);
+  std::string scopesStr;
+  {
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
-      {
-        request->HttpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
-      }
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, true);
     }
+  }
 
-    return request;
-  });
+  // TokenCache::GetToken() and TokenCredentialImpl::GetToken() can only use the lambda argument
+  // when they are being executed. They are not supposed to keep a reference to lambda argument to
+  // call it later. Therefore, any capture made here will outlive the possible time frame when the
+  // lambda might get called.
+  return TokenCache::GetToken(
+      std::string(),
+      GetClientId(),
+      GetAuthorityHost(),
+      scopesStr,
+      tokenRequestContext.MinimumExpiration,
+      [&]() {
+        return TokenCredentialImpl::GetToken(context, [&]() {
+          auto request = std::make_unique<TokenRequest>(m_request);
+
+          if (!scopesStr.empty())
+          {
+            request->HttpRequest.GetUrl().AppendQueryParameter("resource", scopesStr);
+          }
+
+          return request;
+        });
+      });
 }
