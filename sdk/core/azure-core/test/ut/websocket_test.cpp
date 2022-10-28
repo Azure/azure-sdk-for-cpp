@@ -888,7 +888,7 @@ TEST_F(WebSocketTests, LibWebSocketOrgIncrement)
   }
 }
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(DISABLE_PROXY_TESTS)
 TEST_F(WebSocketTests, ProxyTestLibWebSocketOrgIncrement)
 {
   {
@@ -911,7 +911,7 @@ TEST_F(WebSocketTests, ProxyTestLibWebSocketOrgIncrement)
     incrementProtocol.ConsumeUntilClosed();
   }
 }
-#endif // AZ_PLATFORM_MAC
+#endif // DISABLE_PROXY_TESTS
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 TEST_F(WebSocketTests, CurlTransportCoverage)
