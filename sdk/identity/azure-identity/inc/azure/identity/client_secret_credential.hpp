@@ -51,13 +51,18 @@ namespace Azure { namespace Identity {
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     Core::Url m_requestUrl;
     std::string m_requestBody;
+
+    std::string m_tenantId;
+    std::string m_clientId;
+    std::string m_authorityHost;
+
     bool m_isAdfs;
 
     ClientSecretCredential(
-        std::string const& tenantId,
-        std::string const& clientId,
+        std::string tenantId,
+        std::string clientId,
         std::string const& clientSecret,
-        std::string const& authorityHost,
+        std::string authorityHost,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
@@ -70,8 +75,8 @@ namespace Azure { namespace Identity {
      * @param options Options for token retrieval.
      */
     explicit ClientSecretCredential(
-        std::string const& tenantId,
-        std::string const& clientId,
+        std::string tenantId,
+        std::string clientId,
         std::string const& clientSecret,
         ClientSecretCredentialOptions const& options);
 
@@ -86,7 +91,7 @@ namespace Azure { namespace Identity {
     explicit ClientSecretCredential(
         std::string tenantId,
         std::string clientId,
-        std::string clientSecret,
+        std::string const& clientSecret,
         Core::Credentials::TokenCredentialOptions const& options
         = Core::Credentials::TokenCredentialOptions());
 
@@ -101,6 +106,8 @@ namespace Azure { namespace Identity {
      *
      * @param tokenRequestContext A context to get the token in.
      * @param context A context to control the request lifetime.
+     *
+     * @return Authentication token.
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */

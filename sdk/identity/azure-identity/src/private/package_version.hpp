@@ -21,20 +21,30 @@
 namespace Azure { namespace Identity { namespace _detail {
   /**
    * @brief Provides version information.
-   *
    */
   class PackageVersion final {
   public:
+    /**
+     * @brief Major numeric identifier.
+     */
     /// Major numeric identifier.
     static constexpr int32_t Major = AZURE_IDENTITY_VERSION_MAJOR;
 
+    /**
+     * @brief Minor numeric identifier.
+     */
     /// Minor numeric identifier.
     static constexpr int32_t Minor = AZURE_IDENTITY_VERSION_MINOR;
 
+    /**
+     * @brief Patch numeric identifier.
+     */
     /// Patch numeric identifier.
     static constexpr int32_t Patch = AZURE_IDENTITY_VERSION_PATCH;
 
-    /// Indicates whether the SDK is in a pre-release state.
+    /**
+     * @brief Indicates whether the SDK is in a pre-release state.
+     */
     static constexpr bool IsPreRelease = sizeof(AZURE_IDENTITY_VERSION_PRERELEASE) != sizeof("");
 
     /**

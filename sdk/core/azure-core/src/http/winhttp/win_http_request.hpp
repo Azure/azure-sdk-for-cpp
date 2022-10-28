@@ -16,7 +16,10 @@
 #include <cassert>
 #include <memory>
 #include <mutex>
+#pragma warning(push)
+#pragma warning(disable : 6553)
 #include <wil\resource.h>
+#pragma warning(pop)
 #include <winhttp.h>
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
