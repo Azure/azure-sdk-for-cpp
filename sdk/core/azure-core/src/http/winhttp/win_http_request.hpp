@@ -13,6 +13,7 @@
 #include "azure/core/http/win_http_transport.hpp"
 #include "azure/core/url.hpp"
 #include <Windows.h>
+#include <cassert>
 #include <memory>
 #include <mutex>
 #include <wil\resource.h>
@@ -121,10 +122,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         std::unique_lock<std::mutex> lock(m_operationStateMutex);
         return m_bytesAvailable;
       }
-      WINHTTP_WEB_SOCKET_STATUS const* GetWebSocketStatus() {
+      WINHTTP_WEB_SOCKET_STATUS const* GetWebSocketStatus()
+      {
         std::unique_lock<std::mutex> lock(m_operationStateMutex);
         return &m_webSocketStatus;
-		
       }
     };
 
