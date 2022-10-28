@@ -70,7 +70,6 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
-#include <openssl/ssl.h>
 #include <sstream>
 #include <string>
 #include <thread>
