@@ -859,7 +859,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         m_requestHandleClosed = true;
 
         // Complete any outstanding actions with secure failure errors. Note that "0" is
-        // a sentinal which means "Complete all outstanding actions".
+        // a sentinel which means "Complete all outstanding actions".
         m_httpAction->CompleteActionWithError(0, ERROR_WINHTTP_SECURE_FAILURE);
 
         // Start a thread to synchronously close the handle and wait for the handle to close.
