@@ -1168,6 +1168,8 @@ _detail::WinHttpRequest::~WinHttpRequest()
 
       m_handleCloseThread.join();
     }
+    Log::Write(
+        Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Handle close thread completed.");
   }
   else
   {
