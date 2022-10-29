@@ -525,6 +525,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     auto& operationToWait{OperationFromActionStatus(expectedCallbackStatus)};
 
+    Log::Write(Logger::Level::Verbose, "Start " + InternetStatusToString(expectedCallbackStatus));
     operationToWait.StartOperation();
 
     // Call the provided callback to start the WinHTTP action.
@@ -533,7 +534,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     DWORD waitResult;
     do
     {
-
       waitResult = operationToWait.WaitForSingleObject(static_cast<DWORD>(
           std::chrono::duration_cast<std::chrono::milliseconds>(pollInterval).count()));
       if (waitResult == WAIT_TIMEOUT)
