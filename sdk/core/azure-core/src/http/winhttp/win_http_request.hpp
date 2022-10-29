@@ -47,8 +47,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       wil::unique_event m_operationCompleteEvent;
       // Mutex protecting all mutable members of the class.
       std::mutex m_operationStateMutex;
-      // Bitmap of expected status operations.
-      std::atomic<DWORD> m_expectedStatus{};
       bool m_operationStarted{};
       DWORD m_stowedError{};
       DWORD_PTR m_stowedErrorInformation{};
@@ -310,13 +308,14 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @brief A WinHttpRequest object encapsulates an HTTP operation.
    */
   class WinHttpRequest final {
-    bool m_requestHandleClosed{false};
     Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
     std::unique_ptr<WinHttpAction> m_httpAction;
     std::vector<std::string> m_expectedTlsRootCertificates;
     // Thread used to asynchronously close a request handle if the expected root certificate does
     // not match.
+    std::mutex m_handleClosedLock;
     std::thread m_handleCloseThread;
+    bool m_requestHandleClosed{false};
 
     /*
      * Adds the specified trusted certificates to the specified certificate store.

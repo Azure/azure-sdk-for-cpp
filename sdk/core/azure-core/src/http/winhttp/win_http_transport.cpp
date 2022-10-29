@@ -856,16 +856,17 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         // thread, in the destructor of the WinHttpRequest object, we wait for the newly created
         // thread to exit.
         //
+        std::unique_lock<std::mutex> closeLock(m_handleClosedLock);
         m_requestHandleClosed = true;
-
-        // Complete any outstanding actions with secure failure errors. Note that "0" is
-        // a sentinel which means "Complete all outstanding actions".
-        m_httpAction->CompleteActionWithError(0, ERROR_WINHTTP_SECURE_FAILURE);
 
         // Start a thread to synchronously close the handle and wait for the handle to close.
         // If m_requestHandleClosed is set, we'll block waiting on this thread in the destructor
         // of the WinHttpRequest.
         m_handleCloseThread = std::thread([this, hInternet] {
+          // Complete any outstanding actions with secure failure errors. Note that "0" is
+          // a sentinel which means "Complete all outstanding actions".
+          m_httpAction->CompleteActionWithError(0, ERROR_WINHTTP_SECURE_FAILURE);
+
           m_httpAction->WaitForAction(
               [hInternet]() { WinHttpCloseHandle(hInternet); },
               WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
@@ -1158,14 +1159,15 @@ _detail::WinHttpRequest::WinHttpRequest(
  */
 _detail::WinHttpRequest::~WinHttpRequest()
 {
+  std::unique_lock<std::mutex> closeLock(m_handleClosedLock);
   if (m_requestHandleClosed)
   {
-    Log::Write(
-        Logger::Level::Verbose,
-        "WinHttpRequest::~WinHttpRequest. Waiting for close handle to exit.");
+    Log::Write(Logger::Level::Verbose, "WinHttpRequest::~WinHttpRequest. Handle forced closed.");
     if (m_handleCloseThread.joinable())
     {
-
+      Log::Write(
+          Logger::Level::Verbose,
+          "WinHttpRequest::~WinHttpRequest. Waiting for close handle to exit.");
       m_handleCloseThread.join();
     }
     Log::Write(
