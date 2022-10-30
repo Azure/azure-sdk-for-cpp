@@ -859,6 +859,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         std::unique_lock<std::mutex> closeLock(m_handleClosedLock);
         m_requestHandleClosed = true;
 
+          // Complete any outstanding actions with secure failure errors. Note that "0" is
+        // a sentinel which means "Complete all outstanding actions".
+        m_httpAction->CompleteActionWithError(0, ERROR_WINHTTP_SECURE_FAILURE);
+
         // Start a thread to synchronously close the handle and wait for the handle to close.
         // If m_requestHandleClosed is set, we'll block waiting on this thread in the destructor
         // of the WinHttpRequest.
@@ -973,13 +977,13 @@ WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
   }
   if (transportOptions.EnableCertificateRevocationListCheck)
   {
-    httpOptions.EnableCertificateRevocationListCheck;
+    httpOptions.EnableCertificateRevocationListCheck = true;
   }
   // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
   // CAs.
   if (!transportOptions.ExpectedTlsRootCertificate.empty())
   {
-    httpOptions.IgnoreUnknownCertificateAuthority;
+    httpOptions.IgnoreUnknownCertificateAuthority = true;
   }
 
   return httpOptions;
