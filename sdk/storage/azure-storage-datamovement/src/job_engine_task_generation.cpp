@@ -529,7 +529,7 @@ namespace Azure { namespace Storage { namespace _detail {
               Azure::Core::Http::HttpRange range;
               range.Offset = pageRanges[i][j];
               range.Length = pageRanges[i][j + 1];
-              task->MemoryCost += range.Length.Value();
+              task->MemoryCost += static_cast<size_t>(range.Length.Value());
               task->Ranges.push_back(std::move(range));
             }
             task->JournalContext = JournalContext{jobPart, bitmapOffset};

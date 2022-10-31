@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     size_t bufferLength = 0;
     for (const auto& range : Ranges)
     {
-      bufferLength += range.Length.Value();
+      bufferLength += static_cast<size_t>(range.Length.Value());
     }
     std::unique_ptr<uint8_t[]> buffer = std::make_unique<uint8_t[]>(bufferLength);
 
@@ -48,8 +48,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       try
       {
         auto downloadResult = Context->Source.Download(options).Value;
-        size_t bytesRead
-            = downloadResult.BodyStream->ReadToCount(bufferPointer, range.Length.Value());
+        size_t bytesRead = downloadResult.BodyStream->ReadToCount(
+            bufferPointer, static_cast<size_t>(range.Length.Value()));
         if (bytesRead != static_cast<size_t>(range.Length.Value()))
         {
           throw std::runtime_error("Failed to download blob chunk.");
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
             throw std::runtime_error("Failed to resize file.");
           }
 #else
-          int ret = ftruncate(Context->FileWriter->GetHandle(), size);
+          int ret = ftruncate(Context->FileWriter->GetHandle(), Context->FileSize);
           if (ret != 0)
           {
             throw std::runtime_error("Failed to resize file.");
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     for (const auto& range : Ranges)
     {
       int64_t offset = range.Offset;
-      size_t length = range.Length.Value();
+      size_t length = static_cast<size_t>(range.Length.Value());
       totalWriteLength += length;
       try
       {
