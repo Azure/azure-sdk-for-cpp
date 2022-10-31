@@ -856,10 +856,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         // thread, in the destructor of the WinHttpRequest object, we wait for the newly created
         // thread to exit.
         //
+        // Note that we MUST call CompleteActionWithError in this function, because when we return
+        // WinHTTP will continue processing the request.
+        //
         std::unique_lock<std::mutex> closeLock(m_handleClosedLock);
         m_requestHandleClosed = true;
 
-          // Complete any outstanding actions with secure failure errors. Note that "0" is
+        // Complete any outstanding actions with secure failure errors. Note that "0" is
         // a sentinel which means "Complete all outstanding actions".
         m_httpAction->CompleteActionWithError(0, ERROR_WINHTTP_SECURE_FAILURE);
 
