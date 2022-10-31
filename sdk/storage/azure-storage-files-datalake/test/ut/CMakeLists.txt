@@ -45,4 +45,4 @@ gtest_discover_tests(azure-storage-files-datalake-test
      TEST_PREFIX azure-storage-files-datalake.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
-     DISCOVERY_MODE PRE_TEST )
+     DISCOVERY_TIMEOUT 600 )

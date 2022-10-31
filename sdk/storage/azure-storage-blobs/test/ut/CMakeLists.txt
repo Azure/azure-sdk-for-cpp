@@ -49,4 +49,4 @@ gtest_discover_tests(azure-storage-blobs-test
      TEST_PREFIX azure-storage-blobs.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
-     DISCOVERY_MODE PRE_TEST )
+     DISCOVERY_TIMEOUT 600 )

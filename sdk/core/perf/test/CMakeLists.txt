@@ -71,5 +71,5 @@ gtest_discover_tests(azure-perf-unit-test
      TEST_PREFIX azure-perf-unittest.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
-     DISCOVERY_MODE PRE_TEST )
+     DISCOVERY_TIMEOUT 600 )
 
