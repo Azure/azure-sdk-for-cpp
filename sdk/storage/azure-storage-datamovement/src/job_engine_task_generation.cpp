@@ -510,8 +510,8 @@ namespace Azure { namespace Storage { namespace _detail {
           }
           auto pageRanges
               = Core::Json::_internal::json::parse(taskModel.ExtendedAttributes.at("page_ranges"));
-          AZURE_ASSERT(pageRanges.size() == context->NumChunks);
-          AZURE_ASSERT(pageRanges.size() == taskModel.NumSubtasks);
+          AZURE_ASSERT(pageRanges.size() == static_cast<size_t>(context->NumChunks));
+          AZURE_ASSERT(pageRanges.size() == static_cast<size_t>(taskModel.NumSubtasks));
           for (int i = 0; i < context->NumChunks; ++i)
           {
             if (!doneBits.empty() && doneBits[i] != '0')
@@ -524,7 +524,7 @@ namespace Azure { namespace Storage { namespace _detail {
                 _internal::TaskType::NetworkDownload);
             task->Context = context;
             task->MemoryCost = 0;
-            for (int j = 0; j < pageRanges[i].size(); j += 2)
+            for (size_t j = 0; j < pageRanges[i].size(); j += 2)
             {
               Azure::Core::Http::HttpRange range;
               range.Offset = pageRanges[i][j];

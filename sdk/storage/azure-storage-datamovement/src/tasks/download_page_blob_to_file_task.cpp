@@ -93,6 +93,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         {
           Context->FileWriter
               = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+
+#if defined(AZ_PLATFORM_WINDOWS)
           DWORD useless;
           BOOL ret = DeviceIoControl(
               Context->FileWriter->GetHandle(), FSCTL_SET_SPARSE, NULL, 0, NULL, 0, &useless, NULL);
@@ -100,6 +102,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           {
             throw std::runtime_error("Failed to set sparse file.");
           }
+#endif
+
+#if defined(AZ_PLATFORM_WINDOWS)
           LARGE_INTEGER size;
           size.QuadPart = Context->FileSize;
           ret = SetFilePointerEx(Context->FileWriter->GetHandle(), size, NULL, FILE_BEGIN);
@@ -112,6 +117,13 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           {
             throw std::runtime_error("Failed to resize file.");
           }
+#else
+          int ret = ftruncate(Context->FileWriter->GetHandle(), size);
+          if (ret != 0)
+          {
+            throw std::runtime_error("Failed to resize file.");
+          }
+#endif
         }
         else
         {
