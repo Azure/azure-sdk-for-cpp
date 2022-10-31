@@ -25,7 +25,8 @@
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
     "eng/CredScanSuppression.json",
-    "**/test/ut/recordings/*.json"
+    "**/test/ut/recordings/*.json",
+    "**/CMakeLists.txt"
   ],
   // * Unless configured otherwise, these words are not case sensitive
   // * Alphabetize the list when making changes so the list is easier for future
