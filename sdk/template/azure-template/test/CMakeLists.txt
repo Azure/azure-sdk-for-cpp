@@ -25,4 +25,6 @@ if (MSVC)
     target_compile_options(azure-template-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
-gtest_discover_tests(azure-template-test TEST_PREFIX azure-template.)
+gtest_discover_tests(azure-template-test 
+     TEST_PREFIX azure-template.
+     DISCOVERY_MODE PRE_TEST )

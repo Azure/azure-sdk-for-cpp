@@ -62,4 +62,4 @@ gtest_discover_tests(azure-security-keyvault-keys-test
   TEST_PREFIX azure-security-keyvault-keys.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
-)
+  DISCOVERY_MODE PRE_TEST )

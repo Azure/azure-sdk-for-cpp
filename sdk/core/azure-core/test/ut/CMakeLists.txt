@@ -150,7 +150,8 @@ target_link_libraries(azure-core-global-context-test PRIVATE azure-core gtest_ma
 gtest_discover_tests(azure-core-test
      TEST_PREFIX azure-core.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_MODE PRE_TEST )
 
 if(BUILD_TRANSPORT_CURL)
   ################## Azure Libcurl Core Test #################################
@@ -177,10 +178,12 @@ if(BUILD_TRANSPORT_CURL)
 
   # Use the same prefix to run this test
   gtest_discover_tests(azure-core-libcurl-test
-        TEST_PREFIX azure-core.)
+        TEST_PREFIX azure-core.
+        DISCOVERY_MODE PRE_TEST )
 
 endif()
 gtest_discover_tests(azure-core-global-context-test
      TEST_PREFIX azure-core.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_MODE PRE_TEST )

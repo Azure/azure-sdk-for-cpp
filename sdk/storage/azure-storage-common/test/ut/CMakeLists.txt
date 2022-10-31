@@ -40,4 +40,5 @@ target_link_libraries(azure-storage-common-test PRIVATE azure-storage-common azu
 gtest_discover_tests(azure-storage-common-test
      TEST_PREFIX azure-storage-common.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_MODE PRE_TEST )

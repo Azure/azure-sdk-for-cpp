@@ -48,4 +48,5 @@ target_link_libraries(azure-storage-blobs-test PRIVATE azure-identity azure-stor
 gtest_discover_tests(azure-storage-blobs-test
      TEST_PREFIX azure-storage-blobs.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_MODE PRE_TEST )
