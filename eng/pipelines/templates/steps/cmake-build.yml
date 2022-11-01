@@ -3,6 +3,7 @@ parameters:
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
+  VcpkgArgs: ''
   ServiceDirectory: ''
 
 
@@ -15,7 +16,7 @@ steps:
     displayName: cmake --version
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
     displayName: cmake generate
     env:

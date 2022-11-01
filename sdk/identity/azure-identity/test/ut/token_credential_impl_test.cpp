@@ -3,6 +3,8 @@
 
 #include "private/token_credential_impl.hpp"
 
+#include "private/token_cache.hpp"
+
 #include "credential_test_helper.hpp"
 
 #include <memory>
@@ -18,6 +20,7 @@ using Azure::Core::Credentials::TokenCredential;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
+using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
@@ -50,6 +53,8 @@ public:
   AccessToken GetToken(TokenRequestContext const& tokenRequestContext, Context const& context)
       const override
   {
+    TokenCache::Clear();
+
     return m_tokenCredentialImpl->GetToken(context, [&]() {
       m_throwingFunction();
 
