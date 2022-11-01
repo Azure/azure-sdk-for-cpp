@@ -8,6 +8,7 @@
 #include "azure/core/internal/strings.hpp"
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <thread>
 
@@ -111,12 +112,13 @@ EnvironmentLogLevelListener::GetLogListener()
 
   static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
       [](auto level, auto message) {
-        std::cerr << '['
-                  << Azure::DateTime(std::chrono::system_clock::now())
-                         .ToString(
-                             DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  << " T: " << std::this_thread::get_id() << "] " << LogLevelToConsoleString(level)
-                  << " : " << message << std::endl;
+        std::stringstream ss;
+        ss << '['
+           << Azure::DateTime(std::chrono::system_clock::now())
+                  .ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+           << " T: " << std::this_thread::get_id() << "] " << LogLevelToConsoleString(level)
+           << " : " << message << std::endl;
+        std::cerr << ss.str();
       };
 
   return consoleLogger;

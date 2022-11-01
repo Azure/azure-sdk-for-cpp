@@ -52,11 +52,7 @@ in-memory logger.
 opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>
 CreateOpenTelemetryProvider()
 {
-#if USE_MEMORY_EXPORTER
-    auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
-#else
-    auto exporter = std::make_unique<opentelemetry::exporter::trace::OStreamSpanExporter>();
-#endif
+    auto exporter = std::make_unique<MyExporter>();
 
     // simple processor
     auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(

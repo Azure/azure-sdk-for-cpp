@@ -259,6 +259,7 @@ directive:
       $["201"].headers["Content-Length"]["x-ms-client-name"] = "FileSize";
       $["201"].headers["Content-Length"]["x-nullable"] = true;
       $["201"].headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
+      $["201"].headers["x-ms-request-server-encrypted"]["x-ms-client-default"] = "bool()";
       $["201"].headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["201"].headers["x-ms-continuation"];
       $["201"].schema = {
@@ -436,7 +437,6 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
-      $["x-ms-request-server-encrypted"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       delete $["ETag"];
 ```
@@ -449,6 +449,5 @@ directive:
     where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"].headers
     transform: >
       $["Content-Length"]["x-ms-client-name"] = "FileSize";
-      $["x-ms-request-server-encrypted"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
 ```

@@ -1,6 +1,6 @@
 # Release History
 
-## 12.4.0-beta.1 (Unreleased)
+## 12.4.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -8,10 +8,27 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 12.4.0-beta.1 (2022-10-11)
+
+### Features Added
+
+- Added support for encryption scope in SAS builder.
+- Added support for customer-provided key.
+- Added support for flushing when appending data to a file.
+- Added some new fields in `CreatePathOptions`.
+- New APIs:
+  - DataLakeServiceClient::SetProperties
+  - DataLakeServiceClient::GetProperties
+  - DataLakeFileSystemClient::ListDeletedPaths
+  - DataLakeFileSystemClient::UndeletePath
+  - DataLakeFileClient::Query
+
+### Bugs Fixed
+
 - Fixed a bug where file/directory renaming cannot be authenticated with SAS.
 - Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
-
-### Other Changes
 
 ## 12.3.1 (2022-03-09)
 

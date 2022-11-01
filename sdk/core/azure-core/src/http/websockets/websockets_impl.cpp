@@ -59,21 +59,29 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     m_state = SocketState::Opening;
 
+    // We create the pipeline using a copy of the specified client options which resets
+    // the TransportOptions, because we need to provide a custom transport to the pipeline, but
+    // the pipeline constructor is upset if the TransportOptions specify any special options.
+    //
+    // We handle all the special options in the constructor for the WebSocketTransport so they
+    // aren't needed by the pipeline constructor.
+    Azure::Core::_internal::ClientOptions clientOptions{m_options};
+    clientOptions.Transport = Azure::Core::Http::Policies::TransportOptions{};
+
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    WinHttpTransportOptions transportOptions;
     auto winHttpTransport
         = std::make_shared<Azure::Core::Http::WebSockets::WinHttpWebSocketTransport>(
-            transportOptions);
+            m_options.Transport);
     m_transport = std::static_pointer_cast<WebSocketTransport>(winHttpTransport);
-    m_options.Transport.Transport = std::static_pointer_cast<HttpTransport>(winHttpTransport);
+    clientOptions.Transport.Transport = std::static_pointer_cast<HttpTransport>(winHttpTransport);
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-    CurlWebSocketTransportOptions transportOptions;
-    transportOptions.HttpKeepAlive = false;
-    auto curlWebSockets
-        = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(transportOptions);
+    //    CurlWebSocketTransportOptions transportOptions;
+    //    transportOptions.HttpKeepAlive = false;
+    auto curlWebSockets = std::make_shared<Azure::Core::Http::WebSockets::CurlWebSocketTransport>(
+        m_options.Transport);
 
     m_transport = std::static_pointer_cast<WebSocketTransport>(curlWebSockets);
-    m_options.Transport.Transport = std::static_pointer_cast<HttpTransport>(curlWebSockets);
+    clientOptions.Transport.Transport = std::static_pointer_cast<HttpTransport>(curlWebSockets);
 #endif
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies{};
@@ -87,7 +95,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
               m_options.ServiceName, m_options.ServiceVersion, m_options.Telemetry));
     }
     Azure::Core::Http::_internal::HttpPipeline openPipeline(
-        m_options, std::move(perRetryPolicies), std::move(perCallPolicies));
+        clientOptions, std::move(perRetryPolicies), std::move(perCallPolicies));
 
     Azure::Core::Http::Request openSocketRequest(
         Azure::Core::Http::HttpMethod::Get, m_remoteUrl, false);
@@ -107,7 +115,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     }
     if (!m_options.Protocols.empty())
     {
-
       std::string protocols;
       for (auto const& protocol : m_options.Protocols)
       {
@@ -134,7 +141,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     // fail immediately.
     if (response->GetStatusCode() != Azure::Core::Http::HttpStatusCode::SwitchingProtocols)
     {
-      throw Azure::Core::Http::TransportException("Unexpected handshake response");
+      throw Azure::Core::RequestFailedException(response);
     }
 
     // Prove that the server received this socket request.

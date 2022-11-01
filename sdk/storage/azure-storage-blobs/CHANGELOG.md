@@ -10,6 +10,12 @@
 
 ### Other Changes
 
+## 12.6.2 (2022-10-11)
+
+### Other Changes
+
+- No public changes in this release.
+
 ## 12.6.1 (2022-09-16)
 
 ### Other changes

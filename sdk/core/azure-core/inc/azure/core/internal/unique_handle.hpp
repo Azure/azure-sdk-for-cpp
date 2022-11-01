@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace _internal {
    *
    *  template <> struct UniqueHandleHelper<CURL>
    *  {
-   *    using type = BasicUniqueHandle<CURL, curl_free>;
+   *    using type = BasicUniqueHandle<CURL, curl_easy_cleanup>;
    *  };
    */
   // *** Given just T, map it to the corresponding FreeFunc

@@ -35,6 +35,15 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
         : CurlTransport(options)
     {
     }
+    /**
+     * @brief Construct a new CurlWebSocketTransport object.
+     *
+     * @param options Optional parameter to override the default options.
+     */
+    CurlWebSocketTransport(Azure::Core::Http::Policies::TransportOptions const& options = {})
+        : CurlTransport(options)
+    {
+    }
 
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
@@ -49,9 +58,9 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Indicates if the transport natively supports websockets or not.
      *
-     * @details For the CURL websocket transport, the transport does NOT support native websockets -
-     * it is the responsibility of the client of the WebSocketTransport to format WebSocket protocol
-     * elements.
+     * @details For the CURL websocket transport, the transport does NOT support native
+     * websockets - it is the responsibility of the client of the WebSocketTransport to format
+     * WebSocket protocol elements.
      */
     virtual bool HasBuiltInWebSocketSupport() override { return false; }
 
@@ -65,7 +74,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Gracefully closes the WebSocket, notifying the remote node of the close reason.
      *
-     * @details Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native
+     * websockets.
      *
      * The first param is the close reason, the second is descriptive text.
      */
@@ -78,7 +88,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Retrieve the status of the close socket operation.
      *
-     * @details Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native
+     * websockets.
      *
      */
     NativeWebSocketCloseInformation NativeGetCloseSocketInformation(
@@ -90,7 +101,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Send a frame of data to the remote node.
      *
-     * @details Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native
+     * websockets.
      *
      */
     virtual void NativeSendFrame(
@@ -104,7 +116,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     /**
      * @brief Receive a frame of data from the remote node.
      *
-     * @details Not implemented for CURL websockets because CURL does not support native websockets.
+     * @details Not implemented for CURL websockets because CURL does not support native
+     * websockets.
      *
      */
     virtual NativeWebSocketReceiveInformation NativeReceiveFrame(
@@ -116,8 +129,8 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     // Non-Native WebSocket support.
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
-     * Function will try to keep pulling data from socket until the buffer is all written or until
-     * there is no more data to get from the socket.
+     * Function will try to keep pulling data from socket until the buffer is all written or
+     * until there is no more data to get from the socket.
      *
      * @param buffer Buffer to fill with data.
      * @param bufferSize Size of buffer.
@@ -151,5 +164,4 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
     void OnUpgradedConnection(
         std::unique_ptr<Azure::Core::Http::CurlNetworkConnection>&& upgradedConnection) override;
   };
-
 }}}} // namespace Azure::Core::Http::WebSockets

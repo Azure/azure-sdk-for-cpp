@@ -62,6 +62,7 @@ jobs:
     CMOCKA_MESSAGE_OUTPUT: "xml"
     AZURE_ENABLE_STATIC_ANALYSIS: 1
     BuildArgs: ""
+    VcpkgArgs: ""
     WindowsCtestConfig: ""
     CmakeEnvArg: ""
     CmakeArgs: ""
@@ -119,6 +120,7 @@ jobs:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       GenerateArgs: $(CmakeArgs)
+      VcpkgArgs: "$(VcpkgArgs)"
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
 
@@ -132,8 +134,6 @@ jobs:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
-
-  - ${{ parameters.PreTestSteps }}
 
   - ${{ parameters.PreTestSteps }}
 

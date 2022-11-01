@@ -3,7 +3,9 @@
 
 #include "../../src/http/websockets/websockets_impl.hpp"
 #include "azure/core/http/websockets/websockets.hpp"
+#include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/json/json.hpp"
+#include "azure/core/platform.hpp"
 #include <chrono>
 #include <gtest/gtest.h>
 #include <list>
@@ -22,8 +24,26 @@ using namespace std::chrono_literals;
 constexpr uint16_t UndefinedButLegalCloseReason = 4500;
 
 class WebSocketTests : public testing::Test {
-private:
 protected:
+  std::string HttpProxyServer()
+  {
+    std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("SQUID_PROXY_URL")};
+    if (proxyUrl.empty())
+    {
+      proxyUrl = "http://127.0.0.1:3128";
+    }
+    return proxyUrl;
+  }
+  std::string HttpProxyServerWithPassword()
+  {
+    std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("SQUID_AUTH_PROXY_URL")};
+    if (proxyUrl.empty())
+    {
+      proxyUrl = "http://127.0.0.1:3129";
+    }
+    return proxyUrl;
+  }
+
   // Create
   static void SetUpTestSuite() {}
   static void TearDownTestSuite() {}
@@ -55,7 +75,7 @@ TEST_F(WebSocketTests, OpenSimpleSocket)
 
   {
     WebSocketOptions options;
-    WebSocket defaultSocket(Azure::Core::Url("http://www.microsoft.com/"), options);
+    WebSocket defaultSocket(Azure::Core::Url("https://www.microsoft.com/"), options);
     defaultSocket.AddHeader("newHeader", "headerValue");
 
     // When running this test locally, the call times out, so drop in a 5 second timeout on
@@ -286,7 +306,7 @@ TEST_F(WebSocketTests, CloseDuringEcho)
       }
     });
 
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(1s);
 
     // Close the socket gracefully.
     GTEST_LOG_(INFO) << "Closing Socket.";
@@ -711,20 +731,22 @@ TEST_F(WebSocketTests, MultiThreadedTestOnMultipleSockets)
 // Does not work because curl rejects the wss: scheme.
 class LibWebSocketIncrementProtocol {
   WebSocketOptions m_options{{"dumb-increment-protocol"}};
-  WebSocket m_socket;
+  std::unique_ptr<WebSocket> m_socket;
 
 public:
-  LibWebSocketIncrementProtocol() : m_socket{Azure::Core::Url("wss://libwebsockets.org"), m_options}
+  LibWebSocketIncrementProtocol(std::string proxyUrl = {})
   {
+    m_options.Transport.HttpProxy = proxyUrl;
+    m_socket = std::make_unique<WebSocket>(Azure::Core::Url("wss://libwebsockets.org"), m_options);
   }
 
-  void Open() { m_socket.Open(); }
+  void Open() { m_socket->Open(); }
   int GetNextNumber()
   {
     // Time out in 5 seconds if no activity.
     Azure::Core::Context contextWithTimeout
         = Azure::Core::Context().WithDeadline(std::chrono::system_clock::now() + 10s);
-    auto work = m_socket.ReceiveFrame(contextWithTimeout);
+    auto work = m_socket->ReceiveFrame(contextWithTimeout);
     if (work->FrameType == WebSocketFrameType::TextFrameReceived)
     {
       auto frame = work->AsTextFrame();
@@ -746,18 +768,18 @@ public:
     }
   }
 
-  void Reset() { m_socket.SendFrame("reset\n", true); }
-  void RequestClose() { m_socket.SendFrame("closeme\n", true); }
-  void Close() { m_socket.Close(); }
+  void Reset() { m_socket->SendFrame("reset\n", true); }
+  void RequestClose() { m_socket->SendFrame("closeme\n", true); }
+  void Close() { m_socket->Close(); }
   void Close(uint16_t closeCode, std::string const& reasonText = {})
   {
-    m_socket.Close(closeCode, reasonText);
+    m_socket->Close(closeCode, reasonText);
   }
   void ConsumeUntilClosed()
   {
-    while (m_socket.IsOpen())
+    while (m_socket->IsOpen())
     {
-      auto work = m_socket.ReceiveFrame();
+      auto work = m_socket->ReceiveFrame();
       if (work->FrameType == WebSocketFrameType::PeerClosedReceived)
       {
         auto peerClose = work->AsPeerCloseFrame();
@@ -842,6 +864,7 @@ TEST_F(WebSocketTests, LibWebSocketOrgLwsStatus)
     EXPECT_TRUE(foundOurConnection);
   }
 }
+
 TEST_F(WebSocketTests, LibWebSocketOrgIncrement)
 {
   {
@@ -864,6 +887,32 @@ TEST_F(WebSocketTests, LibWebSocketOrgIncrement)
     incrementProtocol.ConsumeUntilClosed();
   }
 }
+
+#if !defined(DISABLE_PROXY_TESTS)
+TEST_F(WebSocketTests, ProxyTestLibWebSocketOrgIncrement)
+{
+  {
+    LibWebSocketIncrementProtocol incrementProtocol{HttpProxyServer()};
+    incrementProtocol.Open();
+
+    // Note that we cannot practically validate the numbers received from the service because
+    // they may be in flight at the time the "Reset" call is made.
+    for (auto i = 0; i < 100; i += 1)
+    {
+      if (i % 5 == 0)
+      {
+        GTEST_LOG_(INFO) << "Reset" << std::endl;
+        incrementProtocol.Reset();
+      }
+      int number = incrementProtocol.GetNextNumber();
+      GTEST_LOG_(INFO) << "Got next number " << number << std::endl;
+    }
+    incrementProtocol.RequestClose();
+    incrementProtocol.ConsumeUntilClosed();
+  }
+}
+#endif // DISABLE_PROXY_TESTS
+
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 TEST_F(WebSocketTests, CurlTransportCoverage)
 {

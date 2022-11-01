@@ -13,7 +13,7 @@
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 8
 #define AZURE_CORE_VERSION_PATCH 0
-#define AZURE_CORE_VERSION_PRERELEASE "beta.1"
+#define AZURE_CORE_VERSION_PRERELEASE "beta.2"
 
 #define AZURE_CORE_VERSION_ITOA_HELPER(i) #i
 #define AZURE_CORE_VERSION_ITOA(i) AZURE_CORE_VERSION_ITOA_HELPER(i)
@@ -21,20 +21,27 @@
 namespace Azure { namespace Core { namespace _detail {
   /**
    * @brief Provides version information.
-   *
    */
   class PackageVersion final {
   public:
-    /// Major numeric identifier.
+    /**
+     * @brief Major numeric identifier.
+     */
     static constexpr int32_t Major = AZURE_CORE_VERSION_MAJOR;
 
-    /// Minor numeric identifier.
+    /**
+     * @brief Minor numeric identifier.
+     */
     static constexpr int32_t Minor = AZURE_CORE_VERSION_MINOR;
 
-    /// Patch numeric identifier.
+    /**
+     * @brief Patch numeric identifier.
+     */
     static constexpr int32_t Patch = AZURE_CORE_VERSION_PATCH;
 
-    /// Indicates whether the SDK is in a pre-release state.
+    /**
+     * @brief Indicates whether the SDK is in a pre-release state.
+     */
     static constexpr bool IsPreRelease = sizeof(AZURE_CORE_VERSION_PRERELEASE) != sizeof("");
 
     /**

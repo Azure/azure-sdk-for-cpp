@@ -20,10 +20,6 @@
 
 namespace Azure { namespace Perf { namespace Test {
 
-  namespace _detail {
-    static std::unique_ptr<Azure::Core::Http::HttpTransport> HttpClient;
-  } // namespace _detail
-
   /**
    * @brief A performance test that defines a test option.
    *
@@ -31,6 +27,7 @@ namespace Azure { namespace Perf { namespace Test {
   class HttpClientGetTest : public Azure::Perf::PerfTest {
   protected:
     Azure::Core::Url m_url;
+    static std::unique_ptr<Azure::Core::Http::HttpTransport> m_httpClient;
 
   public:
     /**
@@ -57,7 +54,7 @@ namespace Azure { namespace Perf { namespace Test {
     void Run(Azure::Core::Context const& ctx) override
     {
       Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, m_url);
-      auto response = _detail::HttpClient->Send(request, ctx);
+      auto response = m_httpClient->Send(request, ctx);
       // Read the body from network
       auto bodyStream = response->ExtractBodyStream();
       response->SetBody(bodyStream->ReadToEnd(ctx));
@@ -73,5 +70,7 @@ namespace Azure { namespace Perf { namespace Test {
       return {{"url", {"--url"}, "Url to send the HTTP request. *Required parameter.", 1, true}};
     }
   };
+
+  std::unique_ptr<Azure::Core::Http::HttpTransport> HttpClientGetTest::m_httpClient;
 
 }}} // namespace Azure::Perf::Test

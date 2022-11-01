@@ -179,6 +179,10 @@
         },
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release"
+        },
+        "openssl_111n": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "VcpkgArgs": " -DVCPKG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=$(Build.SourcesDirectory)/vcpkg-custom-ports -DVCPKG_MANIFEST_DIR=$(Build.SourcesDirectory)"
         }
       }
     }

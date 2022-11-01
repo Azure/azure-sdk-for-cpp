@@ -11,7 +11,7 @@
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR 12
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_MINOR 4
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_PATCH 0
-#define AZURE_STORAGE_FILES_DATALAKE_VERSION_PRERELEASE "beta.1"
+#define AZURE_STORAGE_FILES_DATALAKE_VERSION_PRERELEASE "beta.2"
 
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA_HELPER(i) #i
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA(i) \
@@ -23,16 +23,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
    */
   class PackageVersion final {
   public:
-    /// Major numeric identifier.
+    /**
+     * @brief Major numeric identifier.
+     */
     static constexpr int32_t Major = AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR;
 
-    /// Minor numeric identifier.
+    /**
+     * @brief Minor numeric identifier.
+     */
     static constexpr int32_t Minor = AZURE_STORAGE_FILES_DATALAKE_VERSION_MINOR;
 
-    /// Patch numeric identifier.
+    /**
+     * @brief Patch numeric identifier.
+     */
     static constexpr int32_t Patch = AZURE_STORAGE_FILES_DATALAKE_VERSION_PATCH;
 
-    /// Indicates whether the SDK is in a pre-release state.
+    /**
+     * @brief Indicates whether the SDK is in a pre-release state.
+     */
     static constexpr bool IsPreRelease
         = sizeof(AZURE_STORAGE_FILES_DATALAKE_VERSION_PRERELEASE) != sizeof("");
 
