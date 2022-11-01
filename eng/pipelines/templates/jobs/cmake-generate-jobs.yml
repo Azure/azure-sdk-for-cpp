@@ -14,10 +14,13 @@ parameters:
   - name: CMakeSourceTestOptions
     type: object
     default: []
-
+  - name: TimeoutInMinutes
+    type: number
+    default: 120
 jobs:
 - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
   parameters:
+    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
     MatrixConfigs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakegenerate.json
@@ -32,6 +35,7 @@ jobs:
 
 - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
   parameters:
+    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
     MatrixConfigs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakesourcegenerate.json

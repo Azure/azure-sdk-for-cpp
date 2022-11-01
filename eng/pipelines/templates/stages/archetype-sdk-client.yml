@@ -73,13 +73,16 @@ parameters:
 - name: PostTestSteps
   type: stepList
   default: []
-
+- name: CMakeGenerationTimeoutInMinutes 
+  type: number
+  default: 120
 
 stages:
   - stage: CMakeGeneration
     jobs:
       - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml
         parameters:
+          TimeoutInMinutes: ${{ parameters.CMakeGenerationTimeoutInMinutes }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactsSource: ${{ parameters.ArtifactsSource }}

@@ -28,9 +28,12 @@ parameters:
   - name: JobName
     type: string
     default: CMakeGenerate
-
+  - name: TimeoutInMinutes
+    type: number
+    default: 120
 jobs:
 - job: ${{ parameters.JobName }}
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   condition: >-
     and(
       succeededOrFailed(),
