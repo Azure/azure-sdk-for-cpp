@@ -1,36 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#define USE_MEMORY_EXPORTER 1
-#include "azure/core/internal/tracing/service_tracing.hpp"
-#include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+#include <gtest/gtest.h>
+
+#include <chrono>
+#include <regex>
+
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/test/test_base.hpp>
+#include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
 
-#if defined(_MSC_VER)
-// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
-// the warnings across the includes.
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4244)
-#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
-#endif
-#include <opentelemetry/exporters/memory/in_memory_span_data.h>
-#include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
-#include <opentelemetry/exporters/ostream/span_exporter.h>
+#include "test_exporter.hpp" // Span Exporter used for OpenTelemetry tests.
 #include <opentelemetry/sdk/common/global_log_handler.h>
-#include <opentelemetry/sdk/trace/exporter.h>
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
-#include <opentelemetry/trace/propagation/http_trace_context.h>
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-#include <chrono>
-#include <gtest/gtest.h>
-#include <regex>
 
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
@@ -95,18 +81,13 @@ class CustomLogHandler : public opentelemetry::sdk::common::internal_log::LogHan
 class OpenTelemetryServiceTests : public Azure::Core::Test::TestBase {
 private:
 protected:
-  std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> m_spanData;
+  std::shared_ptr<TestExporter::TestData> m_spanData;
 
   opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>
   CreateOpenTelemetryProvider()
   {
-#if USE_MEMORY_EXPORTER
-    auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
-    m_spanData = exporter->GetData();
-#else
-    // logging exporter
-    auto exporter = std::make_unique<opentelemetry::exporter::trace::OStreamSpanExporter>();
-#endif
+    auto exporter = std::make_unique<TestExporter>();
+    m_spanData = exporter->GetTestData();
 
     // simple processor
     auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
@@ -143,7 +124,7 @@ protected:
   }
 
   bool VerifySpan(
-      std::unique_ptr<opentelemetry::sdk::trace::SpanData> const& span,
+      std::unique_ptr<RecordedSpan> const& span,
       std::string const& expectedSpanContentsJson)
   {
     Azure::Core::Json::_internal::json expectedSpanContents(
@@ -199,7 +180,7 @@ protected:
 
       EXPECT_EQ(expectedAttributes.size(), attributes.size());
 
-      for (const auto& foundAttribute : attributes)
+      for (auto const& foundAttribute : attributes)
       {
         EXPECT_TRUE(expectedAttributes.contains(foundAttribute.first));
         switch (foundAttribute.second.index())
@@ -219,7 +200,7 @@ protected:
             std::regex expectedRegex(expectedVal);
             GTEST_LOG_(INFO) << "expected Regex: " << expectedVal << std::endl;
             GTEST_LOG_(INFO) << "actual val: " << actualVal << std::endl;
-            EXPECT_TRUE(std::regex_match(actualVal, expectedRegex));
+            EXPECT_TRUE(std::regex_match(std::string(actualVal), expectedRegex));
             break;
           }
           case opentelemetry::common::kTypeDouble: {
@@ -262,10 +243,10 @@ protected:
     {
       EXPECT_EQ(
           expectedSpanContents["library"]["name"].get<std::string>(),
-          span->GetInstrumentationLibrary().GetName());
+          span->GetInstrumentationScope().GetName());
       EXPECT_EQ(
           expectedSpanContents["library"]["version"].get<std::string>(),
-          span->GetInstrumentationLibrary().GetVersion());
+          span->GetInstrumentationScope().GetVersion());
     }
     return true;
   }
@@ -327,7 +308,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
       EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
     }
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(1ul, spans.size());
 
     VerifySpan(spans[0], R"(
@@ -367,7 +348,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
     }
 
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(1ul, spans.size());
 
     VerifySpan(spans[0], R"(
@@ -415,7 +396,7 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
     }
 
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(1ul, spans.size());
 
     VerifySpan(spans[0], R"(
@@ -476,7 +457,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
       }
     }
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(2ul, spans.size());
 
     // Because Nested API goes out of scope before My API, it will be logged first in the
@@ -502,10 +483,10 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
           "my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     }
 
-    EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());
-    EXPECT_EQ("my-service", spans[1]->GetInstrumentationLibrary().GetName());
-    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationLibrary().GetVersion());
-    EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationLibrary().GetVersion());
+    EXPECT_EQ("my-service", spans[0]->GetInstrumentationScope().GetName());
+    EXPECT_EQ("my-service", spans[1]->GetInstrumentationScope().GetName());
+    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationScope().GetVersion());
+    EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationScope().GetVersion());
 
     // The trace ID for the inner and outer requests must be the same, the parent-id/span-id must be
     // different.
@@ -676,7 +657,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
         myServiceClient.GetConfigurationString("Fred");
       }
       // Now let's verify what was logged via OpenTelemetry.
-      auto spans = m_spanData->GetSpans();
+      auto const& spans = m_spanData->ExtractSpans();
       EXPECT_EQ(2ul, spans.size());
 
       VerifySpan(spans[0], R"(
@@ -722,7 +703,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
       myServiceClient.GetConfigurationString("George");
     }
     // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
+    auto const& spans = m_spanData->ExtractSpans();
     EXPECT_EQ(0ul, spans.size());
   }
 }

@@ -23,6 +23,9 @@ parameters:
 - name: EnvVars
   type: object
   default: []
+- name: InstallLanguageSteps
+  type: object
+  default: []
 
 extends:
   template: /eng/common/pipelines/templates/jobs/perf.yml
@@ -38,8 +41,4 @@ extends:
     Iterations: ${{ parameters.Iterations }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
     EnvVars: ${{ parameters.EnvVars}}
-    InstallLanguageSteps:
-      - template: /eng/pipelines/templates/steps/vcpkg.yml
-      #/eng/pipelines/templates/steps/vcpkg-clone.yml
-        parameters: 
-          RepoOwner: Microsoft
+    InstallLanguageSteps: ${{ parameters.InstallLanguageSteps }}

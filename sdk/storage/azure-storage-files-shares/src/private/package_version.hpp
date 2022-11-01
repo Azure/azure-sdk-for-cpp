@@ -22,16 +22,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
    */
   class PackageVersion final {
   public:
-    /// Major numeric identifier.
+    /**
+     * @brief Major numeric identifier.
+     */
     static constexpr int32_t Major = AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR;
 
-    /// Minor numeric identifier.
+    /**
+     * @brief Minor numeric identifier.
+     */
     static constexpr int32_t Minor = AZURE_STORAGE_FILES_SHARES_VERSION_MINOR;
 
-    /// Patch numeric identifier.
+    /**
+     * @brief Patch numeric identifier.
+     */
     static constexpr int32_t Patch = AZURE_STORAGE_FILES_SHARES_VERSION_PATCH;
 
-    /// Indicates whether the SDK is in a pre-release state.
+    /**
+     * @brief Indicates whether the SDK is in a pre-release state.
+     */
     static constexpr bool IsPreRelease
         = sizeof(AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE) != sizeof("");
 
