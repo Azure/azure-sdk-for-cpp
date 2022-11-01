@@ -21,7 +21,6 @@ parameters:
 jobs:
 - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
   parameters:
-    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
     MatrixConfigs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakegenerate.json
@@ -36,7 +35,6 @@ jobs:
 
 - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
   parameters:
-    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
     MatrixConfigs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakesourcegenerate.json

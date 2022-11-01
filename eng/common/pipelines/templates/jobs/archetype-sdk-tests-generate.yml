@@ -39,13 +39,9 @@ parameters:
 - name: PreGenerationSteps
   type: stepList
   default: []
-- name: TimeoutInMinutes
-  type: number
-  default: 120
   
 jobs:
 - job: ${{ parameters.GenerateJobName }}
-  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   variables:
     skipComponentGovernanceDetection: true
     displayNameFilter: $[ coalesce(variables.jobMatrixFilter, '.*') ]
