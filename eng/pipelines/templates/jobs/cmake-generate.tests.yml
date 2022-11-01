@@ -31,6 +31,7 @@ parameters:
   - name: TimeoutInMinutes
     type: number
     default: 120
+
 jobs:
 - job: ${{ parameters.JobName }}
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
