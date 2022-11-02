@@ -41,4 +41,4 @@ gtest_discover_tests(azure-storage-common-test
      TEST_PREFIX azure-storage-common.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
-     DISCOVERY_TIMEOUT 600 )
+     DISCOVERY_TIMEOUT 600)

@@ -60,4 +60,4 @@ gtest_discover_tests(azure-identity-test
      TEST_PREFIX azure-identity.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
-     DISCOVERY_TIMEOUT 600 )
+     DISCOVERY_TIMEOUT 600)

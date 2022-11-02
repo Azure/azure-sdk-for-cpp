@@ -44,4 +44,4 @@ gtest_discover_tests(azure-security-keyvault-secrets-test
   TEST_PREFIX azure-security-keyvault-secrets-unittest.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
-  DISCOVERY_TIMEOUT 600 )
+  DISCOVERY_TIMEOUT 600)

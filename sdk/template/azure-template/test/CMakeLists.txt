@@ -27,4 +27,4 @@ endif()
 
 gtest_discover_tests(azure-template-test 
      TEST_PREFIX azure-template.
-     DISCOVERY_TIMEOUT 600 )
+     DISCOVERY_TIMEOUT 600)
