@@ -37,4 +37,5 @@ target_link_libraries(azure-storage-queues-test PRIVATE azure-storage-queues azu
 gtest_discover_tests(azure-storage-queues-test
      TEST_PREFIX azure-storage-queues.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_TIMEOUT 600)

@@ -46,7 +46,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/google/googletest",
-          "CommitHash": "e2239ee6043f73722e7aa812a459f54a28552929"
+          "CommitHash": "58d77fa8070e8cec2dc1ed015d66b454c8d78850"
         }
       },
       "DevelopmentDependency": true

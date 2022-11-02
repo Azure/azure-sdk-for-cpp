@@ -42,4 +42,5 @@ target_link_libraries(azure-storage-files-shares-test PRIVATE azure-storage-file
 gtest_discover_tests(azure-storage-files-shares-test
      TEST_PREFIX azure-storage-files-shares.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_TIMEOUT 600)

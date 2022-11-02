@@ -44,4 +44,5 @@ target_link_libraries(azure-storage-files-datalake-test PRIVATE azure-storage-fi
 gtest_discover_tests(azure-storage-files-datalake-test
      TEST_PREFIX azure-storage-files-datalake.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_TIMEOUT 600)

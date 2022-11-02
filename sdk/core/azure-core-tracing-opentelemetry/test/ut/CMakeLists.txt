@@ -67,4 +67,5 @@ create_map_file(azure-core-tracing-opentelemetry-test azure-core-tracing-opentel
 gtest_discover_tests(azure-core-tracing-opentelemetry-test
      TEST_PREFIX azure-core-tracing-opentelemetry.
      NO_PRETTY_TYPES
-     NO_PRETTY_VALUES)
+     NO_PRETTY_VALUES
+     DISCOVERY_TIMEOUT 600)
