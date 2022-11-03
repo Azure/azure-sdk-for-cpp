@@ -27,7 +27,7 @@ std::string GetConflictErrorMsg(std::string const& keyName)
         "state, the key can only be recovered or purged.";
 }
 
-std::string GetConflictDeletingErrorMsg(std::string const& keyName)
+std::string GetConflictDeletingErrorSlow(std::string const& keyName)
 {
   return "Key " + keyName + " is currently being deleted and cannot be re-created; retry later.";
 }
@@ -262,8 +262,10 @@ TEST_F(KeyVaultKeyClient, CreateDeletedKeyBeforePollComplete)
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             error.StatusCode),
         409);
-    EXPECT_EQ(error.Message, GetConflictDeletingErrorMsg(keyName));
     EXPECT_EQ(error.ErrorCode, "Conflict");
+    EXPECT_TRUE(
+        error.Message.compare(GetConflictDeletingErrorSlow(keyName)) == 0
+        || error.Message.compare(GetConflictErrorMsg(keyName)) == 0);
     wasThrown = true;
   }
   catch (std::exception const&)
