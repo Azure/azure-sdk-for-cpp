@@ -1,17 +1,12 @@
 # Release History
 
-## 1.8.0-beta.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.8.0-beta.2 (2022-11-03)
 
 ### Other Changes
 
 - Added the ability to consume version 1.1.1n of OpenSSL.
 - Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
+- Improved cancellation support for WinHTTP transport.
 
 ## 1.8.0-beta.1 (2022-10-06)
 
