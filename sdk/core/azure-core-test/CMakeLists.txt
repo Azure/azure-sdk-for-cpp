@@ -16,6 +16,7 @@ set(
   inc/azure/core/test/record_network_call_policy.hpp
   inc/azure/core/test/test_base.hpp
   inc/azure/core/test/test_context_manager.hpp
+  inc/azure/core/test/test_proxy_manager.hpp
 )
 
 set(
@@ -25,6 +26,7 @@ set(
   src/playback_http_transport.cpp
   src/record_policy.cpp
   src/test_base.cpp
+  src/test_proxy_manager.cpp
 )
 
 add_library (
