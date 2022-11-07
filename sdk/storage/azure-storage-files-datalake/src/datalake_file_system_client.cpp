@@ -155,6 +155,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::CreateBlobContainerOptions blobOptions;
     blobOptions.Metadata = options.Metadata;
     blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
+    blobOptions.DefaultEncryptionScope = options.DefaultEncryptionScope;
+    blobOptions.PreventEncryptionScopeOverride = options.PreventEncryptionScopeOverride;
     auto result = m_blobContainerClient.Create(blobOptions, context);
     Models::CreateFileSystemResult ret;
     ret.ETag = std::move(result.Value.ETag);
@@ -231,6 +233,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ETag = std::move(result.Value.ETag);
     ret.LastModified = std::move(result.Value.LastModified);
     ret.Metadata = std::move(result.Value.Metadata);
+    ret.DefaultEncryptionScope = std::move(result.Value.DefaultEncryptionScope);
+    ret.PreventEncryptionScopeOverride = result.Value.PreventEncryptionScopeOverride;
     return Azure::Response<Models::FileSystemProperties>(
         std::move(ret), std::move(result.RawResponse));
   }

@@ -164,6 +164,8 @@ namespace Azure { namespace Storage { namespace Test {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
+        EXPECT_EQ(iter->Details.DefaultEncryptionScope, AccountEncryptionKey);
+        EXPECT_FALSE(iter->Details.PreventEncryptionScopeOverride);
         EXPECT_NE(result.end(), iter);
       }
       for (const auto& name : m_fileSystemNameSetB)
