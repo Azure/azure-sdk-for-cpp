@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.1 (Unreleased)
+## 12.5.0-beta.1 (2022-11-08)
 
 ### Features Added
 - Added support for encryption scope:
