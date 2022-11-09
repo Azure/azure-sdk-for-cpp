@@ -189,6 +189,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       DateTime LastModified;
     };
+
+    /**
+     * @brief A listed directory item.
+     */
+    struct DirectoryItem final
+    {
+      std::string Name;
+      /**
+       * File properties.
+       */
+      DirectoryItemDetails Details;
+    };
+
+    /**
+     * @brief A listed file item.
+     */
+    struct FileItem final
+    {
+      std::string Name;
+      /**
+       * File properties.
+       */
+      FileItemDetails Details;
+    };
   } // namespace Models
 
   /**

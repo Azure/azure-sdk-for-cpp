@@ -438,9 +438,42 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.ShareName = std::move(response.Value.ShareName);
     pagedResponse.ShareSnapshot = response.Value.ShareSnapshot.ValueOr(std::string());
     pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
-    pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Directories = std::move(response.Value.Segment.DirectoryItems);
-    pagedResponse.Files = std::move(response.Value.Segment.FileItems);
+    if (response.Value.Prefix.Encoded)
+    {
+      pagedResponse.Prefix = Core::Url::Decode(response.Value.Prefix.Content);
+    }
+    else
+    {
+      pagedResponse.Prefix = std::move(response.Value.Prefix.Content);
+    }
+    for (auto& item : response.Value.Segment.DirectoryItems)
+    {
+      Models::DirectoryItem directoryItem;
+      if (item.Name.Encoded)
+      {
+        directoryItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        directoryItem.Name = std::move(item.Name.Content);
+      }
+      directoryItem.Details = std::move(item.Details);
+      pagedResponse.Directories.push_back(std::move(directoryItem));
+    }
+    for (auto& item : response.Value.Segment.FileItems)
+    {
+      Models::FileItem fileItem;
+      if (item.Name.Encoded)
+      {
+        fileItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        fileItem.Name = std::move(item.Name.Content);
+      }
+      fileItem.Details = std::move(item.Details);
+      pagedResponse.Files.push_back(std::move(fileItem));
+    }
     pagedResponse.DirectoryId = response.Value.DirectoryId.ValueOr(std::string());
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
