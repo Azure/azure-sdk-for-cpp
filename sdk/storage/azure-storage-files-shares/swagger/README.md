@@ -584,6 +584,7 @@ directive:
       $.HandleItem.properties["OpenTime"]["x-ms-client-name"] = "OpenedOn";
       $.HandleItem.properties["LastReconnectTime"]["x-ms-client-name"] = "LastReconnectedOn";
       $.HandleItem.properties["Path"]["description"] = "File or directory name including full path starting from share root.";
+      $.HandleItem["x-namespace"] = "_detail";
 ```
 
 ### ForceCloseFileHandles

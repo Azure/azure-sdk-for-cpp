@@ -2374,7 +2374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
-        Models::HandleItem vectorElement1;
+        Models::_detail::HandleItem vectorElement1;
         while (true)
         {
           auto node = reader.Read();
@@ -2468,7 +2468,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle)
             {
               response.HandleList.push_back(std::move(vectorElement1));
-              vectorElement1 = Models::HandleItem();
+              vectorElement1 = Models::_detail::HandleItem();
             }
             xmlPath.pop_back();
           }
@@ -3738,7 +3738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
-        Models::HandleItem vectorElement1;
+        Models::_detail::HandleItem vectorElement1;
         while (true)
         {
           auto node = reader.Read();
@@ -3832,7 +3832,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle)
             {
               response.HandleList.push_back(std::move(vectorElement1));
-              vectorElement1 = Models::HandleItem();
+              vectorElement1 = Models::_detail::HandleItem();
             }
             xmlPath.pop_back();
           }

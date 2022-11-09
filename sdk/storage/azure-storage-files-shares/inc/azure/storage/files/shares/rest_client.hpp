@@ -1088,46 +1088,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string NextMarker;
         Nullable<std::string> DirectoryId;
       };
-    } // namespace _detail
-    /**
-     * @brief A listed Azure Storage handle item.
-     */
-    struct HandleItem final
-    {
       /**
-       * XSMB service handle ID.
+       * @brief A listed Azure Storage handle item.
        */
-      std::string HandleId;
-      /**
-       * File or directory name including full path starting from share root.
-       */
-      _detail::StringEncoded Path;
-      /**
-       * FileId uniquely identifies the file or directory.
-       */
-      std::string FileId;
-      /**
-       * ParentId uniquely identifies the parent directory of the object.
-       */
-      std::string ParentId;
-      /**
-       * SMB session ID in context of which the file handle was opened.
-       */
-      std::string SessionId;
-      /**
-       * Client IP that opened the handle.
-       */
-      std::string ClientIp;
-      /**
-       * Time when the session that previously opened the handle has last been reconnected. (UTC).
-       */
-      DateTime OpenedOn;
-      /**
-       * Time handle was last connected to (UTC).
-       */
-      DateTime LastReconnectedOn;
-    };
-    namespace _detail {
+      struct HandleItem final
+      {
+        /**
+         * XSMB service handle ID.
+         */
+        std::string HandleId;
+        /**
+         * File or directory name including full path starting from share root.
+         */
+        StringEncoded Path;
+        /**
+         * FileId uniquely identifies the file or directory.
+         */
+        std::string FileId;
+        /**
+         * ParentId uniquely identifies the parent directory of the object.
+         */
+        std::string ParentId;
+        /**
+         * SMB session ID in context of which the file handle was opened.
+         */
+        std::string SessionId;
+        /**
+         * Client IP that opened the handle.
+         */
+        std::string ClientIp;
+        /**
+         * Time when the session that previously opened the handle has last been reconnected. (UTC).
+         */
+        DateTime OpenedOn;
+        /**
+         * Time handle was last connected to (UTC).
+         */
+        DateTime LastReconnectedOn;
+      };
       /**
        * @brief Response type for
        * #Azure::Storage::Files::Shares::DirectoryClient::ForceCloseHandles.
