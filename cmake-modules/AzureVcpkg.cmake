@@ -22,7 +22,7 @@ macro(az_vcpkg_integrate)
       if(NOT DEFINED ENV{AZURE_SDK_DISABLE_AUTO_VCPKG})
         # GET VCPKG FROM SOURCE
         #  User can set env var AZURE_SDK_VCPKG_COMMIT to pick the VCPKG commit to fetch
-        set(VCPKG_COMMIT_STRING 6ca56aeb457f033d344a7106cb3f9f1abf8f4e98) # default SDK tested commit
+        set(VCPKG_COMMIT_STRING 94ce0dab56f4d8ba6bd631ba59ed682b02d45c46) # default SDK tested commit
         if(DEFINED ENV{AZURE_SDK_VCPKG_COMMIT})
           set(VCPKG_COMMIT_STRING "$ENV{AZURE_SDK_VCPKG_COMMIT}") # default SDK tested commit
         endif()
