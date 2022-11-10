@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2021-04-10";
+    constexpr static const char* ApiVersion = "2021-12-02";
   } // namespace _detail
   namespace Models {
     /**
@@ -618,6 +618,14 @@ namespace Azure { namespace Storage { namespace Blobs {
        * User-defined tags for this blob.
        */
       std::map<std::string, std::string> Tags;
+      /**
+       * A string value that uniquely identifies a blob version.
+       */
+      Nullable<std::string> VersionId;
+      /**
+       * Indicates if this is the current version of the blob.
+       */
+      Nullable<bool> IsCurrentVersion;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Create.
@@ -977,6 +985,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
 
     private:
       std::string m_value;

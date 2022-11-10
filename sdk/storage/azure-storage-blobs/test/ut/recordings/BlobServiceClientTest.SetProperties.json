@@ -2,32 +2,31 @@
   "networkCallRecords": [
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.2 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "2a77ceea-064a-429a-6021-4ca52875ace4",
-        "x-ms-version": "2021-04-10"
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b308a0fa-13b6-401a-41a4-a76b6501a5cd",
+        "x-ms-version": "2021-12-02"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>false</Enabled><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2020-02-10</DefaultServiceVersion></StorageServiceProperties>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>7</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors /><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>false</Enabled></StaticWebsite><DefaultServiceVersion>2021-04-10</DefaultServiceVersion></StorageServiceProperties>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sat, 25 Jun 2022 09:01:41 GMT",
+        "date": "Wed, 09 Nov 2022 08:01:14 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "vary": "Origin",
-        "x-ms-client-request-id": "2a77ceea-064a-429a-6021-4ca52875ace4",
-        "x-ms-request-id": "62a44147-801e-0005-4972-880819000000",
-        "x-ms-version": "2021-04-10"
+        "x-ms-client-request-id": "b308a0fa-13b6-401a-41a4-a76b6501a5cd",
+        "x-ms-request-id": "132d4fea-a01e-0025-0311-f4c7da000000",
+        "x-ms-version": "2021-12-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.2 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "6a95c651-9aa3-492b-5972-8cbb59324f71",
-        "x-ms-version": "2021-04-10"
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "803c69a3-4d75-4560-4340-80c54cee188b",
+        "x-ms-version": "2021-12-02"
       },
       "Method": "PUT",
       "Response": {
@@ -35,42 +34,42 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sat, 25 Jun 2022 09:01:42 GMT",
+        "date": "Wed, 09 Nov 2022 08:01:15 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "6a95c651-9aa3-492b-5972-8cbb59324f71",
-        "x-ms-request-id": "62a442ae-801e-0005-0a72-880819000000",
-        "x-ms-version": "2021-04-10"
+        "x-ms-client-request-id": "803c69a3-4d75-4560-4340-80c54cee188b",
+        "x-ms-request-id": "132d50f8-a01e-0025-0111-f4c7da000000",
+        "x-ms-version": "2021-12-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.2 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "d278e4e0-815c-49df-67ab-a8de0f97ef49",
-        "x-ms-version": "2021-04-10"
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4091eb01-e39d-4df5-7edb-5b9846f6a12d",
+        "x-ms-version": "2021-12-02"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2021-04-10</DefaultServiceVersion></StorageServiceProperties>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2021-12-02</DefaultServiceVersion></StorageServiceProperties>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sat, 25 Jun 2022 09:01:52 GMT",
+        "date": "Wed, 09 Nov 2022 08:01:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
         "vary": "Origin",
-        "x-ms-client-request-id": "d278e4e0-815c-49df-67ab-a8de0f97ef49",
-        "x-ms-request-id": "62a46672-801e-0005-3372-880819000000",
-        "x-ms-version": "2021-04-10"
+        "x-ms-client-request-id": "4091eb01-e39d-4df5-7edb-5b9846f6a12d",
+        "x-ms-request-id": "132d84c0-a01e-0025-2311-f4c7da000000",
+        "x-ms-version": "2021-12-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.2 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "b4b5d9aa-af34-4034-50e3-7188883a0fd8",
-        "x-ms-version": "2021-04-10"
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "cce184d2-5671-40d1-727b-5f2c164fe064",
+        "x-ms-version": "2021-12-02"
       },
       "Method": "PUT",
       "Response": {
@@ -78,11 +77,11 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sat, 25 Jun 2022 09:01:52 GMT",
+        "date": "Wed, 09 Nov 2022 08:01:26 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b4b5d9aa-af34-4034-50e3-7188883a0fd8",
-        "x-ms-request-id": "62a46785-801e-0005-3272-880819000000",
-        "x-ms-version": "2021-04-10"
+        "x-ms-client-request-id": "cce184d2-5671-40d1-727b-5f2c164fe064",
+        "x-ms-request-id": "132d8627-a01e-0025-6811-f4c7da000000",
+        "x-ms-version": "2021-12-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     }
