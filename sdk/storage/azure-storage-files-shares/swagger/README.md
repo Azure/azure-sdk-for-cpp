@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-06-08/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-12-02/file.json
 ```
 
 ## ModelFour Options
@@ -79,13 +79,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2021-06-08"],
+        "enum": ["2021-12-02"],
         "description": "The version used for the operations to Azure storage services."
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2021-06-08";
+      $.ApiVersionParameter.enum[0] = "2021-12-02";
 ```
 
 ### Rename Operations
@@ -307,6 +307,10 @@ directive:
       $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
       $.ShareEnabledProtocols["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
       $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
+      $.StringEncoded["x-namespace"] = "_detail";
+      delete $.StringEncoded.properties["content"]["xml"];
+      $.StringEncoded["xml"] = {"name": "Name"};
+      $.StringEncoded.properties["content"]["x-ms-xml"] = {"name": "."};
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
@@ -553,7 +557,8 @@ directive:
       delete $.FileItem.properties["PermissionKey"];
       delete $.FileItem.required;
       $.FileItem.properties["Details"] = {"$ref": "#/definitions/FileItemDetails", "x-ms-xml" : {"name": "Properties"}};
-      
+      $.FileItem["x-namespace"] = "_detail";
+
       delete $.DirectoryItem.properties["Properties"];
       delete $.DirectoryItem.properties["FileId"];
       delete $.DirectoryItem.properties["Attributes"];
@@ -562,7 +567,8 @@ directive:
       $.DirectoryItemDetails = JSON.parse(JSON.stringify($.FileItemDetails));
       delete $.DirectoryItemDetails.properties["Content-Length"];
       $.DirectoryItem.properties["Details"] = {"$ref": "#/definitions/DirectoryItemDetails", "x-ms-xml" : {"name": "Properties"}};
-      
+      $.DirectoryItem["x-namespace"] = "_detail";
+
       $.FilesAndDirectoriesListSegment.properties["DirectoryItems"]["x-ms-xml"] = {"name": "."};
       $.FilesAndDirectoriesListSegment.properties["FileItems"]["x-ms-xml"] = {"name": "."};
 ```
@@ -577,6 +583,8 @@ directive:
       delete $.HandleItem.required;
       $.HandleItem.properties["OpenTime"]["x-ms-client-name"] = "OpenedOn";
       $.HandleItem.properties["LastReconnectTime"]["x-ms-client-name"] = "LastReconnectedOn";
+      $.HandleItem.properties["Path"]["description"] = "File or directory name including full path starting from share root.";
+      $.HandleItem["x-namespace"] = "_detail";
 ```
 
 ### ForceCloseFileHandles

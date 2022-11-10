@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2021-06-08";
+    constexpr static const char* ApiVersion = "2021-12-02";
   } // namespace _detail
   namespace Models {
     /**
@@ -956,6 +956,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       bool IsServerEncrypted = bool();
     };
+    namespace _detail {
+      struct StringEncoded final
+      {
+        bool Encoded = bool();
+        std::string Content;
+      };
+    } // namespace _detail
     /**
      * @brief File properties.
      */
@@ -969,17 +976,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       FileSmbProperties SmbProperties;
     };
-    /**
-     * @brief A listed directory item.
-     */
-    struct DirectoryItem final
-    {
-      std::string Name;
+    namespace _detail {
       /**
-       * File properties.
+       * @brief A listed directory item.
        */
-      DirectoryItemDetails Details;
-    };
+      struct DirectoryItem final
+      {
+        StringEncoded Name;
+        /**
+         * File properties.
+         */
+        DirectoryItemDetails Details;
+      };
+    } // namespace _detail
     /**
      * @brief File properties.
      */
@@ -1000,18 +1009,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       FileSmbProperties SmbProperties;
     };
-    /**
-     * @brief A listed file item.
-     */
-    struct FileItem final
-    {
-      std::string Name;
-      /**
-       * File properties.
-       */
-      FileItemDetails Details;
-    };
     namespace _detail {
+      /**
+       * @brief A listed file item.
+       */
+      struct FileItem final
+      {
+        StringEncoded Name;
+        /**
+         * File properties.
+         */
+        FileItemDetails Details;
+      };
       /**
        * @brief Abstract for entries that can be listed from Directory.
        */
@@ -1067,8 +1076,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string ServiceEndpoint;
         std::string ShareName;
         Nullable<std::string> ShareSnapshot;
+        Nullable<bool> Encoded;
         std::string DirectoryPath;
-        std::string Prefix;
+        StringEncoded Prefix;
         Nullable<std::string> Marker;
         Nullable<int32_t> MaxResults;
         /**
@@ -1078,46 +1088,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string NextMarker;
         Nullable<std::string> DirectoryId;
       };
-    } // namespace _detail
-    /**
-     * @brief A listed Azure Storage handle item.
-     */
-    struct HandleItem final
-    {
       /**
-       * XSMB service handle ID.
+       * @brief A listed Azure Storage handle item.
        */
-      std::string HandleId;
-      /**
-       * File or directory name including full path starting from share root.
-       */
-      std::string Path;
-      /**
-       * FileId uniquely identifies the file or directory.
-       */
-      std::string FileId;
-      /**
-       * ParentId uniquely identifies the parent directory of the object.
-       */
-      std::string ParentId;
-      /**
-       * SMB session ID in context of which the file handle was opened.
-       */
-      std::string SessionId;
-      /**
-       * Client IP that opened the handle.
-       */
-      std::string ClientIp;
-      /**
-       * Time when the session that previously opened the handle has last been reconnected. (UTC).
-       */
-      DateTime OpenedOn;
-      /**
-       * Time handle was last connected to (UTC).
-       */
-      DateTime LastReconnectedOn;
-    };
-    namespace _detail {
+      struct HandleItem final
+      {
+        /**
+         * XSMB service handle ID.
+         */
+        std::string HandleId;
+        /**
+         * File or directory name including full path starting from share root.
+         */
+        StringEncoded Path;
+        /**
+         * FileId uniquely identifies the file or directory.
+         */
+        std::string FileId;
+        /**
+         * ParentId uniquely identifies the parent directory of the object.
+         */
+        std::string ParentId;
+        /**
+         * SMB session ID in context of which the file handle was opened.
+         */
+        std::string SessionId;
+        /**
+         * Client IP that opened the handle.
+         */
+        std::string ClientIp;
+        /**
+         * Time when the session that previously opened the handle has last been reconnected. (UTC).
+         */
+        DateTime OpenedOn;
+        /**
+         * Time handle was last connected to (UTC).
+         */
+        DateTime LastReconnectedOn;
+      };
       /**
        * @brief Response type for
        * #Azure::Storage::Files::Shares::DirectoryClient::ForceCloseHandles.
