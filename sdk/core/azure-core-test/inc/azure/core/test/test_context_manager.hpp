@@ -84,6 +84,16 @@ namespace Azure { namespace Core { namespace Test {
       return fullName;
     }
 
+    std::string GetTestRecordingPathName() const
+    {
+      std::string fullName(RecordingPath);
+      fullName.append("/");
+      fullName.append(GetTestPlaybackRecordingName());
+      fullName.append(".json");
+
+      return fullName;
+    }
+
     std::string GetTestName() const { return m_testName; }
     std::string GetTestSuiteName() const { return m_testSuite; }
 
@@ -120,6 +130,7 @@ namespace Azure { namespace Core { namespace Test {
 
     constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
 
+    std::string RecordingId;
   private:
     std::string m_testName;
     std::string m_testSuite;

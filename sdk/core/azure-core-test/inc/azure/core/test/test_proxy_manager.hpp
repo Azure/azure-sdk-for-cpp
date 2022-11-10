@@ -1,23 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
-
-/**
- * @brief Keep the state of the playback-record-live tests.
- *
- * @remark The interceptor is a singleton that is init during the test configuration.
- * Depending on the test mode, the interceptor will handle the recorder data.
- *
- * - If test mode is LIVE, the Interceptor will not affect the test behavior.
- * - If test mode is RECORD, the Interceptor will init the `record data` to be written after
- * capturing each request going out to the network and also recording the server response for that
- * request.
- * - If test mode is PLAYBACK, the interceptor will load the `record data` and use it to answer HTTP
- * client request without sending the request to the network.
- *
- * @remark The interceptor handle the `recorded data, provides the HTTP transport adapter and the
- * record policy. However, adding the policy and adapter to a pipeline is done by the user.
- */
-
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
@@ -27,48 +7,101 @@
 #include <string>
 
 #include "azure/core/test/network_models.hpp"
-#include "azure/core/test/playback_http_client.hpp"
-#include "azure/core/test/record_network_call_policy.hpp"
+#include "azure/core/test/record_test_proxy_policy.hpp"
 #include "azure/core/test/test_context_manager.hpp"
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#include <azure/core/http/curl_transport.hpp>
+#endif
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#include <azure/core/http/win_http_transport.hpp>
+#endif
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 // Used by recordPolicy and playback transport adapter.
 #if !defined(RECORDING_BODY_STREAM_SENTINEL)
 #define RECORDING_BODY_STREAM_SENTINEL "__bodyStream__"
 #endif
+
+using namespace Azure::Core::Http::_internal;
+
 namespace Azure { namespace Core { namespace Test {
-	class TestProxyManager {
+
+  class TestNonExpiringCredential final : public Core::Credentials::TokenCredential {
+  public:
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override
+    {
+      Core::Credentials::AccessToken accessToken;
+      accessToken.Token = "magicToken";
+      accessToken.ExpiresOn = DateTime::max();
+
+      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
+      {
+        accessToken.ExpiresOn = DateTime::min();
+      }
+
+      return accessToken;
+    }
+  };
+
+  class TestProxyManager {
   private:
     // Using a reference because the context lives in the test_base class and we don't want to make
     // a copy.
     Azure::Core::Test::TestContextManager& m_testContext;
-    Azure::Core::Url m_testProxyUrl;
-    Azure::Core::Url m_testProxyStartRecordingUrl;
-    Azure::Core::Url m_testProxyStopRecordingUrl;
-
-    std::string m_requestId;
-    const std::string header_requestId = "x-recording-id";
-    const std::string header_file_location = "x-recording-file";
-    const std::string header_recording_base_uri = "x-recording-upstream-base-uri";
-    const std::string op_start = "start";
-    const std::string op_stop = "stop";
-    const std::string direction_playback = "playback";
-    const std::string direction_record = "record";
+    const std::string m_proxy = "https://localhost:5001";
+    bool m_isInsecureEnabled = true;
+    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
+    bool m_isRecordMode = false;
 
   public:
     /**
-     * @brief Enables to init a test proxy manager with empty values.
+     * @brief Enables to init an interceptor with empty values.
      *
      */
     TestProxyManager(Azure::Core::Test::TestContextManager& testContext)
         : m_testContext(testContext)
     {
-      m_testProxyUrl.SetHost("http://localHost::9000/");
-      m_testProxyStartRecordingUrl.SetHost(m_testProxyUrl.GetAbsoluteUrl());
-      m_testProxyStartRecordingUrl.AppendPath(direction_record);
-      m_testProxyStartRecordingUrl.AppendPath(op_start);
-      m_testProxyStopRecordingUrl.SetHost(m_testProxyUrl.GetAbsoluteUrl());
-      m_testProxyStopRecordingUrl.AppendPath(direction_record);
-      m_testProxyStopRecordingUrl.AppendPath(op_stop);
     }
+
+    bool IsRecordMode() { return m_isRecordMode; }
+
+    std::string GetTestProxy() { return m_proxy; };
+    Azure::Core::Test::TestContextManager& GetTestContext() { return m_testContext; }
+    /**
+     * Gets HTTP pipeline policy that records network calls and its data is managed by the
+     * TestProxy.
+     *
+     * @return HttpPipelinePolicy to record network calls.
+     */
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetRecordPolicy();
+    /**
+     * @brief Read from environment and parse the a test mode.
+     *
+     * @remark If the AZURE_TEST_MODE variable is not found, default test mode is LIVE mode.
+     *
+     * @return TestMode
+     */
+    static TestMode GetTestMode();
+
+    /**
+     * @brief Get a non-expiring token credential. This is a test utility for use in playback
+     * scenarios where the token is not relevant.
+     *
+     * @return std::shared_ptr<Core::Credentials::TokenCredential>
+     */
+    std::shared_ptr<Core::Credentials::TokenCredential> GetTestCredential()
+    {
+      return std::make_shared<TestNonExpiringCredential>();
+    }
+
+    void SetStartRecordMode();
+    void SetStopRecordMode();
+    bool SetStartPlaybackMode(){};
+    bool SetStopPlaybackMode(){};
+    std::string GetRecordingId() { return m_testContext.RecordingId; }
   };
+
 }}} // namespace Azure::Core::Test

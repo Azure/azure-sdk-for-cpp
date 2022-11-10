@@ -15,36 +15,28 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
-
+#include "azure/core/test/test_proxy_manager.hpp"
 #include "azure/core/test/network_models.hpp"
 
 namespace Azure { namespace Core { namespace Test {
 
   // Partial class. Required to reference the Interceptor that is defined in the implementation.
-  class InterceptorManager;
+  class TestProxyManager;
 
   /**
    * @brief Creates a policy that records network calls into recordedData.
    *
    */
-  class RecordNetworkCallPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  class RecordTestProxyPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   private:
-    Azure::Core::Test::InterceptorManager* m_interceptorManager;
-    // Used to save the first byte from request payloads.
-    // Then, get a subsequent request ask for a bodyStream response, the symbol is used to generate
-    // a bodyStream from it.
-    // This feature is helpful to let a storage tests ( for example ) to upload a big payload (more
-    // than 10Kb) and download it later.
-    // The request for upload will contain the payload to upload.
-    // Then the request for download will use the symbol to generate a bodyStream.
-    std::unique_ptr<uint8_t> m_symbol;
+    Azure::Core::Test::TestProxyManager* m_testProxy;
 
   public:
     /**
      * @brief Disable default constructor.
      *
      */
-    RecordNetworkCallPolicy() = delete;
+    RecordTestProxyPolicy() = delete;
 
     /**
      * @brief Construct the record network policy which will save the HTTP request and response to
@@ -53,8 +45,8 @@ namespace Azure { namespace Core { namespace Test {
      * @param interceptorManager A reference to the interceptor manager which holds the recorded
      * data.
      */
-    RecordNetworkCallPolicy(Azure::Core::Test::InterceptorManager* interceptorManager)
-        : m_interceptorManager(interceptorManager), m_symbol(std::make_unique<uint8_t>('x'))
+    RecordTestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy)
+        : m_testProxy(testProxy)
     {
     }
 
@@ -65,7 +57,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
-      return std::make_unique<RecordNetworkCallPolicy>(m_interceptorManager);
+      return std::make_unique<RecordTestProxyPolicy>(m_testProxy);
     }
 
     /**

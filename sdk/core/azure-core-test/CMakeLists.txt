@@ -10,10 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_CORE_TEST_HEADER
-  inc/azure/core/test/interceptor_manager.hpp
   inc/azure/core/test/network_models.hpp
-  inc/azure/core/test/playback_http_client.hpp
-  inc/azure/core/test/record_network_call_policy.hpp
   inc/azure/core/test/test_base.hpp
   inc/azure/core/test/test_context_manager.hpp
   inc/azure/core/test/test_proxy_manager.hpp
@@ -22,9 +19,8 @@ set(
 set(
   AZURE_CORE_TEST_SOURCE
   src/private/package_version.hpp
-  src/interceptor_manager.cpp
-  src/playback_http_transport.cpp
-  src/record_policy.cpp
+  
+  src/record_test_proxy_policy.cpp
   src/test_base.cpp
   src/test_proxy_manager.cpp
 )
@@ -33,7 +29,7 @@ add_library (
   azure-core-test-fw
   ${AZURE_CORE_TEST_HEADER}
   ${AZURE_CORE_TEST_SOURCE}
-  )
+   "src/test_proxy_manager.cpp" "src/record_test_proxy_policy.cpp")
 
 if (MSVC)
   # - C6326: Google comparisons 

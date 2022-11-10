@@ -873,7 +873,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     TestProxy proxyServer;
-
+    
     EXPECT_EQ(Azure::Core::Http::HttpStatusCode::Ok, proxyServer.IsAlive().Value);
 
     std::string recordingId;
