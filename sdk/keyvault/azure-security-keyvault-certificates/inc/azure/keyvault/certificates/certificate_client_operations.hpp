@@ -4,7 +4,7 @@
 
 /**
  * @file
- * @brief Defines the Key Vault Certificate llong running operations.
+ * @brief Defines the Key Vault Certificate long running operations.
  *
  */
 
