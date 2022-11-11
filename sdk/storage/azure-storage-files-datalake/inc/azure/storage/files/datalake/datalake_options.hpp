@@ -373,11 +373,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Nullable<bool> Flush;
 
     /**
-     * If “acquire” it will acquire the lease.
+     * If "acquire" it will acquire the lease.
      * If "auto-renew" it will renew the lease.
-     * If “release” it will release the lease only on flush. Only applicable if Flush is set to
+     * If "release" it will release the lease only on flush. Only applicable if Flush is set to
      * true.
-     * If “acquire-release” it will acquire & complete the operation & release the lease once
+     * If "acquire-release" it will acquire & complete the operation & release the lease once
      * operation is done. Only applicable if Flush is set to true.
      */
     Azure::Nullable<Models::LeaseAction> LeaseAction;
@@ -442,11 +442,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
 
     /**
-     * If “acquire” it will acquire the lease.
+     * If "acquire" it will acquire the lease.
      * If "auto-renew" it will renew the lease.
-     * If “release” it will release the lease only on flush. Only applicable if Flush is set to
+     * If "release" it will release the lease only on flush. Only applicable if Flush is set to
      * true.
-     * If “acquire-release” it will acquire & complete the operation & release the lease once
+     * If "acquire-release" it will acquire & complete the operation & release the lease once
      * operation is done. Only applicable if Flush is set to true.
      */
     Azure::Nullable<Models::LeaseAction> LeaseAction;
