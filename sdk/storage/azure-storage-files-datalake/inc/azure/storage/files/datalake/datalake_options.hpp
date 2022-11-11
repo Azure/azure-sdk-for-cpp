@@ -371,6 +371,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * If true, the file will be flushed after the append.
      */
     Azure::Nullable<bool> Flush;
+
+    /**
+     * If “acquire” it will acquire the lease.
+     * If "auto-renew" it will renew the lease.
+     * If “release” it will release the lease only on flush. Only applicable if Flush is set to
+     * true.
+     * If “acquire-release” it will acquire & complete the operation & release the lease once
+     * operation is done. Only applicable if Flush is set to true.
+     */
+    Azure::Nullable<Models::LeaseAction> LeaseAction;
+
+    /**
+     * Proposed LeaseId.
+     */
+    Azure::Nullable<std::string> LeaseId;
+
+    /**
+     * Specifies the duration of the lease, in seconds, or InfiniteLeaseDuration for a lease that
+     * never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot
+     * be changed using renew or change.
+     */
+    Azure::Nullable<std::chrono::seconds> LeaseDuration;
   };
 
   /**
@@ -418,6 +440,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * If “acquire” it will acquire the lease.
+     * If "auto-renew" it will renew the lease.
+     * If “release” it will release the lease only on flush. Only applicable if Flush is set to
+     * true.
+     * If “acquire-release” it will acquire & complete the operation & release the lease once
+     * operation is done. Only applicable if Flush is set to true.
+     */
+    Azure::Nullable<Models::LeaseAction> LeaseAction;
+
+    /**
+     * Proposed LeaseId.
+     */
+    Azure::Nullable<std::string> LeaseId;
+
+    /**
+     * Specifies the duration of the lease, in seconds, or InfiniteLeaseDuration for a lease that
+     * never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot
+     * be changed using renew or change.
+     */
+    Azure::Nullable<std::chrono::seconds> LeaseDuration;
   };
 
   /**
