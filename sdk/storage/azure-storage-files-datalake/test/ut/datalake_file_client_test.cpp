@@ -634,7 +634,8 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     class UploadFile : public DataLakeFileClientTest,
-                       public ::testing::WithParamInterface<FileConcurrentUploadParameter> {};
+                       public ::testing::WithParamInterface<FileConcurrentUploadParameter> {
+    };
 
     std::string GetUploadSuffix(const testing::TestParamInfo<UploadFile::ParamType>& info)
     {
