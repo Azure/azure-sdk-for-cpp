@@ -286,9 +286,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
 
-    // Append Lease Aquire
+    // Append Lease Acquire
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_aquire");
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire");
       client.Create();
       Files::DataLake::AppendFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
@@ -378,9 +378,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
 
-    // Flush Lease Aquire
+    // Flush Lease Acquire
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_aquire");
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire");
       client.Create();
       bufferStream->Rewind();
       client.Append(*bufferStream, 0);
