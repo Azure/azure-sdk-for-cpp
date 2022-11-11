@@ -69,68 +69,98 @@ void TestProxyManager::ConfigureInsecureConnection(
   }
 }
 
+std::string TestProxyManager::PrepareRequestBody()
+{
+  std::string body = "{\"x-recording-file\":\"";
+  body.append(m_testContext.GetTestRecordingPathName());
+  body.append("\"}");
+
+  return body;
+}
+
 void TestProxyManager::SetStartRecordMode()
 {
-  Azure::Core::_internal::ClientOptions clientOp;
-  clientOp.Retry.MaxRetries = 0;
-  ConfigureInsecureConnection(clientOp);
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
-  Azure::Core::Http::_internal::HttpPipeline pipeline(
-      clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
+  Azure::Core::Url startPlayback(m_proxy);
+  startPlayback.AppendPath("record");
+  startPlayback.AppendPath("start");
+  std::string body = PrepareRequestBody();
 
-  {
-    Azure::Core::Url startPlayback(m_proxy);
-    startPlayback.AppendPath("record");
-    startPlayback.AppendPath("start");
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(body.data()), body.size());
+  Azure::Core::Http::Request request(
+      Azure::Core::Http::HttpMethod::Post, startPlayback, &payloadStream);
 
-    std::string body = "{\"x-recording-file\":\"";
-    body.append(m_testContext.GetTestRecordingPathName());
-    body.append("\"}");
+  Azure::Core::Context ctx;
+  auto response = m_privatePipeline->Send(request, ctx);
 
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
-    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback, &payloadStream);
-
-    Azure::Core::Context ctx;
-    auto response = pipeline.Send(request, ctx);
-
-    auto const& headers = response->GetHeaders();
-    auto findHeader = std::find_if(
-        headers.begin(), headers.end(), [](std::pair<std::string const&, std::string const&> h) {
-          return h.first == "x-recording-id";
-        });
-    m_testContext.RecordingId = findHeader->second;
-  }
+  auto const& headers = response->GetHeaders();
+  auto findHeader = std::find_if(
+      headers.begin(), headers.end(), [](std::pair<std::string const&, std::string const&> h) {
+        return h.first == "x-recording-id";
+      });
+  m_testContext.RecordingId = findHeader->second;
   m_isRecordMode = true;
 }
 
 void TestProxyManager::SetStopRecordMode()
 {
-  Azure::Core::_internal::ClientOptions clientOp;
-  clientOp.Retry.MaxRetries = 0;
-  ConfigureInsecureConnection(clientOp);
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
-  Azure::Core::Http::_internal::HttpPipeline pipeline(
-      clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
+  Azure::Core::Url startPlayback(m_proxy);
+  startPlayback.AppendPath("record");
+  startPlayback.AppendPath("stop");
+  Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
 
-  {
-    Azure::Core::Url startPlayback(m_proxy);
-    startPlayback.AppendPath("record");
-    startPlayback.AppendPath("stop");
-    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
+  request.SetHeader("x-recording-id", m_testContext.RecordingId);
 
-    request.SetHeader("x-recording-id", m_testContext.RecordingId);
-
-    Azure::Core::Context ctx;
-    auto response = pipeline.Send(request, ctx);
-  }
+  Azure::Core::Context ctx;
+  auto response = m_privatePipeline->Send(request, ctx);
 
   m_isRecordMode = false;
+  m_testContext.RecordingId.clear();
+}
+
+void TestProxyManager::SetStartPlaybackMode()
+{
+  Azure::Core::Url startPlayback(m_proxy);
+  startPlayback.AppendPath("playback");
+  startPlayback.AppendPath("start");
+  std::string body = PrepareRequestBody();
+
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(body.data()), body.size());
+  Azure::Core::Http::Request request(
+      Azure::Core::Http::HttpMethod::Post, startPlayback, &payloadStream);
+  
+  Azure::Core::Context ctx;
+  auto response = m_privatePipeline->Send(request, ctx);
+
+  auto const& headers = response->GetHeaders();
+  auto findHeader = std::find_if(
+      headers.begin(), headers.end(), [](std::pair<std::string const&, std::string const&> h) {
+        return h.first == "x-recording-id";
+      });
+  m_testContext.RecordingId = findHeader->second;
+  m_isPlaybackMode = true;
+}
+
+void TestProxyManager::SetStopPlaybackMode() {
+  Azure::Core::Url stopPlaybackReq(m_proxy);
+  stopPlaybackReq.AppendPath("playback");
+  stopPlaybackReq.AppendPath("stop");
+  Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopPlaybackReq);
+  request.SetHeader("x-recording-id", m_testContext.RecordingId);
+  Azure::Core::Context ctx;
+  m_privatePipeline->Send(request, ctx);
+
+  m_isPlaybackMode = false;
+  m_testContext.RecordingId.clear();
 }
 
 std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetRecordPolicy()
 {
   return std::make_unique<Azure::Core::Test::RecordTestProxyPolicy>(this);
+}
+
+std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetPlaybackPolicy()
+{
+  return std::make_unique<Azure::Core::Test::PlaybackTestProxyPolicy>(this);
 }

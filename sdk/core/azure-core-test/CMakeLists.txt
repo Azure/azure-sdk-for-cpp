@@ -19,7 +19,7 @@ set(
 set(
   AZURE_CORE_TEST_SOURCE
   src/private/package_version.hpp
-  
+  src/playback_test_proxy_policy.cpp
   src/record_test_proxy_policy.cpp
   src/test_base.cpp
   src/test_proxy_manager.cpp

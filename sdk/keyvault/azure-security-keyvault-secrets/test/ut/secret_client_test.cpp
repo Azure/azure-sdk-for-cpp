@@ -46,7 +46,7 @@ TEST(SecretClient, GetUrl)
 
 TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 {
-  _putenv_s("AZURE_TEST_MODE", "RECORD");
+  _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
   auto secretName = GetTestName();
   auto const& client = GetClientForTest(secretName);
 

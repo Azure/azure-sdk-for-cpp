@@ -52,7 +52,8 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Playback mode uses:
         //  - playback transport adapter to read and return payload from json files
-        //options.Transport.Transport = m_interceptor->GetPlaybackTransport();
+        m_testProxy->SetStartPlaybackMode();
+        options.PerRetryPolicies.push_back(m_testProxy->GetPlaybackPolicy());
       }
       else if (!m_testContext.IsLiveMode())
       {
