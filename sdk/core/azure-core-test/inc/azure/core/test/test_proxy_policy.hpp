@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Test {
    * @brief Creates a policy that records network calls into recordedData.
    *
    */
-  class PlaybackTestProxyPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  class TestProxyPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   private:
     Azure::Core::Test::TestProxyManager* m_testProxy;
 
@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Disable default constructor.
      *
      */
-    PlaybackTestProxyPolicy() = delete;
+    TestProxyPolicy() = delete;
 
     /**
      * @brief Construct the record network policy which will save the HTTP request and response to
@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Test {
      * @param interceptorManager A reference to the interceptor manager which holds the recorded
      * data.
      */
-    PlaybackTestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy)
+    TestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy)
         : m_testProxy(testProxy)
     {
     }
@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
-      return std::make_unique<PlaybackTestProxyPolicy>(m_testProxy);
+      return std::make_unique<TestProxyPolicy>(m_testProxy);
     }
 
     /**

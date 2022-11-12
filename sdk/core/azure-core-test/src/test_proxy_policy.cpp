@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/test/record_test_proxy_policy.hpp"
+#include "azure/core/test/test_proxy_policy.hpp"
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 
@@ -23,7 +23,7 @@ using namespace Azure::Core::_internal;
  * @param nextHttpPolicy The next policy in the pipeline.
  * @return The HTTP raw response.
  */
-std::unique_ptr<RawResponse> RecordTestProxyPolicy::Send(
+std::unique_ptr<RawResponse> TestProxyPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
@@ -67,7 +67,16 @@ std::unique_ptr<RawResponse> RecordTestProxyPolicy::Send(
   // Set recording-id
   redirectRequest.SetHeader("x-recording-id", recordId);
 
-  // RECORDING mode
-  redirectRequest.SetHeader("x-recording-mode", "record");
+  if (m_testProxy->IsRecordMode())
+  {
+    // RECORDING mode
+    redirectRequest.SetHeader("x-recording-mode", "record");
+  }
+  else if (m_testProxy->IsPlaybackMode())
+  {
+    // RECORDING mode
+    redirectRequest.SetHeader("x-recording-mode", "playback");
+  }
+
   return nextHttpPolicy.Send(redirectRequest, ctx);
 }

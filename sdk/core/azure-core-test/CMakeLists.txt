@@ -19,8 +19,7 @@ set(
 set(
   AZURE_CORE_TEST_SOURCE
   src/private/package_version.hpp
-  src/playback_test_proxy_policy.cpp
-  src/record_test_proxy_policy.cpp
+  src/test_proxy_policy.cpp
   src/test_base.cpp
   src/test_proxy_manager.cpp
 )
@@ -29,7 +28,7 @@ add_library (
   azure-core-test-fw
   ${AZURE_CORE_TEST_HEADER}
   ${AZURE_CORE_TEST_SOURCE}
-   "src/test_proxy_manager.cpp" "src/record_test_proxy_policy.cpp")
+   "src/test_proxy_manager.cpp" "src/test_proxy_policy.cpp")
 
 if (MSVC)
   # - C6326: Google comparisons 

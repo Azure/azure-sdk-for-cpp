@@ -63,7 +63,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      _putenv_s("AZURE_TEST_MODE", "RECORD");
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
@@ -158,6 +157,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           std::this_thread::sleep_for(std::chrono::minutes(1));
         }
       }
+    }
+
+    // Per-test-suite set-up.
+    // Called before the first test in this test suite.
+    // Can be omitted if not needed.
+    static void SetUpTestSuite()
+    {
+      std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
+      std::system(
+          "pwsh "
+          "S:\\src\\azure-sdk-for-cpp\\sdk\\core\\azure-core-test\\src\\private\\testproxy.ps1");
+    }
+
+    // Per-test-suite tear-down.
+    // Called after the last test in this test suite.
+    // Can be omitted if not needed.
+    static void TearDownTestSuite()
+    {
+      std::system(
+          "pwsh "
+          "S:\\src\\azure-sdk-for-cpp\\sdk\\core\\azure-core-test\\src\\private\\stopProxy.ps1");
     }
   };
 

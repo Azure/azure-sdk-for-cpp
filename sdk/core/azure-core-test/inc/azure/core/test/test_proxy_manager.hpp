@@ -7,8 +7,7 @@
 #include <string>
 
 #include "azure/core/test/network_models.hpp"
-#include "azure/core/test/record_test_proxy_policy.hpp"
-#include "azure/core/test/playback_test_proxy_policy.hpp"
+#include "azure/core/test/test_proxy_policy.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include <azure/core/http/curl_transport.hpp>
@@ -55,9 +54,9 @@ namespace Azure { namespace Core { namespace Test {
     const std::string m_proxy = "https://localhost:5001";
     bool m_isInsecureEnabled = true;
     void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
-    bool m_isRecordMode = false;
-    bool m_isPlaybackMode = false;
+    TestMode m_currentMode = TestMode::LIVE;
     std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_privatePipeline;
+
   public:
     /**
      * @brief Enables to init an interceptor with empty values.
@@ -76,8 +75,8 @@ namespace Azure { namespace Core { namespace Test {
       m_privatePipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(pipeline);
     }
 
-    bool IsRecordMode() { return m_isRecordMode; }
-    bool IsPlaybackMode() { return m_isPlaybackMode; }
+    bool IsRecordMode() { return m_currentMode == TestMode::RECORD; }
+    bool IsPlaybackMode() { return m_currentMode == TestMode::PLAYBACK; }
     std::string GetTestProxy() { return m_proxy; };
     Azure::Core::Test::TestContextManager& GetTestContext() { return m_testContext; }
     /**
@@ -86,9 +85,8 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @return HttpPipelinePolicy to record network calls.
      */
-    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetRecordPolicy();
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetTestProxyPolicy();
 
-    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetPlaybackPolicy();
     /**
      * @brief Read from environment and parse the a test mode.
      *
@@ -115,8 +113,10 @@ namespace Azure { namespace Core { namespace Test {
     void SetStopPlaybackMode();
     std::string GetRecordingId() { return m_testContext.RecordingId; }
 
-    private:
+  private:
     std::string PrepareRequestBody();
+    void StartPlaybackRecord(TestMode testMode);
+    void StopPlaybackRecord();
   };
 
 }}} // namespace Azure::Core::Test
