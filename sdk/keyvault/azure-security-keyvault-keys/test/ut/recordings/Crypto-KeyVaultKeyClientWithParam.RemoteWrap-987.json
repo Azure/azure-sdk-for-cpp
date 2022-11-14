@@ -1,85 +1,135 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "acffe98a-4c77-4543-60f1-fe5857d98c7d"
+      "RequestUri": "https://REDACTED1.vault.azure.net/keys/RemoteWrap-987/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "31",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "95a68b2f-3a2b-4141-569f-5c3ab510b1d0"
       },
-      "Method": "POST",
-      "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/RemoteWrap-987/91b4e68606754d2bad151f092a96e5d1\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"uYo_Cajh756paPgY2_0ggix2dBCDbL3MC7x4a0GG_xke67UMmgucNmxX1tidAjmE5T6YiDilWfDN0MrWmescLMYbfM5t8RNsjWifYqcFr0bqKk_gpxfFk3Zj99OpyBssWofivsN0309dkf1I2i_dN7icZEoYYeFTuUfjLaHyZIbjgZDdFSK2Ak_Hu5Y_kgQkJgbKfxy5iI6fG_JMMdmvu_m3X4FEqfRhgxkkuWzaToPSZhLAXLIUw23TspWb41_yH5yTXTxPeeDzePXrUxeUhSdY0igzYWw0z_7TwJSxUz4bIZszfnD4amYkNDfnqQ3ejKt65OHdlQxwEtC2txX2sQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1651702960,\"updated\":1651702960,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "680",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 04 May 2022 22:22:40 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "acffe98a-4c77-4543-60f1-fe5857d98c7d",
+      "RequestBody": {
+        "attributes": null,
+        "kty": "RSA"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "698",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 23:29:38 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "95a68b2f-3a2b-4141-569f-5c3ab510b1d0",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-keyvault-service-version": "1.9.378.1",
-        "x-ms-request-id": "d8fee2ba-6526-4ce4-b7fc-f1ea91c407ac"
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "ae8140ee-f89b-4308-b907-41c67338aa35"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-987/create?api-version=7.3"
+      "ResponseBody": {
+        "key": {
+          "kid": "https://REDACTED1.vault.azure.net/keys/RemoteWrap-987/b76b942fbf0641e5ab83ed6ef097c9c9",
+          "kty": "RSA",
+          "key_ops": [
+            "encrypt",
+            "decrypt",
+            "sign",
+            "verify",
+            "wrapKey",
+            "unwrapKey"
+          ],
+          "n": "1fIc1eZXSkzyF9LKRNNmcakf1McuzboPLH7IANq6klSdoV9XtfW88vVEAvTF9OnDWc1-EjnJJ2QVn7FjkgVxAMnr5gaBE7SX5FwsSIJjbxGEJzx1hpoHDiHc93EdbjitI2SW1-NuwB6AfkoyjguHhs88yKLNMIrhdmjxJ3kvF4ZLew0dCgE8zsFfGK0cwMkcunGIFY1SCKpch1StYGmDoDExLv1ivg7eHrRefjgtrDB_CiJqxah9pj7qfD4ZtKF4njF5XxN7gdxeOx5oAdMXpqBk_9qrx5zVe9eHPhYtP1zw3q_g37q-1MXZeKlFm4_Ld8CsrJacFgqPlqSaaiblKQ",
+          "e": "AQAB"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1668468579,
+          "updated": 1668468579,
+          "recoveryLevel": "Recoverable\u002BPurgeable",
+          "recoverableDays": 90,
+          "exportable": false
+        }
+      }
     },
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "0ab97e83-3f45-4801-457c-70abcf0b7418"
+      "RequestUri": "https://REDACTED1.vault.azure.net/keys/RemoteWrap-987/b76b942fbf0641e5ab83ed6ef097c9c9/wrapKey?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "71",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-KeyVault/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "400001ae-a897-446c-7feb-4ca70e35cf9f"
       },
-      "Method": "POST",
-      "Response": {
-        "BODY": "{\"kid\":\"https://REDACTED.vault.azure.net/keys/RemoteWrap-987/91b4e68606754d2bad151f092a96e5d1\",\"value\":\"ZO8eDazfySIoSVSzH6K5HIxyxxC2JvGeDcIg_Q57g_WVYMmibNTTt4seCHonMzU85d9ZpXSpg8Dlmt-WObce_V0_zsHWz5czUl2qiWCUGEbMNIefAI_HVyE9ZKAA6qMWmX_fhfvru58D2MfcFIYPeeoGVCyGGvCQKbBAkOXXu0U77GRjYpNgs6H2TlY46sL6LsesMIzhpGG2DniPUeoFgctoMjZJBcN9QoZHUN-q88EluPF0BeMOfLORMo7aBKOHS46Q4UmKDvzxX8-NLv2qcK1203LlrntIpC1d8tYaQ4ZkAtS3BS_RKPDI1L7-87VhIekAbS3qD2c3Sh2vAgEQqg\"}",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "450",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 04 May 2022 22:22:40 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "0ab97e83-3f45-4801-457c-70abcf0b7418",
+      "RequestBody": {
+        "alg": "RSA-OAEP-256",
+        "value": "QSBzaW5nbGUgYmxvY2sgb2YgcGxhaW50ZXh0AA"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "449",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 23:29:38 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "400001ae-a897-446c-7feb-4ca70e35cf9f",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-keyvault-service-version": "1.9.378.1",
-        "x-ms-request-id": "823c90a3-aa50-42c2-9128-cbce761b0bda"
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "d1acc2de-cfac-4d9d-bf1f-d9922499691d"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-987/91b4e68606754d2bad151f092a96e5d1/wrapKey?api-version=7.3"
+      "ResponseBody": {
+        "kid": "https://REDACTED1.vault.azure.net/keys/RemoteWrap-987/b76b942fbf0641e5ab83ed6ef097c9c9",
+        "value": "GCbDoCFzF6k_4kKl5nXE4L5YQQv0OTCi44xAwrZ8N_3l5JksgreMfzpkz4i1FiBF1yVSjbG3Z2xtBA5z0iwyryTXiFASOaEIbxZw6faXf6LdbjJ_J8qKhy-SLj-7WwyktiZUkpnjOAX07LCaVxKRUdJh3BUC-ZCaM5BisBAUF9iVSdPnuXVzAMmol0Uc60kIfxsDrdnryJ6djCQHouLSb-Ir4BT48Yokv8P1jIWTHBYimwnPqlM9dckABm_eHdnTdlW2nYlA1aI_pbkQITborQpqTH6SnQmPyNZ8Jas71AWgs6g_YITYUvxXOHgzaOALE5hufZyxGBp0Xm8H72fFlQ"
+      }
     },
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "03e677c0-0b0b-464f-7723-bd0bf3ad14b6"
+      "RequestUri": "https://REDACTED1.vault.azure.net/keys/RemoteWrap-987/b76b942fbf0641e5ab83ed6ef097c9c9/unwrapKey?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "375",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-KeyVault/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "c1e936bb-95b5-44b3-6c55-5c491629fc08"
       },
-      "Method": "POST",
-      "Response": {
-        "BODY": "{\"kid\":\"https://REDACTED.vault.azure.net/keys/RemoteWrap-987/91b4e68606754d2bad151f092a96e5d1\",\"value\":\"QSBzaW5nbGUgYmxvY2sgb2YgcGxhaW50ZXh0AA\"}",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "146",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 04 May 2022 22:22:40 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "03e677c0-0b0b-464f-7723-bd0bf3ad14b6",
+      "RequestBody": {
+        "alg": "RSA-OAEP-256",
+        "value": "GCbDoCFzF6k_4kKl5nXE4L5YQQv0OTCi44xAwrZ8N_3l5JksgreMfzpkz4i1FiBF1yVSjbG3Z2xtBA5z0iwyryTXiFASOaEIbxZw6faXf6LdbjJ_J8qKhy-SLj-7WwyktiZUkpnjOAX07LCaVxKRUdJh3BUC-ZCaM5BisBAUF9iVSdPnuXVzAMmol0Uc60kIfxsDrdnryJ6djCQHouLSb-Ir4BT48Yokv8P1jIWTHBYimwnPqlM9dckABm_eHdnTdlW2nYlA1aI_pbkQITborQpqTH6SnQmPyNZ8Jas71AWgs6g_YITYUvxXOHgzaOALE5hufZyxGBp0Xm8H72fFlQ"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "145",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 23:29:38 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "c1e936bb-95b5-44b3-6c55-5c491629fc08",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-keyvault-service-version": "1.9.378.1",
-        "x-ms-request-id": "e1f569f2-d579-41df-8a9a-077c4f3a3e11"
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "5ebe72e7-a35c-4d5d-be26-1267d3f177af"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-987/91b4e68606754d2bad151f092a96e5d1/unwrapKey?api-version=7.3"
+      "ResponseBody": {
+        "kid": "https://REDACTED1.vault.azure.net/keys/RemoteWrap-987/b76b942fbf0641e5ab83ed6ef097c9c9",
+        "value": "QSBzaW5nbGUgYmxvY2sgb2YgcGxhaW50ZXh0AA"
+      }
     }
-  ]
+  ],
+  "Variables": {}
 }

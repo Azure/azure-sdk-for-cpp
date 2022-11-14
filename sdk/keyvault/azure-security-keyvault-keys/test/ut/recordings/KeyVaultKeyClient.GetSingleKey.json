@@ -1,57 +1,106 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8fbc0852-7f70-45bb-6011-f8776a548640"
+      "RequestUri": "https://REDACTED1.vault.azure.net/keys/GetSingleKey/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "30",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "84dede3f-9dfd-4985-552b-a783f5425014"
       },
-      "Method": "POST",
-      "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetSingleKey/11a187e71e4a4fc8aca09acc7cda42b3\",\"kty\":\"EC\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"WME75MJbsZpH0KjTnUT8xuxfry3HnUGK5XbSSmIyD0M\",\"y\":\"1ygtnyFOiKrK2jMUeUp_JN9iY6fo8FAHcQo1OjqSDiQ\"},\"attributes\":{\"enabled\":true,\"created\":1638401840,\"updated\":1638401840,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "393",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 01 Dec 2021 23:37:19 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "8fbc0852-7f70-45bb-6011-f8776a548640",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "522792b5-9bc2-4f1f-a8a2-97a2f36ce53a",
-        "x-powered-by": "ASP.NET"
+      "RequestBody": {
+        "attributes": null,
+        "kty": "EC"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetSingleKey/create?api-version=7.3"
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "407",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 21:54:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "84dede3f-9dfd-4985-552b-a783f5425014",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "383747a4-d902-4c79-9d91-63e249692035"
+      },
+      "ResponseBody": {
+        "key": {
+          "kid": "https://REDACTED1.vault.azure.net/keys/GetSingleKey/03d48bd150a04d80b0cd2e6172e91943",
+          "kty": "EC",
+          "key_ops": [
+            "sign",
+            "verify"
+          ],
+          "crv": "P-256",
+          "x": "FtjrZZ28Zk8GRexByAqwHcKvjSU1DzZDK7KU752pzgI",
+          "y": "0EZHDsB-eT0Z6AdoowMH8d1-xDwesW2NpcBqsGteN-M"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1668462894,
+          "updated": 1668462894,
+          "recoveryLevel": "Recoverable\u002BPurgeable",
+          "recoverableDays": 90,
+          "exportable": false
+        }
+      }
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f381695e-0d6c-44ef-6942-eda12cd79000"
+      "RequestUri": "https://REDACTED1.vault.azure.net/keys/GetSingleKey?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4e8321a5-c2d6-40ba-4220-0a0c1d7bdcd9"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetSingleKey/11a187e71e4a4fc8aca09acc7cda42b3\",\"kty\":\"EC\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"WME75MJbsZpH0KjTnUT8xuxfry3HnUGK5XbSSmIyD0M\",\"y\":\"1ygtnyFOiKrK2jMUeUp_JN9iY6fo8FAHcQo1OjqSDiQ\"},\"attributes\":{\"enabled\":true,\"created\":1638401840,\"updated\":1638401840,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "393",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 01 Dec 2021 23:37:19 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "f381695e-0d6c-44ef-6942-eda12cd79000",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "89b5eaa8-dd46-4091-8235-df2727581b74",
-        "x-powered-by": "ASP.NET"
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "407",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 21:54:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "4e8321a5-c2d6-40ba-4220-0a0c1d7bdcd9",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "94866245-32db-4857-a7c0-8f39f23bd825"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetSingleKey?api-version=7.3"
+      "ResponseBody": {
+        "key": {
+          "kid": "https://REDACTED1.vault.azure.net/keys/GetSingleKey/03d48bd150a04d80b0cd2e6172e91943",
+          "kty": "EC",
+          "key_ops": [
+            "sign",
+            "verify"
+          ],
+          "crv": "P-256",
+          "x": "FtjrZZ28Zk8GRexByAqwHcKvjSU1DzZDK7KU752pzgI",
+          "y": "0EZHDsB-eT0Z6AdoowMH8d1-xDwesW2NpcBqsGteN-M"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1668462894,
+          "updated": 1668462894,
+          "recoveryLevel": "Recoverable\u002BPurgeable",
+          "recoverableDays": 90,
+          "exportable": false
+        }
+      }
     }
-  ]
+  ],
+  "Variables": {}
 }

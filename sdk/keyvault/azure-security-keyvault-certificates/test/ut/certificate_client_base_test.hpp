@@ -248,7 +248,7 @@ namespace Azure {
       std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
       std::system(
           "pwsh "
-          "S:\\src\\azure-sdk-for-cpp\\sdk\\core\\azure-core-test\\src\\private\\testproxy.ps1");
+          "testproxy.ps1");
     }
 
     // Per-test-suite tear-down.
@@ -258,7 +258,7 @@ namespace Azure {
     {
       std::system(
           "pwsh "
-          "S:\\src\\azure-sdk-for-cpp\\sdk\\core\\azure-core-test\\src\\private\\stopProxy.ps1");
+          "stopProxy.ps1");
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test

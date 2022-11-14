@@ -146,9 +146,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     static void SetUpTestSuite()
     {
       std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
-      std::system(
-          "pwsh "
-          "S:\\src\\azure-sdk-for-cpp\\sdk\\core\\azure-core-test\\src\\private\\testproxy.ps1");
+      std::system("pwsh "
+                  "testproxy.ps1");
     }
 
     // Per-test-suite tear-down.
@@ -156,9 +155,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     // Can be omitted if not needed.
     static void TearDownTestSuite()
     {
-      std::system(
-          "pwsh "
-          "S:\\src\\azure-sdk-for-cpp\\sdk\\core\\azure-core-test\\src\\private\\stopProxy.ps1");
+      std::system("pwsh "
+                  "stopProxy.ps1");
     }
   };
 

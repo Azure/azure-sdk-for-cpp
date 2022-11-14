@@ -83,7 +83,9 @@ void TestProxyManager::SetStartRecordMode()
   if (IsPlaybackMode() || IsRecordMode())
   {
     std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    throw std::runtime_error("TestProxy already in " + mode + " mode. First stop current mode.");
+    //throw std::runtime_error();
+    std::cout << "TestProxy already in " + mode + " mode.";
+    return;
   }
 
   m_currentMode = TestMode::RECORD;
@@ -95,7 +97,9 @@ void TestProxyManager::SetStartPlaybackMode()
   if (IsPlaybackMode() || IsRecordMode())
   {
     std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    throw std::runtime_error("TestProxy already in " + mode + " mode. First stop current mode.");
+    //throw std::runtime_error("TestProxy already in " + mode + " mode. First stop current mode.");
+    std::cout << "TestProxy already in " + mode + " mode.";
+    return;
   }
 
   m_currentMode = TestMode::PLAYBACK;
@@ -180,3 +184,51 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
 {
   return std::make_unique<Azure::Core::Test::TestProxyPolicy>(this);
 }
+
+void TestProxyManager::SetProxySanitizer()
+{ /*
+  // POST to URI <proxyURL>/Admin/AddSanitizer
+// dictionary dictionary
+{
+    "x-abstraction-identifier": "HeaderRegexSanitizer"
+}
+// request body
+{
+    "key": "Location",
+    "value": "fakeaccount",
+    "regex": "https\\:\\/\\/(?<account>[a-z]+)\\.(?:table|blob|queue)\\.core\\.windows\\.net",
+    "groupForReplace": "account"
+}
+  */
+  Azure::Core::Url sanitizerRequest(m_proxy);
+
+  sanitizerRequest.AppendPath("Admin");
+  sanitizerRequest.AppendPath("AddSanitizer");
+  {
+
+    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+                       "\"https://(?<account>[a-z]+).*\",\"groupForReplace\" : \"account\"}";
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "UriRegexSanitizer");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }
+  {
+
+    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+                       "\"https://(?<account>[a-z]+).*\",\"groupForReplace\" : \"account\"}";
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "BodyRegexSanitizer");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }
+}
+  

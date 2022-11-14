@@ -73,6 +73,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::_internal::HttpPipeline pipeline(
           clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
       m_privatePipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(pipeline);
+      SetProxySanitizer();
     }
 
     bool IsRecordMode() { return m_currentMode == TestMode::RECORD; }
@@ -117,6 +118,7 @@ namespace Azure { namespace Core { namespace Test {
     std::string PrepareRequestBody();
     void StartPlaybackRecord(TestMode testMode);
     void StopPlaybackRecord();
+    void SetProxySanitizer();
   };
 
 }}} // namespace Azure::Core::Test

@@ -1,31 +1,37 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "4228c926-cd26-4ab1-7744-02a73a432d9a"
+      "RequestUri": "https://REDACTED1.vault.azure.net/certificates/GetPropertiesOfCertificatesVersionsNoCert/versions?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-keyvault-certificates/4.2.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b00a4128-9529-4dc5-5f0a-8ffd2966a4b0"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "{\"value\":[],\"nextLink\":null}",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "28",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Nov 2021 20:53:05 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "4228c926-cd26-4ab1-7744-02a73a432d9a",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "28",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 20:44:34 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "b00a4128-9529-4dc5-5f0a-8ffd2966a4b0",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "301c0453-8d33-4876-8838-acb26340fbac",
-        "x-powered-by": "ASP.NET"
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "35008498-86c5-4aa3-8c26-5adf2006b9b3"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetPropertiesOfCertificatesVersionsNoCert/versions?api-version=7.3"
+      "ResponseBody": {
+        "value": [],
+        "nextLink": null
+      }
     }
-  ]
+  ],
+  "Variables": {}
 }

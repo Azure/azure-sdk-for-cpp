@@ -1,58 +1,105 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "13c6a303-7b57-47f8-6a31-77333e7207de"
+      "RequestUri": "https://REDACTED1.vault.azure.net/certificates/contacts?api-version=7.3",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "135",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-keyvault-certificates/4.2.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "04139734-ecdd-4af3-78f2-991c8bad81ad"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one@two.org\",\"name\":\"giqu\",\"phone\":\"1234567890\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\",\"phone\":\"1234567891\"}]}",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "202",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Nov 2021 20:49:35 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "13c6a303-7b57-47f8-6a31-77333e7207de",
+      "RequestBody": {
+        "contacts": [
+          {
+            "email": "one@two.org",
+            "name": "giqu",
+            "phone": "1234567890"
+          },
+          {
+            "email": "two@three.org",
+            "name": "giqu2",
+            "phone": "1234567891"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "199",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 20:41:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "04139734-ecdd-4af3-78f2-991c8bad81ad",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "7b014780-ab8a-4c34-ae04-935ca7370792",
-        "x-powered-by": "ASP.NET"
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "cb469e2a-2cfe-4061-828e-17f293af83dc"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.3"
+      "ResponseBody": {
+        "id": "https://REDACTED1.vault.azure.net/certificates/contacts",
+        "contacts": [
+          {
+            "email": "one@two.org",
+            "name": "giqu",
+            "phone": "1234567890"
+          },
+          {
+            "email": "two@three.org",
+            "name": "giqu2",
+            "phone": "1234567891"
+          }
+        ]
+      }
     },
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "9cab927f-6a92-401f-6340-6d0860c3db76"
+      "RequestUri": "https://REDACTED1.vault.azure.net/certificates/contacts?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-keyvault-certificates/4.2.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "a43deddc-5c0b-45dd-5a2a-978b65570bdf"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one@two.org\",\"name\":\"giqu\",\"phone\":\"1234567890\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\",\"phone\":\"1234567891\"}]}",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "202",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Nov 2021 20:49:35 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "9cab927f-6a92-401f-6340-6d0860c3db76",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "199",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 14 Nov 2022 20:41:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "a43deddc-5c0b-45dd-5a2a-978b65570bdf",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "3e9d653f-1860-449a-98ab-dbf3bf516c82",
-        "x-powered-by": "ASP.NET"
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.576.1",
+        "x-ms-request-id": "cf412e5d-7c46-4bb0-8100-d1b48ae9ecfe"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.3"
+      "ResponseBody": {
+        "id": "https://REDACTED1.vault.azure.net/certificates/contacts",
+        "contacts": [
+          {
+            "email": "one@two.org",
+            "name": "giqu",
+            "phone": "1234567890"
+          },
+          {
+            "email": "two@three.org",
+            "name": "giqu2",
+            "phone": "1234567891"
+          }
+        ]
+      }
     }
-  ]
+  ],
+  "Variables": {}
 }

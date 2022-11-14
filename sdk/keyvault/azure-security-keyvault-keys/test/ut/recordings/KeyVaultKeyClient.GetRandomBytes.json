@@ -1,29 +1,37 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "23e6a7fd-96c0-4642-7b13-4fe10963a7d1"
+      "RequestUri": "https://REDACTED.managedhsm.azure.net/rng?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "11",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b0894f26-b506-4f25-5962-4475cea06ff1"
       },
-      "Method": "POST",
-      "Response": {
-        "BODY": "{\"value\":\"W4Ed2Q\"}",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "cache-control": "no-cache",
-        "content-length": "18",
-        "content-security-policy": "default-src 'self'",
-        "content-type": "application/json; charset=utf-8",
-        "strict-transport-security": "max-age=31536000; includeSubDomains",
-        "x-content-type-options": "nosniff",
-        "x-frame-options": "SAMEORIGIN",
+      "RequestBody": {
+        "count": 4
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "18",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-request-id": "008b910a-cfcf-11ec-bf3e-6045bd7778ea",
-        "x-ms-server-latency": "3"
+        "x-ms-request-id": "660db9c4-6474-11ed-b72c-6045bdc0f9d1",
+        "x-ms-server-latency": "529"
       },
-      "Url": "https://REDACTED.managedhsm.azure.net//rng?api-version=7.3"
+      "ResponseBody": {
+        "value": "7x6tzg"
+      }
     }
-  ]
+  ],
+  "Variables": {}
 }
