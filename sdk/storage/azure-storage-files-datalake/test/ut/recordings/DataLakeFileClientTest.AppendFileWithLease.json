@@ -1,0 +1,460 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "2e20ccc9-c8ec-4f08-50d4-7dba8b1f276a",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:00 GMT",
+        "etag": "\"0x8DAC3A3F64DAE6A\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:00 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "2e20ccc9-c8ec-4f08-50d4-7dba8b1f276a",
+        "x-ms-request-id": "bec1a8f8-601e-0064-4b8c-f52337000000",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "c64f4e18-a561-4b45-5c0e-80b932eaf8a4",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:01 GMT",
+        "etag": "\"0x8DAC3A3F7237D97\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:01 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "c64f4e18-a561-4b45-5c0e-80b932eaf8a4",
+        "x-ms-request-id": "599467a0-a01f-0009-368c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/datalakefileclienttestappendfilewithlease?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "3638516d-5403-43b8-6e90-56bc95c09188",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:01 GMT",
+        "etag": "\"0x8DAC3A3F751DEBF\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:02 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "3638516d-5403-43b8-6e90-56bc95c09188",
+        "x-ms-request-id": "599467d8-a01f-0009-6e8c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_acquire?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "17b4da2c-1111-4b63-40c0-2d02e28b2551",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PATCH",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:02 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "17b4da2c-1111-4b63-40c0-2d02e28b2551",
+        "x-ms-request-id": "59946833-a01f-0009-498c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_acquire?action=append&position=0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "9d5abb2a-018f-431d-569d-0bc74ad8c85e",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "content-length": "0",
+        "content-type": "application/octet-stream",
+        "date": "Fri, 11 Nov 2022 05:17:02 GMT",
+        "etag": "\"0x8DAC3A3F751DEBF\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:02 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "9d5abb2a-018f-431d-569d-0bc74ad8c85e",
+        "x-ms-creation-time": "Fri, 11 Nov 2022 05:17:02 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-duration": "fixed",
+        "x-ms-lease-state": "leased",
+        "x-ms-lease-status": "locked",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rw-r-----",
+        "x-ms-request-id": "bec1b2f4-601e-0064-7f8c-f52337000000",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_acquire"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "75c89cc2-a352-49f6-7832-9e9b7e244203",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:02 GMT",
+        "etag": "\"0x8DAC3A3F7E0A59E\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "75c89cc2-a352-49f6-7832-9e9b7e244203",
+        "x-ms-request-id": "599468ba-a01f-0009-508c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_auto_renew?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "478dfb5f-5cdb-4b58-4ddd-584dda516dc5",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "etag": "\"0x8DAC3A3F7E0A59E\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "478dfb5f-5cdb-4b58-4ddd-584dda516dc5",
+        "x-ms-lease-id": "72cbc663-81de-44ba-735d-40c7af630f35",
+        "x-ms-request-id": "bec1b4b9-601e-0064-2f8c-f52337000000",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_auto_renew?comp=lease"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b09df35d-8a2f-4d8d-6b6a-08c9aef22fc7",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PATCH",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b09df35d-8a2f-4d8d-6b6a-08c9aef22fc7",
+        "x-ms-lease-renewed": "false",
+        "x-ms-request-id": "5994693b-a01f-0009-518c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_auto_renew?action=append&position=0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "906394d5-4ea3-47db-40d7-a881ba71e3c6",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "content-length": "0",
+        "content-type": "application/octet-stream",
+        "date": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "etag": "\"0x8DAC3A3F7E0A59E\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "906394d5-4ea3-47db-40d7-a881ba71e3c6",
+        "x-ms-creation-time": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-duration": "fixed",
+        "x-ms-lease-state": "leased",
+        "x-ms-lease-status": "locked",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rw-r-----",
+        "x-ms-request-id": "bec1b68a-601e-0064-538c-f52337000000",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_auto_renew"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "cc0ba0bc-d7e8-43a4-58dc-efcf273bb5a5",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:03 GMT",
+        "etag": "\"0x8DAC3A3F8996D8A\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:04 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "cc0ba0bc-d7e8-43a4-58dc-efcf273bb5a5",
+        "x-ms-request-id": "599469b9-a01f-0009-4f8c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_release?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "89027009-e262-4fa6-7d9c-c61520ef4f9a",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:04 GMT",
+        "etag": "\"0x8DAC3A3F8996D8A\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:04 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "89027009-e262-4fa6-7d9c-c61520ef4f9a",
+        "x-ms-lease-id": "80caeaf6-47d9-4dfd-773e-5e2cebe5f4d9",
+        "x-ms-request-id": "bec1b86a-601e-0064-048c-f52337000000",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_release?comp=lease"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "dc23c739-fa6b-4990-671d-2d1e98194954",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PATCH",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:04 GMT",
+        "etag": "\"0x8DAC3A3F8FBF272\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "dc23c739-fa6b-4990-671d-2d1e98194954",
+        "x-ms-request-id": "59946a25-a01f-0009-3b8c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_release?action=append&flush=true&position=0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "2ee47fdf-59c2-429c-5c46-632dca10a3f6",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "content-length": "4096",
+        "content-type": "application/octet-stream",
+        "date": "Fri, 11 Nov 2022 05:17:04 GMT",
+        "etag": "\"0x8DAC3A3F8FBF272\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "2ee47fdf-59c2-429c-5c46-632dca10a3f6",
+        "x-ms-creation-time": "Fri, 11 Nov 2022 05:17:04 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rw-r-----",
+        "x-ms-request-id": "bec1ba50-601e-0064-4f8c-f52337000000",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_release"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "bd53a497-060e-4d68-6fc6-acc5fe364cfc",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "etag": "\"0x8DAC3A3F958E97F\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "bd53a497-060e-4d68-6fc6-acc5fe364cfc",
+        "x-ms-request-id": "59946aac-a01f-0009-428c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_acquire_release?resource=file"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "2ff17565-4a25-433d-4b6e-f7b2261a405a",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "PATCH",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "etag": "\"0x8DAC3A3F98BD7D3\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:06 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "2ff17565-4a25-433d-4b6e-f7b2261a405a",
+        "x-ms-request-id": "59946aed-a01f-0009-038c-f5977c000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_acquire_release?action=append&flush=true&position=0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "6946869c-0b5d-4799-6e91-4ca21ba5a3b4",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "content-length": "4096",
+        "content-type": "application/octet-stream",
+        "date": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "etag": "\"0x8DAC3A3F98BD7D3\"",
+        "last-modified": "Fri, 11 Nov 2022 05:17:06 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "6946869c-0b5d-4799-6e91-4ca21ba5a3b4",
+        "x-ms-creation-time": "Fri, 11 Nov 2022 05:17:05 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rw-r-----",
+        "x-ms-request-id": "bec1bd62-601e-0064-208c-f52337000000",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease/appendfilewithlease_acquire_release"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "43f3f226-d7e7-4a5b-40f5-4fe64bf3dcfd",
+        "x-ms-version": "2021-06-08"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:06 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "43f3f226-d7e7-4a5b-40f5-4fe64bf3dcfd",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-deletion-id": "133126174266534696",
+        "x-ms-request-id": "59946b85-a01f-0009-1b8c-f5977c000000",
+        "x-ms-version": "2021-06-08"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestappendfilewithlease/datalakefileclienttestappendfilewithlease"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "7aef54b9-4363-4d15-5dfd-daf86769491a",
+        "x-ms-version": "2021-12-02"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Fri, 11 Nov 2022 05:17:06 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7aef54b9-4363-4d15-5dfd-daf86769491a",
+        "x-ms-request-id": "bec1bfb9-601e-0064-4d8c-f52337000000",
+        "x-ms-version": "2021-12-02"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestappendfilewithlease?restype=container"
+    }
+  ]
+}
