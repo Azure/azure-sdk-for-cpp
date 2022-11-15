@@ -438,6 +438,7 @@ directive:
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
+      $["x-ms-lease-renewed"]["x-nullable"] = true;
       delete $["ETag"];
 ```
 
@@ -450,4 +451,5 @@ directive:
     transform: >
       $["Content-Length"]["x-ms-client-name"] = "FileSize";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
+      $["x-ms-lease-renewed"]["x-nullable"] = true;
 ```

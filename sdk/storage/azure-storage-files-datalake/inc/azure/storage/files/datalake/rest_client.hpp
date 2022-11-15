@@ -277,6 +277,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       };
     } // namespace _detail
     /**
+     * @brief Optional. If "acquire" it will acquire the lease. If "auto-renew" it will renew the
+     * lease. If "release" it will release the lease only on flush. If "acquire-release" it will
+     * acquire & complete the operation & release the lease once operation is done.
+     */
+    class LeaseAction final {
+    public:
+      LeaseAction() = default;
+      explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseAction& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AutoRenew;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Release;
+      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AcquireRelease;
+
+    private:
+      std::string m_value;
+    };
+    /**
      * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Flush.
      */
     struct FlushFileResult final
@@ -304,6 +324,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * returned when the blob was encrypted with a customer-provided key.
        */
       Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * If the lease was auto-renewed with this request.
+       */
+      Nullable<bool> LeaseRenewed;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Append.
@@ -325,6 +349,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * returned when the blob was encrypted with a customer-provided key.
        */
       Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * If the lease was auto-renewed with this request.
+       */
+      Nullable<bool> LeaseRenewed;
     };
   } // namespace Models
   namespace _detail {
@@ -471,6 +499,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<bool> Close;
         Nullable<std::vector<uint8_t>> ContentMD5;
         Nullable<std::string> LeaseId;
+        Nullable<Models::LeaseAction> LeaseAction;
+        Nullable<int64_t> LeaseDuration;
+        Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> CacheControl;
         Nullable<std::string> ContentType;
         Nullable<std::string> ContentDisposition;
@@ -495,6 +526,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::vector<uint8_t>> TransactionalContentHash;
         Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> LeaseId;
+        Nullable<Models::LeaseAction> LeaseAction;
+        Nullable<int64_t> LeaseDuration;
+        Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
