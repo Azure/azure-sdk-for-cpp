@@ -1,6 +1,6 @@
 {
   "Entries": [
-    {
+    { 
       "RequestUri": "https://REDACTED1.vault.azure.net/certificates/contacts?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
