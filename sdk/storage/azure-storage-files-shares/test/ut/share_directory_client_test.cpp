@@ -820,6 +820,34 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesEncoded)
+  {
+    const std::string prefix = "prefix\xEF\xBF\xBF";
+    const std::string specialFileName = prefix + "file";
+    const std::string specialDirectoryName = prefix + "directory";
+    auto fileClient = m_fileShareDirectoryClient->GetFileClient(specialFileName);
+    auto directoryClient = m_fileShareDirectoryClient->GetSubdirectoryClient(specialDirectoryName);
+    fileClient.Create(1024);
+    directoryClient.Create();
+    auto fileUrl = fileClient.GetUrl();
+    EXPECT_EQ(
+        fileUrl,
+        m_fileShareDirectoryClient->GetUrl() + "/" + _internal::UrlEncodePath(specialFileName));
+    auto directoryUrl = directoryClient.GetUrl();
+    EXPECT_EQ(
+        directoryUrl,
+        m_fileShareDirectoryClient->GetUrl() + "/"
+            + _internal::UrlEncodePath(specialDirectoryName));
+    Files::Shares::ListFilesAndDirectoriesOptions options;
+    options.Prefix = prefix;
+    auto response = m_fileShareDirectoryClient->ListFilesAndDirectories(options);
+    EXPECT_EQ(response.Prefix, prefix);
+    EXPECT_EQ(response.Directories.size(), 1L);
+    EXPECT_EQ(response.Directories[0].Name, specialDirectoryName);
+    EXPECT_EQ(response.Files.size(), 1L);
+    EXPECT_EQ(response.Files[0].Name, specialFileName);
+  }
+
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
   {
     auto result = m_fileShareDirectoryClient->ListHandles();
