@@ -1284,8 +1284,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           kTag,
           kKey,
           kValue,
-          kVersionId,
-          kIsCurrentVersion,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -1299,8 +1297,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"Tag", XmlTagEnum::kTag},
             {"Key", XmlTagEnum::kKey},
             {"Value", XmlTagEnum::kValue},
-            {"VersionId", XmlTagEnum::kVersionId},
-            {"IsCurrentVersion", XmlTagEnum::kIsCurrentVersion},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -1349,20 +1345,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kValue)
             {
               mapValue3 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kVersionId)
-            {
-              vectorElement1.VersionId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kIsCurrentVersion)
-            {
-              vectorElement1.IsCurrentVersion = node.Value == std::string("true");
             }
             else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -1912,8 +1894,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           kTag,
           kKey,
           kValue,
-          kVersionId,
-          kIsCurrentVersion,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -1927,8 +1907,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"Tag", XmlTagEnum::kTag},
             {"Key", XmlTagEnum::kKey},
             {"Value", XmlTagEnum::kValue},
-            {"VersionId", XmlTagEnum::kVersionId},
-            {"IsCurrentVersion", XmlTagEnum::kIsCurrentVersion},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -1977,20 +1955,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kValue)
             {
               mapValue3 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kVersionId)
-            {
-              vectorElement1.VersionId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kIsCurrentVersion)
-            {
-              vectorElement1.IsCurrentVersion = node.Value == std::string("true");
             }
             else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults

@@ -481,13 +481,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
 
-    for (auto& item : response.Value.Items)
-    {
-      if (item.VersionId.HasValue() && !item.IsCurrentVersion.HasValue())
-      {
-        item.IsCurrentVersion = false;
-      }
-    }
     FindBlobsByTagsPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.TaggedBlobs = std::move(response.Value.Items);
