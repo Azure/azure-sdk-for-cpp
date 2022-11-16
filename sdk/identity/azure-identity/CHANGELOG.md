@@ -1,16 +1,20 @@
 # Release History
 
-## 1.4.0-beta.2 (Unreleased)
+## 1.4.0-beta.3 (Unreleased)
 
 ### Features Added
-
-- Added token caching.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.4.0-beta.2 (2022-11-08)
+
+### Features Added
+
+- Added token caching.
 
 ## 1.4.0-beta.1 (2022-06-30)
 

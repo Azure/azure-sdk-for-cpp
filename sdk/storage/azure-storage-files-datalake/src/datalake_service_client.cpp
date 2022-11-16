@@ -177,6 +177,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       fileSystem.Details.LeaseDuration = std::move(item.Details.LeaseDuration);
       fileSystem.Details.LeaseState = std::move(item.Details.LeaseState);
       fileSystem.Details.LeaseStatus = std::move(item.Details.LeaseStatus);
+      fileSystem.Details.DefaultEncryptionScope = std::move(item.Details.DefaultEncryptionScope);
+      fileSystem.Details.PreventEncryptionScopeOverride
+          = item.Details.PreventEncryptionScopeOverride;
 
       pagedResponse.FileSystems.emplace_back(std::move(fileSystem));
     }

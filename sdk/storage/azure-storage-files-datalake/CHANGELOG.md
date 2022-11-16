@@ -1,6 +1,6 @@
 # Release History
 
-## 12.4.0-beta.2 (Unreleased)
+## 12.5.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,17 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.5.0-beta.1 (2022-11-08)
+
+### Features Added
+- Added support for encryption scope:
+  - Added new fields `DefaultEncryptionScope` and `PreventEncryptionScopeOverride` in `FileSystemItemDetails`, `FileSystemProperties` and `CreateFileSystemOptions`.
+  - Added new field `EncryptionScope` in `PathProperties`.
+
+## 12.4.0 (2022-11-08)
+
+- New features in `12.4.0-beta.1` are now generally available.
 
 ## 12.4.0-beta.1 (2022-10-11)
 
