@@ -250,6 +250,26 @@ protected:
     }
     return true;
   }
+
+  public:
+  // Per-test-suite set-up.
+  // Called before the first test in this test suite.
+  // Can be omitted if not needed.
+  static void SetUpTestSuite()
+    {
+    std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
+    std::system("pwsh "
+                "testproxy.ps1");
+  }
+
+  // Per-test-suite tear-down.
+  // Called after the last test in this test suite.
+  // Can be omitted if not needed.
+  static void TearDownTestSuite()
+  {
+    std::system("pwsh "
+                "stopProxy.ps1");
+  }
 };
 
 TEST_F(OpenTelemetryServiceTests, SimplestTest)

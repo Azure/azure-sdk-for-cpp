@@ -159,7 +159,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       }
     }
 
-        // Per-test-suite set-up.
+    // Per-test-suite set-up.
     // Called before the first test in this test suite.
     // Can be omitted if not needed.
     static void SetUpTestSuite()
