@@ -18,7 +18,8 @@ add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
 include(GoogleTest)
-
+include (TestProxyPrep)
+CopyTestProxyScripts()
 add_executable (
      azure-security-attestation-test
      macro_guard.cpp
@@ -40,3 +41,4 @@ target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-secur
 gtest_discover_tests(azure-security-attestation-test 
     DISCOVERY_TIMEOUT 600 
     TEST_PREFIX azure-security-attestation.)
+
