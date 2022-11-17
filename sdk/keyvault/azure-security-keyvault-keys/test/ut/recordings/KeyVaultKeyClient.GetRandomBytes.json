@@ -1,15 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://REDACTED.managedhsm.azure.net/rng?api-version=7.3",
+      "RequestUri": "https://REDACTED.managedhsm.azure.net//rng?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "11",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "b0894f26-b506-4f25-5962-4475cea06ff1"
+        "x-ms-client-request-id": "2fc7d107-bfe7-4810-6e25-a6d610661dfc"
       },
       "RequestBody": {
         "count": 4
@@ -25,11 +24,11 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-request-id": "660db9c4-6474-11ed-b72c-6045bdc0f9d1",
-        "x-ms-server-latency": "529"
+        "x-ms-request-id": "8e0b16fc-66b2-11ed-ba0b-6045bdc0f9d1",
+        "x-ms-server-latency": "512"
       },
       "ResponseBody": {
-        "value": "7x6tzg"
+        "value": "54q4zA"
       }
     }
   ],

@@ -5,11 +5,10 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "66",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "995d2320-8a04-451d-6b37-f7b258a28c3b"
+        "x-ms-client-request-id": "757b6d24-8db5-4bbd-7d64-5efe430d117c"
       },
       "RequestBody": {
         "attributes": {
@@ -31,26 +30,26 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-request-id": "6c503f82-6474-11ed-b3db-6045bd86db6d",
-        "x-ms-server-latency": "1189"
+        "x-ms-request-id": "e41deddc-66b0-11ed-a576-6045bd86db6d",
+        "x-ms-server-latency": "358"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1668468671,
+          "created": 1668714544,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1668468671
+          "updated": 1668714544
         },
         "key": {
           "e": "AQAB",
           "key_ops": [
             "sign"
           ],
-          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/5da9e728a52e4eee32bc77e04ab9e22b",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/cf809f34d8af415d27c9b3e72ee92082",
           "kty": "RSA-HSM",
-          "n": "pWI-cbX8YOYDEbZ88tL8g8lS_WMcxah58nwnbLkVmSOTFVGAfb0bSUAfP_-2rOTrPyv3t9J8z6oywMcAQGOkKUZwshHD8URCwnaFN2YGNDyGDXESBbdCkg-ZDL8YXBjn4m2mFWkkcQWF_EgcRAa2X6HRThAygMy1Ig3lNClm6R_M9PQdDU2HsjFtY3jxUHs45s6vhJhoTbfUDyoScy42WQUAm7HI1kjQmVska9pW-nfQGBR9doQJ73fBRwbrqhxJm6L8lpD86ZEliVPSdLq_5Q2nTL80wBY89MhlthCUubyispmEFMj81mj7kI9tVSgLNg_Da7-BLR3wqalcMQ7UxQ"
+          "n": "uReHBQWcLTtuVriV6nRlSRCBz4OBZfvft9_YC76bUDD9QCI_zmQO0lX-IdW9BM4j2euRTChehm3-rgNVVVId8WhPIPPP7jEgIpP99p0pxnU1tKecCa_51I9Go6ZsoCWq-ShSTly7od0NR4fSHDgxApWUOcpJgvpUoEoBSkwYgSE40zNufaQHj-IZWLOLOdV-oFgI4UHzOxo82Wzv3Z6N7_UyywLkEfPMSRQDfu5L0MZ5TfRjG3QHLC5z8uDLOx2oNCmhE0NnNUIuwH_hYuQPQNnBTUbMBWlUSY9JW9EWYypNgDhi_40mbDvsJnYfPXy4GcJ3QV4pgJLGu3WpF8nnYw"
         }
       }
     },
@@ -59,9 +58,9 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "c400d95e-bffa-4947-41f1-2cbaa36fbc2a"
+        "x-ms-client-request-id": "d60fb730-2e79-4007-73d5-f9c6535fcb96"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -76,26 +75,26 @@
         "x-ms-build-version": "1.0.20221108-2-9cd4079e-1.0.20221020-1-945ffe56-develop",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-request-id": "6d0e7ab0-6474-11ed-b3db-6045bd86db6d",
-        "x-ms-server-latency": "103"
+        "x-ms-request-id": "e45c5b12-66b0-11ed-a576-6045bd86db6d",
+        "x-ms-server-latency": "83"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1668468671,
+          "created": 1668714544,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1668468671
+          "updated": 1668714544
         },
         "key": {
           "e": "AQAB",
           "key_ops": [
             "sign"
           ],
-          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/5da9e728a52e4eee32bc77e04ab9e22b",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/cf809f34d8af415d27c9b3e72ee92082",
           "kty": "RSA-HSM",
-          "n": "pWI-cbX8YOYDEbZ88tL8g8lS_WMcxah58nwnbLkVmSOTFVGAfb0bSUAfP_-2rOTrPyv3t9J8z6oywMcAQGOkKUZwshHD8URCwnaFN2YGNDyGDXESBbdCkg-ZDL8YXBjn4m2mFWkkcQWF_EgcRAa2X6HRThAygMy1Ig3lNClm6R_M9PQdDU2HsjFtY3jxUHs45s6vhJhoTbfUDyoScy42WQUAm7HI1kjQmVska9pW-nfQGBR9doQJ73fBRwbrqhxJm6L8lpD86ZEliVPSdLq_5Q2nTL80wBY89MhlthCUubyispmEFMj81mj7kI9tVSgLNg_Da7-BLR3wqalcMQ7UxQ"
+          "n": "uReHBQWcLTtuVriV6nRlSRCBz4OBZfvft9_YC76bUDD9QCI_zmQO0lX-IdW9BM4j2euRTChehm3-rgNVVVId8WhPIPPP7jEgIpP99p0pxnU1tKecCa_51I9Go6ZsoCWq-ShSTly7od0NR4fSHDgxApWUOcpJgvpUoEoBSkwYgSE40zNufaQHj-IZWLOLOdV-oFgI4UHzOxo82Wzv3Z6N7_UyywLkEfPMSRQDfu5L0MZ5TfRjG3QHLC5z8uDLOx2oNCmhE0NnNUIuwH_hYuQPQNnBTUbMBWlUSY9JW9EWYypNgDhi_40mbDvsJnYfPXy4GcJ3QV4pgJLGu3WpF8nnYw"
         }
       }
     }

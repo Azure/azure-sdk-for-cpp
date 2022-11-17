@@ -4,20 +4,20 @@
       "RequestUri": "https://REDACTED.wus.attest.azure.net/certs",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-security.attestation/1.1.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "26f33a85-e269-4d17-4d06-06275362407f"
+        "x-ms-client-request-id": "c488413c-81af-43e5-5694-a5d7d3184083"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "20598",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 01:41:25 GMT",
+        "Date": "Thu, 17 Nov 2022 20:29:08 GMT",
         "Server": "Kestrel",
         "x-ms-maa-service-version": "1.11.02134.501",
-        "x-ms-request-id": "00-441d8230c2e422c3f34a17a42f098633-5a9bc5713f438503-00"
+        "x-ms-request-id": "00-bbd9b1eff602632d8058dbb96f7cb6e2-24c501be5b9f5b7f-00"
       },
       "ResponseBody": {
         "keys": [
@@ -53,20 +53,20 @@
       "RequestUri": "https://REDACTED.wus.attest.azure.net/certs",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-security.attestation/1.1.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "b1610384-a27a-4f72-5c84-28fb7841a56b"
+        "x-ms-client-request-id": "5112ec41-aa13-4fa8-6618-fc90945eb12f"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "20598",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 01:41:25 GMT",
+        "Date": "Thu, 17 Nov 2022 20:29:08 GMT",
         "Server": "Kestrel",
         "x-ms-maa-service-version": "1.11.02134.501",
-        "x-ms-request-id": "00-01eddfbbd8671a5659b5799680816ca6-4d273bd735f047b0-00"
+        "x-ms-request-id": "00-6b3328fb84d955dcba724836e9ad6de5-f4ba144cd4c5c74a-00"
       },
       "ResponseBody": {
         "keys": [

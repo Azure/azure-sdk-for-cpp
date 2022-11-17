@@ -5,11 +5,10 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "359",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "8ce1d171-40d9-45e2-78f6-3193a4f777ca"
+        "x-ms-client-request-id": "3dd2dff8-5e00-48d6-76ac-3e29f8439dd2"
       },
       "RequestBody": {
         "attributes": {
@@ -31,33 +30,33 @@
         "Cache-Control": "no-cache",
         "Content-Length": "713",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 14 Nov 2022 21:54:52 GMT",
+        "Date": "Thu, 17 Nov 2022 19:49:05 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "8ce1d171-40d9-45e2-78f6-3193a4f777ca",
+        "x-ms-client-request-id": "3dd2dff8-5e00-48d6-76ac-3e29f8439dd2",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "ac198552-4fb8-4e6f-989f-fd3f28ddbd6a"
+        "x-ms-request-id": "6d37aefd-4df0-4781-93f3-f04f2c7147f3"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED1.vault.azure.net/keys/CreateKeyWithReleasePolicyOptions/02a5c3a5db674359a8002ff59b5b8e1f",
+          "kid": "https://REDACTED1.vault.azure.net/keys/CreateKeyWithReleasePolicyOptions/f2bd845a07154098a2789e3e3ccd022e",
           "kty": "EC-HSM",
           "key_ops": [
             "sign",
             "verify"
           ],
           "crv": "P-256",
-          "x": "JbXv9YD-c4Af7wdyUgVzJrrb_4Qr7--GOcXGvl8MGR8",
-          "y": "A4_pcnx5ijcbUxcI97gZnowj8wLqDYcxnhlwBd-r-L0"
+          "x": "qYDu61TubHgY4nfuMs4WSXaO6J7e_CCGoAc7VUVSze8",
+          "y": "8OZyXPh5yikuN_HLWk52XZMdiedE5yAtVPKD7p9GC3k"
         },
         "attributes": {
           "enabled": true,
-          "created": 1668462891,
-          "updated": 1668462891,
+          "created": 1668714545,
+          "updated": 1668714545,
           "recoveryLevel": "Recoverable\u002BPurgeable",
           "recoverableDays": 90,
           "exportable": true

@@ -5,11 +5,10 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "58",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "8c812fa5-b3c1-4b78-50e9-d82eaf0a54e1"
+        "x-ms-client-request-id": "db26b8d9-899a-4507-5645-2bbaddf28fa5"
       },
       "RequestBody": {
         "attributes": null,
@@ -24,33 +23,33 @@
         "Cache-Control": "no-cache",
         "Content-Length": "415",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 14 Nov 2022 21:54:49 GMT",
+        "Date": "Thu, 17 Nov 2022 19:49:01 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "8c812fa5-b3c1-4b78-50e9-d82eaf0a54e1",
+        "x-ms-client-request-id": "db26b8d9-899a-4507-5645-2bbaddf28fa5",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "d3c70b78-8c0d-41cd-a3bd-07c569d334a5"
+        "x-ms-request-id": "92cb0587-dad7-45bf-a839-8c22655a9a70"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED1.vault.azure.net/keys/CreateKeyWithOptions/2aff00095b1f48848f663d17347e5e79",
+          "kid": "https://REDACTED1.vault.azure.net/keys/CreateKeyWithOptions/7cde33726235430dbd26a46fe6673541",
           "kty": "EC",
           "key_ops": [
             "sign",
             "verify"
           ],
           "crv": "P-256",
-          "x": "-SHBnFQ4XQ8xC6l5r7vLKsw4J0V5ppYCb52DYmlvJAE",
-          "y": "rJB3-0gL5D54eEOghuOvinoR7LTMRDaPtC9IrcPafFg"
+          "x": "J-BKQWeQrlXc04jE9_ZoRY0oBpGfjK_dsDQJqSSQcl8",
+          "y": "14sehBTvbpsUrSOyZDzVNRMagDlHaMp-NuDmytfGN9I"
         },
         "attributes": {
           "enabled": true,
-          "created": 1668462890,
-          "updated": 1668462890,
+          "created": 1668714542,
+          "updated": 1668714542,
           "recoveryLevel": "Recoverable\u002BPurgeable",
           "recoverableDays": 90,
           "exportable": false

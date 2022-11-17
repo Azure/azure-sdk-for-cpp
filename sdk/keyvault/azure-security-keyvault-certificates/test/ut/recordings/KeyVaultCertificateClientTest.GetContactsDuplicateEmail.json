@@ -5,11 +5,11 @@
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "127",
         "Content-Type": "application/json",
+        "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-keyvault-certificates/4.2.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "3a6cb05b-3765-436e-5991-144f8f39f67f"
+        "x-ms-client-request-id": "3935c010-6c0b-4cad-55f7-3d8cd5b4fb72"
       },
       "RequestBody": {
         "contacts": [
@@ -29,18 +29,18 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "191",
+        "Content-Length": "190",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 14 Nov 2022 20:41:28 GMT",
+        "Date": "Thu, 17 Nov 2022 20:07:58 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "3a6cb05b-3765-436e-5991-144f8f39f67f",
+        "x-ms-client-request-id": "3935c010-6c0b-4cad-55f7-3d8cd5b4fb72",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "ea1c1191-d617-48ae-83b7-aa1fb90cff69"
+        "x-ms-request-id": "f6dcb3e6-723d-4233-be10-3b8a3d272c0f"
       },
       "ResponseBody": {
         "id": "https://REDACTED1.vault.azure.net/certificates/contacts",
@@ -64,27 +64,27 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-certificates/4.2.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "46b6eee4-646d-45f7-6a05-e2e5f20eda1c"
+        "x-ms-client-request-id": "ffe0ecf5-a244-4aa0-6956-23704da5d504"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "191",
+        "Content-Length": "190",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 14 Nov 2022 20:41:28 GMT",
+        "Date": "Thu, 17 Nov 2022 20:07:58 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "46b6eee4-646d-45f7-6a05-e2e5f20eda1c",
+        "x-ms-client-request-id": "ffe0ecf5-a244-4aa0-6956-23704da5d504",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "e07cd9b6-44ad-47de-bd18-01b05a5c4346"
+        "x-ms-request-id": "420e8970-ff16-4104-be22-72179ae339db"
       },
       "ResponseBody": {
         "id": "https://REDACTED1.vault.azure.net/certificates/contacts",
@@ -108,27 +108,27 @@
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-certificates/4.2.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "3d2915c6-6507-49fe-4a20-bb58370ff1c3"
+        "x-ms-client-request-id": "bde9de86-6e53-4552-4674-e30a83f8fd54"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "191",
+        "Content-Length": "190",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 14 Nov 2022 20:41:28 GMT",
+        "Date": "Thu, 17 Nov 2022 20:07:58 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "3d2915c6-6507-49fe-4a20-bb58370ff1c3",
+        "x-ms-client-request-id": "bde9de86-6e53-4552-4674-e30a83f8fd54",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "daf6e35b-8289-4518-9141-442d32e9a32d"
+        "x-ms-request-id": "dea9fd42-b410-4021-9ec2-085f6c2a2010"
       },
       "ResponseBody": {
         "id": "https://REDACTED1.vault.azure.net/certificates/contacts",

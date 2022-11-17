@@ -5,11 +5,10 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "65",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "3ddf7fa6-030b-4e65-44ee-c06826d6a473"
+        "x-ms-client-request-id": "4a6f8556-e3f9-4ae3-5ac8-b867b7f666a4"
       },
       "RequestBody": {
         "attributes": {
@@ -31,27 +30,27 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-request-id": "730bd4f8-6474-11ed-a6a6-6045bd7778ea",
-        "x-ms-server-latency": "723"
+        "x-ms-request-id": "e3a22026-66b0-11ed-a576-6045bd86db6d",
+        "x-ms-server-latency": "606"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1668468682,
+          "created": 1668714543,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1668468682
+          "updated": 1668714543
         },
         "key": {
           "crv": "P-256",
           "key_ops": [
             "sign"
           ],
-          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/907df73ff8ee02daa3a2cc8634e9c0e8",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/140bc68a2be7060412eac74401d9cd1f",
           "kty": "EC-HSM",
-          "x": "La-uxl_lBUenckmcBUs4D_3y78yTuVsDHV4QatYkLNM",
-          "y": "z3c19HaCcpIo14kIsXHxSNOK2A0Mv7yegpS_g-DA2P4"
+          "x": "4fBkxu4FqfaFzVL9Hhw3Eb4pppv8m4sinS6ToZtTItc",
+          "y": "7kXskMjWHf_BJxrznhucM421nnzS-BaaRqgHzKUF6LM"
         }
       }
     },
@@ -60,9 +59,9 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "06d16f25-0d94-4582-65af-526d7da657c3"
+        "x-ms-client-request-id": "44c20812-66a3-43d9-5ea3-12b34c3d8b63"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -77,27 +76,27 @@
         "x-ms-build-version": "1.0.20221108-2-9cd4079e-1.0.20221020-1-945ffe56-develop",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-request-id": "73833016-6474-11ed-a6a6-6045bd7778ea",
-        "x-ms-server-latency": "94"
+        "x-ms-request-id": "e4069592-66b0-11ed-a576-6045bd86db6d",
+        "x-ms-server-latency": "95"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1668468682,
+          "created": 1668714543,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1668468682
+          "updated": 1668714543
         },
         "key": {
           "crv": "P-256",
           "key_ops": [
             "sign"
           ],
-          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/907df73ff8ee02daa3a2cc8634e9c0e8",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/140bc68a2be7060412eac74401d9cd1f",
           "kty": "EC-HSM",
-          "x": "La-uxl_lBUenckmcBUs4D_3y78yTuVsDHV4QatYkLNM",
-          "y": "z3c19HaCcpIo14kIsXHxSNOK2A0Mv7yegpS_g-DA2P4"
+          "x": "4fBkxu4FqfaFzVL9Hhw3Eb4pppv8m4sinS6ToZtTItc",
+          "y": "7kXskMjWHf_BJxrznhucM421nnzS-BaaRqgHzKUF6LM"
         }
       }
     }

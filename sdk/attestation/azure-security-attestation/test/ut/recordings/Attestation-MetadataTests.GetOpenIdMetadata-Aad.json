@@ -4,20 +4,20 @@
       "RequestUri": "https://REDACTED.wus.attest.azure.net/certs",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-security.attestation/1.1.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "1ceeaf8c-ca8d-4a97-4347-91bcc46aefa8"
+        "x-ms-client-request-id": "72613633-fd19-4422-6c9a-6c72c5ede250"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "20598",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 01:41:25 GMT",
+        "Date": "Thu, 17 Nov 2022 20:29:07 GMT",
         "Server": "Kestrel",
         "x-ms-maa-service-version": "1.11.02134.501",
-        "x-ms-request-id": "00-5e5cdddc429a710606843b12e3b9eaab-ec4d865bcda8901c-00"
+        "x-ms-request-id": "00-12a3737f0b8c0b6bed98ec2336d20f48-d2d6ba257fa7ed62-00"
       },
       "ResponseBody": {
         "keys": [
@@ -53,20 +53,20 @@
       "RequestUri": "https://REDACTED.wus.attest.azure.net/.well-known/openid-configuration",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Connection": "keep-alive",
+        "Content-Length": "0",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-security.attestation/1.1.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "fec7ff4f-8e9f-49c4-703f-e208898f93d1"
+        "x-ms-client-request-id": "1d576744-c9f5-4392-7d67-c457d1a22a56"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "570",
+        "Content-Length": "585",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 01:41:25 GMT",
+        "Date": "Thu, 17 Nov 2022 20:29:07 GMT",
         "Server": "Kestrel",
         "x-ms-maa-service-version": "1.11.02134.501",
-        "x-ms-request-id": "00-f69c9615223cd87ed3be5c4a4afc927a-829872eb7c9d1b8e-00"
+        "x-ms-request-id": "00-47a34c383c5778d0615caffcf26bb96d-1b3baa26b8fda8bd-00"
       },
       "ResponseBody": {
         "response_types_supported": [
@@ -78,7 +78,7 @@
         ],
         "revocation_endpoint": "https://REDACTED.wus.attest.azure.net/revoke",
         "issuer": "https://REDACTED.wus.attest.azure.net",
-        "jwks_uri": "https://REDACTED.wus.attest.azure.net/certs",
+        "jwks_uri": "https://cpgearamaattestationaad.wus.attest.azure.net/certs",
         "claims_supported": [
           "cnf",
           "nonce",
