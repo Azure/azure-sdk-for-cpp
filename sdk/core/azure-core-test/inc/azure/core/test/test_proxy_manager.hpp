@@ -53,13 +53,18 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Test::TestContextManager& m_testContext;
     const std::string m_proxy = "https://localhost:5001";
     bool m_isInsecureEnabled = true;
-    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
     TestMode m_currentMode = TestMode::LIVE;
     std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_privatePipeline;
 
+    /**
+     * @brief Configures the proxy to ignore certificate validation
+     *
+     */
+    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
+
   public:
     /**
-     * @brief Enables to init an interceptor with empty values.
+     * @brief Enables to init TestProxyManager with empty values.
      *
      */
     TestProxyManager(Azure::Core::Test::TestContextManager& testContext)
@@ -76,10 +81,34 @@ namespace Azure { namespace Core { namespace Test {
       SetProxySanitizer();
     }
 
+    /**
+    * Are we in RECORD mode
+    * 
+    * @return bool indicating RECORD mode
+    */
     bool IsRecordMode() { return m_currentMode == TestMode::RECORD; }
+
+    /**
+     * Are we in PLAYBACK mode
+     *
+     * @return bool indicating PLAYBACK mode
+     */
     bool IsPlaybackMode() { return m_currentMode == TestMode::PLAYBACK; }
+
+    /**
+     * Gets thes proxy https url
+     *
+     * @return string containing the https url of the proxy (e.g. "https://localhost:xyz")
+     */
     std::string GetTestProxy() { return m_proxy; };
+
+    /**
+     * Gets a ref to the test context
+     *
+     * @return Test context ref
+     */
     Azure::Core::Test::TestContextManager& GetTestContext() { return m_testContext; }
+
     /**
      * Gets HTTP pipeline policy that records network calls and its data is managed by the
      * TestProxy.
@@ -108,10 +137,36 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_shared<TestNonExpiringCredential>();
     }
 
+    /**
+     * Sets proxy to start RECORD test
+     *
+     */
     void SetStartRecordMode();
+
+    /**
+     * Sets proxy to stop RECORD test and save the recording file.
+     *
+     */
     void SetStopRecordMode();
+
+    /**
+     * Sets proxy to start PLAYBACK test.
+     *
+     */
     void SetStartPlaybackMode();
+
+    /**
+     * Sets proxy to stop PLAYBACK test.
+     *
+     */
     void SetStopPlaybackMode();
+
+
+    /**
+     * Gets the test recording ID
+     *
+     * @returns recording ID
+     */
     std::string GetRecordingId() { return m_testContext.RecordingId; }
 
   private:

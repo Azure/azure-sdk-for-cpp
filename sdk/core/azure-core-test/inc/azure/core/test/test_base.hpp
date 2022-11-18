@@ -390,5 +390,22 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     void TearDown() override;
+
+  public:
+    // Per-test-suite set-up.
+    // Called before the first test in this test suite.
+    // Can be omitted if not needed.
+    static void SetUpTestSuite()
+    {
+      std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted testproxy.ps1");
+    }
+
+    // Per-test-suite tear-down.
+    // Called after the last test in this test suite.
+    // Can be omitted if not needed.
+    static void TearDownTestSuite()
+    {
+      std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted stopProxy.ps1");
+    }
   };
 }}} // namespace Azure::Core::Test

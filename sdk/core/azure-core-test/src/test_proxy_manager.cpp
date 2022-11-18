@@ -186,20 +186,7 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
 }
 
 void TestProxyManager::SetProxySanitizer()
-{ /*
-  // POST to URI <proxyURL>/Admin/AddSanitizer
-// dictionary dictionary
-{
-    "x-abstraction-identifier": "HeaderRegexSanitizer"
-}
-// request body
-{
-    "key": "Location",
-    "value": "fakeaccount",
-    "regex": "https\\:\\/\\/(?<account>[a-z]+)\\.(?:table|blob|queue)\\.core\\.windows\\.net",
-    "groupForReplace": "account"
-}
-  */
+{ 
   Azure::Core::Url sanitizerRequest(m_proxy);
 
   sanitizerRequest.AppendPath("Admin");

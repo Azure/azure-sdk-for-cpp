@@ -140,26 +140,6 @@ namespace Azure { namespace Storage {
     public:
       const static Azure::ETag DummyETag;
       const static Azure::ETag DummyETag2;
-    
-    public:
-      // Per-test-suite set-up.
-      // Called before the first test in this test suite.
-      // Can be omitted if not needed.
-      static void SetUpTestSuite()
-      {
-        std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
-        std::system("pwsh "
-                    "testproxy.ps1");
-      }
-
-      // Per-test-suite tear-down.
-      // Called after the last test in this test suite.
-      // Can be omitted if not needed.
-      static void TearDownTestSuite()
-      {
-        std::system("pwsh "
-                    "stopProxy.ps1");
-      }
     };
 
     constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
