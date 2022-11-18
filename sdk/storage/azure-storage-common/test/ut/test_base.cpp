@@ -35,14 +35,14 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
-  constexpr static const char* StandardStorageConnectionStringValue = "";
+  constexpr static const char* StandardStorageConnectionStringValue = "DefaultEndpointsProtocol=https;AccountName=goqu;AccountKey=N5Vem+VR5D17LKLjj8Gcoyl02Czf6htIZkLorEHPNOH6V3e89Xf7PnK84cEjjj919rmkBfb4KN/s+AStXcbdpg==;EndpointSuffix=core.windows.net";
   constexpr static const char* PremiumStorageConnectionStringValue = "";
   constexpr static const char* BlobStorageConnectionStringValue = "";
-  constexpr static const char* PremiumFileConnectionStringValue = "";
-  constexpr static const char* AdlsGen2ConnectionStringValue = "";
-  constexpr static const char* AadTenantIdValue = "";
-  constexpr static const char* AadClientIdValue = "";
-  constexpr static const char* AadClientSecretValue = "";
+  constexpr static const char* PremiumFileConnectionStringValue = "DefaultEndpointsProtocol=https;AccountName=goqupfile;AccountKey=xzLIpmFA0edVm6/NlL4t3vT43CdotjBlpbbnuzLjhlsAqU39v3xzUmDFZqb62hNe1DkLvBjPxfmd+AStlWZefQ==;EndpointSuffix=core.windows.net";
+  constexpr static const char* AdlsGen2ConnectionStringValue = "DefaultEndpointsProtocol=https;AccountName=dgoqu;AccountKey=wulhCQqcvM1B5XrD0Cz4zd+vPQvHRBMQgYFXvyM3Ac70n8aezmVBG+qL/gJ86mnwCSVwm/zh+CIM+AStsmb5UA==;EndpointSuffix=core.windows.net";
+  constexpr static const char* AadTenantIdValue = "72f988bf-86f1-41af-91ab-2d7cd011db47";
+  constexpr static const char* AadClientIdValue = "11c655c5-28ef-4f01-81a6-0e0940cb0164";
+  constexpr static const char* AadClientSecretValue = "Cdh8Q~ErDwqvAzMq_hDElYP3VJfM_e620r_a8cMZ";
 
   const std::string& StorageTest::StandardStorageConnectionString()
   {

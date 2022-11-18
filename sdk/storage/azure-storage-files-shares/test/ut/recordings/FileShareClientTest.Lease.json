@@ -1,416 +1,553 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "865c7afd-233a-4719-7953-f60fcb5864a4",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "1af7033b-9a91-49fa-4594-651f8317e050",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "865c7afd-233a-4719-7953-f60fcb5864a4",
-        "x-ms-request-id": "a253a293-701a-0044-6cd2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "1af7033b-9a91-49fa-4594-651f8317e050",
+        "x-ms-request-id": "7bc8ad72-701a-00fe-1ac9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "a3ec13c3-8d04-4cc8-508a-d4dd8c7b005a",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "e8d147f1-ab59-4cd2-4367-1893e982b4b0",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "a3ec13c3-8d04-4cc8-508a-d4dd8c7b005a",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "e8d147f1-ab59-4cd2-4367-1893e982b4b0",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "a253a297-701a-0044-6dd2-b2e499000000",
+        "x-ms-request-id": "7bc8ad74-701a-00fe-1bc9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "9f779426-285a-4b26-42a9-370b59bf0aff",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "7aa25eab-4b14-4c4e-51f9-00437f47f76f",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "20",
+        "x-ms-proposed-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "9f779426-285a-4b26-42a9-370b59bf0aff",
-        "x-ms-lease-id": "b5d200d3-5a1e-45a6-7a37-c4382fd74868",
-        "x-ms-request-id": "a253a298-701a-0044-6ed2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "7aa25eab-4b14-4c4e-51f9-00437f47f76f",
+        "x-ms-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
+        "x-ms-request-id": "7bc8ad75-701a-00fe-1cc9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "f778f1b2-7742-46a7-72ff-d5b33bdc7f77",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "6bda884a-802a-4560-59ff-c4b050619435",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:30 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-lease-duration,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "f778f1b2-7742-46a7-72ff-d5b33bdc7f77",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "6bda884a-802a-4560-59ff-c4b050619435",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-duration": "fixed",
         "x-ms-lease-state": "leased",
         "x-ms-lease-status": "locked",
-        "x-ms-request-id": "a253a299-701a-0044-6fd2-b2e499000000",
+        "x-ms-request-id": "7bc8ad76-701a-00fe-1dc9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "b2ff8952-725f-4131-7bfc-bc17e1327d6f",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "440712bf-e3e4-452d-452f-e0a2e6089999",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "-1",
+        "x-ms-proposed-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:30 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b2ff8952-725f-4131-7bfc-bc17e1327d6f",
-        "x-ms-lease-id": "b5d200d3-5a1e-45a6-7a37-c4382fd74868",
-        "x-ms-request-id": "a253a29a-701a-0044-70d2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "440712bf-e3e4-452d-452f-e0a2e6089999",
+        "x-ms-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
+        "x-ms-request-id": "7bc8ad77-701a-00fe-1ec9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "e3fad572-8871-4efe-424e-304215b0a283",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "82315926-2424-4899-6461-8dd32c60b277",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:30 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-lease-duration,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "e3fad572-8871-4efe-424e-304215b0a283",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "82315926-2424-4899-6461-8dd32c60b277",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-duration": "infinite",
         "x-ms-lease-state": "leased",
         "x-ms-lease-status": "locked",
-        "x-ms-request-id": "a253a29b-701a-0044-71d2-b2e499000000",
+        "x-ms-request-id": "7bc8ad78-701a-00fe-1fc9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "ec276f41-a7c9-437e-4d48-5d3a2dcc085a",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "aea1055c-66ef-408e-78fe-e5f38e9454d6",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:30 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-lease-duration,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "ec276f41-a7c9-437e-4d48-5d3a2dcc085a",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "aea1055c-66ef-408e-78fe-e5f38e9454d6",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-duration": "infinite",
         "x-ms-lease-state": "leased",
         "x-ms-lease-status": "locked",
-        "x-ms-request-id": "a253a29c-701a-0044-72d2-b2e499000000",
+        "x-ms-request-id": "7bc8ad79-701a-00fe-20c9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "89d56f52-a528-4ff9-7bce-963f30435b35",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "f4150125-f6db-462e-7f14-d2a70e8bed3d",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:31 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "89d56f52-a528-4ff9-7bce-963f30435b35",
-        "x-ms-lease-id": "b5d200d3-5a1e-45a6-7a37-c4382fd74868",
-        "x-ms-request-id": "a253a29d-701a-0044-73d2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "f4150125-f6db-462e-7f14-d2a70e8bed3d",
+        "x-ms-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
+        "x-ms-request-id": "7bc8ad7a-701a-00fe-21c9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "beb3e640-92ff-4cf2-7847-a44991f5da61",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b5ccb976-7f5b-46f3-5997-975348960916",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:31 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-lease-duration,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "beb3e640-92ff-4cf2-7847-a44991f5da61",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "b5ccb976-7f5b-46f3-5997-975348960916",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-duration": "infinite",
         "x-ms-lease-state": "leased",
         "x-ms-lease-status": "locked",
-        "x-ms-request-id": "a253a2a0-701a-0044-74d2-b2e499000000",
+        "x-ms-request-id": "7bc8ad7b-701a-00fe-22c9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "e70ce540-62fc-4a8f-6dfb-f84d6e8c4b7a",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "18c73a0f-adef-4b4b-436c-6cc5e1945255",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "x-ms-lease-action": "change",
+        "x-ms-lease-id": "6520927a-1216-4fb9-731f-7ffbe87cb001",
+        "x-ms-proposed-lease-id": "9c3537de-4361-4de4-75be-1a0d0074edf4",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:31 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e70ce540-62fc-4a8f-6dfb-f84d6e8c4b7a",
-        "x-ms-lease-id": "49c22105-c889-4f1b-405c-79361eb87fdb",
-        "x-ms-request-id": "a253a2a2-701a-0044-75d2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "18c73a0f-adef-4b4b-436c-6cc5e1945255",
+        "x-ms-lease-id": "9c3537de-4361-4de4-75be-1a0d0074edf4",
+        "x-ms-request-id": "7bc8ad7c-701a-00fe-23c9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "48f5a5fd-7257-4f7d-5168-f89c7a64f88d",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "f07767cb-8189-42c9-5894-f3a92463e98f",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:51 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:32 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-lease-duration,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "48f5a5fd-7257-4f7d-5168-f89c7a64f88d",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "f07767cb-8189-42c9-5894-f3a92463e98f",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-duration": "infinite",
         "x-ms-lease-state": "leased",
         "x-ms-lease-status": "locked",
-        "x-ms-request-id": "a253a2a4-701a-0044-76d2-b2e499000000",
+        "x-ms-request-id": "7bc8ad7d-701a-00fe-24c9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "afb18ed9-1b03-4c97-798c-5d77b89e0d85",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "9978218d-60b0-4717-5c1a-0da3553b0604",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:51 GMT",
+        "x-ms-lease-action": "release",
+        "x-ms-lease-id": "9c3537de-4361-4de4-75be-1a0d0074edf4",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:32 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "afb18ed9-1b03-4c97-798c-5d77b89e0d85",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "9978218d-60b0-4717-5c1a-0da3553b0604",
         "x-ms-lease-time": "0",
-        "x-ms-request-id": "a253a2a5-701a-0044-77d2-b2e499000000",
+        "x-ms-request-id": "7bc8ad7e-701a-00fe-25c9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "1e8e3670-d1b0-4b49-6b13-6d426dd48536",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b2aa2af2-2374-43cc-70dd-82285899756b",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:51 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "-1",
+        "x-ms-proposed-lease-id": "cc09fabe-57a9-492f-79ee-d0b6fef36547",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:32 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "1e8e3670-d1b0-4b49-6b13-6d426dd48536",
-        "x-ms-lease-id": "b5b2e3ec-7129-4330-7e90-72dd6cd539d4",
-        "x-ms-request-id": "a253a2a7-701a-0044-78d2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "b2aa2af2-2374-43cc-70dd-82285899756b",
+        "x-ms-lease-id": "cc09fabe-57a9-492f-79ee-d0b6fef36547",
+        "x-ms-request-id": "7bc8ad7f-701a-00fe-26c9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "2e58ffdf-a9a1-46c1-62d0-faf39a9e45b1",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "d40b0ec8-af46-4aef-7631-f14649010328",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:51 GMT",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:32 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Last-Modified,ETag,x-ms-lease-status,x-ms-lease-state,x-ms-lease-duration,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-share-quota,x-ms-access-tier,x-ms-access-tier-change-time,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-access-tier": "TransactionOptimized",
-        "x-ms-access-tier-change-time": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "x-ms-client-request-id": "2e58ffdf-a9a1-46c1-62d0-faf39a9e45b1",
+        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "x-ms-client-request-id": "d40b0ec8-af46-4aef-7631-f14649010328",
         "x-ms-has-immutability-policy": "false",
         "x-ms-has-legal-hold": "false",
         "x-ms-lease-duration": "infinite",
         "x-ms-lease-state": "leased",
         "x-ms-lease-status": "locked",
-        "x-ms-request-id": "a253a2a8-701a-0044-79d2-b2e499000000",
+        "x-ms-request-id": "7bc8ad80-701a-00fe-27c9-fa5612000000",
         "x-ms-share-quota": "5120",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "d6b58ce7-3827-4a78-6dc1-3a58fcc7172b",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease\u0026restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "e79dfd16-ef1e-4e45-479d-5aa23e4c0c49",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:51 GMT",
+        "x-ms-lease-action": "break",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Accepted",
-        "STATUS_CODE": "202",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:33 GMT",
-        "etag": "\"0x8DA80E94A905682\"",
-        "last-modified": "Thu, 18 Aug 2022 07:14:29 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d6b58ce7-3827-4a78-6dc1-3a58fcc7172b",
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "ETag": "\u00220x8DAC8E09F7672F3\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:13:49 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "e79dfd16-ef1e-4e45-479d-5aa23e4c0c49",
         "x-ms-lease-time": "0",
-        "x-ms-request-id": "a253a2aa-701a-0044-7ad2-b2e499000000",
+        "x-ms-request-id": "7bc8ad81-701a-00fe-28c9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?comp=lease&restype=share"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-shares/12.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "d23bbabb-a058-47db-626c-4b9949f17ee7",
+      "RequestUri": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "477db5fb-5437-4535-4b89-6aa22442b142",
+        "x-ms-date": "Thu, 17 Nov 2022 21:13:51 GMT",
+        "x-ms-delete-snapshots": "include",
         "x-ms-version": "2021-06-08"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Accepted",
-        "STATUS_CODE": "202",
-        "content-length": "0",
-        "date": "Thu, 18 Aug 2022 07:14:33 GMT",
-        "server": "Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d23bbabb-a058-47db-626c-4b9949f17ee7",
-        "x-ms-request-id": "a253a2ab-701a-0044-7bd2-b2e499000000",
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:13:50 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "477db5fb-5437-4535-4b89-6aa22442b142",
+        "x-ms-request-id": "7bc8ad82-701a-00fe-29c9-fa5612000000",
         "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.file.core.windows.net/fileshareclienttestlease?restype=share"
+      "ResponseBody": null
     }
-  ]
+  ],
+  "Variables": {}
 }

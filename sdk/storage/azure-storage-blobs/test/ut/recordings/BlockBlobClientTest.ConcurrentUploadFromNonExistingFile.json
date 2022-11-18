@@ -1,68 +1,92 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "408546d5-de6a-4fa0-642e-c7ad43b94287",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "31a67933-2022-4dc9-6c09-03b539448a82",
+        "x-ms-date": "Thu, 17 Nov 2022 22:00:58 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:22 GMT",
-        "etag": "\"0x8D9C0E004ABADE4\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "408546d5-de6a-4fa0-642e-c7ad43b94287",
-        "x-ms-request-id": "345a9324-701e-0074-01c8-f25e0e000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:58 GMT",
+        "ETag": "\u00220x8DAC8E75988FD44\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "31a67933-2022-4dc9-6c09-03b539448a82",
+        "x-ms-request-id": "1d3451c3-701e-00ee-08d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile?restype=container"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5321da1e-bfd4-4cd4-74d6-ea446381a491",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile/ConcurrentUploadFromNonExistingFile",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "1eea65cf-4de5-4a86-702c-4e74406c284f",
+        "x-ms-date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:345a9331-701e-0074-0cc8-f25e0e000000\nTime:2021-12-16T22:04:23.3453025Z</Message></Error>",
-        "REASON_PHRASE": "The specified blob does not exist.",
-        "STATUS_CODE": "404",
-        "content-length": "215",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:22 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5321da1e-bfd4-4cd4-74d6-ea446381a491",
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "215",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:58 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "1eea65cf-4de5-4a86-702c-4e74406c284f",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "345a9331-701e-0074-0cc8-f25e0e000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3451d1-701e-00ee-14d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile/ConcurrentUploadFromNonExistingFile"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EBlobNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified blob does not exist.\n",
+        "RequestId:1d3451d1-701e-00ee-14d0-fa937a000000\n",
+        "Time:2022-11-17T22:01:59.2366534Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cb4f199d-1a68-4973-448d-20b48b3b2aaf",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile?restype=container",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "93f895fd-cf35-4723-478e-5fce995e77dc",
+        "x-ms-date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Accepted",
-        "STATUS_CODE": "202",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:22 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "cb4f199d-1a68-4973-448d-20b48b3b2aaf",
-        "x-ms-request-id": "de0a0e14-a01e-002a-38c8-f2b5ee000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:58 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "93f895fd-cf35-4723-478e-5fce995e77dc",
+        "x-ms-request-id": "1d3451d8-701e-00ee-1bd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile?restype=container"
+      "ResponseBody": null
     }
-  ]
+  ],
+  "Variables": {}
 }

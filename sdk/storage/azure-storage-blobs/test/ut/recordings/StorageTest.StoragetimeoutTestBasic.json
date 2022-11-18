@@ -1,48 +1,69 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "fb280cf6-8618-4a14-71c9-e4b1a38f249f",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/storagetimeouttestbasic?restype=container",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "f11a6244-86a5-4ba9-5891-ace2408a58e0",
+        "x-ms-date": "Thu, 17 Nov 2022 21:51:36 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The specified container does not exist.\nRequestId:90986367-401e-0032-33c8-f26a89000000\nTime:2021-12-16T22:04:58.0422473Z</Message></Error>",
-        "REASON_PHRASE": "The specified container does not exist.",
-        "STATUS_CODE": "404",
-        "content-length": "225",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:57 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "fb280cf6-8618-4a14-71c9-e4b1a38f249f",
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "225",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 21:51:35 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "f11a6244-86a5-4ba9-5891-ace2408a58e0",
         "x-ms-error-code": "ContainerNotFound",
-        "x-ms-request-id": "90986367-401e-0032-33c8-f26a89000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "886c3e1c-d01e-00f7-74ce-fa13c1000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/storagetimeouttestbasic?restype=container"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
+        "RequestId:886c3e1c-d01e-00f7-74ce-fa13c1000000\n",
+        "Time:2022-11-17T21:51:36.6213857Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8de8f0bf-355a-4634-47a0-fab16a238dbd",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/storagetimeouttestbasic?restype=container\u0026timeout=299",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "ac781b8f-7252-44bc-6e6b-19bb0a8b6e29",
+        "x-ms-date": "Thu, 17 Nov 2022 21:51:37 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The specified container does not exist.\nRequestId:cea63e69-e01e-002b-5ac8-f2ea32000000\nTime:2021-12-16T22:04:58.0862689Z</Message></Error>",
-        "REASON_PHRASE": "The specified container does not exist.",
-        "STATUS_CODE": "404",
-        "content-length": "225",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:57 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8de8f0bf-355a-4634-47a0-fab16a238dbd",
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "225",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 21:51:35 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "ac781b8f-7252-44bc-6e6b-19bb0a8b6e29",
         "x-ms-error-code": "ContainerNotFound",
-        "x-ms-request-id": "cea63e69-e01e-002b-5ac8-f2ea32000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "886c3e23-d01e-00f7-7ace-fa13c1000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/storagetimeouttestbasic?restype=container&timeout=299"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
+        "RequestId:886c3e23-d01e-00f7-7ace-fa13c1000000\n",
+        "Time:2022-11-17T21:51:36.6843488Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     }
-  ]
+  ],
+  "Variables": {}
 }

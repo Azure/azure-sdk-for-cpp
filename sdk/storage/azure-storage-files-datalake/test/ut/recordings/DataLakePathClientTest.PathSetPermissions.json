@@ -1,392 +1,523 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a2543949-9d0f-4fc7-761f-1621f6214e1f",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/datalakepathclienttestpathsetpermissions?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "bcbf0a40-6db9-4501-6ba0-aa64ef23c578",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8153BE187\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a2543949-9d0f-4fc7-761f-1621f6214e1f",
-        "x-ms-request-id": "f344c9bb-f01e-0021-2fb0-fde194000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE3C8A9F5\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "bcbf0a40-6db9-4501-6ba0-aa64ef23c578",
+        "x-ms-request-id": "fca44808-f01e-00c1-3cc8-fa0a8b000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakepathclienttestpathsetpermissions?restype=container"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3257f94c-215e-4aee-66d9-e68515821475",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/datalakepathclienttestpathsetpermissions?resource=file",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "1bc67bf1-81fa-4573-4ed6-6840ff879dcf",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154A5E04\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3257f94c-215e-4aee-66d9-e68515821475",
-        "x-ms-request-id": "118fbe0c-301f-003e-62b0-fd5290000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:34 GMT",
+        "ETag": "\u00220x8DAC8DFE3D539C6\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "1bc67bf1-81fa-4573-4ed6-6840ff879dcf",
+        "x-ms-request-id": "738dfdf8-a01f-0065-76c8-fa032d000000",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10"
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/datalakepathclienttestpathsetpermissions?resource=file"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "95555597-7e39-4af8-56ac-1f14f83de0b3",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?resource=file",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "119089c7-03ee-4f5a-4a69-13201be4f646",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "95555597-7e39-4af8-56ac-1f14f83de0b3",
-        "x-ms-request-id": "118fbe0d-301f-003e-63b0-fd5290000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:34 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "119089c7-03ee-4f5a-4a69-13201be4f646",
+        "x-ms-request-id": "738dfdfb-a01f-0065-77c8-fa032d000000",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10"
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?resource=file"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "06e1da06-e8ff-4356-4b0a-c7e34d26b675",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "014a899a-a0e8-46cd-637b-b6e642782548",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-permissions": "rwxrw-rw-",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "06e1da06-e8ff-4356-4b0a-c7e34d26b675",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:34 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "014a899a-a0e8-46cd-637b-b6e642782548",
         "x-ms-namespace-enabled": "true",
-        "x-ms-request-id": "118fbe0e-301f-003e-64b0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfdfc-a01f-0065-78c8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=setAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c8e82174-1e15-4db1-7f98-90d7465f7620",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=getAccessControl",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "25904d2e-c553-42da-72ee-cecf1cbede7d",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "HEAD",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Date": "Thu, 17 Nov 2022 21:08:34 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-acl": "user::rwx,group::rw-,other::rw-",
-        "x-ms-client-request-id": "c8e82174-1e15-4db1-7f98-90d7465f7620",
+        "x-ms-client-request-id": "25904d2e-c553-42da-72ee-cecf1cbede7d",
         "x-ms-group": "$superuser",
         "x-ms-owner": "$superuser",
         "x-ms-permissions": "rwxrw-rw-",
-        "x-ms-request-id": "118fbe0f-301f-003e-65b0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfdfd-a01f-0065-79c8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=getAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ce6ce64f-c50c-4120-5a66-763999334591",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "02955155-5aad-4199-61c7-95432fbc3fb2",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-permissions": "rw-rw-rw-",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ce6ce64f-c50c-4120-5a66-763999334591",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "02955155-5aad-4199-61c7-95432fbc3fb2",
         "x-ms-namespace-enabled": "true",
-        "x-ms-request-id": "118fbe10-301f-003e-66b0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfdfe-a01f-0065-7ac8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=setAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5e24224f-626f-4648-5b5f-4f41aa08280f",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=getAccessControl",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "fd2959f0-62c9-4e39-6db1-b2c3c0cad3f6",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "HEAD",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-acl": "user::rw-,group::rw-,other::rw-",
-        "x-ms-client-request-id": "5e24224f-626f-4648-5b5f-4f41aa08280f",
+        "x-ms-client-request-id": "fd2959f0-62c9-4e39-6db1-b2c3c0cad3f6",
         "x-ms-group": "$superuser",
         "x-ms-owner": "$superuser",
         "x-ms-permissions": "rw-rw-rw-",
-        "x-ms-request-id": "118fbe11-301f-003e-67b0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfdff-a01f-0065-7bc8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=getAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "14b82a41-61d1-4f8e-4319-677233a5692f",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "10e1d02b-66be-4d2b-729a-3afd12730574",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "x-ms-permissions": "0766",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "14b82a41-61d1-4f8e-4319-677233a5692f",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "10e1d02b-66be-4d2b-729a-3afd12730574",
         "x-ms-namespace-enabled": "true",
-        "x-ms-request-id": "118fbe12-301f-003e-68b0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfe00-a01f-0065-7cc8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=setAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "60a23bfd-92a6-45fe-59af-7ca9430a037e",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=getAccessControl",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "f30e11b0-a7e9-4416-6142-15c979596512",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "HEAD",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8154D671C\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE3DE7DC4\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-acl": "user::rwx,group::rw-,other::rw-",
-        "x-ms-client-request-id": "60a23bfd-92a6-45fe-59af-7ca9430a037e",
+        "x-ms-client-request-id": "f30e11b0-a7e9-4416-6142-15c979596512",
         "x-ms-group": "$superuser",
         "x-ms-owner": "$superuser",
         "x-ms-permissions": "rwxrw-rw-",
-        "x-ms-request-id": "118fbe13-301f-003e-69b0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfe01-a01f-0065-7dc8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions1?action=getAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "6590d60e-6e88-4ddc-4f6d-c2ee74d31b12",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions2?resource=file",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "b5a8fc34-2838-41f0-7323-da16202b79cb",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8155A6723\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "6590d60e-6e88-4ddc-4f6d-c2ee74d31b12",
-        "x-ms-request-id": "118fbe14-301f-003e-6ab0-fd5290000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE41733DD\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "b5a8fc34-2838-41f0-7323-da16202b79cb",
+        "x-ms-request-id": "738dfe02-a01f-0065-7ec8-fa032d000000",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10"
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions2?resource=file"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "017b77f6-f17c-45cf-73e9-9abb21702fe9",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions2?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "If-Modified-Since": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "5892988b-29af-4d6d-6373-f858d790805e",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-permissions": "rwxrw-rw-",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "{\"error\":{\"code\":\"ConditionNotMet\",\"message\":\"The condition specified using HTTP conditional header(s) is not met.\\nRequestId:118fbe15-301f-003e-6bb0-fd5290000000\\nTime:2021-12-30T19:10:46.1921224Z\"}}",
-        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
-        "STATUS_CODE": "412",
-        "content-length": "200",
-        "content-type": "application/json;charset=utf-8",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "017b77f6-f17c-45cf-73e9-9abb21702fe9",
+      "RequestBody": null,
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Content-Length": "200",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "5892988b-29af-4d6d-6373-f858d790805e",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "118fbe15-301f-003e-6bb0-fd5290000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfe03-a01f-0065-7fc8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions2?action=setAccessControl"
+      "ResponseBody": {
+        "error": {
+          "code": "ConditionNotMet",
+          "message": "The condition specified using HTTP conditional header(s) is not met.\nRequestId:738dfe03-a01f-0065-7fc8-fa032d000000\nTime:2022-11-17T21:08:35.6834386Z"
+        }
+      }
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "08b9f1c7-2f86-4758-49a6-0f9c5a856949",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions2?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "If-Unmodified-Since": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4eaad30f-d94f-4c91-551f-4626b9628cce",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-permissions": "rwxrw-rw-",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8155A6723\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "08b9f1c7-2f86-4758-49a6-0f9c5a856949",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE41733DD\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "4eaad30f-d94f-4c91-551f-4626b9628cce",
         "x-ms-namespace-enabled": "true",
-        "x-ms-request-id": "85f9756f-c01f-003a-1eb0-fddf97000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfe04-a01f-0065-80c8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions2?action=setAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "345d2dfb-66eb-473b-6d38-3d0368d3dbc0",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions3?resource=file",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "e911af52-b9fe-4ef9-565d-fa8c8624dfd9",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "etag": "\"0x8D9CBC8156805D8\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "345d2dfb-66eb-473b-6d38-3d0368d3dbc0",
-        "x-ms-request-id": "85f97570-c01f-003a-1fb0-fddf97000000",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE4316C09\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "e911af52-b9fe-4ef9-565d-fa8c8624dfd9",
+        "x-ms-request-id": "738dfe05-a01f-0065-01c8-fa032d000000",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10"
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions3?resource=file"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f1aba7a7-a595-4509-5a2c-0576b463ba1b",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions3?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "If-None-Match": "\u00220x8DAC8DFE4316C09\u0022",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "c4adf604-038b-41fb-5b37-ff9e3f499d7c",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-permissions": "rwxrw-rw-",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "{\"error\":{\"code\":\"ConditionNotMet\",\"message\":\"The condition specified using HTTP conditional header(s) is not met.\\nRequestId:85f97572-c01f-003a-21b0-fddf97000000\\nTime:2021-12-30T19:10:46.2837094Z\"}}",
-        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
-        "STATUS_CODE": "412",
-        "content-length": "200",
-        "content-type": "application/json;charset=utf-8",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f1aba7a7-a595-4509-5a2c-0576b463ba1b",
+      "RequestBody": null,
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Content-Length": "200",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "c4adf604-038b-41fb-5b37-ff9e3f499d7c",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "85f97572-c01f-003a-21b0-fddf97000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfe07-a01f-0065-02c8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions3?action=setAccessControl"
+      "ResponseBody": {
+        "error": {
+          "code": "ConditionNotMet",
+          "message": "The condition specified using HTTP conditional header(s) is not met.\nRequestId:738dfe07-a01f-0065-02c8-fa032d000000\nTime:2022-11-17T21:08:35.8553435Z"
+        }
+      }
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "40710a1b-3c32-47b1-4550-f49fd6fa7467",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions3?action=setAccessControl",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "If-Match": "\u00220x8DAC8DFE4316C09\u0022",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "239e9da9-2a24-42fd-77e7-e0c5a5814ae1",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-permissions": "rwxrw-rw-",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "PATCH",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "etag": "\"0x8D9CBC8156805D8\"",
-        "last-modified": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "40710a1b-3c32-47b1-4550-f49fd6fa7467",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "ETag": "\u00220x8DAC8DFE4316C09\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "239e9da9-2a24-42fd-77e7-e0c5a5814ae1",
         "x-ms-namespace-enabled": "true",
-        "x-ms-request-id": "d3807527-d01f-0036-27b0-fd489f000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "738dfe08-a01f-0065-03c8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/PathSetPermissions3?action=setAccessControl"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d825c192-72a3-41cf-4769-538fb4cc8bc6",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/datalakepathclienttestpathsetpermissions",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-files-datalake/12.5.0-beta.2 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "8f240d2c-fd3b-4384-4af9-7024e74e250d",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-version": "2021-06-08"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:46 GMT",
-        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d825c192-72a3-41cf-4769-538fb4cc8bc6",
-        "x-ms-request-id": "d3807528-d01f-0036-28b0-fd489f000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:35 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "8f240d2c-fd3b-4384-4af9-7024e74e250d",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-deletion-id": "133131929159725067",
+        "x-ms-request-id": "738dfe0a-a01f-0065-04c8-fa032d000000",
+        "x-ms-version": "2021-06-08"
       },
-      "Url": "https://REDACTED.dfs.core.windows.net/datalakepathclienttestpathsetpermissions/datalakepathclienttestpathsetpermissions"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "513fb34d-7bba-4e27-5623-d0017cea7553",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/datalakepathclienttestpathsetpermissions?restype=container",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "da32af04-026f-480a-4ad1-5c915638b813",
+        "x-ms-date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Accepted",
-        "STATUS_CODE": "202",
-        "content-length": "0",
-        "date": "Thu, 30 Dec 2021 19:10:45 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "513fb34d-7bba-4e27-5623-d0017cea7553",
-        "x-ms-request-id": "f344cad7-f01e-0021-28b0-fde194000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 21:08:36 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "da32af04-026f-480a-4ad1-5c915638b813",
+        "x-ms-request-id": "fca448e8-f01e-00c1-04c8-fa0a8b000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakepathclienttestpathsetpermissions?restype=container"
+      "ResponseBody": null
     }
-  ]
+  ],
+  "Variables": {}
 }

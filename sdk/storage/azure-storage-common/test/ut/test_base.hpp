@@ -140,6 +140,26 @@ namespace Azure { namespace Storage {
     public:
       const static Azure::ETag DummyETag;
       const static Azure::ETag DummyETag2;
+    
+    public:
+      // Per-test-suite set-up.
+      // Called before the first test in this test suite.
+      // Can be omitted if not needed.
+      static void SetUpTestSuite()
+      {
+        std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
+        std::system("pwsh "
+                    "testproxy.ps1");
+      }
+
+      // Per-test-suite tear-down.
+      // Called after the last test in this test suite.
+      // Can be omitted if not needed.
+      static void TearDownTestSuite()
+      {
+        std::system("pwsh "
+                    "stopProxy.ps1");
+      }
     };
 
     constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
@@ -156,8 +176,7 @@ namespace Azure { namespace Storage {
       return x * 1024 * 1024 * 1024 * 1024;
     }
 
-    class CryptFunctionsTest : public StorageTest {
-    };
+    class CryptFunctionsTest : public StorageTest {};
 
     class ClientSecretCredentialTest : public StorageTest {
 
@@ -203,10 +222,10 @@ namespace Azure { namespace Storage {
 
   namespace Files { namespace DataLake { namespace _detail {
 
-    Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url);
-    Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url);
-    std::string GetBlobUrlFromUrl(const std::string& url);
-    std::string GetDfsUrlFromUrl(const std::string& url);
+        Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url);
+        Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url);
+        std::string GetBlobUrlFromUrl(const std::string& url);
+        std::string GetDfsUrlFromUrl(const std::string& url);
 
   }}} // namespace Files::DataLake::_detail
 

@@ -1,726 +1,1034 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "62d206db-eb19-4125-6d05-38ee5c544488",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4426705c-fa08-4347-79c7-4fd0310bcf53",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:22 GMT",
-        "etag": "\"0x8D9C0E004EC0140\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "62d206db-eb19-4125-6d05-38ee5c544488",
-        "x-ms-request-id": "679c2596-801e-0012-71c8-f2112e000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A0065DC\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "4426705c-fa08-4347-79c7-4fd0310bcf53",
+        "x-ms-request-id": "1d34523a-701e-00ee-76d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob?restype=container"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4c6778fe-9421-4b4d-4800-1b1b11af2691",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "04f9e446-a753-47f4-79ae-c2439a2e2bd4",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "content-md5": "1B2M2Y8AsgTpgAmY7PhCfg==",
-        "date": "Thu, 16 Dec 2021 22:04:22 GMT",
-        "etag": "\"0x8D9C0E004EE49D6\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "4c6778fe-9421-4b4d-4800-1b1b11af2691",
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Content-MD5": "1B2M2Y8AsgTpgAmY7PhCfg==",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A0909FC\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "04f9e446-a753-47f4-79ae-c2439a2e2bd4",
         "x-ms-content-crc64": "AAAAAAAAAAA=",
-        "x-ms-request-id": "679c25b2-801e-0012-0ac8-f2112e000000",
+        "x-ms-request-id": "1d34523f-701e-00ee-7ad0-fa937a000000",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7568470Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:01:59.9888892Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f2e88b96-8bbf-4ffc-5696-8e0637cccc2a",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob?comp=properties",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "3815c0ce-4c0e-4aa6-684c-7683f1217842",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:22 GMT",
-        "etag": "\"0x8D9C0E004F1CBC9\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f2e88b96-8bbf-4ffc-5696-8e0637cccc2a",
-        "x-ms-request-id": "679c25d5-801e-0012-2dc8-f2112e000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A12CC8E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "3815c0ce-4c0e-4aa6-684c-7683f1217842",
+        "x-ms-request-id": "1d345244-701e-00ee-7fd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob?comp=properties"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "562fe8bb-03b4-4837-6973-98edd9fee48a",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob?comp=metadata",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Expect": "100-continue",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "f4843758-4a71-4bda-4cfe-73dd077acc1f",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "562fe8bb-03b4-4837-6973-98edd9fee48a",
-        "x-ms-request-id": "679c25f6-801e-0012-4cc8-f2112e000000",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "f4843758-4a71-4bda-4cfe-73dd077acc1f",
+        "x-ms-request-id": "1d345252-701e-00ee-0cd0-fa937a000000",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob?comp=metadata"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "49e13af2-4939-4c22-4e36-f52bfb776e69",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "51db4a59-e7bf-42b5-6138-111ba409f764",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "49e13af2-4939-4c22-4e36-f52bfb776e69",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "51db4a59-e7bf-42b5-6138-111ba409f764",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "679c2608-801e-0012-5ec8-f2112e000000",
+        "x-ms-request-id": "1d34525e-701e-00ee-17d0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ae760783-15c1-49ec-7771-357e0af0701f",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "aacedd9c-a869-4017-59c0-44dbe06b3b61",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "ae760783-15c1-49ec-7771-357e0af0701f",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "aacedd9c-a869-4017-59c0-44dbe06b3b61",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "679c2617-801e-0012-6cc8-f2112e000000",
+        "x-ms-request-id": "1d345264-701e-00ee-1dd0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a55fcd58-6a15-463a-68b3-f1dece887aaa",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "dd212748-e81c-4d13-7c19-f4aea3a1350c",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "a55fcd58-6a15-463a-68b3-f1dece887aaa",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "dd212748-e81c-4d13-7c19-f4aea3a1350c",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "679c2626-801e-0012-7bc8-f2112e000000",
+        "x-ms-request-id": "1d345268-701e-00ee-21d0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "12d26b94-3c19-46f5-48e3-7d4545f28c71",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "7affb8e1-88cd-4035-57d6-25ee3df502c8",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "12d26b94-3c19-46f5-48e3-7d4545f28c71",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "7affb8e1-88cd-4035-57d6-25ee3df502c8",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "679c262f-801e-0012-04c8-f2112e000000",
+        "x-ms-request-id": "1d34526f-701e-00ee-28d0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "95750928-3168-48a0-5b33-d6ca223520a4",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "156ba729-96ea-494b-71cc-649de0c057d6",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "95750928-3168-48a0-5b33-d6ca223520a4",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "156ba729-96ea-494b-71cc-649de0c057d6",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "679c263a-801e-0012-0fc8-f2112e000000",
+        "x-ms-request-id": "1d345273-701e-00ee-2bd0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "05a2bf40-5504-4bd2-5196-a61cbdbaa7d0",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "fab4820b-8058-4cdb-46fe-feec5e49f69a",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "05a2bf40-5504-4bd2-5196-a61cbdbaa7d0",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "fab4820b-8058-4cdb-46fe-feec5e49f69a",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "679c264b-801e-0012-20c8-f2112e000000",
+        "x-ms-request-id": "1d345279-701e-00ee-2fd0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "402ad7c5-dfe4-4b38-6aa0-a4088f56c770",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "70621188-8cd9-4a20-6c25-e8c7ebf001bc",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "x-ms-range": "bytes=0-9",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:679c265c-801e-0012-31c8-f2112e000000\nTime:2021-12-16T22:04:23.8658101Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "402ad7c5-dfe4-4b38-6aa0-a4088f56c770",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "70621188-8cd9-4a20-6c25-e8c7ebf001bc",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "679c265c-801e-0012-31c8-f2112e000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d34527f-701e-00ee-35d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d34527f-701e-00ee-35d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.5119301Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "23ca4d7b-6c00-445c-59cd-6ba38a270257",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "fe7f32de-d6ac-4d1b-70b6-cce9a67636e5",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-9",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:dde567c5-f01e-006a-4ec8-f2b2d6000000\nTime:2021-12-16T22:04:23.9039072Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "23ca4d7b-6c00-445c-59cd-6ba38a270257",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "fe7f32de-d6ac-4d1b-70b6-cce9a67636e5",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "dde567c5-f01e-006a-4ec8-f2b2d6000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d345286-701e-00ee-3cd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d345286-701e-00ee-3cd0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.5649002Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ccfff02d-0848-4a93-45f1-d1c0b2d00689",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "97d3ad99-0cf1-49b8-4654-193128cea01f",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=1-10",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:46fff31b-901e-0021-2dc8-f24e85000000\nTime:2021-12-16T22:04:23.9540567Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ccfff02d-0848-4a93-45f1-d1c0b2d00689",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "97d3ad99-0cf1-49b8-4654-193128cea01f",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "46fff31b-901e-0021-2dc8-f24e85000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d34528a-701e-00ee-40d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d34528a-701e-00ee-40d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.6178702Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "6a81b21d-c821-498e-4447-1d37ed01e747",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "304fa3c6-9a15-419f-5097-9848c91ca5d7",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=1-10",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:002abcf4-201e-0079-4dc8-f296da000000\nTime:2021-12-16T22:04:23.9948661Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "6a81b21d-c821-498e-4447-1d37ed01e747",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "304fa3c6-9a15-419f-5097-9848c91ca5d7",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "002abcf4-201e-0079-4dc8-f296da000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d345294-701e-00ee-49d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d345294-701e-00ee-49d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.6738393Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4a6252c5-89da-4105-5761-80a907806e17",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4a7f98ee-a455-47fa-44c3-ec48d30a4427",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-0",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:aaf36d1f-301e-0007-33c8-f2069d000000\nTime:2021-12-16T22:04:24.0383528Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "4a6252c5-89da-4105-5761-80a907806e17",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "4a7f98ee-a455-47fa-44c3-ec48d30a4427",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "aaf36d1f-301e-0007-33c8-f2069d000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d34529b-701e-00ee-50d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d34529b-701e-00ee-50d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.7248099Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "b8618d67-17d4-4143-6975-9cc42b17f435",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "78758724-b81b-4e8b-705b-d61c7480bdba",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-0",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:585e3d0f-101e-0072-4ec8-f26db1000000\nTime:2021-12-16T22:04:24.0736730Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b8618d67-17d4-4143-6975-9cc42b17f435",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:01:59 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "78758724-b81b-4e8b-705b-d61c7480bdba",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "585e3d0f-101e-0072-4ec8-f26db1000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452a2-701e-00ee-56d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452a2-701e-00ee-56d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.7757804Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a9d48f58-4187-44f2-4c4e-18ceee6f4c31",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4c71ce5a-9037-4957-56d6-7d59e977d38f",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=100-109",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:5b8ddf4b-501e-0001-7ec8-f23522000000\nTime:2021-12-16T22:04:24.1103845Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a9d48f58-4187-44f2-4c4e-18ceee6f4c31",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "4c71ce5a-9037-4957-56d6-7d59e977d38f",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "5b8ddf4b-501e-0001-7ec8-f23522000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452a9-701e-00ee-5dd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452a9-701e-00ee-5dd0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.8317489Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "847b0510-b403-440c-4490-da9664af989d",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "1c06b35d-d084-45ea-6b43-4072c2e82cc0",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=100-109",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:1cb6d896-d01e-0030-50c8-f2d431000000\nTime:2021-12-16T22:04:24.1575744Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "847b0510-b403-440c-4490-da9664af989d",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "1c06b35d-d084-45ea-6b43-4072c2e82cc0",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "1cb6d896-d01e-0030-50c8-f2d431000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452b2-701e-00ee-65d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452b2-701e-00ee-65d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:00.8817205Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d2bac67c-9925-44b7-6d79-085bc977b79d",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "688cd3ea-8c67-4673-55f7-ea2af21c3be6",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "d2bac67c-9925-44b7-6d79-085bc977b79d",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "688cd3ea-8c67-4673-55f7-ea2af21c3be6",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "df3a8208-201e-0024-14c8-f29c5e000000",
+        "x-ms-request-id": "1d3452b9-701e-00ee-6bd0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f349c6dc-2e48-46d5-4ea5-17cb540b3121",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "a80d0b3f-7ce7-4482-6cfb-bf64a3d6fad5",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "accept-ranges": "bytes",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "etag": "\"0x8D9C0E004F41561\"",
-        "last-modified": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-version-id,x-ms-is-current-version,Last-Modified,ETag,x-ms-creation-time,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Accept-Ranges,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "ETag": "\u00220x8DAC8E75A20380E\u0022",
+        "Last-Modified": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "f349c6dc-2e48-46d5-4ea5-17cb540b3121",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:23 GMT",
+        "x-ms-client-request-id": "a80d0b3f-7ce7-4482-6cfb-bf64a3d6fad5",
+        "x-ms-creation-time": "Thu, 17 Nov 2022 22:01:59 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "df3a820f-201e-0024-18c8-f29c5e000000",
+        "x-ms-request-id": "1d3452c5-701e-00ee-76d0-fa937a000000",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:04:23.7958257Z"
+        "x-ms-version": "2021-04-10",
+        "x-ms-version-id": "2022-11-17T22:02:00.1418014Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e3f465b0-ae08-4833-6d50-f8d27d3f222a",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "86bcab55-e4ae-4913-4c7a-1153db448ce6",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-9",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:df3a8217-201e-0024-1ec8-f29c5e000000\nTime:2021-12-16T22:04:24.2185548Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e3f465b0-ae08-4833-6d50-f8d27d3f222a",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "86bcab55-e4ae-4913-4c7a-1153db448ce6",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "df3a8217-201e-0024-1ec8-f29c5e000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452cc-701e-00ee-7dd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452cc-701e-00ee-7dd0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.0346334Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cd8a3f71-6d9e-484b-5551-acbbedfb3d71",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "3a14255a-e260-4f96-6623-5bec270ede16",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-9",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:ad236373-701e-0016-5ec8-f29c29000000\nTime:2021-12-16T22:04:24.2640902Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "cd8a3f71-6d9e-484b-5551-acbbedfb3d71",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "3a14255a-e260-4f96-6623-5bec270ede16",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "ad236373-701e-0016-5ec8-f29c29000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452d4-701e-00ee-05d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452d4-701e-00ee-05d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.0856051Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "b2b21d13-a036-4568-63a0-648cf80712ad",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "cfe01147-0b87-41f6-41c9-88ac2cd35a39",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=1-10",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:78ffe5f7-601e-000a-02c8-f2ce49000000\nTime:2021-12-16T22:04:24.3051771Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b2b21d13-a036-4568-63a0-648cf80712ad",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "cfe01147-0b87-41f6-41c9-88ac2cd35a39",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "78ffe5f7-601e-000a-02c8-f2ce49000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452e5-701e-00ee-13d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452e5-701e-00ee-13d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.1405735Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "596249e1-4848-40df-506b-44d6f337b9ab",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "9624cfe4-3fbf-41a3-7d5e-d5346135a5c3",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=1-10",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:8ac2119e-501e-0011-55c8-f2f04a000000\nTime:2021-12-16T22:04:24.3474575Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "596249e1-4848-40df-506b-44d6f337b9ab",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "9624cfe4-3fbf-41a3-7d5e-d5346135a5c3",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "8ac2119e-501e-0011-55c8-f2f04a000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d3452ef-701e-00ee-1dd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d3452ef-701e-00ee-1dd0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.1945434Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "651ac2eb-ec05-451b-780b-ae9a3b7230f9",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "88d5535d-41dd-40d8-5ee6-a98b1d4170f1",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-0",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:7b746425-901e-0053-23c8-f249ca000000\nTime:2021-12-16T22:04:24.3887628Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "651ac2eb-ec05-451b-780b-ae9a3b7230f9",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "88d5535d-41dd-40d8-5ee6-a98b1d4170f1",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "7b746425-901e-0053-23c8-f249ca000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d345306-701e-00ee-31d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d345306-701e-00ee-31d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.2465136Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4a73692a-415b-4440-4473-92ae68506e1a",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "ce96d8c9-5bd3-4b7e-7a64-4c9020e04cee",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=0-0",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:37495142-401e-006f-59c8-f2600d000000\nTime:2021-12-16T22:04:24.4280860Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "4a73692a-415b-4440-4473-92ae68506e1a",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "ce96d8c9-5bd3-4b7e-7a64-4c9020e04cee",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "37495142-401e-006f-59c8-f2600d000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d345314-701e-00ee-37d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d345314-701e-00ee-37d0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.2984834Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "aaf5bbf8-4eda-4f1b-5a91-0c8af58f5e69",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "27fd5414-8300-41ed-5b19-f7260fefc036",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=100-109",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:2494392b-501e-0063-79c8-f2f705000000\nTime:2021-12-16T22:04:24.4668981Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "aaf5bbf8-4eda-4f1b-5a91-0c8af58f5e69",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "27fd5414-8300-41ed-5b19-f7260fefc036",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "2494392b-501e-0063-79c8-f2f705000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d345319-701e-00ee-3cd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d345319-701e-00ee-3cd0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.3514540Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "43e051d9-6c09-45cc-6275-a6c000e61f95",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "c6718d31-a656-4ee4-4546-c54ffcd49a0a",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-range": "bytes=100-109",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The range specified is invalid for the current size of the resource.\nRequestId:7da1da74-201e-0056-73c8-f29b11000000\nTime:2021-12-16T22:04:24.5327069Z</Message></Error>",
-        "REASON_PHRASE": "The range specified is invalid for the current size of the resource.",
-        "STATUS_CODE": "416",
-        "content-length": "249",
-        "content-range": "bytes */0",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:04:23 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "43e051d9-6c09-45cc-6275-a6c000e61f95",
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Range,x-ms-error-code,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "c6718d31-a656-4ee4-4546-c54ffcd49a0a",
         "x-ms-error-code": "InvalidRange",
-        "x-ms-request-id": "7da1da74-201e-0056-73c8-f29b11000000",
-        "x-ms-version": "2020-02-10"
+        "x-ms-request-id": "1d34531c-701e-00ee-3fd0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob/ConcurrentDownloadEmptyBlob"
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:1d34531c-701e-00ee-3fd0-fa937a000000\n",
+        "Time:2022-11-17T22:02:01.4024261Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "584ce065-86f1-4422-61e7-e0e2fa379b2c",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob?restype=container",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "34abe7c7-6897-4914-50ac-2f6fc2ee982d",
+        "x-ms-date": "Thu, 17 Nov 2022 22:02:01 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Accepted",
-        "STATUS_CODE": "202",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "584ce065-86f1-4422-61e7-e0e2fa379b2c",
-        "x-ms-request-id": "dd8db0d0-101e-005d-0bc8-f2607a000000",
-        "x-ms-version": "2020-02-10"
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:02:00 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "34abe7c7-6897-4914-50ac-2f6fc2ee982d",
+        "x-ms-request-id": "1d345321-701e-00ee-43d0-fa937a000000",
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentdownloademptyblob?restype=container"
+      "ResponseBody": null
     }
-  ]
+  ],
+  "Variables": {}
 }

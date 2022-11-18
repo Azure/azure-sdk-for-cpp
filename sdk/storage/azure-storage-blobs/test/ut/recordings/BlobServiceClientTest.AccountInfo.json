@@ -1,50 +1,65 @@
 {
-  "networkCallRecords": [
+  "Entries": [
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "25795e6b-f009-474e-4d19-7ba6c79c94cd",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/?comp=properties\u0026restype=account",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "4e6759b9-9d16-4884-6319-b7fe60de36d6",
+        "x-ms-date": "Thu, 17 Nov 2022 22:16:56 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 20 Jan 2022 18:18:30 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-sku-name,x-ms-account-kind,x-ms-is-hns-enabled,Content-Length,Date,Transfer-Encoding",
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:16:55 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-account-kind": "StorageV2",
-        "x-ms-client-request-id": "25795e6b-f009-474e-4d19-7ba6c79c94cd",
+        "x-ms-client-request-id": "4e6759b9-9d16-4884-6319-b7fe60de36d6",
         "x-ms-is-hns-enabled": "false",
-        "x-ms-request-id": "020c6700-601e-0007-7f2a-0e88e7000000",
+        "x-ms-request-id": "ecaffa13-001e-004d-4dd2-faf6bf000000",
         "x-ms-sku-name": "Standard_RAGRS",
-        "x-ms-version": "2020-02-10"
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=account"
+      "ResponseBody": null
     },
     {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "230be2c2-673d-4c9d-4924-61d65421cb80",
-        "x-ms-version": "2020-02-10"
+      "RequestUri": "https://REDACTED.blob.core.windows.net/?comp=properties\u0026restype=account",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
+        "x-ms-client-request-id": "40fb953e-96e5-4268-75e8-5f4c498401d2",
+        "x-ms-date": "Thu, 17 Nov 2022 22:16:56 GMT",
+        "x-ms-version": "2021-04-10"
       },
-      "Method": "GET",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "0",
-        "date": "Thu, 20 Jan 2022 18:18:30 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 17 Nov 2022 22:16:56 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
         "x-ms-account-kind": "StorageV2",
-        "x-ms-client-request-id": "230be2c2-673d-4c9d-4924-61d65421cb80",
+        "x-ms-client-request-id": "40fb953e-96e5-4268-75e8-5f4c498401d2",
         "x-ms-is-hns-enabled": "true",
-        "x-ms-request-id": "d18be0ed-001e-0061-7b2a-0e9c44000000",
+        "x-ms-request-id": "b40924f7-b01e-00c0-79d2-fa5557000000",
         "x-ms-sku-name": "Standard_RAGRS",
-        "x-ms-version": "2020-02-10"
+        "x-ms-version": "2021-04-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=account"
+      "ResponseBody": null
     }
-  ]
+  ],
+  "Variables": {}
 }
