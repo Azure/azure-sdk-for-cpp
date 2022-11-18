@@ -27,10 +27,20 @@ steps:
     - script: cmake --build . ${{ parameters.BuildArgs }}
       workingDirectory: build
       displayName: cmake build All
+      timeoutInMinutes: 20
 
 # Non-core services define the list of targets to build
   - ${{ if and(eq(parameters.Build, true) , ne(parameters.ServiceDirectory, 'core')) }}:
     - pwsh: cmake --build . ${{ parameters.BuildArgs }} --target (Get-Content ${{ parameters.ServiceDirectory }}-targets-build.txt)
       workingDirectory: build
       displayName: cmake build Targets
+      timeoutInMinutes: 20
 
+  - pwsh: |
+      New-Item -ItemType Directory -Name diagnostics
+      eng/scripts/New-Screenshot.ps1 -OutFile diagnostics/screenshot.bmp
+    displayName: Take screenshot 
+    condition: failed()
+
+  - publish: diagnostics
+    condition: failed()
