@@ -8,7 +8,7 @@
 #include <csignal>
 #include <iostream>
 
-int main(int argc, char** argv)
+int main(/* int argc, char** argv*/)
 {
 #if defined(AZ_PLATFORM_POSIX)
   // OpenSSL signals SIGPIPE when trying to clean an HTTPS closed connection.
@@ -21,14 +21,15 @@ int main(int argc, char** argv)
 #if defined(AZ_PLATFORM_WINDOWS)
   // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
 #if defined(_DEBUG) && defined(_MSC_VER)
-  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+//  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
-  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
+//  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
 #endif // AZ_PLATFORM_WINDOWS
+  throw std::runtime_error("explode");
 
-  testing::InitGoogleTest(&argc, argv);
-  auto r = RUN_ALL_TESTS();
+//  testing::InitGoogleTest(&argc, argv);
+//  auto r = RUN_ALL_TESTS();
 
-  return r;
+//  return r;
 }
