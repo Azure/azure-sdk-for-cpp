@@ -724,11 +724,11 @@ directive:
       $.FilterBlobItem.properties["Name"]["x-ms-client-name"] = "BlobName";
       $.FilterBlobItem.properties["ContainerName"]["x-ms-client-name"] = "BlobContainerName";
       delete $.FilterBlobItem.properties["TagValue"];
+      delete $.FilterBlobItem.properties["VersionId"];
+      delete $.FilterBlobItem.properties["IsCurrentVersion"];
       $.FilterBlobItem.properties["Name"].description = "Blob name.";
       $.FilterBlobItem.properties["ContainerName"].description = "Blob container name.";
       $.FilterBlobItem.properties["Tags"]["x-ms-xml"] = {"name": "Tags/TagSet"};
-      $.FilterBlobItem.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
-      $.FilterBlobItem.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
       $.FilterBlobSegment["x-ms-client-name"] = "FindBlobsByTagsResult";
       $.FilterBlobSegment.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
       $.FilterBlobSegment.properties["Blobs"]["x-ms-client-name"] = "Items";
