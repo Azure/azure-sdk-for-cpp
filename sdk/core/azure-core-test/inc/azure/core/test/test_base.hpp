@@ -397,7 +397,7 @@ namespace Azure { namespace Core { namespace Test {
     // Can be omitted if not needed.
     static void SetUpTestSuite()
     {
-      std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted testproxy.ps1");
+      (void)std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted testproxy.ps1");
     }
 
     // Per-test-suite tear-down.
@@ -405,7 +405,7 @@ namespace Azure { namespace Core { namespace Test {
     // Can be omitted if not needed.
     static void TearDownTestSuite()
     {
-      std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted stopProxy.ps1");
+      (void)std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted stopProxy.ps1");
     }
   };
 }}} // namespace Azure::Core::Test
