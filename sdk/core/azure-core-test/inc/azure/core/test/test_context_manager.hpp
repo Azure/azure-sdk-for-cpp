@@ -131,6 +131,7 @@ namespace Azure { namespace Core { namespace Test {
     constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
 
     std::string RecordingId;
+
   private:
     std::string m_testName;
     std::string m_testSuite;

@@ -149,7 +149,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
     }
 
-      // Per-test-suite set-up.
+    // Per-test-suite set-up.
     // Called before the first test in this test suite.
     // Can be omitted if not needed.
     static void SetUpTestSuite()
@@ -157,7 +157,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       _putenv_s("AZURE_TEST_MODE", "RECORD");
       std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
       auto result = std::system("pwsh "
-                  "testproxy.ps1");
+                                "testproxy.ps1");
       std::cout << result;
     }
 

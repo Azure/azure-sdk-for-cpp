@@ -29,7 +29,8 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
     Context const& ctx) const
 {
   std::string const recordId(m_testProxy->GetRecordingId());
-  if (recordId.empty() || m_testProxy->GetTestContext().LiveOnly || m_testProxy->GetTestMode() == TestMode::LIVE)
+  if (recordId.empty() || m_testProxy->GetTestContext().LiveOnly
+      || m_testProxy->GetTestMode() == TestMode::LIVE)
   {
     return nextHttpPolicy.Send(request, ctx);
   }

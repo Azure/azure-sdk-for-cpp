@@ -11,12 +11,12 @@
 #include <memory>
 #include <string>
 
+#include "azure/core/test/network_models.hpp"
+#include "azure/core/test/test_proxy_manager.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
-#include "azure/core/test/test_proxy_manager.hpp"
-#include "azure/core/test/network_models.hpp"
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -42,12 +42,9 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Construct the record network policy which will save the HTTP request and response to
      * the \p recordedData.
      *
-     * @param testProxy A reference to the test proxy manager 
+     * @param testProxy A reference to the test proxy manager
      */
-    TestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy)
-        : m_testProxy(testProxy)
-    {
-    }
+    TestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy) : m_testProxy(testProxy) {}
 
     /**
      * @brief Cronstructs a new record network policy with the same recorded data.

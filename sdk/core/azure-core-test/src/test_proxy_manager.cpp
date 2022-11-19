@@ -83,7 +83,7 @@ void TestProxyManager::SetStartRecordMode()
   if (IsPlaybackMode() || IsRecordMode())
   {
     std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    //throw std::runtime_error();
+    // throw std::runtime_error();
     std::cout << "TestProxy already in " + mode + " mode.";
     return;
   }
@@ -97,7 +97,7 @@ void TestProxyManager::SetStartPlaybackMode()
   if (IsPlaybackMode() || IsRecordMode())
   {
     std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    //throw std::runtime_error("TestProxy already in " + mode + " mode. First stop current mode.");
+    // throw std::runtime_error("TestProxy already in " + mode + " mode. First stop current mode.");
     std::cout << "TestProxy already in " + mode + " mode.";
     return;
   }
@@ -186,7 +186,7 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
 }
 
 void TestProxyManager::SetProxySanitizer()
-{ 
+{
   Azure::Core::Url sanitizerRequest(m_proxy);
 
   sanitizerRequest.AppendPath("Admin");
@@ -218,4 +218,3 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
 }
-  
