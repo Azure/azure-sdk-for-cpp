@@ -346,3 +346,4 @@ build/
 
 # Default Assets restore directory
 .assets
+/.cache/clangd/index
