@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Construct the record network policy which will save the HTTP request and response to
      * the \p recordedData.
      *
-     * @param testProxy A reference to the test proxy manager
+     * @param testProxy A reference to the test proxy manager 
      */
     TestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy)
         : m_testProxy(testProxy)
