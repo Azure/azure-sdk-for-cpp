@@ -96,9 +96,9 @@ jobs:
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
 
-      - script: >
-          dotnet tool update azure.sdk.tools.testproxy --global --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json --version "1.0.0-dev*" && dotnet tool uninstall --global dotnet-dev-certs &&  dotnet tool install --global dotnet-dev-certs &&       dotnet dev-certs https --trust
-        displayName: 'Install test-proxy'
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+        parameters:
+          runProxy: true
 
       - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         condition: >-
