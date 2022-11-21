@@ -96,10 +96,6 @@ jobs:
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
 
-      - template: /eng/common/testproxy/test-proxy-tool.yml
-        parameters:
-          runProxy: true
-
       - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         condition: >-
           and(
@@ -150,6 +146,12 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
+
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+        parameters:
+          runProxy: true
+          rootFolder: '$(Build.SourcesDirectory)/sdk'
+          templateFolder: '$(Build.SourcesDirectory)/sdk'
 
       - ${{ parameters.PreTestSteps }}
       

@@ -106,10 +106,6 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - template: /eng/common/testproxy/test-proxy-tool.yml
-    parameters:
-      runProxy: false
-
   - template: /eng/pipelines/templates/steps/vcpkg.yml
 
   - script: |
@@ -138,6 +134,10 @@ jobs:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
+
+  - template: /eng/common/testproxy/test-proxy-tool.yml
+    parameters:
+      runProxy: false
 
   - ${{ parameters.PreTestSteps }}
 

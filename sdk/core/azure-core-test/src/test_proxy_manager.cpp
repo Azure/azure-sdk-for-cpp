@@ -55,6 +55,7 @@ void TestProxyManager::ConfigureInsecureConnection(
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.SslVerifyPeer = false;
+    curlOptions.SslOptions.AllowFailedCrlRetrieval = true;
     clientOptions.Transport.Transport
         = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
