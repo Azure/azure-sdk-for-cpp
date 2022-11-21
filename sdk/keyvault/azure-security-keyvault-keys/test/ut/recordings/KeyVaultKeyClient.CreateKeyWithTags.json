@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://REDACTED1.vault.azure.net/keys/CreateKeyWithTags/create?api-version=7.3",
+      "RequestUri": "https://REDACTED.vault.azure.net/keys/CreateKeyWithTags/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
         "Content-Length": "72",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "faaf69b5-9a53-42f9-7138-c778adb7e9be"
+        "x-ms-client-request-id": "3f6ea0db-58e1-49bb-7b51-8c923d4d3540"
       },
       "RequestBody": {
         "attributes": null,
@@ -21,22 +21,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "742",
+        "Content-Length": "741",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 19:49:01 GMT",
+        "Date": "Mon, 21 Nov 2022 22:49:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "faaf69b5-9a53-42f9-7138-c778adb7e9be",
+        "x-ms-client-request-id": "3f6ea0db-58e1-49bb-7b51-8c923d4d3540",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "1a932c43-5896-4c60-84ca-afe7582d6eae"
+        "x-ms-request-id": "6994a8a7-f8fd-4cd8-b935-30bc7ee7cb9e"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED1.vault.azure.net/keys/CreateKeyWithTags/eaf27b86e85e4b76af8842989b09e026",
+          "kid": "https://REDACTED.vault.azure.net/keys/CreateKeyWithTags/30aa96c15ec9480ea119e2ff810cb182",
           "kty": "RSA",
           "key_ops": [
             "encrypt",
@@ -46,13 +46,13 @@
             "wrapKey",
             "unwrapKey"
           ],
-          "n": "z2tzcP7oC_hzHaTOt83I4K-Az3BXKFr0SUuGQwgjAfTQ4eXW_IwZ6ndsk_wI6AuudbqHsDUwKVfeEpDCnAZeAhvn7YfN_lvF9muG6L9zydFQv_pX8iC88Vx1_S3uWMwVXTZ52kAXUlt0R9VNZrjPrLLUTHyok77c1Lt5UpSYz3Q-nn86L2Eyhb4RcRv81mJbNqG2-In5aXISv1YNytL_vxTQ7qsI37OyjLWs0C3WjSoDSGEGPeD77gf2o9BA19fsuQOPFwLytmXIosFMDNuiFDtb6LzrZSmpsOnZvdZbjNEYTHqvpKLEroYwKRqPWLV7PztOjc7JlzGkHM5MSjlLKQ",
+          "n": "p39vc30oBQpAn2BcpMAJu__DDj2C6HLX0zDwfKE0XWWhaqL1AsJ3JcN-WybfhFfdMrNN5AWjq6_lOJs1_oPEE8sltbEBRVOxc-4fgFK58nEjAa7CTOlXeahyhq2NIjzYX98gsmQR4Zg1xFV4pT-rEXdGmCDku8-SBuW32NfudWu57nk8zRCKbntwq3yeiB3fSXsNcZNhUU2ILsy0GHIJkippAdGU4d7DrGIBhaYMywI7TKZ8vuoT7sM3G6dY87FMFskqp-tdku1_PSMs05ixZkENNCnPUyLK8BoMXhu0ACFllsa9gh8iVYqQMiN8hGd-FAm60vGpf3NGzdQu3FFR2Q",
           "e": "AQAB"
         },
         "attributes": {
           "enabled": true,
-          "created": 1668714542,
-          "updated": 1668714542,
+          "created": 1669070953,
+          "updated": 1669070953,
           "recoveryLevel": "Recoverable\u002BPurgeable",
           "recoverableDays": 90,
           "exportable": false

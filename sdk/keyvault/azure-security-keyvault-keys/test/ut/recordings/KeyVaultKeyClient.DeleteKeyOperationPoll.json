@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://REDACTED1.vault.azure.net/keys/DeleteKeyOperationPoll/create?api-version=7.3",
+      "RequestUri": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
         "Content-Length": "30",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "81283570-5cb2-4434-7839-c36adc906701"
+        "x-ms-client-request-id": "162efa5f-e5e7-409f-662f-b1b80487226d"
       },
       "RequestBody": {
         "attributes": null,
@@ -17,35 +17,35 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "417",
+        "Content-Length": "416",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 19:50:05 GMT",
+        "Date": "Mon, 21 Nov 2022 22:50:18 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "81283570-5cb2-4434-7839-c36adc906701",
+        "x-ms-client-request-id": "162efa5f-e5e7-409f-662f-b1b80487226d",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "f41b7820-9ac5-4473-83c3-25883abdb91e"
+        "x-ms-request-id": "2673c41d-f7d4-4126-9a29-a67f523fb047"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED1.vault.azure.net/keys/DeleteKeyOperationPoll/8658a129edb0414ba34842c6a6345ca9",
+          "kid": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll/721bdc32d9a6446f8bc6fca6a8e56b70",
           "kty": "EC",
           "key_ops": [
             "sign",
             "verify"
           ],
           "crv": "P-256",
-          "x": "2VfvyAvJbIyXOFladOWcE610K9fZ5_Et0a1T1zpx-8k",
-          "y": "f2oNLRGZ4Q7ztMzoOJLgESJXRzxK7tvlu7Zj6OgIL40"
+          "x": "wTrFCz8I0-vB4J4v2nlce1mC_AhAtpBPEwcTM7ZuNqA",
+          "y": "dIvtU7lpzXYd1wIH8E7kWW54_CmJsFoBueGWTf7qY3U"
         },
         "attributes": {
           "enabled": true,
-          "created": 1668714606,
-          "updated": 1668714606,
+          "created": 1669071018,
+          "updated": 1669071018,
           "recoveryLevel": "Recoverable\u002BPurgeable",
           "recoverableDays": 90,
           "exportable": false
@@ -53,50 +53,50 @@
       }
     },
     {
-      "RequestUri": "https://REDACTED1.vault.azure.net/keys/DeleteKeyOperationPoll?api-version=7.3",
+      "RequestUri": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "c7b6d03f-9700-427d-5172-f08f31683168"
+        "x-ms-client-request-id": "2a4708f0-8d37-4d39-7b37-9909e21264bb"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "558",
+        "Content-Length": "556",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 19:50:05 GMT",
+        "Date": "Mon, 21 Nov 2022 22:50:18 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "c7b6d03f-9700-427d-5172-f08f31683168",
+        "x-ms-client-request-id": "2a4708f0-8d37-4d39-7b37-9909e21264bb",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "7929e5c1-ed1c-4482-8999-7d655f64e572"
+        "x-ms-request-id": "4950ca0b-8f6c-427a-99a4-465e13f21133"
       },
       "ResponseBody": {
-        "recoveryId": "https://REDACTED1.vault.azure.net/deletedkeys/DeleteKeyOperationPoll",
-        "deletedDate": 1668714606,
-        "scheduledPurgeDate": 1676490606,
+        "recoveryId": "https://REDACTED.vault.azure.net/deletedkeys/DeleteKeyOperationPoll",
+        "deletedDate": 1669071018,
+        "scheduledPurgeDate": 1676847018,
         "key": {
-          "kid": "https://REDACTED1.vault.azure.net/keys/DeleteKeyOperationPoll/8658a129edb0414ba34842c6a6345ca9",
+          "kid": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll/721bdc32d9a6446f8bc6fca6a8e56b70",
           "kty": "EC",
           "key_ops": [
             "sign",
             "verify"
           ],
           "crv": "P-256",
-          "x": "2VfvyAvJbIyXOFladOWcE610K9fZ5_Et0a1T1zpx-8k",
-          "y": "f2oNLRGZ4Q7ztMzoOJLgESJXRzxK7tvlu7Zj6OgIL40"
+          "x": "wTrFCz8I0-vB4J4v2nlce1mC_AhAtpBPEwcTM7ZuNqA",
+          "y": "dIvtU7lpzXYd1wIH8E7kWW54_CmJsFoBueGWTf7qY3U"
         },
         "attributes": {
           "enabled": true,
-          "created": 1668714606,
-          "updated": 1668714606,
+          "created": 1669071018,
+          "updated": 1669071018,
           "recoveryLevel": "Recoverable\u002BPurgeable",
           "recoverableDays": 90,
           "exportable": false
@@ -104,13 +104,13 @@
       }
     },
     {
-      "RequestUri": "https://REDACTED1.vault.azure.net/deletedkeys/DeleteKeyOperationPoll?api-version=7.3",
+      "RequestUri": "https://REDACTED.vault.azure.net/deletedkeys/DeleteKeyOperationPoll?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "332dfe66-bd20-4076-7a8a-b764d123fc63"
+        "x-ms-client-request-id": "64aa4a5e-65b1-42b1-434e-3cd5eed026b0"
       },
       "RequestBody": null,
       "StatusCode": 404,
@@ -118,16 +118,16 @@
         "Cache-Control": "no-cache",
         "Content-Length": "90",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 19:50:05 GMT",
+        "Date": "Mon, 21 Nov 2022 22:50:18 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "332dfe66-bd20-4076-7a8a-b764d123fc63",
+        "x-ms-client-request-id": "64aa4a5e-65b1-42b1-434e-3cd5eed026b0",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "b510387a-152a-4e5c-8091-75ba47d35d63"
+        "x-ms-request-id": "16c9657d-8e5a-4582-863f-fc8929390ae2"
       },
       "ResponseBody": {
         "error": {

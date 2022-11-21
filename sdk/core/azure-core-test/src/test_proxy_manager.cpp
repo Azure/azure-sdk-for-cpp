@@ -195,7 +195,7 @@ void TestProxyManager::SetProxySanitizer()
   {
 
     std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-                       "\"https://(?<account>[a-z]+).*\",\"groupForReplace\" : \"account\"}";
+                       "\"https://(?<account>[a-zA-Z]+).*\",\"groupForReplace\" : \"account\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());
@@ -208,13 +208,39 @@ void TestProxyManager::SetProxySanitizer()
   {
 
     std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-                       "\"https://(?<account>[a-z]+).*\",\"groupForReplace\" : \"account\"}";
+                       "\"https://(?<account>[a-zA-Z]+).*\",\"groupForReplace\" : \"account\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());
     Azure::Core::Http::Request request(
         Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
     request.SetHeader("x-abstraction-identifier", "BodyRegexSanitizer");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }
+  {
+
+    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+                       "\"https://(?<account>[a-zA-Z]+).*\",\"groupForReplace\" : \"account\"}";
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "HeaderRegexSanitizer");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }
+  {
+
+    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+                       "\"https://(?<account>[a-zA-Z]+).*\",\"groupForReplace\" : \"account\"}";
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "GeneralRegexSanitizer");
     Azure::Core::Context ctx;
     auto response = m_privatePipeline->Send(request, ctx);
   }

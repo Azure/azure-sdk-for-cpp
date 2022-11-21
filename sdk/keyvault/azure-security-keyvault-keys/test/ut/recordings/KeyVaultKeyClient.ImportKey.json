@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://REDACTED1.vault.azure.net/keys/ImportKey?api-version=7.3",
+      "RequestUri": "https://REDACTED.vault.azure.net/keys/ImportKey?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Authorization": "Sanitized",
@@ -9,7 +9,7 @@
         "Content-Type": "application/json",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-keyvault-keys/4.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "77e1ed2b-0448-4265-7d3d-b621ab33d437"
+        "x-ms-client-request-id": "efbd0ecc-1aa9-409e-4a03-2baf3d0747b6"
       },
       "RequestBody": {
         "attributes": null,
@@ -33,22 +33,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "656",
+        "Content-Length": "655",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Nov 2022 20:00:56 GMT",
+        "Date": "Mon, 21 Nov 2022 23:01:06 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "77e1ed2b-0448-4265-7d3d-b621ab33d437",
+        "x-ms-client-request-id": "efbd0ecc-1aa9-409e-4a03-2baf3d0747b6",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-keyvault-service-version": "1.9.576.1",
-        "x-ms-request-id": "818bbddb-af8f-436d-be13-d347c405fea8"
+        "x-ms-request-id": "4a57ddb9-89ae-49f4-9dd6-d74536dea54c"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED1.vault.azure.net/keys/ImportKey/4291b631e994482eb0fd2f3c3d0640fa",
+          "kid": "https://REDACTED.vault.azure.net/keys/ImportKey/859c049dcdfd420cb452660703d45601",
           "kty": "RSA",
           "key_ops": [
             "sign"
@@ -59,8 +59,8 @@
         },
         "attributes": {
           "enabled": true,
-          "created": 1668715257,
-          "updated": 1668715257,
+          "created": 1669071667,
+          "updated": 1669071667,
           "recoveryLevel": "Recoverable\u002BPurgeable",
           "recoverableDays": 90,
           "exportable": false
