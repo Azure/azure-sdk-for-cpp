@@ -45,7 +45,7 @@ steps:
       condition: and(succeeded(), ${{ parameters.condition }})
 
     - pwsh: |
-        dotnet dev-certs https --trust
+        dotnet dev-certs https --trust -q
       displayName: trustCerts
       condition: and(succeeded(), ${{ parameters.condition }})
 
