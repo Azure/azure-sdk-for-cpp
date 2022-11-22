@@ -12,11 +12,6 @@ steps:
     condition: and(succeeded(), ${{ parameters.condition }})
 
   - pwsh: |
-        ${{ parameters.templateRoot }}/eng/common/scripts/trust-proxy-certificate.ps1
-    displayName: 'Language Specific Certificate Trust'
-    condition: and(succeeded(), ${{ parameters.condition }})
-
-  - pwsh: |
       $version = $(Get-Content "${{ parameters.templateRoot }}/eng/common/testproxy/target_version.txt" -Raw).Trim()
       $overrideVersion = "${{ parameters.targetVersion }}"
 
@@ -42,11 +37,6 @@ steps:
         Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Password]password"
         Write-Host "##vso[task.setvariable variable=PROXY_MANUAL_START]true"
       displayName: 'Configure Kestrel and PROXY_MANUAL_START Variables'
-      condition: and(succeeded(), ${{ parameters.condition }})
-
-    - pwsh: |
-        dotnet dev-certs https --trust -q
-      displayName: trustCerts
       condition: and(succeeded(), ${{ parameters.condition }})
 
     - pwsh: |
