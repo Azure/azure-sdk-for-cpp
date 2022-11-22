@@ -150,8 +150,8 @@ jobs:
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
-          rootFolder: '$(Build.SourcesDirectory)/sdk'
-          templateFolder: '$(Build.SourcesDirectory)/sdk'
+          rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+          templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
 
       - ${{ parameters.PreTestSteps }}
       
