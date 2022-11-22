@@ -54,8 +54,9 @@ namespace Azure { namespace Core { namespace Test {
           // Playback mode uses:
           //  - playback transport adapter to read and return payload from json files
           m_testProxy->SetStartPlaybackMode();
-
+          m_testProxy->ConfigureInsecureConnection(options);
           options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
+          
         }
         else if (!m_testContext.IsLiveMode())
         {
@@ -64,6 +65,7 @@ namespace Azure { namespace Core { namespace Test {
           //  - Recording policy. Intercept server responses to create json files
           // AZURE_TEST_RECORDING_DIR is exported by CMAKE
           m_testProxy->SetStartRecordMode();
+          m_testProxy->ConfigureInsecureConnection(options);
           options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
         }
       }

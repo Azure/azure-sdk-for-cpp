@@ -56,13 +56,14 @@ namespace Azure { namespace Core { namespace Test {
     TestMode m_currentMode = TestMode::LIVE;
     std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_privatePipeline;
 
+  public:
     /**
-     * @brief Configures the proxy to ignore certificate validation
+     * @brief Configures the transport to ignore certificate validation
      *
      */
     void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
 
-  public:
+  
     /**
      * @brief Enables to init TestProxyManager with empty values.
      *
