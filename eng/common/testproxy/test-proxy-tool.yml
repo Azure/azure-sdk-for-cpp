@@ -48,6 +48,7 @@ steps:
       env:
         MICROSOFT_LOGGING_LEVEL: DEBUG
         DEFAULT_LOGGING_LEVEL: DEBUG
+        DEFAULT_LOGGING_LOGLEVEL: DEBUG
 
     # nohup does NOT continue beyond the current session if you use it within powershell
     - bash: |
