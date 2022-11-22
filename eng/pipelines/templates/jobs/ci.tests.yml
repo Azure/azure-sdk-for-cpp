@@ -169,7 +169,7 @@ jobs:
       - ${{ parameters.PostTestSteps }}
             
       - bash: |
-          cat $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}/test-proxy.log
+          cat $(Build.SourcesDirectory)/test-proxy.log
         displayName: TestProxy Log
         condition: succeededOrFailed()
 
