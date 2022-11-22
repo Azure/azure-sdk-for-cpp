@@ -152,9 +152,7 @@ jobs:
           runProxy: true
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
-        env:
-          MICROSOFT_LOGGING_LEVEL: DEBUG
-
+        
       - ${{ parameters.PreTestSteps }}
       
       - pwsh: |
