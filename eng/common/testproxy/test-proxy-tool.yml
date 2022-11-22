@@ -46,7 +46,8 @@ steps:
 
     - pwsh: |
         dotnet dev-certs https --trust
-      diaplyName: trustCerts
+      displayName: trustCerts
+      condition: and(succeeded(), ${{ parameters.condition }})
 
     - pwsh: |
         Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
