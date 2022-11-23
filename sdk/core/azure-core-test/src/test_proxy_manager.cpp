@@ -194,8 +194,9 @@ void TestProxyManager::SetProxySanitizer()
   sanitizerRequest.AppendPath("AddSanitizer");
   {
 
-    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-                       "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
+    std::string body
+        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());
@@ -207,8 +208,9 @@ void TestProxyManager::SetProxySanitizer()
   }
   {
 
-    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-                       "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
+    std::string body
+        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());
@@ -220,8 +222,9 @@ void TestProxyManager::SetProxySanitizer()
   }
   {
 
-    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-                       "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
+    std::string body
+        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());
@@ -232,8 +235,9 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
   {
-    std::string body = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-                       "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
+    std::string body
+        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());

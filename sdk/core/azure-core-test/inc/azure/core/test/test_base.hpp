@@ -56,7 +56,6 @@ namespace Azure { namespace Core { namespace Test {
           m_testProxy->SetStartPlaybackMode();
           m_testProxy->ConfigureInsecureConnection(options);
           options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
-          
         }
         else if (!m_testContext.IsLiveMode())
         {

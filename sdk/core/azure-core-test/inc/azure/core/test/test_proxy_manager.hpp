@@ -63,7 +63,6 @@ namespace Azure { namespace Core { namespace Test {
      */
     void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
 
-  
     /**
      * @brief Enables to init TestProxyManager with empty values.
      *
