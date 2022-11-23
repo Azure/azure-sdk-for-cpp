@@ -45,10 +45,6 @@ steps:
           -NoNewWindow -PassThru -RedirectStandardOutput ${{ parameters.templateRoot }}/test-proxy.log
       displayName: 'Run the testproxy - windows'
       condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'), ${{ parameters.condition }})
-      env:
-        MICROSOFT_LOGGING_LEVEL: DEBUG
-        DEFAULT_LOGGING_LEVEL: DEBUG
-        DEFAULT_LOGGING_LOGLEVEL: DEBUG
 
     # nohup does NOT continue beyond the current session if you use it within powershell
     - bash: |
