@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/create?api-version=7.3",
+      "RequestUri": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
@@ -37,7 +37,7 @@
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/a0ea7a32c9eb4cc884d8e502f0c6058b",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/a0ea7a32c9eb4cc884d8e502f0c6058b",
           "kty": "EC-HSM",
           "key_ops": [
             "sign"
@@ -57,7 +57,7 @@
       }
     },
     {
-      "RequestUri": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey?api-version=7.3",
+      "RequestUri": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Authorization": "Sanitized",
@@ -84,7 +84,7 @@
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/a0ea7a32c9eb4cc884d8e502f0c6058b",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/a0ea7a32c9eb4cc884d8e502f0c6058b",
           "kty": "EC-HSM",
           "key_ops": [
             "sign"

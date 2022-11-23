@@ -168,10 +168,12 @@ jobs:
         
       - ${{ parameters.PostTestSteps }}
             
-      - bash: |
-          cat $(Build.SourcesDirectory)/test-proxy.log
+      - pwsh: |
+          get-content test-proxy.log
         displayName: TestProxy Log
         condition: succeededOrFailed()
+        workingDirectory: $(Build.SourcesDirectory)
+        continueOnError: true
 
       - task: PublishTestResults@2
         inputs:

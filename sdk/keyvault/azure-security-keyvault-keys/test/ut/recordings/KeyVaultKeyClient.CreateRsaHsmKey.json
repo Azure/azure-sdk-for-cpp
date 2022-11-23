@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey/create?api-version=7.3",
+      "RequestUri": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Authorization": "Sanitized",
@@ -37,7 +37,7 @@
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey/d79f7fd2f485462bb8619abbb3db58ad",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/d79f7fd2f485462bb8619abbb3db58ad",
           "kty": "RSA-HSM",
           "key_ops": [
             "sign"
@@ -56,7 +56,7 @@
       }
     },
     {
-      "RequestUri": "https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey?api-version=7.3",
+      "RequestUri": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Authorization": "Sanitized",
@@ -83,7 +83,7 @@
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey/d79f7fd2f485462bb8619abbb3db58ad",
+          "kid": "https://REDACTED.managedhsm.azure.net/keys/CreateRsaHsmKey/d79f7fd2f485462bb8619abbb3db58ad",
           "kty": "RSA-HSM",
           "key_ops": [
             "sign"
