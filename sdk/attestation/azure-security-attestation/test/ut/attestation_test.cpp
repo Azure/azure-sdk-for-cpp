@@ -135,7 +135,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Can be omitted if not needed.
     static void SetUpTestSuite()
     {
-      _putenv_s("AZURE_TEST_MODE", "RECORD");
       std::system("pwsh Set-ExecutionPolicy -Scope CurrentUser Unrestricted");
       std::system("pwsh "
                   "testproxy.ps1");
