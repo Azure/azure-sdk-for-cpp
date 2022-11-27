@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * overwrite the file or not. If true, the rename will succeed and will overwrite the
      * destination directory. If not provided or if false and the destination directory does exist,
      * the request will not overwrite the destination directory. If provided and the destination
-     * file doesn�t exist, the rename will succeed.
+     * file doesn't exist, the rename will succeed.
      */
     Azure::Nullable<bool> ReplaceIfExists;
 
