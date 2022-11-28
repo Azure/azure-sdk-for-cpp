@@ -176,6 +176,7 @@
       "BuildSettings": {
         "clang-11": {
           "CHECK_CLANG_FORMAT": "1"
+          "CHECK_ASCII_CHARACTERS": "1"
         },
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release"
