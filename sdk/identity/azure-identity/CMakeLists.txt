@@ -46,6 +46,7 @@ endif()
 
 set(
   AZURE_IDENTITY_HEADER
+    inc/azure/identity/azure_cli_credential.hpp
     inc/azure/identity/chained_token_credential.hpp
     inc/azure/identity/client_certificate_credential.hpp
     inc/azure/identity/client_secret_credential.hpp
@@ -60,15 +61,18 @@ set(
   AZURE_IDENTITY_SOURCE
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
+    src/private/process_helper.hpp
     src/private/token_cache.hpp
     src/private/token_cache_internals.hpp
     src/private/token_credential_impl.hpp
+    src/azure_cli_credential.cpp
     src/chained_token_credential.cpp
     src/client_certificate_credential.cpp
     src/client_secret_credential.cpp
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp
+    src/process_helper.cpp
     src/token_cache.cpp
     src/token_credential_impl.cpp
 )

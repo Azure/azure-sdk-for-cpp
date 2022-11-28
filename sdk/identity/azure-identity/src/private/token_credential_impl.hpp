@@ -56,9 +56,31 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource);
 
     /**
+     * @brief Parses JSON that contains access token and its expiration.
+     *
+     * @param jsonString String with a JSON object to parse.
+     * @param accessTokenPropertyName Name of a property in the JSON object that represents access
+     * token.
+     * @param expirationPropertyName Name of a property in the JSON object that represents token
+     * expiration.
+     * @param expirationInSecondsFromNow `true` if value of #expirationPropertyName represents
+     * number of seconds from now, `false` if it represents an absolute date-time stamp.
+     *
+     * @return A successfully parsed access token.
+     *
+     * @throw `std::exception` if there was a problem parsing the token.
+     */
+    static Core::Credentials::AccessToken ParseToken(
+        std::string const& jsonString,
+        std::string const& accessTokenPropertyName,
+        std::string const& expirationPropertyName,
+        bool expirationInSecondsFromNow);
+
+    /**
      * @brief Holds `#Azure::Core::Http::Request` and all the associated resources for the HTTP
-     * request body, so that the lifetime for all the resources needed for the request aligns with
-     * its lifetime, and so that instances of this class can easily be returned from a function.
+     * request body, so that the lifetime for all the resources needed for the request aligns
+     * with its lifetime, and so that instances of this class can easily be returned from a
+     * function.
      *
      */
     class TokenRequest final {

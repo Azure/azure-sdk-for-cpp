@@ -105,10 +105,7 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
           auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
               HttpMethod::Post, m_requestUrl, body.str());
 
-          if (m_isAdfs)
-          {
-            request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
-          }
+          request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
 
           return request;
         });
