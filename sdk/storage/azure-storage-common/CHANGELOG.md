@@ -159,7 +159,7 @@ Thank you to our developer community members who helped to make Azure Storage be
 
 ### Acknowledgments
 
-Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+Thank you to our developer community members who helped to make Azure Storage better with their contributions to this release:
 
 - Gabor Gyimesi _([GitHub](https://github.com/lordgamez))_
 
