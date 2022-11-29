@@ -1,0 +1,18 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-storage-common/inc",
+    "../../azure-storage-blobs/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "includeInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Storage::Files::DataLake",
+  "reviewName": "Storage Datalake Review",
+  "serviceName": "Azure Storage Files Datalake",
+  "packageName": "azure.storage.files.datalake"
+}

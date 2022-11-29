@@ -1,0 +1,17 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-security-keyvault-shared/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "includeInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Security::KeyVault::Secrets",
+  "reviewName": "KeyVault Secrets Review",
+  "serviceName": "Azure Security Keyvault Secrets",
+  "packageName": "azure.security.keyvault.secrets"
+}
