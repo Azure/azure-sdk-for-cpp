@@ -12,7 +12,7 @@
 
 ### Acknowledgments
 
-Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+Thank you to our developer community members who helped to make Azure Storage File Shares better with their contributions to this release:
 
 - ariellink _([GitHub](https://github.com/Ariellink))_
 
