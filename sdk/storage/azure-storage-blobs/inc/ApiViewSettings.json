@@ -1,0 +1,17 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-storage-common/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "includeInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Storage::Blobs",
+  "reviewName": "Storage Review",
+  "serviceName": "Azure Storage Blobs",
+  "packageName": "azure.storage.blobs"
+}
