@@ -78,7 +78,7 @@
         ],
         "revocation_endpoint": "https://REDACTED.wus.attest.azure.net/revoke",
         "issuer": "https://REDACTED.wus.attest.azure.net",
-        "jwks_uri": "https://cpgearamaattestationaad.wus.attest.azure.net/certs",
+        "jwks_uri": "https://REDACTED.wus.attest.azure.net/certs",
         "claims_supported": [
           "cnf",
           "nonce",
