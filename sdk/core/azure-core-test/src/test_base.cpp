@@ -13,6 +13,10 @@ using namespace Azure::Core::Json::_internal;
 
 void Azure::Core::Test::TestBase::TearDown()
 {
+  if (m_wasSkipped)
+  {
+    return;
+  }
   if (m_testProxy->IsRecordMode())
   {
     m_testProxy->SetStopRecordMode();

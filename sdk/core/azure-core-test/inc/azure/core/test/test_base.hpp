@@ -47,6 +47,10 @@ namespace Azure { namespace Core { namespace Test {
     bool m_wasSkipped = false;
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
+      if (m_wasSkipped)
+      {
+        return;
+      }
       // Set up client options depending on the test-mode
       if (m_testContext.IsPlaybackMode())
       {
@@ -380,7 +384,10 @@ namespace Azure { namespace Core { namespace Test {
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
-      m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
+      if (!m_wasSkipped)
+      {
+        m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
+      }
     }
 
     /**
