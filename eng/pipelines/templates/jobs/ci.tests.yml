@@ -172,7 +172,7 @@ jobs:
       - pwsh: |
           get-content test-proxy.log
         displayName: TestProxy Log
-        condition: succeededOrFailed()
+        condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
         workingDirectory: $(Build.SourcesDirectory)
         continueOnError: true
 
