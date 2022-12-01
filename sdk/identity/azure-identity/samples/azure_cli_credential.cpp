@@ -12,8 +12,6 @@ int main()
   try
   {
     // Step 1: Initialize Azure CLI Credential.
-    // A configuration demonstrated below would authenticate using EnvironmentCredential if it is
-    // available, and if it is not available, would fall back to use ManagedIdentityCredential.
     auto chainedTokenCredential = std::make_shared<Azure::Identity::AzureCliCredential>();
 
     // Step 2: Pass the credential to an Azure Service Client.

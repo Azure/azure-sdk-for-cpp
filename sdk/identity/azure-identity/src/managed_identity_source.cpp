@@ -88,7 +88,7 @@ Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
     auto const& scopes = tokenRequestContext.Scopes;
     if (!scopes.empty())
     {
-      scopesStr = TokenCredentialImpl::FormatScopes(scopes, true);
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, true, );
     }
   }
 

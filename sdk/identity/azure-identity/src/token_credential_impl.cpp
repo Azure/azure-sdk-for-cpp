@@ -8,21 +8,36 @@
 #include "private/package_version.hpp"
 
 #include <chrono>
-#include <sstream>
 
-using namespace Azure::Identity::_detail;
+using Azure::Identity::_detail::TokenCredentialImpl;
 
-TokenCredentialImpl::TokenCredentialImpl(Core::Credentials::TokenCredentialOptions const& options)
+using Azure::Identity::_detail::PackageVersion;
+
+using Azure::Core::Context;
+using Azure::Core::Url;
+using Azure::Core::Credentials::AccessToken;
+using Azure::Core::Credentials::AuthenticationException;
+using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Http::HttpStatusCode;
+using Azure::Core::Http::RawResponse;
+
+TokenCredentialImpl::TokenCredentialImpl(TokenCredentialOptions const& options)
     : m_httpPipeline(options, "identity", PackageVersion::ToString(), {}, {})
 {
 }
 
+namespace {
+std::string OptionalUrlEncode(std::string const& value, bool doEncode)
+{
+  return doEncode ? Url::Encode(value) : value;
+}
+} // namespace
+
 std::string TokenCredentialImpl::FormatScopes(
     std::vector<std::string> const& scopes,
-    bool asResource)
+    bool asResource,
+    bool urlEncode)
 {
-  using Azure::Core::Url;
-
   if (asResource && scopes.size() == 1)
   {
     auto resource = scopes[0];
@@ -37,148 +52,39 @@ std::string TokenCredentialImpl::FormatScopes(
       resource = resource.substr(0, resourceLen - suffixLen);
     }
 
-    return Url::Encode(resource);
+    return OptionalUrlEncode(resource, urlEncode);
   }
 
-  auto scopesIter = scopes.begin();
-  auto scopesStr = Azure::Core::Url::Encode(*scopesIter);
-
-  auto const scopesEnd = scopes.end();
-  for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+  std::string scopesStr;
   {
-    scopesStr += std::string(" ") + Url::Encode(*scopesIter);
+    auto scopesIter = scopes.begin();
+    auto const scopesEnd = scopes.end();
+
+    if (scopesIter != scopesEnd) // LCOV_EXCL_LINE
+    {
+      auto const scope = *scopesIter;
+      auto scopesStr = OptionalUrlEncode(scope, urlEncode);
+    }
+
+    for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+    {
+      auto const Separator = std::string(" "); // Element separator never gets URL-encoded
+
+      auto const scope = *scopesIter;
+      scopesStr += Separator + OptionalUrlEncode(scope, urlEncode);
+    }
   }
 
   return scopesStr;
 }
 
-Core::Credentials::AccessToken TokenCredentialImpl::ParseToken(
-    std::string const& jsonString,
-    std::string const& accessTokenPropertyName,
-    std::string const& expirationPropertyName,
-    bool expirationInSecondsFromNow)
-{
-  // TODO: use JSON parser.
-  auto const jsonStringBegin = jsonString.begin();
-  auto const jsonStringSize = jsonString.size();
-
-  auto jsonStringPos = jsonString.find(':', jsonString.find(accessTokenPropertyName));
-  if (jsonStringPos == std::string::npos)
-  {
-    throw std::runtime_error(
-        std::string("Token JSON object: \'") + accessTokenPropertyName
-        + "\' property was not found.");
-  }
-
-  for (; jsonStringPos < jsonStringSize; ++jsonStringPos)
-  {
-    auto c = jsonString[jsonStringPos];
-    if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-    {
-      break;
-    }
-  }
-
-  auto const tokenBegin = jsonStringPos;
-  for (; jsonStringPos < jsonStringSize; ++jsonStringPos)
-  {
-    auto c = jsonString[jsonStringPos];
-    if (c == '\"' || c == '\'')
-    {
-      break;
-    }
-  }
-  auto const tokenEnd = jsonStringPos;
-
-  jsonStringPos = jsonString.find(':', jsonString.find(expirationPropertyName));
-  if (jsonStringPos == std::string::npos)
-  {
-    throw std::runtime_error(std::string("Token JSON object: \'" + expirationPropertyName "\' property was not found.";
-  }
-
-  auto const accessToken = std::string(jsonStringBegin + tokenBegin, jsonStringBegin + tokenEnd);
-
-  if (expirationInSecondsFromNow)
-  {
-    for (; jsonStringPos < jsonStringSize; ++jsonStringPos)
-    {
-      auto c = jsonString[jsonStringPos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-
-    long long expiresInSeconds = 0;
-    for (; jsonStringPos < jsonStringSize; ++jsonStringPos)
-    {
-      auto c = jsonString[jsonStringPos];
-      if (c < '0' || c > '9')
-      {
-        break;
-      }
-
-      expiresInSeconds = (expiresInSeconds * 10) + (static_cast<long long>(c) - '0');
-    }
-
-    return {
-        accessToken,
-        std::chrono::system_clock::now() + std::chrono::seconds(expiresInSeconds),
-    };
-  }
-  else
-  {
-    for (; jsonStringPos < jsonStringSize; ++jsonStringPos)
-    {
-      auto c = jsonString[jsonStringPos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-
-    auto const dateTimeStampStartPos = jsonStringPos;
-    for (; jsonStringPos < jsonStringSize; ++jsonStringPos)
-    {
-      auto c = jsonString[jsonStringPos];
-      if (c == '\"' || c == '\'')
-      {
-        break;
-      }
-    }
-
-    auto dateTimeString
-        = std::string(jsonStringBegin + dateTimeStampStartPos, jsonStringBegin + jsonStringPos);
-
-    // dateTimeString may not be in strict RFC3339 format - space may be used instead of 'T'.
-    {
-      auto const spacePos = dateTimeString.find(' ');
-      if (spacePos != std::string::npos)
-      {
-        dateTimeString = dateTimeString.replace(spacePos, 1, 1, 'T');
-      }
-    }
-
-    return {
-        accessToken,
-        Azure::DateTime::Parse(dateTimeString, Azure::DateTime::DateFormat::Rfc3339),
-    };
-  }
-}
-
-Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
-    Core::Context const& context,
+AccessToken TokenCredentialImpl::GetToken(
+    Context const& context,
     std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>()> const& createRequest,
     std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>(
-        Azure::Core::Http::HttpStatusCode statusCode,
-        Azure::Core::Http::RawResponse const& response)> const& shouldRetry) const
+        HttpStatusCode statusCode,
+        RawResponse const& response)> const& shouldRetry) const
 {
-  using Azure::Core::Credentials::AuthenticationException;
-  using Azure::Core::Http::HttpStatusCode;
-  using Azure::Core::Http::RawResponse;
-
-  static std::string const errorMsgPrefix("GetToken: ");
-
   try
   {
     std::unique_ptr<RawResponse> response;
@@ -189,7 +95,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
         response = m_httpPipeline.Send(request->HttpRequest, context);
         if (!response)
         {
-          throw AuthenticationException(errorMsgPrefix + "null response");
+          throw std::runtime_error("null response");
         }
 
         auto const statusCode = response->GetStatusCode();
@@ -201,12 +107,9 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
         request = shouldRetry(statusCode, *response);
         if (request == nullptr)
         {
-          std::ostringstream errorMsg;
-          errorMsg << errorMsgPrefix << "error response: "
-                   << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
-                   << response->GetReasonPhrase();
-
-          throw AuthenticationException(errorMsg.str());
+          throw std::runtime_error(
+              std::string("error response: ") + std::to_string(statusCode) + " "
+              + esponse->GetReasonPhrase());
         }
 
         response.reset();
@@ -214,9 +117,12 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
     }
 
     auto const& responseBodyVector = response->GetBody();
-    std::string responseBody(responseBodyVector.begin(), responseBodyVector.end());
 
-    return ParseToken(responseBody, "access_token", "expires_in", true);
+    return ParseToken(
+        std::string(responseBodyVector.begin(), responseBodyVector.end()),
+        "access_token",
+        "expires_in",
+        std::string());
   }
   catch (AuthenticationException const&)
   {
@@ -224,6 +130,168 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
   }
   catch (std::exception const& e)
   {
-    throw AuthenticationException(errorMsgPrefix + e.what());
+    throw AuthenticationException(std::string("GetToken(): ") + e.what());
   }
 }
+
+namespace {
+[[noreturn]] void ThrowMissingJsonPropertyError(std::string const& propertyName)
+{
+  throw std::runtime_error(
+      std::string("Token JSON object: \'") + propertyName + "\' property was not found.");
+}
+
+bool GetPropertyValueAsInt64(
+    std::string const& jsonString,
+    std::string const& propertyName,
+    std::string& outValue);
+
+bool GetPropertyValueAsString(
+    std::string const& jsonString,
+    std::string const& propertyName,
+    std::string& outValue);
+} // namespace
+
+Core::Credentials::AccessToken TokenCredentialImpl::ParseToken(
+    std::string const& jsonString,
+    std::string const& accessTokenPropertyName,
+    std::string const& expiresInPropertyName,
+    std::string const& expiresOnPropertyName)
+{
+  // TODO: use JSON parser.
+  AccessToken accessToken;
+  if (!GetPropertyValueAsString(jsonString, accessTokenPropertyName, accessToken.Token))
+  {
+    ThrowMissingJsonPropertyError(accessTokenPropertyName);
+  }
+
+  int64_t expiresIn = 0;
+  if (GetPropertyValueAsInt64(jsonString, expiresInPropertyName, accessToken.Token))
+  {
+    accessToken.ExpiresOn = std::chrono::system_clock::now() + std::chrono::seconds(expiresIn);
+    return accessToken;
+  }
+
+  if (expiresOnPropertyName.empty())
+  {
+    ThrowMissingJsonPropertyError(expiresInPropertyName);
+  }
+
+  std::string expiresOn;
+  if (!GetPropertyValueAsString(jsonString, expiresOnPropertyName, expiresOn))
+  {
+    ThrowMissingJsonPropertyError(expiresInPropertyName + "\' or \'" + expiresOnPropertyName);
+  }
+
+  {
+    auto const spacePos = expiresOn.find(' ');
+    if (spacePos != std::string::npos)
+    {
+      expiresOn = dateTimeString.replace(spacePos, 1, 1, 'T');
+    }
+  }
+
+  accessToken.ExpiresOn = Azure::DateTime::Parse(expiresOn, Azure::DateTime::DateFormat::Rfc3339);
+  return accessToken;
+}
+
+namespace {
+std::string::size_type GetPropertyValueStart(
+    std::string const& jsonString,
+    std::string const& propertyName);
+
+bool GetPropertyValueAsInt64(
+    std::string const& jsonString,
+    std::string const& propertyName,
+    std::string& outValue)
+{
+  auto const valueStartPos = GetPropertyValueStart(jsonString, propertyName);
+  if (valueStartPos == std::string::npos)
+  {
+    return false;
+  }
+
+  int64_t value = 0;
+  {
+    auto const size = jsonString.size();
+    for (auto pos = valueStartPos; pos < size; ++pos)
+    {
+      auto c = jsonString[pos];
+      if (c < '0' || c > '9')
+      {
+        break;
+      }
+
+      value = (value * 10) + (static_cast<int64_t>(c) - '0');
+    }
+  }
+
+  outValue = value;
+
+  return true;
+}
+
+std::string::size_type GetPropertyValueEnd(std::string const& str, std::string::size_type startPos);
+
+bool GetPropertyValueAsString(
+    std::string const& jsonString,
+    std::string const& propertyName,
+    std::string& outValue)
+{
+  auto const valueStartPos = GetPropertyValueStart(jsonString, propertyName);
+  if (valueStartPos == std::string::npos)
+  {
+    return false;
+  }
+  auto const jsonStringBegin = jsonString.begin();
+  outValue = std::string(
+      jsonStringBegin + valueStartPos,
+      jsonStringBegin + GetPropertyValueEnd(jsonString, valueStartPos));
+
+  return true;
+}
+
+std::string::size_type GetPropertyValueStart(
+    std::string const& jsonString,
+    std::string const& propertyName)
+{
+  auto const propertyNameStart = jsonString.find(':', jsonString.find(propertyName));
+  if (propertyNameStart == std::string::npos)
+  {
+    return std::string::npos;
+  }
+
+  auto pos = propertyNameStart + propertyName.size();
+  {
+    auto const jsonStringSize = jsonString.size();
+    for (; pos < jsonStringSize; ++pos)
+    {
+      auto c = jsonString[pos];
+      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
+      {
+        break;
+      }
+    }
+  }
+
+  return pos;
+}
+
+std::string::size_type GetPropertyValueEnd(std::string const& str, std::string::size_type startPos)
+{
+  auto pos = startPos;
+  {
+    auto const strSize = str.size();
+    for (; pos < strSize; ++pos)
+    {
+      auto c = str[pos];
+      if (c == '\"' || c == '\'')
+      {
+        break;
+      }
+    }
+  }
+
+  return pos;
+}
+} // namespace

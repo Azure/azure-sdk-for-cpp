@@ -61,7 +61,6 @@ set(
   AZURE_IDENTITY_SOURCE
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
-    src/private/process_helper.hpp
     src/private/token_cache.hpp
     src/private/token_cache_internals.hpp
     src/private/token_credential_impl.hpp
@@ -72,7 +71,6 @@ set(
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp
-    src/process_helper.cpp
     src/token_cache.cpp
     src/token_credential_impl.cpp
 )
