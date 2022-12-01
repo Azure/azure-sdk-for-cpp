@@ -64,7 +64,7 @@ std::string TokenCredentialImpl::FormatScopes(
     if (scopesIter != scopesEnd) // LCOV_EXCL_LINE
     {
       auto const scope = *scopesIter;
-      auto scopesStr = OptionalUrlEncode(scope, urlEncode);
+      scopesStr += OptionalUrlEncode(scope, urlEncode);
     }
 
     for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
