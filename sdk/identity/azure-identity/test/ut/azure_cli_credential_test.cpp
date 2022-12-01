@@ -198,31 +198,6 @@ TEST(AzureCliCredential, ContextCanceled)
   EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, context)), AuthenticationException);
 }
 
-TEST(AzureCliCredential, UnsafeChars)
-{
-  std::string const Exploit = "\" | echo OWNED | " + InfiniteCommand + " | echo \"";
-
-  {
-    AzureCliCredentialOptions options;
-    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
-    options.TenantId += Exploit;
-
-    EXPECT_THROW(
-        static_cast<void>(std::make_unique<AzureCliCredential>(options)), AuthenticationException);
-  }
-
-  {
-    AzureCliCredentialOptions options;
-    options.CliProcessTimeout = std::chrono::hours(24);
-    AzureCliCredential azCliCred(options);
-
-    TokenRequestContext trc;
-    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + Exploit);
-
-    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
-  }
-}
-
 TEST(AzureCliCredential, Defaults)
 {
   {
@@ -252,23 +227,48 @@ TEST(AzureCliCredential, Defaults)
     EXPECT_EQ(azCliCred.GetTenantId, "01234567-89AB-CDEF-0123-456789ABCDEF");
     EXPECT_EQ(azCliCred.GetCliProcessTimeout(), std::chrono::seconds(12345));
   }
+}
+
+TEST(AzureCliCredential, CmdLine)
+{
+  AzureCliTestCredential azCliCred({});
+
+  auto const cmdLineWithoutTenant = azCliCred.GetOriginalAzCommand("https://storage.azure.com", {});
+
+  auto const cmdLineWithTenant = azCliCred.GetOriginalAzCommand(
+      "https://storage.azure.com", "01234567-89AB-CDEF-0123-456789ABCDEF");
+
+  EXPECT_EQ(
+      cmdLineWithoutTenant,
+      "az account get-access-token --output json --resource \"https://storage.azure.com\"");
+
+  EXPECT_EQ(
+      cmdLineWithTenant,
+      "az account get-access-token --output json --resource \"https://storage.azure.com\"
+      "--tenant \"01234567-89AB-CDEF-0123-456789ABCDEF"\"");
+}
+
+TEST(AzureCliCredential, UnsafeChars)
+{
+  std::string const Exploit = "\" | echo OWNED | " + InfiniteCommand + " | echo \"";
 
   {
-    AzureCliTestCredential azCliCred({});
+    AzureCliCredentialOptions options;
+    options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
+    options.TenantId += Exploit;
 
-    auto const cmdLineWithoutTenant
-        = azCliCred.GetOriginalAzCommand("https://storage.azure.com", {});
+    EXPECT_THROW(
+        static_cast<void>(std::make_unique<AzureCliCredential>(options)), AuthenticationException);
+  }
 
-    auto const cmdLineWithTenant = azCliCred.GetOriginalAzCommand(
-        "https://storage.azure.com", "01234567-89AB-CDEF-0123-456789ABCDEF");
+  {
+    AzureCliCredentialOptions options;
+    options.CliProcessTimeout = std::chrono::hours(24);
+    AzureCliCredential azCliCred(options);
 
-    EXPECT_EQ(
-        cmdLineWithoutTenant,
-        "az account get-access-token --output json --resource \"https://storage.azure.com\"");
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + Exploit);
 
-    EXPECT_EQ(
-        cmdLineWithTenant,
-        "az account get-access-token --output json --resource \"https://storage.azure.com\"
-        "--tenant \"01234567-89AB-CDEF-0123-456789ABCDEF"\"");
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
   }
 }
