@@ -229,7 +229,7 @@ std::string RunShellCommand(
       if (context.IsCancelled())
       {
         shellProcess.Terminate();
-        throw std::runtime_error("Context was canceled before Azure CLI process was done.");
+        throw std::runtime_error("Context was cancelled before Azure CLI process was done.");
       }
 
       if (std::chrono::steady_clock::now() > terminateAfter)

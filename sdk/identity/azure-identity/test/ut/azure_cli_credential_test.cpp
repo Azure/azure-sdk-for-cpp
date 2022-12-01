@@ -179,7 +179,7 @@ TEST(AzureCliCredential, TimedOut)
   EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 }
 
-TEST(AzureCliCredential, ContextCanceled)
+TEST(AzureCliCredential, ContextCancelled)
 {
   AzureCliCredentialOptions options;
   options.CliProcessTimeout = std::chrono::hours(24);
