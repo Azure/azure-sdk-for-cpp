@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  TEST_F(DataLakePathClientTest, CreateWithOptions)
+  TEST_F(DataLakePathClientTest, CreateWithOptions_LIVEONLY_)
   {
     // owner&group
     {

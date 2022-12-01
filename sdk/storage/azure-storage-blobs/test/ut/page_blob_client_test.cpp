@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(numRanges, static_cast<size_t>(3));
   }
 
-  TEST_F(PageBlobClientTest, UploadFromUri)
+  TEST_F(PageBlobClientTest, UploadFromUri_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto testPageBlobClient = GetPageBlobClient(testName);
@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Test {
         0, testPageBlobClient.GetUrl() + GetSas(), {0, static_cast<int64_t>(m_blobContent.size())});
   }
 
-  TEST_F(PageBlobClientTest, StartCopyIncremental)
+  TEST_F(PageBlobClientTest, StartCopyIncremental_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto testPageBlobClient = GetPageBlobClient(testName);
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.Value().empty());
   }
 
-  TEST_F(PageBlobClientTest, Lease)
+  TEST_F(PageBlobClientTest, Lease_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto testPageBlobClient = GetPageBlobClient(testName);
@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(PageBlobClientTest, ContentHash)
+  TEST_F(PageBlobClientTest, ContentHash_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto pageBlobClient = GetPageBlobClient(testName);
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadStream->ReadToEnd(Azure::Core::Context()), m_blobContent);
   }
 
-  TEST_F(PageBlobClientTest, SourceBlobAccessConditions)
+  TEST_F(PageBlobClientTest, SourceBlobAccessConditions_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto sourceBlobClient = GetPageBlobClient(testName);
@@ -474,7 +474,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobClient.GetProperties().Value.HttpHeaders.ContentType, headers.ContentType);
   }
 
-  TEST_F(PageBlobClientTest, PageBlobAccessConditions)
+  TEST_F(PageBlobClientTest, PageBlobAccessConditions_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto blobClient = GetPageBlobClient(testName);

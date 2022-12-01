@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, RenameFile)
+  TEST_F(FileShareDirectoryClientTest, RenameFile_LIVEONLY_)
   {
     const std::string testName(GetTestName());
     const std::string baseDirectoryName = testName + "1";
@@ -301,7 +301,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, RenameSubdirectory)
+  TEST_F(FileShareDirectoryClientTest, RenameSubdirectory_LIVEONLY_)
   {
     const std::string testName(GetTestName());
     const std::string baseDirectoryName = testName + "1";
@@ -472,7 +472,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, DirectoryPermission)
+  TEST_F(FileShareDirectoryClientTest, DirectoryPermission_LIVEONLY_)
   {
     std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
                              "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
@@ -541,7 +541,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, DirectorySmbProperties)
+  TEST_F(FileShareDirectoryClientTest, DirectorySmbProperties_LIVEONLY_)
   {
     Files::Shares::Models::FileSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::Directory

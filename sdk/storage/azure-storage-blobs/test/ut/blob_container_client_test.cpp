@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ret2.Value.SignedIdentifiers, options.SignedIdentifiers);
   }
 
-  TEST_F(BlobContainerClientTest, Lease)
+  TEST_F(BlobContainerClientTest, Lease_LIVEONLY_)
   {
     auto client = GetBlobContainerTestClient();
     client.Create();
@@ -740,7 +740,7 @@ namespace Azure { namespace Storage { namespace Test {
     client.Delete();
   }
 
-  TEST_F(BlobContainerClientTest, AccessConditionLeaseId)
+  TEST_F(BlobContainerClientTest, AccessConditionLeaseId_LIVEONLY_)
   {
     auto client = GetBlobContainerTestClient();
     client.Create();
@@ -899,7 +899,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobNames, findResults2);
   }
 
-  TEST_F(BlobContainerClientTest, AccessConditionTags)
+  TEST_F(BlobContainerClientTest, AccessConditionTags_LIVEONLY_)
   {
     auto client = GetBlobContainerTestClient();
     client.Create();
