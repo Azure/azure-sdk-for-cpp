@@ -147,7 +147,7 @@ namespace {
 bool GetPropertyValueAsInt64(
     std::string const& jsonString,
     std::string const& propertyName,
-    std::string& outValue);
+    int64_t& outValue);
 
 bool GetPropertyValueAsString(
     std::string const& jsonString,
@@ -169,7 +169,7 @@ AccessToken TokenCredentialImpl::ParseToken(
   }
 
   int64_t expiresIn = 0;
-  if (GetPropertyValueAsInt64(jsonString, expiresInPropertyName, accessToken.Token))
+  if (GetPropertyValueAsInt64(jsonString, expiresInPropertyName, expiresIn))
   {
     accessToken.ExpiresOn = std::chrono::system_clock::now() + std::chrono::seconds(expiresIn);
     return accessToken;
@@ -206,7 +206,7 @@ std::string::size_type GetPropertyValueStart(
 bool GetPropertyValueAsInt64(
     std::string const& jsonString,
     std::string const& propertyName,
-    std::string& outValue)
+    int64_t& outValue)
 {
   auto const valueStartPos = GetPropertyValueStart(jsonString, propertyName);
   if (valueStartPos == std::string::npos)
