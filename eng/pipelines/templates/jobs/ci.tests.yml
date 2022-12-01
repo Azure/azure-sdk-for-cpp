@@ -152,6 +152,7 @@ jobs:
           runProxy: true
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
         
       - ${{ parameters.PreTestSteps }}
       
