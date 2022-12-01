@@ -265,6 +265,7 @@ void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
     );
   }
   // LCOV_EXCL_STOP
+}
 #else
 void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 {
@@ -278,45 +279,45 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 }
 #endif
 
-  OutputPipe::OutputPipe()
-  {
+OutputPipe::OutputPipe()
+{
 #if defined(AZ_PLATFORM_WINDOWS)
-    SECURITY_ATTRIBUTES pipeSecurity;
-    ZeroMemory(&pipeSecurity, sizeof(decltype(pipeSecurity)));
-    pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
-    pipeSecurity.bInheritHandle = TRUE;
-    pipeSecurity.lpSecurityDescriptor = NULL;
+  SECURITY_ATTRIBUTES pipeSecurity = {};
+  ZeroMemory(&pipeSecurity, sizeof(decltype(pipeSecurity)));
+  pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
+  pipeSecurity.bInheritHandle = TRUE;
+  pipeSecurity.lpSecurityDescriptor = NULL;
 
-    ThrowIfApiCallFails(
-        CreatePipe(&m_readHandle, &m_writeHandle, &pipeSecurity, 0), "Cannot create output pipe");
+  ThrowIfApiCallFails(
+      CreatePipe(&m_readHandle, &m_writeHandle, &pipeSecurity, 0), "Cannot create output pipe");
 
-    ThrowIfApiCallFails(
-        SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0),
-        "Cannot ensure the read handle for the output pipe is not inherited");
+  ThrowIfApiCallFails(
+      SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0),
+      "Cannot ensure the read handle for the output pipe is not inherited");
 
-    // We use OVERLAPPED when we ReadFile(), so that the call is non-blocking, which lets us to also
-    // poll whether we should terminate the process.
-    ZeroMemory(&m_overlapped, sizeof(decltype(m_overlapped)));
+  // We use OVERLAPPED when we ReadFile(), so that the call is non-blocking, which lets us to also
+  // poll whether we should terminate the process.
+  ZeroMemory(&m_overlapped, sizeof(decltype(m_overlapped)));
 #else
   ThrowIfApiCallFails(pipe(m_fd.data()), "Cannot create output pipe");
   ThrowIfApiCallFails(
       fcntl(m_fd[0], F_SETFL, O_NONBLOCK), "Cannot set up output pipe to have non-blocking read");
 
 #endif
+}
+
+OutputPipe::~OutputPipe()
+{
+#if defined(AZ_PLATFORM_WINDOWS)
+  if (m_writeHandle != NULL)
+  {
+    static_cast<void>(CloseHandle(m_writeHandle));
   }
 
-  OutputPipe::~OutputPipe()
+  if (m_readHandle != NULL)
   {
-#if defined(AZ_PLATFORM_WINDOWS)
-    if (m_writeHandle != NULL)
-    {
-      static_cast<void>(CloseHandle(m_writeHandle));
-    }
-
-    if (m_readHandle != NULL)
-    {
-      static_cast<void>(CloseHandle(m_readHandle));
-    }
+    static_cast<void>(CloseHandle(m_readHandle));
+  }
 #else
   for (auto iter = m_fd.rbegin(); iter != m_fd.rend(); ++iter)
   {
@@ -326,45 +327,46 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
     }
   }
 #endif
-  }
+}
 
-  void EnsureShellExists(std::string const& pathToShell)
+void EnsureShellExists(std::string const& pathToShell)
+{
+  auto file = std::fopen(pathToShell.c_str(), "r");
+
+  // LCOV_EXCL_START
+  if (!file)
   {
-    auto file = std::fopen(pathToShell.c_str(), "r");
-
-    // LCOV_EXCL_START
-    if (!file)
-    {
-      throw std::runtime_error("Cannot locate command line shell.");
-    }
-    // LCOV_EXCL_STOP
-
-    std::fclose(file);
+    throw std::runtime_error("Cannot locate command line shell.");
   }
+  // LCOV_EXCL_STOP
+
+  std::fclose(file);
+}
 
 #if defined(AZ_PLATFORM_WINDOWS)
-  void AppendToEnvironmentValuesIfNotEmpty(
-      std::vector<CHAR> & environmentValues,
-      std::string const& envVarName,
-      std::string const& value)
+void AppendToEnvironmentValuesIfNotEmpty(
+    std::vector<CHAR>& environmentValues,
+    std::string const& envVarName,
+    std::string const& value)
+{
+  if (!value.empty()) // LCOV_EXCL_LINE
   {
-    if (!value.empty()) // LCOV_EXCL_LINE
-    {
-      auto const envVarStatement = envVarName + "=" + value;
+    auto const envVarStatement = envVarName + "=" + value;
 
-      environmentValues.insert(
-          environmentValues.end(), envVarStatement.begin(), envVarStatement.end());
+    environmentValues.insert(
+        environmentValues.end(), envVarStatement.begin(), envVarStatement.end());
 
-      environmentValues.push_back('\0'); // terminate the string
-    }
+    environmentValues.push_back('\0'); // terminate the string
   }
+}
 
-  void AppendToEnvironmentValuesIfDefined(
-      std::vector<CHAR> & environmentValues, std::string const& envVarName)
-  {
-    AppendToEnvironmentValuesIfNotEmpty(
-        environmentValues, envVarName, Environment::GetVariable(envVarName.c_str()));
-  }
+void AppendToEnvironmentValuesIfDefined(
+    std::vector<CHAR>& environmentValues,
+    std::string const& envVarName)
+{
+  AppendToEnvironmentValuesIfNotEmpty(
+      environmentValues, envVarName, Environment::GetVariable(envVarName.c_str()));
+}
 #else
 void AppendToArgvValues(
     std::vector<char>& argvValues,
@@ -377,111 +379,111 @@ void AppendToArgvValues(
 }
 #endif
 
-  ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
-  {
+ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
+{
 #if defined(AZ_PLATFORM_WINDOWS)
-    // Start the process.
-    PROCESS_INFORMATION procInfo = {};
-    ZeroMemory(&procInfo, sizeof(decltype(procInfo)));
+  // Start the process.
+  PROCESS_INFORMATION procInfo = {};
+  ZeroMemory(&procInfo, sizeof(decltype(procInfo)));
 
+  {
+    STARTUPINFO startupInfo = {};
+    ZeroMemory(&startupInfo, sizeof(decltype(startupInfo)));
+    startupInfo.cb = sizeof(decltype(startupInfo));
+    startupInfo.dwFlags |= STARTF_USESTDHANDLES; // cspell:disable-line
+    startupInfo.hStdInput = INVALID_HANDLE_VALUE;
+    startupInfo.hStdOutput = outputPipe.m_writeHandle;
+    startupInfo.hStdError = outputPipe.m_writeHandle;
+
+    // Path to cmd.exe
+    std::vector<CHAR> commandLineStr;
     {
-      STARTUPINFO startupInfo = {};
-      ZeroMemory(&startupInfo, sizeof(decltype(startupInfo)));
-      startupInfo.cb = sizeof(decltype(startupInfo));
-      startupInfo.dwFlags |= STARTF_USESTDHANDLES; // cspell:disable-line
-      startupInfo.hStdInput = INVALID_HANDLE_VALUE;
-      startupInfo.hStdOutput = outputPipe.m_writeHandle;
-      startupInfo.hStdError = outputPipe.m_writeHandle;
+      auto cmd = Environment::GetVariable("COMSPEC");
+      EnsureShellExists(cmd);
 
-      // Path to cmd.exe
-      std::vector<CHAR> commandLineStr;
+      // Enclose path in quotes, in case there are space characters.
       {
-        auto cmd = Environment::GetVariable("COMSPEC");
-        EnsureShellExists(cmd);
-
-        // Enclose path in quotes, in case there are space characters.
-        {
-          std::string const Quote = "\"";
-          cmd = Quote + cmd + Quote;
-        }
-
-        auto const commandLine = cmd + " /c " + command;
-        commandLineStr.insert(commandLineStr.end(), commandLine.begin(), commandLine.end());
-        commandLineStr.push_back('\0');
+        std::string const Quote = "\"";
+        cmd = Quote + cmd + Quote;
       }
 
-      // Form the environment
-      std::vector<CHAR> environmentValues;
-      LPVOID lpEnvironment = NULL;
-      {
-        {
-          constexpr auto PathEnvVarName = "PATH";
-          auto pathValue = Environment::GetVariable(PathEnvVarName);
-
-          for (auto const pf :
-               {Environment::GetVariable("ProgramFiles"),
-                Environment::GetVariable("ProgramFiles(x86)")})
-          {
-            if (!pf.empty()) // LCOV_EXCL_LINE
-            {
-              if (!pathValue.empty()) // LCOV_EXCL_LINE
-              {
-                pathValue += ";";
-              }
-
-              pathValue += pf + "\\Microsoft SDKs\\Azure\\CLI2\\wbin";
-            }
-          }
-
-          AppendToEnvironmentValuesIfNotEmpty(environmentValues, PathEnvVarName, pathValue);
-        }
-
-        // Also provide SystemRoot variable.
-        // Without it, 'az' may fail with the following error:
-        // "Fatal Python error: _Py_HashRandomization_Init: failed to get random numbers to
-        // initialize Python
-        // Python runtime state: preinitialized
-        // ".
-        AppendToEnvironmentValuesIfDefined(environmentValues, "SystemRoot");
-
-        // Also provide USERPROFILE variable.
-        // Without it, we'll be getting "ERROR: Please run 'az login' to setup account." even if the
-        // user did log in.
-        AppendToEnvironmentValuesIfDefined(environmentValues, "USERPROFILE");
-
-        if (!environmentValues.empty()) // LCOV_EXCL_LINE
-        {
-          environmentValues.push_back('\0'); // terminate the block
-          lpEnvironment = environmentValues.data();
-        }
-      }
-
-      ThrowIfApiCallFails(
-          CreateProcessA(
-              NULL,
-              commandLineStr.data(),
-              NULL,
-              NULL,
-              TRUE,
-              NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW,
-              lpEnvironment,
-              NULL,
-              &startupInfo,
-              &procInfo),
-          "Cannot create process");
+      auto const commandLine = cmd + " /c " + command;
+      commandLineStr.insert(commandLineStr.end(), commandLine.begin(), commandLine.end());
+      commandLineStr.push_back('\0');
     }
 
-    // We won't be needing the process main thread handle on our end.
-    static_cast<void>(CloseHandle(procInfo.hThread));
+    // Form the environment
+    std::vector<CHAR> environmentValues;
+    LPVOID lpEnvironment = NULL;
+    {
+      {
+        constexpr auto PathEnvVarName = "PATH";
+        auto pathValue = Environment::GetVariable(PathEnvVarName);
 
-    // Keep the process handle so we can cancel it if it takes too long.
-    m_processHandle = procInfo.hProcess;
+        for (auto const pf :
+             {Environment::GetVariable("ProgramFiles"),
+              Environment::GetVariable("ProgramFiles(x86)")})
+        {
+          if (!pf.empty()) // LCOV_EXCL_LINE
+          {
+            if (!pathValue.empty()) // LCOV_EXCL_LINE
+            {
+              pathValue += ";";
+            }
 
-    // We won't be writing to the pipe that is meant for the process.
-    // We will only be reading the pipe.
-    // So, now that the process is started, we can close write handle on our end.
-    static_cast<void>(CloseHandle(outputPipe.m_writeHandle));
-    outputPipe.m_writeHandle = NULL;
+            pathValue += pf + "\\Microsoft SDKs\\Azure\\CLI2\\wbin";
+          }
+        }
+
+        AppendToEnvironmentValuesIfNotEmpty(environmentValues, PathEnvVarName, pathValue);
+      }
+
+      // Also provide SystemRoot variable.
+      // Without it, 'az' may fail with the following error:
+      // "Fatal Python error: _Py_HashRandomization_Init: failed to get random numbers to
+      // initialize Python
+      // Python runtime state: preinitialized
+      // ".
+      AppendToEnvironmentValuesIfDefined(environmentValues, "SystemRoot");
+
+      // Also provide USERPROFILE variable.
+      // Without it, we'll be getting "ERROR: Please run 'az login' to setup account." even if the
+      // user did log in.
+      AppendToEnvironmentValuesIfDefined(environmentValues, "USERPROFILE");
+
+      if (!environmentValues.empty()) // LCOV_EXCL_LINE
+      {
+        environmentValues.push_back('\0'); // terminate the block
+        lpEnvironment = environmentValues.data();
+      }
+    }
+
+    ThrowIfApiCallFails(
+        CreateProcessA(
+            NULL,
+            commandLineStr.data(),
+            NULL,
+            NULL,
+            TRUE,
+            NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW,
+            lpEnvironment,
+            NULL,
+            &startupInfo,
+            &procInfo),
+        "Cannot create process");
+  }
+
+  // We won't be needing the process main thread handle on our end.
+  static_cast<void>(CloseHandle(procInfo.hThread));
+
+  // Keep the process handle so we can cancel it if it takes too long.
+  m_processHandle = procInfo.hProcess;
+
+  // We won't be writing to the pipe that is meant for the process.
+  // We will only be reading the pipe.
+  // So, now that the process is started, we can close write handle on our end.
+  static_cast<void>(CloseHandle(outputPipe.m_writeHandle));
+  outputPipe.m_writeHandle = NULL;
 #else
   // Form the 'argv' array:
   // * An array of pointers to non-const C strings (0-terminated).
@@ -568,12 +570,12 @@ void AppendToArgvValues(
   close(outputPipe.m_fd[1]);
   outputPipe.m_fd[1] = -1;
 #endif
-  }
+}
 
-  ShellProcess::~ShellProcess()
-  {
+ShellProcess::~ShellProcess()
+{
 #if defined(AZ_PLATFORM_WINDOWS)
-    static_cast<void>(CloseHandle(m_processHandle));
+  static_cast<void>(CloseHandle(m_processHandle));
 #else
   if (m_pid > 0)
   {
@@ -582,51 +584,51 @@ void AppendToArgvValues(
 
   posix_spawn_file_actions_destroy(&m_actions);
 #endif
-  }
+}
 
-  void ShellProcess::Terminate()
-  {
+void ShellProcess::Terminate()
+{
 #if defined(AZ_PLATFORM_WINDOWS)
-    static_cast<void>(TerminateProcess(m_processHandle, 0));
+  static_cast<void>(TerminateProcess(m_processHandle, 0));
 #else
   if (m_pid > 0)
   {
     static_cast<void>(kill(m_pid, SIGKILL));
   }
 #endif
-  }
+}
 
-  bool OutputPipe::NonBlockingRead(
-      std::vector<std::string::value_type> & buffer,
-      std::string::size_type & bytesRead,
-      bool& willHaveMoreData)
-  {
+bool OutputPipe::NonBlockingRead(
+    std::vector<std::string::value_type>& buffer,
+    std::string::size_type& bytesRead,
+    bool& willHaveMoreData)
+{
 #if defined(AZ_PLATFORM_WINDOWS)
-    static_assert(
-        sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(CHAR),
-        "buffer elements and CHARs should be of the same size");
+  static_assert(
+      sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(CHAR),
+      "buffer elements and CHARs should be of the same size");
 
-    // Since we're using OVERLAPPED, call to ReadFile() is non-blocking - ReadFile() would return
-    // immediately if there is no data, and won;t wait for any data to arrive.
-    DWORD bytesReadDword = 0;
-    auto const hadData
-        = (ReadFile(
-               m_readHandle,
-               buffer.data(),
-               static_cast<DWORD>(buffer.size()),
-               &bytesReadDword,
-               &m_overlapped)
-           == TRUE);
+  // Since we're using OVERLAPPED, call to ReadFile() is non-blocking - ReadFile() would return
+  // immediately if there is no data, and won;t wait for any data to arrive.
+  DWORD bytesReadDword = 0;
+  auto const hadData
+      = (ReadFile(
+             m_readHandle,
+             buffer.data(),
+             static_cast<DWORD>(buffer.size()),
+             &bytesReadDword,
+             &m_overlapped)
+         == TRUE);
 
-    bytesRead = static_cast<std::remove_reference<decltype(bytesRead)>::type>(bytesReadDword);
+  bytesRead = static_cast<std::remove_reference<decltype(bytesRead)>::type>(bytesReadDword);
 
-    // Invoking code should be calling this function until we set willHaveMoreData to true.
-    // We set it to true when we receive ERROR_BROKEN_PIPE after ReadFile(), which means the process
-    // has finished and closed the pipe on its end, and it means there won't be more data after
-    // what've just read.
-    willHaveMoreData = (GetLastError() != ERROR_BROKEN_PIPE);
+  // Invoking code should be calling this function until we set willHaveMoreData to true.
+  // We set it to true when we receive ERROR_BROKEN_PIPE after ReadFile(), which means the process
+  // has finished and closed the pipe on its end, and it means there won't be more data after
+  // what've just read.
+  willHaveMoreData = (GetLastError() != ERROR_BROKEN_PIPE);
 
-    return hadData && bytesRead > 0;
+  return hadData && bytesRead > 0;
 #else
   static_assert(
       sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(char),
@@ -638,5 +640,5 @@ void AppendToArgvValues(
   willHaveMoreData = (nread > 0 || (nread == -1 && errno == EAGAIN));
   return nread > 0;
 #endif
-  }
+}
 } // namespace
