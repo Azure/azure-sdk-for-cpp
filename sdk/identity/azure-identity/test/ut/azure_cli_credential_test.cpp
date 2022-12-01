@@ -246,7 +246,7 @@ TEST(AzureCliCredential, CmdLine)
 
   EXPECT_EQ(
       cmdLineWithTenant,
-      "az account get-access-token --output json --resource \"https://storage.azure.com\"
+      "az account get-access-token --output json --resource \"https://storage.azure.com\""
       " --tenant \"01234567-89AB-CDEF-0123-456789ABCDEF\"");
 }
 
