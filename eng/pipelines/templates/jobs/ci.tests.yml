@@ -147,13 +147,13 @@ jobs:
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - template: /eng/common/testproxy/test-proxy-tool.yml
-        parameters:
-          runProxy: true
-          rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
-          templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
-          condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-        
+    #  - template: /eng/common/testproxy/test-proxy-tool.yml
+    #    parameters:
+    #      runProxy: true
+    #      rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+    #      templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+    #      condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+    #    
       - ${{ parameters.PreTestSteps }}
       
       - pwsh: |
@@ -169,12 +169,12 @@ jobs:
         
       - ${{ parameters.PostTestSteps }}
             
-      - pwsh: |
-          get-content test-proxy.log
-        displayName: TestProxy Log
-        condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-        workingDirectory: $(Build.SourcesDirectory)
-        continueOnError: true
+    #  - pwsh: |
+    #      get-content test-proxy.log
+    #    displayName: TestProxy Log
+    #    condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+    #    workingDirectory: $(Build.SourcesDirectory)
+    #    continueOnError: true
 
       - task: PublishTestResults@2
         inputs:

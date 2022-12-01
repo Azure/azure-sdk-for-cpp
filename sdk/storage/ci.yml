@@ -61,3 +61,5 @@ stages:
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: PREMIUM_FILE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: AZURE_TEST_USE_TEST_PROXY
+          Value: ON
