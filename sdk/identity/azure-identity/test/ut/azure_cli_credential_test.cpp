@@ -189,7 +189,7 @@ TEST(AzureCliCredential, ContextCancelled)
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
-  auto context = Context::ApplicationContext::WithDeadline(
+  auto context = Context::ApplicationContext.WithDeadline(
       std::chrono::system_clock::now() + std::chrono::hours(24));
 
   std::thread t([&]() {
@@ -247,12 +247,12 @@ TEST(AzureCliCredential, CmdLine)
   EXPECT_EQ(
       cmdLineWithTenant,
       "az account get-access-token --output json --resource \"https://storage.azure.com\"
-      "--tenant \"01234567-89AB-CDEF-0123-456789ABCDEF"\"");
+      " --tenant \"01234567-89AB-CDEF-0123-456789ABCDEF\"");
 }
 
 TEST(AzureCliCredential, UnsafeChars)
 {
-  std::string const Exploit = "\" | echo OWNED | " + InfiniteCommand + " | echo \"";
+  std::string const Exploit = std::string("\" | echo OWNED | ") + InfiniteCommand + " | echo \"";
 
   {
     AzureCliCredentialOptions options;
