@@ -388,7 +388,7 @@ void AppendToArgvValues(
       STARTUPINFO startupInfo = {};
       ZeroMemory(&startupInfo, sizeof(decltype(startupInfo)));
       startupInfo.cb = sizeof(decltype(startupInfo));
-      startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+      startupInfo.dwFlags |= STARTF_USESTDHANDLES; // cspell:disable-line
       startupInfo.hStdInput = INVALID_HANDLE_VALUE;
       startupInfo.hStdOutput = outputPipe.m_writeHandle;
       startupInfo.hStdError = outputPipe.m_writeHandle;

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Azure CLI Credential usese Azure CLI to obtain an access token.
+ * @brief Azure CLI Credential uses Azure CLI to obtain an access token.
  */
 
 #pragma once
