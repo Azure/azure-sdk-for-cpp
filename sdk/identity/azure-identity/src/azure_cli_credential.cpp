@@ -331,7 +331,17 @@ OutputPipe::~OutputPipe()
 
 void EnsureShellExists(std::string const& pathToShell)
 {
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
+#pragma warning(disable : 4996)
+#endif
+
   auto file = std::fopen(pathToShell.c_str(), "r");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
   // LCOV_EXCL_START
   if (!file)

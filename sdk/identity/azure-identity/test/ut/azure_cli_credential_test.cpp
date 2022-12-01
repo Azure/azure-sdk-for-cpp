@@ -134,7 +134,7 @@ TEST(AzureCliCredential, HugeToken)
   }
 
   AzureCliTestCredential const azCliCred(EchoCommand(
-      std::string("{\"accessToken\":\"") + token
+      std::string("{\"accessToken\":\"") + accessToken
       + "\",\"expiresOn\":\"2022-08-24 00:43:08.000000\"}"));
 
   TokenRequestContext trc;
@@ -189,7 +189,8 @@ TEST(AzureCliCredential, ContextCancelled)
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
-  auto context = Context::WithDeadline(std::chrono::system_clock::now() + std::chrono::hours(24));
+  auto context = Context::ApplicationContext::WithDeadline(
+      std::chrono::system_clock::now() + std::chrono::hours(24));
 
   std::thread t([&]() {
     std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -219,7 +220,7 @@ TEST(AzureCliCredential, Defaults)
   }
 
   {
-    AzureCliCredentialOptions const options;
+    AzureCliCredentialOptions options;
     options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
     options.CliProcessTimeout = std::chrono::seconds(12345);
 
