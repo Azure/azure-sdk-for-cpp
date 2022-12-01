@@ -23,17 +23,17 @@ using Azure::Identity::AzureCliCredentialOptions;
 namespace {
 constexpr auto InfiniteCommand =
 #if defined(AZ_PLATFORM_WINDOWS)
-    return "for /l %q in (0) do timeout 10";
+    "for /l %q in (0) do timeout 10";
 #else
-    return "while true; do sleep 10; done"
+    "while true; do sleep 10; done"
 #endif
 ;
 
 constexpr auto EmptyOutputCommand =
 #if defined(AZ_PLATFORM_WINDOWS)
-    return "rem";
+    "rem";
 #else
-    return "."
+    "."
 #endif
 ;
 
@@ -62,19 +62,18 @@ public:
   explicit AzureCliTestCredential(std::string command) : m_command(std::move(command)) {}
 
   explicit AzureCliTestCredential(std::string command, AzureCliCredentialOptions const& options)
-      : m_command(std::move(command)), AzureCliCredential(options)
+      : AzureCliCredential(options), m_command(std::move(command))
   {
   }
 
   explicit AzureCliTestCredential(std::string command, TokenCredentialOptions const& options)
-      : m_command(std::move(command)), AzureCliCredential(options)
+      : AzureCliCredential(options), m_command(std::move(command))
   {
   }
 
   std::string GetOriginalAzCommand(std::string const& resource, std::string const& tenantId) const
   {
-    return AzureCliCredential::GetAzCommand(
-        std::string const& resource, std::string const& tenantId);
+    return AzureCliCredential::GetAzCommand(resource, tenantId);
   }
 
   decltype(m_tenantId) const& GetTenantId() const { return m_tenantId; }
@@ -84,10 +83,10 @@ public:
 
 TEST(AzureCliCredential, Success)
 {
-  constexpr Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
-                    "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
-                    "\"tenant\":\"72f988bf-86f1-41af-91ab-2d7cd011db47\","
-                    "\"tokenType\":\"Bearer\"}";
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
+                         "\"tenant\":\"72f988bf-86f1-41af-91ab-2d7cd011db47\","
+                         "\"tokenType\":\"Bearer\"}";
 
   AzureCliTestCredential const azCliCred(EchoCommand(Token));
 
@@ -99,7 +98,7 @@ TEST(AzureCliCredential, Success)
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime.Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
 
 TEST(AzureCliCredential, Error)
@@ -125,12 +124,12 @@ TEST(AzureCliCredential, EmptyOutput)
 
 TEST(AzureCliCredential, HugeToken)
 {
-  std::string token = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  std::string accessToken = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   {
-    auto const nIterations = ((4 * 1024) / token.size()) + 1;
+    auto const nIterations = ((4 * 1024) / accessToken.size()) + 1;
     for (auto i = 0; i < static_cast<decltype(i)>(nIterations); ++i)
     {
-      token += token;
+      accessToken += accessToken;
     }
   }
 
@@ -141,16 +140,18 @@ TEST(AzureCliCredential, HugeToken)
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
-  EXPECT_EQ(token.Token, token);
+  auto const token = azCliCred.GetToken(trc, {});
+
+  EXPECT_EQ(token.Token, accessToken);
 
   EXPECT_EQ(
       token.ExpiresOn,
-      DateTime.Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
 
 TEST(AzureCliCredential, ExpiresIn)
 {
-  constexpr Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\",\"expiresIn\":30}";
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\",\"expiresIn\":30}";
 
   AzureCliTestCredential const azCliCred(EchoCommand(Token));
 
@@ -205,14 +206,14 @@ TEST(AzureCliCredential, Defaults)
 
     {
       AzureCliTestCredential azCliCred({});
-      EXPECT_EQ(azCliCred.GetTenantId, DefaultOptions.TenantId);
+      EXPECT_EQ(azCliCred.GetTenantId(), DefaultOptions.TenantId);
       EXPECT_EQ(azCliCred.GetCliProcessTimeout(), DefaultOptions.CliProcessTimeout);
     }
 
     {
       TokenCredentialOptions const options;
       AzureCliTestCredential azCliCred({}, options);
-      EXPECT_EQ(azCliCred.GetTenantId, DefaultOptions.TenantId);
+      EXPECT_EQ(azCliCred.GetTenantId(), DefaultOptions.TenantId);
       EXPECT_EQ(azCliCred.GetCliProcessTimeout(), DefaultOptions.CliProcessTimeout);
     }
   }
@@ -224,7 +225,7 @@ TEST(AzureCliCredential, Defaults)
 
     AzureCliTestCredential azCliCred({}, options);
 
-    EXPECT_EQ(azCliCred.GetTenantId, "01234567-89AB-CDEF-0123-456789ABCDEF");
+    EXPECT_EQ(azCliCred.GetTenantId(), "01234567-89AB-CDEF-0123-456789ABCDEF");
     EXPECT_EQ(azCliCred.GetCliProcessTimeout(), std::chrono::seconds(12345));
   }
 }
