@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <stdexcept>
 #include <thread>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -24,9 +25,6 @@
 #endif
 #include <windows.h>
 #else
-#include <array>
-#include <type_traits>
-
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -160,7 +158,7 @@ private:
   HANDLE m_readHandle = NULL;
   OVERLAPPED m_overlapped = {};
 #else
-  std::array<int, 2> m_fd = {-1, -1};
+  std::vector<int> m_fd;
 #endif
 
   OutputPipe(OutputPipe const&) = delete;
@@ -299,6 +297,9 @@ OutputPipe::OutputPipe()
   // poll whether we should terminate the process.
   ZeroMemory(&m_overlapped, sizeof(decltype(m_overlapped)));
 #else
+  m_fd[0] = -1;
+  m_fd[1] = -1;
+
   ThrowIfApiCallFails(pipe(m_fd.data()), "Cannot create output pipe");
   ThrowIfApiCallFails(
       fcntl(m_fd[0], F_SETFL, O_NONBLOCK), "Cannot set up output pipe to have non-blocking read");
