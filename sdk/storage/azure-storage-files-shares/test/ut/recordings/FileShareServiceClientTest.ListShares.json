@@ -8,23 +8,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "d170b089-ef18-41ac-76ac-742b85a6385c",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "43f532af-c5f2-4c01-7c4c-2de39efa6944",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DA8BCD26\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD3265810D904\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "d170b089-ef18-41ac-76ac-742b85a6385c",
-        "x-ms-request-id": "732dbb0a-301a-000b-4bc9-fac238000000",
+        "x-ms-client-request-id": "43f532af-c5f2-4c01-7c4c-2de39efa6944",
+        "x-ms-request-id": "8327aa0c-b01a-0042-530f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -37,23 +37,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "b49cae66-df7c-4564-7811-bc91b821267f",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "6fd3e499-e25e-483b-74fb-cc638bf851d2",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DA9BF76C\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD326581A4D85\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "b49cae66-df7c-4564-7811-bc91b821267f",
-        "x-ms-request-id": "732dbb0d-301a-000b-4cc9-fac238000000",
+        "x-ms-client-request-id": "6fd3e499-e25e-483b-74fb-cc638bf851d2",
+        "x-ms-request-id": "8327aa0e-b01a-0042-540f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -66,23 +66,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "3ef7dee1-655b-4b56-7c37-95abd4767493",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "340d3ecd-81f5-4d4e-7c24-329cdfb3e1e7",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DAA43395\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD32658215163\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "3ef7dee1-655b-4b56-7c37-95abd4767493",
-        "x-ms-request-id": "732dbb0f-301a-000b-4dc9-fac238000000",
+        "x-ms-client-request-id": "340d3ecd-81f5-4d4e-7c24-329cdfb3e1e7",
+        "x-ms-request-id": "8327aa10-b01a-0042-550f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -95,23 +95,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "81eb3097-9761-4bba-633d-e9cc74439b43",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "881f23a7-1ff2-417d-4448-2e8df3a362cb",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DAAD0BEB\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD32658280729\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "81eb3097-9761-4bba-633d-e9cc74439b43",
-        "x-ms-request-id": "732dbb11-301a-000b-4ec9-fac238000000",
+        "x-ms-client-request-id": "881f23a7-1ff2-417d-4448-2e8df3a362cb",
+        "x-ms-request-id": "8327aa12-b01a-0042-560f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -124,23 +124,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "8a2bdb2f-3ae4-4107-613e-fc1d4e181d8e",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "740f3207-383b-4ae2-545f-257031dcf38f",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DAB59629\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD326582EE405\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "8a2bdb2f-3ae4-4107-613e-fc1d4e181d8e",
-        "x-ms-request-id": "732dbb13-301a-000b-4fc9-fac238000000",
+        "x-ms-client-request-id": "740f3207-383b-4ae2-545f-257031dcf38f",
+        "x-ms-request-id": "8327aa14-b01a-0042-570f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -153,23 +153,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "19df81cb-7a1e-4ae5-69e0-5bb92817e3c9",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "ee49a553-75af-4515-4221-c550a11252c7",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DABEBC94\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD326583AF03B\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "19df81cb-7a1e-4ae5-69e0-5bb92817e3c9",
-        "x-ms-request-id": "732dbb15-301a-000b-50c9-fac238000000",
+        "x-ms-client-request-id": "ee49a553-75af-4515-4221-c550a11252c7",
+        "x-ms-request-id": "8327aa16-b01a-0042-580f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -182,23 +182,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "aff3309f-0d02-4658-7863-58fdde68ef02",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "f8af896d-58d8-4109-4811-755873ccc2ed",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DAC746D0\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD326584416AD\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "aff3309f-0d02-4658-7863-58fdde68ef02",
-        "x-ms-request-id": "732dbb17-301a-000b-51c9-fac238000000",
+        "x-ms-client-request-id": "f8af896d-58d8-4109-4811-755873ccc2ed",
+        "x-ms-request-id": "8327aa18-b01a-0042-590f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -211,23 +211,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "effc10df-6524-4bc1-48e6-8537d509683e",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "x-ms-client-request-id": "5f796a8b-529e-424d-6bf4-ac0689387d88",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DACFD110\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD326584D8B25\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "effc10df-6524-4bc1-48e6-8537d509683e",
-        "x-ms-request-id": "732dbb19-301a-000b-52c9-fac238000000",
+        "x-ms-client-request-id": "5f796a8b-529e-424d-6bf4-ac0689387d88",
+        "x-ms-request-id": "8327aa1a-b01a-0042-5a0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -240,23 +240,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "f8c30f61-5a95-41e1-653f-dfd77a0eeabc",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "ad5aa1a9-ed7c-4c54-66f1-2ee42f23355c",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DAD83442\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD3265857E9DF\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "f8c30f61-5a95-41e1-653f-dfd77a0eeabc",
-        "x-ms-request-id": "732dbb1b-301a-000b-53c9-fac238000000",
+        "x-ms-client-request-id": "ad5aa1a9-ed7c-4c54-66f1-2ee42f23355c",
+        "x-ms-request-id": "8327aa1c-b01a-0042-5b0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -269,23 +269,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "f3c1fa43-22f2-4e55-743e-fb0e750bad71",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "a08a08d7-397e-4950-4211-9d864f20b069",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
-        "ETag": "\u00220x8DAC8E0DAE0BE81\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
+        "ETag": "\u00220x8DAD326585E9FAD\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "f3c1fa43-22f2-4e55-743e-fb0e750bad71",
-        "x-ms-request-id": "732dbb1d-301a-000b-54c9-fac238000000",
+        "x-ms-client-request-id": "a08a08d7-397e-4950-4211-9d864f20b069",
+        "x-ms-request-id": "8327aa1e-b01a-0042-5c0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -297,8 +297,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "14b66e97-0fda-484c-7d2d-14d67b24605a",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "6398079b-dd4f-4d9c-7477-cf62af598704",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -307,17 +307,17 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Type,Content-Length,Date,Transfer-Encoding",
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "14b66e97-0fda-484c-7d2d-14d67b24605a",
-        "x-ms-request-id": "732dbb1f-301a-000b-55c9-fac238000000",
+        "x-ms-client-request-id": "6398079b-dd4f-4d9c-7477-cf62af598704",
+        "x-ms-request-id": "8327aa20-b01a-0042-5d0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://REDACTED.file.core.windows.net/\u0022\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DA8BCD26\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAA43395\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa2\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAB59629\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAC746D0\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa4\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAD83442\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DA9BF76C\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAAD0BEB\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb2\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DABEBC94\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DACFD110\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb4\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAE0BE81\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eprefix543211\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0A0F22A86\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eprefix543212\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0A1022DA4\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eprefix543213\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0A1136912\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ECool\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Esharetierrelated1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0A133D798\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:13:52 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://REDACTED.file.core.windows.net/\u0022\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD3265810D904\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32658215163\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa2\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326582EE405\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326584416AD\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa4\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD3265857E9DF\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326581A4D85\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32658280729\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb2\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326583AF03B\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326584D8B25\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesbb4\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326585E9FAD\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eprefix543211\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32625C9843C\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eprefix543212\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32625D54260\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eprefix543213\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32625E19CB5\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ECool\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Esharetierrelated1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32625FA519B\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:56:42 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     },
     {
       "RequestUri": "https://REDACTED.file.core.windows.net/?comp=list\u0026prefix=listsharesa",
@@ -326,8 +326,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "e75e4526-2226-45c9-7075-84def68d81b5",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "853df4bc-c89b-40b9-6ed2-b3350681ae5f",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -336,17 +336,17 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Type,Content-Length,Date,Transfer-Encoding",
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "e75e4526-2226-45c9-7075-84def68d81b5",
-        "x-ms-request-id": "732dbb20-301a-000b-56c9-fac238000000",
+        "x-ms-client-request-id": "853df4bc-c89b-40b9-6ed2-b3350681ae5f",
+        "x-ms-request-id": "8327aa21-b01a-0042-5e0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://REDACTED.file.core.windows.net/\u0022\u003E\u003CPrefix\u003Elistsharesa\u003C/Prefix\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DA8BCD26\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAA43395\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa2\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAB59629\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAC746D0\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa4\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAD83442\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://REDACTED.file.core.windows.net/\u0022\u003E\u003CPrefix\u003Elistsharesa\u003C/Prefix\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD3265810D904\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32658215163\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa2\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326582EE405\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD326584416AD\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa4\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD3265857E9DF\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:07 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     },
     {
       "RequestUri": "https://REDACTED.file.core.windows.net/?comp=list\u0026maxresults=2",
@@ -355,8 +355,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "4afeb1b2-b345-4b5e-6e36-bd9fe9466bd3",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "88714767-f8d8-46e7-7da0-0a6783e06c19",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -365,17 +365,17 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Type,Content-Length,Date,Transfer-Encoding",
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:15:29 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "4afeb1b2-b345-4b5e-6e36-bd9fe9466bd3",
-        "x-ms-request-id": "732dbb21-301a-000b-57c9-fac238000000",
+        "x-ms-client-request-id": "88714767-f8d8-46e7-7da0-0a6783e06c19",
+        "x-ms-request-id": "8327aa22-b01a-0042-5f0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://REDACTED.file.core.windows.net/\u0022\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DA8BCD26\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAC8E0DAA43395\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EThu, 17 Nov 2022 21:15:29 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker\u003E/goqu/listsharesaa2\u003C/NextMarker\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://REDACTED.file.core.windows.net/\u0022\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa0\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD3265810D904\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Elistsharesaa1\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAD32658215163\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EWed, 30 Nov 2022 22:58:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker\u003E/gearamastorage/listsharesaa2\u003C/NextMarker\u003E\u003C/EnumerationResults\u003E"
     },
     {
       "RequestUri": "https://REDACTED.file.core.windows.net/listsharesaa0?restype=share",
@@ -384,21 +384,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "7d5aa656-dffc-4105-6436-dc2f36d73f08",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "bb3a5d6e-4638-4580-5585-84b99687c0b7",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "7d5aa656-dffc-4105-6436-dc2f36d73f08",
-        "x-ms-request-id": "732dbb22-301a-000b-58c9-fac238000000",
+        "x-ms-client-request-id": "bb3a5d6e-4638-4580-5585-84b99687c0b7",
+        "x-ms-request-id": "8327aa23-b01a-0042-600f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -410,21 +410,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "c0d0d091-90d0-4817-4c73-aed95d1a1bc3",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "0b15cb17-7cbc-4272-4ea9-90aca0a0eb99",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "c0d0d091-90d0-4817-4c73-aed95d1a1bc3",
-        "x-ms-request-id": "732dbb23-301a-000b-59c9-fac238000000",
+        "x-ms-client-request-id": "0b15cb17-7cbc-4272-4ea9-90aca0a0eb99",
+        "x-ms-request-id": "8327aa27-b01a-0042-620f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -436,21 +436,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "ef89887b-0912-4d7e-70f9-35bc212d7be1",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "d6e6c716-7cfa-4d05-4706-e215ac50d916",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "ef89887b-0912-4d7e-70f9-35bc212d7be1",
-        "x-ms-request-id": "732dbb24-301a-000b-5ac9-fac238000000",
+        "x-ms-client-request-id": "d6e6c716-7cfa-4d05-4706-e215ac50d916",
+        "x-ms-request-id": "8327aa28-b01a-0042-630f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -462,21 +462,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "be2565d2-cbbd-4212-6341-fdaafffc3a0d",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "3280ef22-0629-4551-5fd4-31fef3de666d",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:06 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "be2565d2-cbbd-4212-6341-fdaafffc3a0d",
-        "x-ms-request-id": "732dbb25-301a-000b-5bc9-fac238000000",
+        "x-ms-client-request-id": "3280ef22-0629-4551-5fd4-31fef3de666d",
+        "x-ms-request-id": "8327aa29-b01a-0042-640f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -488,21 +488,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "2451f8a9-e69c-42b8-4235-0f47be320534",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "295b5375-28e6-4719-6cd3-6324ebdf9aad",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "2451f8a9-e69c-42b8-4235-0f47be320534",
-        "x-ms-request-id": "732dbb26-301a-000b-5cc9-fac238000000",
+        "x-ms-client-request-id": "295b5375-28e6-4719-6cd3-6324ebdf9aad",
+        "x-ms-request-id": "8327aa2a-b01a-0042-650f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -514,21 +514,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "c4edb964-9ec8-4d4d-69ed-7a76f689aca1",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "15111a40-7ad1-47c7-4f0f-16f0d2b85275",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "c4edb964-9ec8-4d4d-69ed-7a76f689aca1",
-        "x-ms-request-id": "732dbb27-301a-000b-5dc9-fac238000000",
+        "x-ms-client-request-id": "15111a40-7ad1-47c7-4f0f-16f0d2b85275",
+        "x-ms-request-id": "8327aa2b-b01a-0042-660f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -540,21 +540,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "ff089bdb-aedd-404a-65cf-0a23095bf71b",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "3e4e9e29-1b64-4e87-5b94-bd6b482c2f0a",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "ff089bdb-aedd-404a-65cf-0a23095bf71b",
-        "x-ms-request-id": "732dbb28-301a-000b-5ec9-fac238000000",
+        "x-ms-client-request-id": "3e4e9e29-1b64-4e87-5b94-bd6b482c2f0a",
+        "x-ms-request-id": "8327aa2c-b01a-0042-670f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -566,21 +566,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "cc707536-0fdd-4fb0-58f8-714ad1f61940",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "a30c98a9-f037-44e5-5e72-50391977a9f9",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "cc707536-0fdd-4fb0-58f8-714ad1f61940",
-        "x-ms-request-id": "732dbb29-301a-000b-5fc9-fac238000000",
+        "x-ms-client-request-id": "a30c98a9-f037-44e5-5e72-50391977a9f9",
+        "x-ms-request-id": "8327aa2d-b01a-0042-680f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -592,21 +592,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "c10ba3ec-0c7f-47aa-6c82-02820150c4d4",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "x-ms-client-request-id": "77415c9d-7a9d-429f-7b22-fbfcc6b30007",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "c10ba3ec-0c7f-47aa-6c82-02820150c4d4",
-        "x-ms-request-id": "732dbb2a-301a-000b-60c9-fac238000000",
+        "x-ms-client-request-id": "77415c9d-7a9d-429f-7b22-fbfcc6b30007",
+        "x-ms-request-id": "8327aa2e-b01a-0042-690f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -618,21 +618,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-files-shares/12.4.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "6354da3b-4d7c-4439-4505-04b6b3053362",
-        "x-ms-date": "Thu, 17 Nov 2022 21:15:31 GMT",
+        "x-ms-client-request-id": "9419b707-92e8-498b-5600-7a5f10ac0559",
+        "x-ms-date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:15:30 GMT",
+        "Date": "Wed, 30 Nov 2022 22:58:07 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "6354da3b-4d7c-4439-4505-04b6b3053362",
-        "x-ms-request-id": "732dbb2b-301a-000b-61c9-fac238000000",
+        "x-ms-client-request-id": "9419b707-92e8-498b-5600-7a5f10ac0559",
+        "x-ms-request-id": "8327aa2f-b01a-0042-6a0f-05106b000000",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null

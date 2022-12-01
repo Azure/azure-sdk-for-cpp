@@ -7,8 +7,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "f11a6244-86a5-4ba9-5891-ace2408a58e0",
-        "x-ms-date": "Thu, 17 Nov 2022 21:51:36 GMT",
+        "x-ms-client-request-id": "c44a5607-5281-46c7-729a-d4373863149a",
+        "x-ms-date": "Wed, 30 Nov 2022 22:41:18 GMT",
         "x-ms-version": "2021-04-10"
       },
       "RequestBody": null,
@@ -16,20 +16,20 @@
       "ResponseHeaders": {
         "Content-Length": "225",
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:51:35 GMT",
+        "Date": "Wed, 30 Nov 2022 22:41:18 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "f11a6244-86a5-4ba9-5891-ace2408a58e0",
+        "x-ms-client-request-id": "c44a5607-5281-46c7-729a-d4373863149a",
         "x-ms-error-code": "ContainerNotFound",
-        "x-ms-request-id": "886c3e1c-d01e-00f7-74ce-fa13c1000000",
+        "x-ms-request-id": "e6c72e0e-301e-002e-6b0c-05fbfc000000",
         "x-ms-version": "2021-04-10"
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
-        "RequestId:886c3e1c-d01e-00f7-74ce-fa13c1000000\n",
-        "Time:2022-11-17T21:51:36.6213857Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:e6c72e0e-301e-002e-6b0c-05fbfc000000\n",
+        "Time:2022-11-30T22:41:18.8913049Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     },
     {
@@ -39,8 +39,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "ac781b8f-7252-44bc-6e6b-19bb0a8b6e29",
-        "x-ms-date": "Thu, 17 Nov 2022 21:51:37 GMT",
+        "x-ms-client-request-id": "f15940ca-8f6a-4656-5094-037c6f206f3a",
+        "x-ms-date": "Wed, 30 Nov 2022 22:41:18 GMT",
         "x-ms-version": "2021-04-10"
       },
       "RequestBody": null,
@@ -48,20 +48,20 @@
       "ResponseHeaders": {
         "Content-Length": "225",
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:51:35 GMT",
+        "Date": "Wed, 30 Nov 2022 22:41:18 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "ac781b8f-7252-44bc-6e6b-19bb0a8b6e29",
+        "x-ms-client-request-id": "f15940ca-8f6a-4656-5094-037c6f206f3a",
         "x-ms-error-code": "ContainerNotFound",
-        "x-ms-request-id": "886c3e23-d01e-00f7-7ace-fa13c1000000",
+        "x-ms-request-id": "e6c72e33-301e-002e-0e0c-05fbfc000000",
         "x-ms-version": "2021-04-10"
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
-        "RequestId:886c3e23-d01e-00f7-7ace-fa13c1000000\n",
-        "Time:2022-11-17T21:51:36.6843488Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:e6c72e33-301e-002e-0e0c-05fbfc000000\n",
+        "Time:2022-11-30T22:41:18.9452746Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     }
   ],

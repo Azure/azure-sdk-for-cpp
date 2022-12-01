@@ -8,20 +8,20 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-queues/12.1.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "43f0e336-c75f-45ff-5fa6-1fda204d7354",
-        "x-ms-date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "x-ms-client-request-id": "03c4fdf9-8238-4bf9-7479-6d50de8327cf",
+        "x-ms-date": "Wed, 30 Nov 2022 23:04:25 GMT",
         "x-ms-version": "2018-03-28"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "Date": "Wed, 30 Nov 2022 23:04:25 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-request-id": "fa8546a1-0003-002f-39ca-fa3498000000",
+        "x-ms-request-id": "dedfd064-b003-000f-6710-05df87000000",
         "x-ms-version": "2018-03-28"
       },
       "ResponseBody": null
@@ -34,20 +34,20 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-queues/12.1.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "ed61bf65-a761-4bad-6e95-dfb67ec77d2f",
-        "x-ms-date": "Thu, 17 Nov 2022 21:21:36 GMT",
+        "x-ms-client-request-id": "7c477b04-be6f-4a77-6c6f-0aa9a524eb7f",
+        "x-ms-date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "x-ms-version": "2018-03-28"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "Date": "Wed, 30 Nov 2022 23:04:25 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-request-id": "fa8546a4-0003-002f-3aca-fa3498000000",
+        "x-ms-request-id": "dedfd09b-b003-000f-1a10-05df87000000",
         "x-ms-version": "2018-03-28"
       },
       "ResponseBody": null
@@ -60,24 +60,24 @@
         "Content-Length": "110",
         "Content-Type": "application/xml; charset=UTF-8",
         "User-Agent": "azsdk-cpp-storage-queues/12.1.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "c3dfd62a-de5d-4703-4b41-db8b9e867918",
-        "x-ms-date": "Thu, 17 Nov 2022 21:21:36 GMT",
+        "x-ms-client-request-id": "eb817180-e4d5-4af2-64f8-9b8860748f37",
+        "x-ms-date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "x-ms-version": "2018-03-28"
       },
       "RequestBody": "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessage\u003E\u003CMessageText\u003Emessage content.\u003C/MessageText\u003E\u003C/QueueMessage\u003E",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "Date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "fa8546a8-0003-002f-3cca-fa3498000000",
+        "x-ms-request-id": "dedfd0b0-b003-000f-2d10-05df87000000",
         "x-ms-version": "2018-03-28"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E57e26e46-41bc-4d8b-894e-1830e0a665de\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 17 Nov 2022 21:21:35 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 24 Nov 2022 21:21:35 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAxJG5ksr62AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 17 Nov 2022 21:21:35 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Ef2935f7f-e2e5-4c7b-a845-935cb44e2b81\u003C/MessageId\u003E\u003CInsertionTime\u003EWed, 30 Nov 2022 23:04:26 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EWed, 07 Dec 2022 23:04:26 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAZnjNFxAF2QE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EWed, 30 Nov 2022 23:04:26 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
     },
     {
       "RequestUri": "https://REDACTED.queue.core.windows.net/enqueuemessage/messages?peekonly=true",
@@ -86,8 +86,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-queues/12.1.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "53f383b6-d8cf-4ac6-4956-8eea4f8b9e9b",
-        "x-ms-date": "Thu, 17 Nov 2022 21:21:36 GMT",
+        "x-ms-client-request-id": "d293b76a-4e77-489b-61a4-e2df43b4c5fb",
+        "x-ms-date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "x-ms-version": "2018-03-28"
       },
       "RequestBody": null,
@@ -95,16 +95,16 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/xml",
-        "Date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "Date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "fa8546aa-0003-002f-3eca-fa3498000000",
+        "x-ms-request-id": "dedfd0f0-b003-000f-6610-05df87000000",
         "x-ms-version": "2018-03-28"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E57e26e46-41bc-4d8b-894e-1830e0a665de\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 17 Nov 2022 21:21:35 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 24 Nov 2022 21:21:35 GMT\u003C/ExpirationTime\u003E\u003CDequeueCount\u003E0\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage content.\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Ef2935f7f-e2e5-4c7b-a845-935cb44e2b81\u003C/MessageId\u003E\u003CInsertionTime\u003EWed, 30 Nov 2022 23:04:26 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EWed, 07 Dec 2022 23:04:26 GMT\u003C/ExpirationTime\u003E\u003CDequeueCount\u003E0\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage content.\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
     },
     {
       "RequestUri": "https://REDACTED.queue.core.windows.net/enqueuemessage",
@@ -113,20 +113,20 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-queues/12.1.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "8cc39c5c-83f4-4db3-4e24-eb20527a65ae",
-        "x-ms-date": "Thu, 17 Nov 2022 21:21:36 GMT",
+        "x-ms-client-request-id": "7361f346-8c6b-401a-576d-484229c679d9",
+        "x-ms-date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "x-ms-version": "2018-03-28"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "Date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-request-id": "fa8546ae-0003-002f-42ca-fa3498000000",
+        "x-ms-request-id": "dedfd0fa-b003-000f-6f10-05df87000000",
         "x-ms-version": "2018-03-28"
       },
       "ResponseBody": null
@@ -138,20 +138,20 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-queues/12.1.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "4d4fdaef-f7c9-469b-7232-c06691f61068",
-        "x-ms-date": "Thu, 17 Nov 2022 21:21:36 GMT",
+        "x-ms-client-request-id": "f6454460-aaff-4b1c-7e35-0a6f5456c7d7",
+        "x-ms-date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "x-ms-version": "2018-03-28"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:21:35 GMT",
+        "Date": "Wed, 30 Nov 2022 23:04:26 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-request-id": "fa8546b1-0003-002f-45ca-fa3498000000",
+        "x-ms-request-id": "dedfd10b-b003-000f-8010-05df87000000",
         "x-ms-version": "2018-03-28"
       },
       "ResponseBody": null

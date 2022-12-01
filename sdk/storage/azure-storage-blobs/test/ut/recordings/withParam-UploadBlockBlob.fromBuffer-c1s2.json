@@ -8,23 +8,23 @@
         "Content-Length": "0",
         "Expect": "100-continue",
         "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "58f05040-be56-475a-7468-fe168d126c70",
-        "x-ms-date": "Thu, 17 Nov 2022 21:26:50 GMT",
+        "x-ms-client-request-id": "67c3bcf4-8d5d-4cac-6496-146ac1f58776",
+        "x-ms-date": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-version": "2021-04-10"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:26:49 GMT",
-        "ETag": "\u00220x8DAC8E2703CF5F3\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "Date": "Wed, 30 Nov 2022 22:47:00 GMT",
+        "ETag": "\u00220x8DAD324CB3B63C6\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:47:00 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "58f05040-be56-475a-7468-fe168d126c70",
-        "x-ms-request-id": "85f67b81-001e-00db-5bcb-faff6e000000",
+        "x-ms-client-request-id": "67c3bcf4-8d5d-4cac-6496-146ac1f58776",
+        "x-ms-request-id": "e6cb6dfe-301e-002e-1e0d-05fbfc000000",
         "x-ms-version": "2021-04-10"
       },
       "ResponseBody": null
@@ -44,8 +44,8 @@
         "x-ms-blob-content-language": "en-US",
         "x-ms-blob-content-type": "application/x-binary",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "7a261586-e699-470b-5c68-96d6c37197ba",
-        "x-ms-date": "Thu, 17 Nov 2022 21:26:50 GMT",
+        "x-ms-client-request-id": "e36da372-868f-4f12-6567-9f9dfe58a056",
+        "x-ms-date": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-meta-key1": "V1",
         "x-ms-meta-key2": "Value2",
         "x-ms-version": "2021-04-10"
@@ -55,19 +55,19 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "kzbr8lCH2RyBjubp7Cn4wQ==",
-        "Date": "Thu, 17 Nov 2022 21:26:49 GMT",
-        "ETag": "\u00220x8DAC8E2704CD4E0\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "Date": "Wed, 30 Nov 2022 22:47:00 GMT",
+        "ETag": "\u00220x8DAD324CB48A6C8\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:47:00 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "7a261586-e699-470b-5c68-96d6c37197ba",
+        "x-ms-client-request-id": "e36da372-868f-4f12-6567-9f9dfe58a056",
         "x-ms-content-crc64": "GkCMY8i4s0E=",
-        "x-ms-request-id": "85f67b89-001e-00db-62cb-faff6e000000",
+        "x-ms-request-id": "e6cb6e17-301e-002e-360d-05fbfc000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2021-04-10",
-        "x-ms-version-id": "2022-11-17T21:26:49.8594016Z"
+        "x-ms-version-id": "2022-11-30T22:47:00.9166024Z"
       },
       "ResponseBody": null
     },
@@ -78,8 +78,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "5ce96193-b78d-4711-71c5-cec0cc9faa43",
-        "x-ms-date": "Thu, 17 Nov 2022 21:26:50 GMT",
+        "x-ms-client-request-id": "55f358fd-9804-437b-7939-cbbce93fecf1",
+        "x-ms-date": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-version": "2021-04-10"
       },
       "RequestBody": null,
@@ -95,27 +95,27 @@
         "Content-Length": "2",
         "Content-MD5": "kzbr8lCH2RyBjubp7Cn4wQ==",
         "Content-Type": "application/x-binary",
-        "Date": "Thu, 17 Nov 2022 21:26:49 GMT",
-        "ETag": "\u00220x8DAC8E2704CD4E0\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "Date": "Wed, 30 Nov 2022 22:47:00 GMT",
+        "ETag": "\u00220x8DAD324CB48A6C8\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:47:00 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-access-tier": "Hot",
-        "x-ms-access-tier-change-time": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "x-ms-access-tier-change-time": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "5ce96193-b78d-4711-71c5-cec0cc9faa43",
-        "x-ms-creation-time": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "x-ms-client-request-id": "55f358fd-9804-437b-7939-cbbce93fecf1",
+        "x-ms-creation-time": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-key1": "V1",
         "x-ms-meta-key2": "Value2",
-        "x-ms-request-id": "85f67b96-001e-00db-6fcb-faff6e000000",
+        "x-ms-request-id": "e6cb6e4c-301e-002e-670d-05fbfc000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2021-04-10",
-        "x-ms-version-id": "2022-11-17T21:26:49.8594016Z"
+        "x-ms-version-id": "2022-11-30T22:47:00.9166024Z"
       },
       "ResponseBody": null
     },
@@ -126,8 +126,8 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "15761504-0d71-4485-5f5f-61998fbc8cee",
-        "x-ms-date": "Thu, 17 Nov 2022 21:26:50 GMT",
+        "x-ms-client-request-id": "56df4f07-1633-41b9-59fd-551302c6d9f4",
+        "x-ms-date": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-version": "2021-04-10"
       },
       "RequestBody": null,
@@ -143,25 +143,25 @@
         "Content-Length": "2",
         "Content-MD5": "kzbr8lCH2RyBjubp7Cn4wQ==",
         "Content-Type": "application/x-binary",
-        "Date": "Thu, 17 Nov 2022 21:26:49 GMT",
-        "ETag": "\u00220x8DAC8E2704CD4E0\u0022",
-        "Last-Modified": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "Date": "Wed, 30 Nov 2022 22:47:00 GMT",
+        "ETag": "\u00220x8DAD324CB48A6C8\u0022",
+        "Last-Modified": "Wed, 30 Nov 2022 22:47:00 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "15761504-0d71-4485-5f5f-61998fbc8cee",
-        "x-ms-creation-time": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "x-ms-client-request-id": "56df4f07-1633-41b9-59fd-551302c6d9f4",
+        "x-ms-creation-time": "Wed, 30 Nov 2022 22:47:00 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-key1": "V1",
         "x-ms-meta-key2": "Value2",
-        "x-ms-request-id": "85f67b9f-001e-00db-78cb-faff6e000000",
+        "x-ms-request-id": "e6cb6e72-301e-002e-0b0d-05fbfc000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2021-04-10",
-        "x-ms-version-id": "2022-11-17T21:26:49.8594016Z"
+        "x-ms-version-id": "2022-11-30T22:47:00.9166024Z"
       },
       "ResponseBody": "eHg="
     },
@@ -172,21 +172,21 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-cpp-storage-blobs/12.7.0-beta.1 (Windows 10 Enterprise 6.3 22621 22621.1.amd64fre.ni_release.220506-1250)",
-        "x-ms-client-request-id": "70597031-0441-4af0-757a-89015a6f3160",
-        "x-ms-date": "Thu, 17 Nov 2022 21:26:50 GMT",
+        "x-ms-client-request-id": "e0ae465b-fb4f-4a7d-5516-7a8d296f8995",
+        "x-ms-date": "Wed, 30 Nov 2022 22:47:01 GMT",
         "x-ms-version": "2021-04-10"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 17 Nov 2022 21:26:49 GMT",
+        "Date": "Wed, 30 Nov 2022 22:47:00 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "70597031-0441-4af0-757a-89015a6f3160",
-        "x-ms-request-id": "85f67ba5-001e-00db-7ecb-faff6e000000",
+        "x-ms-client-request-id": "e0ae465b-fb4f-4a7d-5516-7a8d296f8995",
+        "x-ms-request-id": "e6cb6eab-301e-002e-3f0d-05fbfc000000",
         "x-ms-version": "2021-04-10"
       },
       "ResponseBody": null

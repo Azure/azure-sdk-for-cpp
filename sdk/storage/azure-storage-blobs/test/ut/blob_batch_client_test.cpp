@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   };
 
-  TEST_F(BlobBatchClientTest, SubmitDeleteBatch)
+  TEST_F(BlobBatchClientTest, SubmitDeleteBatch_LIVEONLY_)
   {
     const std::string testName = GetTestNameLowerCase();
 
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Test {
     container2Client.Delete();
   }
 
-  TEST_F(BlobBatchClientTest, SnapshotVersion)
+  TEST_F(BlobBatchClientTest, SnapshotVersion_LIVEONLY_)
   {
     const std::string testName = GetTestNameLowerCase();
 
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Test {
     serviceClient.DeleteBlobContainer(containerName);
   }
 
-  TEST_F(BlobBatchClientTest, TokenAuthorization)
+  TEST_F(BlobBatchClientTest, TokenAuthorization_LIVEONLY_)
   {
     const std::string testName = GetTestNameLowerCase();
 
