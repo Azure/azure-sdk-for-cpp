@@ -281,7 +281,7 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
   OutputPipe::OutputPipe()
   {
 #if defined(AZ_PLATFORM_WINDOWS)
-    SECURITY_ATTRIBUTES pipeSecurity = {};
+    SECURITY_ATTRIBUTES pipeSecurity;
     ZeroMemory(&pipeSecurity, sizeof(decltype(pipeSecurity)));
     pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
     pipeSecurity.bInheritHandle = TRUE;
