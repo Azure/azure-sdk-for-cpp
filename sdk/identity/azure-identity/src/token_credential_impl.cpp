@@ -8,6 +8,7 @@
 #include "private/package_version.hpp"
 
 #include <chrono>
+#include <type_traits>
 
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -108,8 +109,10 @@ AccessToken TokenCredentialImpl::GetToken(
         if (request == nullptr)
         {
           throw std::runtime_error(
-              std::string("error response: ") + std::to_string(statusCode) + " "
-              + response->GetReasonPhrase());
+              std::string("error response: ")
+              + std::to_string(
+                  static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
+              + " " + response->GetReasonPhrase());
         }
 
         response.reset();
@@ -152,7 +155,7 @@ bool GetPropertyValueAsString(
     std::string& outValue);
 } // namespace
 
-Core::Credentials::AccessToken TokenCredentialImpl::ParseToken(
+AccessToken TokenCredentialImpl::ParseToken(
     std::string const& jsonString,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
@@ -187,7 +190,7 @@ Core::Credentials::AccessToken TokenCredentialImpl::ParseToken(
     auto const spacePos = expiresOn.find(' ');
     if (spacePos != std::string::npos)
     {
-      expiresOn = dateTimeString.replace(spacePos, 1, 1, 'T');
+      expiresOn = expiresOn.replace(spacePos, 1, 1, 'T');
     }
   }
 

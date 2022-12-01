@@ -48,12 +48,12 @@ namespace Azure { namespace Identity {
       : public Core::Credentials::TokenCredential {
   protected:
     std::string m_tenantId;
-    std::chrono::steady_clock::duration m_cliProcessTimeout;
+    DateTime::duration m_cliProcessTimeout;
 
   private:
     explicit AzureCliCredential(
         std::string tenantId,
-        DateTime::duration const& cliProcessTimeout,
+        DateTime::duration cliProcessTimeout,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:

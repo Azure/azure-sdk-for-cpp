@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#pragma once
-
 #include "azure/identity/azure_cli_credential.hpp"
 
 #include "private/token_credential_impl.hpp"
@@ -27,6 +25,7 @@
 #include <windows.h>
 #else
 #include <array>
+#include <type_traits>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -75,13 +74,11 @@ void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& des
 }
 } // namespace
 
-explicit AzureCliCredential::AzureCliCredential(
+AzureCliCredential::AzureCliCredential(
     std::string tenantId,
-    DateTime::duration const& cliProcessTimeout,
+    DateTime::duration cliProcessTimeout,
     Core::Credentials::TokenCredentialOptions const& options)
-    : m_tenantId(std::move(tenantId)),
-      m_cliProcessTimeout(
-          std::chrono::duration_cast<decltype(m_cliProcessTimeout)>(cliProcessTimeout))
+    : m_tenantId(std::move(tenantId)), m_cliProcessTimeout(std::move(cliProcessTimeout))
 {
   static_cast<void>(options);
   ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
@@ -129,8 +126,11 @@ AccessToken AzureCliCredential::GetToken(
 {
   try
   {
-    auto const azCliResult = RunShellCommand(GetAzCommand(
-        TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, true, false), m_tenantId), m_cliProcessTimeout, context));
+    auto const azCliResult = RunShellCommand(
+        GetAzCommand(
+            TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, true, false), m_tenantId),
+        m_cliProcessTimeout,
+        context);
 
     try
     {
@@ -260,7 +260,7 @@ void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
   if (!apiResult)
   {
     throw std::runtime_error(
-        errorMsg + ": " + std::to_string(GetLastError())
+        errMsg + ": " + std::to_string(GetLastError())
 
     );
   }
@@ -272,7 +272,7 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
   if (apiResult != 0)
   {
     throw std::runtime_error(
-        errorMsg + ": " + std::to_string(apiResult) + " (errno: " + std::to_string(errno) + ")");
+        errMsg + ": " + std::to_string(apiResult) + " (errno: " + std::to_string(errno) + ")");
   }
   // LCOV_EXCL_STOP
 }
@@ -368,7 +368,7 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 #else
 void AppendToArgvValues(
     std::vector<char>& argvValues,
-    std::vector<decltype(argvValues)::size_type>& argvValuePositions,
+    std::vector<std::remove_reference<decltype(argvValues)>::type::size_type>& argvValuePositions,
     std::string const& value)
 {
   argvValuePositions.push_back(argvValues.size());
