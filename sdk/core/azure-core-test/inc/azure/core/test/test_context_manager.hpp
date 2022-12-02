@@ -21,6 +21,11 @@ namespace Azure { namespace Core { namespace Test {
   class TestContextManager {
   public:
     /**
+     * @brief The path where the asset.json exists.
+     *
+     */
+    std::string AssetsPath;
+    /**
      * @brief The path where the tests recordings are written.
      *
      */

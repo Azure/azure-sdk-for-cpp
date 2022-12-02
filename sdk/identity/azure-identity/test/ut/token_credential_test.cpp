@@ -49,6 +49,8 @@ namespace Azure { namespace Identity { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
     }
+
+    virtual std::string GetAssetsPath() { return "assets.json"; }
   };
 }}} // namespace Azure::Identity::Test
 
@@ -57,28 +59,28 @@ using namespace Azure::Identity;
 
 TEST_F(TokenCredentialTest, ClientSecret)
 {
-  std::string const testName(GetTestName());
-  auto const clientSecretCredential = GetClientSecretCredential(testName);
+std::string const testName(GetTestName());
+auto const clientSecretCredential = GetClientSecretCredential(testName);
 
-  _detail::TokenCache::Clear();
+_detail::TokenCache::Clear();
 
-  auto const token = clientSecretCredential->GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
+auto const token = clientSecretCredential->GetToken(
+    {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
 
-  EXPECT_FALSE(token.Token.empty());
-  EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
+EXPECT_FALSE(token.Token.empty());
+EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }
 
 TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
-  std::string const testName(GetTestName());
-  auto const clientSecretCredential = GetEnvironmentCredential(testName);
+std::string const testName(GetTestName());
+auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
-  _detail::TokenCache::Clear();
+_detail::TokenCache::Clear();
 
-  auto const token = clientSecretCredential->GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
+auto const token = clientSecretCredential->GetToken(
+    {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
 
-  EXPECT_FALSE(token.Token.empty());
-  EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
+EXPECT_FALSE(token.Token.empty());
+EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }

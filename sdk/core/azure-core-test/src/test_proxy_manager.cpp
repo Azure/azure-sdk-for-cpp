@@ -72,9 +72,30 @@ void TestProxyManager::ConfigureInsecureConnection(
 
 std::string TestProxyManager::PrepareRequestBody()
 {
-  std::string body = "{\"x-recording-file\":\"";
-  body.append(m_testContext.GetTestRecordingPathName());
-  body.append("\"}");
+  std::string recordingPath = m_testContext.GetTestRecordingPathName();
+  std::string body;
+  
+  if (!m_testContext.AssetsPath.empty())
+  {
+    auto sdkPos = recordingPath.rfind("sdk");
+    recordingPath = recordingPath.substr(sdkPos, recordingPath.size() - sdkPos);
+    body = "{\"x-recording-file\":\"";
+    body.append(recordingPath);
+    body.append("\"");
+    body.append(",");
+    body.append("\"x-recording-assets-file\":\"");
+    body.append(m_testContext.AssetsPath);
+    body.append("\"");
+  }
+  else
+  {
+    body = "{\"x-recording-file\":\"";
+    body.append(recordingPath);
+    body.append("\"");
+
+  }
+
+  body.append("}");
 
   return body;
 }

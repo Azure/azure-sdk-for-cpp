@@ -40,6 +40,7 @@ namespace Azure { namespace Core { namespace Test {
   class TestBase : public ::testing::Test {
 
   private:
+    
     /**
      * @brief Whenever a test case is skipped
      *
@@ -387,6 +388,7 @@ namespace Azure { namespace Core { namespace Test {
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
+      m_testContext.AssetsPath = GetAssetsPath();
       if (!m_wasSkipped)
       {
         m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
@@ -401,7 +403,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     void TearDown() override;
-
+    virtual std::string GetAssetsPath() { return std::string(); }
   public:
     // Per-test-suite set-up.
     // Called before the first test in this test suite.
