@@ -245,7 +245,7 @@ std::string RunShellCommand(
     }
     else if (willHaveMoreData)
     {
-      std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Value has no special meaning.
+      std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Value has no special meaning.
     }
   } while (willHaveMoreData);
 
