@@ -153,8 +153,8 @@ class OutputPipe final {
 
 private:
 #if defined(AZ_PLATFORM_WINDOWS)
-  HANDLE m_writeHandle = NULL;
-  HANDLE m_readHandle = NULL;
+  HANDLE m_writeHandle = nullptr;
+  HANDLE m_readHandle = nullptr;
   OVERLAPPED m_overlapped = {};
 #else
   std::vector<int> m_fd;
@@ -177,7 +177,7 @@ public:
 class ShellProcess final {
 private:
 #if defined(AZ_PLATFORM_WINDOWS)
-  HANDLE m_processHandle = NULL;
+  HANDLE m_processHandle = nullptr;
 #else
   std::vector<char*> m_argv;
   std::vector<char> m_argvValues;
@@ -283,7 +283,7 @@ OutputPipe::OutputPipe()
   ZeroMemory(&pipeSecurity, sizeof(decltype(pipeSecurity)));
   pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
   pipeSecurity.bInheritHandle = TRUE;
-  pipeSecurity.lpSecurityDescriptor = NULL;
+  pipeSecurity.lpSecurityDescriptor = nullptr;
 
   ThrowIfApiCallFails(
       CreatePipe(&m_readHandle, &m_writeHandle, &pipeSecurity, 0), "Cannot create output pipe");
@@ -309,12 +309,12 @@ OutputPipe::OutputPipe()
 OutputPipe::~OutputPipe()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
-  if (m_writeHandle != NULL)
+  if (m_writeHandle != nullptr)
   {
     static_cast<void>(CloseHandle(m_writeHandle));
   }
 
-  if (m_readHandle != NULL)
+  if (m_readHandle != nullptr)
   {
     static_cast<void>(CloseHandle(m_readHandle));
   }
@@ -424,7 +424,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 
     // Form the environment
     std::vector<CHAR> environmentValues;
-    LPVOID lpEnvironment = NULL;
+    LPVOID lpEnvironment = nullptr;
     {
       {
         constexpr auto PathEnvVarName = "PATH";
@@ -470,14 +470,14 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 
     ThrowIfApiCallFails(
         CreateProcessA(
-            NULL,
+            nullptr,
             commandLineStr.data(),
-            NULL,
-            NULL,
+            nullptr,
+            nullptr,
             TRUE,
             NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW,
             lpEnvironment,
-            NULL,
+            nullptr,
             &startupInfo,
             &procInfo),
         "Cannot create process");
@@ -493,11 +493,11 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   // We will only be reading the pipe.
   // So, now that the process is started, we can close write handle on our end.
   static_cast<void>(CloseHandle(outputPipe.m_writeHandle));
-  outputPipe.m_writeHandle = NULL;
+  outputPipe.m_writeHandle = nullptr;
 #else
   // Form the 'argv' array:
   // * An array of pointers to non-const C strings (0-terminated).
-  // * Last element is NULL pointer.
+  // * Last element is nullptr.
   // * First element (at index 0) is path to a program.
   {
     // Since the strings that argv is pointing at do need to be non-const,
@@ -532,14 +532,14 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
       }
     }
 
-    // argv last element needs to be NULL pointer.
-    m_argv.push_back(NULL);
+    // argv last element needs to be nullptr.
+    m_argv.push_back(nullptr);
   }
 
   // Form the 'envp' array:
   // * An array of pointers to non-const C strings (0-terminated).
   // * Strings are in form key=value (PATH uses ':' as separator)
-  // * Last element is NULL pointer.
+  // * Last element is nullptr.
   // * First element (at index 0) is path to a program.
   {
     auto const actualPathVarValue = Environment::GetVariable("PATH");
@@ -554,7 +554,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
     // We should only grab m_envpValues.data() as we're done appending to it, because appends may
     // reallocate the buffer to a different memory location.
     m_envp.push_back(m_envpValues.data());
-    m_envp.push_back(NULL);
+    m_envp.push_back(nullptr);
   }
 
   // Set up pipe communication for the process.
@@ -589,7 +589,7 @@ ShellProcess::~ShellProcess()
 #else
   if (m_pid > 0)
   {
-    static_cast<void>(waitpid(m_pid, NULL, 0));
+    static_cast<void>(waitpid(m_pid, nullptr, 0));
   }
 
   posix_spawn_file_actions_destroy(&m_actions);
