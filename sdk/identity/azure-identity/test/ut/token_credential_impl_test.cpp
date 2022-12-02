@@ -181,7 +181,7 @@ TEST(TokenCredentialImpl, ThrowInt)
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
         EXPECT_THROW(
-            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+            token = credential.GetToken(tokenRequestContext, context), int);
         return token;
       }));
 }
