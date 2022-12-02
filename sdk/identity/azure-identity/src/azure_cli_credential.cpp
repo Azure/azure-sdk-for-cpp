@@ -16,6 +16,8 @@
 #include <utility>
 #include <vector>
 
+#include <iostream>
+
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -223,15 +225,20 @@ std::string RunShellCommand(
   {
     // Check if we should terminate
     {
+      std::cerr << "Checking if should terminate.\n";
       if (context.IsCancelled())
       {
+        std::cerr << "Should terminate by cancellation.\n";
         shellProcess.Terminate();
+        std::cerr << "Terminated by cancellation.\n";
         throw std::runtime_error("Context was cancelled before Azure CLI process was done.");
       }
 
       if (std::chrono::steady_clock::now() > terminateAfter)
       {
+        std::cerr << "Should terminate by timeout.\n";
         shellProcess.Terminate();
+        std::cerr << "Terminated by timeout.\n";
         throw std::runtime_error("Azure CLI process took too long to complete.");
       }
     }
@@ -604,7 +611,6 @@ void ShellProcess::Terminate()
   if (m_pid > 0)
   {
     static_cast<void>(kill(m_pid, SIGKILL));
-    m_pid = -1;
   }
 #endif
 }
