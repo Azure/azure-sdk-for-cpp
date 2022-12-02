@@ -74,7 +74,7 @@ std::string TestProxyManager::PrepareRequestBody()
 {
   std::string recordingPath = m_testContext.GetTestRecordingPathName();
   std::string body;
-  
+
   if (!m_testContext.AssetsPath.empty())
   {
     auto sdkPos = recordingPath.rfind("sdk");
@@ -92,7 +92,6 @@ std::string TestProxyManager::PrepareRequestBody()
     body = "{\"x-recording-file\":\"";
     body.append(recordingPath);
     body.append("\"");
-
   }
 
   body.append("}");
