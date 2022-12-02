@@ -280,7 +280,6 @@ OutputPipe::OutputPipe()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
   SECURITY_ATTRIBUTES pipeSecurity = {};
-  ZeroMemory(&pipeSecurity, sizeof(decltype(pipeSecurity)));
   pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
   pipeSecurity.bInheritHandle = TRUE;
   pipeSecurity.lpSecurityDescriptor = nullptr;
@@ -291,10 +290,6 @@ OutputPipe::OutputPipe()
   ThrowIfApiCallFails(
       SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0),
       "Cannot ensure the read handle for the output pipe is not inherited");
-
-  // We use OVERLAPPED when we ReadFile(), so that the call is non-blocking, which lets us to also
-  // poll whether we should terminate the process.
-  ZeroMemory(&m_overlapped, sizeof(decltype(m_overlapped)));
 #else
   m_fd.push_back(-1);
   m_fd.push_back(-1);
@@ -394,11 +389,9 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 #if defined(AZ_PLATFORM_WINDOWS)
   // Start the process.
   PROCESS_INFORMATION procInfo = {};
-  ZeroMemory(&procInfo, sizeof(decltype(procInfo)));
 
   {
     STARTUPINFO startupInfo = {};
-    ZeroMemory(&startupInfo, sizeof(decltype(startupInfo)));
     startupInfo.cb = sizeof(decltype(startupInfo));
     startupInfo.dwFlags |= STARTF_USESTDHANDLES; // cspell:disable-line
     startupInfo.hStdInput = INVALID_HANDLE_VALUE;
@@ -619,7 +612,7 @@ bool OutputPipe::NonBlockingRead(
       "buffer elements and CHARs should be of the same size");
 
   // Since we're using OVERLAPPED, call to ReadFile() is non-blocking - ReadFile() would return
-  // immediately if there is no data, and won;t wait for any data to arrive.
+  // immediately if there is no data, and won't wait for any data to arrive.
   DWORD bytesReadDword = 0;
   auto const hadData
       = (ReadFile(
