@@ -605,9 +605,9 @@ ShellProcess::~ShellProcess()
     std::cerr << "waitpid() ok.\n";
   }
 
-  std::cerr << "about to destroy actions.\n";
-  posix_spawn_file_actions_destroy(&m_actions);
-  std::cerr << "Actions destroyed.\n";
+  //std::cerr << "about to destroy actions.\n";
+  //posix_spawn_file_actions_destroy(&m_actions);
+  //std::cerr << "Actions destroyed.\n";
 #endif
 }
 
