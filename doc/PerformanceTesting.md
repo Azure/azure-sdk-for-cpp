@@ -168,4 +168,3 @@ In this case you are the first to add the required nodes. The defintion is fairl
 Once you have everything in place create a pipeline using the definition in your in the cpp repo by going to https://dev.azure.com/azure-sdk/internal/_build?definitionScope=%5Cperf and create a new one under the cpp node. 
 
 To test intermediate definitions of your pipeline you can run the https://dev.azure.com/azure-sdk/internal/_build?definitionId=5121 pipline and set the proper values for the cpp node( make sure to deselect all other languages except cpp unless you want to run them).
-

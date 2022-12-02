@@ -13,4 +13,3 @@ RUN chmod +x ./$targetTest
 # install the mem check tool 
 RUN apt-get update -y
 RUN apt-get install valgrind -y
-

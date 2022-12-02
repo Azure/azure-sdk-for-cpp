@@ -16,4 +16,3 @@ popd
 pushd .\remoteproxy.passwd
 docker build -t squid-remote.passwd .
 popd
-

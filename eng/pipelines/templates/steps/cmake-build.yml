@@ -33,4 +33,3 @@ steps:
     - pwsh: cmake --build . ${{ parameters.BuildArgs }} --target (Get-Content ${{ parameters.ServiceDirectory }}-targets-build.txt)
       workingDirectory: build
       displayName: cmake build Targets
-
