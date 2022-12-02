@@ -169,8 +169,8 @@ public:
   ~OutputPipe();
 
   bool NonBlockingRead(
-      std::vector<std::string::value_type>& buffer,
-      std::string::size_type& bytesRead,
+      std::vector<char>& buffer,
+      std::remove_reference<decltype(buffer)>::type::size_type& bytesRead,
       bool& willHaveMoreData);
 };
 
@@ -216,7 +216,7 @@ std::string RunShellCommand(
   // Typically token json is just a bit less than 2KiB.
   // The best buffer size is the one that lets us to read it in one go.
   // (Should it be smaller, we will succeed as well, it'll just take more iterations).
-  std::vector<std::string::value_type> processOutputBuf(2 * 1024);
+  std::vector<char> processOutputBuf(2 * 1024);
 
   auto willHaveMoreData = true;
   do
@@ -236,7 +236,7 @@ std::string RunShellCommand(
       }
     }
 
-    std::string::size_type bytesRead = 0;
+    decltype(processOutputBuf)::size_type bytesRead = 0;
     if (pipe.NonBlockingRead(processOutputBuf, bytesRead, willHaveMoreData))
     {
       output.insert(output.size(), processOutputBuf.data(), bytesRead);
@@ -609,8 +609,8 @@ void ShellProcess::Terminate()
 }
 
 bool OutputPipe::NonBlockingRead(
-    std::vector<std::string::value_type>& buffer,
-    std::string::size_type& bytesRead,
+    std::vector<char>& buffer,
+    std::remove_reference<decltype(buffer)>::type::size_type& bytesRead,
     bool& willHaveMoreData)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
