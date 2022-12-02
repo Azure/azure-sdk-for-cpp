@@ -589,7 +589,7 @@ ShellProcess::~ShellProcess()
 #else
   if (m_pid > 0)
   {
-    static_cast<void>(waitpid(m_pid, NULL, 0));
+    static_cast<void>(waitpid(m_pid, NULL, WNOHANG));
   }
 
   posix_spawn_file_actions_destroy(&m_actions);
