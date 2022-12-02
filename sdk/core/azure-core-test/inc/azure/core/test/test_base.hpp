@@ -104,8 +104,11 @@ namespace Azure { namespace Core { namespace Test {
 
     void SkipTest()
     {
-      m_wasSkipped = true;
-      GTEST_SKIP();
+      if (!m_wasSkipped)
+      {
+        m_wasSkipped = true;
+        GTEST_SKIP();
+      }
     }
 
     std::string RemovePreffix(std::string const& src)
