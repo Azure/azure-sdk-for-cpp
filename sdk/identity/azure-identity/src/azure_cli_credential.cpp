@@ -296,8 +296,8 @@ OutputPipe::OutputPipe()
   // poll whether we should terminate the process.
   ZeroMemory(&m_overlapped, sizeof(decltype(m_overlapped)));
 #else
-  m_fd[0] = -1;
-  m_fd[1] = -1;
+  m_fd.push_back(-1);
+  m_fd.push_back(-1);
 
   ThrowIfApiCallFails(pipe(m_fd.data()), "Cannot create output pipe");
   ThrowIfApiCallFails(
