@@ -16,8 +16,6 @@
 #include <utility>
 #include <vector>
 
-#include <iostream>
-
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -213,49 +211,41 @@ std::string RunShellCommand(
   std::string output;
 
   OutputPipe pipe;
-  try {
-    ShellProcess shellProcess(command, pipe);
+  ShellProcess shellProcess(command, pipe);
 
-    // Typically token json is just a bit less than 2KiB.
-    // The best buffer size is the one that lets us to read it in one go.
-    // (Should it be smaller, we will succeed as well, it'll just take more iterations).
-    std::vector<std::string::value_type> processOutputBuf(2 * 1024);
+  // Typically token json is just a bit less than 2KiB.
+  // The best buffer size is the one that lets us to read it in one go.
+  // (Should it be smaller, we will succeed as well, it'll just take more iterations).
+  std::vector<std::string::value_type> processOutputBuf(2 * 1024);
 
-    auto willHaveMoreData = true;
-    do
-    {
-      // Check if we should terminate
-      {
-        if (context.IsCancelled())
-        {
-          shellProcess.Terminate();
-          throw std::runtime_error("Context was cancelled before Azure CLI process was done.");
-        }
-
-        if (std::chrono::steady_clock::now() > terminateAfter)
-        {
-          shellProcess.Terminate();
-          throw std::runtime_error("Azure CLI process took too long to complete.");
-        }
-      }
-
-      std::string::size_type bytesRead = 0;
-      if (pipe.NonBlockingRead(processOutputBuf, bytesRead, willHaveMoreData))
-      {
-        output.insert(output.size(), processOutputBuf.data(), bytesRead);
-      }
-      else if (willHaveMoreData)
-      {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(200)); // Value has no special meaning.
-      }
-    } while (willHaveMoreData);
-  }
-  catch (...)
+  auto willHaveMoreData = true;
+  do
   {
-    std::cerr << "Process destroyed\n";
-    throw;
-  }
+    // Check if we should terminate
+    {
+      if (context.IsCancelled())
+      {
+        shellProcess.Terminate();
+        throw std::runtime_error("Context was cancelled before Azure CLI process was done.");
+      }
+
+      if (std::chrono::steady_clock::now() > terminateAfter)
+      {
+        shellProcess.Terminate();
+        throw std::runtime_error("Azure CLI process took too long to complete.");
+      }
+    }
+
+    std::string::size_type bytesRead = 0;
+    if (pipe.NonBlockingRead(processOutputBuf, bytesRead, willHaveMoreData))
+    {
+      output.insert(output.size(), processOutputBuf.data(), bytesRead);
+    }
+    else if (willHaveMoreData)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Value has no special meaning.
+    }
+  } while (willHaveMoreData);
 
   return output;
 }
@@ -578,7 +568,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
         = posix_spawn(&m_pid, m_argv[0], &m_actions, NULL, m_argv.data(), m_envp.data());
 
     // LCOV_EXCL_START
-    if (!spawnResult)
+    if (spawnResult != 0)
     {
       m_pid = -1;
       this->~ShellProcess();
@@ -603,7 +593,6 @@ ShellProcess::~ShellProcess()
   }
 
   posix_spawn_file_actions_destroy(&m_actions);
-  std::cerr << "~ShellProcess() end\n";
 #endif
 }
 

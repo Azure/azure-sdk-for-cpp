@@ -34,7 +34,7 @@ constexpr auto EmptyOutputCommand =
 #if defined(AZ_PLATFORM_WINDOWS)
     "rem";
 #else
-    "."
+    "clear"
 #endif
 ;
 
