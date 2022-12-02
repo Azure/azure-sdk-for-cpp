@@ -603,6 +603,7 @@ ShellProcess::~ShellProcess()
   }
 
   posix_spawn_file_actions_destroy(&m_actions);
+  std::cerr << "~ShellProcess() end\n";
 #endif
 }
 
