@@ -194,7 +194,7 @@ TEST(AzureCliCredential, ContextCancelled)
   auto context = Context::ApplicationContext.WithDeadline(
       std::chrono::system_clock::now() + std::chrono::hours(24));
 
-  std::atomic<bool> thread1Started = false;
+  std::atomic<bool> thread1Started(false);
 
   std::thread thread1([&]() {
     thread1Started = true;
