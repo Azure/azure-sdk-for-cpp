@@ -5,6 +5,7 @@
 
 #include <azure/core/platform.hpp>
 
+#include <atomic>
 #include <string>
 #include <thread>
 #include <utility>
@@ -122,14 +123,15 @@ TEST(AzureCliCredential, EmptyOutput)
   EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 }
 
-TEST(AzureCliCredential, HugeToken)
+TEST(AzureCliCredential, BigToken)
 {
-  std::string accessToken = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  std::string accessToken;
   {
-    auto const nIterations = ((4 * 1024) / accessToken.size()) + 1;
+    std::string const tokenPart = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    auto const nIterations = ((4 * 1024) / tokenPart.size()) + 1;
     for (auto i = 0; i < static_cast<decltype(i)>(nIterations); ++i)
     {
-      accessToken += accessToken;
+      accessToken += tokenPart;
     }
   }
 
@@ -192,12 +194,25 @@ TEST(AzureCliCredential, ContextCancelled)
   auto context = Context::ApplicationContext.WithDeadline(
       std::chrono::system_clock::now() + std::chrono::hours(24));
 
-  std::thread t([&]() {
+  std::atomic<bool> thread1Started = false;
+
+  std::thread thread1([&]() {
+    thread1Started = true;
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, context)), AuthenticationException);
+  });
+
+  std::thread thread2([&]() {
+    while (!thread1Started)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     std::this_thread::sleep_for(std::chrono::seconds(2));
     context.Cancel();
   });
 
-  EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, context)), AuthenticationException);
+  thread1.join();
+  thread2.join();
 }
 
 TEST(AzureCliCredential, Defaults)

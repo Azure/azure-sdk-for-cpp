@@ -87,12 +87,11 @@ AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
 {
 }
 
-namespace {
-AzureCliCredentialOptions const DefaultOptions = {};
-}
-
 AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
-    : AzureCliCredential(DefaultOptions.TenantId, DefaultOptions.CliProcessTimeout, options)
+    : AzureCliCredential(
+        AzureCliCredentialOptions{}.TenantId,
+        AzureCliCredentialOptions{}.CliProcessTimeout,
+        options)
 {
 }
 

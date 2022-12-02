@@ -258,13 +258,13 @@ std::string::size_type GetPropertyValueStart(
     std::string const& jsonString,
     std::string const& propertyName)
 {
-  auto const propertyNameStart = jsonString.find(':', jsonString.find(propertyName));
-  if (propertyNameStart == std::string::npos)
+  auto const propertyNameValueSeparator = jsonString.find(':', jsonString.find(propertyName));
+  if (propertyNameValueSeparator == std::string::npos)
   {
     return std::string::npos;
   }
 
-  auto pos = propertyNameStart + propertyName.size();
+  auto pos = propertyNameValueSeparator;
   {
     auto const jsonStringSize = jsonString.size();
     for (; pos < jsonStringSize; ++pos)
