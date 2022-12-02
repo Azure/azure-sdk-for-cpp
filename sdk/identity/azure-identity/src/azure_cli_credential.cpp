@@ -192,6 +192,8 @@ private:
   ShellProcess(ShellProcess const&) = delete;
   ShellProcess& operator=(ShellProcess const&) = delete;
 
+  void Destruct();
+
 public:
   ShellProcess(std::string const& command, OutputPipe& outputPipe);
   ~ShellProcess();
@@ -564,7 +566,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
     if (spawnResult != 0)
     {
       m_pid = -1;
-      this->~ShellProcess();
+      Destruct();
       ThrowIfApiCallFails(spawnResult, "Cannot spawn process");
     }
     // LCOV_EXCL_STOP
@@ -575,7 +577,9 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 #endif
 }
 
-ShellProcess::~ShellProcess()
+ShellProcess::~ShellProcess() { Destruct(); }
+
+void ShellProcess::Destruct()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
   static_cast<void>(CloseHandle(m_processHandle));
