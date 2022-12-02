@@ -326,11 +326,14 @@ OutputPipe::~OutputPipe()
     static_cast<void>(CloseHandle(m_readHandle));
   }
 #else
+  std::cerr << "Closing pipes.\n";
   for (auto iter = m_fd.rbegin(); iter != m_fd.rend(); ++iter)
   {
     if (*iter != -1)
     {
+      std::cerr << "About to close pipe.\n";
       static_cast<void>(close(*iter));
+      std::cerr << "Pipe closed.\n";
     }
   }
 #endif
@@ -594,12 +597,17 @@ ShellProcess::~ShellProcess()
 #if defined(AZ_PLATFORM_WINDOWS)
   static_cast<void>(CloseHandle(m_processHandle));
 #else
+  std::cerr << "~ShellProcess().\n";
   if (m_pid > 0)
   {
+    std::cerr << "About to waitpid().\n";
     static_cast<void>(waitpid(m_pid, NULL, 0));
+    std::cerr << "waitpid() ok.\n";
   }
 
+  std::cerr << "about to destroy actions.\n";
   posix_spawn_file_actions_destroy(&m_actions);
+  std::cerr << "Actions destroyed.\n";
 #endif
 }
 
