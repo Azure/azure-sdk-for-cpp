@@ -29,7 +29,6 @@ namespace Azure { namespace Identity {
    */
   struct ClientSecretCredentialOptions final : public Core::Credentials::TokenCredentialOptions
   {
-  public:
     /**
      * @brief Authentication authority URL.
      * @note Default value is Azure AD global authority (https://login.microsoftonline.com/).

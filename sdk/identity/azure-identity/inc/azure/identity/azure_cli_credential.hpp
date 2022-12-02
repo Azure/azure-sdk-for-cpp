@@ -22,7 +22,6 @@ namespace Azure { namespace Identity {
    */
   struct AzureCliCredentialOptions final : public Core::Credentials::TokenCredentialOptions
   {
-  public:
     /**
      * @brief The ID of the tenant to which the credential will authenticate by default. If not
      * specified, the credential will authenticate to any requested tenant, and will default to the
@@ -83,7 +82,11 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
+#if !defined(TESTING_BUILD)
+  private:
+#else
   protected:
+#endif
     virtual std::string GetAzCommand(std::string const& resource, std::string const& tenantId)
         const;
   };
