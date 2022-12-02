@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_endpoint;
-
+    virtual std::string GetAssetsPath() override { return "assets.json"; }
     // Create
     virtual void SetUp() override
     {
