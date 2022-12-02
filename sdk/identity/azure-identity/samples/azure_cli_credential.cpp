@@ -12,10 +12,10 @@ int main()
   try
   {
     // Step 1: Initialize Azure CLI Credential.
-    auto chainedTokenCredential = std::make_shared<Azure::Identity::AzureCliCredential>();
+    auto azureCliCredential = std::make_shared<Azure::Identity::AzureCliCredential>();
 
     // Step 2: Pass the credential to an Azure Service Client.
-    Azure::Service::Client azureServiceClient("serviceUrl", chainedTokenCredential);
+    Azure::Service::Client azureServiceClient("serviceUrl", azureCliCredential);
 
     // Step 3: Start using the Azure Service Client.
     azureServiceClient.DoSomething(Azure::Core::Context::ApplicationContext);
