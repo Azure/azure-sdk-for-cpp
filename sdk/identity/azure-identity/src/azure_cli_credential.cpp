@@ -326,30 +326,6 @@ OutputPipe::~OutputPipe()
 #endif
 }
 
-void EnsureShellExists(std::string const& pathToShell)
-{
-#ifdef _MSC_VER
-#pragma warning(push)
-// warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
-#pragma warning(disable : 4996)
-#endif
-
-  auto file = std::fopen(pathToShell.c_str(), "r");
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-  // LCOV_EXCL_START
-  if (!file)
-  {
-    throw std::runtime_error("Cannot locate command line shell.");
-  }
-  // LCOV_EXCL_STOP
-
-  std::fclose(file);
-}
-
 #if defined(AZ_PLATFORM_WINDOWS)
 void AppendToEnvironmentValuesIfNotEmpty(
     std::vector<CHAR>& environmentValues,
@@ -384,6 +360,20 @@ void AppendToArgvValues(
   argvValues.insert(argvValues.end(), value.begin(), value.end());
   argvValues.push_back('\0');
 }
+
+void EnsureShellExists(std::string const& pathToShell)
+{
+  auto file = std::fopen(pathToShell.c_str(), "r");
+
+  // LCOV_EXCL_START
+  if (!file)
+  {
+    throw std::runtime_error("Cannot locate command line shell.");
+  }
+  // LCOV_EXCL_STOP
+
+  std::fclose(file);
+}
 #endif
 
 ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
@@ -403,16 +393,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
     // Path to cmd.exe
     std::vector<CHAR> commandLineStr;
     {
-      auto cmd = Environment::GetVariable("COMSPEC");
-      EnsureShellExists(cmd);
-
-      // Enclose path in quotes, in case there are space characters.
-      {
-        std::string const Quote = "\"";
-        cmd = Quote + cmd + Quote;
-      }
-
-      auto const commandLine = cmd + " /c " + command;
+      auto const commandLine = "cmd /c " + command;
       commandLineStr.insert(commandLineStr.end(), commandLine.begin(), commandLine.end());
       commandLineStr.push_back('\0');
     }
