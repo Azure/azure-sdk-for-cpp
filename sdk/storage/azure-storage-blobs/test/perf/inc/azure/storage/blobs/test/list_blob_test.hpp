@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     void Run(Azure::Core::Context const& context) override
     {
       // Loop each page
-#if defined(_MSC_FULL_VER) && _MSC_FULL_VER == 193431931
+#if defined(_MSC_VER) && _MSC_VER == 1934
 // Workaround for MSVC bug that was introduced in version 19.34 (Visual Studio 2022 version 17.4):
 // https://developercommunity.visualstudio.com/t/Bogus-C2143-brace-initializing-temporary/10218087
       auto page = m_containerClient->ListBlobs({}, context);
