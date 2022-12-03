@@ -6,6 +6,7 @@
 #include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
 
 #include <cctype>
@@ -147,14 +148,33 @@ AccessToken AzureCliCredential::GetToken(
 }
 
 namespace {
+#if defined(AZ_PLATFORM_WINDOWS)
+template <typename> struct UniqueHandleHelper;
+template <> struct UniqueHandleHelper<HANDLE>
+{
+  static void CloseWin32Handle(HANDLE handle)
+  {
+    if (handle != nullptr)
+    {
+      static_cast<void>(CloseHandle(handle));
+    }
+  }
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<void, CloseWin32Handle>;
+};
+
+template <typename T>
+using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
+#endif
+
 class ShellProcess;
 class OutputPipe final {
   friend class ShellProcess;
 
 private:
 #if defined(AZ_PLATFORM_WINDOWS)
-  HANDLE m_writeHandle = nullptr;
-  HANDLE m_readHandle = nullptr;
+  UniqueHandle<HANDLE> m_writeHandle;
+  UniqueHandle<HANDLE> m_readHandle;
   OVERLAPPED m_overlapped = {};
 #else
   std::vector<int> m_fd;
@@ -177,7 +197,7 @@ public:
 class ShellProcess final {
 private:
 #if defined(AZ_PLATFORM_WINDOWS)
-  HANDLE m_processHandle = nullptr;
+  UniqueHandle<HANDLE> m_processHandle;
 #else
   std::vector<char*> m_argv;
   std::vector<char> m_argvValues;
@@ -186,17 +206,17 @@ private:
   std::vector<char> m_envpValues;
 
   posix_spawn_file_actions_t m_actions = {};
-  int m_pid = -1;
+  pid_t m_pid = -1;
 #endif
 
   ShellProcess(ShellProcess const&) = delete;
   ShellProcess& operator=(ShellProcess const&) = delete;
 
-  void Destruct();
+  void Finalize();
 
 public:
   ShellProcess(std::string const& command, OutputPipe& outputPipe);
-  ~ShellProcess();
+  ~ShellProcess() { Finalize(); }
 
   void Terminate();
 };
@@ -286,11 +306,19 @@ OutputPipe::OutputPipe()
   pipeSecurity.bInheritHandle = TRUE;
   pipeSecurity.lpSecurityDescriptor = nullptr;
 
-  ThrowIfApiCallFails(
-      CreatePipe(&m_readHandle, &m_writeHandle, &pipeSecurity, 0), "Cannot create output pipe");
+  {
+    HANDLE readHandle = nullptr;
+    HANDLE writeHandle = nullptr;
+
+    ThrowIfApiCallFails(
+        CreatePipe(&readHandle, &writeHandle, &pipeSecurity, 0), "Cannot create output pipe");
+
+    m_readHandle.reset(readHandle);
+    m_writeHandle.reset(writeHandle);
+  }
 
   ThrowIfApiCallFails(
-      SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0),
+      SetHandleInformation(m_readHandle.get(), HANDLE_FLAG_INHERIT, 0),
       "Cannot ensure the read handle for the output pipe is not inherited");
 #else
   m_fd.push_back(-1);
@@ -299,23 +327,12 @@ OutputPipe::OutputPipe()
   ThrowIfApiCallFails(pipe(m_fd.data()), "Cannot create output pipe");
   ThrowIfApiCallFails(
       fcntl(m_fd[0], F_SETFL, O_NONBLOCK), "Cannot set up output pipe to have non-blocking read");
-
 #endif
 }
 
 OutputPipe::~OutputPipe()
 {
-#if defined(AZ_PLATFORM_WINDOWS)
-  if (m_writeHandle != nullptr)
-  {
-    static_cast<void>(CloseHandle(m_writeHandle));
-  }
-
-  if (m_readHandle != nullptr)
-  {
-    static_cast<void>(CloseHandle(m_readHandle));
-  }
-#else
+#if !defined(AZ_PLATFORM_WINDOWS)
   for (auto iter = m_fd.rbegin(); iter != m_fd.rend(); ++iter)
   {
     if (*iter != -1)
@@ -387,8 +404,8 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
     startupInfo.cb = sizeof(decltype(startupInfo));
     startupInfo.dwFlags |= STARTF_USESTDHANDLES; // cspell:disable-line
     startupInfo.hStdInput = INVALID_HANDLE_VALUE;
-    startupInfo.hStdOutput = outputPipe.m_writeHandle;
-    startupInfo.hStdError = outputPipe.m_writeHandle;
+    startupInfo.hStdOutput = outputPipe.m_writeHandle.get();
+    startupInfo.hStdError = outputPipe.m_writeHandle.get();
 
     // Path to cmd.exe
     std::vector<CHAR> commandLineStr;
@@ -463,13 +480,12 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   static_cast<void>(CloseHandle(procInfo.hThread));
 
   // Keep the process handle so we can cancel it if it takes too long.
-  m_processHandle = procInfo.hProcess;
+  m_processHandle.reset(procInfo.hProcess);
 
   // We won't be writing to the pipe that is meant for the process.
   // We will only be reading the pipe.
   // So, now that the process is started, we can close write handle on our end.
-  static_cast<void>(CloseHandle(outputPipe.m_writeHandle));
-  outputPipe.m_writeHandle = nullptr;
+  outputPipe.m_writeHandle.reset();
 #else
   // Form the 'argv' array:
   // * An array of pointers to non-const C strings (0-terminated).
@@ -534,10 +550,10 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   }
 
   // Set up pipe communication for the process.
-  posix_spawn_file_actions_init(&m_actions);
-  posix_spawn_file_actions_addclose(&m_actions, outputPipe.m_fd[0]);
-  posix_spawn_file_actions_adddup2(&m_actions, outputPipe.m_fd[1], 1);
-  posix_spawn_file_actions_addclose(&m_actions, outputPipe.m_fd[1]);
+  static_cast<void>(posix_spawn_file_actions_init(&m_actions));
+  static_cast<void>(posix_spawn_file_actions_addclose(&m_actions, outputPipe.m_fd[0]));
+  static_cast<void>(posix_spawn_file_actions_adddup2(&m_actions, outputPipe.m_fd[1], 1));
+  static_cast<void>(posix_spawn_file_actions_addclose(&m_actions, outputPipe.m_fd[1]));
 
   {
     auto const spawnResult
@@ -547,7 +563,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
     if (spawnResult != 0)
     {
       m_pid = -1;
-      Destruct();
+      Finalize();
       ThrowIfApiCallFails(spawnResult, "Cannot spawn process");
     }
     // LCOV_EXCL_STOP
@@ -558,13 +574,9 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 #endif
 }
 
-ShellProcess::~ShellProcess() { Destruct(); }
-
-void ShellProcess::Destruct()
+void ShellProcess::Finalize()
 {
-#if defined(AZ_PLATFORM_WINDOWS)
-  static_cast<void>(CloseHandle(m_processHandle));
-#else
+#if !defined(AZ_PLATFORM_WINDOWS)
   if (m_pid > 0)
   {
     static_cast<void>(waitpid(m_pid, nullptr, 0));
@@ -577,7 +589,7 @@ void ShellProcess::Destruct()
 void ShellProcess::Terminate()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
-  static_cast<void>(TerminateProcess(m_processHandle, 0));
+  static_cast<void>(TerminateProcess(m_processHandle.get(), 0));
 #else
   if (m_pid > 0)
   {
@@ -601,7 +613,7 @@ bool OutputPipe::NonBlockingRead(
   DWORD bytesReadDword = 0;
   auto const hadData
       = (ReadFile(
-             m_readHandle,
+             m_readHandle.get(),
              buffer.data(),
              static_cast<DWORD>(buffer.size()),
              &bytesReadDword,
