@@ -72,7 +72,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       for (auto page = m_containerClient->ListBlobs({}, context); page.HasPage();
            page.MoveToNextPage(context))
 #endif
-
       {
         // loop each blob
         for (auto blob : page.Blobs)
