@@ -63,8 +63,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     void Run(Azure::Core::Context const& context) override
     {
       // Loop each page
-      for (auto page = m_containerClient->ListBlobs({}, context); page.HasPage();
-           page.MoveToNextPage(context))
+      auto page = m_containerClient->ListBlobs({}, context);
+      for (; page.HasPage(); page.MoveToNextPage(context))
       {
         // loop each blob
         for (auto blob : page.Blobs)
