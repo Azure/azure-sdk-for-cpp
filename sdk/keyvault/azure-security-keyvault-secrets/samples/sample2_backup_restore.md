@@ -91,4 +91,3 @@ auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample2-backup-restore)
-
