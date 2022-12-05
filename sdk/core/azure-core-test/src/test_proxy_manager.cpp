@@ -274,7 +274,12 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
   {
-    std::string body = "{ \"ignoredHeaders\": \"x-ms-copy-source,x-ms-proposed-lease-id,x-ms-lease-id,x-ms-file-change-time,x-ms-file-creation-time,x-ms-file-last-write-time,x-ms-destination-lease-id,x-ms-source-lease-id\"}";
+    std::string body
+        = "{\"compareBodies\": false ,\"ignoreQueryOrdering\": true , \"ignoredHeaders\": "
+          "\"x-ms-copy-source,x-ms-proposed-lease-id,x-ms-lease-id,x-ms-file-change-"
+          "time,x-ms-file-creation-time,x-ms-file-last-write-time,x-ms-destination-"
+          "lease-id,x-ms-source-lease-id,x-ms-source-content-crc64,x-ms-content-crc64,x-ms-source-"
+          "content-md5,x-ms-content-md5,Content-MD5\"}";
 
     Azure::Core::IO::MemoryBodyStream payloadStream(
         reinterpret_cast<const uint8_t*>(body.data()), body.size());
@@ -284,19 +289,7 @@ void TestProxyManager::SetProxySanitizer()
     Azure::Core::Context ctx;
     auto response = m_privatePipeline->Send(request, ctx);
   }
-  /* {
-    std::string body
-        = "{}";
 
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
-    Azure::Core::Http::Request request(
-        Azure::Core::Http::HttpMethod::Post, matcherRequest, &payloadStream);
-    request.SetHeader("x-abstraction-identifier", "BodilessMatcher");
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
-  }*/
+  /*  <> values differ, request <yBYe+1/4Eus=>, record <KXO4vSyhIkQ=>
+      Body differences:*/
 }
-/*
-   
-*/

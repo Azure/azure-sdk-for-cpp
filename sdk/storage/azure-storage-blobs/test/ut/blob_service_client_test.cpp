@@ -484,7 +484,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.GetProperties());
   }
 
-  TEST_F(BlobServiceClientTest, UserDelegationKey_LIVEONLY_)
+  TEST_F(BlobServiceClientTest, UserDelegationKey)
   {
     const std::string testName = GetTestName();
     auto client = GetClientForTest(testName);

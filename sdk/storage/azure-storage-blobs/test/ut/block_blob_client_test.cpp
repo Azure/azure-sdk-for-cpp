@@ -640,7 +640,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(res.Value.AccessTierChangedOn.Value()));
   }
 
-  TEST_F(BlockBlobClientTest, StageBlock_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, StageBlock)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -1787,7 +1787,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, ContentHash_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, ContentHash)
   {
     auto const testName(GetTestName());
     auto srcBlobClient = GetBlockBlobClient(testName + "src");

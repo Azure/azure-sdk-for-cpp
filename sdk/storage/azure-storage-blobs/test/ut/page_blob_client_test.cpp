@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(PageBlobClientTest, ContentHash_LIVEONLY_)
+  TEST_F(PageBlobClientTest, ContentHash)
   {
     auto const testName(GetTestName());
     auto pageBlobClient = GetPageBlobClient(testName);
