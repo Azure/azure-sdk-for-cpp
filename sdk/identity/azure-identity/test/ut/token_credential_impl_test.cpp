@@ -180,8 +180,7 @@ TEST(TokenCredentialImpl, ThrowInt)
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
-        EXPECT_THROW(
-            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        EXPECT_THROW(token = credential.GetToken(tokenRequestContext, context), int);
         return token;
       }));
 }

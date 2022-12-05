@@ -10,6 +10,10 @@
 
 #include "token_cache.hpp"
 
+#if defined(TESTING_BUILD)
+#include "azure/identity/dll_import_export.hpp"
+#endif
+
 #include <azure/core/credentials/credentials.hpp>
 
 #include <functional>
@@ -76,13 +80,13 @@ namespace Azure { namespace Identity { namespace _detail {
      * A test hook that gets invoked before cache write lock gets acquired.
      *
      */
-    static std::function<void()> OnBeforeCacheWriteLock;
+    AZ_IDENTITY_DLLEXPORT static std::function<void()> OnBeforeCacheWriteLock;
 
     /**
      * A test hook that gets invoked before item write lock gets acquired.
      *
      */
-    static std::function<void()> OnBeforeItemWriteLock;
+    AZ_IDENTITY_DLLEXPORT static std::function<void()> OnBeforeItemWriteLock;
 #endif
   };
 }}} // namespace Azure::Identity::_detail

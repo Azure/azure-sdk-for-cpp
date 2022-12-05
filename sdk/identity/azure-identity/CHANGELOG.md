@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added Azure CLI Credential.
+
 ### Breaking Changes
 
 ### Bugs Fixed
