@@ -740,7 +740,7 @@ namespace Azure { namespace Storage { namespace Test {
     client.Delete();
   }
 
-  TEST_F(BlobContainerClientTest, AccessConditionLeaseId_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, AccessConditionLeaseId)
   {
     auto client = GetBlobContainerTestClient();
     client.Create();
@@ -899,7 +899,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobNames, findResults2);
   }
 
-  TEST_F(BlobContainerClientTest, AccessConditionTags_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, AccessConditionTags)
   {
     auto client = GetBlobContainerTestClient();
     client.Create();

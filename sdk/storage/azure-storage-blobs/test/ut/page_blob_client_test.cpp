@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(numRanges, static_cast<size_t>(3));
   }
 
-  TEST_F(PageBlobClientTest, UploadFromUri_LIVEONLY_)
+  TEST_F(PageBlobClientTest, UploadFromUri)
   {
     auto const testName(GetTestName());
     auto testPageBlobClient = GetPageBlobClient(testName);
@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Test {
         0, testPageBlobClient.GetUrl() + GetSas(), {0, static_cast<int64_t>(m_blobContent.size())});
   }
 
-  TEST_F(PageBlobClientTest, StartCopyIncremental_LIVEONLY_)
+  TEST_F(PageBlobClientTest, StartCopyIncremental)
   {
     auto const testName(GetTestName());
     auto testPageBlobClient = GetPageBlobClient(testName);
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadStream->ReadToEnd(Azure::Core::Context()), m_blobContent);
   }
 
-  TEST_F(PageBlobClientTest, SourceBlobAccessConditions_LIVEONLY_)
+  TEST_F(PageBlobClientTest, SourceBlobAccessConditions)
   {
     auto const testName(GetTestName());
     auto sourceBlobClient = GetPageBlobClient(testName);
@@ -474,7 +474,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobClient.GetProperties().Value.HttpHeaders.ContentType, headers.ContentType);
   }
 
-  TEST_F(PageBlobClientTest, PageBlobAccessConditions_LIVEONLY_)
+  TEST_F(PageBlobClientTest, PageBlobAccessConditions)
   {
     auto const testName(GetTestName());
     auto blobClient = GetPageBlobClient(testName);

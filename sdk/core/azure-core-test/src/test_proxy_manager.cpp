@@ -212,6 +212,12 @@ void TestProxyManager::SetProxySanitizer()
 
   sanitizerRequest.AppendPath("Admin");
   sanitizerRequest.AppendPath("AddSanitizer");
+
+  Azure::Core::Url matcherRequest(m_proxy);
+
+  matcherRequest.AppendPath("Admin");
+  matcherRequest.AppendPath("SetMatcher");
+
   {
 
     std::string body
@@ -267,4 +273,30 @@ void TestProxyManager::SetProxySanitizer()
     Azure::Core::Context ctx;
     auto response = m_privatePipeline->Send(request, ctx);
   }
+  {
+    std::string body = "{ \"ignoredHeaders\": \"x-ms-copy-source,x-ms-proposed-lease-id,x-ms-lease-id,x-ms-file-change-time,x-ms-file-creation-time,x-ms-file-last-write-time,x-ms-destination-lease-id,x-ms-source-lease-id\"}";
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, matcherRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "CustomDefaultMatcher");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }
+  /* {
+    std::string body
+        = "{}";
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, matcherRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", "BodilessMatcher");
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+  }*/
 }
+/*
+   
+*/

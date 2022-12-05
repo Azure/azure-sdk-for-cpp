@@ -341,7 +341,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blockBlobClient.Download(options), StorageException);
   }
 
-  TEST_F(BlockBlobClientTest, SyncCopyFromUri_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, SyncCopyFromUri)
   {
     auto const testName(GetTestName());
     auto blockBlobClient = GetBlockBlobClient(testName);
@@ -378,7 +378,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
-  TEST_F(BlockBlobClientTest, SyncCopyFromUriEncryptionScope_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, SyncCopyFromUriEncryptionScope)
   {
     auto clientOptions = InitClientOptions<Blobs::BlobClientOptions>();
     const auto encryptionScope = GetTestEncryptionScope();
@@ -469,7 +469,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
-  TEST_F(BlockBlobClientTest, CopyWithTagsMetadataTier_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, CopyWithTagsMetadataTier)
   {
     auto const testName(GetTestName());
     auto blockBlobClient = GetBlockBlobClient(testName);
@@ -1509,7 +1509,7 @@ namespace Azure { namespace Storage { namespace Test {
         blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
   }
 
-  TEST_F(BlockBlobClientTest, SetTierWithLeaseId_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, SetTierWithLeaseId)
   {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
@@ -1566,7 +1566,7 @@ namespace Azure { namespace Storage { namespace Test {
     buffer.resize(1024);
   }
 
-  TEST_F(BlobContainerClientTest, SourceBlobAccessConditions_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, SourceBlobAccessConditions)
   {
     auto const testName(GetTestNameLowerCase());
     auto containerClient = GetBlobContainerTestClient();
@@ -1910,7 +1910,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, UploadFromUri_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, UploadFromUri)
   {
     auto const testName(GetTestName());
     auto srcBlobClient = GetBlockBlobClient(testName + "src");
@@ -1964,7 +1964,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(destBlobClient.GetTags().Value, srcTags);
   }
 
-  TEST_F(BlockBlobClientTest, SetGetTagsWithLeaseId_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, SetGetTagsWithLeaseId)
   {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
