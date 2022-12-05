@@ -45,6 +45,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     bool m_wasSkipped = false;
+    bool m_proxySanitized = false;
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
       if (m_wasSkipped)
@@ -137,7 +138,7 @@ namespace Azure { namespace Core { namespace Test {
   protected:
     Azure::Core::Test::TestContextManager m_testContext;
     std::unique_ptr<Azure::Core::Test::TestProxyManager> m_testProxy;
-
+    
     bool shouldSkipTest() { return m_wasSkipped; }
 
     inline void ValidateSkippingTest()
@@ -388,9 +389,16 @@ namespace Azure { namespace Core { namespace Test {
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
       m_testContext.AssetsPath = GetAssetsPath();
+
       if (!m_wasSkipped)
       {
         m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
+        if (m_proxySanitized == false)
+        {
+          m_testProxy->SetProxySanitizer();
+          m_proxySanitized = true;
+
+        }
       }
     }
 
