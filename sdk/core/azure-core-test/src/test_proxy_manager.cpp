@@ -209,23 +209,25 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
 void TestProxyManager::SetProxySanitizer()
 {
   Azure::Core::Url sanitizerRequest(m_proxy);
-
   sanitizerRequest.AppendPath("Admin");
   sanitizerRequest.AppendPath("AddSanitizer");
+  const std::string regexBody
+      = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
+        "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
 
   Azure::Core::Url matcherRequest(m_proxy);
-
   matcherRequest.AppendPath("Admin");
   matcherRequest.AppendPath("SetMatcher");
+  const std::string matcherBody
+      = "{\"compareBodies\": false ,\"ignoreQueryOrdering\": true , \"ignoredHeaders\": "
+        "\"x-ms-copy-source,x-ms-proposed-lease-id,x-ms-lease-id,x-ms-file-change-"
+        "time,x-ms-file-creation-time,x-ms-file-last-write-time,x-ms-destination-"
+        "lease-id,x-ms-source-lease-id,x-ms-source-content-crc64,x-ms-content-crc64,x-ms-source-"
+        "content-md5,x-ms-content-md5,Content-MD5\"}";
 
   {
-
-    std::string body
-        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
-
     Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+        reinterpret_cast<const uint8_t*>(regexBody.data()), regexBody.size());
     Azure::Core::Http::Request request(
         Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
     request.SetHeader("x-abstraction-identifier", "UriRegexSanitizer");
@@ -233,13 +235,8 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
   {
-
-    std::string body
-        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
-
     Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+        reinterpret_cast<const uint8_t*>(regexBody.data()), regexBody.size());
     Azure::Core::Http::Request request(
         Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
     request.SetHeader("x-abstraction-identifier", "BodyRegexSanitizer");
@@ -247,13 +244,8 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
   {
-
-    std::string body
-        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
-
     Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+        reinterpret_cast<const uint8_t*>(regexBody.data()), regexBody.size());
     Azure::Core::Http::Request request(
         Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
     request.SetHeader("x-abstraction-identifier", "HeaderRegexSanitizer");
@@ -261,12 +253,8 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
   {
-    std::string body
-        = "{\"key\" : \"Location\",\"value\" : \"REDACTED\",\"regex\": "
-          "\"https://(?<account>[a-zA-Z0-9\\\\-]+).\",\"groupForReplace\" : \"account\"}";
-
     Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+        reinterpret_cast<const uint8_t*>(regexBody.data()), regexBody.size());
     Azure::Core::Http::Request request(
         Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
     request.SetHeader("x-abstraction-identifier", "GeneralRegexSanitizer");
@@ -274,22 +262,12 @@ void TestProxyManager::SetProxySanitizer()
     auto response = m_privatePipeline->Send(request, ctx);
   }
   {
-    std::string body
-        = "{\"compareBodies\": false ,\"ignoreQueryOrdering\": true , \"ignoredHeaders\": "
-          "\"x-ms-copy-source,x-ms-proposed-lease-id,x-ms-lease-id,x-ms-file-change-"
-          "time,x-ms-file-creation-time,x-ms-file-last-write-time,x-ms-destination-"
-          "lease-id,x-ms-source-lease-id,x-ms-source-content-crc64,x-ms-content-crc64,x-ms-source-"
-          "content-md5,x-ms-content-md5,Content-MD5\"}";
-
     Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(body.data()), body.size());
+        reinterpret_cast<const uint8_t*>(matcherBody.data()), matcherBody.size());
     Azure::Core::Http::Request request(
         Azure::Core::Http::HttpMethod::Post, matcherRequest, &payloadStream);
     request.SetHeader("x-abstraction-identifier", "CustomDefaultMatcher");
     Azure::Core::Context ctx;
     auto response = m_privatePipeline->Send(request, ctx);
   }
-
-  /*  <> values differ, request <yBYe+1/4Eus=>, record <KXO4vSyhIkQ=>
-      Body differences:*/
 }
