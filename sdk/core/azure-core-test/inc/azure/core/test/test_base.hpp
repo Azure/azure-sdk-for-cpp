@@ -393,12 +393,6 @@ namespace Azure { namespace Core { namespace Test {
       if (!m_wasSkipped)
       {
         m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
-        if (m_proxySanitized == false)
-        {
-          m_testProxy->SetProxySanitizer();
-          m_proxySanitized = true;
-
-        }
       }
     }
 

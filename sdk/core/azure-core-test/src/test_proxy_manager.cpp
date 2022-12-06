@@ -206,8 +206,53 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
   return std::make_unique<Azure::Core::Test::TestProxyPolicy>(this);
 }
 
+bool TestProxyManager::CheckSanitizers()
+{
+  Azure::Core::Url checkRequest(m_proxy);
+
+  checkRequest.AppendPath("Info");
+  checkRequest.AppendPath("Active");
+
+  {
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, checkRequest);
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+
+    auto rawResponse = response->GetBody();
+    std::string stringBody(rawResponse.begin(), rawResponse.end());
+    std::string regex = "\"https://(?<account>[a-zA-Z0-9\\-]+).\"";
+    std::vector<std::string> stringsInOrder
+        = {"UriRegexSanitizer",
+           regex,
+           "BodyRegexSanitizer",
+           regex,
+           "HeaderRegexSanitizer",
+           regex,
+           "GeneralRegexSanitizer",
+           regex,
+           "CustomDefaultMatcher"};
+
+    size_t position = 0;
+
+    for(auto &part:stringsInOrder)
+    {
+      position = stringBody.find(part, position);
+      if (position == std::string::npos)
+      {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 void TestProxyManager::SetProxySanitizer()
 {
+  if (CheckSanitizers())
+  {
+    return;
+  }
   Azure::Core::Url sanitizerRequest(m_proxy);
   sanitizerRequest.AppendPath("Admin");
   sanitizerRequest.AppendPath("AddSanitizer");
