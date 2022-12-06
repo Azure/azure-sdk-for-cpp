@@ -1434,7 +1434,7 @@ namespace Azure { namespace Core {
       {
         auto bio(Azure::Core::_internal::MakeUniqueHandle(BIO_new, BIO_s_mem()));
 
-        BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
+        BIO_printf(bio.get(), "Error in %s: ", what.c_str());
         if (ERR_peek_error() != 0)
         {
           ERR_print_errors(bio.get());
@@ -1499,6 +1499,13 @@ namespace Azure { namespace Core {
               "BIO_new_connect failed" + _detail::GetOpenSSLError("Load CRL"));
           return nullptr;
         }
+
+#ifdef __GNUC__
+        // BIO_set_conn_port is a macro that defines a (char*) cast. This causes a warning when building on Debian 9
+        // so let's suppress that here
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Werror=old-style-cast\"")
+#endif
         if (!BIO_set_conn_port(bio.get(), const_cast<char*>(port.c_str())))
         {
           Log::Write(
@@ -1506,6 +1513,9 @@ namespace Azure { namespace Core {
               "BIO_set_conn_port failed" + _detail::GetOpenSSLError("Load CRL"));
           return nullptr;
         }
+#ifdef __GNUC__
+_Pragma("GCC diagnostic pop")
+#endif
 
         auto requestContext
             = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
