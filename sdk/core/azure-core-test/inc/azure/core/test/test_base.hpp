@@ -404,7 +404,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     void TearDown() override;
-    virtual std::string GetAssetsPath() { return std::string(); }
+    virtual std::string GetAssetsPath() { return "assets.json"; }
 
   public:
     // Per-test-suite set-up.
