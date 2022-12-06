@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
-  TEST_F(AppendBlobClientTest, CreateWithTags)
+  TEST_F(AppendBlobClientTest, CreateWithTags_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
