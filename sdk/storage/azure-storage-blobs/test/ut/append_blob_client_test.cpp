@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(AppendBlobClientTest, AccessConditionETag)
+  TEST_F(AppendBlobClientTest, AccessConditionETag_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(appendBlobClient.Delete(options));
   }
 
-  TEST_F(AppendBlobClientTest, Seal)
+  TEST_F(AppendBlobClientTest, Seal_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(getPropertiesResult.Value.CopyStatus.Value(), Blobs::Models::CopyStatus::Success);
   }
 
-  TEST_F(AppendBlobClientTest, CreateIfNotExists)
+  TEST_F(AppendBlobClientTest, CreateIfNotExists_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
@@ -315,7 +315,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadStream->ReadToEnd(Azure::Core::Context()), m_blobContent);
   }
 
-  TEST_F(AppendBlobClientTest, ContentHash)
+  TEST_F(AppendBlobClientTest, ContentHash_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto appendBlobClient = GetAppendBlobClient(testName);
