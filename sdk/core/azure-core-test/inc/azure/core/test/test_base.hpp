@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     bool m_wasSkipped = false;
-    bool m_proxySanitized = false;
+
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
       if (m_wasSkipped)
