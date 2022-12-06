@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   // Requires blob versioning?
-  TEST_F(AppendBlobClientTest, CreateAppendDelete)
+  TEST_F(AppendBlobClientTest, CreateAppendDelete_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
