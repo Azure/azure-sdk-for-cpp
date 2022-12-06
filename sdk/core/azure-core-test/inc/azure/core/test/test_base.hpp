@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Test {
   protected:
     Azure::Core::Test::TestContextManager m_testContext;
     std::unique_ptr<Azure::Core::Test::TestProxyManager> m_testProxy;
-    
+
     bool shouldSkipTest() { return m_wasSkipped; }
 
     inline void ValidateSkippingTest()

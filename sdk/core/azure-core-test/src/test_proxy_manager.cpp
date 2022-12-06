@@ -234,7 +234,7 @@ bool TestProxyManager::CheckSanitizers()
 
     size_t position = 0;
 
-    for(auto &part:stringsInOrder)
+    for (auto& part : stringsInOrder)
     {
       position = stringBody.find(part, position);
       if (position == std::string::npos)

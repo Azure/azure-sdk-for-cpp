@@ -168,7 +168,6 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::string GetRecordingId() { return m_testContext.RecordingId; }
 
-    
   private:
     std::string PrepareRequestBody();
     void StartPlaybackRecord(TestMode testMode);
