@@ -31,5 +31,5 @@ if($error){
 }
 
 echo "start test proxy"
-#starts it in a separate process that will outlive pwsh in roder to serve requests.
+#starts it in a separate process that will outlive pwsh in order to serve requests.
 Start-Process 'test-proxy' 

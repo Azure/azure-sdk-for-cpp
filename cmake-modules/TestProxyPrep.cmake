@@ -38,7 +38,7 @@ if($error){\n \
 }\n \
 \n \
 echo \"start test proxy\"\n \
-#starts it in a separate process that will outlive pwsh in roder to serve requests.\n \
+#starts it in a separate process that will outlive pwsh in order to serve requests.\n \
 Start-Process 'test-proxy'\n \
 ")
 endmacro()

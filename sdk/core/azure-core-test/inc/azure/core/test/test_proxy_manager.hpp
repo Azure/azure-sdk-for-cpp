@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Test {
     bool IsPlaybackMode() { return m_currentMode == TestMode::PLAYBACK; }
 
     /**
-     * Gets thes proxy https url
+     * Gets the proxy https url
      *
      * @return string containing the https url of the proxy (e.g. "https://localhost:xyz")
      */

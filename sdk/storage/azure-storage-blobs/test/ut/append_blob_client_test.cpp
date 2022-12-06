@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(appendBlobClient.GetTags().Value, options.Tags);
   }
 
-  TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime)
+  TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto appendBlobClient = GetAppendBlobClient(testName);
