@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   // Requires blob versioning?
-  TEST_F(AppendBlobClientTest, CreateAppendDelete_LIVEONLY_)
+  TEST_F(AppendBlobClientTest, createappenddelete)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
-  TEST_F(AppendBlobClientTest, CreateWithTags_LIVEONLY_)
+  TEST_F(AppendBlobClientTest, createwithtags)
   {
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(appendBlobClient.GetTags().Value, options.Tags);
   }
 
-  TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime)
+  TEST_F(AppendBlobClientTest, accessconditionlastmodifiedtime)
   {
     auto const testName(GetTestName());
     auto appendBlobClient = GetAppendBlobClient(testName);
