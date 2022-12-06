@@ -1,0 +1,80 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Token cache.
+ *
+ */
+
+#pragma once
+
+#include <azure/core/credentials/credentials.hpp>
+
+#include <chrono>
+#include <functional>
+#include <map>
+#include <memory>
+#include <shared_mutex>
+#include <string>
+
+namespace Azure { namespace Identity { namespace _detail {
+  /**
+   * @brief Access token cache.
+   *
+   */
+  class TokenCache final {
+#if defined(TESTING_BUILD)
+  public:
+    // A test hook that gets invoked before cache write lock gets acquired.
+    std::function<void()> m_onBeforeCacheWriteLock;
+
+    // A test hook that gets invoked before item write lock gets acquired.
+    std::function<void()> m_onBeforeItemWriteLock;
+#else
+  private:
+#endif
+
+    struct CacheValue
+    {
+      Core::Credentials::AccessToken AccessToken;
+      std::shared_timed_mutex ElementMutex;
+    };
+
+    mutable std::map<std::string, std::shared_ptr<CacheValue>> m_cache;
+    mutable std::shared_timed_mutex m_cacheMutex;
+
+    TokenCache(TokenCache const&) = delete;
+    TokenCache& operator=(TokenCache const&) = delete;
+
+    static bool IsFresh(
+        std::shared_ptr<CacheValue> const& item,
+        DateTime::duration minimumExpiration,
+        std::chrono::system_clock::time_point now);
+
+    std::shared_ptr<CacheValue> GetOrCreateValue(
+        std::string const& key,
+        DateTime::duration minimumExpiration) const;
+
+  public:
+    TokenCache() {}
+    ~TokenCache() {}
+
+    /**
+     * @brief Attempts to get token from cache, and if not found, gets the token using the function
+     * provided, caches it, and returns its value.
+     *
+     * @param scopeString Authentication scopes (or resource) as string.
+     * @param minimumExpiration Minimum token lifetime for the cached value to be returned.
+     * @param getNewToken Function to get the new token for the given \p scopeString, in case when
+     * cache does not have it, or if its remaining lifetime is less than \p minimumExpiration.
+     *
+     * @return Authentication token.
+     *
+     */
+    Core::Credentials::AccessToken GetToken(
+        std::string const& scopeString,
+        DateTime::duration minimumExpiration,
+        std::function<Core::Credentials::AccessToken()> const& getNewToken) const;
+  };
+}}} // namespace Azure::Identity::_detail

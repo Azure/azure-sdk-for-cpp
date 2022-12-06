@@ -196,100 +196,114 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  return m_tokenCredentialImpl->GetToken(context, [&]() {
-    using _detail::TokenCredentialImpl;
-    using Azure::Core::Http::HttpMethod;
-
-    std::ostringstream body;
-    body << m_requestBody;
+  using _detail::TokenCredentialImpl;
+  std::string scopesStr;
+  {
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
-      {
-        body << "&scope=" << TokenCredentialImpl::FormatScopes(scopes, false);
-      }
+      scopesStr = TokenCredentialImpl::FormatScopes(scopes, false);
     }
+  }
 
-    std::string assertion = m_tokenHeaderEncoded;
-    {
-      using Azure::Core::_internal::Base64Url;
-      // Form the assertion to sign.
+  // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda argument
+  // when they are being executed. They are not supposed to keep a reference to lambda argument to
+  // call it later. Therefore, any capture made here will outlive the possible time frame when the
+  // lambda might get called.
+  return m_tokenCache.GetToken(scopesStr, tokenRequestContext.MinimumExpiration, [&]() {
+    return m_tokenCredentialImpl->GetToken(context, [&]() {
+      using Azure::Core::Http::HttpMethod;
+
+      std::ostringstream body;
+      body << m_requestBody;
       {
-        std::string payloadStr;
-        // Add GUID, current time, and expiration time to the payload
+        if (!scopesStr.empty())
         {
-          using Azure::Core::Uuid;
-          using Azure::Core::_internal::PosixTimeConverter;
+          body << "&scope=" << scopesStr;
+        }
+      }
 
-          std::ostringstream payloadStream;
+      std::string assertion = m_tokenHeaderEncoded;
+      {
+        using Azure::Core::_internal::Base64Url;
+        // Form the assertion to sign.
+        {
+          std::string payloadStr;
+          // Add GUID, current time, and expiration time to the payload
+          {
+            using Azure::Core::Uuid;
+            using Azure::Core::_internal::PosixTimeConverter;
 
-          const Azure::DateTime now = std::chrono::system_clock::now();
-          const Azure::DateTime exp = now + std::chrono::minutes(10);
+            std::ostringstream payloadStream;
 
-          payloadStream << m_tokenPayloadStaticPart << Uuid::CreateUuid().ToString()
-                        << "\",\"nbf\":" << PosixTimeConverter::DateTimeToPosixTime(now)
-                        << ",\"exp\":" << PosixTimeConverter::DateTimeToPosixTime(exp) << "}";
+            const Azure::DateTime now = std::chrono::system_clock::now();
+            const Azure::DateTime exp = now + std::chrono::minutes(10);
 
-          payloadStr = payloadStream.str();
+            payloadStream << m_tokenPayloadStaticPart << Uuid::CreateUuid().ToString()
+                          << "\",\"nbf\":" << PosixTimeConverter::DateTimeToPosixTime(now)
+                          << ",\"exp\":" << PosixTimeConverter::DateTimeToPosixTime(exp) << "}";
+
+            payloadStr = payloadStream.str();
+          }
+
+          // Concatenate JWT token header + "." + encoded payload
+          const auto payloadVec
+              = std::vector<std::string::value_type>(payloadStr.begin(), payloadStr.end());
+
+          assertion += std::string(".") + Base64Url::Base64UrlEncode(ToUInt8Vector(payloadVec));
         }
 
-        // Concatenate JWT token header + "." + encoded payload
-        const auto payloadVec
-            = std::vector<std::string::value_type>(payloadStr.begin(), payloadStr.end());
-
-        assertion += std::string(".") + Base64Url::Base64UrlEncode(ToUInt8Vector(payloadVec));
-      }
-
-      // Get assertion signature.
-      std::string signature;
-      if (auto mdCtx = EVP_MD_CTX_new())
-      {
-        try
+        // Get assertion signature.
+        std::string signature;
+        if (auto mdCtx = EVP_MD_CTX_new())
         {
-          EVP_PKEY_CTX* signCtx = nullptr;
-          if ((EVP_DigestSignInit(
-                   mdCtx, &signCtx, EVP_sha256(), nullptr, static_cast<EVP_PKEY*>(m_pkey))
-               == 1)
-              && (EVP_PKEY_CTX_set_rsa_padding(signCtx, RSA_PKCS1_PADDING) == 1))
+          try
           {
-            size_t sigLen = 0;
-            if (EVP_DigestSign(mdCtx, nullptr, &sigLen, nullptr, 0) == 1)
+            EVP_PKEY_CTX* signCtx = nullptr;
+            if ((EVP_DigestSignInit(
+                     mdCtx, &signCtx, EVP_sha256(), nullptr, static_cast<EVP_PKEY*>(m_pkey))
+                 == 1)
+                && (EVP_PKEY_CTX_set_rsa_padding(signCtx, RSA_PKCS1_PADDING) == 1))
             {
-              const auto bufToSign = reinterpret_cast<const unsigned char*>(assertion.data());
-              const auto bufToSignLen = static_cast<size_t>(assertion.size());
-
-              std::vector<unsigned char> sigVec(sigLen);
-              if (EVP_DigestSign(mdCtx, sigVec.data(), &sigLen, bufToSign, bufToSignLen) == 1)
+              size_t sigLen = 0;
+              if (EVP_DigestSign(mdCtx, nullptr, &sigLen, nullptr, 0) == 1)
               {
-                signature = Base64Url::Base64UrlEncode(ToUInt8Vector(sigVec));
+                const auto bufToSign = reinterpret_cast<const unsigned char*>(assertion.data());
+                const auto bufToSignLen = static_cast<size_t>(assertion.size());
+
+                std::vector<unsigned char> sigVec(sigLen);
+                if (EVP_DigestSign(mdCtx, sigVec.data(), &sigLen, bufToSign, bufToSignLen) == 1)
+                {
+                  signature = Base64Url::Base64UrlEncode(ToUInt8Vector(sigVec));
+                }
               }
             }
-          }
 
-          if (signature.empty())
+            if (signature.empty())
+            {
+              throw Azure::Core::Credentials::AuthenticationException(
+                  "Failed to sign token request.");
+            }
+
+            EVP_MD_CTX_free(mdCtx);
+          }
+          catch (...)
           {
-            throw Azure::Core::Credentials::AuthenticationException(
-                "Failed to sign token request.");
+            EVP_MD_CTX_free(mdCtx);
+            throw;
           }
+        }
 
-          EVP_MD_CTX_free(mdCtx);
-        }
-        catch (...)
-        {
-          EVP_MD_CTX_free(mdCtx);
-          throw;
-        }
+        // Add signature to the end of assertion
+        assertion += std::string(".") + signature;
       }
 
-      // Add signature to the end of assertion
-      assertion += std::string(".") + signature;
-    }
+      body << "&client_assertion=" << Azure::Core::Url::Encode(assertion);
 
-    body << "&client_assertion=" << Azure::Core::Url::Encode(assertion);
+      auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
+          HttpMethod::Post, m_requestUrl, body.str());
 
-    auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
-        HttpMethod::Post, m_requestUrl, body.str());
-
-    return request;
+      return request;
+    });
   });
 }

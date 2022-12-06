@@ -172,7 +172,7 @@ TEST(ClientSecretCredential, Authority)
             "CLIENTSECRET1",
             options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   auto const actual2 = CredentialTestHelper::SimulateTokenRequest(
@@ -184,7 +184,7 @@ TEST(ClientSecretCredential, Authority)
         return std::make_unique<ClientSecretCredential>(
             "adfs", "01234567-89ab-cdef-fedc-ba8976543210", "CLIENTSECRET2", options);
       },
-      {{{"https://outlook.com/.default"}}},
+      {{"https://outlook.com/.default"}},
       {"{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
 
   EXPECT_EQ(actual1.Requests.size(), 1U);

@@ -3,7 +3,6 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 
-#include "private/token_cache.hpp"
 #include "private/token_credential_impl.hpp"
 
 #include <sstream>
@@ -68,7 +67,6 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
 {
-  using _detail::TokenCache;
   using _detail::TokenCredentialImpl;
 
   std::string scopesStr;
@@ -84,30 +82,24 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
   // when they are being executed. They are not supposed to keep a reference to lambda argument to
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
-  return TokenCache::GetToken(
-      m_tenantId,
-      m_clientId,
-      m_authorityHost,
-      scopesStr,
-      tokenRequestContext.MinimumExpiration,
-      [&]() {
-        return m_tokenCredentialImpl->GetToken(context, [&]() {
-          using Azure::Core::Http::HttpMethod;
+  return m_tokenCache.GetToken(scopesStr, tokenRequestContext.MinimumExpiration, [&]() {
+    return m_tokenCredentialImpl->GetToken(context, [&]() {
+      using Azure::Core::Http::HttpMethod;
 
-          std::ostringstream body;
-          body << m_requestBody;
+      std::ostringstream body;
+      body << m_requestBody;
 
-          if (!scopesStr.empty())
-          {
-            body << "&scope=" << scopesStr;
-          }
+      if (!scopesStr.empty())
+      {
+        body << "&scope=" << scopesStr;
+      }
 
-          auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
-              HttpMethod::Post, m_requestUrl, body.str());
+      auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
+          HttpMethod::Post, m_requestUrl, body.str());
 
-          request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
+      request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
 
-          return request;
-        });
-      });
+      return request;
+    });
+  });
 }

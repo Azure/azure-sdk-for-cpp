@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "azure/identity/detail/token_cache.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
@@ -22,9 +24,11 @@ namespace Azure { namespace Identity { namespace _detail {
   public:
     virtual Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const = 0;
+        Core::Context const& context) const
+        = 0;
 
   protected:
+    _detail::TokenCache m_tokenCache;
     static Core::Url ParseEndpointUrl(std::string const& url, char const* envVarName);
 
     explicit ManagedIdentitySource(
