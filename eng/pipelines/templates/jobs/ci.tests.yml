@@ -160,7 +160,7 @@ jobs:
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
         displayName: Restore Recordings
-        condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+        condition: and(and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON')), contains(parameters.ServiceDirectory, 'core'))
 
       - pwsh: |
           ctest `
