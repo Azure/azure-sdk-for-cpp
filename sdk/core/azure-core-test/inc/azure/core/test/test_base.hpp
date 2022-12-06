@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 #include <azure/core/credentials/credentials.hpp>
@@ -61,8 +60,6 @@ namespace Azure { namespace Core { namespace Test {
           m_testProxy->SetStartPlaybackMode();
           m_testProxy->ConfigureInsecureConnection(options);
           options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
-          options.PerOperationPolicies.emplace_back(
-              std::make_unique<Http::Policies::_internal::RetryPolicy>(options.Retry));
         }
         else if (!m_testContext.IsLiveMode())
         {

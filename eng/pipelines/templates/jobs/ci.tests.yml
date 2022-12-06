@@ -157,6 +157,11 @@ jobs:
       - ${{ parameters.PreTestSteps }}
       
       - pwsh: |
+          testproxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
+        workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
+        displayName: Restore Recordings
+
+      - pwsh: |
           ctest `
             -C Debug `
             -V `
