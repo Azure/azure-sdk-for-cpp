@@ -1502,6 +1502,7 @@ namespace Azure { namespace Core {
 
         // BIO_set_conn_port is a macro that defines a (char*) cast. This causes a warning when building on Debian 9.
         // Let's temporarily disable this warning here
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
