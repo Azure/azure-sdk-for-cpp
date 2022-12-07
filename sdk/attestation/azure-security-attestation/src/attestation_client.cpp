@@ -38,8 +38,8 @@ AttestationClient::AttestationClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://attest.azure.net/.default"}};
+    Azure::Core::Credentials::TokenRequestContext tokenContext;
+    tokenContext.Scopes = {"https://attest.azure.net/.default"};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

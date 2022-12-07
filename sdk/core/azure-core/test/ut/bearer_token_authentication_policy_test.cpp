@@ -51,10 +51,12 @@ TEST(BearerTokenAuthenticationPolicy, InitialGet)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -84,10 +86,12 @@ TEST(BearerTokenAuthenticationPolicy, ReuseWhileValid)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -126,10 +130,12 @@ TEST(BearerTokenAuthenticationPolicy, RefreshNearExpiry)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -168,10 +174,12 @@ TEST(BearerTokenAuthenticationPolicy, RefreshAfterExpiry)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
