@@ -97,12 +97,11 @@ AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
 {
 }
 
-std::string AzureCliCredential::GetAzCommand(
-    std::string const& resource,
-    std::string const& tenantId) const
+std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::string const& tenantId)
+    const
 {
-  ThrowIfNotSafeCmdLineInput(resource, "Resource");
-  std::string command = "az account get-access-token --output json --resource \"" + resource + "\"";
+  ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
+  std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
   {
@@ -123,7 +122,7 @@ AccessToken AzureCliCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, true, false);
+  auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, false, false);
 
   // TokenCache::GetToken() can only use the lambda argument when they are being executed. They are
   // not supposed to keep a reference to lambda argument to call it later. Therefore, any capture
