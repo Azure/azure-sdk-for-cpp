@@ -26,7 +26,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::chrono::milliseconds m_defaultWait = 1min;
-    virtual std::string GetAssetsPath() override { return "assets.json"; }
     Azure::Security::KeyVault::Secrets::SecretClient const& GetClientForTest(
         std::string const& testName)
     {

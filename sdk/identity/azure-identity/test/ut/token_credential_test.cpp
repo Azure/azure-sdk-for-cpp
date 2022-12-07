@@ -50,7 +50,6 @@ namespace Azure { namespace Identity { namespace Test {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
     }
 
-    virtual std::string GetAssetsPath() override { return "assets.json"; }
   };
 }}} // namespace Azure::Identity::Test
 
