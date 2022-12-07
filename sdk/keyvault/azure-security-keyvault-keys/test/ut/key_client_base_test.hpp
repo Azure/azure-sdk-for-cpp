@@ -32,6 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     std::string m_keyVaultHsmUrl;
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
+
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.
