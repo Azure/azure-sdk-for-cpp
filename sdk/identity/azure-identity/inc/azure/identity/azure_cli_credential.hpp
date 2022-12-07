@@ -61,7 +61,8 @@ namespace Azure { namespace Identity {
      *
      * @param options Options for token retrieval.
      */
-    explicit AzureCliCredential(AzureCliCredentialOptions const& options = {});
+    explicit AzureCliCredential(
+        AzureCliCredentialOptions const& options = AzureCliCredentialOptions());
 
     /**
      * @brief Constructs an Azure CLI Credential.
