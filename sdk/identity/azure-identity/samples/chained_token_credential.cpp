@@ -5,6 +5,7 @@
 
 #include <azure/identity/chained_token_credential.hpp>
 
+#include <azure/identity/azure_cli_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 #include <azure/identity/managed_identity_credential.hpp>
 
@@ -16,10 +17,12 @@ int main()
   {
     // Step 1: Initialize Chained Token Credential.
     // A configuration demonstrated below would authenticate using EnvironmentCredential if it is
-    // available, and if it is not available, would fall back to use ManagedIdentityCredential.
+    // available, and if it is not available, would fall back to use AzureCliCredential, and then to
+    // ManagedIdentityCredential.
     auto chainedTokenCredential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
         Azure::Identity::ChainedTokenCredential::Sources{
             std::make_shared<Azure::Identity::EnvironmentCredential>(),
+            std::make_shared<Azure::Identity::AzureCliCredential>(),
             std::make_shared<Azure::Identity::ManagedIdentityCredential>()});
 
     // Step 2: Pass the credential to an Azure Service Client.
