@@ -30,8 +30,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
-    // Create
 
+    // Create
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
@@ -148,6 +148,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         }
       }
     }
+
+  public:
   }; // namespace Test
 
   // Get Policy management certificates for each instance type.
