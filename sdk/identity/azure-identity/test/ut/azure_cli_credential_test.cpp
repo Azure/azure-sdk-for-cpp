@@ -254,7 +254,7 @@ TEST(AzureCliCredential, CmdLine)
       = azCliCred.GetOriginalAzCommand("https://storage.azure.com/.default", {});
 
   auto const cmdLineWithTenant = azCliCred.GetOriginalAzCommand(
-      "https://storage.azure.com", "01234567-89AB-CDEF-0123-456789ABCDEF");
+      "https://storage.azure.com/.default", "01234567-89AB-CDEF-0123-456789ABCDEF");
 
   EXPECT_EQ(
       cmdLineWithoutTenant,
