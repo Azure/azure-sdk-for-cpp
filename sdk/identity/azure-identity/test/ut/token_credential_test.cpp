@@ -49,7 +49,6 @@ namespace Azure { namespace Identity { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
     }
-
   };
 }}} // namespace Azure::Identity::Test
 

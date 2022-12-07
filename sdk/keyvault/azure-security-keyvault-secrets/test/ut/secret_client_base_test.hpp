@@ -26,6 +26,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::chrono::milliseconds m_defaultWait = 1min;
+
     Azure::Security::KeyVault::Secrets::SecretClient const& GetClientForTest(
         std::string const& testName)
     {
@@ -139,4 +140,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
     }
   };
+
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test

@@ -51,6 +51,7 @@ namespace Azure {
     std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::chrono::milliseconds m_defaultWait = 20s;
+
     // Required to rename the test propertly once the test is started.
     // We can only know the test instance name until the test instance is run.
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
