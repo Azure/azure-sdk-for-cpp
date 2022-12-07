@@ -294,7 +294,7 @@ TEST(AzureCliCredential, UnsafeChars)
 TEST(AzureCliCredential, StrictIso8601TimeFormat)
 {
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
-                         "\"expiresOn\":\"2022-08-24T00:43:08}"; // With the "T"
+                         "\"expiresOn\":\"2022-08-24T00:43:08\"}"; // With the "T"
 
   AzureCliTestCredential const azCliCred(EchoCommand(Token));
 
