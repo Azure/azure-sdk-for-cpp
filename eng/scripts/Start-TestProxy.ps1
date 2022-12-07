@@ -1,6 +1,10 @@
+param(
+[Parameter(Mandatory=$True)]
+[string] $AssetsPath
+)
 # check is there is another test-proxy running
 $running = Get-Process -Name test-proxy
-
+echo $AssetsPath
 if($running)
 {
     echo "test-proxy running, no need for new instance"
@@ -30,6 +34,6 @@ if($error){
     }
 }
 
-echo "start test proxy"
+echo "start test proxy with argument list --storage-location $AssetsPath"
 #starts it in a separate process that will outlive pwsh in order to serve requests.
-Start-Process 'test-proxy' 
+Start-Process 'test-proxy' -ArgumentList "--storage-location $AssetsPath" 

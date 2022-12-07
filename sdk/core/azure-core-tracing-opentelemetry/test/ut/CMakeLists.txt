@@ -25,7 +25,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(AzureBuildTargetForCI)
 include(GoogleTest)
-include (TestProxyPrep)
+
 add_executable (
   azure-core-tracing-opentelemetry-test
     azure_core_otel_test.cpp
@@ -69,6 +69,3 @@ gtest_discover_tests(azure-core-tracing-opentelemetry-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
-
-     
-CopyTestProxyScripts()

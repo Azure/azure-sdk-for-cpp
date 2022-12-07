@@ -405,33 +405,5 @@ namespace Azure { namespace Core { namespace Test {
      */
     void TearDown() override;
     virtual std::string GetAssetsPath() { return "assets.json"; }
-
-  public:
-    // Per-test-suite set-up.
-    // Called before the first test in this test suite.
-    // Can be omitted if not needed.
-    static void SetUpTestSuite()
-    {
-      if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
-      {
-        int result = std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted testproxy.ps1");
-        if (result != 0)
-        {
-          std::cout << "Non zero exit code for start proxy : " << result;
-        }
-      }
-    }
-
-    // Per-test-suite tear-down.
-    // Called after the last test in this test suite.
-    // Can be omitted if not needed.
-    static void TearDownTestSuite()
-    {
-      if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
-      {
-        int result = std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted stopProxy.ps1");
-        std::cout << "Non zero exit code for stop proxy : " << result;
-      }
-    }
   };
 }}} // namespace Azure::Core::Test
