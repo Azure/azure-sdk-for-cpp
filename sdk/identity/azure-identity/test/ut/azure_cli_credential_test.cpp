@@ -250,18 +250,19 @@ TEST(AzureCliCredential, CmdLine)
 {
   AzureCliTestCredential azCliCred({});
 
-  auto const cmdLineWithoutTenant = azCliCred.GetOriginalAzCommand("https://storage.azure.com", {});
+  auto const cmdLineWithoutTenant
+      = azCliCred.GetOriginalAzCommand("https://storage.azure.com/.default", {});
 
   auto const cmdLineWithTenant = azCliCred.GetOriginalAzCommand(
       "https://storage.azure.com", "01234567-89AB-CDEF-0123-456789ABCDEF");
 
   EXPECT_EQ(
       cmdLineWithoutTenant,
-      "az account get-access-token --output json --resource \"https://storage.azure.com\"");
+      "az account get-access-token --output json --scope \"https://storage.azure.com/.default\"");
 
   EXPECT_EQ(
       cmdLineWithTenant,
-      "az account get-access-token --output json --resource \"https://storage.azure.com\""
+      "az account get-access-token --output json --scope \"https://storage.azure.com/.default\""
       " --tenant \"01234567-89AB-CDEF-0123-456789ABCDEF\"");
 }
 
