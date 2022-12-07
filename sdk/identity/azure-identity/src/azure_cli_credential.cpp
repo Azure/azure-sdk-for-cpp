@@ -97,11 +97,11 @@ AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
 }
 
 std::string AzureCliCredential::GetAzCommand(
-    std::string const& resource,
+    std::string const& scopes,
     std::string const& tenantId) const
 {
-  ThrowIfNotSafeCmdLineInput(resource, "Resource");
-  std::string command = "az account get-access-token --output json --scope \"" + resource + "\"";
+  ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
+  std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
   {

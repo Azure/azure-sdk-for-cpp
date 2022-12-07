@@ -87,7 +87,7 @@ namespace Azure { namespace Identity {
 #else
   protected:
 #endif
-    virtual std::string GetAzCommand(std::string const& resource, std::string const& tenantId)
+    virtual std::string GetAzCommand(std::string const& scopes, std::string const& tenantId)
         const;
   };
 
