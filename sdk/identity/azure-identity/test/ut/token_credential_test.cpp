@@ -55,32 +55,32 @@ using namespace Azure::Identity;
 
 TEST_F(TokenCredentialTest, ClientSecret)
 {
-std::string const testName(GetTestName());
-auto const clientSecretCredential = GetClientSecretCredential(testName);
+  std::string const testName(GetTestName());
+  auto const clientSecretCredential = GetClientSecretCredential(testName);
 
-Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
-tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
-tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+  tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
 
-auto const token = clientSecretCredential->GetToken(
+  auto const token = clientSecretCredential->GetToken(
     tokenRequestContext, Azure::Core::Context::ApplicationContext);
 
-EXPECT_FALSE(token.Token.empty());
-EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
+  EXPECT_FALSE(token.Token.empty());
+  EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }
 
 TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
-std::string const testName(GetTestName());
-auto const clientSecretCredential = GetEnvironmentCredential(testName);
+  std::string const testName(GetTestName());
+  auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
-Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
-tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
-tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+  tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
 
-auto const token = clientSecretCredential->GetToken(
+  auto const token = clientSecretCredential->GetToken(
     tokenRequestContext, Azure::Core::Context::ApplicationContext);
 
-EXPECT_FALSE(token.Token.empty());
-EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
+  EXPECT_FALSE(token.Token.empty());
+  EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }

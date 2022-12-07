@@ -24,8 +24,7 @@ namespace Azure { namespace Identity { namespace _detail {
   public:
     virtual Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const
-        = 0;
+        Core::Context const& context) const = 0;
 
   protected:
     _detail::TokenCache m_tokenCache;
