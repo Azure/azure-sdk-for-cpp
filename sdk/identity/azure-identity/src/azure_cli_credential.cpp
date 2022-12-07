@@ -123,10 +123,11 @@ AccessToken AzureCliCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
+  auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, true, false);
+
   // TokenCache::GetToken() can only use the lambda argument when they are being executed. They are
   // not supposed to keep a reference to lambda argument to call it later. Therefore, any capture
   // made here will outlive the possible time frame when the lambda might get called.
-  auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, true, false);
   return m_tokenCache.GetToken(scopes, tokenRequestContext.MinimumExpiration, [&]() {
     try
     {
