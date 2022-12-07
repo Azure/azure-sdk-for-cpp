@@ -60,8 +60,8 @@ int main(int argc, char** argv)
     using Azure::DateTime;
     using Azure::Core::Context;
     using Azure::Core::Credentials::TokenCredentialOptions;
-    using Azure::Identity::ManagedIdentityCredential;
     using Azure::Core::Credentials::TokenRequestContext;
+    using Azure::Identity::ManagedIdentityCredential;
 
     constexpr char const* resourceUrlEnvVarName = "AZURE_IDENTITY_TEST_VAULT_URL";
     std::string const defaultResourceUrl = "https://management.azure.com/";
