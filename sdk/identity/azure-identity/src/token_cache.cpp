@@ -33,10 +33,7 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
   }
 
 #if defined(TESTING_BUILD)
-  if (m_onBeforeCacheWriteLock != nullptr)
-  {
-    m_onBeforeCacheWriteLock();
-  }
+  OnBeforeCacheWriteLock();
 #endif
 
   std::unique_lock<std::shared_timed_mutex> cacheWriteLock(m_cacheMutex);
@@ -107,10 +104,7 @@ AccessToken TokenCache::GetToken(
   }
 
 #if defined(TESTING_BUILD)
-  if (m_onBeforeItemWriteLock != nullptr)
-  {
-    m_onBeforeItemWriteLock();
-  }
+  OnBeforeItemWriteLock();
 #endif
 
   std::unique_lock<std::shared_timed_mutex> itemWriteLock(item->ElementMutex);

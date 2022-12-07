@@ -23,17 +23,21 @@ namespace Azure { namespace Identity { namespace _detail {
    * @brief Access token cache.
    *
    */
-  class TokenCache final {
-#if defined(TESTING_BUILD)
-  public:
+  class TokenCache
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
+#if !defined(TESTING_BUILD)
+  private:
+#else
+  protected:
+#endif
     // A test hook that gets invoked before cache write lock gets acquired.
-    std::function<void()> m_onBeforeCacheWriteLock;
+    virtual void OnBeforeCacheWriteLock() const {};
 
     // A test hook that gets invoked before item write lock gets acquired.
-    std::function<void()> m_onBeforeItemWriteLock;
-#else
-  private:
-#endif
+    virtual void OnBeforeItemWriteLock() const {};
 
     struct CacheValue
     {
@@ -44,6 +48,7 @@ namespace Azure { namespace Identity { namespace _detail {
     mutable std::map<std::string, std::shared_ptr<CacheValue>> m_cache;
     mutable std::shared_timed_mutex m_cacheMutex;
 
+  private:
     TokenCache(TokenCache const&) = delete;
     TokenCache& operator=(TokenCache const&) = delete;
 
@@ -57,8 +62,8 @@ namespace Azure { namespace Identity { namespace _detail {
         DateTime::duration minimumExpiration) const;
 
   public:
-    TokenCache() {}
-    ~TokenCache() {}
+    TokenCache() = default;
+    ~TokenCache() = default;
 
     /**
      * @brief Attempts to get token from cache, and if not found, gets the token using the function

@@ -11,11 +11,39 @@ using Azure::DateTime;
 using Azure::Core::Credentials::AccessToken;
 using Azure::Identity::_detail::TokenCache;
 
+namespace {
+class TestableTokenCache final : public TokenCache {
+public:
+  using TokenCache::CacheValue;
+  using TokenCache::m_cache;
+  using TokenCache::m_cacheMutex;
+
+  mutable std::function<void()> m_onBeforeCacheWriteLock;
+  mutable std::function<void()> m_onBeforeItemWriteLock;
+
+  void OnBeforeCacheWriteLock() const override
+  {
+    if (m_onBeforeCacheWriteLock != nullptr)
+    {
+      m_onBeforeCacheWriteLock();
+    }
+  }
+
+  void OnBeforeItemWriteLock() const override
+  {
+    if (m_onBeforeItemWriteLock != nullptr)
+    {
+      m_onBeforeItemWriteLock();
+    }
+  }
+};
+} // namespace
+
 using namespace std::chrono_literals;
 
 TEST(TokenCache, GetReuseRefresh)
 {
-  TokenCache tokenCache;
+  TestableTokenCache tokenCache;
 
   EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
 
@@ -68,7 +96,7 @@ TEST(TokenCache, GetReuseRefresh)
 
 TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
 {
-  TokenCache tokenCache;
+  TestableTokenCache tokenCache;
 
   EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
 
@@ -105,7 +133,7 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
   auto const Yesterday = Tomorrow - 48h;
 
   {
-    TokenCache tokenCache;
+    TestableTokenCache tokenCache;
 
     EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
 
@@ -133,7 +161,7 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
 
   // Same as above, but the token that was inserted is already expired.
   {
-    TokenCache tokenCache;
+    TestableTokenCache tokenCache;
 
     tokenCache.m_onBeforeItemWriteLock = [&]() {
       tokenCache.m_onBeforeItemWriteLock = nullptr;
@@ -161,7 +189,7 @@ TEST(TokenCache, ExpiredCleanup)
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
   auto const Yesterday = Tomorrow - 48h;
 
-  TokenCache tokenCache;
+  TestableTokenCache tokenCache;
   EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
 
   for (auto i = 1; i <= 65; ++i)
@@ -293,7 +321,7 @@ TEST(TokenCache, ExpiredCleanup)
 
 TEST(TokenCache, MinimumExpiration)
 {
-  TokenCache tokenCache;
+  TestableTokenCache tokenCache;
 
   EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
 
@@ -326,7 +354,7 @@ TEST(TokenCache, MinimumExpiration)
 
 TEST(TokenCache, MultithreadedAccess)
 {
-  TokenCache tokenCache;
+  TestableTokenCache tokenCache;
 
   EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
 
