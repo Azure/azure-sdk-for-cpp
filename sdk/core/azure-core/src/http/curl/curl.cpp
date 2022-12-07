@@ -1500,11 +1500,10 @@ namespace Azure { namespace Core {
           return nullptr;
         }
 
-#ifdef __GNUC__
-        // BIO_set_conn_port is a macro that defines a (char*) cast. This causes a warning when building on Debian 9
-        // so let's suppress that here
-_Pragma("GCC diagnostic push")
-_Pragma("GCC diagnostic ignored \"-Werror=old-style-cast\"")
+        // BIO_set_conn_port is a macro that defines a (char*) cast. This causes a warning when building on Debian 9.
+        // Let's temporarily disable this warning here
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
         if (!BIO_set_conn_port(bio.get(), const_cast<char*>(port.c_str())))
         {
@@ -1514,7 +1513,7 @@ _Pragma("GCC diagnostic ignored \"-Werror=old-style-cast\"")
           return nullptr;
         }
 #ifdef __GNUC__
-_Pragma("GCC diagnostic pop")
+#pragma GCC diagnostic pop
 #endif
 
         auto requestContext
