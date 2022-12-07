@@ -31,6 +31,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     // Create
+
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
