@@ -184,7 +184,7 @@ AccessToken TokenCredentialImpl::ParseToken(
       auto expiresOn = parsedJson[expiresOnPropertyName].get<std::string>();
       {
         auto const spacePos = expiresOn.find(' ');
-        if (spacePos != std::string::npos) // LCOV_EXCL_LINE
+        if (spacePos != std::string::npos) 
         {
           expiresOn = expiresOn.replace(spacePos, 1, 1, 'T');
         }
