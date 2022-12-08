@@ -272,11 +272,11 @@ TEST(TokenCredentialImpl, FormatScopes)
   // Spaces inside scopes get encoded, but the spaces separating scopes are not
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"a b", "c d", "e f"}, false), "a%20b c%20d e%20f");
 
-  // 1 scope, './default' only, gets removed when treated as single resource
+  // 1 scope, '/.default' only, gets removed when treated as single resource
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.default"}, false), "%2F.default");
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.default"}, true), "");
 
-  // 2 scopes, './default' only
+  // 2 scopes, '/.default' only
   EXPECT_EQ(
       TokenCredentialImpl::FormatScopes({"/.default", "/.default"}, false),
       "%2F.default %2F.default");
