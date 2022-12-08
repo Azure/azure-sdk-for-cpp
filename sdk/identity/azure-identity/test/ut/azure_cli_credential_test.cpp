@@ -290,3 +290,21 @@ TEST(AzureCliCredential, UnsafeChars)
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
   }
 }
+
+TEST(AzureCliCredential, StrictIso8601TimeFormat)
+{
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
+                         "\"expiresOn\":\"2022-08-24T00:43:08\"}"; // With the "T"
+
+  AzureCliTestCredential const azCliCred(EchoCommand(Token));
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+  auto const token = azCliCred.GetToken(trc, {});
+
+  EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+  EXPECT_EQ(
+      token.ExpiresOn,
+      DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+}
