@@ -52,11 +52,13 @@ namespace Azure { namespace Identity { namespace _detail {
     TokenCache(TokenCache const&) = delete;
     TokenCache& operator=(TokenCache const&) = delete;
 
+    // Checks cache element if cached value should be reused. Caller should be holding ElementMutex.
     static bool IsFresh(
         std::shared_ptr<CacheValue> const& item,
         DateTime::duration minimumExpiration,
         std::chrono::system_clock::time_point now);
 
+    // Gets item from cache, or creates it, puts into cache, and returns.
     std::shared_ptr<CacheValue> GetOrCreateValue(
         std::string const& key,
         DateTime::duration minimumExpiration) const;
