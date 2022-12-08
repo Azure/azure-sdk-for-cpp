@@ -3,6 +3,7 @@
 
 #include "private/token_credential_impl.hpp"
 
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/url.hpp>
 
 #include "private/package_version.hpp"
@@ -143,16 +144,6 @@ namespace {
   throw std::runtime_error(
       std::string("Token JSON object: \'") + propertyName + "\' property was not found.");
 }
-
-bool GetPropertyValueAsInt64(
-    std::string const& jsonString,
-    std::string const& propertyName,
-    int64_t& outValue);
-
-bool GetPropertyValueAsString(
-    std::string const& jsonString,
-    std::string const& propertyName,
-    std::string& outValue);
 } // namespace
 
 AccessToken TokenCredentialImpl::ParseToken(
@@ -161,140 +152,52 @@ AccessToken TokenCredentialImpl::ParseToken(
     std::string const& expiresInPropertyName,
     std::string const& expiresOnPropertyName)
 {
-  // TODO: use JSON parser.
-  AccessToken accessToken;
-  if (!GetPropertyValueAsString(jsonString, accessTokenPropertyName, accessToken.Token))
+  try
   {
-    ThrowMissingJsonPropertyError(accessTokenPropertyName);
-  }
+    auto const parsedJson = Azure::Core::Json::_internal::json::parse(jsonString);
 
-  int64_t expiresIn = 0;
-  if (GetPropertyValueAsInt64(jsonString, expiresInPropertyName, expiresIn))
-  {
-    accessToken.ExpiresOn = std::chrono::system_clock::now() + std::chrono::seconds(expiresIn);
+    if (!parsedJson.contains(accessTokenPropertyName))
+    {
+      ThrowMissingJsonPropertyError(accessTokenPropertyName);
+    }
+
+    AccessToken accessToken;
+    accessToken.Token = parsedJson[accessTokenPropertyName].get<std::string>();
+
+    if (parsedJson.contains(expiresInPropertyName))
+    {
+      accessToken.ExpiresOn
+          = std::chrono::system_clock::now()
+          + std::chrono::seconds(
+                parsedJson[expiresInPropertyName].get<std::chrono::seconds::duration::rep>());
+    }
+    else if (expiresOnPropertyName.empty())
+    {
+      ThrowMissingJsonPropertyError(expiresInPropertyName);
+    }
+    else if (!parsedJson.contains(expiresOnPropertyName))
+    {
+      ThrowMissingJsonPropertyError(expiresOnPropertyName);
+    }
+    else
+    {
+      auto expiresOn = parsedJson[expiresOnPropertyName].get<std::string>();
+      {
+        auto const spacePos = expiresOn.find(' ');
+        if (spacePos != std::string::npos)
+        {
+          expiresOn = expiresOn.replace(spacePos, 1, 1, 'T');
+        }
+      }
+
+      accessToken.ExpiresOn
+          = Azure::DateTime::Parse(expiresOn, Azure::DateTime::DateFormat::Rfc3339);
+    }
+
     return accessToken;
   }
-
-  if (expiresOnPropertyName.empty())
+  catch (Azure::Core::Json::_internal::json::parse_error const& ex)
   {
-    ThrowMissingJsonPropertyError(expiresInPropertyName);
+    throw std::runtime_error(std::string("Error parsing token JSON: ") + ex.what());
   }
-
-  std::string expiresOn;
-  if (!GetPropertyValueAsString(jsonString, expiresOnPropertyName, expiresOn))
-  {
-    ThrowMissingJsonPropertyError(expiresInPropertyName + "\' or \'" + expiresOnPropertyName);
-  }
-
-  {
-    auto const spacePos = expiresOn.find(' ');
-    if (spacePos != std::string::npos) // LCOV_EXCL_LINE
-    {
-      expiresOn = expiresOn.replace(spacePos, 1, 1, 'T');
-    }
-  }
-
-  accessToken.ExpiresOn = Azure::DateTime::Parse(expiresOn, Azure::DateTime::DateFormat::Rfc3339);
-  return accessToken;
 }
-
-namespace {
-std::string::size_type GetPropertyValueStart(
-    std::string const& jsonString,
-    std::string const& propertyName);
-
-bool GetPropertyValueAsInt64(
-    std::string const& jsonString,
-    std::string const& propertyName,
-    int64_t& outValue)
-{
-  auto const valueStartPos = GetPropertyValueStart(jsonString, propertyName);
-  if (valueStartPos == std::string::npos)
-  {
-    return false;
-  }
-
-  int64_t value = 0;
-  {
-    auto const size = jsonString.size();
-    for (auto pos = valueStartPos; pos < size; ++pos)
-    {
-      auto c = jsonString[pos];
-      if (c < '0' || c > '9')
-      {
-        break;
-      }
-
-      value = (value * 10) + (static_cast<int64_t>(c) - '0');
-    }
-  }
-
-  outValue = value;
-
-  return true;
-}
-
-std::string::size_type GetPropertyValueEnd(std::string const& str, std::string::size_type startPos);
-
-bool GetPropertyValueAsString(
-    std::string const& jsonString,
-    std::string const& propertyName,
-    std::string& outValue)
-{
-  auto const valueStartPos = GetPropertyValueStart(jsonString, propertyName);
-  if (valueStartPos == std::string::npos)
-  {
-    return false;
-  }
-  auto const jsonStringBegin = jsonString.begin();
-  outValue = std::string(
-      jsonStringBegin + valueStartPos,
-      jsonStringBegin + GetPropertyValueEnd(jsonString, valueStartPos));
-
-  return true;
-}
-
-std::string::size_type GetPropertyValueStart(
-    std::string const& jsonString,
-    std::string const& propertyName)
-{
-  auto const propertyNameValueSeparator = jsonString.find(':', jsonString.find(propertyName));
-  if (propertyNameValueSeparator == std::string::npos)
-  {
-    return std::string::npos;
-  }
-
-  auto pos = propertyNameValueSeparator;
-  {
-    auto const jsonStringSize = jsonString.size();
-    for (; pos < jsonStringSize; ++pos)
-    {
-      auto c = jsonString[pos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-  }
-
-  return pos;
-}
-
-std::string::size_type GetPropertyValueEnd(std::string const& str, std::string::size_type startPos)
-{
-  auto pos = startPos;
-  {
-    auto const strSize = str.size();
-    for (; pos < strSize; ++pos)
-    {
-      auto c = str[pos];
-      if (c == '\"' || c == '\'')
-      {
-        break;
-      }
-    }
-  }
-
-  return pos;
-}
-} // namespace
