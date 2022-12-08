@@ -1854,7 +1854,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct DeleteBlobResult final
     {
       /**
-       * Indicates if the blob was successfully created by this operation.
+       * Indicates if the blob was successfully deleted by this operation.
        */
       bool Deleted = true;
     };
