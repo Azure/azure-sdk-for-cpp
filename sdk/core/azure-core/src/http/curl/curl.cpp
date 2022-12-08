@@ -2,6 +2,13 @@
 // SPDX-License-Identifier: MIT
 // cspell:words OCSP crls
 
+// Some macros (e.g. BIO_set_conn_port, or BIO_get_mem_data) include a (char*) cast. This causes a warning when building on Debian 9.
+// Let's temporarily disable this warning here
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
 #include "azure/core/base64.hpp"
 #include "azure/core/platform.hpp"
 
@@ -1500,12 +1507,6 @@ namespace Azure { namespace Core {
           return nullptr;
         }
 
-        // BIO_set_conn_port is a macro that defines a (char*) cast. This causes a warning when building on Debian 9.
-        // Let's temporarily disable this warning here
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
         if (!BIO_set_conn_port(bio.get(), const_cast<char*>(port.c_str())))
         {
           Log::Write(
@@ -1513,9 +1514,6 @@ namespace Azure { namespace Core {
               "BIO_set_conn_port failed" + _detail::GetOpenSSLError("Load CRL"));
           return nullptr;
         }
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 
         auto requestContext
             = Azure::Core::_internal::MakeUniqueHandle(OCSP_REQ_CTX_new, bio.get(), 1024 * 1024);
@@ -2443,3 +2441,7 @@ CurlConnection::CurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
