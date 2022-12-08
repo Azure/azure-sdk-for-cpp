@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/identity/detail/token_cache.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 
@@ -46,6 +48,7 @@ namespace Azure { namespace Identity {
 #endif
       : public Core::Credentials::TokenCredential {
   protected:
+    _detail::TokenCache m_tokenCache;
     std::string m_tenantId;
     DateTime::duration m_cliProcessTimeout;
 

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/identity/dll_import_export.hpp"
+#include "azure/identity/detail/token_cache.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
@@ -37,6 +37,7 @@ namespace Azure { namespace Identity {
    */
   class ClientCertificateCredential final : public Core::Credentials::TokenCredential {
   private:
+    _detail::TokenCache m_tokenCache;
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     Core::Url m_requestUrl;
     std::string m_requestBody;

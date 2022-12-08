@@ -75,13 +75,15 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
 
     static TokenRequestSimulationResult SimulateTokenRequest(
         CreateCredentialCallback const& createCredential,
-        std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+        std::vector<decltype(Core::Credentials::TokenRequestContext::Scopes)> const&
+            tokenRequestContextScopes,
         std::vector<TokenRequestSimulationServerResponse> const& responses,
         GetTokenCallback getToken = DefaultGetToken);
 
     static TokenRequestSimulationResult SimulateTokenRequest(
         CreateCredentialCallback const& createCredential,
-        std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+        std::vector<decltype(Core::Credentials::TokenRequestContext::Scopes)> const&
+            tokenRequestContextScopes,
         std::vector<std::string> const& responseBodies,
         GetTokenCallback getToken = DefaultGetToken)
     {
@@ -92,7 +94,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
         responses.push_back({HttpStatusCode::Ok, responseBody, {}});
       }
 
-      return SimulateTokenRequest(createCredential, tokenRequestContexts, responses, getToken);
+      return SimulateTokenRequest(createCredential, tokenRequestContextScopes, responses, getToken);
     }
   };
 }}}} // namespace Azure::Identity::Test::_detail

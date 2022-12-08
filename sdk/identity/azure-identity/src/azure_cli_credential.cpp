@@ -44,6 +44,7 @@ using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Identity::AzureCliCredentialOptions;
+using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
@@ -121,28 +122,34 @@ AccessToken AzureCliCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  try
-  {
-    auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, false, false);
+  auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, false, false);
 
-    auto const azCliResult
-        = RunShellCommand(GetAzCommand(scopes, m_tenantId), m_cliProcessTimeout, context);
-
+  // TokenCache::GetToken() can only use the lambda argument when they are being executed. They are
+  // not supposed to keep a reference to lambda argument to call it later. Therefore, any capture
+  // made here will outlive the possible time frame when the lambda might get called.
+  return m_tokenCache.GetToken(scopes, tokenRequestContext.MinimumExpiration, [&]() {
     try
     {
-      return TokenCredentialImpl::ParseToken(azCliResult, "accessToken", "expiresIn", "expiresOn");
+      auto const azCliResult
+          = RunShellCommand(GetAzCommand(scopes, m_tenantId), m_cliProcessTimeout, context);
+
+      try
+      {
+        return TokenCredentialImpl::ParseToken(
+            azCliResult, "accessToken", "expiresIn", "expiresOn");
+      }
+      catch (std::exception const&)
+      {
+        // Throw the az command output (error message)
+        // limited to 250 characters (250 has no special meaning).
+        throw std::runtime_error(azCliResult.substr(0, 250));
+      }
     }
-    catch (std::exception const&)
+    catch (std::exception const& e)
     {
-      // Throw the az command output (error message)
-      // limited to 250 characters (250 has no special meaning).
-      throw std::runtime_error(azCliResult.substr(0, 250));
+      throw AuthenticationException(std::string("AzureCliCredential::GetToken(): ") + e.what());
     }
-  }
-  catch (std::exception const& e)
-  {
-    throw AuthenticationException(std::string("AzureCliCredential::GetToken(): ") + e.what());
-  }
+  });
 }
 
 namespace {

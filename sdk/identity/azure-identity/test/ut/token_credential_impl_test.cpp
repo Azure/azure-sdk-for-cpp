@@ -3,8 +3,6 @@
 
 #include "private/token_credential_impl.hpp"
 
-#include "private/token_cache.hpp"
-
 #include "credential_test_helper.hpp"
 
 #include <memory>
@@ -20,7 +18,6 @@ using Azure::Core::Credentials::TokenCredential;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
-using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
@@ -53,8 +50,6 @@ public:
   AccessToken GetToken(TokenRequestContext const& tokenRequestContext, Context const& context)
       const override
   {
-    TokenCache::Clear();
-
     return m_tokenCredentialImpl->GetToken(context, [&]() {
       m_throwingFunction();
 
@@ -80,9 +75,9 @@ TEST(TokenCredentialImpl, Normal)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}},
-       {{"https://azure.com/.default", "https://microsoft.com/.default"}},
-       {{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"},
+       {"https://azure.com/.default", "https://microsoft.com/.default"},
+       {"https://azure.com/.default", "https://microsoft.com/.default"}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"access_token\":\"ACCESSTOKEN2\", \"expires_in\":7200}",
@@ -157,7 +152,7 @@ TEST(TokenCredentialImpl, StdException)
         return std::make_unique<TokenCredentialImplTester>(
             []() { throw std::exception(); }, options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -176,7 +171,7 @@ TEST(TokenCredentialImpl, ThrowInt)
 
         return std::make_unique<TokenCredentialImplTester>([]() { throw 0; }, options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -310,7 +305,7 @@ TEST(TokenCredentialImpl, NoExpiration)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -330,7 +325,7 @@ TEST(TokenCredentialImpl, NoToken)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"expires_in\":3600}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -369,7 +364,7 @@ TEST(TokenCredentialImpl, NullResponse)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://microsoft.com/"), options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
