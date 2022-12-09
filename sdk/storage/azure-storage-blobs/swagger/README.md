@@ -1151,7 +1151,7 @@ directive:
         "x-ms-client-name": "DeleteBlobResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the blob was successfully created by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the blob was successfully deleted by this operation."}
         }
       };
 ```
