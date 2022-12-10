@@ -7,13 +7,17 @@
 
 #include <azure/core/internal/environment.hpp>
 
-using namespace Azure::Identity;
+using Azure::Identity::EnvironmentCredential;
 
-EnvironmentCredential::EnvironmentCredential(
-    Azure::Core::Credentials::TokenCredentialOptions options)
+using Azure::Core::Context;
+using Azure::Core::_internal::Environment;
+using Azure::Core::Credentials::AccessToken;
+using Azure::Core::Credentials::AuthenticationException;
+using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Credentials::TokenRequestContext;
+
+EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
 {
-  using Azure::Core::_internal::Environment;
-
   auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
   auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");
 
@@ -31,7 +35,6 @@ EnvironmentCredential::EnvironmentCredential(
     {
       if (!authority.empty())
       {
-        using namespace Azure::Core::Credentials;
         ClientSecretCredentialOptions clientSecretCredentialOptions;
         static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
         clientSecretCredentialOptions.AuthorityHost = authority;
@@ -55,7 +58,6 @@ EnvironmentCredential::EnvironmentCredential(
     {
       if (!authority.empty())
       {
-        using namespace Azure::Core::Credentials;
         ClientCertificateCredentialOptions clientCertificateCredentialOptions;
         static_cast<TokenCredentialOptions&>(clientCertificateCredentialOptions) = options;
         clientCertificateCredentialOptions.AuthorityHost = authority;
@@ -72,12 +74,10 @@ EnvironmentCredential::EnvironmentCredential(
   }
 }
 
-Azure::Core::Credentials::AccessToken EnvironmentCredential::GetToken(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::Core::Context const& context) const
+AccessToken EnvironmentCredential::GetToken(
+    TokenRequestContext const& tokenRequestContext,
+    Context const& context) const
 {
-  using namespace Azure::Core::Credentials;
-
   if (!m_credentialImpl)
   {
     throw AuthenticationException("EnvironmentCredential authentication unavailable. "
