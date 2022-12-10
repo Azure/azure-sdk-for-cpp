@@ -187,7 +187,7 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
 TEST(TokenCache, ExpiredCleanup)
 {
   // Expected cleanup points are when cache size is in the Fibonacci sequence:
-    // 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, ...
+  // 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, ...
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
   auto const Yesterday = Tomorrow - 48h;
 
