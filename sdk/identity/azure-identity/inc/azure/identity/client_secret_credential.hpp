@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include "azure/identity/detail/client_credential_core.hpp"
 #include "azure/identity/detail/token_cache.hpp"
-#include "azure/identity/dll_import_export.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
@@ -21,7 +21,6 @@
 namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
-    AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
   } // namespace _detail
 
   /**
@@ -38,7 +37,7 @@ namespace Azure { namespace Identity {
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = _detail::g_aadGlobalAuthority;
+    std::string AuthorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
   };
 
   /**
@@ -49,21 +48,15 @@ namespace Azure { namespace Identity {
   class ClientSecretCredential final : public Core::Credentials::TokenCredential {
   private:
     _detail::TokenCache m_tokenCache;
+    _detail::ClientCredentialCore m_clientCredentialCore;
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
-    Core::Url m_requestUrl;
     std::string m_requestBody;
-
-    std::string m_tenantId;
-    std::string m_clientId;
-    std::string m_authorityHost;
-
-    bool m_isAdfs;
 
     ClientSecretCredential(
         std::string tenantId,
-        std::string clientId,
+        std::string const& clientId,
         std::string const& clientSecret,
-        std::string authorityHost,
+        std::string const& authorityHost,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
@@ -77,7 +70,7 @@ namespace Azure { namespace Identity {
      */
     explicit ClientSecretCredential(
         std::string tenantId,
-        std::string clientId,
+        std::string const& clientId,
         std::string const& clientSecret,
         ClientSecretCredentialOptions const& options);
 
@@ -91,7 +84,7 @@ namespace Azure { namespace Identity {
      */
     explicit ClientSecretCredential(
         std::string tenantId,
-        std::string clientId,
+        std::string const& clientId,
         std::string const& clientSecret,
         Core::Credentials::TokenCredentialOptions const& options
         = Core::Credentials::TokenCredentialOptions());

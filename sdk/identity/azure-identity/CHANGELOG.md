@@ -5,6 +5,8 @@
 ### Features Added
 
 - Added Azure CLI Credential.
+- Added authority host overriding support for `ClientCertificateCredential`.
+- Added Azure Stack support for `ClientCertificateCredential`.
 
 ### Breaking Changes
 

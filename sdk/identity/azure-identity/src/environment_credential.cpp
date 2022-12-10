@@ -53,8 +53,21 @@ EnvironmentCredential::EnvironmentCredential(
     // }
     else if (!clientCertificatePath.empty())
     {
-      m_credentialImpl.reset(
-          new ClientCertificateCredential(tenantId, clientId, clientCertificatePath, options));
+      if (!authority.empty())
+      {
+        using namespace Azure::Core::Credentials;
+        ClientCertificateCredentialOptions clientCertificateCredentialOptions;
+        static_cast<TokenCredentialOptions&>(clientCertificateCredentialOptions) = options;
+        clientCertificateCredentialOptions.AuthorityHost = authority;
+
+        m_credentialImpl.reset(new ClientCertificateCredential(
+            tenantId, clientId, clientCertificatePath, clientCertificateCredentialOptions));
+      }
+      else
+      {
+        m_credentialImpl.reset(
+            new ClientCertificateCredential(tenantId, clientId, clientCertificatePath, options));
+      }
     }
   }
 }
