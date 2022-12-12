@@ -181,17 +181,9 @@ AccessToken TokenCredentialImpl::ParseToken(
     }
     else
     {
-      auto expiresOn = parsedJson[expiresOnPropertyName].get<std::string>();
-      {
-        auto const spacePos = expiresOn.find(' ');
-        if (spacePos != std::string::npos)
-        {
-          expiresOn = expiresOn.replace(spacePos, 1, 1, 'T');
-        }
-      }
-
-      accessToken.ExpiresOn
-          = Azure::DateTime::Parse(expiresOn, Azure::DateTime::DateFormat::Rfc3339);
+      accessToken.ExpiresOn = Azure::DateTime::Parse(
+          parsedJson[expiresOnPropertyName].get<std::string>(),
+          Azure::DateTime::DateFormat::Rfc3339);
     }
 
     return accessToken;
