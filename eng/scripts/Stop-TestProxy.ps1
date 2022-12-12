@@ -1,1 +1,1 @@
-﻿Stop-Process -Name "test-proxy"
+Stop-Process -Name "test-proxy"
