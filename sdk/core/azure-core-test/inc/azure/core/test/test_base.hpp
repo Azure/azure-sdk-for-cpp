@@ -408,8 +408,8 @@ namespace Azure { namespace Core { namespace Test {
     void TearDown() override;
 
     /**
-    * Returns the assets.json file path used when invoking the test-proxy playback/record
-    */
+     * Returns the assets.json file path used when invoking the test-proxy playback/record
+     */
     virtual std::string GetAssetsPath() { return "assets.json"; }
   };
 }}} // namespace Azure::Core::Test
