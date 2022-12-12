@@ -13,6 +13,7 @@
 
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_proxy_manager.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -39,7 +40,7 @@ namespace Azure { namespace Core { namespace Test {
     TestProxyPolicy() = delete;
 
     /**
-     * @brief Construct the record network policy which will save the HTTP request and response to
+     * @brief Construct the TestProxyPolicy which will save the HTTP request and response to
      * the \p recordedData.
      *
      * @param testProxy A reference to the test proxy manager
@@ -47,9 +48,9 @@ namespace Azure { namespace Core { namespace Test {
     TestProxyPolicy(Azure::Core::Test::TestProxyManager* testProxy) : m_testProxy(testProxy) {}
 
     /**
-     * @brief Cronstructs a new record network policy with the same recorded data.
+     * @brief Cronstructs a new TestProxyPolicy with the same recorded data.
      *
-     * @return A record network policy with the same recorded data.
+     * @return A TestProxyPolicy with the same recorded data.
      */
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {

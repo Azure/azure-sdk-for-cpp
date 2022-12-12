@@ -28,7 +28,7 @@ add_library (
   azure-core-test-fw
   ${AZURE_CORE_TEST_HEADER}
   ${AZURE_CORE_TEST_SOURCE}
-   "src/test_proxy_manager.cpp" "src/test_proxy_policy.cpp")
+  )
 
 if (MSVC)
   # - C6326: Google comparisons 
@@ -44,4 +44,3 @@ target_include_directories (azure-core-test-fw
 add_library (Azure::Core::Test ALIAS azure-core-test-fw)
 target_link_libraries(azure-core-test-fw PRIVATE azure-core Azure::azure-identity gtest)
 create_map_file(azure-core-test-fw azure-core-test-fw.map)
-

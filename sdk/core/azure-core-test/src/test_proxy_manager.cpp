@@ -42,7 +42,7 @@ TestMode TestProxyManager::GetTestMode()
   }
 
   // unexpected variable value
-  throw std::runtime_error("Invalid environment variable: " + value);
+  throw std::runtime_error("Invalid environment variable value for AZURE_TEST_MODE: " + value);
 }
 
 void TestProxyManager::ConfigureInsecureConnection(
@@ -90,36 +90,17 @@ std::string TestProxyManager::PrepareRequestBody()
   return body;
 }
 
-void TestProxyManager::SetStartRecordMode()
-{
-  if (IsPlaybackMode() || IsRecordMode())
-  {
-    std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    // throw std::runtime_error();
-    std::cout << "TestProxy already in " + mode + " mode.";
-    return;
-  }
-
-  m_currentMode = TestMode::RECORD;
-  StartPlaybackRecord(m_currentMode);
-}
-
-void TestProxyManager::SetStartPlaybackMode()
-{
-  if (IsPlaybackMode() || IsRecordMode())
-  {
-    std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    // throw std::runtime_error("TestProxy already in " + mode + " mode. First stop current mode.");
-    std::cout << "TestProxy already in " + mode + " mode.";
-    return;
-  }
-
-  m_currentMode = TestMode::PLAYBACK;
-  StartPlaybackRecord(m_currentMode);
-}
-
 void TestProxyManager::StartPlaybackRecord(TestMode testMode)
 {
+  if (IsPlaybackMode() || IsRecordMode())
+  {
+    std::string mode = (IsPlaybackMode() ? "playback" : "record");
+    std::cout << "TestProxy already in " + mode + " mode.";
+    return;
+  }
+
+  m_currentMode = testMode;
+
   Azure::Core::Url startRequest(m_proxy);
   if (testMode == TestMode::PLAYBACK)
   {
@@ -149,28 +130,17 @@ void TestProxyManager::StartPlaybackRecord(TestMode testMode)
   m_testContext.RecordingId = findHeader->second;
 }
 
-void TestProxyManager::SetStopPlaybackMode()
+void TestProxyManager::StopPlaybackRecord(TestMode testMode)
 {
-  if (!IsPlaybackMode())
+  if (testMode == TestMode::PLAYBACK && !IsPlaybackMode())
   {
     throw std::runtime_error("TestProxy not in playback mode.");
   }
-  StopPlaybackRecord();
-  m_currentMode = TestMode::LIVE;
-}
-
-void TestProxyManager::SetStopRecordMode()
-{
-  if (!IsRecordMode())
+  if (testMode == TestMode::RECORD && !IsRecordMode())
   {
     throw std::runtime_error("TestProxy not in record mode");
   }
-  StopPlaybackRecord();
-  m_currentMode = TestMode::LIVE;
-}
 
-void TestProxyManager::StopPlaybackRecord()
-{
   Azure::Core::Url stopRequest(m_proxy);
 
   if (m_currentMode == TestMode::PLAYBACK)
@@ -191,6 +161,7 @@ void TestProxyManager::StopPlaybackRecord()
   m_privatePipeline->Send(request, ctx);
 
   m_testContext.RecordingId.clear();
+  m_currentMode = TestMode::LIVE;
 }
 std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTestProxyPolicy()
 {

@@ -19,10 +19,10 @@ void Azure::Core::Test::TestBase::TearDown()
   }
   if (m_testProxy->IsRecordMode())
   {
-    m_testProxy->SetStopRecordMode();
+    m_testProxy->StopPlaybackRecord(TestMode::RECORD);
   }
   if (m_testProxy->IsPlaybackMode())
   {
-    m_testProxy->SetStopPlaybackMode();
+    m_testProxy->StopPlaybackRecord(TestMode::PLAYBACK);
   }
 }

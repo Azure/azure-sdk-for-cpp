@@ -1,3 +1,10 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * Test proxy mamager class
+ */
+
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
@@ -17,11 +24,6 @@
 #endif
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-
-// Used by recordPolicy and playback transport adapter.
-#if !defined(RECORDING_BODY_STREAM_SENTINEL)
-#define RECORDING_BODY_STREAM_SENTINEL "__bodyStream__"
-#endif
 
 using namespace Azure::Core::Http::_internal;
 
@@ -138,22 +140,10 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-     * Sets proxy to start RECORD test
-     *
-     */
-    void SetStartRecordMode();
-
-    /**
      * Sets proxy to stop RECORD test and save the recording file.
      *
      */
     void SetStopRecordMode();
-
-    /**
-     * Sets proxy to start PLAYBACK test.
-     *
-     */
-    void SetStartPlaybackMode();
 
     /**
      * Sets proxy to stop PLAYBACK test.
@@ -168,10 +158,11 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::string GetRecordingId() { return m_testContext.RecordingId; }
 
+    void StartPlaybackRecord(TestMode testMode);
+    void StopPlaybackRecord(TestMode testMode);
+
   private:
     std::string PrepareRequestBody();
-    void StartPlaybackRecord(TestMode testMode);
-    void StopPlaybackRecord();
     void SetProxySanitizer();
     bool CheckSanitizers();
   };

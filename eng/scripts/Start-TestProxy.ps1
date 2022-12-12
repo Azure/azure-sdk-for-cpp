@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 param(
 [Parameter(Mandatory=$True)]
 [string] $AssetsPath
@@ -29,11 +32,11 @@ if($error){
 
     # if we have errors this means we had issues installing it , needs to be done by hand
     if($error){
-        echo "unable to install testproxy. try manual install"
+        echo "Unable to install testproxy. Try installing manually."
         exit 1
     }
 }
 
-echo "start test proxy with argument list --storage-location $AssetsPath"
+echo "Start test proxy with argument list --storage-location $AssetsPath"
 #starts it in a separate process that will outlive pwsh in order to serve requests.
 Start-Process 'test-proxy' -ArgumentList "--storage-location $AssetsPath" 

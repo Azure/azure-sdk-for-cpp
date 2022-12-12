@@ -9,17 +9,19 @@
 
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
+#include "azure/core/test/test_proxy_manager.hpp"
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
-#include <azure/core/test/test_proxy_manager.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+
 #include <chrono>
 #include <memory>
 #include <regex>
 #include <thread>
+
 #define CHECK_SKIP_TEST() \
   std::string const readTestNameAndUpdateTestContext = GetTestName(); \
   if (shouldSkipTest()) \
@@ -32,7 +34,7 @@ using namespace std::chrono_literals;
 namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief The base class provides the tools for a test to use the Record&PlayBack
+   * @brief The base class provides the tools for a test to use the Record&Playback
    * functionalities.
    *
    */
@@ -57,7 +59,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Playback mode uses:
         //  - playback transport adapter to read and return payload from json files
-        m_testProxy->SetStartPlaybackMode();
+        m_testProxy->StartPlaybackRecord(TestMode::PLAYBACK);
         m_testProxy->ConfigureInsecureConnection(options);
         options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
       }
@@ -67,7 +69,7 @@ namespace Azure { namespace Core { namespace Test {
         //  - curl or winhttp transport adapter
         //  - Recording policy. Intercept server responses to create json files
         // AZURE_TEST_RECORDING_DIR is exported by CMAKE
-        m_testProxy->SetStartRecordMode();
+        m_testProxy->StartPlaybackRecord(TestMode::RECORD);
         m_testProxy->ConfigureInsecureConnection(options);
         options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
       }
@@ -404,6 +406,10 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     void TearDown() override;
+
+    /**
+    * Returns the assets.json file path used when invoking the test-proxy playback/record
+    */
     virtual std::string GetAssetsPath() { return "assets.json"; }
   };
 }}} // namespace Azure::Core::Test

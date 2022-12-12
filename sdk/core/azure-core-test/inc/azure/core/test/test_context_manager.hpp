@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Test {
   class TestContextManager {
   public:
     /**
-     * @brief The path where the asset.json exists.
+     * @brief The path where the asset.json for the current test exists, will be passed as part of the playback request to the test-proxy via the manager.
      *
      */
     std::string AssetsPath;

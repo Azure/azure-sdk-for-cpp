@@ -1,3 +1,7 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
+
 macro(CopyTestProxyScripts)
     file(COPY ${CMAKE_SOURCE_DIR}/eng/Scripts/Start-TestProxy.ps1
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

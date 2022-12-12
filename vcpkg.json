@@ -21,9 +21,6 @@
     {
       "name": "wil",
       "platform": "windows"
-    },
-    {
-      "name": "gtest"
     }
   ],
   "overrides": [
