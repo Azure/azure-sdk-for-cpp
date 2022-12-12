@@ -1,139 +1,40 @@
-# Azure Storage Client Library for C++
+# Azure Storage libraries for C++
 
-The Azure Storage Client Library for C++ allows you to build applications against Microsoft Azure Storage. For an overview of Azure Storage, see [Introduction to Microsoft Azure Storage](https://docs.microsoft.com/azure/storage/common/storage-introduction).
+Azure Storage is a Microsoft-managed service providing cloud storage that is highly available, secure, durable, scalable, and redundant. Azure Storage includes Blobs (objects), Queues, and Files.
 
-# Features
+- [Azure.Storage.Blobs][blobs] is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data that does not adhere to a particular data model or definition, such as text or binary data.
 
-- Blobs
-    - Create/Delete/List Containers
-    - Create/Read/Update/Delete/List Blobs
-- DataLake Gen 2
-    - Create/Delete File Systems
-    - Create/Delete Directories
-    - Create/Read/Append/Flush/Delete Files
-- File Shares
-    - Create/Delete Shares
-    - Create/Delete Directories
-    - Create/Read/Delete Files
+- [Azure.Storage.Queues][queues] is a service for storing large numbers of messages.  A queue message can be up to 64 KB in size and a queue may contain millions of messages, up to the total capacity limit of a storage account.
 
-# Getting started
+- [Azure.Storage.Files.Shares][files] offers fully managed file shares in the cloud that are accessible via the industry standard Server Message Block (SMB) protocol.  Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS.
 
-For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
+- [Azure.Storage.Files.DataLake][datalake] includes all the capabilities required to make it easy for developers, data scientists, and analysts to store data of any size, shape, and speed, and do all types of processing and analytics across platforms and languages.
 
-## Requirements
+- [Azure.Storage.Common][common] provides infrastructure shared by the other Azure Storage client libraries like shared key authentication and exceptions.
 
-To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
+## Contributing
 
-## Need Help?
+See the [Storage CONTRIBUTING.md][storage_contrib] for details on building,
+testing, and contributing to these libraries.
 
-Be sure to check out the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) on MSDN if you need help, or use [StackOverflow](https://stackoverflow.com/questions/tagged/azure).
+This project welcomes contributions and suggestions.  Most contributions require
+you to agree to a Contributor License Agreement (CLA) declaring that you have
+the right to, and actually do, grant us the rights to use your contribution. For
+details, visit [cla.microsoft.com][cla].
 
-## Collaborate & Contribute
-
-We gladly accept community contributions.
-
-- **Issues:** Report bugs on the [Issues page](https://github.com/Azure/azure-sdk-for-cpp/issues) in GitHub. Ideally, please add an "[Storage]" prefix to the title for easier categorizing.
-- **Forums:** Communicate with the Azure Storage development team on the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) or [StackOverflow](https://stackoverflow.com/questions/tagged/azure).
-- **Source Code Contributions:** Please follow the [contribution guidelines for Azure open source](https://azure.github.io/azure-sdk/cpp_introduction.html) for instructions about contributing to the source project.
-
-For general suggestions about Azure, use our [Azure feedback forum](https://feedback.azure.com/forums/34192--general-feedback).
-
-## Download & Install
-
-### Install Dependencies
-
-#### Windows
-
-On Windows, dependencies are managed by [vcpkg](https://github.com/microsoft/vcpkg). You can reference the [Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) to quickly set yourself up.
-After Vcpkg is initialized and bootstrapped, you can install the dependencies:
-```BatchFile
-vcpkg.exe install curl:x64-windows-static
-```
-
-#### POSIX Platforms
-
-You can use the package manager on different POSIX platforms to install the dependencies. The dependencies to be installed are:
-
-  - CMake 3.13.0 or higher.
-  - libxml2.
-  - OpenSSL.
-  - libcurl.
-
-### Build from Source
-
-First, download the repository to your local folder:
-```BatchFile
-git clone https://github.com/Azure/azure-sdk-for-cpp.git
-```
-
-#### Windows
-
-##### Use CMake to generate the solution file
-
-In a new folder you created under the root directory:
-```BatchFile
-cmake .. -A x64 -DCMAKE_TOOLCHAIN_FILE=<YOUR_VCPKG_INSTALL_DIR>/scripts/buildsystems/vcpkg.cmake
-cmake --build .
-```
-
-The built library will be in `.\sdk\<ProjectDir>\<Configuration>\` respectively for Azure Core and Azure Storage. e.g. `azure_core.lib` will be in `.\sdk\core\azure-core\Debug` for debug configuration.
-
-##### Use Visual Studio's Open by folder feature
-Open the root folder of the library with Visual Studio's Open folder feature.
-
-If Vcpkg is not globally integrated, then you need to open CMakeSettings.json and change the `Make toolchain file to be <YOUR_VCPKG_INSTALL_DIR>/scripts/buildsystems/vcpkg.cmake` and save.
-Then you can build Azure Storage libraries by selecting the target in Visual Studio, or simply build all.
-The libraries will be in `<ProjectRoot>\out\build\<Configuration>\sdk\<LibraryName>` respectively.
-
-#### POSIX Platforms
-
-You can run the following command in a new folder created under the downloaded code's root folder to build the code.
-
-```bash
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-cmake --build .
-```
-Then you can consume the built library with the header files.
-make/ninja install is work in progress.
-
-
-### Via NuGet
-WIP
-TODO when ready.
-
-### Via vcpkg
-The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
-
-To install Azure Storage packages via vcpkg:
-
-```cmd
-> vcpkg install azure-storage-blobs-cpp azure-storage-files-datalake-cpp azure-storage-files-shares-cpp
-```
-
-Then, use in your CMake file:
-
-```CMake
-find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
-
-find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-datalake)
-
-find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
-```
-
-## Dependencies
-
-  - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md)
-  - libxml2
-
-## Code Samples
-
-To get started with the coding, please visit the following code samples:
-- [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_getting_started.cpp)
-- [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-datalake/samples/datalake_getting_started.cpp)
-- [How to use File Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-shares/samples/file_share_getting_started.cpp)
+This project has adopted the [Microsoft Open Source Code of Conduct][coc].
+For more information see the [Code of Conduct FAQ][coc_faq]
+or contact [opencode@microsoft.com][coc_contact] with any
+additional questions or comments.
 
 <!-- LINKS -->
-[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
+[blobs]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs/README.md
+[queues]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-queues/README.md
+[files]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-shares/README.md
+[datalake]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake/README.md
+[common]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-common/README.md
+[storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[cla]: https://cla.microsoft.com
+[coc]: https://opensource.microsoft.com/codeofconduct/
+[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[coc_contact]: mailto:opencode@microsoft.com
