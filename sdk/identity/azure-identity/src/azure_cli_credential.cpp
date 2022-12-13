@@ -157,14 +157,7 @@ namespace {
 template <typename> struct UniqueHandleHelper;
 template <> struct UniqueHandleHelper<HANDLE>
 {
-  static void CloseWin32Handle(HANDLE handle)
-  {
-    if (handle != nullptr)
-    {
-      static_cast<void>(CloseHandle(handle));
-    }
-  }
-
+  static void CloseWin32Handle(HANDLE handle) { static_cast<void>(CloseHandle(handle)); }
   using type = Azure::Core::_internal::BasicUniqueHandle<void, CloseWin32Handle>;
 };
 

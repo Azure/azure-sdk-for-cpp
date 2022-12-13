@@ -34,8 +34,11 @@ namespace Azure { namespace Identity {
      * - AZURE_CLIENT_ID
      * - AZURE_CLIENT_SECRET
      * - AZURE_CLIENT_CERTIFICATE_PATH
+     * - AZURE_CLIENT_CERTIFICATE_PASSWORD
+     * - AZURE_CLIENT_SEND_CERTIFICATE_CHAIN
      * - AZURE_USERNAME
      * - AZURE_PASSWORD
+     * - AZURE_AUTHORITY_HOST
      */
     explicit EnvironmentCredential(
         Azure::Core::Credentials::TokenCredentialOptions options
