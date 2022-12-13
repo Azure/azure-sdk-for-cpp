@@ -120,6 +120,8 @@ AccessToken TokenCache::GetToken(
 
 namespace {
 
+// Compile-time Fibonacci sequence computation.
+// Get() produces a std::array<T> containing the numbers in ascending order.
 template <
     typename T, // Type
     T L = 0, // Left hand side
