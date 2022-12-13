@@ -2,7 +2,7 @@
 
 Azure Storage is a Microsoft-managed service providing cloud storage that is highly available, secure, durable, scalable, and redundant. Azure Storage includes Blobs (objects), Queues, and Files.
 
-- [Azure.Storage.Blobs][azure-storage-blobs/README.md] is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data that does not adhere to a particular data model or definition, such as text or binary data.
+- [Azure.Storage.Blobs](azure-storage-blobs/README.md) is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data that does not adhere to a particular data model or definition, such as text or binary data.
 
 - [Azure.Storage.Queues][queues] is a service for storing large numbers of messages.  A queue message can be up to 64 KB in size and a queue may contain millions of messages, up to the total capacity limit of a storage account.
 
