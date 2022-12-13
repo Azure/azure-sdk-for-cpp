@@ -5,7 +5,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(ClientSecretCredentialTest, ClientSecretCredentialWorks)
+  TEST_F(ClientSecretCredentialTest, ClientSecretCredentialWorks_LIVEONLY_)
   {
     auto containerClient = GetClientForTest(GetTestName());
 

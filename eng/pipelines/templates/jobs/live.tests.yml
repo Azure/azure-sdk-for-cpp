@@ -135,6 +135,10 @@ jobs:
       Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
 
+  - template: /eng/common/testproxy/test-proxy-tool.yml
+    parameters:
+      runProxy: false
+
   - ${{ parameters.PreTestSteps }}
 
     # For non multi-config generator use the same build configuration to run tests

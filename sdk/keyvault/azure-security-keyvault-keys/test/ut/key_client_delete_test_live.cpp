@@ -12,14 +12,6 @@
 
 namespace {
 
-std::string GetNotFoundErrorMsg(std::string const& keyName)
-{
-  return "A key with (name/id) " + keyName
-      + " was not found in this key vault. If you recently deleted this key you may be able "
-        "to recover it using the correct recovery command. For help resolving this issue, "
-        "please see https://go.microsoft.com/fwlink/?linkid=2125182";
-}
-
 std::string GetConflictErrorMsg(std::string const& keyName)
 {
   return "Key " + keyName
@@ -110,7 +102,6 @@ TEST_F(KeyVaultKeyClient, DeleteInvalidKey)
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             error.StatusCode),
         404);
-    EXPECT_EQ(error.Message, GetNotFoundErrorMsg(keyName));
     EXPECT_EQ(error.ErrorCode, "KeyNotFound");
     wasThrown = true;
   }
@@ -149,7 +140,6 @@ TEST_F(KeyVaultKeyClient, DoubleDelete)
         static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             error.StatusCode),
         404);
-    EXPECT_EQ(error.Message, GetNotFoundErrorMsg(keyName));
     EXPECT_EQ(error.ErrorCode, "KeyNotFound");
     wasThrown = true;
   }
@@ -185,7 +175,6 @@ TEST_F(KeyVaultKeyClient, DoubleDeleteBeforePollComplete)
             error.StatusCode),
         404);
 
-    EXPECT_EQ(error.Message, GetNotFoundErrorMsg(keyName));
     EXPECT_EQ(error.ErrorCode, "KeyNotFound");
     wasThrown = true;
   }
