@@ -224,7 +224,7 @@ AccessToken ClientCertificateCredential::GetToken(
           std::string payloadStr;
           // Add GUID, current time, and expiration time to the payload
           {
-            // MSAL have JWT token expiration hardcoded as 10 minutes, without further explanations
+            // MSAL has JWT token expiration hardcoded as 10 minutes, without further explanations
             // anywhere nearby the constant.
             // https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/blob/01ecd12464007fc1988b6a127aa0b1b980bca1ed/src/client/Microsoft.Identity.Client/Internal/JsonWebTokenConstants.cs#L8
             DateTime const now = std::chrono::system_clock::now();
