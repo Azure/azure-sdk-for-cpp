@@ -86,19 +86,24 @@ TBD
 const std::string connectionString = "<connection_string>";
 const std::string containerName = "sample-container";
 const std::string blobName = "sample-blob";
-const std::string filePath = "sample-file";
 
 auto containerClient = BlobContainerClient::CreateFromConnectionString(connectionString, containerName);
 containerClient.CreateIfNotExists();
 
 BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
-blobClient.UploadFrom(filePath);
+// upload from local file
+blobClient.UploadFrom(localFilePath);
+// or upload from memory buffer
+blobClinet.UploadFrom(bufferPtr, bufferLength);
 ```
 
 ### Downloading a blob
 
 ```C++
-blobClient.DownloadTo(filePath);
+// download to local file
+blobClient.DownloadTo(localFilePath);
+// or download to memory buffer
+blobClinet.DownloadTo(bufferPtr, bufferLength);
 ```
 
 ### Enumerating blobs
