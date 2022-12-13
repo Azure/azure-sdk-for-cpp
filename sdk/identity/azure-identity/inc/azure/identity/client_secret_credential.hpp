@@ -33,7 +33,7 @@ namespace Azure { namespace Identity {
      * @brief Authentication authority URL.
      * @note Default value is Azure AD global authority (https://login.microsoftonline.com/).
      *
-     * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
+     * @note Example of an authority host string: "https://login.microsoftonline.us/". See national
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */

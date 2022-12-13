@@ -52,53 +52,26 @@ template <typename> struct UniqueHandleHelper;
 
 template <> struct UniqueHandleHelper<BIO>
 {
-  static void FreeBioIfNotNull(BIO* bio)
-  {
-    if (bio != nullptr)
-    {
-      static_cast<void>(BIO_free(bio));
-    }
-  }
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<BIO, FreeBioIfNotNull>;
+  using type = Azure::Core::_internal::BasicUniqueHandle<BIO, BIO_free_all>;
 };
 
 template <> struct UniqueHandleHelper<X509>
 {
-  static void FreeX509IfNotNull(X509* x509)
-  {
-    if (x509 != nullptr)
-    {
-      X509_free(x509);
-    }
-  }
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<X509, FreeX509IfNotNull>;
+  using type = Azure::Core::_internal::BasicUniqueHandle<X509, X509_free>;
 };
 
 template <> struct UniqueHandleHelper<EVP_MD_CTX>
 {
-  static void FreeEvpMdCtxIfNotNull(EVP_MD_CTX* evpMdCtx)
-  {
-    if (evpMdCtx != nullptr)
-    {
-      EVP_MD_CTX_free(evpMdCtx);
-    }
-  }
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<EVP_MD_CTX, FreeEvpMdCtxIfNotNull>;
+  using type = Azure::Core::_internal::BasicUniqueHandle<EVP_MD_CTX, EVP_MD_CTX_free>;
 };
 
 template <typename T>
 using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
 } // namespace
 
-void Azure::Identity::_detail::FreePkeyIfNotNull(void* pkey)
+void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
 {
-  if (pkey != nullptr)
-  {
-    EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
-  }
+  EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
 }
 
 ClientCertificateCredential::ClientCertificateCredential(
@@ -251,6 +224,9 @@ AccessToken ClientCertificateCredential::GetToken(
           std::string payloadStr;
           // Add GUID, current time, and expiration time to the payload
           {
+            // MSAL have JWT token expiration hardcoded as 10 minutes, without further explanations
+            // anywhere nearby the constant.
+            // https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/blob/01ecd12464007fc1988b6a127aa0b1b980bca1ed/src/client/Microsoft.Identity.Client/Internal/JsonWebTokenConstants.cs#L8
             DateTime const now = std::chrono::system_clock::now();
             DateTime const exp = now + std::chrono::minutes(10);
 
