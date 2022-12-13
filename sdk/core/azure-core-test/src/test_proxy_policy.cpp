@@ -75,7 +75,7 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
   }
   else if (m_testProxy->IsPlaybackMode())
   {
-    // RECORDING mode
+    // Playback mode
     redirectRequest.SetHeader("x-recording-mode", "playback");
   }
 
