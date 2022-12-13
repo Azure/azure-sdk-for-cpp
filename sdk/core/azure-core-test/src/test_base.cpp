@@ -13,7 +13,7 @@ using namespace Azure::Core::Json::_internal;
 
 void Azure::Core::Test::TestBase::TearDown()
 {
-  if (m_wasSkipped)
+  if (m_wasSkipped || m_testContext.IsLiveMode())
   {
     return;
   }

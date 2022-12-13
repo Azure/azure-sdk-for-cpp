@@ -392,7 +392,7 @@ namespace Azure { namespace Core { namespace Test {
       m_testContext.RecordingPath = recordingPath;
       m_testContext.AssetsPath = GetAssetsPath();
 
-      if (!m_wasSkipped)
+      if (!m_wasSkipped && !m_testContext.IsLiveMode())
       {
         m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
       }
