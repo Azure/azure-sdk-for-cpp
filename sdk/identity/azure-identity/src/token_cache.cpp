@@ -121,11 +121,11 @@ AccessToken TokenCache::GetToken(
 namespace {
 
 template <
-    typename T,
-    T L = 0,
-    T R = 1,
-    size_t N = 0,
-    bool X = ((std::numeric_limits<T>::max() - L) < R)>
+    typename T, // Type
+    T L = 0, // Left hand side
+    T R = 1, // Right hand size
+    size_t N = 0, // Counter (for array)
+    bool X = ((std::numeric_limits<T>::max() - L) < R)> // Condition to stop (integer overflow of T)
 struct SortedFibonacciSequence
 {
   static constexpr auto Get();
