@@ -33,7 +33,7 @@
         "Win2019": {
           "OSVmImage": "MMS2022",
           "Pool": "azsdk-pool-mms-win-2022-general",
-          "CMAKE_GENERATOR": "Visual Studio 16 2019"
+          "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
       },
       "TargetPlatform": {
@@ -90,7 +90,7 @@
           "VcpkgInstall": "openssl",
           "OSVmImage": "MMS2022",
           "Pool": "azsdk-pool-mms-win-2022-general",
-          "CMAKE_GENERATOR": "Visual Studio 16 2019",
+          "CMAKE_GENERATOR": "Visual Studio 17 2022",
           "PublishMapFiles": "true"
         }
       },
