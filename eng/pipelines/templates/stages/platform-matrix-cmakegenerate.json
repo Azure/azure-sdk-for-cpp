@@ -9,8 +9,8 @@
         "VCPKG_DEFAULT_TRIPLET": "x64-linux"
       },
       "Windows": {
-        "Pool": "azsdk-pool-mms-win-2019-general",
-        "OSVmImage": "MMS2019",
+        "Pool": "azsdk-pool-mms-win-2022-general",
+        "OSVmImage": "MMS2022",
         "VCPKG_DEFAULT_TRIPLET": "x64-windows"
       },
       "Mac": {
