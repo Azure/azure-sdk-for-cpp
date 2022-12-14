@@ -895,3 +895,10 @@ TEST(DateTime, LeapYear)
   EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 2, 28)));
   EXPECT_THROW(static_cast<void>(DateTime(2021, 2, 29)), std::invalid_argument);
 }
+
+TEST(DateTime, Rfc3339Space)
+{
+  auto const datetime
+      = DateTime::Parse("2022-08-24 00:43:08.0004308Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(datetime.ToString(DateTime::DateFormat::Rfc3339), "2022-08-24T00:43:08.0004308Z");
+}

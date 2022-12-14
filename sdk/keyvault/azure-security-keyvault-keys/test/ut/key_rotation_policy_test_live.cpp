@@ -81,7 +81,7 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   }
 }
 
-TEST_F(KeyVaultKeyClient, GetRandomBytes)
+TEST_F(KeyVaultKeyClient, GetRandomBytes_LIVEONLY_)
 {
   if (m_keyVaultUrl.compare(m_keyVaultHsmUrl) != 0)
   {

@@ -405,6 +405,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::string GetTestName(testing::TestParamInfo<PolicyTests::ParamType> const& testInfo)
     {
       std::string testName;
+      int suffixVotes = 0;
       switch (testInfo.param.TestType)
       {
         case TestCaseType::GetPolicy:
@@ -415,6 +416,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           break;
         case TestCaseType::ModifyPolicySecured:
           testName += "ModifyGeneratedKey";
+          suffixVotes++;
           break;
         case TestCaseType::ModifyPolicyUnsecured:
           testName += "ModifyUnsecured";
@@ -427,6 +429,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         case ServiceInstanceType::AAD:
           testName += "AAD";
+          suffixVotes++;
           break;
         case ServiceInstanceType::Isolated:
           testName += "Isolated";
@@ -440,6 +443,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       testName += "_";
       testName += testInfo.param.TeeType.ToString();
+      if (suffixVotes == 2)
+      {
+        testName += "_LIVEONLY_";
+      };
+      //+"_LIVEONLY_";
       return testName;
     }
   } // namespace

@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
+#include "azure/core/test/test_proxy_manager.hpp"
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
@@ -34,7 +34,8 @@ using namespace std::chrono_literals;
 namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief The base class provides the tools for a test to use the Record&PlayBack functionalities.
+   * @brief The base class provides the tools for a test to use the Record&Playback
+   * functionalities.
    *
    */
   class TestBase : public ::testing::Test {
@@ -48,12 +49,19 @@ namespace Azure { namespace Core { namespace Test {
 
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
+      if (m_wasSkipped)
+      {
+        return;
+      }
+
       // Set up client options depending on the test-mode
       if (m_testContext.IsPlaybackMode())
       {
         // Playback mode uses:
         //  - playback transport adapter to read and return payload from json files
-        options.Transport.Transport = m_interceptor->GetPlaybackTransport();
+        m_testProxy->StartPlaybackRecord(TestMode::PLAYBACK);
+        m_testProxy->ConfigureInsecureConnection(options);
+        options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
       }
       else if (!m_testContext.IsLiveMode())
       {
@@ -61,7 +69,9 @@ namespace Azure { namespace Core { namespace Test {
         //  - curl or winhttp transport adapter
         //  - Recording policy. Intercept server responses to create json files
         // AZURE_TEST_RECORDING_DIR is exported by CMAKE
-        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
+        m_testProxy->StartPlaybackRecord(TestMode::RECORD);
+        m_testProxy->ConfigureInsecureConnection(options);
+        options.PerRetryPolicies.push_back(m_testProxy->GetTestProxyPolicy());
       }
     }
 
@@ -71,14 +81,14 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Playback mode uses:
         //  - never-expiring test credential to never require a token
-        credential = m_interceptor->GetTestCredential();
+        credential = m_testProxy->GetTestCredential();
       }
     }
 
     // Call this method to update client options with the required configuration to
     // support Record & Playback.
-    // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
-    // Call this before creating the SDK client
+    // If Playback or Record is not set, no changes will be done to the clientOptions or
+    // credential. Call this before creating the SDK client
     void PrepareClientOptions(
         std::shared_ptr<Core::Credentials::TokenCredential>& credential,
         Azure::Core::_internal::ClientOptions& options)
@@ -97,8 +107,11 @@ namespace Azure { namespace Core { namespace Test {
 
     void SkipTest()
     {
-      m_wasSkipped = true;
-      GTEST_SKIP();
+      if (!m_wasSkipped)
+      {
+        m_wasSkipped = true;
+        GTEST_SKIP();
+      }
     }
 
     std::string RemovePreffix(std::string const& src)
@@ -126,7 +139,7 @@ namespace Azure { namespace Core { namespace Test {
 
   protected:
     Azure::Core::Test::TestContextManager m_testContext;
-    std::unique_ptr<Azure::Core::Test::InterceptorManager> m_interceptor;
+    std::unique_ptr<Azure::Core::Test::TestProxyManager> m_testProxy;
 
     bool shouldSkipTest() { return m_wasSkipped; }
 
@@ -241,7 +254,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Playback mode uses:
         //  - never-expiring test credential to never require a token
-        return m_interceptor->GetTestCredential();
+        return m_testProxy->GetTestCredential();
       }
       else
       {
@@ -299,8 +312,8 @@ namespace Azure { namespace Core { namespace Test {
      * with the values emitted by the New-TestResources.ps1 script.
      *
      * @note The Azure CI pipeline upper cases all environment variables defined in the pipeline.
-     * Since some operating systems have case sensitive environment variables, on debug builds, this
-     * function ensures that the environment variable being retrieved is all upper case.
+     * Since some operating systems have case sensitive environment variables, on debug builds,
+     * this function ensures that the environment variable being retrieved is all upper case.
      *
      */
     std::string GetEnv(std::string const& name)
@@ -354,8 +367,8 @@ namespace Azure { namespace Core { namespace Test {
     /**
      * @brief Run before each test.
      *
-     * @param baseRecordingPath - the base recording path to be used for this test. Normally this is
-     * `AZURE_TEST_RECORDING_DIR`.
+     * @param baseRecordingPath - the base recording path to be used for this test. Normally this
+     * is `AZURE_TEST_RECORDING_DIR`.
      *
      * For example:
      *
@@ -370,14 +383,19 @@ namespace Azure { namespace Core { namespace Test {
       std::string recordingPath(baseRecordingPath);
       recordingPath.append("/recordings");
 
-      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
+      m_testContext.TestMode = Azure::Core::Test::TestProxyManager::GetTestMode();
       // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
       // set the interceptor for the current test
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
-      m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
+      m_testContext.AssetsPath = GetAssetsPath();
+
+      if (!m_wasSkipped && !m_testContext.IsLiveMode())
+      {
+        m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
+      }
     }
 
     /**
@@ -388,5 +406,10 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     void TearDown() override;
+
+    /**
+     * Returns the assets.json file path used when invoking the test-proxy playback/record
+     */
+    virtual std::string GetAssetsPath() { return "assets.json"; }
   };
 }}} // namespace Azure::Core::Test

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for parsing space character in place of 'T' in RFC3339 DateTimes.
+
 ### Breaking Changes
 
 ### Bugs Fixed

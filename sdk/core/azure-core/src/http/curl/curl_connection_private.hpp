@@ -230,8 +230,6 @@ namespace Azure { namespace Core {
        */
       CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
           override;
-
-      void Shutdown() override;
     };
   } // namespace Http
 }} // namespace Azure::Core

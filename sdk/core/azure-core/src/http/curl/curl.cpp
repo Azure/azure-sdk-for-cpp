@@ -557,6 +557,12 @@ CURLcode CurlConnection::SendBuffer(
     size_t bufferSize,
     Context const& context)
 {
+  // Once you've shutdown the connection, we can't send any more data (although we can continue to
+  // receive).
+  if (IsShutdown())
+  {
+    return CURLE_SEND_ERROR;
+  }
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
     // check cancelation for each chunk of data.
@@ -1063,16 +1069,6 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   }
 
   return totalRead;
-}
-
-void CurlConnection::Shutdown()
-{
-#if defined(AZ_PLATFORM_POSIX)
-  ::shutdown(m_curlSocket, SHUT_RDWR);
-#elif defined(AZ_PLATFORM_WINDOWS)
-  ::shutdown(m_curlSocket, SD_BOTH);
-#endif
-  CurlNetworkConnection::Shutdown();
 }
 
 // Read from socket and return the number of bytes taken from socket

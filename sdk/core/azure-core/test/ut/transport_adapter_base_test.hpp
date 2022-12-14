@@ -33,6 +33,10 @@ namespace Azure { namespace Core { namespace Test {
     inline static std::string Delete() { return Schema() + "://" + Host() + "/delete"; }
     inline static std::string Patch() { return Schema() + "://" + Host() + "/patch"; }
     inline static std::string Delay() { return Schema() + "://" + Host() + "/delay"; }
+    inline static std::string Status(int statusCode)
+    {
+      return Schema() + "://" + Host() + "/status/" + std::to_string(statusCode);
+    }
     inline static std::string Host() { return std::string(_detail::AzureSdkHttpbinServer); }
     inline static std::string Schema() { return std::string(_detail::AzureSdkHttpbinServerSchema); }
   };

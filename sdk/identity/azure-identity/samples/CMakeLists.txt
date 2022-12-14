@@ -7,6 +7,11 @@ project (azure-identity-samples LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+add_executable(azure_cli_credential_sample azure_cli_credential.cpp)
+target_link_libraries(azure_cli_credential_sample PRIVATE azure-identity service)
+target_include_directories(azure_cli_credential_sample PRIVATE .)
+create_per_service_target_build_for_sample(identity azure_cli_credential_sample)
+
 add_executable(chained_token_credential_sample chained_token_credential.cpp)
 target_link_libraries(chained_token_credential_sample PRIVATE azure-identity service)
 target_include_directories(chained_token_credential_sample PRIVATE .)

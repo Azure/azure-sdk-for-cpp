@@ -604,7 +604,8 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
         day = ParseNumber<decltype(day)>(&cursor, dateTime, DateTimeLength, parsingArea, 2, 2);
       }
 
-      if (cursor < DateTimeLength && (dateTime[cursor] == 'T' || dateTime[cursor] == 't'))
+      if (cursor < DateTimeLength
+          && (dateTime[cursor] == 'T' || dateTime[cursor] == 't' || dateTime[cursor] == ' '))
       {
         ++cursor;
         IncreaseAndCheckMinLength(&minDateTimeLength, DateTimeLength, 7);

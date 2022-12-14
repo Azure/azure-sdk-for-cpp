@@ -3,7 +3,6 @@
 
 #include "credential_test_helper.hpp"
 
-#include "private/token_cache_internals.hpp"
 #include <azure/core/internal/environment.hpp>
 
 #include <stdlib.h>
@@ -67,19 +66,18 @@ CredentialTestHelper::GetTokenCallback const CredentialTestHelper::DefaultGetTok
 
 CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::SimulateTokenRequest(
     CredentialTestHelper::CreateCredentialCallback const& createCredential,
-    std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+    std::vector<decltype(Azure::Core::Credentials::TokenRequestContext::Scopes)> const&
+        tokenRequestContextScopes,
     std::vector<TokenRequestSimulationServerResponse> const& responses,
     GetTokenCallback getToken)
 {
-  Azure::Identity::_detail::TokenCache::Clear();
-
   using Azure::Core::Context;
   using Azure::Core::Http::HttpStatusCode;
   using Azure::Core::Http::RawResponse;
   using Azure::Core::IO::MemoryBodyStream;
 
   auto const nResponses = responses.size();
-  auto const nRequestTimes = tokenRequestContexts.size();
+  auto const nRequestTimes = tokenRequestContextScopes.size();
 
   TokenRequestSimulationResult result;
   {
@@ -139,7 +137,11 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
   {
     TokenRequestSimulationResult::ResponseInfo response{};
 
-    response.AccessToken = getToken(*credential, tokenRequestContexts.at(i), Context());
+    Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+    tokenRequestContext.Scopes = tokenRequestContextScopes.at(i);
+    tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
+
+    response.AccessToken = getToken(*credential, tokenRequestContext, Context());
     response.EarliestExpiration = earliestExpiration;
     response.LatestExpiration = std::chrono::system_clock::now();
 

@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(expectedPermission, ret2.Value);
   }
 
-  TEST_F(FileShareClientTest, Lease)
+  TEST_F(FileShareClientTest, Lease_LIVEONLY_)
   {
     {
       std::string leaseId1 = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();
@@ -338,7 +338,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, SnapshotLease)
+  TEST_F(FileShareClientTest, SnapshotLease_LIVEONLY_)
   {
     auto snapshotResult = m_shareClient->CreateSnapshot();
     auto shareSnapshot = m_shareClient->WithSnapshot(snapshotResult.Value.Snapshot);

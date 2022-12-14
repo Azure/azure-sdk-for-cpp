@@ -21,6 +21,12 @@ namespace Azure { namespace Core { namespace Test {
   class TestContextManager {
   public:
     /**
+     * @brief The path where the asset.json for the current test exists, will be passed as part of
+     * the playback request to the test-proxy via the manager.
+     *
+     */
+    std::string AssetsPath;
+    /**
      * @brief The path where the tests recordings are written.
      *
      */
@@ -84,6 +90,16 @@ namespace Azure { namespace Core { namespace Test {
       return fullName;
     }
 
+    std::string GetTestRecordingPathName() const
+    {
+      std::string fullName(RecordingPath);
+      fullName.append("/");
+      fullName.append(GetTestPlaybackRecordingName());
+      fullName.append(".json");
+
+      return fullName;
+    }
+
     std::string GetTestName() const { return m_testName; }
     std::string GetTestSuiteName() const { return m_testSuite; }
 
@@ -119,6 +135,8 @@ namespace Azure { namespace Core { namespace Test {
     bool IsLiveMode() const { return TestMode == Azure::Core::Test::TestMode::LIVE; }
 
     constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
+
+    std::string RecordingId;
 
   private:
     std::string m_testName;

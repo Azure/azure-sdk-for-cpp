@@ -2,7 +2,6 @@
     "name": "azure-security-keyvault-secrets",
     "version-string": "1.0.0",
     "dependencies": [
-        "azure-core-cpp",
-        "azure-identity-cpp"
+        "azure-core-cpp"
     ]
 }

@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Delete();
   }
 
-  TEST_F(QueueClientTest, PeekMessage)
+  TEST_F(QueueClientTest, PeekMessage_LIVEONLY_)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_testNameLowercase, m_options);

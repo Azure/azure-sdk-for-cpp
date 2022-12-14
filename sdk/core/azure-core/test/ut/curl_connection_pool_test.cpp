@@ -601,6 +601,29 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
+    TEST(CurlConnectionPool, forceConnectionClosed)
+    {
+      Azure::Core::Http::Request req(
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Status(101)));
+
+      Azure::Core::Http::CurlTransportOptions options;
+      auto connection
+          = CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(req, options);
+
+      {
+        // Check we can use the connection to retrieve headers in the response, but the connection
+        // is still flagged as shutdown.
+        auto session
+            = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
+
+        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+        EXPECT_EQ(CURLE_OK, r);
+        auto response = session->ExtractResponse();
+        EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::SwitchingProtocols);
+        EXPECT_EQ("close", response->GetHeaders().find("Connection")->second);
+      }
+    }
+
     TEST(CurlConnectionPool, connectionClose)
     {
       /// When getting the header connection: close from an HTTP response, the connection should not

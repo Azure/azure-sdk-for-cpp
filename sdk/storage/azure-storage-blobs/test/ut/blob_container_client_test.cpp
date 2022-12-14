@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ret2.Value.SignedIdentifiers, options.SignedIdentifiers);
   }
 
-  TEST_F(BlobContainerClientTest, Lease)
+  TEST_F(BlobContainerClientTest, Lease_LIVEONLY_)
   {
     auto client = GetBlobContainerTestClient();
     client.Create();
