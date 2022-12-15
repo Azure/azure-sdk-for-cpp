@@ -175,13 +175,3 @@ void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
   // insert (override if duplicated)
   headers[headerName] = headerValue;
 }
-
-Request::Request(HttpMethod httpMethod, Url url, bool shouldBufferResponse)
-    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), shouldBufferResponse)
-{
-}
-
-Request::Request(HttpMethod httpMethod, Url url)
-    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), true)
-{
-}
