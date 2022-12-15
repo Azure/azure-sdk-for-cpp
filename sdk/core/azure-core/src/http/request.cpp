@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
+#include "azure/core/internal/http/null_body_stream.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <map>
@@ -21,6 +22,16 @@ static Azure::Core::CaseInsensitiveMap MergeMaps(
   return left;
 }
 } // namespace
+
+Request::Request(HttpMethod httpMethod, Url url, bool shouldBufferResponse)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), shouldBufferResponse)
+{
+}
+
+Request::Request(HttpMethod httpMethod, Url url)
+    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), true)
+{
+}
 
 Azure::Nullable<std::string> Request::GetHeader(std::string const& name)
 {
