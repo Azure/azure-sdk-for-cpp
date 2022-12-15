@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/http.hpp"
-#include "azure/core/internal/http/null_body_stream.hpp"
+#include "azure/core/internal/io/null_body_stream.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <map>
