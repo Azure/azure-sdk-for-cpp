@@ -10,6 +10,7 @@
 #include <vector>
 
 using namespace Azure::Core::Http;
+using namespace Azure::Core::IO::_internal;
 
 namespace {
 // returns left map plus all items in right
