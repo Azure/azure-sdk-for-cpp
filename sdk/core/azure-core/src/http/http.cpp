@@ -9,7 +9,6 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::IO::_internal;
 
 char const Azure::Core::Http::_internal::HttpShared::ContentType[] = "content-type";
 char const Azure::Core::Http::_internal::HttpShared::ApplicationJson[] = "application/json";
