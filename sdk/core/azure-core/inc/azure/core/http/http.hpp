@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Http {
         Url url,
         Azure::Core::IO::BodyStream* bodyStream,
         bool shouldBufferResponse)
-        : Request(httpMethod, std::move(url), bodyStream, "application/json", true)
+        : Request(httpMethod, std::move(url), bodyStream, "application/json", shouldBufferResponse)
     {
     }
 
