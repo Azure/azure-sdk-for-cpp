@@ -29,11 +29,11 @@ const HttpMethod HttpMethod::Delete("DELETE");
 const HttpMethod HttpMethod::Patch("PATCH");
 
 namespace {
-std::unordered_set<char> const HeaderNameExtraValidChars
-    = {' ', '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~'};
-
 bool IsInvalidHeaderNameChar(char c)
 {
+  static std::unordered_set<char> const HeaderNameExtraValidChars
+      = {' ', '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~'};
+
   return !std::isalnum(c, std::locale::classic())
       && HeaderNameExtraValidChars.find(c) == HeaderNameExtraValidChars.end();
 }

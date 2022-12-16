@@ -129,14 +129,13 @@ std::string Url::Decode(std::string const& value)
 }
 
 namespace {
-// List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
-// this set.
-std::unordered_set<char> const DefaultNonUrlEncodeChars = {
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-    'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-    'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~',
-};
+bool ShouldEncode(char c)
+{
+  static std::unordered_set<char> const ExtraNonEncodableChars = {'-', '.', '_', '~'};
+
+  return !std::isalnum(c, std::locale::classic())
+      && ExtraNonEncodableChars.find(c) == ExtraNonEncodableChars.end();
+}
 } // namespace
 
 std::string Url::Encode(const std::string& value, const std::string& doNotEncodeSymbols)
@@ -151,8 +150,7 @@ std::string Url::Encode(const std::string& value, const std::string& doNotEncode
   {
     // encode if char is not in the default non-encoding set AND if it is NOT in chars to ignore
     // from user input
-    if (DefaultNonUrlEncodeChars.find(c) == DefaultNonUrlEncodeChars.end()
-        && doNotEncodeSymbolsSet.find(c) == doNotEncodeSymbolsSet.end())
+    if (ShouldEncode(c) && doNotEncodeSymbolsSet.find(c) == doNotEncodeSymbolsSet.end())
     {
       auto const u8 = static_cast<uint8_t>(c);
 
