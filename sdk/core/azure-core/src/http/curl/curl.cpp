@@ -1316,9 +1316,10 @@ void DumpCurlInfoToLog(std::string const& text, uint8_t* ptr, size_t size)
     {
       // Log the contents of the buffer as text, if it's printable, print the character, otherwise
       // print '.'
-      if (std::isprint(ptr[i + c], std::locale::classic()))
+      auto const ch = static_cast<char>(ptr[i + c]);
+      if (std::isprint(ch, std::locale::classic()))
       {
-        ss << ptr[i + c];
+        ss << ch;
       }
       else
       {
