@@ -25,8 +25,9 @@ TEST(String, invariantCompare)
 TEST(String, toLowerC)
 {
   using Azure::Core::_internal::StringExtensions;
-  for (char c = 0; c <= 255; ++c)
+  for (unsigned i = 0; i <= 255; ++i)
   {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
     EXPECT_TRUE(StringExtensions::ToLower(c) == std::tolower(c, std::locale::classic()));
   }
 }
@@ -34,8 +35,9 @@ TEST(String, toLowerC)
 TEST(String, toUpperC)
 {
   using Azure::Core::_internal::StringExtensions;
-  for (char c = 0; c <= 255; ++c)
+  for (unsigned i = 0; i <= 255; ++i)
   {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
     EXPECT_TRUE(StringExtensions::ToUpper(c) == std::toupper(c, std::locale::classic()));
   }
 }
