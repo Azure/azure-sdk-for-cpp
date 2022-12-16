@@ -268,49 +268,49 @@ inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime
 }
 
 namespace Core { namespace _internal {
+  /**
+   * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
+   *
+   */
+  class PosixTimeConverter final {
+  public:
     /**
-     * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
+     * @brief Converts POSIX time to an #Azure::DateTime.
+     *
+     * @param posixTime The number of seconds since 1970.
+     * @return Calculated #Azure::DateTime.
+     */
+    static DateTime PosixTimeToDateTime(int64_t posixTime)
+    {
+      return {DateTime(1970) + std::chrono::seconds(posixTime)};
+    }
+
+    /**
+     * @brief Converts a DateTime to POSIX time.
+     *
+     * @param dateTime The `%DateTime` to convert.
+     * @return The number of seconds since 1970.
+     */
+    static int64_t DateTimeToPosixTime(DateTime const& dateTime)
+    {
+      //  This count starts at the POSIX epoch which is January 1st, 1970 UTC.
+      return std::chrono::duration_cast<std::chrono::seconds>(dateTime - DateTime(1970)).count();
+    }
+
+  private:
+    /**
+     * @brief An instance of `%PosixTimeConverter` class cannot be created.
      *
      */
-    class PosixTimeConverter final {
-    public:
-      /**
-       * @brief Converts POSIX time to an #Azure::DateTime.
-       *
-       * @param posixTime The number of seconds since 1970.
-       * @return Calculated #Azure::DateTime.
-       */
-      static DateTime PosixTimeToDateTime(int64_t posixTime)
-      {
-        return {DateTime(1970) + std::chrono::seconds(posixTime)};
-      }
+    PosixTimeConverter() = delete;
 
-      /**
-       * @brief Converts a DateTime to POSIX time.
-       *
-       * @param dateTime The `%DateTime` to convert.
-       * @return The number of seconds since 1970.
-       */
-      static int64_t DateTimeToPosixTime(DateTime const& dateTime)
-      {
-        //  This count starts at the POSIX epoch which is January 1st, 1970 UTC.
-        return std::chrono::duration_cast<std::chrono::seconds>(dateTime - DateTime(1970)).count();
-      }
-
-    private:
-      /**
-       * @brief An instance of `%PosixTimeConverter` class cannot be created.
-       *
-       */
-      PosixTimeConverter() = delete;
-
-      /**
-       * @brief An instance of `%PosixTimeConverter` class cannot be destructed, because no instance
-       * can be created.
-       *
-       */
-      ~PosixTimeConverter() = delete;
-    };
+    /**
+     * @brief An instance of `%PosixTimeConverter` class cannot be destructed, because no instance
+     * can be created.
+     *
+     */
+    ~PosixTimeConverter() = delete;
+  };
 }} // namespace Core::_internal
 
 } // namespace Azure
