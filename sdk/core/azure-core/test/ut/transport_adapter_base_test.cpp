@@ -231,8 +231,8 @@ namespace Azure { namespace Core { namespace Test {
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, false);
+    auto request = Azure::Core::Http::Request(
+        Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, "application/json", false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
@@ -248,7 +248,7 @@ namespace Azure { namespace Core { namespace Test {
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, false);
+        Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, "application/json", false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
 
@@ -264,7 +264,7 @@ namespace Azure { namespace Core { namespace Test {
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, false);
+        Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, "application/json", false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
 
@@ -341,8 +341,8 @@ namespace Azure { namespace Core { namespace Test {
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
     auto bodyRequest = Azure::Core::IO::MemoryBodyStream(requestBodyVector);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, false);
+    auto request = Azure::Core::Http::Request(
+        Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, "application/json", false);
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(
         response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::MethodNotAllowed);
@@ -521,7 +521,7 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, "application/json", false);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       checkResponseCode(response->GetStatusCode());
@@ -546,7 +546,7 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, "application/json", false);
     // Make transport adapter to read default chunk size
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
@@ -572,7 +572,7 @@ namespace Azure { namespace Core { namespace Test {
 
     Azure::Core::IO::FileBodyStream requestBodyStream(testDataPath);
     auto request = Azure::Core::Http::Request(
-        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, false);
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, "application/json", false);
     {
       auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
       checkResponseCode(response->GetStatusCode());

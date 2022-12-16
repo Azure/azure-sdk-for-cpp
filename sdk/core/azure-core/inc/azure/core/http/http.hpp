@@ -236,56 +236,13 @@ namespace Azure { namespace Core { namespace Http {
       AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
 
       // Only set the content length, whenever a content type is present.
-      // When there is no body (as-in a NullBodyStream is passed-in by default), don't set these headers.
+      // When there is no body (as-in a NullBodyStream is passed-in by default), don't set these
+      // headers.
       if (!contentType.empty())
       {
         this->SetHeader("Content-Type", contentType);
         this->SetHeader("Content-Length", std::to_string(bodyStream->Length()));
       }
-    }
-
-    /**
-     * @brief Construct an #Azure::Core::Http::Request.
-     *
-     * @param httpMethod HttpMethod.
-     * @param url %Request URL.
-     * @param bodyStream #Azure::Core::IO::BodyStream.
-     * @param shouldBufferResponse A boolean value indicating whether the returned response should
-     * be buffered or returned as a body stream instead.
-     *
-     * @remark The `%Request` object doesn't take ownership of the #Azure::Core::IO::BodyStream and
-     * is not responsible for its lifetime. The caller must keep the BodyStream alive for the
-     * duration of the request.
-     * 
-     * @remark The default content type is set to application/json.
-     */
-    // OBSOLETE THIS, whenever a body stream is present, it requires a content type
-    explicit Request(
-        HttpMethod httpMethod,
-        Url url,
-        Azure::Core::IO::BodyStream* bodyStream,
-        bool shouldBufferResponse)
-        : Request(httpMethod, std::move(url), bodyStream, "application/json", shouldBufferResponse)
-    {
-    }
-
-    /**
-     * @brief Constructs a `%Request`.
-     *
-     * @param httpMethod HTTP method.
-     * @param url %Request URL.
-     * @param bodyStream #Azure::Core::IO::BodyStream.
-     *
-     * @remark The `%Request` object doesn't take ownership of the #Azure::Core::IO::BodyStream and
-     * is not responsible for its lifetime. The caller must keep the BodyStream alive for the
-     * duration of the request.
-     * 
-     * @remark The default content type is set to application/json.
-     */
-    // OBSOLETE THIS, whenever a body stream is present, it requires a content type
-    explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
-        : Request(httpMethod, std::move(url), bodyStream, "application/json", true)
-    {
     }
 
     /**

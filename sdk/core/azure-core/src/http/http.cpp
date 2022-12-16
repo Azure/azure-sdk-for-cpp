@@ -177,7 +177,12 @@ void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
 }
 
 Request::Request(HttpMethod httpMethod, Url url, bool shouldBufferResponse)
-    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), "", shouldBufferResponse)
+    : Request(
+        httpMethod,
+        std::move(url),
+        NullBodyStream::GetNullBodyStream(),
+        "",
+        shouldBufferResponse)
 {
 }
 

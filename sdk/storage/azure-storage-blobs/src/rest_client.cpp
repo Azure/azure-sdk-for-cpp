@@ -1215,13 +1215,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         const SubmitServiceBatchOptions& options,
         const Core::Context& context)
     {
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Post, url, &requestBody, false);
+      auto request = Core::Http::Request(
+          Core::Http::HttpMethod::Post, url, &requestBody, options.MultipartContentType, false);
       request.GetUrl().AppendQueryParameter("comp", "batch");
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-      if (!options.MultipartContentType.empty())
-      {
-        request.SetHeader("Content-Type", options.MultipartContentType);
-      }
       request.SetHeader("x-ms-version", "2021-04-10");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1823,14 +1820,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         const SubmitBlobContainerBatchOptions& options,
         const Core::Context& context)
     {
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Post, url, &requestBody, false);
+      auto request = Core::Http::Request(
+          Core::Http::HttpMethod::Post, url, &requestBody, options.MultipartContentType, false);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "batch");
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-      if (!options.MultipartContentType.empty())
-      {
-        request.SetHeader("Content-Type", options.MultipartContentType);
-      }
       request.SetHeader("x-ms-version", "2021-04-10");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -5516,8 +5510,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       Core::IO::MemoryBodyStream requestBody(
           reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Post, url, &requestBody, false);
-      request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
+      auto request = Core::Http::Request(
+          Core::Http::HttpMethod::Post, url, &requestBody, "application/xml; charset=UTF-8", false);
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("comp", "query");
       if (options.Snapshot.HasValue() && !options.Snapshot.Value().empty())
