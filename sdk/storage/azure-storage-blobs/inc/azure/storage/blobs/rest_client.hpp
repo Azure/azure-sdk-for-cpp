@@ -13,12 +13,12 @@
 #include <type_traits>
 #include <vector>
 
+#include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/strings.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
@@ -409,11 +409,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * A set of name-value pairs associated with this blob or blob container.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
     };
     /**
      * @brief An Azure Storage container.
@@ -648,11 +644,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * A set of name-value pair associated with this blob container.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * The ETag contains a value that you can use to perform operations conditionally. If the
        * request version is 2011-08-18 or newer, the ETag value will be in quotes.
@@ -1288,11 +1280,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * A set of name-value pairs associated with this blob or blob container.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * User-defined tags for this blob.
        */
@@ -1479,11 +1467,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * A set of name-value pairs associated with this blob or blob container.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * The current sequence number for a page blob.
        */
@@ -1652,11 +1636,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * A set of name-value pair associated with this blob.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * Optional. Only valid when Object Replication is enabled for the storage container and on
        * the destination blob of the replication.

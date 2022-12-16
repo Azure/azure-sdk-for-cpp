@@ -70,6 +70,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
+#include <locale>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -1315,7 +1316,7 @@ void DumpCurlInfoToLog(std::string const& text, uint8_t* ptr, size_t size)
     {
       // Log the contents of the buffer as text, if it's printable, print the character, otherwise
       // print '.'
-      if (isprint(ptr[i + c]))
+      if (std::isprint(ptr[i + c], std::locale::classic()))
       {
         ss << ptr[i + c];
       }

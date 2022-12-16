@@ -5,145 +5,165 @@
 #include "azure/core/internal/strings.hpp"
 
 #include <algorithm>
-#include <cctype>
-#include <iterator>
 #include <limits>
+#include <locale>
 #include <stdexcept>
-#include <vector>
+#include <unordered_set>
 
 using namespace Azure::Core;
 
-Url::Url(const std::string& url)
+Url::Url(std::string const& url)
 {
-  std::string::const_iterator pos = url.begin();
+  auto urlIter = url.cbegin();
 
-  const std::string schemeEnd = "://";
-  auto schemeIter = url.find(schemeEnd);
-  if (schemeIter != std::string::npos)
   {
-    std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
-      return static_cast<char>(
-          Azure::Core::_internal::StringExtensions::ToLower(static_cast<unsigned char>(c)));
-    });
+    std::string const SchemeEnd = "://";
+    auto const schemePos = url.find(SchemeEnd);
 
-    pos = url.begin() + schemeIter + schemeEnd.length();
+    if (schemePos != std::string::npos)
+    {
+      m_scheme = Azure::Core::_internal::StringExtensions::ToLower(url.substr(0, schemePos));
+      urlIter += schemePos + SchemeEnd.length();
+    }
   }
 
-  auto hostIter
-      = std::find_if(pos, url.end(), [](char c) { return c == '/' || c == '?' || c == ':'; });
-  m_host = std::string(pos, hostIter);
-  pos = hostIter;
-
-  if (pos != url.end() && *pos == ':')
   {
-    auto port_ite = std::find_if_not(
-        pos + 1, url.end(), [](char c) { return std::isdigit(static_cast<unsigned char>(c)); });
-    auto portNumber = std::stoi(std::string(pos + 1, port_ite));
+    auto const hostIter
+        = std::find_if(urlIter, url.end(), [](auto c) { return c == '/' || c == '?' || c == ':'; });
+
+    m_host = std::string(urlIter, hostIter);
+    urlIter = hostIter;
+  }
+
+  if (urlIter == url.end())
+  {
+    return;
+  }
+
+  if (*urlIter == ':')
+  {
+    ++urlIter;
+    auto const portIter = std::find_if_not(
+        urlIter, url.end(), [](auto c) { return std::isdigit(c, std::locale::classic()); });
+
+    auto const portNumber = std::stoi(std::string(urlIter, portIter));
 
     // stoi will throw out_of_range when `int` is overflow, but we need to throw if uint16 is
     // overflow
-    auto maxPortNumberSupported = std::numeric_limits<uint16_t>::max();
-    if (portNumber > maxPortNumberSupported)
     {
-      throw std::out_of_range(
-          "The port number is out of range. The max supported number is "
-          + std::to_string(maxPortNumberSupported) + ".");
+      constexpr auto const MaxPortNumberSupported = std::numeric_limits<uint16_t>::max();
+      if (portNumber > MaxPortNumberSupported)
+      {
+        throw std::out_of_range(
+            "The port number is out of range. The max supported number is "
+            + std::to_string(MaxPortNumberSupported) + ".");
+      }
     }
+
     // cast is safe because the overflow was detected before
     m_port = static_cast<uint16_t>(portNumber);
-    pos = port_ite;
+    urlIter = portIter;
   }
 
-  if (pos != url.end() && (*pos != '/') && (*pos != '?'))
+  if (urlIter == url.end())
   {
-    // only char `\` or `?` is valid after the port (or the end of the URL). Any other char is an
+    return;
+  }
+
+  if (*urlIter != '/' && *urlIter != '?')
+  {
+    // only char '/' or '?' is valid after the port (or the end of the URL). Any other char is an
     // invalid input
     throw std::invalid_argument("The port number contains invalid characters.");
   }
 
-  if (pos != url.end() && (*pos == '/'))
+  if (*urlIter == '/')
   {
-    auto pathIter = std::find(pos + 1, url.end(), '?');
-    m_encodedPath = std::string(pos + 1, pathIter);
-    pos = pathIter;
+    ++urlIter;
+
+    auto const pathIter = std::find(urlIter, url.end(), '?');
+    m_encodedPath = std::string(urlIter, pathIter);
+
+    urlIter = pathIter;
   }
 
-  if (pos != url.end() && *pos == '?')
+  if (urlIter != url.end() && *urlIter == '?')
   {
-    auto queryIter = std::find(pos + 1, url.end(), '#');
-    AppendQueryParameters(std::string(pos + 1, queryIter));
-    pos = queryIter;
+    ++urlIter;
+    AppendQueryParameters(std::string(urlIter, std::find(urlIter, url.end(), '#')));
   }
 }
 
-std::string Url::Decode(const std::string& value)
+std::string Url::Decode(std::string const& value)
 {
-  const static std::vector<int> hexTable = []() {
-    std::vector<int> t(256, -1);
-    for (int i = 0; i < 10; ++i)
-    {
-      t[static_cast<size_t>('0') + i] = i;
-    }
-    for (int i = 10; i < 16; ++i)
-    {
-      t[static_cast<size_t>('A') + i - 10] = i;
-      t[static_cast<size_t>('a') + i - 10] = i;
-    }
-    return t;
-  }();
-
   std::string decodedValue;
-  for (size_t i = 0; i < value.size();)
+  for (size_t i = 0; i < value.size(); ++i)
   {
-    char c = value[i];
-    if (c == '+')
+    auto const c = value[i];
+    switch (c)
     {
-      decodedValue += ' ';
-      ++i;
-    }
-    else if (c == '%')
-    {
-      if (i + 2 >= value.size() || hexTable[value[i + 1]] < 0 || hexTable[value[i + 2]] < 0)
-      {
-        throw std::runtime_error("failed when decoding URL component");
-      }
-      int v = (hexTable[value[i + 1]] << 4) + hexTable[value[i + 2]];
-      decodedValue += static_cast<std::string::value_type>(v);
-      i += 3;
-    }
-    else
-    {
-      decodedValue += value[i];
-      ++i;
+      case '%':
+        if (i + 2 >= value.size() || std::isxdigit(value[i + 1], std::locale::classic())
+            || std::isxdigit(value[i + 2], std::locale::classic()))
+        {
+          throw std::runtime_error("failed when decoding URL component");
+        }
+
+        decodedValue += static_cast<char>(std::stoi(value.substr(i + 1, 2)));
+        i += 2;
+        break;
+
+      case '+':
+        decodedValue += ' ';
+        break;
+
+      default:
+        decodedValue += c;
+        break;
     }
   }
+
   return decodedValue;
 }
 
+namespace {
+// List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
+// this set.
+std::unordered_set<char> const DefaultNonUrlEncodeChars = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+    'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+    'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~',
+};
+} // namespace
+
 std::string Url::Encode(const std::string& value, const std::string& doNotEncodeSymbols)
 {
-  const char* hex = "0123456789ABCDEF";
-  std::unordered_set<unsigned char> noEncodingSymbolsSet(
+  auto const Hex = "0123456789ABCDEF";
+
+  std::unordered_set<char> const doNotEncodeSymbolsSet(
       doNotEncodeSymbols.begin(), doNotEncodeSymbols.end());
 
   std::string encoded;
-  for (char c : value)
+  for (auto const c : value)
   {
-    unsigned char uc = c;
     // encode if char is not in the default non-encoding set AND if it is NOT in chars to ignore
     // from user input
-    if (defaultNonUrlEncodeChars.find(uc) == defaultNonUrlEncodeChars.end()
-        && noEncodingSymbolsSet.find(uc) == noEncodingSymbolsSet.end())
+    if (DefaultNonUrlEncodeChars.find(c) == DefaultNonUrlEncodeChars.end()
+        && doNotEncodeSymbolsSet.find(c) == doNotEncodeSymbolsSet.end())
     {
+      auto const u8 = static_cast<uint8_t>(c);
+
       encoded += '%';
-      encoded += hex[(uc >> 4) & 0x0f];
-      encoded += hex[uc & 0x0f];
+      encoded += Hex[(u8 >> 4) & 0x0f];
+      encoded += Hex[u8 & 0x0f];
     }
     else
     {
       encoded += c;
     }
   }
+
   return encoded;
 }
 
@@ -219,9 +239,3 @@ std::string Url::GetAbsoluteUrl() const
   return GetUrlWithoutQuery(false)
       + _detail::FormatEncodedUrlQueryParameters(m_encodedQueryParameters);
 }
-
-const std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
-    = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-       'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-       'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-       'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~'};

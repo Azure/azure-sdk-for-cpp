@@ -3,6 +3,8 @@
 
 #include <azure/core/internal/strings.hpp>
 #include <gtest/gtest.h>
+
+#include <locale>
 #include <string>
 
 TEST(String, invariantCompare)
@@ -23,18 +25,18 @@ TEST(String, invariantCompare)
 TEST(String, toLowerC)
 {
   using Azure::Core::_internal::StringExtensions;
-  for (unsigned char ch = 0; ch < 255; ch += 1)
+  for (char c = 0; c <= 255; ++c)
   {
-    EXPECT_TRUE(StringExtensions::ToLower(ch) == std::tolower(ch));
+    EXPECT_TRUE(StringExtensions::ToLower(c) == std::tolower(c, std::locale::classic()));
   }
 }
 
 TEST(String, toUpperC)
 {
   using Azure::Core::_internal::StringExtensions;
-  for (unsigned char ch = 0; ch < 255; ch += 1)
+  for (char c = 0; c <= 255; ++c)
   {
-    EXPECT_TRUE(StringExtensions::ToUpper(ch) == std::toupper(ch));
+    EXPECT_TRUE(StringExtensions::ToUpper(c) == std::toupper(c, std::locale::classic()));
   }
 }
 
