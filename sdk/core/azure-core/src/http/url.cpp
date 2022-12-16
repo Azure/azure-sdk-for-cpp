@@ -97,13 +97,14 @@ Url::Url(std::string const& url)
 std::string Url::Decode(std::string const& value)
 {
   std::string decodedValue;
-  for (size_t i = 0; i < value.size(); ++i)
+  auto const valueSize = value.size();
+  for (size_t i = 0; i < valueSize; ++i)
   {
     auto const c = value[i];
     switch (c)
     {
       case '%':
-        if (i + 2 >= value.size() //
+        if ((valueSize - i) <= 2 // need at least 3 characters: "%XY"
             || !std::isxdigit(value[i + 1], std::locale::classic())
             || !std::isxdigit(value[i + 2], std::locale::classic()))
         {
