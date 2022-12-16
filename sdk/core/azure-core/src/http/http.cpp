@@ -7,6 +7,7 @@
 #include "azure/core/url.hpp"
 
 #include <algorithm>
+#include <locale>
 #include <unordered_set>
 #include <utility>
 
@@ -28,23 +29,24 @@ const HttpMethod HttpMethod::Delete("DELETE");
 const HttpMethod HttpMethod::Patch("PATCH");
 
 namespace {
-std::unordered_set<char> const ValidHeaderNameChars = {
-    ' ', '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '0', '1', '2', '3', '4', '5', '6',
-    '7', '8', '9', 'a', 'b', 'c', 'd',  'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-    'p', 'q', 'r', 's', 't', 'u', 'v',  'w', 'x', 'y', 'z', '^', '_', '`', '|', '~',
-};
+std::unordered_set<char> const HeaderNameExtraValidChars
+    = {' ', '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~'};
+
+bool IsInvalidHeaderNameChar(char c)
+{
+  return !std::isalnum(c, std::locale::classic())
+      && HeaderNameExtraValidChars.find(c) == HeaderNameExtraValidChars.end();
 }
+} // namespace
 
 void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
     Azure::Core::CaseInsensitiveMap& headers,
     std::string const& headerName,
     std::string const& headerValue)
 {
+
   // Check all chars in name are valid
-  if (std::find_if(
-          headerName.begin(),
-          headerName.end(),
-          [](auto c) { return ValidHeaderNameChars.find(c) == ValidHeaderNameChars.end(); })
+  if (std::find_if(headerName.begin(), headerName.end(), IsInvalidHeaderNameChar)
       != headerName.end())
   {
     throw std::invalid_argument("Invalid header name: " + headerName);
