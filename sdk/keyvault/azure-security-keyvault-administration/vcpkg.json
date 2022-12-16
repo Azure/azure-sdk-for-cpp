@@ -1,0 +1,7 @@
+{
+    "name": "azure-security-keyvault-administration",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "azure-core-cpp"
+    ]
+}
