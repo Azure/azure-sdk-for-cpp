@@ -103,8 +103,9 @@ std::string Url::Decode(std::string const& value)
     switch (c)
     {
       case '%':
-        if (i + 2 >= value.size() || std::isxdigit(value[i + 1], std::locale::classic())
-            || std::isxdigit(value[i + 2], std::locale::classic()))
+        if (i + 2 >= value.size() //
+            || !std::isxdigit(value[i + 1], std::locale::classic())
+            || !std::isxdigit(value[i + 2], std::locale::classic()))
         {
           throw std::runtime_error("failed when decoding URL component");
         }
