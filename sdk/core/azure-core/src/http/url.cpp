@@ -111,7 +111,7 @@ std::string Url::Decode(std::string const& value)
           throw std::runtime_error("failed when decoding URL component");
         }
 
-        decodedValue += static_cast<char>(std::stoi(value.substr(i + 1, 2)));
+        decodedValue += static_cast<char>(std::stoi(value.substr(i + 1, 2), nullptr, 16));
         i += 2;
         break;
 

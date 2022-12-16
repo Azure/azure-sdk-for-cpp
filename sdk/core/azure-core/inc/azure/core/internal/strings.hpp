@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace _internal {
       auto const rhsData = rhs.c_str();
       for (size_t i = 0; i < rhsSize; ++i)
       {
-        if (lhsData[i] != rhsData[i])
+        if (ToLower(lhsData[i]) != ToLower(rhsData[i]))
         {
           return false;
         }
