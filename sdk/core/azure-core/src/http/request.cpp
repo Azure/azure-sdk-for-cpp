@@ -32,7 +32,7 @@ Azure::Nullable<std::string> Request::GetHeader(std::string const& name)
       return header->second;
     }
   }
-  
+
   return {};
 }
 
