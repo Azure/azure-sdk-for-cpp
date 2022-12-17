@@ -49,11 +49,19 @@ set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_HEADER
     inc/azure/keyvault/administration/dll_import_export.hpp
     inc/azure/keyvault/administration/rtti.hpp
+    inc/azure/keyvault/administration/administration_client.hpp
+    inc/azure/keyvault/administration/administration_client_options.hpp
+    inc/azure/keyvault/administration/rest_client.hpp
     inc/azure/keyvault/administration.hpp
+    src/private/keyvault_administration_common_request.hpp
+    src/private/administration_constants.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_SOURCE
+    src/administration_client.cpp
+    src/rest_client.cpp
+    src/keyvault_administration_common_request.cpp
 )
 
 add_library(azure-security-keyvault-administration ${AZURE_SECURITY_KEYVAULT_ADMINISTRATION_HEADER} ${AZURE_SECURITY_KEYVAULT_ADMINISTRATION_SOURCE})
