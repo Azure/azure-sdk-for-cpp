@@ -3,6 +3,8 @@
 
 #include "azure/identity/detail/token_cache.hpp"
 
+#include "azure/identity/client_secret_credential.hpp"
+
 #include <mutex>
 
 #include <gtest/gtest.h>
@@ -427,5 +429,115 @@ TEST(TokenCache, MultithreadedAccess)
 
     EXPECT_EQ(token3.ExpiresOn, Tomorrow + 3h);
     EXPECT_EQ(token3.Token, "T4");
+  }
+}
+
+using Azure::Core::Context;
+using Azure::Core::Http::HttpTransport;
+using Azure::Core::Http::RawResponse;
+using Azure::Core::Http::Request;
+
+namespace {
+class TestTransport final : public HttpTransport {
+  int m_attemptNumber = 0;
+  std::vector<uint8_t> m_responseBuf;
+
+public:
+  // Returns token response with 3600 seconds expiration (1 hour), and the value of the
+  // client_secret parameter from the body + attempt number as token value.
+  std::unique_ptr<RawResponse> Send(Request& request, Context const&) override
+  {
+    using Azure::Core::Http::HttpStatusCode;
+    using Azure::Core::IO::BodyStream;
+    using Azure::Core::IO::MemoryBodyStream;
+
+    ++m_attemptNumber;
+
+    std::string clientSecret;
+    {
+      std::string const ClientSecretStart = "client_secret=";
+
+      auto const reqBodyVec = request.GetBodyStream()->ReadToEnd();
+      auto const reqBodyStr = std::string(reqBodyVec.cbegin(), reqBodyVec.cend());
+
+      auto clientSecretStartPos = reqBodyStr.find(ClientSecretStart);
+      if (clientSecretStartPos != std::string::npos)
+      {
+        clientSecretStartPos += ClientSecretStart.size();
+        auto const clientSecretEndPos = reqBodyStr.find('&', clientSecretStartPos);
+
+        clientSecret = (clientSecretEndPos == std::string::npos)
+            ? reqBodyStr.substr(clientSecretStartPos)
+            : reqBodyStr.substr(clientSecretStartPos, clientSecretEndPos - clientSecretStartPos);
+      }
+    }
+
+    auto const respBodyStr = std::string("{ \"access_token\" : \"") + clientSecret
+        + std::to_string(m_attemptNumber) + "\", \"expires_in\" : 3600 }";
+
+    m_responseBuf.assign(respBodyStr.cbegin(), respBodyStr.cend());
+
+    auto resp = std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "OK");
+    resp->SetBodyStream(std::make_unique<MemoryBodyStream>(m_responseBuf));
+    return resp;
+  }
+};
+} // namespace
+
+TEST(TokenCache, PerCredInstance)
+{
+  using Azure::Core::Credentials::TokenCredentialOptions;
+  using Azure::Core::Credentials::TokenRequestContext;
+  using Azure::Identity::ClientSecretCredential;
+
+  TokenRequestContext getCached;
+  getCached.Scopes = {"https://vault.azure.net/.default"};
+  getCached.MinimumExpiration = 1s;
+
+  TokenCredentialOptions credOptions;
+  credOptions.Transport.Transport = std::make_shared<TestTransport>();
+
+  ClientSecretCredential credA("TenantId", "ClientId", "SecretA", credOptions);
+  ClientSecretCredential credB("TenantId", "ClientId", "SecretB", credOptions);
+
+  {
+    auto const tokenA1 = credA.GetToken(getCached, {}); // Should populate
+    EXPECT_EQ(tokenA1.Token, "SecretA1");
+  }
+
+  {
+    auto const tokenA2 = credA.GetToken(getCached, {}); // Should get previously populated value
+    EXPECT_EQ(tokenA2.Token, "SecretA1");
+  }
+
+  {
+    auto const tokenB = credB.GetToken(getCached, {});
+    EXPECT_EQ(
+        tokenB.Token,
+        "SecretB2"); // if token cache was shared between instances, the value would be "SecretA1"
+  }
+
+  {
+    auto const tokenA3 = credA.GetToken(getCached, {}); // Should still get the cached value
+    EXPECT_EQ(tokenA3.Token, "SecretA1");
+  }
+
+  auto getNew = getCached;
+  getNew.MinimumExpiration += 3600s;
+
+  {
+    auto const tokenA4 = credA.GetToken(getNew, {}); // Should get the new value
+    EXPECT_EQ(tokenA4.Token, "SecretA3");
+  }
+
+  {
+    auto const tokenA5 = credA.GetToken(getNew, {}); // Should get the new value
+    EXPECT_EQ(tokenA5.Token, "SecretA4");
+  }
+
+  {
+    auto const tokenA6
+        = credA.GetToken(getCached, {}); // Should get the cached, recently refreshed value
+    EXPECT_EQ(tokenA6.Token, "SecretA4");
   }
 }
