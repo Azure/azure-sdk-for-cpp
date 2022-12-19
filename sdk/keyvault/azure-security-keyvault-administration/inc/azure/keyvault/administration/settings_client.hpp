@@ -8,28 +8,24 @@
  */
 
 #pragma once
-#include "administration_client_options.hpp"
+#include "settings_client_options.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
-
+#include <azure/keyvault/administration/rest_client.hpp>
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
 #if defined(TESTING_BUILD)
+
   namespace Test {
-    class KeyVaultCertificateClientTest;
+    class KeyVaultSettingsClientTest;
   }
 #endif
-  /**
-   * @brief The CertificateClient provides synchronous methods to manage KeyVaultCertificate in
-   * Azure Key Vault.
-   *
-   * @details The client supports retrieving KeyVaultCertificate.
-   */
-  class AdministrationClient
+
+  class KeyVaultSettingsClient
 #if !defined(TESTING_BUILD)
       final
 #endif
@@ -46,7 +42,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Destructor.
      *
      */
-    virtual ~AdministrationClient() = default;
+    virtual ~KeyVaultSettingsClient() = default;
 
     /**
      * @brief Construct a new administration Client object
@@ -55,20 +51,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param credential The authentication method to use.
      * @param options The options to customize the client behavior.
      */
-    explicit AdministrationClient(
+    explicit KeyVaultSettingsClient(
         std::string const& vaultUrl,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AdministrationClientOptions options = AdministrationClientOptions());
+        KeyVaultSettingsClientOptions options = KeyVaultSettingsClientOptions());
 
     /**
      * @brief Construct a new administration Client object from another administration client.
      *
      * @param administration Client An existing key vault administration client.
      */
-    explicit AdministrationClient(AdministrationClient const& administrationClient) = default;
+    explicit KeyVaultSettingsClient(KeyVaultSettingsClient const& settingsClient) = default;
+
+  public:
+    Azure::Response<Setting> UpdateSetting(
+        const UpdateSettingOptions& options,
+        const Azure::Core::Context& context = Azure::Core::Context{});
+
+    Azure::Response<Setting> GetSetting(
+        const Azure::Core::Context& context = Azure::Core::Context{}) const;
+
+    Azure::Response<SettingsListResult> GetSettings(
+        const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
   private:
-
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context) const;
@@ -82,4 +88,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::vector<std::string> const& path,
         const Azure::Nullable<std::string>& NextPageToken) const;
   };
-}}}} // namespace Azure::Security::KeyVault::Certificates
+}}}} // namespace Azure::Security::KeyVault::Administration

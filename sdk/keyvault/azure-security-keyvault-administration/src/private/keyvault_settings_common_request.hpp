@@ -26,7 +26,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
   constexpr static const char ApplicationJsonValue[] = "application/json";
   constexpr static const char ApiVersionQueryParamName[] = "api-version";
 
-  struct KeyVaultAdministrationCommonRequest final
+  struct KeyVaultSettingsCommonRequest final
   {
     static Azure::Core::Http::Request CreateRequest(
         Azure::Core::Url url,

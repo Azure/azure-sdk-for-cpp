@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "private/keyvault_administration_common_request.hpp"
+#include "private/keyvault_settings_common_request.hpp"
 #include "private/administration_constants.hpp"
 
 #include <azure/core/exception.hpp>
@@ -12,7 +12,7 @@ using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
-_detail::KeyVaultAdministrationCommonRequest::SendRequest(
+_detail::KeyVaultSettingsCommonRequest::SendRequest(
     Azure::Core::Http::_internal::HttpPipeline const& pipeline,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
@@ -35,7 +35,7 @@ _detail::KeyVaultAdministrationCommonRequest::SendRequest(
   return response;
 }
 
-Azure::Core::Http::Request _detail::KeyVaultAdministrationCommonRequest::CreateRequest(
+Azure::Core::Http::Request _detail::KeyVaultSettingsCommonRequest::CreateRequest(
     Azure::Core::Url url,
     std::string const& apiVersion,
     Azure::Core::Http::HttpMethod method,

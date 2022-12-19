@@ -12,5 +12,5 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   namespace _detail {
     /***************** Certificates Requests *****************/
-    constexpr static const char KeyVaultServicePackageName[] = "keyvault-settings";
+    constexpr static const char KeyVaultServicePackageName[] = "keyvault-administration";
 }}}}} // namespace Azure::Security::KeyVault::Administration::_detail
