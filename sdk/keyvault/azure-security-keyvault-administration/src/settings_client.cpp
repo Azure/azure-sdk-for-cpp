@@ -4,6 +4,9 @@
 #include "private/package_version.hpp"
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
+#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/keyvault/administration/settings_client.hpp>
 #include <memory>
 
@@ -17,6 +20,9 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
+
+using namespace Azure::Core::Json::_internal;
+
 std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultSettingsClient::SendRequest(
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context) const
@@ -74,62 +80,50 @@ KeyVaultSettingsClient::KeyVaultSettingsClient(
       std::move(perCallpolicies));
 }
 
-
-  Azure::Response<Setting> KeyVaultSettingsClient::UpdateSetting(
-    const UpdateSettingOptions& options,
-    const Azure::Core::Context& context)
+Azure::Response<Setting> KeyVaultSettingsClient::UpdateSetting(
+    std::string const& settingName,
+    UpdateSettingOptions const& options,
+    const Azure::Core::Context& context) const
 {
   std::string jsonBody;
   {
     auto jsonRoot = Azure::Core::Json::_internal::json::object();
-    jsonRoot["value"] = options.parameters.value;
+    jsonRoot["value"] = options.value;
     jsonBody = jsonRoot.dump();
   }
   Azure::Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<const uint8_t*>(jsonBody.data()), jsonBody.length());
-  auto url = m_vaultUrl;
-      url.SetQueryParameters({{"apiVersion", "7.4-preview.1"}});
-  auto request
-      = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Patch, url, &requestBody);
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
-  request.GetUrl().AppendQueryParameter("api-version", "7.4-preview.1");
+
+  auto request = CreateRequest(HttpMethod::Patch, {"settings", settingName}, &requestBody);
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
   {
     throw Azure::Core::RequestFailedException(pRawResponse);
   }
-  Setting response;
-  {
-    const auto& responseBody = pRawResponse->GetBody();
-    auto jsonRoot
-        = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-    response.name = jsonRoot["name"].get<std::string>();
-    response.value = jsonRoot["value"].get<std::string>();
-    if (jsonRoot.count("type") != 0)
-    {
-      response.type = SettingTypeEnum(jsonRoot["type"].get<std::string>());
-    }
-  }
+  Setting response = ParseSetting(pRawResponse->GetBody());
   return Azure::Response<Setting>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(const Azure::Core::Context& context) const
+Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(
+    std::string const& settingName,
+    const Azure::Core::Context& context) const
 {
-  auto url = m_vaultUrl;
-  url.SetQueryParameters({{"apiVersion", "7.4-preview.1"}});
-  auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-  request.GetUrl().AppendQueryParameter("api-version", "7.4-preview.1");
+  auto request = CreateRequest(HttpMethod::Get, {"settings", settingName});
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
   {
     throw Azure::Core::RequestFailedException(pRawResponse);
   }
+  Setting response = ParseSetting(pRawResponse->GetBody());
+  return Azure::Response<Setting>(std::move(response), std::move(pRawResponse));
+}
+
+Setting KeyVaultSettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) const
+{
   Setting response;
   {
-    const auto& responseBody = pRawResponse->GetBody();
     auto jsonRoot
         = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
     response.name = jsonRoot["name"].get<std::string>();
@@ -139,14 +133,14 @@ Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(const Azure::Core::C
       response.type = SettingTypeEnum(jsonRoot["type"].get<std::string>());
     }
   }
-  return Azure::Response<Setting>(std::move(response), std::move(pRawResponse));
+  return response;
 }
-
 Azure::Response<SettingsListResult> KeyVaultSettingsClient::GetSettings(
     const Azure::Core::Context& context) const
 {
   auto request = CreateRequest(Azure::Core::Http::HttpMethod::Get, {"settings"});
   auto pRawResponse = m_pipeline->Send(request, context);
+
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
   {
@@ -155,11 +149,9 @@ Azure::Response<SettingsListResult> KeyVaultSettingsClient::GetSettings(
   SettingsListResult response;
   {
     const auto& responseBody = pRawResponse->GetBody();
-    auto jsonRoot
-        = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-    for (const auto& var0 : jsonRoot.count("value") != 0 && jsonRoot["value"].is_array()
-             ? jsonRoot["value"]
-             : Azure::Core::Json::_internal::json::array())
+    auto jsonRoot = json::parse(responseBody);
+    auto settingsArray = jsonRoot["settings"];
+    for (const auto& var0 : settingsArray)
     {
       Setting vectorElement2;
       vectorElement2.name = var0["name"].get<std::string>();

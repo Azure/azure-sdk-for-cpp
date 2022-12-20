@@ -20,17 +20,6 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   /**
-   * @brief The update settings request object.
-   */
-  struct UpdateSettingRequest final
-  {
-    /**
-     * The value of the pool setting.
-     */
-    std::string value;
-  };
-
-  /**
    * @brief The type specifier of the value.
    */
   class SettingTypeEnum final {
@@ -48,7 +37,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 
   struct UpdateSettingOptions final
   {
-    UpdateSettingRequest parameters;
+    /**
+     * The value of the pool setting.
+     */
+    std::string value;
   };
 
   struct Setting final

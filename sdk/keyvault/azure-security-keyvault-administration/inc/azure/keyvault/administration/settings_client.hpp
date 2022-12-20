@@ -64,17 +64,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     explicit KeyVaultSettingsClient(KeyVaultSettingsClient const& settingsClient) = default;
 
   public:
+
     Azure::Response<Setting> UpdateSetting(
-        const UpdateSettingOptions& options,
-        const Azure::Core::Context& context = Azure::Core::Context{});
+        std::string const& settingName,
+        UpdateSettingOptions const& options,
+        const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
     Azure::Response<Setting> GetSetting(
+        std::string const& settingName,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
     Azure::Response<SettingsListResult> GetSettings(
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
   private:
+    Setting ParseSetting(std::vector<uint8_t> const& responseBody) const;
+
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context) const;

@@ -3,26 +3,73 @@
 
 #include <azure/identity/client_secret_credential.hpp>
 
-#include "settings_client_base_test.hpp"
 #include "azure/keyvault/administration/settings_client.hpp"
+#include "settings_client_base_test.hpp"
 #include <azure/core/base64.hpp>
+#include <azure/keyvault/administration/rest_client.hpp>
 #include <cstddef>
 #include <gtest/gtest.h>
 #include <string>
 #include <thread>
-
 using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Administration;
 using namespace Azure::Security::KeyVault::Administration::Test;
 
 using namespace std::chrono_literals;
 
-TEST_F(KeyVaultSettingsClientTest, CreateClient)
+TEST_F(KeyVaultSettingsClientTest, GetSettings)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   EXPECT_EQ(testName, testName);
+  CreateHSMClientForTest();
   // create certificate method contains all the checks
   auto const& client = GetClientForTest(testName);
   auto result = client.GetSettings();
-  EXPECT_FALSE(result.Value.value.size() == 0);
+  EXPECT_EQ(result.Value.value.size(), 1);
+  auto setting = result.Value.value[0];
+  EXPECT_EQ(setting.name, "AllowKeyManagementOperationsThroughARM");
+  EXPECT_EQ(setting.value, "false");
+}
+
+TEST_F(KeyVaultSettingsClientTest, GetSetting)
+{
+  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  CreateHSMClientForTest();
+  // create certificate method contains all the checks
+  auto const& client = GetClientForTest(testName);
+  auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
+  EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
+  EXPECT_EQ(result.Value.value, "false");
+}
+
+TEST_F(KeyVaultSettingsClientTest, UpdateSetting)
+{
+  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  CreateHSMClientForTest();
+  // create certificate method contains all the checks
+  auto const& client = GetClientForTest(testName);
+  {
+    UpdateSettingOptions options;
+    options.value = "false";
+    auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+
+    EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.value, "false");
+  }
+  {
+    UpdateSettingOptions options;
+    options.value = "true";
+    auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+
+    EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.value, "true");
+  }
+  {
+    UpdateSettingOptions options;
+    options.value = "false";
+    auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+
+    EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.value, "false");
+  }
 }

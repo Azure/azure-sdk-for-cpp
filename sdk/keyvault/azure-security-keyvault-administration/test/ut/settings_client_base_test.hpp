@@ -31,6 +31,7 @@ namespace Azure {
   protected:
     std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
+    std::string m_keyVaultHsmUrl;
     std::chrono::milliseconds m_defaultWait = 20s;
 
     // Required to rename the test propertly once the test is started.
@@ -42,13 +43,20 @@ namespace Azure {
       m_testContext.RenameTest(testName);
       return *m_client;
     }
-
+    void CreateHSMClientForTest(std::string hsmUrl = "")
+    {
+      KeyVaultSettingsClientOptions options;
+      m_client = InitTestClient<
+          Azure::Security::KeyVault::Administration::KeyVaultSettingsClient,
+          Azure::Security::KeyVault::Administration::KeyVaultSettingsClientOptions>(
+          hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
+    }
     // Runs before every test.
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
-
+      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
       // Options and credential for the client
       KeyVaultSettingsClientOptions options;
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
