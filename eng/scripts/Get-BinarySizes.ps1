@@ -93,7 +93,7 @@ function getToolChain {
         return "MSVC"
     }
 
-	if ($OSVmImage -matcj "windows-\d{4}") {
+	if ($OSVmImage -match "windows-\d{4}") {
         return "MSVC17"
     }
 
