@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     /**
      * @brief Update a setting
      *
-     * @param setting Name of the setting to update
+     * @param settingName Name of the setting to update
      * @param options Options for updating the setting
      * @param context Operation Context
      *
@@ -82,7 +82,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Gets an existing setting
      *
      * @param settingName Name of setting to get
-     * @param options The options to customize the client behavior.
+     * @param context Operation context
      *
      * @returns response containing the setting
      */
@@ -93,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     /**
      * @brief Gets all settings
      *
-     * @param options The options to customize the client behavior.
+     * @param context Operation context
      *
      * @returns Response containing a list of settings
      */
