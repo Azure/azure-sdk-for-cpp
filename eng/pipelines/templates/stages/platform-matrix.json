@@ -29,12 +29,25 @@
       }
     },
     {
-      "StaticConfigs": {
-        "Win2019": {
+      "StaticConfigs": { 
+        "Win2019_x64_Release": {
           "OSVmImage": "MMS2019",
           "Pool": "azsdk-pool-mms-win-2019-general",
-          "CMAKE_GENERATOR": "Visual Studio 16 2019"
+          "CMAKE_GENERATOR": "Visual Studio 16 2019",
+          "CMAKE_GENERATOR_PLATFORM": "x64",
+          "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
+          "BuildArgs": "--parallel 8 --config Release"
+        }
+      }, 
+      "BuildSettings": {
+        "Curl": {
+          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
         },
+        "WinHttp": { }
+      }
+    },
+    {
+      "StaticConfigs": {
         "Win2022": {
           "OSVmImage": "MMS2022",
           "Pool": "azsdk-pool-mms-win-2022-general",
@@ -64,15 +77,9 @@
     },
     {
       "StaticConfigs": {
-        "Win2019": {
-          "OSVmImage": "windows-2019",
-          "Pool": "Azure Pipelines",
-          "RunProxyTests": true,
-          "CMAKE_GENERATOR": "Visual Studio 16 2019"
-        },
         "Win2022": {
           "OSVmImage": "windows-2022",
-          "Pool": "Azure Pipelines",
+          "Pool": "azsdk-pool-mms-win-2022-general",
           "RunProxyTests": true,
           "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
@@ -97,7 +104,7 @@
     },
     {
       "StaticConfigs": {
-        "Win2019": {
+        "Win2022": {
           "VcpkgInstall": "openssl",
           "OSVmImage": "MMS2022",
           "Pool": "azsdk-pool-mms-win-2022-general",
