@@ -22,8 +22,6 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
-
-
   struct KeyVaultSettingsCommonRequest final
   {
     static Azure::Core::Http::Request CreateRequest(

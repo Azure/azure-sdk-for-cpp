@@ -12,8 +12,7 @@ using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 using namespace Azure::Security::KeyVault::Administration::_detail;
 
-std::unique_ptr<Azure::Core::Http::RawResponse>
-_detail::KeyVaultSettingsCommonRequest::SendRequest(
+std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultSettingsCommonRequest::SendRequest(
     Azure::Core::Http::_internal::HttpPipeline const& pipeline,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)

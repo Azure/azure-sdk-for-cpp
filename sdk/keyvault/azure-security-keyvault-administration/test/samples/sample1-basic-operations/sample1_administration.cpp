@@ -46,12 +46,14 @@ int main()
 
     std::cout << "Retreived setting with name " << setting.Name << ", with value " << setting.Value;
 
-    UpdateSettingOptions options; 
+    UpdateSettingOptions options;
     options.Value = setting.Value;
 
-    Setting updatedSetting = settingsClient.UpdateSetting(settingsList.Value[0].Name,options).Value;
+    Setting updatedSetting
+        = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
 
-    std::cout << "Retreived updated setting with name " << updatedSetting.Name << ", with value " << updatedSetting.Value;
+    std::cout << "Retreived updated setting with name " << updatedSetting.Name << ", with value "
+              << updatedSetting.Value;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

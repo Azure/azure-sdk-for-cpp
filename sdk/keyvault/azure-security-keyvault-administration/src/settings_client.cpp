@@ -128,8 +128,9 @@ Azure::Response<SettingsListResult> SettingsClient::GetSettings(
     auto settingsArray = jsonRoot[SettingNodeName];
     for (const auto& setting : settingsArray)
     {
-      auto const settingString = setting.dump(); 
-      Setting parsedSetting = ParseSetting(std::vector<uint8_t>(settingString.begin(), settingString.end()));
+      auto const settingString = setting.dump();
+      Setting parsedSetting
+          = ParseSetting(std::vector<uint8_t>(settingString.begin(), settingString.end()));
       response.Value.emplace_back(std::move(parsedSetting));
     }
   }
