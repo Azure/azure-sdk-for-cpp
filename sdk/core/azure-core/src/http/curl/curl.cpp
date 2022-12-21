@@ -2051,8 +2051,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       + request.GetUrl().GetHost() + (port != 0 ? ":" + std::to_string(port) : "");
   std::string const connectionKey = GetConnectionKey(hostDisplayName, options);
 
-  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Using connection key: " + connectionKey);
-
   {
     decltype(CurlConnectionPool::g_curlConnectionPool
                  .ConnectionPoolIndex)::mapped_type connectionsToBeReset;
@@ -2078,30 +2076,22 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       }
       else
       {
-        // Find the first reusable connection from the pool.
-        std::unique_ptr<CurlNetworkConnection> connection;
-        while (!hostPoolIndex->second.empty())
-        {
-          connection = std::move(hostPoolIndex->second.front());
-          hostPoolIndex->second.pop_front();
-          if (!connection->IsShutdown() && !connection->IsExpired())
-          {
-            break;
-          }
-        }
+        // get ref to first connection
+        auto fistConnectionIterator = hostPoolIndex->second.begin();
+        // move the connection ref to temp ref
+        auto connection = std::move(*fistConnectionIterator);
+        // Remove the connection ref from list
+        hostPoolIndex->second.erase(fistConnectionIterator);
 
         // Remove index if there are no more connections
-        if (hostPoolIndex->second.empty())
+        if (hostPoolIndex->second.size() == 0)
         {
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
 
-        if (connection)
-        {
-          Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
-          // return connection ref
-          return connection;
-        }
+        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
+        // return connection ref
+        return connection;
       }
     }
   }
