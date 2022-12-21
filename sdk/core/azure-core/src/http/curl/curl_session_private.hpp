@@ -314,7 +314,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param context A context to control the request lifetime.
      * @param reuseInternalBuffer Indicates whether the internal buffer should be reused.
-     * 
+     *
      * @return Curl code. CURLE_OK if successful, otherwise CURLE_RECV_ERROR.
      */
     CURLcode ReadStatusLineAndHeadersFromRawResponse(
