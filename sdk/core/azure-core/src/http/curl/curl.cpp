@@ -356,7 +356,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
        getConnectionOpenIntent++)
   {
     performing = session->Perform(context);
-    if (performing != CURLE_UNSUPPORTED_PROTOCOL && performing != CURLE_SEND_ERROR)
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL && performing != CURLE_SEND_ERROR
+        && performing != CURLE_RECV_ERROR)
     {
       break;
     }
@@ -453,7 +454,11 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Parse server response");
-  ReadStatusLineAndHeadersFromRawResponse(context);
+  result = ReadStatusLineAndHeadersFromRawResponse(context);
+  if (result != CURLE_OK)
+  {
+    return result;
+  }
 
   // non-PUT request are ready to be stream at this point. Only PUT request would start an uploading
   // transfer where we want to maintain the `PERFORM` state.
@@ -478,7 +483,11 @@ CURLcode CurlSession::Perform(Context const& context)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
     // We don't need to upload body, just parse the response from Server and return
-    ReadStatusLineAndHeadersFromRawResponse(context, true);
+    result = ReadStatusLineAndHeadersFromRawResponse(context, true);
+    if (result != CURLE_OK)
+    {
+      return result;
+    }
     m_sessionState = SessionState::STREAMING;
     return result;
   }
@@ -492,7 +501,11 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Upload completed. Parse server response");
-  ReadStatusLineAndHeadersFromRawResponse(context);
+  result = ReadStatusLineAndHeadersFromRawResponse(context);
+  if (result != CURLE_OK)
+  {
+    return result;
+  }
   // If no throw at this point, the request is ready to stream.
   // If any throw happened before this point, the state will remain as PERFORM.
   m_sessionState = SessionState::STREAMING;
@@ -800,7 +813,7 @@ void CurlSession::ParseChunkSize(Context const& context)
 }
 
 // Read status line plus headers to create a response with no body
-void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
+CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     Context const& context,
     bool reuseInternalBuffer)
 {
@@ -831,8 +844,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       if (bufferSize == 0)
       {
         // closed connection, prevent application from keep trying to pull more bytes from the wire
-        throw TransportException(
-            "Connection was closed by the server while trying to read a response");
+        return CURLE_RECV_ERROR;
       }
       // returns the number of bytes parsed up to the body Start
       bytesParsed = parser.Parse(this->m_readBuffer, bufferSize);
@@ -859,7 +871,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
-    return;
+    return CURLE_OK;
   }
 
   // headers are already lowerCase at this point
@@ -891,7 +903,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   {
     this->m_contentLength
         = static_cast<int64_t>(std::stoull(isContentLengthHeaderInResponse->second.data()));
-    return;
+    return CURLE_OK;
   }
 
   // No content-length from headers, check transfer-encoding
@@ -917,14 +929,13 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
         {
           // closed connection, prevent application from keep trying to pull more bytes from the
           // wire
-          throw TransportException(
-              "Connection was closed by the server while trying to read a response");
+          return CURLE_RECV_ERROR;
         }
         this->m_bodyStartInBuffer = 0;
       }
 
       ParseChunkSize(context);
-      return;
+      return CURLE_OK;
     }
   }
   /*
@@ -934,6 +945,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
        number of octets received prior to the server closing the
        connection.
   */
+  return CURLE_OK;
 }
 
 /**
@@ -2039,6 +2051,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       + request.GetUrl().GetHost() + (port != 0 ? ":" + std::to_string(port) : "");
   std::string const connectionKey = GetConnectionKey(hostDisplayName, options);
 
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Using connection key: " + connectionKey);
+
   {
     decltype(CurlConnectionPool::g_curlConnectionPool
                  .ConnectionPoolIndex)::mapped_type connectionsToBeReset;
@@ -2064,22 +2078,30 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
       }
       else
       {
-        // get ref to first connection
-        auto fistConnectionIterator = hostPoolIndex->second.begin();
-        // move the connection ref to temp ref
-        auto connection = std::move(*fistConnectionIterator);
-        // Remove the connection ref from list
-        hostPoolIndex->second.erase(fistConnectionIterator);
+        // Find the first reusable connection from the pool.
+        std::unique_ptr<CurlNetworkConnection> connection;
+        while (!hostPoolIndex->second.empty())
+        {
+          connection = std::move(hostPoolIndex->second.front());
+          hostPoolIndex->second.pop_front();
+          if (!connection->IsShutdown() && !connection->IsExpired())
+          {
+            break;
+          }
+        }
 
         // Remove index if there are no more connections
-        if (hostPoolIndex->second.size() == 0)
+        if (hostPoolIndex->second.empty())
         {
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
 
-        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
-        // return connection ref
-        return connection;
+        if (connection)
+        {
+          Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
+          // return connection ref
+          return connection;
+        }
       }
     }
   }
