@@ -22,9 +22,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
-  constexpr static const char ContentHeaderName[] = "content-type";
-  constexpr static const char ApplicationJsonValue[] = "application/json";
-  constexpr static const char ApiVersionQueryParamName[] = "api-version";
+
 
   struct KeyVaultSettingsCommonRequest final
   {

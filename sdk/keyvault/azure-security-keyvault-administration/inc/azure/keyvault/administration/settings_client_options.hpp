@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines the supported options to create a Key Vault Certificate client.
+ * @brief Defines the supported options to create a Key Vault Administration client.
  *
  */
 

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
 #include "azure/keyvault/shared/keyvault_shared.hpp"
 #include "private/administration_constants.hpp"
 #include "private/keyvault_settings_common_request.hpp"
@@ -11,6 +14,7 @@
 #include <memory>
 
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::_detail;
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Security::KeyVault::_detail;
 
@@ -38,20 +42,6 @@ Azure::Core::Http::Request KeyVaultSettingsClient::CreateRequest(
 {
   return Azure::Security::KeyVault::_detail::KeyVaultSettingsCommonRequest::CreateRequest(
       m_vaultUrl, m_apiVersion, method, path, content);
-}
-
-Azure::Core::Http::Request KeyVaultSettingsClient::ContinuationTokenRequest(
-    std::vector<std::string> const& path,
-    const Azure::Nullable<std::string>& NextPageToken) const
-{
-  if (NextPageToken)
-  {
-    // Using a continuation token requires to send the request to the continuation token URL instead
-    // of the default URL which is used only for the first page.
-    Azure::Core::Url nextPageUrl(NextPageToken.Value());
-    return Azure::Core::Http::Request(HttpMethod::Get, nextPageUrl);
-  }
-  return CreateRequest(HttpMethod::Get, path);
 }
 
 KeyVaultSettingsClient::KeyVaultSettingsClient(
@@ -88,13 +78,13 @@ Azure::Response<Setting> KeyVaultSettingsClient::UpdateSetting(
   std::string jsonBody;
   {
     auto jsonRoot = Azure::Core::Json::_internal::json::object();
-    jsonRoot["value"] = options.value;
+    jsonRoot[ValueField] = options.Value;
     jsonBody = jsonRoot.dump();
   }
   Azure::Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<const uint8_t*>(jsonBody.data()), jsonBody.length());
 
-  auto request = CreateRequest(HttpMethod::Patch, {"settings", settingName}, &requestBody);
+  auto request = CreateRequest(HttpMethod::Patch, {SettingPathName, settingName}, &requestBody);
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
@@ -109,7 +99,7 @@ Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(
     std::string const& settingName,
     const Azure::Core::Context& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {"settings", settingName});
+  auto request = CreateRequest(HttpMethod::Get, {SettingPathName, settingName});
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
@@ -120,25 +110,10 @@ Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(
   return Azure::Response<Setting>(std::move(response), std::move(pRawResponse));
 }
 
-Setting KeyVaultSettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) const
-{
-  Setting response;
-  {
-    auto jsonRoot
-        = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-    response.name = jsonRoot["name"].get<std::string>();
-    response.value = jsonRoot["value"].get<std::string>();
-    if (jsonRoot.count("type") != 0)
-    {
-      response.type = SettingTypeEnum(jsonRoot["type"].get<std::string>());
-    }
-  }
-  return response;
-}
 Azure::Response<SettingsListResult> KeyVaultSettingsClient::GetSettings(
     const Azure::Core::Context& context) const
 {
-  auto request = CreateRequest(Azure::Core::Http::HttpMethod::Get, {"settings"});
+  auto request = CreateRequest(Azure::Core::Http::HttpMethod::Get, {SettingPathName});
   auto pRawResponse = m_pipeline->Send(request, context);
 
   auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -150,18 +125,29 @@ Azure::Response<SettingsListResult> KeyVaultSettingsClient::GetSettings(
   {
     const auto& responseBody = pRawResponse->GetBody();
     auto jsonRoot = json::parse(responseBody);
-    auto settingsArray = jsonRoot["settings"];
-    for (const auto& var0 : settingsArray)
+    auto settingsArray = jsonRoot[SettingNodeName];
+    for (const auto& setting : settingsArray)
     {
-      Setting vectorElement2;
-      vectorElement2.name = var0["name"].get<std::string>();
-      vectorElement2.value = var0["value"].get<std::string>();
-      if (var0.count("type") != 0)
-      {
-        vectorElement2.type = SettingTypeEnum(var0["type"].get<std::string>());
-      }
-      response.value.emplace_back(std::move(vectorElement2));
+      auto const settingString = setting.dump(); 
+      Setting parsedSetting = ParseSetting(std::vector<uint8_t>(settingString.begin(), settingString.end()));
+      response.Value.emplace_back(std::move(parsedSetting));
     }
   }
   return Azure::Response<SettingsListResult>(std::move(response), std::move(pRawResponse));
+}
+
+Setting KeyVaultSettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) const
+{
+  Setting response;
+  {
+    auto jsonRoot
+        = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+    response.Name = jsonRoot[NameField].get<std::string>();
+    response.Value = jsonRoot[ValueField].get<std::string>();
+    if (jsonRoot.count(TypeField) != 0)
+    {
+      response.Type = SettingTypeEnum(jsonRoot[TypeField].get<std::string>());
+    }
+  }
+  return response;
 }

@@ -105,7 +105,7 @@ if (BUILD_PERFORMANCE_TESTS)
 endif()
 
 if(BUILD_SAMPLES)
-  #add_subdirectory(test/samples)
+  add_subdirectory(test/samples)
 endif()
 
 az_vcpkg_export(

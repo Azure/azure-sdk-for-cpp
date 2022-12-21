@@ -64,16 +64,39 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     explicit KeyVaultSettingsClient(KeyVaultSettingsClient const& settingsClient) = default;
 
   public:
-
+    /**
+     * @brief Update a setting
+     *
+     * @param setting Name of the setting to update
+     * @param options Options for updating the setting
+     * @param context Operation Context
+     *
+     * @returns Response containing the new updated setting
+     */
     Azure::Response<Setting> UpdateSetting(
         std::string const& settingName,
         UpdateSettingOptions const& options,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
+    /**
+     * @brief Gets an existing setting
+     *
+     * @param settingName Name of setting to get
+     * @param options The options to customize the client behavior.
+     *
+     * @returns response containing the setting
+     */
     Azure::Response<Setting> GetSetting(
         std::string const& settingName,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
+    /**
+     * @brief Gets all settings
+     *
+     * @param options The options to customize the client behavior.
+     *
+     * @returns Response containing a list of settings
+     */
     Azure::Response<SettingsListResult> GetSettings(
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
@@ -88,9 +111,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path = {},
         Azure::Core::IO::BodyStream* content = nullptr) const;
-
-    Azure::Core::Http::Request ContinuationTokenRequest(
-        std::vector<std::string> const& path,
-        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Administration

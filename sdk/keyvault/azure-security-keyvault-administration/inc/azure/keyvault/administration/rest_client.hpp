@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
 #include <azure/core/context.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/nullable.hpp>
@@ -24,10 +27,24 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
    */
   class SettingTypeEnum final {
   public:
+    /**
+     * @brief Default constructor
+     */
     SettingTypeEnum() = default;
+
+    /**
+     * @brief Constructor
+     * @param value string value
+     */
     explicit SettingTypeEnum(std::string value) : m_value(std::move(value)) {}
     bool operator==(const SettingTypeEnum& other) const { return m_value == other.m_value; }
     bool operator!=(const SettingTypeEnum& other) const { return !(*this == other); }
+
+    /**
+     * @brief Returns value as string
+     *
+     * @returns String value
+     */
     const std::string& ToString() const { return m_value; }
     AZURE_SECURITY_KEYVAULT_ADMINISTRATION_DLLEXPORT const static SettingTypeEnum Boolean;
 
@@ -35,28 +52,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     std::string m_value;
   };
 
+  /**
+   * @brief Update Security Options
+   */
   struct UpdateSettingOptions final
   {
     /**
      * The value of the pool setting.
      */
-    std::string value;
+    std::string Value;
   };
 
+  /**
+   * @brief Setting Model
+   */
   struct Setting final
   {
     /**
      * The account setting to be updated.
      */
-    std::string name;
+    std::string Name;
     /**
      * The value of the pool setting.
      */
-    std::string value;
+    std::string Value;
     /**
      * The type specifier of the value.
      */
-    Azure::Nullable<SettingTypeEnum> type;
+    Azure::Nullable<SettingTypeEnum> Type;
   };
 
   /**
@@ -68,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * A response message containing a list of account settings with their
      * associated value.
      */
-    std::vector<Setting> value;
+    std::vector<Setting> Value;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Administration

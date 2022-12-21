@@ -25,10 +25,10 @@ TEST_F(KeyVaultSettingsClientTest, GetSettings)
   // create certificate method contains all the checks
   auto const& client = GetClientForTest(testName);
   auto result = client.GetSettings();
-  EXPECT_EQ(result.Value.value.size(), 1);
-  auto setting = result.Value.value[0];
-  EXPECT_EQ(setting.name, "AllowKeyManagementOperationsThroughARM");
-  EXPECT_EQ(setting.value, "false");
+  EXPECT_EQ(result.Value.Value.size(), 1);
+  auto setting = result.Value.Value[0];
+  EXPECT_EQ(setting.Name, "AllowKeyManagementOperationsThroughARM");
+  EXPECT_EQ(setting.Value, "false");
 }
 
 TEST_F(KeyVaultSettingsClientTest, GetSetting)
@@ -38,8 +38,8 @@ TEST_F(KeyVaultSettingsClientTest, GetSetting)
   // create certificate method contains all the checks
   auto const& client = GetClientForTest(testName);
   auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
-  EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
-  EXPECT_EQ(result.Value.value, "false");
+  EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+  EXPECT_EQ(result.Value.Value, "false");
 }
 
 TEST_F(KeyVaultSettingsClientTest, UpdateSetting)
@@ -50,26 +50,26 @@ TEST_F(KeyVaultSettingsClientTest, UpdateSetting)
   auto const& client = GetClientForTest(testName);
   {
     UpdateSettingOptions options;
-    options.value = "false";
+    options.Value = "false";
     auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
 
-    EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.value, "false");
+    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.Value, "false");
   }
   {
     UpdateSettingOptions options;
-    options.value = "true";
+    options.Value = "true";
     auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
 
-    EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.value, "true");
+    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.Value, "true");
   }
   {
     UpdateSettingOptions options;
-    options.value = "false";
+    options.Value = "false";
     auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
 
-    EXPECT_EQ(result.Value.name, "AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.value, "false");
+    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.Value, "false");
   }
 }

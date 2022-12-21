@@ -10,6 +10,7 @@
 
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
+using namespace Azure::Security::KeyVault::Administration::_detail;
 
 std::unique_ptr<Azure::Core::Http::RawResponse>
 _detail::KeyVaultSettingsCommonRequest::SendRequest(
