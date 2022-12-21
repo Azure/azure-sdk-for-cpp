@@ -18,18 +18,7 @@
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
-#if defined(TESTING_BUILD)
-
-  namespace Test {
-    class SettingsClientTest;
-  }
-#endif
-
-  class SettingsClient
-#if !defined(TESTING_BUILD)
-      final
-#endif
-  {
+  class SettingsClient final {
 
   private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
