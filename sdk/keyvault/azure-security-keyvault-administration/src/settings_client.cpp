@@ -27,7 +27,7 @@ using namespace Azure::Core::Http::_internal;
 
 using namespace Azure::Core::Json::_internal;
 
-std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultSettingsClient::SendRequest(
+std::unique_ptr<Azure::Core::Http::RawResponse> SettingsClient::SendRequest(
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context) const
 {
@@ -35,7 +35,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultSettingsClient::SendRequ
       *m_pipeline, request, context);
 }
 
-Azure::Core::Http::Request KeyVaultSettingsClient::CreateRequest(
+Azure::Core::Http::Request SettingsClient::CreateRequest(
     Azure::Core::Http::HttpMethod method,
     std::vector<std::string> const& path,
     Azure::Core::IO::BodyStream* content) const
@@ -44,10 +44,10 @@ Azure::Core::Http::Request KeyVaultSettingsClient::CreateRequest(
       m_vaultUrl, m_apiVersion, method, path, content);
 }
 
-KeyVaultSettingsClient::KeyVaultSettingsClient(
+SettingsClient::SettingsClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    KeyVaultSettingsClientOptions options)
+    SettingsClientOptions options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
   auto apiVersion = options.ApiVersion;
@@ -70,7 +70,7 @@ KeyVaultSettingsClient::KeyVaultSettingsClient(
       std::move(perCallpolicies));
 }
 
-Azure::Response<Setting> KeyVaultSettingsClient::UpdateSetting(
+Azure::Response<Setting> SettingsClient::UpdateSetting(
     std::string const& settingName,
     UpdateSettingOptions const& options,
     const Azure::Core::Context& context) const
@@ -95,7 +95,7 @@ Azure::Response<Setting> KeyVaultSettingsClient::UpdateSetting(
   return Azure::Response<Setting>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(
+Azure::Response<Setting> SettingsClient::GetSetting(
     std::string const& settingName,
     const Azure::Core::Context& context) const
 {
@@ -110,7 +110,7 @@ Azure::Response<Setting> KeyVaultSettingsClient::GetSetting(
   return Azure::Response<Setting>(std::move(response), std::move(pRawResponse));
 }
 
-Azure::Response<SettingsListResult> KeyVaultSettingsClient::GetSettings(
+Azure::Response<SettingsListResult> SettingsClient::GetSettings(
     const Azure::Core::Context& context) const
 {
   auto request = CreateRequest(Azure::Core::Http::HttpMethod::Get, {SettingPathName});
@@ -136,7 +136,7 @@ Azure::Response<SettingsListResult> KeyVaultSettingsClient::GetSettings(
   return Azure::Response<SettingsListResult>(std::move(response), std::move(pRawResponse));
 }
 
-Setting KeyVaultSettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) const
+Setting SettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) const
 {
   Setting response;
   {

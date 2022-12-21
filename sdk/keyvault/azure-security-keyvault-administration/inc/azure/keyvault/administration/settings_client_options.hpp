@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
    * @brief Define the options to create an SDK Administration client.
    *
    */
-  struct KeyVaultSettingsClientOptions final : public Azure::Core::_internal::ClientOptions
+  struct SettingsClientOptions final : public Azure::Core::_internal::ClientOptions
   {
     /**
      * @brief Service Version used.

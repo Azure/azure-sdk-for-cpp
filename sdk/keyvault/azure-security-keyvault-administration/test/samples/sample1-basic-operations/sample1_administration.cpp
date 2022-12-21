@@ -3,7 +3,7 @@
 
 /**
  * @brief This sample provides the code implementation to use the Key Vault Settings SDK client for
- * C++ to get one or more settings.
+ * C++ to get one or more settings, and update a setting value.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_HSM_URL:  To the Key Vault HSM URL.
@@ -33,10 +33,7 @@ int main()
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   // create client
-  KeyVaultSettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
-
-  std::string secretName("MySampleSecret");
-  std::string secretValue("my secret value");
+  SettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
 
   try
   {
@@ -48,6 +45,13 @@ int main()
     Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
 
     std::cout << "Retreived setting with name " << setting.Name << ", with value " << setting.Value;
+
+    UpdateSettingOptions options; 
+    options.Value = setting.Value;
+
+    Setting updatedSetting = settingsClient.UpdateSetting(settingsList.Value[0].Name,options).Value;
+
+    std::cout << "Retreived updated setting with name " << updatedSetting.Name << ", with value " << updatedSetting.Value;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

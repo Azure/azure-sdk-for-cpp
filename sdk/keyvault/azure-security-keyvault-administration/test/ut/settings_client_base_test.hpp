@@ -21,12 +21,11 @@ namespace Azure {
       namespace Administration {
         namespace Test {
 
-  class KeyVaultSettingsClientTest : public Azure::Core::Test::TestBase,
-                                        public ::testing::WithParamInterface<int> {
+  class SettingsClientTest : public Azure::Core::Test::TestBase,
+                             public ::testing::WithParamInterface<int> {
 
   private:
-    std::unique_ptr<Azure::Security::KeyVault::Administration::KeyVaultSettingsClient>
-        m_client;
+    std::unique_ptr<Azure::Security::KeyVault::Administration::SettingsClient> m_client;
 
   protected:
     std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
@@ -36,7 +35,7 @@ namespace Azure {
 
     // Required to rename the test propertly once the test is started.
     // We can only know the test instance name until the test instance is run.
-    Azure::Security::KeyVault::Administration::KeyVaultSettingsClient const& GetClientForTest(
+    Azure::Security::KeyVault::Administration::SettingsClient const& GetClientForTest(
         std::string const& testName)
     {
       // set the interceptor for the current test
@@ -45,10 +44,10 @@ namespace Azure {
     }
     void CreateHSMClientForTest(std::string hsmUrl = "")
     {
-      KeyVaultSettingsClientOptions options;
+      SettingsClientOptions options;
       m_client = InitTestClient<
-          Azure::Security::KeyVault::Administration::KeyVaultSettingsClient,
-          Azure::Security::KeyVault::Administration::KeyVaultSettingsClientOptions>(
+          Azure::Security::KeyVault::Administration::SettingsClient,
+          Azure::Security::KeyVault::Administration::SettingsClientOptions>(
           hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
     }
     // Runs before every test.
@@ -58,14 +57,14 @@ namespace Azure {
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
       // Options and credential for the client
-      KeyVaultSettingsClientOptions options;
+      SettingsClientOptions options;
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
-          Azure::Security::KeyVault::Administration::KeyVaultSettingsClient,
-          Azure::Security::KeyVault::Administration::KeyVaultSettingsClientOptions>(
+          Azure::Security::KeyVault::Administration::SettingsClient,
+          Azure::Security::KeyVault::Administration::SettingsClientOptions>(
           m_keyVaultUrl, m_credential, options);
 
       // Update default time depending on test mode.
@@ -80,7 +79,5 @@ namespace Azure {
     {
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
-
-    
   };
-}}}}} // namespace Azure::Security::KeyVault::Certificates::Test
+}}}}} // namespace Azure::Security::KeyVault::Administration::Test

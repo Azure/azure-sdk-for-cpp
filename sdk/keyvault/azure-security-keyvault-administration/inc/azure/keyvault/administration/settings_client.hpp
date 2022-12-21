@@ -21,11 +21,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 #if defined(TESTING_BUILD)
 
   namespace Test {
-    class KeyVaultSettingsClientTest;
+    class SettingsClientTest;
   }
 #endif
 
-  class KeyVaultSettingsClient
+  class SettingsClient
 #if !defined(TESTING_BUILD)
       final
 #endif
@@ -42,26 +42,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Destructor.
      *
      */
-    virtual ~KeyVaultSettingsClient() = default;
+    virtual ~SettingsClient() = default;
 
     /**
-     * @brief Construct a new administration Client object
+     * @brief Construct a new settings client object
      *
      * @param vaultUrl The URL address where the client will send the requests to.
      * @param credential The authentication method to use.
      * @param options The options to customize the client behavior.
      */
-    explicit KeyVaultSettingsClient(
+    explicit SettingsClient(
         std::string const& vaultUrl,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        KeyVaultSettingsClientOptions options = KeyVaultSettingsClientOptions());
+        SettingsClientOptions options = SettingsClientOptions());
 
     /**
-     * @brief Construct a new administration Client object from another administration client.
+     * @brief Construct a new settings client object from another settings client.
      *
-     * @param administration Client An existing key vault administration client.
+     * @param settingsClient An existing key vault settings client.
      */
-    explicit KeyVaultSettingsClient(KeyVaultSettingsClient const& settingsClient) = default;
+    explicit SettingsClient(SettingsClient const& settingsClient) = default;
 
   public:
     /**
