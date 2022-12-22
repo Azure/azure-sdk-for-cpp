@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Centralize the string constants used by Key Vault Certificates Client.
+ * @brief Centralize the string constants used by Key Vault Administration Client.
  *
  */
 

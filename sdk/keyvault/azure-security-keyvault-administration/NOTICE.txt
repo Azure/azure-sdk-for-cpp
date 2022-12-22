@@ -1,4 +1,4 @@
-azure-template
+azure-security-keyvault-administration
 
 NOTICES AND INFORMATION
 Do Not Translate or Localize

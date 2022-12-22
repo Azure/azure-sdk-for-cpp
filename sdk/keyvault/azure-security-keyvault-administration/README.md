@@ -1,4 +1,4 @@
-# Azure Security Keyvault Administration Package client library for C++
+# Azure Security KeyVault Administration client library for C++
 
 Azure Security Keyvault Administration Package client library for C++ (`azure-security-keyvault-administration`) matches necessary patterns that the development team has established to create a unified SDK written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
 

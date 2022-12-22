@@ -20,21 +20,22 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
+namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
+  namespace _detail {
 
-  struct KeyVaultSettingsCommonRequest final
-  {
-    static Azure::Core::Http::Request CreateRequest(
-        Azure::Core::Url url,
-        std::string const& apiVersion,
-        Azure::Core::Http::HttpMethod method,
-        std::vector<std::string> const& path,
-        Azure::Core::IO::BodyStream* content);
+    struct KeyVaultSettingsCommonRequest final
+    {
+      static Azure::Core::Http::Request CreateRequest(
+          Azure::Core::Url url,
+          std::string const& apiVersion,
+          Azure::Core::Http::HttpMethod method,
+          std::vector<std::string> const& path,
+          Azure::Core::IO::BodyStream* content);
 
-    static std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::_internal::HttpPipeline const& pipeline,
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context);
-  };
+      static std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
+          Azure::Core::Http::_internal::HttpPipeline const& pipeline,
+          Azure::Core::Http::Request& request,
+          Azure::Core::Context const& context);
+    };
 
-}}}} // namespace Azure::Security::KeyVault::_detail
+}}}}} // namespace Azure::Security::KeyVault::Administration::_detail

@@ -8,22 +8,25 @@
  */
 
 #pragma once
-#include "settings_client_options.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/keyvault/administration/rest_client.hpp>
+#include <azure/keyvault/administration/settings_client_options.hpp>
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
+  /**
+   * @brief Settings Client class.
+   */
   class SettingsClient final {
 
   private:
-    // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
+    // Using a shared pipeline for a client to share it with LRO (like delete key).
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
   public:
@@ -34,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     virtual ~SettingsClient() = default;
 
     /**
-     * @brief Construct a new settings client object
+     * @brief Construct a new settings client object.
      *
      * @param vaultUrl The URL address where the client will send the requests to.
      * @param credential The authentication method to use.
@@ -54,13 +57,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 
   public:
     /**
-     * @brief Update a setting
+     * @brief Update a setting.
      *
-     * @param settingName Name of the setting to update
-     * @param options Options for updating the setting
-     * @param context Operation Context
+     * @param settingName Name of the setting to update.
+     * @param options Options for updating the setting.
+     * @param context Operation Context.
      *
-     * @returns Response containing the new updated setting
+     * @returns Response containing the new updated setting.
      */
     Azure::Response<Setting> UpdateSetting(
         std::string const& settingName,
@@ -68,23 +71,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
     /**
-     * @brief Gets an existing setting
+     * @brief Gets an existing setting.
      *
-     * @param settingName Name of setting to get
-     * @param context Operation context
+     * @param settingName Name of setting to get.
+     * @param context Operation context.
      *
-     * @returns response containing the setting
+     * @returns response containing the setting.
      */
     Azure::Response<Setting> GetSetting(
         std::string const& settingName,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
     /**
-     * @brief Gets all settings
+     * @brief Gets all settings.
      *
-     * @param context Operation context
+     * @param context Operation context.
      *
-     * @returns Response containing a list of settings
+     * @returns Response containing a list of settings.
      */
     Azure::Response<SettingsListResult> GetSettings(
         const Azure::Core::Context& context = Azure::Core::Context{}) const;

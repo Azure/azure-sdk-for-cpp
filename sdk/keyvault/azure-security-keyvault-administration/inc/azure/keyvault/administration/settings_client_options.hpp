@@ -11,14 +11,14 @@
 
 #include <azure/core/internal/client_options.hpp>
 
-#include "azure/keyvault/administration/dll_import_export.hpp"
+#include <azure/keyvault/administration/dll_import_export.hpp>
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
 
   /**
-   * @brief Define the options to create an SDK Administration client.
+   * @brief Define the options to create a Keyvault Administration client.
    *
    */
   struct SettingsClientOptions final : public Azure::Core::_internal::ClientOptions

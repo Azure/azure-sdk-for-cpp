@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/shared/keyvault_shared.hpp"
 #include "private/administration_constants.hpp"
 #include "private/keyvault_settings_common_request.hpp"
 #include "private/package_version.hpp"
@@ -11,28 +10,22 @@
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/keyvault/administration/settings_client.hpp>
+#include <azure/keyvault/shared/keyvault_shared.hpp>
 #include <memory>
 
-using namespace Azure::Security::KeyVault::Administration;
-using namespace Azure::Security::KeyVault::Administration::_detail;
-using namespace Azure::Security::KeyVault;
-using namespace Azure::Security::KeyVault::_detail;
-
-using namespace Azure;
-using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
-using namespace Azure::Core::Http::_internal;
-
 using namespace Azure::Core::Json::_internal;
+using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::_detail;
 
 std::unique_ptr<Azure::Core::Http::RawResponse> SettingsClient::SendRequest(
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::_detail::KeyVaultSettingsCommonRequest::SendRequest(
-      *m_pipeline, request, context);
+  return Azure::Security::KeyVault::Administration::_detail::KeyVaultSettingsCommonRequest::
+      SendRequest(*m_pipeline, request, context);
 }
 
 Azure::Core::Http::Request SettingsClient::CreateRequest(
@@ -40,8 +33,8 @@ Azure::Core::Http::Request SettingsClient::CreateRequest(
     std::vector<std::string> const& path,
     Azure::Core::IO::BodyStream* content) const
 {
-  return Azure::Security::KeyVault::_detail::KeyVaultSettingsCommonRequest::CreateRequest(
-      m_vaultUrl, m_apiVersion, method, path, content);
+  return Azure::Security::KeyVault::Administration::_detail::KeyVaultSettingsCommonRequest::
+      CreateRequest(m_vaultUrl, m_apiVersion, method, path, content);
 }
 
 SettingsClient::SettingsClient(
