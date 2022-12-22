@@ -318,7 +318,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.LeaseId = leaseId;
       bufferStream->Rewind();
       auto response = client.Append(*bufferStream, 0, options);
-      EXPECT_TRUE(response.Value.LeaseRenewed.HasValue());
+      EXPECT_TRUE(response.Value.IsLeaseRenewed.HasValue());
       auto properties = client.GetProperties();
       EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
       EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, properties.Value.LeaseStatus.Value());
@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
       flushOptions.LeaseAction = Files::DataLake::Models::LeaseAction::AutoRenew;
       flushOptions.AccessConditions.LeaseId = leaseId;
       auto response = client.Flush(bufferSize, flushOptions);
-      EXPECT_TRUE(response.Value.LeaseRenewed.HasValue());
+      EXPECT_TRUE(response.Value.IsLeaseRenewed.HasValue());
       auto properties = client.GetProperties();
       EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
       EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, properties.Value.LeaseStatus.Value());

@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * If the lease was auto-renewed with this request.
        */
-      Nullable<bool> LeaseRenewed;
+      Nullable<bool> IsLeaseRenewed;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Append.
@@ -352,7 +352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * If the lease was auto-renewed with this request.
        */
-      Nullable<bool> LeaseRenewed;
+      Nullable<bool> IsLeaseRenewed;
     };
   } // namespace Models
   namespace _detail {

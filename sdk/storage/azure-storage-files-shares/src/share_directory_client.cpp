@@ -437,7 +437,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.ShareName = std::move(response.Value.ShareName);
     pagedResponse.ShareSnapshot = response.Value.ShareSnapshot.ValueOr(std::string());
-    pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
+    if (response.Value.Encoded)
+    {
+      pagedResponse.DirectoryPath = Core::Url::Decode(response.Value.DirectoryPath);
+    }
+    else
+    {
+      pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
+    }
     if (response.Value.Prefix.Encoded)
     {
       pagedResponse.Prefix = Core::Url::Decode(response.Value.Prefix.Content);

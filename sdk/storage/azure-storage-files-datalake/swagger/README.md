@@ -439,6 +439,7 @@ directive:
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-nullable"] = true;
+      $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
       delete $["ETag"];
 ```
 
@@ -452,4 +453,5 @@ directive:
       $["Content-Length"]["x-ms-client-name"] = "FileSize";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-nullable"] = true;
+      $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
 ```

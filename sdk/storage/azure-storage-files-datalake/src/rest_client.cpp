@@ -716,7 +716,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       if (pRawResponse->GetHeaders().count("x-ms-lease-renewed") != 0)
       {
-        response.LeaseRenewed
+        response.IsLeaseRenewed
             = pRawResponse->GetHeaders().at("x-ms-lease-renewed") == std::string("true");
       }
       return Response<Models::FlushFileResult>(std::move(response), std::move(pRawResponse));
@@ -814,7 +814,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       if (pRawResponse->GetHeaders().count("x-ms-lease-renewed") != 0)
       {
-        response.LeaseRenewed
+        response.IsLeaseRenewed
             = pRawResponse->GetHeaders().at("x-ms-lease-renewed") == std::string("true");
       }
       return Response<Models::AppendFileResult>(std::move(response), std::move(pRawResponse));
