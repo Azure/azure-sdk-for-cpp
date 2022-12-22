@@ -48,10 +48,11 @@ function getTargetOs {
         return $OsVMImage
     }
 
-    if ($OsVMImage -eq "MMS2019") {
+    if ($OsVMImage -match "^MMS2019$|^win-2019$") {
         return "win-2019"
     }
-    if ($OsVMImage -eq "windows-2022") {
+
+    if ($OsVMImage -match "^MMS2022$|^win-2022$") {
         return "win-2022"
     }
 
@@ -88,11 +89,11 @@ function getToolChain {
         return "AppleClang 12"
     }
 
-    if ($OSVmImage -eq "MMS2019") {
+    if ($OSVmImage -match "MMS\d{4}") {
         return "MSVC"
     }
 
-	if ($OSVmImage -eq "windows-2022") {
+	if ($OSVmImage -match "windows-\d{4}") {
         return "MSVC17"
     }
 
@@ -116,7 +117,7 @@ function getTargetPlatform {
         return "macos"
     }
 
-    if ($OSVmImage -eq 'MMS2019' -or $OsVMImage -eq "windows-2022") {
+    if ($OSVmImage -match 'MMS\d{4}' -or $OsVMImage -match "windows-\d{4}") {
         if (!$env:CMAKE_SYSTEM_NAME -and !$CmakeArgs.Contains('WindowsStore')) {
             return 'win32'
         } elseif ($env:CMAKE_SYSTEM_NAME -eq 'WindowsStore' -or $CmakeArgs.Contains('WindowsStore')) {
