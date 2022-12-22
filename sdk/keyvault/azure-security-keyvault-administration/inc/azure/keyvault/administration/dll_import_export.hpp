@@ -39,16 +39,3 @@
 
 #undef AZURE_SECURITY_KEYVAULT_ADMINISTRATION_BUILT_AS_DLL
 
-/**
- * @brief Azure SDK abstractions.
- *
- */
-namespace Azure {
-
-/**
- * @brief Azure Template SDK abstractions.
- *
- */
-namespace Template {
-}
-} // namespace Azure
