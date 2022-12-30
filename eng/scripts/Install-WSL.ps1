@@ -6,10 +6,6 @@
 Write-Host "wsl --update --web-download"
 wsl --update --web-download | Out-String
 
-# Out-String waits for the process to finish
-Write-Host "wsl --update --web-download | Out-String"
-wsl --update --web-download | Out-String
-
 Write-Host "wsl --version" 
 wsl --version
 
