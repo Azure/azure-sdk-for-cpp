@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+- Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
 - Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
 
 ### Bugs Fixed
