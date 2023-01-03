@@ -25,33 +25,42 @@ Logger::Level const* GetEnvironmentLogLevel()
   {
     EnvironmentLogLevelListener::SetInitialized(true);
 
-    auto const envVar = Environment::GetVariable("AZURE_LOG_LEVEL");
-    if (!envVar.empty())
+    auto const logLevelStr = Environment::GetVariable("AZURE_LOG_LEVEL");
+    if (!logLevelStr.empty())
     {
-      auto const logLevelStr = Azure::Core::_internal::StringExtensions::ToLower(envVar);
-
       // See https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK
       // And
       // https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/LogLevel.java
+      using Azure::Core::_internal::StringExtensions;
 
       static Logger::Level envLogLevel = {};
       envLogLevelPtr = &envLogLevel;
 
-      if (logLevelStr == "error" || logLevelStr == "err" || logLevelStr == "4")
+      if (logLevelStr == "4"
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "error")
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "err"))
       {
         envLogLevel = Logger::Level::Error;
       }
-      else if (logLevelStr == "warning" || logLevelStr == "warn" || logLevelStr == "3")
+      else if (
+          logLevelStr == "3"
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "warning")
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "warn"))
       {
         envLogLevel = Logger::Level::Warning;
       }
       else if (
-          logLevelStr == "informational" || logLevelStr == "info" || logLevelStr == "information"
-          || logLevelStr == "2")
+          logLevelStr == "2"
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "informational")
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "information")
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "info"))
       {
         envLogLevel = Logger::Level::Informational;
       }
-      else if (logLevelStr == "verbose" || logLevelStr == "debug" || logLevelStr == "1")
+      else if (
+          logLevelStr == "1"
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "verbose")
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(logLevelStr, "debug"))
       {
         envLogLevel = Logger::Level::Verbose;
       }

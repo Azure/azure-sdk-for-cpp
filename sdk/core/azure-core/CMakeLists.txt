@@ -147,7 +147,6 @@ set(
     src/operation_status.cpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
-    src/strings.cpp
     src/tracing/tracing.cpp
     src/uuid.cpp
     )
