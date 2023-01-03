@@ -4,7 +4,6 @@
 #include "azure/storage/common/internal/shared_key_policy.hpp"
 
 #include <algorithm>
-#include <cctype>
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/strings.hpp>
@@ -32,7 +31,7 @@ namespace Azure { namespace Storage { namespace _internal {
           "If-Unmodified-Since",
           "Range"})
     {
-      auto ite = headers.find(Azure::Core::_internal::StringExtensions::ToLower(headerName));
+      auto ite = headers.find(headerName);
       if (ite != headers.end())
       {
         if (headerName == "Content-Length" && ite->second == "0")

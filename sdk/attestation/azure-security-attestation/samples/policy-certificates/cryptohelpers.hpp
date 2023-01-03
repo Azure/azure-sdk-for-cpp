@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
+
+#include <azure/core/internal/strings.hpp>
+
 #include <algorithm>
 #include <cstring>
 #include <memory>
@@ -193,14 +196,9 @@ public:
       }
       hashedThumbprint.resize(hashLength);
 
-      auto hexThumbprint(BinaryToHexString(hashedThumbprint));
       // HexString uses an "a"-"f" alphabet, but the CLR hex encoder uses an "A"-"F" alphabet,
-      // convert between them.
-      std::transform(
-          hexThumbprint.begin(), hexThumbprint.end(), hexThumbprint.begin(), [](char ch) {
-            return static_cast<char>(std::toupper(ch));
-          });
-      return hexThumbprint;
+      // so we need to uppercase them.
+      return Azure::Core::_internal::StringExtensions::ToUpper(BinaryToHexString(hashedThumbprint));
     }
 
     static std::unique_ptr<Cryptography::X509Certificate> Import(

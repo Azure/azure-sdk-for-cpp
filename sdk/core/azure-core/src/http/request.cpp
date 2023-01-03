@@ -24,29 +24,24 @@ static Azure::Core::CaseInsensitiveMap MergeMaps(
 
 Azure::Nullable<std::string> Request::GetHeader(std::string const& name)
 {
-  std::vector<std::string> returnedHeaders;
-  auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
+  for (auto const& hdrs : {m_retryHeaders, m_headers})
+  {
+    auto const header = hdrs.find(name);
+    if (header != hdrs.end())
+    {
+      return header->second;
+    }
+  }
 
-  auto retryHeader = this->m_retryHeaders.find(headerNameLowerCase);
-  if (retryHeader != this->m_retryHeaders.end())
-  {
-    return retryHeader->second;
-  }
-  auto header = this->m_headers.find(headerNameLowerCase);
-  if (header != this->m_headers.end())
-  {
-    return header->second;
-  }
-  return Azure::Nullable<std::string>{};
+  return {};
 }
 
 void Request::SetHeader(std::string const& name, std::string const& value)
 {
-  auto headerNameLowerCase = Azure::Core::_internal::StringExtensions::ToLower(name);
-  return this->m_retryModeEnabled ? _detail::RawResponseHelpers::InsertHeaderWithValidation(
-             this->m_retryHeaders, headerNameLowerCase, value)
-                                  : _detail::RawResponseHelpers::InsertHeaderWithValidation(
-                                      this->m_headers, headerNameLowerCase, value);
+  return _detail::RawResponseHelpers::InsertHeaderWithValidation(
+      m_retryModeEnabled ? m_retryHeaders : m_headers,
+      Azure::Core::_internal::StringExtensions::ToLower(name),
+      value);
 }
 
 void Request::RemoveHeader(std::string const& name)

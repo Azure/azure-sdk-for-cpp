@@ -259,7 +259,7 @@ jobs:
 
       # Use the job name to create the artifact name for MAP file publishing.
       # Attempts are also noted starting with 1
-      # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86_attempt_1"
+      # "Validate windows2022_UWP_debug_x86" -> "windows2022_UWP_debug_x86_attempt_1"
       - pwsh: |
           $artifactName = "$(Agent.JobName)_attempt_$(System.JobAttempt)"
           $parts = $artifactName -split ' '

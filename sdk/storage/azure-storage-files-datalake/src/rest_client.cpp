@@ -40,6 +40,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     const PublicAccessType PublicAccessType::Path("blob");
     const PathResourceType PathResourceType::Directory("directory");
     const PathResourceType PathResourceType::File("file");
+    const LeaseAction LeaseAction::Acquire("acquire");
+    const LeaseAction LeaseAction::AutoRenew("auto-renew");
+    const LeaseAction LeaseAction::Release("release");
+    const LeaseAction LeaseAction::AcquireRelease("acquire-release");
   } // namespace Models
   namespace _detail {
     Response<Models::_detail::PathList> FileSystemClient::ListPaths(
@@ -624,6 +628,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
+      if (options.LeaseAction.HasValue() && !options.LeaseAction.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-lease-action", options.LeaseAction.Value().ToString());
+      }
+      if (options.LeaseDuration.HasValue())
+      {
+        request.SetHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.Value()));
+      }
+      if (options.ProposedLeaseId.HasValue() && !options.ProposedLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
+      }
       if (options.CacheControl.HasValue() && !options.CacheControl.Value().empty())
       {
         request.SetHeader("x-ms-cache-control", options.CacheControl.Value());
@@ -698,6 +714,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         response.EncryptionKeySha256 = Core::Convert::Base64Decode(
             pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-renewed") != 0)
+      {
+        response.IsLeaseRenewed
+            = pRawResponse->GetHeaders().at("x-ms-lease-renewed") == std::string("true");
+      }
       return Response<Models::FlushFileResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::AppendFileResult> FileClient::Append(
@@ -730,6 +751,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.LeaseAction.HasValue() && !options.LeaseAction.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-lease-action", options.LeaseAction.Value().ToString());
+      }
+      if (options.LeaseDuration.HasValue())
+      {
+        request.SetHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration.Value()));
+      }
+      if (options.ProposedLeaseId.HasValue() && !options.ProposedLeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
       request.SetHeader("x-ms-version", "2021-06-08");
       if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
@@ -778,6 +811,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         response.EncryptionKeySha256 = Core::Convert::Base64Decode(
             pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-renewed") != 0)
+      {
+        response.IsLeaseRenewed
+            = pRawResponse->GetHeaders().at("x-ms-lease-renewed") == std::string("true");
       }
       return Response<Models::AppendFileResult>(std::move(response), std::move(pRawResponse));
     }

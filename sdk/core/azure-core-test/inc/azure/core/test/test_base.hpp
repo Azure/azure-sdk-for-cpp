@@ -186,8 +186,7 @@ namespace Azure { namespace Core { namespace Test {
     // creating
     std::string GetTestNameLowerCase(bool sanitize = true)
     {
-      std::string testName(GetTestName(sanitize));
-      return Azure::Core::_internal::StringExtensions::ToLower(testName);
+      return Azure::Core::_internal::StringExtensions::ToLower(GetTestName(sanitize));
     }
 
     /**
