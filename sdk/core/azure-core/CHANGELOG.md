@@ -8,6 +8,8 @@
 
 ### Breaking Changes
 
+- Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
+
 ### Bugs Fixed
 
 ### Other Changes
