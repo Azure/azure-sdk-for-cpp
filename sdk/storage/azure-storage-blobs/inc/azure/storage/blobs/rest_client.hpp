@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2021-04-10";
+    constexpr static const char* ApiVersion = "2021-12-02";
   } // namespace _detail
   namespace Models {
     /**
@@ -977,6 +977,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
 
     private:
       std::string m_value;

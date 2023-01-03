@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-12-02/blob.json
 ```
 
 ## ModelFour Options
@@ -102,7 +102,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2021-04-10"],
+        "enum": ["2021-12-02"],
         "description": "The version used for the operations to Azure storage services."
       };
 ```
@@ -290,6 +290,7 @@ directive:
       delete $.EncryptionAlgorithm["x-ms-enum"];
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
       $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
+      delete $.FilterBlobsInclude;
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -299,7 +300,27 @@ directive:
       $.CopyStatus["x-ms-enum"]["name"] = "CopyStatus";
       $.PublicAccessType["x-ms-enum"]["values"] = [{"value": "container", "name": "BlobContainer"}, {"value": "blob", "name": "Blob"}, {"value": "", "name": "None"}];
       $.PublicAccessType.description = "Specifies whether data in the container may be accessed publicly and the level of access";
-      $.AccessTier.enum.unshift("P1", "P2", "P3");
+      $.AccessTier["x-ms-enum"]["values"] = [
+          {"value": "p1", "name": "P1"},
+          {"value": "p2", "name": "P2"},
+          {"value": "p3", "name": "P3"},
+          {"value": "p4", "name": "P4"},
+          {"value": "p6", "name": "P6"},
+          {"value": "p10", "name": "P10"},
+          {"value": "p15", "name": "P15"},
+          {"value": "p20", "name": "P20"},
+          {"value": "p30", "name": "P30"},
+          {"value": "p40", "name": "P40"},
+          {"value": "p50", "name": "P50"},
+          {"value": "p60", "name": "P60"},
+          {"value": "p70", "name": "P70"},
+          {"value": "p80", "name": "P80"},
+          {"value": "Hot", "name": "Hot"},
+          {"value": "Cool", "name": "Cool"},
+          {"value": "Archive", "name": "Archive"},
+          {"value": "Premium", "name": "Premium"},
+          {"value": "Cold", "name": "Cold"}
+      ];
       $.AccessTier.description = "The tier of page blob on a premium storage account or tier of block blob on blob storage or general purpose v2 account.";
       $.EncryptionAlgorithm = {
         "type": "string",
@@ -689,12 +710,22 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $["x-ms-paths"]["/?comp=blobs"].get.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/FilterBlobsInclude"));
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=blobs"].get.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/FilterBlobsInclude"));
+  - from: swagger-document
     where: $.definitions
     transform: >
       $.FilterBlobItem["x-ms-client-name"] = "TaggedBlobItem";
       $.FilterBlobItem.properties["Name"]["x-ms-client-name"] = "BlobName";
       $.FilterBlobItem.properties["ContainerName"]["x-ms-client-name"] = "BlobContainerName";
       delete $.FilterBlobItem.properties["TagValue"];
+      delete $.FilterBlobItem.properties["VersionId"];
+      delete $.FilterBlobItem.properties["IsCurrentVersion"];
       $.FilterBlobItem.properties["Name"].description = "Blob name.";
       $.FilterBlobItem.properties["ContainerName"].description = "Blob container name.";
       $.FilterBlobItem.properties["Tags"]["x-ms-xml"] = {"name": "Tags/TagSet"};
@@ -1596,10 +1627,6 @@ directive:
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{containerName}/{blob}?BlockBlob"].put.parameters
-    transform: >
-      $.push({"$ref": "#/parameters/ContentCrc64"});
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}?BlockBlob"].put.responses["201"].headers
     transform: >
