@@ -14,7 +14,7 @@
 
 ### Other Changes
 
-- Added token cache support to all credentials.
+- Added token cache support to all credentials. 
 
 ## 1.4.0-beta.2 (2022-11-08)
 
