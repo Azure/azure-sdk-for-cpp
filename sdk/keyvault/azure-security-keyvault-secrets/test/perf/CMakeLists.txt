@@ -23,7 +23,7 @@ add_executable (
      ${AZURE_KEYVAULT_SECRETS_PERF_TEST_HEADER} ${AZURE_KEYVAULT_SECRETS_PERF_TEST_SOURCE}
 )
 create_per_service_target_build(keyvault azure-security-keyvault-secrets-perf)
-create_map_file(azure-security-keyvault-keys-perf azure-security-keyvault-secrets-perf.map)
+create_map_file(azure-security-keyvault-secrets-perf azure-security-keyvault-secrets-perf.map)
 
 # Include the headers from the project.
 target_include_directories(
