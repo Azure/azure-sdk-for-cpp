@@ -50,6 +50,7 @@
     "cuse",
     "CUSEUAP",
     "DCMAKE",
+    "DCURL",
     "DDISABLE",
     "deserializers",
     "Deserializes",
