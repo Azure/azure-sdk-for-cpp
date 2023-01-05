@@ -11,7 +11,7 @@
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Storage::Blobs",
-  "reviewName": "Storage Review",
+  "reviewName": "Storage Blobs Review",
   "serviceName": "Azure Storage Blobs",
   "packageName": "azure.storage.blobs"
 }
