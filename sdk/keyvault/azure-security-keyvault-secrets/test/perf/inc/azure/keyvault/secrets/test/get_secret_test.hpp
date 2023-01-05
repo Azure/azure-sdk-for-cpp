@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
 
       m_secretName = name + suffix;
-      
+
       auto secretResponse = m_client->SetSecret(m_secretName, "secretValue");
     }
 
@@ -118,9 +118,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
       return {"GetSecret", "Get a secret", [](Azure::Perf::TestOptions options) {
-                return std::make_unique<Azure::Security::KeyVault::Secrets::Test::GetSecret>(options);
+                return std::make_unique<Azure::Security::KeyVault::Secrets::Test::GetSecret>(
+                    options);
               }};
     }
   };
-
 }}}}} // namespace Azure::Security::KeyVault::Secrets::Test
