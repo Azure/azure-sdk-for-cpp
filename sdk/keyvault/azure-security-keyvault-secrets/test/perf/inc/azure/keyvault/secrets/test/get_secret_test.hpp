@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Test the overhead of getting a key.
+ * @brief Test the overhead of getting a secret.
  *
  */
 
@@ -23,7 +23,7 @@ using namespace Azure::Core::_internal;
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace Test {
 
   /**
-   * @brief A test to measure getting a key performance.
+   * @brief A test to measure getting a secret performance.
    *
    */
   class GetSecret : public Azure::Perf::PerfTest {
@@ -61,7 +61,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     }
 
     /**
-     * @brief Create a random named certificate.
+     * @brief Create a random named secret.
      *
      */
     void CreateRandomNameKey()
@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     }
 
     /**
-     * @brief Construct a new GetKey test.
+     * @brief Construct a new GetSecret test.
      *
      * @param options The test options.
      */
