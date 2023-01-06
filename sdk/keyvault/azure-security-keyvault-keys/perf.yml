@@ -6,7 +6,7 @@ parameters:
 - name: Tests
   displayName: Tests (regex of tests to run)
   type: string
-  default: '^(get-secret|list-secrets)$'
+  default: '^(get-key)$'
 - name: Arguments
   displayName: Arguments (regex of arguments to run)
   type: string
@@ -24,7 +24,7 @@ extends:
   template: /eng/pipelines/templates/jobs/perf.yml
   parameters:
     ServiceDirectory: keyvault
-    Services: "^keyvault-secrets$"
+    Services: "^keyvault-keys$"
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}
