@@ -35,7 +35,6 @@ int main()
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   CertificateClient certClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
@@ -45,22 +44,7 @@ int main()
     std::vector<DeleteCertificateOperation> certOps;
     std::vector<DeleteKeyOperation> keyOps;
     std::vector<DeleteSecretOperation> secretOps;
-    for (auto keys = keyClient.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPage())
-    {
-      for (auto const& key : keys.Items)
-      {
-        try
-        {
-          keyOps.push_back(keyClient.StartDeleteKey(key.Name));
-          std::cout << "DeleteKey" << key.Name << std::endl;
-        }
-        catch (...)
-        {
-          std::cout << "fail to delete key " << key.Name;
-        }
-      }
-    }
-
+   
     for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage();
          secrets.MoveToNextPage())
     {
@@ -95,13 +79,22 @@ int main()
       }
     }
 
-    for (auto op : keyOps)
+    for (auto keys = keyClient.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPage())
     {
-      op.PollUntilDone(1s);
-      keyClient.PurgeDeletedKey(op.Value().Name());
-      std::cout << "Purge Key " << op.Value().Name() << std::endl;
+      for (auto const& key : keys.Items)
+      {
+        try
+        {
+          keyOps.push_back(keyClient.StartDeleteKey(key.Name));
+          std::cout << "DeleteKey" << key.Name << std::endl;
+        }
+        catch (...)
+        {
+          std::cout << "fail to delete key " << key.Name;
+        }
+      }
     }
-
+   
     for (auto op : certOps)
     {
       op.PollUntilDone(1s);
@@ -114,6 +107,13 @@ int main()
       op.PollUntilDone(1s);
       secretClient.PurgeDeletedSecret(op.Value().Name);
       std::cout << "Purge secret " << op.Value().Name << std::endl;
+    }
+
+     for (auto op : keyOps)
+    {
+      op.PollUntilDone(1s);
+      keyClient.PurgeDeletedKey(op.Value().Name());
+      std::cout << "Purge Key " << op.Value().Name() << std::endl;
     }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
