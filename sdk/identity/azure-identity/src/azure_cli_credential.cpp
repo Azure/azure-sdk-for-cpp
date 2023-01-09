@@ -154,15 +154,14 @@ AccessToken AzureCliCredential::GetToken(
 
 namespace {
 #if defined(AZ_PLATFORM_WINDOWS)
-template <typename> struct UniqueHandleHelper;
-template <> struct UniqueHandleHelper<HANDLE>
+struct UniqueWin32HandleHelper
 {
   static void CloseWin32Handle(HANDLE handle) { static_cast<void>(CloseHandle(handle)); }
   using type = Azure::Core::_internal::BasicUniqueHandle<void, CloseWin32Handle>;
 };
 
 template <typename T>
-using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
+using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueWin32HandleHelper>;
 #endif
 
 class ShellProcess;

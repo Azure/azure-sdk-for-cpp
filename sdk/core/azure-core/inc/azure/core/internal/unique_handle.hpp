@@ -62,6 +62,5 @@ namespace Azure { namespace Core { namespace _internal {
   template <typename T> struct UniqueHandleHelper;
 
   // *** Now users can say UniqueHandle<T> if they want:
-  template <typename T, template <typename> class U = UniqueHandleHelper>
-  using UniqueHandle = typename U<T>::type;
+  template <typename T, typename U = UniqueHandleHelper<T>> using UniqueHandle = typename U::type;
 }}} // namespace Azure::Core::_internal

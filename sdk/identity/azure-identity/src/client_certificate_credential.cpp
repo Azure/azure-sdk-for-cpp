@@ -66,7 +66,7 @@ template <> struct UniqueHandleHelper<EVP_MD_CTX>
 };
 
 template <typename T>
-using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
+using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper<T>>;
 } // namespace
 
 void Azure::Identity::_detail::FreePkeyImpl(void* pkey)

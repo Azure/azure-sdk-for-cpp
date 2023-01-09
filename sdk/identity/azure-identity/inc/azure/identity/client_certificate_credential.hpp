@@ -25,8 +25,7 @@ namespace Azure { namespace Identity {
 
     void FreePkeyImpl(void* pkey);
 
-    template <typename> struct UniquePkeyHelper;
-    template <> struct UniquePkeyHelper<void*>
+    struct UniquePkeyHelper
     {
       static void FreePkey(void* pkey) { FreePkeyImpl(pkey); }
       using type = Azure::Core::_internal::BasicUniqueHandle<void, FreePkey>;
