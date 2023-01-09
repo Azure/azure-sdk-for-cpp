@@ -44,7 +44,7 @@ int main()
     std::vector<DeleteCertificateOperation> certOps;
     std::vector<DeleteKeyOperation> keyOps;
     std::vector<DeleteSecretOperation> secretOps;
-   
+
     for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage();
          secrets.MoveToNextPage())
     {
@@ -94,7 +94,7 @@ int main()
         }
       }
     }
-   
+
     for (auto op : certOps)
     {
       op.PollUntilDone(1s);
@@ -109,7 +109,7 @@ int main()
       std::cout << "Purge secret " << op.Value().Name << std::endl;
     }
 
-     for (auto op : keyOps)
+    for (auto op : keyOps)
     {
       op.PollUntilDone(1s);
       keyClient.PurgeDeletedKey(op.Value().Name());
