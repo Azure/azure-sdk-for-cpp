@@ -60,6 +60,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char RsaHsmValue[] = "RSA-HSM";
   constexpr static const char OctValue[] = "oct";
   constexpr static const char OctHsmValue[] = "oct-HSM";
+  constexpr static const char OkpValue[] = "OKP";
+  constexpr static const char OkpHsmValue[] = "OKP-HSM";
 
   /***************** Deleted Key *****************/
   constexpr static const char RecoveryIdPropertyName[] = "recoveryId";

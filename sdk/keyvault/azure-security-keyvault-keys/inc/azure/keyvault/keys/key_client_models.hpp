@@ -214,6 +214,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OctHsm;
+
+     /**
+     * @brief An OKP cryptographic algorithm.
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Okp;
+
+     /**
+     * @brief An OKP cryptographic algorithm backed by a Hardware Security Module (HSM).
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OkpHsm;
   };
 
   /**
