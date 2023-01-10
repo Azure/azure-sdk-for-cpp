@@ -524,7 +524,7 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-  TEST_F(TransportAdapterOptions, MultipleCrlOperations)
+  TEST_F(TransportAdapterOptions, MultipleCrlOperations_LIVEONLY_)
   {
     // LetsEncrypt certificates don't contain a distribution point URL extension. While this seems
     // to work when run locally, it fails in the CI pipeline. "https://www.wikipedia.org" uses a
