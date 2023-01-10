@@ -8,11 +8,11 @@
   "sourceFilesToSkip": [
   ],
   "additionalCompilerSwitches": [],
-  "includeInternal": false,
+  "allownternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Storage::Queues",
   "reviewName": "Storage Queues Review",
   "serviceName": "Azure Storage Queues",
-  "packageName": "azure.storage.queues"
+  "packageName": "azure-storage-queues-cpp"
 }

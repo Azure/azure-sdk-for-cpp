@@ -4,11 +4,11 @@
     "../../../core/azure-core/inc"
   ],
   "additionalCompilerSwitches": [],
-  "includeInternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Identity",
   "reviewName": "Azure Identity",
   "serviceName": "Azure Identity",
-  "packageName": "azure.identity"
+  "packageName": "azure-identity-cpp"
 }

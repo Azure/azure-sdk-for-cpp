@@ -6,11 +6,11 @@
   "sourceFilesToSkip": [
   ],
   "additionalCompilerSwitches": [],
-  "includeInternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Security::Attestation",
   "reviewName": "Azure Attestation",
   "serviceName": "Microsoft Azure Attestation",
-  "packageName": "azure.security.attestation"
+  "packageName": "azure-security-attestation-cpp"
 }

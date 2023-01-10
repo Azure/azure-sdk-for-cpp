@@ -8,11 +8,11 @@
   "sourceFilesToSkip": [
   ],
   "additionalCompilerSwitches": [],
-  "includeInternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Storage::Files::Shares",
   "reviewName": "Storage File Shares Review",
   "serviceName": "Azure Storage Files Shares",
-  "packageName": "azure.storage.files.shares"
+  "packageName": "azure-storage-files-shares-cpp"
 }

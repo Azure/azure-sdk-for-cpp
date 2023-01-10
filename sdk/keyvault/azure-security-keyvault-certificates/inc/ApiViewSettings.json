@@ -7,11 +7,11 @@
   "sourceFilesToSkip": [
   ],
   "additionalCompilerSwitches": [],
-  "includeInternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Security::KeyVault::Certificates",
   "reviewName": "KeyVault Certificates Review",
   "serviceName": "Azure Security Keyvault Certificates",
-  "packageName": "azure.security.keyvault.certificates"
+  "packageName": "azure-security-keyvault-certificates-cpp"
 }

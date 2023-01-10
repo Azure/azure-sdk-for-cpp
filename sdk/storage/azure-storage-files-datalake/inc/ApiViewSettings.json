@@ -8,11 +8,11 @@
   "sourceFilesToSkip": [
   ],
   "additionalCompilerSwitches": [],
-  "includeInternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": ["Azure::Storage::Files::DataLake", "Azure::Storage::Sas"],
   "reviewName": "Azure Storage Files DataLake",
   "serviceName": "Azure Storage Files DataLake",
-  "packageName": "azure.storage.files.datalake"
+  "packageName": "azure-storage-files-datalake-cpp"
 }

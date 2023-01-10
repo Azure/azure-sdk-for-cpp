@@ -11,11 +11,11 @@
     "-DBUILD_TRANSPORT_WINHTTP_ADAPTER",
     "-DCURL_STATICLIB"
   ],
-  "includeInternal": true,
+  "allowInternal": true,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::",
   "reviewName": "Azure Core Review",
   "serviceName": null,
-  "packageName": "azure.core"
+  "packageName": "azure-core-cpp"
 }
