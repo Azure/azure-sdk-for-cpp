@@ -102,8 +102,8 @@ public:
   {
     if (m_hasValue)
     {
-      m_value.~T();
       m_hasValue = false;
+      m_value.~T();
     }
   }
 
