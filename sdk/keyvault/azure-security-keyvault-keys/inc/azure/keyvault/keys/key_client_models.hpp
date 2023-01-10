@@ -412,14 +412,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /// The RSA secret prime.
     std::vector<uint8_t> Q;
 
-    /// The RSA private exponent or EC private key.
+    /// The RSA private exponent or EC private key, or OKP private key.
     std::vector<uint8_t> D;
 
     /// Gets the symmetric key.
     std::vector<uint8_t> K;
     /// Gets the protected key used with "Bring Your Own Key".
     std::vector<uint8_t> T;
-    /// Gets the X coordinate of the elliptic curve point.
+    /// Gets the X coordinate of the elliptic curve point, or OKP public key.
     std::vector<uint8_t> X;
     /// Gets the Y coordinate for the elliptic curve point.
     std::vector<uint8_t> Y;
