@@ -8,7 +8,7 @@
   "sourceFilesToSkip": [
   ],
   "additionalCompilerSwitches": [],
-  "allownternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Storage::Queues",
