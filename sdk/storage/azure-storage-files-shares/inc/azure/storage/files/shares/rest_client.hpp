@@ -13,12 +13,12 @@
 #include <type_traits>
 #include <vector>
 
+#include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/strings.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
@@ -316,11 +316,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * A set of name-value pairs associated with the share or file.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * Properties of a share.
        */
@@ -409,11 +405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * A set of name-value pairs that contain the user-defined metadata of the share.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -886,11 +878,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * A set of name-value pairs that contain metadata for the directory.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -1290,11 +1278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * A set of name-value pairs associated with the share or file.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        *  String identifier for this copy operation. Use with Get File Properties to check the
        * status of this copy operation, or pass to Abort Copy File to abort a pending copy.
@@ -1404,11 +1388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * A set of name-value pairs associated with this file as user-defined metadata.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
        * header that is stored with the file.

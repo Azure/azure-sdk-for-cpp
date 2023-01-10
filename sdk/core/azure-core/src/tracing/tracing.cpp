@@ -5,7 +5,6 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/internal/tracing/tracing_impl.hpp"
-#include <cctype>
 #include <sstream>
 
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
