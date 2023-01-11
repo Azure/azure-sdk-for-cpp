@@ -19,9 +19,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultKeysCommonReque
 {
   auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
-  std::string responseBody(response->GetBody().begin(), response->GetBody().end());
-  std::string reasonphrase(response->GetReasonPhrase());
-  auto body = response->GetBody();
+ 
   switch (responseCode)
   {
     

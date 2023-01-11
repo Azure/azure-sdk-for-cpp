@@ -168,6 +168,8 @@ TEST_F(KeyVaultKeyClient, CreateOkpHSMKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_EQ(keyVaultKey.GetKeyType(), KeyVaultKeyType::OkpHsm);
+    EXPECT_EQ(keyVaultKey.Key.CurveName.Value(), KeyCurveName::Ed25519);
   }
   {
     // Now get the key

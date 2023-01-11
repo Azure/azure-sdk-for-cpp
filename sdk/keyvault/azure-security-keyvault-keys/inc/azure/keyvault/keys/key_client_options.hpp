@@ -387,7 +387,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string const& GetName() const { return m_name; }
 
     /**
-     * @brief Gets the key type to create, including Rsa and RsaHsm.
+     * @brief Gets the key type to create, including Okp and OkpHsm.
      *
      */
     KeyVaultKeyType GetKeyType() const { return m_keyType; }

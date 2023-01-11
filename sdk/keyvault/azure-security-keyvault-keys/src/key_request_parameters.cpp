@@ -52,7 +52,9 @@ std::string KeyRequestParameters::Serialize() const
       attributes,
       _detail::NbfPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
-
+  
+  // in order to avoid creating the "attributes":null json field. 
+  // The service deserializer on HSM really does not like that
   if (!attributes.empty())
   {
     payload[_detail::AttributesPropertyName] = attributes;
