@@ -3,7 +3,6 @@
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
-#include "azure/core/internal/io/null_body_stream.hpp"
 #include "azure/core/url.hpp"
 
 #include <algorithm>
@@ -13,7 +12,6 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::IO::_internal;
 
 char const Azure::Core::Http::_internal::HttpShared::ContentType[] = "content-type";
 char const Azure::Core::Http::_internal::HttpShared::ApplicationJson[] = "application/json";
@@ -54,14 +52,4 @@ void Azure::Core::Http::_detail::RawResponseHelpers::InsertHeaderWithValidation(
 
   // insert (override if duplicated)
   headers[headerName] = headerValue;
-}
-
-Request::Request(HttpMethod httpMethod, Url url, bool shouldBufferResponse)
-    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), shouldBufferResponse)
-{
-}
-
-Request::Request(HttpMethod httpMethod, Url url)
-    : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), true)
-{
 }

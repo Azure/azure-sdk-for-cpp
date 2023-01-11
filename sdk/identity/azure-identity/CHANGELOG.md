@@ -1,14 +1,22 @@
 # Release History
 
-## 1.4.0-beta.3 (Unreleased)
+## 1.4.0-beta.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.4.0-beta.3 (2023-01-10)
 
 ### Features Added
 
 - Added Azure CLI Credential.
 - Added authority host overriding support for `ClientCertificateCredential`.
 - Added Azure Stack support for `ClientCertificateCredential`.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

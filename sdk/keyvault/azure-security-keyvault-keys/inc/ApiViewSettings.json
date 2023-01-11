@@ -1,0 +1,17 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-security-keyvault-shared/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Security::KeyVault::Keys",
+  "reviewName": "KeyVault Keys Review",
+  "serviceName": "Azure Security Keyvault Keys",
+  "packageName": "azure-security-keyvault-keys-cpp"
+}
