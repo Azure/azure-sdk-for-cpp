@@ -11,7 +11,7 @@
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Security::KeyVault::Secrets",
-  "reviewName": "KeyVault Secrets Review",
+  "reviewName": "KeyVault Secrets API Review",
   "serviceName": "Azure Security Keyvault Secrets",
   "packageName": "azure-security-keyvault-secrets-cpp"
 }
