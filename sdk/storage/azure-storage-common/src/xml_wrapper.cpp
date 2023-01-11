@@ -433,7 +433,6 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
     m_context = std::make_unique<XmlReaderContext>(std::move(reader));
-    m_context->reader = std::move(reader);
   }
 
   XmlReader::~XmlReader() = default;
