@@ -15,7 +15,7 @@
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::",
-  "reviewName": "Azure Core Review",
+  "reviewName": "Azure Core API Review",
   "serviceName": null,
   "packageName": "azure-core-cpp"
 }
