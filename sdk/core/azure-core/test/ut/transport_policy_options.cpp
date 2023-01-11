@@ -529,7 +529,7 @@ namespace Azure { namespace Core { namespace Test {
 #if !defined(AZ_PLATFORM_LINUX)
   TEST_F(TransportAdapterOptions, MultipleCrlOperations)
 #else
-  TEST_F(TransportAdapterOptions, MultipleCrlOperations_LIVEONLY_)
+  TEST_F(TransportAdapterOptions, DISABLED_MultipleCrlOperations)
 #endif
   {
     // LetsEncrypt certificates don't contain a distribution point URL extension. While this seems
