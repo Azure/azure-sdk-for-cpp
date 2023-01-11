@@ -400,7 +400,6 @@ namespace Azure { namespace Storage { namespace _internal {
   XmlReader& XmlReader::operator=(XmlReader&& other) noexcept
   {
     m_context = std::move(other.m_context);
-    m_context.reset();
     return *this;
   }
 
@@ -535,7 +534,6 @@ namespace Azure { namespace Storage { namespace _internal {
   XmlWriter& XmlWriter::operator=(XmlWriter&& other) noexcept
   {
     m_context = std::move(other.m_context);
-    other.m_context = nullptr;
     return *this;
   }
 
