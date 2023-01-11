@@ -136,8 +136,8 @@
     {
       "StaticConfigs": {
         "Ubuntu18": {
-          "OSVmImage": "MMSUbuntu18.04",
-          "Pool": "azsdk-pool-mms-ubuntu-1804-general",
+          "OSVmImage": "ubuntu-18.04",
+          "Pool": "Azure Pipelines",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true
