@@ -167,7 +167,6 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
-
 Azure::Response<KeyVaultKey> KeyClient::CreateOkpKey(
     CreateOkpKeyOptions const& okpKeyOptions,
     Azure::Core::Context const& context) const

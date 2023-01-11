@@ -130,7 +130,6 @@ TEST_F(KeyVaultKeyClient, CreateEcKey)
   }
 }
 
-
 /********************************* Create key overloads  *********************************/
 TEST_F(KeyVaultKeyClient, CreateOkpKey)
 {
@@ -163,7 +162,7 @@ TEST_F(KeyVaultKeyClient, CreateOkpHSMKey)
   auto const& client = GetClientForTest(keyName);
 
   {
-    auto okpKey = Azure::Security::KeyVault::Keys::CreateOkpKeyOptions(keyName,true);
+    auto okpKey = Azure::Security::KeyVault::Keys::CreateOkpKeyOptions(keyName, true);
     auto keyResponse = client.CreateOkpKey(okpKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
