@@ -532,7 +532,8 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<std::pair<std::string, bool>> testUrls{
         {AzureSdkHttpbinServer::Get(), true}, // Uses a Microsoft/DigiCert certificate.
         {"https://aws.amazon.com", true}, // Uses a Amazon/Starfield Technologies certificate.
-        {"https://www.example.com/", true}, // Uses a DigiCert certificate.
+        //        {"https://www.example.com/", true}, // Uses a DigiCert certificate. Does not work
+        //        correctly from Linux as of 2023-01-09.
         {"https://www.google.com/", true}, // Uses a google certificate.
     };
 
