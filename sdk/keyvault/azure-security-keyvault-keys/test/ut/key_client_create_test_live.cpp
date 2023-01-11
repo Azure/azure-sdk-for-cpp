@@ -299,8 +299,9 @@ std::string BinaryToHexString(std::vector<uint8_t> const& src)
 
   return output;
 }
-
-TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
+// the authority https://sharedeus.eus.test.attest.azure.net/ is not available anymore. 
+// this test shoudl not be anymore since we cannot guarantee the dependencies are available. 
+TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions_DISABLED)
 {
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
