@@ -524,9 +524,6 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-  // This test started to fail consistently in CI on Linux.
-  // It should be fixed, but to unblock CI, there is a workaround below.
-#if !defined(AZ_PLATFORM_LINUX)
   TEST_F(TransportAdapterOptions, MultipleCrlOperations)
   {
     // LetsEncrypt certificates don't contain a distribution point URL extension. While this seems
@@ -630,7 +627,6 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
   }
-#endif
 
   TEST_F(TransportAdapterOptions, TestRootCertificate)
   {
