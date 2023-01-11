@@ -174,7 +174,7 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOkpKey(
 {
   // Payload for the request
   std::string const& keyName = okpKeyOptions.GetName();
-  auto payload = _detail::KeyRequestParameters(okpKeyOptions).Serialize();
+  std::string payload = _detail ::KeyRequestParameters(okpKeyOptions).Serialize();
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 

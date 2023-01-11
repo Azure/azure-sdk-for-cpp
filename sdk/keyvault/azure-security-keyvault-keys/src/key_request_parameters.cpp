@@ -24,15 +24,12 @@ std::string KeyRequestParameters::Serialize() const
         return type.ToString();
       });
 
+  json attributes;
   // attributes
-  JsonOptional::SetFromNullable(
-      m_options.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
+  JsonOptional::SetFromNullable(m_options.Enabled, attributes, _detail::EnabledPropertyName);
 
   // exportable attribute
-  JsonOptional::SetFromNullable(
-      m_options.Exportable,
-      payload[_detail::AttributesPropertyName],
-      _detail::ExportablePropertyName);
+  JsonOptional::SetFromNullable(m_options.Exportable, attributes, _detail::ExportablePropertyName);
 
   /* Optional */
   // key_size
@@ -46,15 +43,20 @@ std::string KeyRequestParameters::Serialize() const
   // attributes
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.ExpiresOn,
-      payload[_detail::AttributesPropertyName],
+      attributes,
       _detail::ExpPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
 
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.NotBefore,
-      payload[_detail::AttributesPropertyName],
+      attributes,
       _detail::NbfPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
+
+  if (!attributes.empty())
+  {
+    payload[_detail::AttributesPropertyName] = attributes;
+  }
 
   // tags
   for (auto tag : m_options.Tags)

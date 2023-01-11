@@ -309,6 +309,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P521;
+
+    /**
+     * @brief Gets the Ed25519 Edwards curve.
+     *
+     * @remark For more information, see
+     * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
+     * types</a>.
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName Ed25519;
   };
 
   /**

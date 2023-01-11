@@ -130,6 +130,31 @@ TEST_F(KeyVaultKeyClient, CreateEcKey)
   }
 }
 
+
+/********************************* Create key overloads  *********************************/
+TEST_F(KeyVaultKeyClient, CreateOkpKey)
+{
+  auto const keyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
+
+  {
+    auto okpKey = Azure::Security::KeyVault::Keys::CreateOkpKeyOptions(keyName);
+    auto keyResponse = client.CreateOkpKey(okpKey);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+  {
+    // Now get the key
+    auto keyResponse = client.GetKey(keyName);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+}
+
 TEST_F(KeyVaultKeyClient, CreateEcKeyWithCurve)
 {
   auto const keyName = GetTestName();

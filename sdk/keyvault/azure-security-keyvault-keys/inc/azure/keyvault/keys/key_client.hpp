@@ -181,14 +181,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark This operation requires the keys/create permission.
      *
-     * @param octKeyOptions The key options object containing information about the OKP key
+     * @param okpKeyOptions The key options object containing information about the OKP key
      * being created.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return The Key wrapped in the Response.
      */
     Azure::Response<KeyVaultKey> CreateOkpKey(
-        CreateOkpKeyOptions const& rsaKeyOptions,
-        Azure::Core::Context const& context) const;
+        CreateOkpKeyOptions const& okpKeyOptions,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Get a single page with the properties of all keys in the specified vault. You can
