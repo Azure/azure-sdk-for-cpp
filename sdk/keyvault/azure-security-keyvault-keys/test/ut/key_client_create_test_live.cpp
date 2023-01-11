@@ -155,6 +155,28 @@ TEST_F(KeyVaultKeyClient, CreateOkpKey)
   }
 }
 
+TEST_F(KeyVaultKeyClient, CreateOkpHSMKey)
+{
+  auto const keyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
+
+  {
+    auto okpKey = Azure::Security::KeyVault::Keys::CreateOkpKeyOptions(keyName,true);
+    auto keyResponse = client.CreateOkpKey(okpKey);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+  {
+    // Now get the key
+    auto keyResponse = client.GetKey(keyName);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+}
 TEST_F(KeyVaultKeyClient, CreateEcKeyWithCurve)
 {
   auto const keyName = GetTestName();
