@@ -524,13 +524,16 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-// This test started to fail consistently in CI on Linux.
-// It should be fixed, but to unblock CI, there is a workaround below.
+  // This test started to fail consistently in CI on Linux.
+  // It should be fixed, but to unblock CI, there is a workaround below.
+  TEST_F(
+      TransportAdapterOptions,
 #if !defined(AZ_PLATFORM_LINUX)
-  TEST_F(TransportAdapterOptions, MultipleCrlOperations)
+      MultipleCrlOperations
 #else
-  TEST_F(TransportAdapterOptions, DISABLED_MultipleCrlOperations)
+      DISABLED_MultipleCrlOperations
 #endif
+  )
   {
     // LetsEncrypt certificates don't contain a distribution point URL extension. While this seems
     // to work when run locally, it fails in the CI pipeline. "https://www.wikipedia.org" uses a
