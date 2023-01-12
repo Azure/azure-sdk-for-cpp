@@ -181,7 +181,7 @@
       "StaticConfigs": {
         "Ubuntu20": {
           "OSVmImage": "ubuntu-20.04",
-          "Pool": "Azure Pipelines",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-perf",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "CC": "/usr/bin/clang-11",
