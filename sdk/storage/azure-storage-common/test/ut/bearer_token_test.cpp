@@ -11,7 +11,10 @@ namespace Azure { namespace Storage { namespace Test {
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), containerName);
     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(), AadClientId(), AadClientSecret());
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitClientOptions<Core::Credentials::TokenCredentialOptions>());
     containerClient = Blobs::BlobContainerClient(
         containerClient.GetUrl(), credential, InitClientOptions<Blobs::BlobClientOptions>());
 
