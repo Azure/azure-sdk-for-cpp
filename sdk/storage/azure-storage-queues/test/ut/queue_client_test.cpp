@@ -47,7 +47,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           throw;
         }
-        SUCCEED() << "Cotnainer is being deleted. Will try again after 3 seconds.";
+        SUCCEED() << "Queue is being deleted. Will try again after 3 seconds.";
         std::this_thread::sleep_for(std::chrono::seconds(3));
       }
     }
