@@ -396,9 +396,20 @@ namespace Azure { namespace Storage { namespace _internal {
 
   static void XmlGlobalInitialize() { static XmlGlobalInitializer globalInitializer; }
 
-  struct XmlReaderContext
+  XmlReader::XmlReader(XmlReader&& other) noexcept { *this = std::move(other); }
+  XmlReader& XmlReader::operator=(XmlReader&& other) noexcept
   {
-    xmlTextReaderPtr reader = nullptr;
+    m_context = std::move(other.m_context);
+    return *this;
+  }
+
+  using ReaderPtr = std::unique_ptr<xmlTextReader, decltype(&xmlFreeTextReader)>;
+  struct XmlReader::XmlReaderContext
+  {
+    explicit XmlReaderContext(ReaderPtr && reader_)
+      : reader(std::move(reader_))
+    {}
+    ReaderPtr reader;
     bool readingAttributes = false;
     bool readingEmptyTag = false;
   };
@@ -412,38 +423,29 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Xml data too big.");
     }
 
-    xmlTextReaderPtr reader
-        = xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0);
+    auto reader
+        = ReaderPtr(xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0), xmlFreeTextReader);
+
     if (!reader)
     {
       throw std::runtime_error("Failed to parse xml.");
     }
 
-    XmlReaderContext* context = new XmlReaderContext();
-    context->reader = reader;
-    m_context = context;
+    m_context = std::make_unique<XmlReaderContext>(std::move(reader));
   }
 
-  XmlReader::~XmlReader()
-  {
-    if (m_context)
-    {
-      auto context = static_cast<XmlReaderContext*>(m_context);
-      xmlFreeTextReader(static_cast<xmlTextReaderPtr>(context->reader));
-      delete context;
-    }
-  }
+  XmlReader::~XmlReader() = default;
 
   XmlNode XmlReader::Read()
   {
-    auto context = static_cast<XmlReaderContext*>(m_context);
+    auto context = m_context.get();
     if (context->readingAttributes)
     {
-      int ret = xmlTextReaderMoveToNextAttribute(context->reader);
+      int ret = xmlTextReaderMoveToNextAttribute(context->reader.get());
       if (ret == 1)
       {
-        const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader));
-        const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader));
+        const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader.get()));
+        const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader.get()));
         return XmlNode{XmlNodeType::Attribute, name, value};
       }
       else if (ret == 0)
@@ -461,7 +463,7 @@ namespace Azure { namespace Storage { namespace _internal {
       return XmlNode{XmlNodeType::EndTag};
     }
 
-    int ret = xmlTextReaderRead(context->reader);
+    int ret = xmlTextReaderRead(context->reader.get());
     if (ret == 0)
     {
       return XmlNode{XmlNodeType::End};
@@ -471,13 +473,13 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to parse xml.");
     }
 
-    int type = xmlTextReaderNodeType(context->reader);
-    bool is_empty = xmlTextReaderIsEmptyElement(context->reader) == 1;
-    bool has_value = xmlTextReaderHasValue(context->reader) == 1;
-    bool has_attributes = xmlTextReaderHasAttributes(context->reader) == 1;
+    int type = xmlTextReaderNodeType(context->reader.get());
+    bool is_empty = xmlTextReaderIsEmptyElement(context->reader.get()) == 1;
+    bool has_value = xmlTextReaderHasValue(context->reader.get()) == 1;
+    bool has_attributes = xmlTextReaderHasAttributes(context->reader.get()) == 1;
 
-    const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader));
-    const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader));
+    const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader.get()));
+    const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader.get()));
 
     if (has_attributes)
     {
@@ -516,48 +518,48 @@ namespace Azure { namespace Storage { namespace _internal {
     return Read();
   }
 
-  struct XmlWriterContext
+  using BufferPtr = std::unique_ptr<xmlBuffer, decltype(&xmlBufferFree)>;
+  using WriterPtr = std::unique_ptr<xmlTextWriter, decltype(&xmlFreeTextWriter)>;
+  struct XmlWriter::XmlWriterContext
   {
-    xmlBufferPtr buffer;
-    xmlTextWriterPtr writer;
+    XmlWriterContext(BufferPtr && buffer_, WriterPtr && writer_)
+      : buffer(std::move(buffer_))
+      , writer(std::move(writer_))
+    {}
+    BufferPtr buffer;
+    WriterPtr writer;
   };
+
+  XmlWriter::XmlWriter(XmlWriter&& other) noexcept { *this = std::move(other); }
+  XmlWriter& XmlWriter::operator=(XmlWriter&& other) noexcept
+  {
+    m_context = std::move(other.m_context);
+    return *this;
+  }
 
   XmlWriter::XmlWriter()
   {
     XmlGlobalInitialize();
-    auto buffer = xmlBufferCreate();
+    auto buffer = BufferPtr(xmlBufferCreate(), xmlBufferFree);
 
     if (!buffer)
     {
       throw std::runtime_error("Failed to initialize xml writer.");
     }
 
-    auto writer = xmlNewTextWriterMemory(static_cast<xmlBufferPtr>(buffer), 0);
+    auto writer = WriterPtr(xmlNewTextWriterMemory(buffer.get(), 0), xmlFreeTextWriter);
 
     if (!writer)
     {
-      xmlBufferFree(static_cast<xmlBufferPtr>(buffer));
       throw std::runtime_error("Failed to initialize xml writer.");
     }
 
-    xmlTextWriterStartDocument(static_cast<xmlTextWriterPtr>(writer), nullptr, nullptr, nullptr);
+    xmlTextWriterStartDocument(writer.get(), nullptr, nullptr, nullptr);
 
-    auto context = new XmlWriterContext;
-    context->buffer = buffer;
-    context->writer = writer;
-    m_context = context;
+    m_context = std::make_unique<XmlWriterContext>(std::move(buffer), std::move(writer));
   }
 
-  XmlWriter::~XmlWriter()
-  {
-    if (m_context)
-    {
-      auto context = static_cast<XmlWriterContext*>(m_context);
-      xmlFreeTextWriter(static_cast<xmlTextWriterPtr>(context->writer));
-      xmlBufferFree(static_cast<xmlBufferPtr>(context->buffer));
-      delete context;
-    }
-  }
+  XmlWriter::~XmlWriter() = default;
 
   namespace {
     inline xmlChar* BadCast(const char* x)
@@ -568,8 +570,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void XmlWriter::Write(XmlNode node)
   {
-    auto context = static_cast<XmlWriterContext*>(m_context);
-    xmlTextWriterPtr writer = context->writer;
+    xmlTextWriterPtr writer = m_context->writer.get();
     if (node.Type == XmlNodeType::StartTag)
     {
       if (node.Value.empty())
@@ -607,9 +608,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string XmlWriter::GetDocument()
   {
-    auto context = static_cast<XmlWriterContext*>(m_context);
-    xmlBufferPtr buffer = context->buffer;
-    return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
+    return std::string(reinterpret_cast<const char*>(m_context->buffer->content), m_context->buffer->use);
   }
 
 #endif
