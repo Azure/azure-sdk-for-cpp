@@ -1491,7 +1491,7 @@ namespace Azure { namespace Storage { namespace Test {
     CHECK_SKIP_TEST();
 
     auto blobClient = *m_blockBlobClient;
-    const auto blobContent = RandomBuffer(8_MB);
+    const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
     blobClient.UploadFrom(blobContent.data(), blobContent.size());
 
     auto testDownloadToBuffer = [&](int concurrency,
@@ -1677,7 +1677,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     CHECK_SKIP_TEST();
 
-    const auto blobContent = RandomBuffer(8_MB);
+    const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency,
                                     int64_t bufferSize,
@@ -1695,10 +1695,12 @@ namespace Azure { namespace Storage { namespace Test {
       }
 
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
-      EXPECT_NO_THROW(blobClient.UploadFrom(blobContent.data(), bufferSize, options));
-      std::vector<uint8_t> downloadBuffer(bufferSize, '\x00');
+      EXPECT_NO_THROW(
+          blobClient.UploadFrom(blobContent.data(), static_cast<size_t>(bufferSize), options));
+      std::vector<uint8_t> downloadBuffer(static_cast<size_t>(bufferSize), '\x00');
       blobClient.DownloadTo(downloadBuffer.data(), downloadBuffer.size());
-      std::vector<uint8_t> expectedData(blobContent.begin(), blobContent.begin() + bufferSize);
+      std::vector<uint8_t> expectedData(
+          blobContent.begin(), blobContent.begin() + static_cast<size_t>(bufferSize));
       EXPECT_EQ(downloadBuffer, expectedData);
     };
 
@@ -1719,13 +1721,16 @@ namespace Azure { namespace Storage { namespace Test {
 
       const std::string tempFileName = RandomString();
       WriteFile(
-          tempFileName, std::vector<uint8_t>(blobContent.begin(), blobContent.begin() + fileSize));
+          tempFileName,
+          std::vector<uint8_t>(
+              blobContent.begin(), blobContent.begin() + static_cast<size_t>(fileSize)));
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
       EXPECT_NO_THROW(blobClient.UploadFrom(tempFileName, options));
       DeleteFile(tempFileName);
-      std::vector<uint8_t> downloadBuffer(fileSize, '\x00');
+      std::vector<uint8_t> downloadBuffer(static_cast<size_t>(fileSize), '\x00');
       blobClient.DownloadTo(downloadBuffer.data(), downloadBuffer.size());
-      std::vector<uint8_t> expectedData(blobContent.begin(), blobContent.begin() + fileSize);
+      std::vector<uint8_t> expectedData(
+          blobContent.begin(), blobContent.begin() + static_cast<size_t>(fileSize));
       EXPECT_EQ(downloadBuffer, expectedData);
     };
 

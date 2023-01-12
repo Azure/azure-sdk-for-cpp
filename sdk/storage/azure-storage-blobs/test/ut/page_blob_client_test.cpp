@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_pageBlobClient->Create(2_KB);
     m_pageBlobClient->UploadPages(0, blobContent);
-    m_blobContent.resize(2_KB);
+    m_blobContent.resize(static_cast<size_t>(2_KB));
   }
 
   TEST_F(PageBlobClientTest, CreateDelete)
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto pageBlobClient = *m_pageBlobClient;
 
-    std::vector<uint8_t> blobContent = RandomBuffer(4_KB);
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(4_KB));
 
     pageBlobClient.Create(8_KB);
     auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());

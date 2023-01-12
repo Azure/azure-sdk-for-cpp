@@ -16,8 +16,6 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
-  const size_t ShareTestSize = 5;
-
   void FileShareServiceClientTest::SetUp()
   {
     StorageTest::SetUp();
