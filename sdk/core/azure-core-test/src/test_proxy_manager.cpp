@@ -95,7 +95,6 @@ void TestProxyManager::StartPlaybackRecord(TestMode testMode)
   if (IsPlaybackMode() || IsRecordMode())
   {
     std::string mode = (IsPlaybackMode() ? "playback" : "record");
-    std::cout << "TestProxy already in " + mode + " mode.";
     return;
   }
 
@@ -225,12 +224,50 @@ void TestProxyManager::SetProxySanitizer()
   Azure::Core::Url matcherRequest(m_proxy);
   matcherRequest.AppendPath("Admin");
   matcherRequest.AppendPath("SetMatcher");
-  const std::string matcherBody
-      = "{\"compareBodies\": false ,\"ignoreQueryOrdering\": true , \"ignoredHeaders\": "
-        "\"x-ms-copy-source,x-ms-proposed-lease-id,x-ms-lease-id,x-ms-file-change-"
-        "time,x-ms-file-creation-time,x-ms-file-last-write-time,x-ms-destination-"
-        "lease-id,x-ms-source-lease-id,x-ms-source-content-crc64,x-ms-content-crc64,x-ms-source-"
-        "content-md5,x-ms-content-md5,Content-MD5\"}";
+  std::string matcherBody;
+  {
+    auto jsonRoot = Json::_internal::json::object();
+    jsonRoot["compareBodies"] = false;
+    jsonRoot["ignoreQueryOrdering"] = true;
+    const std::vector<std::string> excludedHeaders = {
+        "Expect",
+        "Connection",
+    };
+    jsonRoot["excludedHeaders"] = std::accumulate(
+        excludedHeaders.begin(),
+        excludedHeaders.end(),
+        std::string(),
+        [](const std::string& lhs, const std::string& rhs) {
+          return lhs + (lhs.empty() ? "" : ",") + rhs;
+        });
+    const std::vector<std::string> ignoredHeaders = {
+        "x-ms-copy-source",
+        "x-ms-file-change-time",
+        "x-ms-file-creation-time",
+        "x-ms-file-last-write-time",
+        "x-ms-rename-source",
+    };
+    const std::vector<std::string> ignoreQueryParameters = {
+        "st",
+        "se",
+        "sig",
+    };
+    jsonRoot["ignoredHeaders"] = std::accumulate(
+        ignoredHeaders.begin(),
+        ignoredHeaders.end(),
+        std::string(),
+        [](const std::string& lhs, const std::string& rhs) {
+          return lhs + (lhs.empty() ? "" : ",") + rhs;
+        });
+    jsonRoot["ignoredQueryParameters"] = std::accumulate(
+        ignoreQueryParameters.begin(),
+        ignoreQueryParameters.end(),
+        std::string(),
+        [](const std::string& lhs, const std::string& rhs) {
+          return lhs + (lhs.empty() ? "" : ",") + rhs;
+        });
+    matcherBody = jsonRoot.dump();
+  }
 
   {
     Azure::Core::IO::MemoryBodyStream payloadStream(

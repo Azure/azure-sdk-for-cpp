@@ -21,121 +21,91 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareServiceClientTest::SetUp()
   {
     StorageTest::SetUp();
-    CHECK_SKIP_TEST();
 
-    m_options = InitClientOptions<Files::Shares::ShareClientOptions>();
-    m_fileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+    auto options = InitClientOptions<Files::Shares::ShareClientOptions>();
+    m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), m_options));
-    m_testName = GetTestName();
-    m_testNameLowercase = GetTestNameLowerCase();
-    m_sharePrefixA = m_testNameLowercase + "a";
-    m_sharePrefixB = m_testNameLowercase + "b";
-    m_shareNameSetA.clear();
-    m_shareNameSetB.clear();
-    for (size_t i = 0; i < ShareTestSize; ++i)
-    {
-      {
-        auto name = m_sharePrefixA + "a" + std::to_string(i);
-        m_fileShareServiceClient->GetShareClient(name).Create();
-        m_shareNameSetA.emplace_back(std::move(name));
-      }
-      {
-        auto name = m_sharePrefixB + "b" + std::to_string(i);
-        m_fileShareServiceClient->GetShareClient(name).Create();
-        m_shareNameSetB.emplace_back(std::move(name));
-      }
-    }
-  }
-
-  void FileShareServiceClientTest::TearDown()
-  {
-    CHECK_SKIP_TEST();
-    for (const auto& name : m_shareNameSetA)
-    {
-      m_fileShareServiceClient->GetShareClient(name).Delete();
-    }
-    for (const auto& name : m_shareNameSetB)
-    {
-      m_fileShareServiceClient->GetShareClient(name).Delete();
-    }
-    StorageTest::TearDown();
-  }
-
-  std::vector<Files::Shares::Models::ShareItem> FileShareServiceClientTest::ListAllShares(
-      const std::string& prefix)
-  {
-    std::vector<Files::Shares::Models::ShareItem> result;
-    Files::Shares::ListSharesOptions options;
-    if (!prefix.empty())
-    {
-      options.Prefix = prefix;
-    }
-    for (auto pageResult = m_fileShareServiceClient->ListShares(options); pageResult.HasPage();
-         pageResult.MoveToNextPage())
-    {
-      result.insert(result.end(), pageResult.Shares.begin(), pageResult.Shares.end());
-    }
-    return result;
+            StandardStorageConnectionString(), options));
   }
 
   TEST_F(FileShareServiceClientTest, ListShares)
   {
+    std::string prefix1 = LowercaseRandomString();
+    std::string prefix2 = LowercaseRandomString();
+    std::set<std::string> shareSet1;
+    std::set<std::string> shareSet2;
+    for (int i = 0; i < 5; ++i)
+    {
+      auto shareName = prefix1 + LowercaseRandomString();
+      auto shareClient = m_shareServiceClient->GetShareClient(shareName);
+      shareClient.Create();
+      shareSet1.emplace(shareName);
+      shareName = prefix2 + LowercaseRandomString();
+      shareClient = m_shareServiceClient->GetShareClient(shareName);
+      shareClient.Create();
+      shareSet2.emplace(shareName);
+    }
     {
       // Normal list without prefix.
-      auto result = ListAllShares();
-      for (const auto& name : m_shareNameSetA)
+      std::set<std::string> result;
+      for (auto page = m_shareServiceClient->ListShares(); page.HasPage(); page.MoveToNextPage())
       {
-        auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
-              return share.Name == name;
-            });
-        EXPECT_EQ(iter->Name.substr(0U, m_sharePrefixA.size()), m_sharePrefixA);
-        EXPECT_NE(result.end(), iter);
+        for (const auto& share : page.Shares)
+        {
+          result.insert(share.Name);
+        }
       }
-      for (const auto& name : m_shareNameSetB)
+      for (const auto& name : shareSet1)
       {
-        auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
-              return share.Name == name;
-            });
-        EXPECT_EQ(iter->Name.substr(0U, m_sharePrefixB.size()), m_sharePrefixB);
-        EXPECT_NE(result.end(), iter);
+        EXPECT_NE(result.find(name), result.end());
+      }
+      for (const auto& name : shareSet2)
+      {
+        EXPECT_NE(result.find(name), result.end());
       }
     }
     {
       // List prefix.
-      auto result = ListAllShares(m_sharePrefixA);
-      for (const auto& name : m_shareNameSetA)
+      std::set<std::string> result;
+      Files::Shares::ListSharesOptions options;
+      options.Prefix = prefix1;
+      for (auto page = m_shareServiceClient->ListShares(options); page.HasPage();
+           page.MoveToNextPage())
       {
-        auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
-              return share.Name == name;
-            });
-        EXPECT_EQ(iter->Name.substr(0U, m_sharePrefixA.size()), m_sharePrefixA);
-        EXPECT_NE(result.end(), iter);
+        for (const auto& share : page.Shares)
+        {
+          result.insert(share.Name);
+        }
       }
-      for (const auto& name : m_shareNameSetB)
+      for (const auto& name : shareSet1)
       {
-        auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
-              return share.Name == name;
-            });
-        EXPECT_EQ(result.end(), iter);
+        EXPECT_NE(result.find(name), result.end());
+      }
+      for (const auto& name : shareSet2)
+      {
+        EXPECT_EQ(result.find(name), result.end());
       }
     }
     {
       // List max result
       Files::Shares::ListSharesOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileShareServiceClient->ListShares(options);
+      auto response = m_shareServiceClient->ListShares(options);
       EXPECT_LE(2U, response.Shares.size());
+    }
+    for (const auto& shareName : shareSet1)
+    {
+      m_shareServiceClient->GetShareClient(shareName).DeleteIfExists();
+    }
+    for (const auto& shareName : shareSet2)
+    {
+      m_shareServiceClient->GetShareClient(shareName).DeleteIfExists();
     }
   }
 
   TEST_F(FileShareServiceClientTest, GetProperties)
   {
-    auto ret = m_fileShareServiceClient->GetProperties();
+    auto ret = m_shareServiceClient->GetProperties();
     auto properties = ret.Value;
     auto hourMetrics = properties.HourMetrics;
     if (hourMetrics.Enabled)
@@ -151,7 +121,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
-    auto properties = m_fileShareServiceClient->GetProperties().Value;
+    auto properties = m_shareServiceClient->GetProperties().Value;
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -179,11 +149,11 @@ namespace Azure { namespace Storage { namespace Test {
     corsRule.MaxAgeInSeconds = 20;
     properties.Cors.emplace_back(corsRule);
 
-    EXPECT_NO_THROW(m_fileShareServiceClient->SetProperties(properties));
+    EXPECT_NO_THROW(m_shareServiceClient->SetProperties(properties));
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     TestSleep(10s);
-    auto downloadedProperties = m_fileShareServiceClient->GetProperties().Value;
+    auto downloadedProperties = m_shareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
@@ -235,7 +205,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NE(properties.Cors.end(), iter);
     }
 
-    m_fileShareServiceClient->SetProperties(originalProperties);
+    m_shareServiceClient->SetProperties(originalProperties);
   }
 
   TEST_F(FileShareServiceClientTest, DISABLED_SetPremiumFileProperties)

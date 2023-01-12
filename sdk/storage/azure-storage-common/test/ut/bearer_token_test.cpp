@@ -5,9 +5,15 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(ClientSecretCredentialTest, ClientSecretCredentialWorks_LIVEONLY_)
+  TEST_F(StorageTest, ClientSecretCredentialWorks)
   {
-    auto containerClient = GetClientForTest(GetTestName());
+    const std::string containerName = LowercaseRandomString();
+    auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), containerName);
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        AadTenantId(), AadClientId(), AadClientSecret());
+    containerClient = Blobs::BlobContainerClient(
+        containerClient.GetUrl(), credential, InitClientOptions<Blobs::BlobClientOptions>());
 
     EXPECT_NO_THROW(containerClient.Create());
     EXPECT_NO_THROW(containerClient.Delete());

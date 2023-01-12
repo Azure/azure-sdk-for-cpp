@@ -134,37 +134,6 @@ namespace Azure { namespace Core { namespace Test {
 
     bool shouldSkipTest() { return m_wasSkipped; }
 
-    void SkipTest()
-    {
-      if (!m_wasSkipped)
-      {
-        m_wasSkipped = true;
-        GTEST_SKIP();
-      }
-    }
-
-    inline void ValidateSkippingTest()
-    {
-      if (m_wasSkipped)
-      {
-        GTEST_SKIP();
-      }
-    }
-
-    bool IsValidTime(const Azure::DateTime& datetime)
-    {
-      // Playback won't check dates
-      if (m_testContext.IsPlaybackMode())
-      {
-        return true;
-      }
-
-      // We assume datetime within a week is valid.
-      const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
-      const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
-      return datetime > minTime && datetime < maxTime;
-    }
-
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
@@ -236,11 +205,13 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_unique<T>(url, credential, options);
     }
 
+    template <class T> void InitClientOptions(T& options) { PrepareOptions(options); }
+
     template <class T> T InitClientOptions()
     {
       // Run instrumentation before creating the client
       T options;
-      PrepareOptions(options);
+      InitClientOptions(options);
       return options;
     }
 

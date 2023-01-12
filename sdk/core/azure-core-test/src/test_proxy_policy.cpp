@@ -42,7 +42,10 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
   {
     // This is a download with keep connection open. Let's switch the request
     redirectRequest = Azure::Core::Http::Request(
-        request.GetMethod(), Azure::Core::Url(m_testProxy->GetTestProxy()), false);
+        request.GetMethod(),
+        Azure::Core::Url(m_testProxy->GetTestProxy()),
+        request.GetBodyStream(),
+        false);
   }
 
   redirectRequest.GetUrl().SetPath(request.GetUrl().GetPath());

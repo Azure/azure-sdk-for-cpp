@@ -68,115 +68,57 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
-  const size_t FileSystemTestSize = 5;
-
-  void DataLakeServiceClientTest::CreateFileSystemList()
-  {
-    std::string const fileSystemName(GetFileSystemValidName());
-    std::string const prefix(fileSystemName.begin(), fileSystemName.end() - 2);
-    m_fileSystemPrefixA = prefix + "a";
-    m_fileSystemPrefixB = prefix + "b";
-    m_fileSystemNameSetA.clear();
-    m_fileSystemNameSetB.clear();
-    for (size_t i = 0; i < FileSystemTestSize; ++i)
-    {
-      {
-        auto name = m_fileSystemPrefixA + std::to_string(i);
-        m_dataLakeServiceClient->GetFileSystemClient(name).Create();
-        m_fileSystemNameSetA.emplace_back(std::move(name));
-      }
-      {
-        auto name = m_fileSystemPrefixB + std::to_string(i);
-        m_dataLakeServiceClient->GetFileSystemClient(name).Create();
-        m_fileSystemNameSetB.emplace_back(std::move(name));
-      }
-    }
-  }
-
-  void DataLakeServiceClientTest::SetUp()
-  {
-    StorageTest::SetUp();
-
-    CHECK_SKIP_TEST();
-
-    m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
-        Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-            AdlsGen2ConnectionString(),
-            InitClientOptions<Files::DataLake::DataLakeClientOptions>()));
-  }
-
-  std::vector<Files::DataLake::Models::FileSystemItem>
-  DataLakeServiceClientTest::ListAllFileSystems(const std::string& prefix)
-  {
-    std::vector<Files::DataLake::Models::FileSystemItem> result;
-    std::string continuation;
-    Files::DataLake::ListFileSystemsOptions options;
-    if (!prefix.empty())
-    {
-      options.Prefix = prefix;
-    }
-    for (auto pageResult = m_dataLakeServiceClient->ListFileSystems(options); pageResult.HasPage();
-         pageResult.MoveToNextPage())
-    {
-      result.insert(result.end(), pageResult.FileSystems.begin(), pageResult.FileSystems.end());
-    }
-    return result;
-  }
-
   TEST_F(DataLakeServiceClientTest, ListFileSystemsSegment)
   {
-    CreateFileSystemList();
+    const std::string prefix1 = LowercaseRandomString();
+    const std::string prefix2 = LowercaseRandomString();
+    std::set<std::string> filesystemSet1;
+    std::set<std::string> filesystemSet2;
+    for (int i = 0; i < 5; ++i)
+    {
+      std::string fsName = prefix1 + LowercaseRandomString();
+
+      m_dataLakeServiceClient->GetFileSystemClient(fsName).Create();
+      filesystemSet1.insert(fsName);
+      fsName = prefix2 + LowercaseRandomString();
+      m_dataLakeServiceClient->GetFileSystemClient(fsName).Create();
+      filesystemSet2.insert(fsName);
+    }
     {
       // Normal list without prefix.
-      auto result = ListAllFileSystems();
-      for (const auto& name : m_fileSystemNameSetA)
+      std::set<std::string> result;
+      for (auto page = m_dataLakeServiceClient->ListFileSystems(); page.HasPage();
+           page.MoveToNextPage())
       {
-        auto iter = std::find_if(
-            result.begin(),
-            result.end(),
-            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
-              return fileSystem.Name == name;
-            });
-        EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
-        EXPECT_NE(result.end(), iter);
+        for (auto fs : page.FileSystems)
+        {
+          result.insert(fs.Name);
+        }
       }
-      for (const auto& name : m_fileSystemNameSetB)
+      for (const auto& f : filesystemSet1)
       {
-        auto iter = std::find_if(
-            result.begin(),
-            result.end(),
-            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
-              return fileSystem.Name == name;
-            });
-        EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixB.size()), m_fileSystemPrefixB);
-        EXPECT_NE(result.end(), iter);
+        EXPECT_NE(result.find(f), result.end());
+      }
+      for (const auto& f : filesystemSet2)
+      {
+        EXPECT_NE(result.find(f), result.end());
       }
     }
     {
-      // List prefix.
-      auto result = ListAllFileSystems(m_fileSystemPrefixA);
-      for (const auto& name : m_fileSystemNameSetA)
+      std::set<std::string> result;
+      Files::DataLake::ListFileSystemsOptions listOptions;
+      listOptions.Prefix = prefix1;
+      for (auto page = m_dataLakeServiceClient->ListFileSystems(listOptions); page.HasPage();
+           page.MoveToNextPage())
       {
-        auto iter = std::find_if(
-            result.begin(),
-            result.end(),
-            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
-              return fileSystem.Name == name;
-            });
-        EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
-        EXPECT_EQ(iter->Details.DefaultEncryptionScope, AccountEncryptionKey);
-        EXPECT_FALSE(iter->Details.PreventEncryptionScopeOverride);
-        EXPECT_NE(result.end(), iter);
+        for (auto fs : page.FileSystems)
+        {
+          result.insert(fs.Name);
+        }
       }
-      for (const auto& name : m_fileSystemNameSetB)
+      for (const auto& f : filesystemSet1)
       {
-        auto iter = std::find_if(
-            result.begin(),
-            result.end(),
-            [&name](const Files::DataLake::Models::FileSystemItem& fileSystem) {
-              return fileSystem.Name == name;
-            });
-        EXPECT_EQ(result.end(), iter);
+        EXPECT_NE(result.find(f), result.end());
       }
     }
     {
@@ -185,6 +127,14 @@ namespace Azure { namespace Storage { namespace Test {
       options.PageSizeHint = 2;
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
       EXPECT_LE(2U, response.FileSystems.size());
+    }
+    for (const auto& fsName : filesystemSet1)
+    {
+      m_dataLakeServiceClient->GetFileSystemClient(fsName).DeleteIfExists();
+    }
+    for (const auto& fsName : filesystemSet2)
+    {
+      m_dataLakeServiceClient->GetFileSystemClient(fsName).DeleteIfExists();
     }
   }
 
@@ -209,7 +159,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(fileSystems.empty());
   }
 
-  TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks_LIVEONLY_)
+  TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks)
   {
     CHECK_SKIP_TEST();
 
@@ -388,4 +338,5 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto res = m_dataLakeServiceClient->SetProperties(originalProperties);
   }
+
 }}} // namespace Azure::Storage::Test

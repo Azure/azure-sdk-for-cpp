@@ -23,6 +23,7 @@ add_executable (
     blob_container_client_test.hpp
     blob_query_test.cpp
     blob_sas_test.cpp
+    blob_service_client_test.hpp
     blob_service_client_test.cpp
     block_blob_client_test.cpp
     block_blob_client_test.hpp
