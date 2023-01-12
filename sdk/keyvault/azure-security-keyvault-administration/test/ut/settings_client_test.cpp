@@ -22,7 +22,7 @@ TEST_F(SettingsClientTest, GetSettings)
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   EXPECT_EQ(testName, testName);
   CreateHSMClientForTest();
-  if (m_keyVaultHsmUrl == m_keyVaultUrl)
+  if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
     // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
@@ -39,7 +39,7 @@ TEST_F(SettingsClientTest, GetSetting)
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   CreateHSMClientForTest();
   // create certificate method contains all the checks
-  if (m_keyVaultHsmUrl == m_keyVaultUrl)
+  if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
     auto const& client = GetClientForTest(testName);
     auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
@@ -52,7 +52,7 @@ TEST_F(SettingsClientTest, UpdateSetting)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   CreateHSMClientForTest();
-  if (m_keyVaultHsmUrl == m_keyVaultUrl)
+  if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
     // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
