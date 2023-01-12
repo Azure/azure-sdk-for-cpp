@@ -2,4 +2,4 @@
 
 ## 4.0.0-beta.1 (Unreleased)
 
-- initial preview
+- initial preview of Settings API. 
