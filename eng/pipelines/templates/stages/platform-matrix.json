@@ -180,8 +180,8 @@
     {
       "StaticConfigs": {
         "Ubuntu20": {
-          "OSVmImage": "ubuntu-20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-perf",
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "CC": "/usr/bin/clang-11",
