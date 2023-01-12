@@ -270,7 +270,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
           "equals":"0123456789"
         }
       ],
-      "authority":"https://sharedeus.eus.test.attest.azure.net/"
+      "authority":"https://sharedeus.eus.attest.azure.net"
     }
   ],
   "version":"1.0.0"

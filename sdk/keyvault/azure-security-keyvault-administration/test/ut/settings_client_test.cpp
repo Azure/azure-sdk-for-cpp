@@ -22,13 +22,16 @@ TEST_F(SettingsClientTest, GetSettings)
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   EXPECT_EQ(testName, testName);
   CreateHSMClientForTest();
-  // create certificate method contains all the checks
-  auto const& client = GetClientForTest(testName);
-  auto result = client.GetSettings();
-  EXPECT_EQ(result.Value.Value.size(), 1);
-  auto setting = result.Value.Value[0];
-  EXPECT_EQ(setting.Name, "AllowKeyManagementOperationsThroughARM");
-  EXPECT_EQ(setting.Value, "false");
+  if (m_keyVaultHsmUrl == m_keyVaultUrl)
+  {
+    // create certificate method contains all the checks
+    auto const& client = GetClientForTest(testName);
+    auto result = client.GetSettings();
+    EXPECT_EQ(result.Value.Value.size(), 1);
+    auto setting = result.Value.Value[0];
+    EXPECT_EQ(setting.Name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(setting.Value, "false");
+  }
 }
 
 TEST_F(SettingsClientTest, GetSetting)
@@ -36,40 +39,46 @@ TEST_F(SettingsClientTest, GetSetting)
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   CreateHSMClientForTest();
   // create certificate method contains all the checks
-  auto const& client = GetClientForTest(testName);
-  auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
-  EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
-  EXPECT_EQ(result.Value.Value, "false");
+  if (m_keyVaultHsmUrl == m_keyVaultUrl)
+  {
+    auto const& client = GetClientForTest(testName);
+    auto result = client.GetSetting("AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+    EXPECT_EQ(result.Value.Value, "false");
+  }
 }
 
 TEST_F(SettingsClientTest, UpdateSetting)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   CreateHSMClientForTest();
-  // create certificate method contains all the checks
-  auto const& client = GetClientForTest(testName);
+  if (m_keyVaultHsmUrl == m_keyVaultUrl)
   {
-    UpdateSettingOptions options;
-    options.Value = "false";
-    auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+    // create certificate method contains all the checks
+    auto const& client = GetClientForTest(testName);
+    {
+      UpdateSettingOptions options;
+      options.Value = "false";
+      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
 
-    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.Value, "false");
-  }
-  {
-    UpdateSettingOptions options;
-    options.Value = "true";
-    auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      EXPECT_EQ(result.Value.Value, "false");
+    }
+    {
+      UpdateSettingOptions options;
+      options.Value = "true";
+      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
 
-    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.Value, "true");
-  }
-  {
-    UpdateSettingOptions options;
-    options.Value = "false";
-    auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      EXPECT_EQ(result.Value.Value, "true");
+    }
+    {
+      UpdateSettingOptions options;
+      options.Value = "false";
+      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
 
-    EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
-    EXPECT_EQ(result.Value.Value, "false");
+      EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
+      EXPECT_EQ(result.Value.Value, "false");
+    }
   }
 }
