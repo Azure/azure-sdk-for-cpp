@@ -1,0 +1,18 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-storage-common/inc",
+    "../../azure-storage-blobs/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Storage::Files::Shares",
+  "reviewName": "Storage File Shares Review",
+  "serviceName": "Azure Storage Files Shares",
+  "packageName": "azure-storage-files-shares-cpp"
+}
