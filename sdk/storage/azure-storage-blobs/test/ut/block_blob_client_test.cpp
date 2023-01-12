@@ -795,17 +795,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, DISABLED_SetTierCold)
   {
-
-    auto const testName(GetTestName());
-    auto blobClient = GetBlockBlobClient(testName);
-
-    std::vector<uint8_t> emptyContent;
-    std::string blobName(testName);
-    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
-
-    // set to cold
-    blobClient.SetAccessTier(Blobs::Models::AccessTier::Cold);
-    auto properties = blobClient.GetProperties().Value;
+    m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Cold);
+    auto properties = m_blockBlobClient->GetProperties().Value;
     EXPECT_EQ(properties.AccessTier.Value(), Blobs::Models::AccessTier::Cold);
   }
 
