@@ -136,8 +136,8 @@
     {
       "StaticConfigs": {
         "Ubuntu18": {
-          "OSVmImage": "ubuntu-18.04",
-          "Pool": "Azure Pipelines",
+          "OSVmImage": "MMSUbuntu18.04",
+          "Pool": "azsdk-pool-mms-ubuntu-1804-general",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true
@@ -181,7 +181,7 @@
       "StaticConfigs": {
         "Ubuntu20": {
           "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-perf",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "CC": "/usr/bin/clang-11",
