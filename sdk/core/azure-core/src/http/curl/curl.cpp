@@ -845,6 +845,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       if (bufferSize == 0)
       {
         // closed connection, prevent application from keep trying to pull more bytes from the wire
+        Log::Write(Logger::Level::Error, "Failed to read from socket");
         return CURLE_RECV_ERROR;
       }
       // returns the number of bytes parsed up to the body Start
@@ -930,6 +931,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse(
         {
           // closed connection, prevent application from keep trying to pull more bytes from the
           // wire
+          Log::Write(Logger::Level::Error, "Failed to read from socket");
           return CURLE_RECV_ERROR;
         }
         this->m_bodyStartInBuffer = 0;
