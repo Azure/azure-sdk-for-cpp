@@ -117,7 +117,7 @@ To get the settings we will call the GetSettings API
 
 #### GetSetting
 
-To get a specific settinig we will call the GetSetting API bassing the setting name as a string parameter. 
+To get a specific setting we will call the GetSetting API bassing the setting name as a string parameter. 
 
 ```CPP
   Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
