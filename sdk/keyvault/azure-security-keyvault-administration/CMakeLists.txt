@@ -103,7 +103,7 @@ if (BUILD_PERFORMANCE_TESTS)
   #add_subdirectory(test/perf)
 endif()
 
-if(BUILD_SAMPLES)
+if(BUILD_SAMPLES_HSM)
   add_subdirectory(test/samples)
 endif()
 
