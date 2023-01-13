@@ -32,48 +32,40 @@ int main()
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  if (std::getenv("AZURE_KEYVAULT_URL") != std::getenv("AZURE_KEYVAULT_HSM_URL"))
+  // create client
+  SettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
+
+  try
   {
+    // Get all settings
+    SettingsListResult settingsList = settingsClient.GetSettings().Value;
 
-    // create client
-    SettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
+    std::cout << "Number of settings found : " << settingsList.Value.size() << std::endl;
 
-    try
-    {
-      // Get all settings
-      SettingsListResult settingsList = settingsClient.GetSettings().Value;
+    Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
 
-      std::cout << "Number of settings found : " << settingsList.Value.size() << std::endl;
+    std::cout << "Retrieved setting with name " << setting.Name << ", with value " << setting.Value
+              << std::endl;
 
-      Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
+    UpdateSettingOptions options;
+    options.Value = setting.Value;
 
-      std::cout << "Retrieved setting with name " << setting.Name << ", with value "
-                << setting.Value << std::endl;
+    Setting updatedSetting
+        = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
 
-      UpdateSettingOptions options;
-      options.Value = setting.Value;
-
-      Setting updatedSetting
-          = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
-
-      std::cout << "Retrieved updated setting with name " << updatedSetting.Name << ", with value "
-                << updatedSetting.Value << std::endl;
-    }
-    catch (Azure::Core::Credentials::AuthenticationException const& e)
-    {
-      std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
-      return 1;
-    }
-    catch (Azure::Core::RequestFailedException const& e)
-    {
-      std::cout << "Key Vault Settings Client Exception happened:" << std::endl
-                << e.Message << std::endl;
-      return 1;
-    }
+    std::cout << "Retrieved updated setting with name " << updatedSetting.Name << ", with value "
+              << updatedSetting.Value << std::endl;
   }
-  else
+  catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
-    std::cout << "this sample requires an HSM to be present and configured " << std::endl;
+    std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
+    return 1;
+  }
+  catch (Azure::Core::RequestFailedException const& e)
+  {
+    std::cout << "Key Vault Settings Client Exception happened:" << std::endl
+              << e.Message << std::endl;
+    return 1;
   }
 
   return 0;
