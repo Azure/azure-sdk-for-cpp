@@ -76,7 +76,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 ### Additional concepts
 
-TBD
+Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for-cpp#response-t-model-types) | [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp#long-running-operations) | Handling failures
 
 ## Examples
 
@@ -143,7 +143,10 @@ catch (Azure::Storage::StorageException& e)
 
 ## Next steps
 
-TBD
+Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs/samples):
+
+1. [Upload and download blobs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_getting_started.cpp)
+2. [List operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_list_operation.cpp)
 
 ## Contributing
 
