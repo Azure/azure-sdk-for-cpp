@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       // if we are in live mode and the test needs a valid HSM url (aka different from the keyvault
       // url)
-      if (m_testContext.IsLiveMode() && (m_keyVaultUrl != m_keyVaultHsmUrl))
+      if (m_testContext.IsLiveMode() && (m_keyVaultUrl == m_keyVaultHsmUrl))
       {
         SkipTest();
       }
