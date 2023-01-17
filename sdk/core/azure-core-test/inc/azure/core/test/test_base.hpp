@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       std::string updated(src);
       std::replace(updated.begin(), updated.end(), '/', '-');
-      return RemovePreffix(updated);
+      return RemovePrefix(updated);
     }
 
     std::string RemovePrefix(std::string const& src)
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
         testName = Sanitize(testName);
       }
 
-      return RemovePreffix(testName);
+      return RemovePrefix(testName);
     }
 
     // Reads the current test instance name.
