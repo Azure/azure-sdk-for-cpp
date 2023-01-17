@@ -308,20 +308,6 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
       VerifyIsProxiedResponse(response, myIpAddress);
     }
-    {
-      Azure::Core::Http::Policies::TransportOptions transportOptions;
-
-      transportOptions.HttpProxy = HttpProxyServer();
-      HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
-      testUrl.SetScheme("http");
-
-      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-      auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
-      checkResponseCode(response->GetStatusCode());
-      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-      CheckBodyFromBuffer(*response, expectedResponseBodySize);
-      VerifyIsProxiedResponse(response, myIpAddress);
-    }
   }
 
 #if !defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -385,7 +371,7 @@ namespace Azure { namespace Core { namespace Test {
     }
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
     // HTTP Connections.
-    testUrl.SetScheme("http");
+    testUrl.m_scheme = "http";
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
 

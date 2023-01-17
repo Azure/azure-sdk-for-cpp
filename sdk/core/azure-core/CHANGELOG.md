@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed unused APIs `SetScheme()` and `SetPort()` from `Azure::Core::Url`. After construction from a url string, these attributes don't need to be changed.
+
 ### Bugs Fixed
 
 ### Other Changes
@@ -19,7 +21,7 @@
 ### Breaking Changes
 
 - Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
-- Removed `noexcept` specification from `Azure::DateTime::clock::now()`. 
+- Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
 
 ## 1.8.0-beta.2 (2022-11-03)
 

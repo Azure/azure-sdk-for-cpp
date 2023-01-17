@@ -15,6 +15,13 @@
 #include <memory>
 #include <string>
 
+#if defined(TESTING_BUILD)
+// Define the class used from tests to validate http scheme
+namespace Azure { namespace Core { namespace Test {
+  class TransportAdapterOptions_ProxyWithPasswordHttp_Test;
+}}} // namespace Azure::Core::Test
+#endif
+
 namespace Azure { namespace Core {
   namespace _detail {
     inline std::string FormatEncodedUrlQueryParameters(
@@ -44,6 +51,11 @@ namespace Azure { namespace Core {
    * (scheme, host, path, etc.). Authority is not currently supported.
    */
   class Url final {
+#if defined(TESTING_BUILD)
+    // make tests classes friends to allow setting scheme to http
+    friend class Azure::Core::Test::TransportAdapterOptions_ProxyWithPasswordHttp_Test;
+#endif
+
   private:
     std::string m_scheme;
     std::string m_host;
@@ -102,25 +114,11 @@ namespace Azure { namespace Core {
     /******** API for building Url from scratch. Override state ********/
 
     /**
-     * @brief Sets URL scheme.
-     *
-     * @param scheme URL scheme.
-     */
-    void SetScheme(const std::string& scheme) { m_scheme = scheme; }
-
-    /**
      * @brief Sets URL host.
      *
      * @param encodedHost URL host, already encoded.
      */
     void SetHost(const std::string& encodedHost) { m_host = encodedHost; }
-
-    /**
-     * @brief Sets URL port.
-     *
-     * @param port URL port.
-     */
-    void SetPort(uint16_t port) { m_port = port; }
 
     /**
      * @brief Sets URL path.

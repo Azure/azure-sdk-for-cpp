@@ -241,7 +241,7 @@ namespace Azure { namespace Core { namespace Test {
         url.GetPort(),
         expected);
 
-    url.SetPort(40);
+    url = Core::Url("http://test.com:40");
     expected = 40;
 
     EXPECT_PRED2(
@@ -249,7 +249,7 @@ namespace Azure { namespace Core { namespace Test {
         url.GetPort(),
         expected);
 
-    url.SetPort(90);
+    url = Core::Url("http://test.com:90");
     expected = 90;
 
     EXPECT_PRED2(
