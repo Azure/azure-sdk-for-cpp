@@ -105,15 +105,6 @@ namespace Azure { namespace Core { namespace Test {
       return RemovePreffix(updated);
     }
 
-    void SkipTest()
-    {
-      if (!m_wasSkipped)
-      {
-        m_wasSkipped = true;
-        GTEST_SKIP();
-      }
-    }
-
     std::string RemovePreffix(std::string const& src)
     {
       std::string updated(src);
@@ -142,6 +133,15 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<Azure::Core::Test::TestProxyManager> m_testProxy;
 
     bool shouldSkipTest() { return m_wasSkipped; }
+
+    void SkipTest()
+    {
+      if (!m_wasSkipped)
+      {
+        m_wasSkipped = true;
+        GTEST_SKIP();
+      }
+    }
 
     inline void ValidateSkippingTest()
     {

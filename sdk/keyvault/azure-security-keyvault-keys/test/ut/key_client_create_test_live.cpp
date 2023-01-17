@@ -133,6 +133,7 @@ TEST_F(KeyVaultKeyClient, CreateEcKey)
 /********************************* Create key overloads  *********************************/
 TEST_F(KeyVaultKeyClient, CreateOkpKey)
 {
+  CheckSkipHSMForLive();
   auto const keyName = GetTestName();
   // This client requires an HSM client
   CreateHsmClient();
@@ -156,6 +157,7 @@ TEST_F(KeyVaultKeyClient, CreateOkpKey)
 
 TEST_F(KeyVaultKeyClient, CreateOkpHSMKey)
 {
+  CheckSkipHSMForLive();
   auto const keyName = GetTestName();
   // This client requires an HSM client
   CreateHsmClient();
@@ -262,7 +264,7 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
   // This client requires an HSM client
   CreateHsmClient();
   auto const& client = GetClientForTest(keyName);
-
+  
   {
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
     rsaHsmKey.Enabled = true;
