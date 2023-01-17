@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Test {
       return RemovePreffix(updated);
     }
 
-    std::string RemovePreffix(std::string const& src)
+    std::string RemovePrefix(std::string const& src)
     {
       std::string updated(src);
       // Remove special marker for LIVEONLY
