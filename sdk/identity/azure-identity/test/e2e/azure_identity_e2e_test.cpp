@@ -60,6 +60,7 @@ int main(int argc, char** argv)
     using Azure::DateTime;
     using Azure::Core::Context;
     using Azure::Core::Credentials::TokenCredentialOptions;
+    using Azure::Core::Credentials::TokenRequestContext;
     using Azure::Identity::ManagedIdentityCredential;
 
     constexpr char const* resourceUrlEnvVarName = "AZURE_IDENTITY_TEST_VAULT_URL";
@@ -94,7 +95,10 @@ int main(int argc, char** argv)
     ManagedIdentityCredential credential(
         Environment::GetVariable("AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID"), options);
 
-    auto const token = credential.GetToken({{resourceUrl}}, Context());
+    TokenRequestContext tokenRequestContext;
+    tokenRequestContext.Scopes = {resourceUrl};
+
+    auto const token = credential.GetToken(tokenRequestContext, Context());
 
     std::string tokenPreview;
     {

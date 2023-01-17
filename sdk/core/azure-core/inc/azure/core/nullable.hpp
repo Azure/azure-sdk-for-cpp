@@ -98,12 +98,12 @@ public:
    * @brief Destructs the contained value, if there is one.
    *
    */
-  void Reset() noexcept /* enforces termination */
+  void Reset() noexcept(std::is_nothrow_destructible<T>::value) /* enforces termination */
   {
     if (m_hasValue)
     {
-      m_value.~T();
       m_hasValue = false;
+      m_value.~T();
     }
   }
 

@@ -1,0 +1,11 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(azure-core-cpp "1.5.0")
+
+include("${CMAKE_CURRENT_LIST_DIR}/azure-security-keyvault-administration-cppTargets.cmake")
+
+check_required_components("azure-security-keyvault-administration-cpp")

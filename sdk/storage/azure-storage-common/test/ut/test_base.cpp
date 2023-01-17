@@ -4,7 +4,6 @@
 #include "test_base.hpp"
 
 #include <algorithm>
-#include <cctype>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>

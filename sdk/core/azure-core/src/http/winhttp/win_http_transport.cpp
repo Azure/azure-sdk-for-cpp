@@ -21,6 +21,8 @@
 #include <string>
 #pragma warning(push)
 #pragma warning(disable : 6553)
+#pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
+                                // 'GetProcAddress'.
 #include <wil/resource.h> // definitions for wil::unique_cert_chain_context and other RAII type wrappers for Windows types.
 #pragma warning(pop)
 
@@ -515,7 +517,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       DWORD_PTR dwContext,
       DWORD internetStatus,
       LPVOID statusInformation,
-      DWORD statusInformationLength) noexcept
+      DWORD statusInformationLength)
   {
     // If we're called before our context has been set (on Open and Close callbacks), ignore the
     // status callback.

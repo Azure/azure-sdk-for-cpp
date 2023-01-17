@@ -130,6 +130,54 @@ TEST_F(KeyVaultKeyClient, CreateEcKey)
   }
 }
 
+/********************************* Create key overloads  *********************************/
+TEST_F(KeyVaultKeyClient, CreateOkpKey)
+{
+  auto const keyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
+
+  {
+    auto okpKey = Azure::Security::KeyVault::Keys::CreateOkpKeyOptions(keyName);
+    auto keyResponse = client.CreateOkpKey(okpKey);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+  {
+    // Now get the key
+    auto keyResponse = client.GetKey(keyName);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+}
+
+TEST_F(KeyVaultKeyClient, CreateOkpHSMKey)
+{
+  auto const keyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
+
+  {
+    auto okpKey = Azure::Security::KeyVault::Keys::CreateOkpKeyOptions(keyName, true);
+    auto keyResponse = client.CreateOkpKey(okpKey);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_EQ(keyVaultKey.GetKeyType(), KeyVaultKeyType::OkpHsm);
+    EXPECT_EQ(keyVaultKey.Key.CurveName.Value(), KeyCurveName::Ed25519);
+  }
+  {
+    // Now get the key
+    auto keyResponse = client.GetKey(keyName);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+  }
+}
 TEST_F(KeyVaultKeyClient, CreateEcKeyWithCurve)
 {
   auto const keyName = GetTestName();
@@ -270,7 +318,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
           "equals":"0123456789"
         }
       ],
-      "authority":"https://sharedeus.eus.test.attest.azure.net/"
+      "authority":"https://sharedeus.eus.attest.azure.net"
     }
   ],
   "version":"1.0.0"

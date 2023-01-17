@@ -7,8 +7,6 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 
-#include "private/token_cache.hpp"
-
 #include <chrono>
 #include <thread>
 
@@ -60,10 +58,12 @@ TEST_F(TokenCredentialTest, ClientSecret)
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetClientSecretCredential(testName);
 
-  _detail::TokenCache::Clear();
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+  tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
 
   auto const token = clientSecretCredential->GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
+      tokenRequestContext, Azure::Core::Context::ApplicationContext);
 
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
@@ -74,10 +74,12 @@ TEST_F(TokenCredentialTest, EnvironmentCredential)
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
-  _detail::TokenCache::Clear();
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+  tokenRequestContext.MinimumExpiration = std::chrono::hours(1000000);
 
   auto const token = clientSecretCredential->GetToken(
-      {{"https://vault.azure.net/.default"}}, Azure::Core::Context::ApplicationContext);
+      tokenRequestContext, Azure::Core::Context::ApplicationContext);
 
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());

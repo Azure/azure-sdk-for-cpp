@@ -363,7 +363,7 @@ namespace Azure { namespace Core { namespace Http {
         }
 
         // Always toLower() headers
-        auto headerName
+        auto const headerName
             = Azure::Core::_internal::StringExtensions::ToLower(std::string(start, end));
         start = end + 1; // start value
         while (start < last && (*start == ' ' || *start == '\t'))

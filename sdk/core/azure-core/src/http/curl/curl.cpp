@@ -70,6 +70,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
+#include <locale>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -557,6 +558,12 @@ CURLcode CurlConnection::SendBuffer(
     size_t bufferSize,
     Context const& context)
 {
+  // Once you've shutdown the connection, we can't send any more data (although we can continue to
+  // receive).
+  if (IsShutdown())
+  {
+    return CURLE_SEND_ERROR;
+  }
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
     // check cancelation for each chunk of data.
@@ -1065,16 +1072,6 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   return totalRead;
 }
 
-void CurlConnection::Shutdown()
-{
-#if defined(AZ_PLATFORM_POSIX)
-  ::shutdown(m_curlSocket, SHUT_RDWR);
-#elif defined(AZ_PLATFORM_WINDOWS)
-  ::shutdown(m_curlSocket, SD_BOTH);
-#endif
-  CurlNetworkConnection::Shutdown();
-}
-
 // Read from socket and return the number of bytes taken from socket
 size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
 {
@@ -1319,9 +1316,10 @@ void DumpCurlInfoToLog(std::string const& text, uint8_t* ptr, size_t size)
     {
       // Log the contents of the buffer as text, if it's printable, print the character, otherwise
       // print '.'
-      if (isprint(ptr[i + c]))
+      auto const ch = static_cast<char>(ptr[i + c]);
+      if (std::isprint(ch, std::locale::classic()))
       {
-        ss << ptr[i + c];
+        ss << ch;
       }
       else
       {

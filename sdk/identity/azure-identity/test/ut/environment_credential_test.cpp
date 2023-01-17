@@ -30,7 +30,7 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -85,7 +85,7 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -141,7 +141,7 @@ TEST(EnvironmentCredential, Unavailable)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -169,7 +169,7 @@ TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -227,7 +227,7 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -258,7 +258,7 @@ TEST(EnvironmentCredential, ClientSecretNoClientId)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -289,7 +289,7 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
 
         return std::make_unique<EnvironmentCredential>(options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;

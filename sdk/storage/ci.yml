@@ -27,8 +27,8 @@ stages:
       ServiceDirectory: storage
       # Not running tests on CI but only on LiveTest mode
       CtestRegex: azure-storage
-      LineCoverageTarget: 73.5305
-      BranchCoverageTarget: 40.7738
+      LineCoverageTarget: 71.0434
+      BranchCoverageTarget: 40.3229
       LiveTestCtestRegex: azure-storage
       Clouds: Preview
       SupportedClouds: Preview

@@ -72,8 +72,8 @@ KeyClient::KeyClient(
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
+    Azure::Core::Credentials::TokenRequestContext tokenContext;
+    tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));
@@ -153,6 +153,27 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
   // Payload for the request
   std::string const& keyName = rsaKeyOptions.GetName();
   auto payload = _detail::KeyRequestParameters(rsaKeyOptions).Serialize();
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<KeyVaultKey> KeyClient::CreateOkpKey(
+    CreateOkpKeyOptions const& okpKeyOptions,
+    Azure::Core::Context const& context) const
+{
+  // Payload for the request
+  std::string const& keyName = okpKeyOptions.GetName();
+  std::string payload = _detail ::KeyRequestParameters(okpKeyOptions).Serialize();
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 

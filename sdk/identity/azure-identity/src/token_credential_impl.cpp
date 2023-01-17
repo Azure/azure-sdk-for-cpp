@@ -3,26 +3,43 @@
 
 #include "private/token_credential_impl.hpp"
 
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/url.hpp>
 
 #include "private/package_version.hpp"
 
 #include <chrono>
-#include <sstream>
+#include <type_traits>
 
-using namespace Azure::Identity::_detail;
+using Azure::Identity::_detail::TokenCredentialImpl;
 
-TokenCredentialImpl::TokenCredentialImpl(Core::Credentials::TokenCredentialOptions const& options)
+using Azure::Identity::_detail::PackageVersion;
+
+using Azure::Core::Context;
+using Azure::Core::Url;
+using Azure::Core::Credentials::AccessToken;
+using Azure::Core::Credentials::AuthenticationException;
+using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Http::HttpStatusCode;
+using Azure::Core::Http::RawResponse;
+
+TokenCredentialImpl::TokenCredentialImpl(TokenCredentialOptions const& options)
     : m_httpPipeline(options, "identity", PackageVersion::ToString(), {}, {})
 {
 }
 
+namespace {
+std::string OptionalUrlEncode(std::string const& value, bool doEncode)
+{
+  return doEncode ? Url::Encode(value) : value;
+}
+} // namespace
+
 std::string TokenCredentialImpl::FormatScopes(
     std::vector<std::string> const& scopes,
-    bool asResource)
+    bool asResource,
+    bool urlEncode)
 {
-  using Azure::Core::Url;
-
   if (asResource && scopes.size() == 1)
   {
     auto resource = scopes[0];
@@ -37,34 +54,39 @@ std::string TokenCredentialImpl::FormatScopes(
       resource = resource.substr(0, resourceLen - suffixLen);
     }
 
-    return Url::Encode(resource);
+    return OptionalUrlEncode(resource, urlEncode);
   }
 
-  auto scopesIter = scopes.begin();
-  auto scopesStr = Azure::Core::Url::Encode(*scopesIter);
-
-  auto const scopesEnd = scopes.end();
-  for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+  std::string scopesStr;
   {
-    scopesStr += std::string(" ") + Url::Encode(*scopesIter);
+    auto scopesIter = scopes.begin();
+    auto const scopesEnd = scopes.end();
+
+    if (scopesIter != scopesEnd) // LCOV_EXCL_LINE
+    {
+      auto const scope = *scopesIter;
+      scopesStr += OptionalUrlEncode(scope, urlEncode);
+    }
+
+    for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
+    {
+      auto const Separator = std::string(" "); // Element separator never gets URL-encoded
+
+      auto const scope = *scopesIter;
+      scopesStr += Separator + OptionalUrlEncode(scope, urlEncode);
+    }
   }
 
   return scopesStr;
 }
 
-Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
-    Core::Context const& context,
+AccessToken TokenCredentialImpl::GetToken(
+    Context const& context,
     std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>()> const& createRequest,
     std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>(
-        Azure::Core::Http::HttpStatusCode statusCode,
-        Azure::Core::Http::RawResponse const& response)> const& shouldRetry) const
+        HttpStatusCode statusCode,
+        RawResponse const& response)> const& shouldRetry) const
 {
-  using Azure::Core::Credentials::AuthenticationException;
-  using Azure::Core::Http::HttpStatusCode;
-  using Azure::Core::Http::RawResponse;
-
-  static std::string const errorMsgPrefix("GetToken: ");
-
   try
   {
     std::unique_ptr<RawResponse> response;
@@ -75,7 +97,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
         response = m_httpPipeline.Send(request->HttpRequest, context);
         if (!response)
         {
-          throw AuthenticationException(errorMsgPrefix + "null response");
+          throw std::runtime_error("null response");
         }
 
         auto const statusCode = response->GetStatusCode();
@@ -87,12 +109,11 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
         request = shouldRetry(statusCode, *response);
         if (request == nullptr)
         {
-          std::ostringstream errorMsg;
-          errorMsg << errorMsgPrefix << "error response: "
-                   << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
-                   << response->GetReasonPhrase();
-
-          throw AuthenticationException(errorMsg.str());
+          throw std::runtime_error(
+              std::string("error response: ")
+              + std::to_string(
+                  static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
+              + " " + response->GetReasonPhrase());
         }
 
         response.reset();
@@ -100,79 +121,12 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
     }
 
     auto const& responseBodyVector = response->GetBody();
-    std::string responseBody(responseBodyVector.begin(), responseBodyVector.end());
 
-    // TODO: use JSON parser.
-    auto const responseBodySize = responseBody.size();
-
-    static std::string const jsonExpiresIn = "expires_in";
-    static std::string const jsonAccessToken = "access_token";
-
-    auto responseBodyPos = responseBody.find(':', responseBody.find(jsonExpiresIn));
-    if (responseBodyPos == std::string::npos)
-    {
-      std::ostringstream errorMsg;
-      errorMsg << errorMsgPrefix << "response json: \'" << jsonExpiresIn << "\' not found.";
-
-      throw AuthenticationException(errorMsg.str());
-    }
-
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-
-    long long expiresInSeconds = 0;
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c < '0' || c > '9')
-      {
-        break;
-      }
-
-      expiresInSeconds = (expiresInSeconds * 10) + (static_cast<long long>(c) - '0');
-    }
-
-    responseBodyPos = responseBody.find(':', responseBody.find(jsonAccessToken));
-    if (responseBodyPos == std::string::npos)
-    {
-      std::ostringstream errorMsg;
-      errorMsg << errorMsgPrefix << "response json: \'" << jsonAccessToken << "\' not found.";
-
-      throw AuthenticationException(errorMsg.str());
-    }
-
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-
-    auto const tokenBegin = responseBodyPos;
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c == '\"' || c == '\'')
-      {
-        break;
-      }
-    }
-    auto const tokenEnd = responseBodyPos;
-
-    auto const responseBodyBegin = responseBody.begin();
-
-    return {
-        std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        std::chrono::system_clock::now() + std::chrono::seconds(expiresInSeconds),
-    };
+    return ParseToken(
+        std::string(responseBodyVector.begin(), responseBodyVector.end()),
+        "access_token",
+        "expires_in",
+        std::string());
   }
   catch (AuthenticationException const&)
   {
@@ -180,10 +134,62 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
   }
   catch (std::exception const& e)
   {
-    throw AuthenticationException(e.what());
+    throw AuthenticationException(std::string("GetToken(): ") + e.what());
   }
-  catch (...)
+}
+
+namespace {
+[[noreturn]] void ThrowMissingJsonPropertyError(std::string const& propertyName)
+{
+  throw std::runtime_error(
+      std::string("Token JSON object: \'") + propertyName + "\' property was not found.");
+}
+} // namespace
+
+AccessToken TokenCredentialImpl::ParseToken(
+    std::string const& jsonString,
+    std::string const& accessTokenPropertyName,
+    std::string const& expiresInPropertyName,
+    std::string const& expiresOnPropertyName)
+{
+  try
   {
-    throw AuthenticationException("unknown error");
+    auto const parsedJson = Azure::Core::Json::_internal::json::parse(jsonString);
+
+    if (!parsedJson.contains(accessTokenPropertyName))
+    {
+      ThrowMissingJsonPropertyError(accessTokenPropertyName);
+    }
+
+    AccessToken accessToken;
+    accessToken.Token = parsedJson[accessTokenPropertyName].get<std::string>();
+
+    if (parsedJson.contains(expiresInPropertyName))
+    {
+      accessToken.ExpiresOn
+          = std::chrono::system_clock::now()
+          + std::chrono::seconds(
+                parsedJson[expiresInPropertyName].get<std::chrono::seconds::duration::rep>());
+    }
+    else if (expiresOnPropertyName.empty())
+    {
+      ThrowMissingJsonPropertyError(expiresInPropertyName);
+    }
+    else if (!parsedJson.contains(expiresOnPropertyName))
+    {
+      ThrowMissingJsonPropertyError(expiresOnPropertyName);
+    }
+    else
+    {
+      accessToken.ExpiresOn = Azure::DateTime::Parse(
+          parsedJson[expiresOnPropertyName].get<std::string>(),
+          Azure::DateTime::DateFormat::Rfc3339);
+    }
+
+    return accessToken;
+  }
+  catch (Azure::Core::Json::_internal::json::parse_error const& ex)
+  {
+    throw std::runtime_error(std::string("Error parsing token JSON: ") + ex.what());
   }
 }

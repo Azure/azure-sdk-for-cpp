@@ -1,0 +1,18 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-storage-common/inc",
+    "../../azure-storage-blobs/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Storage::Queues",
+  "reviewName": "Storage Queues Review",
+  "serviceName": "Azure Storage Queues",
+  "packageName": "azure-storage-queues-cpp"
+}

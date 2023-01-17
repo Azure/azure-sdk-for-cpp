@@ -10,6 +10,12 @@
 
 ### Other Changes
 
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage File Shares better with their contributions to this release:
+
+- ariellink _([GitHub](https://github.com/Ariellink))_
+
 ## 12.3.0 (2022-10-11)
 
 ### Features Added

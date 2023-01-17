@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/http/policies/policy.hpp>
+
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
 #include <gtest/gtest.h>
@@ -51,10 +53,12 @@ TEST(BearerTokenAuthenticationPolicy, InitialGet)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -84,10 +88,12 @@ TEST(BearerTokenAuthenticationPolicy, ReuseWhileValid)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -126,10 +132,12 @@ TEST(BearerTokenAuthenticationPolicy, RefreshNearExpiry)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -168,10 +176,12 @@ TEST(BearerTokenAuthenticationPolicy, RefreshAfterExpiry)
 
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
 
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -201,4 +211,32 @@ TEST(BearerTokenAuthenticationPolicy, RefreshAfterExpiry)
       EXPECT_EQ(authHeader->second, "Bearer ACCESSTOKEN2");
     }
   }
+}
+
+TEST(BearerTokenAuthenticationPolicy, HttpEndpoint)
+{
+  using namespace std::chrono_literals;
+  auto accessToken = std::make_shared<Azure::Core::Credentials::AccessToken>();
+
+  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+
+  Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
+  policies.emplace_back(
+      std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
+          std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
+
+  policies.emplace_back(std::make_unique<TestTransportPolicy>());
+
+  Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+  Azure::Core::Http::Request request(
+      Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("http://www.azure.com"));
+
+  *accessToken = {"ACCESSTOKEN1", std::chrono::system_clock::now()};
+
+  EXPECT_THROW(
+      static_cast<void>(pipeline.Send(request, Azure::Core::Context())),
+      Azure::Core::Credentials::AuthenticationException);
 }

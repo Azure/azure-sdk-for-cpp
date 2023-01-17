@@ -17,6 +17,8 @@
 #include <mutex>
 #pragma warning(push)
 #pragma warning(disable : 6553)
+#pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
+                                // 'GetProcAddress'.
 #include <wil\resource.h>
 #pragma warning(pop)
 #include <winhttp.h>
@@ -53,7 +55,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         DWORD_PTR dwContext,
         DWORD dwInternetStatus,
         LPVOID lpvStatusInformation,
-        DWORD dwStatusInformationLength) noexcept;
+        DWORD dwStatusInformationLength);
 
     /*
      * Callback from WinHTTP called after the TLS certificates are received when the caller sets

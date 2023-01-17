@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Support for OKP keys.
+
 ### Breaking Changes
 
 ### Bugs Fixed

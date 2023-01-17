@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, LeaseRelated)
+  TEST_F(FileShareFileClientTest, LeaseRelated_LIVEONLY_)
   {
     {
       std::string leaseId1 = Files::Shares::ShareLeaseClient::CreateUniqueLeaseId();

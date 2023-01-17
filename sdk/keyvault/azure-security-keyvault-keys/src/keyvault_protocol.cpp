@@ -19,9 +19,9 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultKeysCommonReque
 {
   auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
+
   switch (responseCode)
   {
-
     // 200, 2001, 202, 204 are accepted responses
     case Azure::Core::Http::HttpStatusCode::Ok:
     case Azure::Core::Http::HttpStatusCode::Created:

@@ -3,8 +3,6 @@
 
 #include "private/token_credential_impl.hpp"
 
-#include "private/token_cache.hpp"
-
 #include "credential_test_helper.hpp"
 
 #include <memory>
@@ -20,7 +18,6 @@ using Azure::Core::Credentials::TokenCredential;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
-using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
@@ -53,8 +50,6 @@ public:
   AccessToken GetToken(TokenRequestContext const& tokenRequestContext, Context const& context)
       const override
   {
-    TokenCache::Clear();
-
     return m_tokenCredentialImpl->GetToken(context, [&]() {
       m_throwingFunction();
 
@@ -80,9 +75,9 @@ TEST(TokenCredentialImpl, Normal)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}},
-       {{"https://azure.com/.default", "https://microsoft.com/.default"}},
-       {{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"},
+       {"https://azure.com/.default", "https://microsoft.com/.default"},
+       {"https://azure.com/.default", "https://microsoft.com/.default"}},
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"access_token\":\"ACCESSTOKEN2\", \"expires_in\":7200}",
@@ -157,7 +152,7 @@ TEST(TokenCredentialImpl, StdException)
         return std::make_unique<TokenCredentialImplTester>(
             []() { throw std::exception(); }, options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -176,12 +171,11 @@ TEST(TokenCredentialImpl, ThrowInt)
 
         return std::make_unique<TokenCredentialImplTester>([]() { throw 0; }, options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
-        EXPECT_THROW(
-            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        EXPECT_THROW(token = credential.GetToken(tokenRequestContext, context), int);
         return token;
       }));
 }
@@ -273,11 +267,11 @@ TEST(TokenCredentialImpl, FormatScopes)
   // Spaces inside scopes get encoded, but the spaces separating scopes are not
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"a b", "c d", "e f"}, false), "a%20b c%20d e%20f");
 
-  // 1 scope, './default' only, gets removed when treated as single resource
+  // 1 scope, '/.default' only, gets removed when treated as single resource
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.default"}, false), "%2F.default");
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.default"}, true), "");
 
-  // 2 scopes, './default' only
+  // 2 scopes, '/.default' only
   EXPECT_EQ(
       TokenCredentialImpl::FormatScopes({"/.default", "/.default"}, false),
       "%2F.default %2F.default");
@@ -311,7 +305,7 @@ TEST(TokenCredentialImpl, NoExpiration)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"access_token\":\"ACCESSTOKEN\"}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -331,7 +325,7 @@ TEST(TokenCredentialImpl, NoToken)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {{"https://azure.com/.default", "https://microsoft.com/.default"}},
       {"{\"expires_in\":3600}"},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
@@ -339,72 +333,6 @@ TEST(TokenCredentialImpl, NoToken)
             token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
         return token;
       }));
-}
-
-TEST(TokenCredentialImpl, CurrentJsonParserQuirksAndLimitations)
-{
-  // This test case is to cover all the current behavior in the JSON parsing code.
-  // It is to verify the edge cases to define limitations. A better behavior is possible, and it
-  // won't be a breaking change to update it. This parsing is internal. At some point, we will
-  // update the code to use the real JSON parser, instead of parsing ourselves. If when that
-  // happens, at any point, this test case gets broken, it is ok to drop/update this test case - it
-  // is likely that the proper JSON parser has better behavior.
-
-  auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
-        TokenCredentialOptions options;
-        options.Transport.Transport = transport;
-
-        return std::make_unique<TokenCredentialImplTester>(
-            HttpMethod::Delete, Url("https://microsoft.com/"), options);
-      },
-      {{{"https://azure.com/.default"}}, {{"https://azure.com/.default"}}},
-      std::vector<std::string>{
-          {"{\"access_token\":\'ACCESSTOKEN\', \"expires_in\": \"\'"},
-          {"{\"expires_in\": 3600, \"access_token\": \"\'"}});
-
-  EXPECT_EQ(actual.Requests.size(), 2U);
-  EXPECT_EQ(actual.Responses.size(), 2U);
-
-  auto const& request0 = actual.Requests.at(0);
-  auto const& request1 = actual.Requests.at(1);
-
-  auto const& response0 = actual.Responses.at(0);
-  auto const& response1 = actual.Responses.at(1);
-
-  EXPECT_EQ(request0.HttpMethod, HttpMethod::Delete);
-  EXPECT_EQ(request1.HttpMethod, HttpMethod::Delete);
-
-  EXPECT_EQ(request0.AbsoluteUrl, "https://microsoft.com");
-  EXPECT_EQ(request1.AbsoluteUrl, "https://microsoft.com");
-
-  {
-    constexpr char expectedBody[] = "https://azure.com/.default ";
-    EXPECT_EQ(request0.Body, expectedBody);
-    EXPECT_EQ(request1.Body, expectedBody);
-
-    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
-
-    EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
-  }
-
-  EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
-  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
-
-  EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
-  EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
-
-  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN");
-  EXPECT_EQ(response1.AccessToken.Token, std::string());
-
-  using namespace std::chrono_literals;
-  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 0s);
-  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 0s);
-
-  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
-  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
 }
 
 TEST(TokenCredentialImpl, NullResponse)
@@ -436,7 +364,7 @@ TEST(TokenCredentialImpl, NullResponse)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://microsoft.com/"), options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{"https://azure.com/.default"}},
       {{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;

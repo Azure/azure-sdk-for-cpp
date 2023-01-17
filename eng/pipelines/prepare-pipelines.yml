@@ -1,10 +1,10 @@
 trigger: none
 
 extends:
-  template: /eng/common/pipelines/templates/steps/prepare-pipelines.yml
+  template: /eng/common/pipelines/templates/jobs/prepare-pipelines.yml
   parameters:
     Repository: $(Build.Repository.Name)
     Prefix: cpp
     CIConventionOptions: ''
-    UPConventionOptions: '--variablegroup 58 --variablegroup 76 --variablegroup 56 --variablegroup 64 --variablegroup 93 --variablegroup 117'
+    UPConventionOptions: '--variablegroups 58 76 56 64 93 117'
     TestsConventionOptions: ''

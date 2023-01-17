@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.Value().empty());
   }
 
-  TEST_F(PageBlobClientTest, Lease)
+  TEST_F(PageBlobClientTest, Lease_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto testPageBlobClient = GetPageBlobClient(testName);

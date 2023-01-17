@@ -5,10 +5,10 @@
 #include "azure/core/platform.hpp"
 
 #include <algorithm>
-#include <cctype>
 #include <ctime>
 #include <iomanip>
 #include <limits>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 
@@ -319,10 +319,10 @@ T ParseNumber(
     auto i = 0;
     for (; i < MaxChars; ++i)
     {
-      int const ch = str[*cursor + i];
-      if (std::isdigit(ch))
+      auto const ch = str[*cursor + i];
+      if (std::isdigit(ch, std::locale::classic()))
       {
-        value = (value * 10) + (static_cast<decltype(value)>(ch) - '0');
+        value = (value * 10) + (static_cast<decltype(value)>(static_cast<unsigned char>(ch)) - '0');
         continue;
       }
 
@@ -604,7 +604,8 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
         day = ParseNumber<decltype(day)>(&cursor, dateTime, DateTimeLength, parsingArea, 2, 2);
       }
 
-      if (cursor < DateTimeLength && (dateTime[cursor] == 'T' || dateTime[cursor] == 't'))
+      if (cursor < DateTimeLength
+          && (dateTime[cursor] == 'T' || dateTime[cursor] == 't' || dateTime[cursor] == ' '))
       {
         ++cursor;
         IncreaseAndCheckMinLength(&minDateTimeLength, DateTimeLength, 7);
@@ -653,10 +654,10 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
             minDateTimeLength += charsRead;
             if (charsRead == 7 && (DateTimeLength - cursor) > 0)
             {
-              int const ch = dateTime[cursor];
-              if (std::isdigit(ch))
+              auto const ch = dateTime[cursor];
+              if (std::isdigit(ch, std::locale::classic()))
               {
-                auto const num = static_cast<int>(ch - '0');
+                auto const num = static_cast<int>(static_cast<unsigned char>(ch) - '0');
                 if (num > 4)
                 {
                   if (fracSec < 9999999)
@@ -676,7 +677,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
 
           for (auto i = DateTimeLength - cursor; i > 0; --i)
           {
-            if (std::isdigit(static_cast<int>(dateTime[cursor])))
+            if (std::isdigit(dateTime[cursor], std::locale::classic()))
             {
               ++minDateTimeLength;
               ++cursor;

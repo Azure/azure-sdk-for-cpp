@@ -48,17 +48,44 @@ namespace Azure { namespace Identity { namespace _detail {
      *
      * @param scopes Authentication scopes.
      * @param asResource `true` if \p scopes need to be formatted as a resource.
+     * @param urlEncode `true` if the result needs to be URL-encoded.
      *
      * @return A string representing scopes so that it can be used in Identity request.
      *
      * @note Does not check for \p scopes being empty.
      */
-    static std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource);
+    static std::string FormatScopes(
+        std::vector<std::string> const& scopes,
+        bool asResource,
+        bool urlEncode = true);
+
+    /**
+     * @brief Parses JSON that contains access token and its expiration.
+     *
+     * @param jsonString String with a JSON object to parse.
+     * @param accessTokenPropertyName Name of a property in the JSON object that represents access
+     * token.
+     * @param expiresInPropertyName Name of a property in the JSON object that represents token
+     * expiration in number of seconds from now.
+     * @param expiresOnPropertyName Name of a property in the JSON object that represents token
+     * expiration as absolute date-time stamp. Can be empty, in which case no attempt to parse it is
+     * made.
+     *
+     * @return A successfully parsed access token.
+     *
+     * @throw `std::exception` if there was a problem parsing the token.
+     */
+    static Core::Credentials::AccessToken ParseToken(
+        std::string const& jsonString,
+        std::string const& accessTokenPropertyName,
+        std::string const& expiresInPropertyName,
+        std::string const& expiresOnPropertyName);
 
     /**
      * @brief Holds `#Azure::Core::Http::Request` and all the associated resources for the HTTP
-     * request body, so that the lifetime for all the resources needed for the request aligns with
-     * its lifetime, and so that instances of this class can easily be returned from a function.
+     * request body, so that the lifetime for all the resources needed for the request aligns
+     * with its lifetime, and so that instances of this class can easily be returned from a
+     * function.
      *
      */
     class TokenRequest final {
