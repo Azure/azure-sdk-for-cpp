@@ -193,6 +193,13 @@
       ]
     },
     {
+      "filename": "**/sdk/keyvault/azure-security-keyvault-certificates/inc/azure/keyvault/certificates/certificate_client_models.hpp",
+      "words": [
+        "SECG",
+        "SECP"
+      ]
+    },
+    {
       "filename": "**/sdk/core/azure-core/**",
       "words": [
         "TEAMPROJECTID"
