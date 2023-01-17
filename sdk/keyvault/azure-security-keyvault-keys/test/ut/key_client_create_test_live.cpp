@@ -264,7 +264,7 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
   // This client requires an HSM client
   CreateHsmClient();
   auto const& client = GetClientForTest(keyName);
-  
+
   {
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
     rsaHsmKey.Enabled = true;
