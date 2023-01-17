@@ -133,7 +133,7 @@ TEST_F(KeyVaultKeyClient, CreateEcKey)
 /********************************* Create key overloads  *********************************/
 TEST_F(KeyVaultKeyClient, CreateOkpKey)
 {
-  CheckSkipHSMForLive();
+  CheckSkipHsmForLive();
   auto const keyName = GetTestName();
   // This client requires an HSM client
   CreateHsmClient();
@@ -157,7 +157,7 @@ TEST_F(KeyVaultKeyClient, CreateOkpKey)
 
 TEST_F(KeyVaultKeyClient, CreateOkpHSMKey)
 {
-  CheckSkipHSMForLive();
+  CheckSkipHsmForLive();
   auto const keyName = GetTestName();
   // This client requires an HSM client
   CreateHsmClient();

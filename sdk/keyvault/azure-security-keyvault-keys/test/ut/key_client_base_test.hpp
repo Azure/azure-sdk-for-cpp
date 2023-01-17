@@ -33,7 +33,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
 
-    void CheckSkipHSMForLive()
+    void CheckSkipHsmForLive()
     {
       // if we are in live mode and the test needs a valid HSM url (aka different from the keyvault
       // url)
