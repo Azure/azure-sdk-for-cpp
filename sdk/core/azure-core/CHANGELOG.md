@@ -8,6 +8,14 @@
 
 ### Bugs Fixed
 
+- Fixed Azurite parallel connectivity problem (#4206).
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Johannes Schonberger _([GitHub](https://github.com/ahojnnes))_
+
 ### Other Changes
 
 ## 1.8.0-beta.3 (2023-01-05)
