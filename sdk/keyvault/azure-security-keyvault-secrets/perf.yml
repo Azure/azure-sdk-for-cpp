@@ -10,7 +10,7 @@ parameters:
 - name: Arguments
   displayName: Arguments (regex of arguments to run)
   type: string
-  default: '.* --parallel 1'
+  default: '.*'
 - name: Iterations
   displayName: Iterations (times to run each test)
   type: number
@@ -18,7 +18,7 @@ parameters:
 - name: AdditionalArguments
   displayName: AdditionalArguments (passed to PerfAutomation)
   type: string 
-  default: ' '
+  default: '--parallel 1'
 
 extends:
   template: /eng/pipelines/templates/jobs/perf.yml
