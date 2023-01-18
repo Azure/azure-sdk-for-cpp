@@ -173,7 +173,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html
-[administration_client_src]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-administration
+[administration_client_src]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-administration
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [access_control]: https://learn.microsoft.com/azure/key-vault/managed-hsm/access-control
 [access_policy]: https://learn.microsoft.com/azure/key-vault/general/assign-access-policy
