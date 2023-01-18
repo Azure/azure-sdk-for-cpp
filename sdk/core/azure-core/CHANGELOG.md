@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed Azurite parallel connectivity problem (#4206).
+- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Azurite parallel connectivity problem.
 
 ### Acknowledgments
 
