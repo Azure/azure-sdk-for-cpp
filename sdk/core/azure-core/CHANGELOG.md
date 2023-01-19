@@ -8,11 +8,7 @@
 
 ### Bugs Fixed
 
-<<<<<<< HEAD
 - [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Connectivity issues which can occur if a TCP connection is dropped prematurely.
-=======
-- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Azurite parallel connectivity problem.
->>>>>>> 8dc3fc75 (Reformat link)
 
 ### Acknowledgments
 
