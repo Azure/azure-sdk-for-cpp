@@ -23,23 +23,9 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     NextHttpPolicy nextPolicy,
     Context const& context) const
 {
-  Azure::Nullable<std::string> userAgent;
   // Find a tracing factory from our context. Note that the factory value is owned by the
   // context chain so we can manage a raw pointer to the factory.
   auto tracingFactory = TracingContextFactory::CreateFromContext(context);
-  if (tracingFactory)
-  {
-    // Determine the value of the "User-Agent" header.
-    //
-    // If nobody has previously set a user agent header, then set the user agent header
-    // based on the value calculated by the tracing factory.
-    userAgent = request.GetHeader("User-Agent");
-    if (!userAgent.HasValue())
-    {
-      userAgent = tracingFactory->GetUserAgent();
-      request.SetHeader("User-Agent", userAgent.Value());
-    }
-  }
 
   // If our tracing factory has a tracer attached to it, register the request with the tracer.
   if (tracingFactory && tracingFactory->HasTracer())
@@ -71,9 +57,14 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
           TracingAttributes::RequestId.ToString(), requestId.Value());
     }
 
-    // We retrieved the value of the user-agent header above.
-    createOptions.Attributes->AddAttribute(
-        TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
+    // Note that the span captures its values by reference. That means we can't let the userAgent variable
+    // move out of scope until after the span object is destroyed.
+    auto userAgent{request.GetHeader("User-Agent")};
+    if (userAgent.HasValue())
+    {
+      createOptions.Attributes->AddAttribute(
+          TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
+    }
 
     auto contextAndSpan = tracingFactory->CreateTracingContext(spanName, createOptions, context);
     auto scope = std::move(contextAndSpan.Span);

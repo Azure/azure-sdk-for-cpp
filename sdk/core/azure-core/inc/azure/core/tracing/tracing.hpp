@@ -25,12 +25,13 @@ namespace Azure { namespace Core { namespace Tracing {
        *
        * @param name Name of the tracer object, typically the name of the Service client
        * (Azure.Storage.Blobs, for example)
-       * @param version Version of the service client.
+       * @param version Optional version of the service client.
        * @return std::shared_ptr<Azure::Core::Tracing::Tracer>
        */
       virtual std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
           std::string const& name,
-          std::string const& version) const = 0;
+          std::string const& version = {}) const
+          = 0;
 
       virtual ~TracerProviderImpl() = default;
     };

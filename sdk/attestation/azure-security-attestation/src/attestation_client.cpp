@@ -33,7 +33,7 @@ AttestationClient::AttestationClient(
     AttestationClientOptions options)
     : m_endpoint(endpoint), m_apiVersion(options.ApiVersion),
       m_tokenValidationOptions(options.TokenValidationOptions),
-      m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
+      m_tracingFactory(options, "Microsoft.Attestation", PackageVersion::ToString())
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
@@ -47,7 +47,11 @@ AttestationClient::AttestationClient(
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options, std::move(perRetrypolicies), std::move(perCallpolicies));
+      options,
+      "azure-security-attestation-cpp",
+      PackageVersion::ToString(),
+      std::move(perRetrypolicies),
+      std::move(perCallpolicies));
 }
 
 Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(

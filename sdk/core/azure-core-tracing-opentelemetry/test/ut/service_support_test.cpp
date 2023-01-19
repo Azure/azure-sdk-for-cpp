@@ -185,17 +185,16 @@ protected:
         EXPECT_TRUE(expectedAttributes.contains(foundAttribute.first));
         switch (foundAttribute.second.index())
         {
-          case opentelemetry::common::kTypeBool: {
+          case RecordedSpan::Attribute::AttributeType::Bool: {
 
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_boolean());
-            auto actualVal = opentelemetry::nostd::get<bool>(foundAttribute.second);
+            auto actualVal = foundAttribute.second.BoolValue;
             EXPECT_EQ(expectedAttributes[foundAttribute.first].get<bool>(), actualVal);
             break;
           }
-          case opentelemetry::common::kTypeCString:
-          case opentelemetry::common::kTypeString: {
+          case RecordedSpan::Attribute::AttributeType::CString: {
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_string());
-            const auto& actualVal = opentelemetry::nostd::get<std::string>(foundAttribute.second);
+            const auto& actualVal = foundAttribute.second.CStringValue;
             std::string expectedVal(expectedAttributes[foundAttribute.first].get<std::string>());
             std::regex expectedRegex(expectedVal);
             GTEST_LOG_(INFO) << "expected Regex: " << expectedVal << std::endl;
@@ -203,32 +202,43 @@ protected:
             EXPECT_TRUE(std::regex_match(std::string(actualVal), expectedRegex));
             break;
           }
-          case opentelemetry::common::kTypeDouble: {
+
+          case RecordedSpan::Attribute::AttributeType::String: {
+            EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_string());
+            const auto& actualVal = foundAttribute.second.StringValue;
+            std::string expectedVal(expectedAttributes[foundAttribute.first].get<std::string>());
+            std::regex expectedRegex(expectedVal);
+            GTEST_LOG_(INFO) << "expected Regex: " << expectedVal << std::endl;
+            GTEST_LOG_(INFO) << "actual val: " << actualVal << std::endl;
+            EXPECT_TRUE(std::regex_match(std::string(actualVal), expectedRegex));
+            break;
+          }
+          case RecordedSpan::Attribute::AttributeType::Double: {
 
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_number());
-            auto actualVal = opentelemetry::nostd::get<double>(foundAttribute.second);
+            auto actualVal = foundAttribute.second.DoubleValue;
             EXPECT_EQ(expectedAttributes[foundAttribute.first].get<double>(), actualVal);
             break;
           }
 
-          case opentelemetry::common::kTypeInt:
-          case opentelemetry::common::kTypeInt64:
+          case RecordedSpan::Attribute::AttributeType::Int32:
+          case RecordedSpan::Attribute::AttributeType::Int64:
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_number_integer());
             break;
-          case opentelemetry::common::kTypeSpanBool:
-          case opentelemetry::common::kTypeSpanByte:
-          case opentelemetry::common::kTypeSpanDouble:
-          case opentelemetry::common::kTypeSpanInt:
-          case opentelemetry::common::kTypeSpanInt64:
-          case opentelemetry::common::kTypeSpanString:
-          case opentelemetry::common::kTypeSpanUInt:
-          case opentelemetry::common::kTypeSpanUInt64:
+          case RecordedSpan::Attribute::AttributeType::BoolArray:
+          case RecordedSpan::Attribute::AttributeType::ByteArray:
+          case RecordedSpan::Attribute::AttributeType::DoubleArray:
+          case RecordedSpan::Attribute::AttributeType::Int32Array:
+          case RecordedSpan::Attribute::AttributeType::Int64Array:
+          case RecordedSpan::Attribute::AttributeType::StringArray:
+          case RecordedSpan::Attribute::AttributeType::UInt32Array:
+          case RecordedSpan::Attribute::AttributeType::UInt64Array:
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_array());
             throw std::runtime_error("Unsupported attribute kind");
             break;
 
-          case opentelemetry::common::kTypeUInt:
-          case opentelemetry::common::kTypeUInt64:
+          case RecordedSpan::Attribute::AttributeType::UInt32:
+          case RecordedSpan::Attribute::AttributeType::UInt64:
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_number_unsigned());
             break;
           default:
@@ -470,8 +480,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
       const auto& attributes = spans[0]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ(
-          "my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
+      EXPECT_EQ("my-service", attributes.at("az.namespace").StringValue);
     }
     {
       EXPECT_EQ("My API", spans[1]->GetName());
@@ -479,8 +488,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
       const auto& attributes = spans[1]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ(
-          "my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
+      EXPECT_EQ("my-service", attributes.at("az.namespace").StringValue);
     }
 
     EXPECT_EQ("my-service", spans[0]->GetInstrumentationScope().GetName());
@@ -572,6 +580,8 @@ public:
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<RequestIdPolicy>());
+    policies.emplace_back(std::make_unique<TelemetryPolicy>(
+        "Azure-Core-OpenTelemetry-Test-Service", "1.0.0.beta-2", clientOptions.Telemetry));
     policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
 
     // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
@@ -670,7 +680,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
     "http.method": "GET",
     "http.url": "https://www.microsoft.com",
     "requestId": ".*",
-    "http.user_agent": "MyApplication azsdk-cpp-Azure.Core.OpenTelemetry.Test.Service/1.0.0.beta-2.*",
+    "http.user_agent": "MyApplication azsdk-cpp-Azure-Core-OpenTelemetry-Test-Service/1.0.0.beta-2.*",
     "http.status_code": "200"
   },
   "library": {

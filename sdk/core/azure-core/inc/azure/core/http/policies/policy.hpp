@@ -498,17 +498,17 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       /**
        * @brief Construct HTTP telemetry policy.
        *
-       * @param componentName Azure SDK component name (e.g. "storage.blobs").
-       * @param componentVersion Azure SDK component version (e.g. "11.0.0").
+       * @param packageName Azure SDK component name (e.g. "storage.blobs").
+       * @param packageVersion Azure SDK component version (e.g. "11.0.0").
        * @param options The optional parameters for the policy (e.g. "AzCopy")
        */
       explicit TelemetryPolicy(
-          std::string const& componentName,
-          std::string const& componentVersion,
+          std::string const& packageName,
+          std::string const& packageVersion,
           TelemetryOptions options = TelemetryOptions())
           : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
-              componentName,
-              componentVersion,
+              packageName,
+              packageVersion,
               options.ApplicationId))
       {
       }

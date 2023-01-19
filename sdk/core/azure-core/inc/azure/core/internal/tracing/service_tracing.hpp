@@ -172,8 +172,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   class TracingContextFactory final {
   private:
     std::string m_serviceName;
-    std::string m_serviceVersion;
-    std::string m_userAgent;
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
 
     /** @brief The key used to retrieve the span and tracer associated with a context object.
@@ -188,15 +186,18 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     static Azure::Core::Context::Key TracingFactoryContextKey;
 
   public:
+    /**
+    * @brief Construct a new Tracing Context Factory object
+    *
+    * @param options Client Options for tracing.
+    * @param serviceName Name of the service.
+    * @param serviceVersion Optional package version number (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
+    */
     TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
-        std::string serviceVersion)
-        : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
-          m_userAgent(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
-              serviceName,
-              serviceVersion,
-              options.Telemetry.ApplicationId)),
+        std::string serviceVersion = {})
+        : m_serviceName(serviceName),
           m_serviceTracer(
               options.Telemetry.TracingProvider
                   ? Azure::Core::Tracing::_internal::TracerProviderImplGetter::TracerImplFromTracer(
@@ -257,10 +258,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         Azure::Core::Context const& context) const;
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
-
-    /** @brief Retrieves the User-Agent header value for this tracing context factory.
-     */
-    std::string const& GetUserAgent() const { return m_userAgent; }
 
     /** @brief Returns true if this TracingContextFactory is connected to a service tracer.
      */
