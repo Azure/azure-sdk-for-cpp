@@ -67,8 +67,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Specifies the default distributed tracing provider to use for this client. By default,
      * this will be the tracing provider specified in the application context.
      */
-    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider{
-        Context::ApplicationContext.GetTracerProvider()};
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
   };
 
   /**

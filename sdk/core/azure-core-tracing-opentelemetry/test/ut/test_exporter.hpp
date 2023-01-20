@@ -30,13 +30,13 @@ public:
       ByteArray
     };
     AttributeType Type;
-    bool BoolValue;
-    int32_t Int32Value;
-    int64_t Int64Value;
-    uint32_t UInt32Value;
-    uint64_t UInt64Value;
-    double DoubleValue;
-    const char* CStringValue;
+    bool BoolValue{};
+    int32_t Int32Value{};
+    int64_t Int64Value{};
+    uint32_t UInt32Value{};
+    uint64_t UInt64Value{};
+    double DoubleValue{};
+    const char* CStringValue{};
     std::string StringValue;
     std::vector<bool> BoolArrayValue;
     std::vector<int32_t> Int32ArrayValue;

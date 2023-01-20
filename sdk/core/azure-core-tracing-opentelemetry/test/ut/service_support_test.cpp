@@ -295,8 +295,11 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
         Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
     Azure::Core::Context rootContext;
-    rootContext.SetTracerProvider(provider);
-    EXPECT_EQ(provider, rootContext.GetTracerProvider());
+    Azure::Core::Context::Key providerKey;
+    auto newContext = rootContext.WithValue(providerKey, provider);
+    decltype(provider) savedProvider;
+    EXPECT_TRUE(newContext.TryGetValue(providerKey, savedProvider));
+    EXPECT_EQ(provider, savedProvider);
   }
 
   {
@@ -343,17 +346,15 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
     auto provider(
         Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
-    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
-
     {
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
+      clientOptions.Telemetry.TracingProvider = provider;
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
-      Azure::Core::Context clientContext;
-      auto contextAndSpan = serviceTrace.CreateTracingContext("My API", clientContext);
+      auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
       EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
     }
 
@@ -374,9 +375,6 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
   }
 })");
   }
-
-  // Clear the global tracer provider set earlier in the test.
-  Azure::Core::Context::ApplicationContext.SetTracerProvider(nullptr);
 }
 
 TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
@@ -386,22 +384,19 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
     auto provider(
         Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
-    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
-
     {
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
+      clientOptions.Telemetry.TracingProvider = provider;
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
-      Azure::Core::Context clientContext;
       Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
       createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Internal;
       createOptions.Attributes = serviceTrace.CreateAttributeSet();
       createOptions.Attributes->AddAttribute("TestAttribute", 3);
-      auto contextAndSpan
-          = serviceTrace.CreateTracingContext("My API", createOptions, clientContext);
+      auto contextAndSpan = serviceTrace.CreateTracingContext("My API", createOptions, {});
       EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
     }
 
@@ -423,9 +418,6 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
   }
 })");
   }
-
-  // Clear the global tracer provider set earlier in the test.
-  Azure::Core::Context::ApplicationContext.SetTracerProvider(nullptr);
 }
 
 TEST_F(OpenTelemetryServiceTests, NestSpans)
@@ -435,8 +427,6 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
     auto provider(
         Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider));
 
-    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
-
     Azure::Core::Http::Request outerRequest(
         HttpMethod::Post, Azure::Core::Url("https://www.microsoft.com"));
     Azure::Core::Http::Request innerRequest(
@@ -444,24 +434,23 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
     {
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
+      clientOptions.Telemetry.TracingProvider = provider;
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-          clientOptions, "my-service", "1.0beta-2");
+          clientOptions, "my.service", "1.0beta-2");
 
-      Azure::Core::Context parentContext;
       Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
       createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
-      auto contextAndSpan
-          = serviceTrace.CreateTracingContext("My API", createOptions, parentContext);
+      auto contextAndSpan = serviceTrace.CreateTracingContext("My API", createOptions, {});
       EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
-      parentContext = contextAndSpan.Context;
+      auto outerContext{contextAndSpan.Context};
       contextAndSpan.Span.PropagateToHttpHeaders(outerRequest);
 
       {
         Azure::Core::Tracing::_internal::CreateSpanOptions innerOptions;
         innerOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Server;
         auto innerContextAndSpan
-            = serviceTrace.CreateTracingContext("Nested API", innerOptions, parentContext);
+            = serviceTrace.CreateTracingContext("Nested API", innerOptions, outerContext);
         EXPECT_FALSE(innerContextAndSpan.Context.IsCancelled());
         innerContextAndSpan.Span.PropagateToHttpHeaders(innerRequest);
       }
@@ -480,7 +469,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
       const auto& attributes = spans[0]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my-service", attributes.at("az.namespace").StringValue);
+      EXPECT_EQ("my.service", attributes.at("az.namespace").StringValue);
     }
     {
       EXPECT_EQ("My API", spans[1]->GetName());
@@ -488,11 +477,11 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
       const auto& attributes = spans[1]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my-service", attributes.at("az.namespace").StringValue);
+      EXPECT_EQ("my.service", attributes.at("az.namespace").StringValue);
     }
 
-    EXPECT_EQ("my-service", spans[0]->GetInstrumentationScope().GetName());
-    EXPECT_EQ("my-service", spans[1]->GetInstrumentationScope().GetName());
+    EXPECT_EQ("my.service", spans[0]->GetInstrumentationScope().GetName());
+    EXPECT_EQ("my.service", spans[1]->GetInstrumentationScope().GetName());
     EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationScope().GetVersion());
     EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationScope().GetVersion());
 

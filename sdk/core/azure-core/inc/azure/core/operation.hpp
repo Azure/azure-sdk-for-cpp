@@ -199,7 +199,8 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollUntilDone(period, Context::ApplicationContext);
+      Context context;
+      return PollUntilDone(period, context);
     }
 
     /**

@@ -30,7 +30,6 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
   // If our tracing factory has a tracer attached to it, register the request with the tracer.
   if (tracingFactory && tracingFactory->HasTracer())
   {
-
     // Create a tracing span over the HTTP request.
     std::string spanName("HTTP ");
     spanName.append(request.GetMethod().ToString());

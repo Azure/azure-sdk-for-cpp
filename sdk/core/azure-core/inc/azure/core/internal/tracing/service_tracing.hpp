@@ -172,6 +172,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   class TracingContextFactory final {
   private:
     std::string m_serviceName;
+    std::string m_packageVersion;
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
 
     /** @brief The key used to retrieve the span and tracer associated with a context object.
@@ -187,24 +188,28 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   public:
     /**
-    * @brief Construct a new Tracing Context Factory object
-    *
-    * @param options Client Options for tracing.
-    * @param serviceName Name of the service.
-    * @param serviceVersion Optional package version number (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
-    */
+     * @brief Construct a new Tracing Context Factory object
+     *
+     * @param options Client Options for tracing.
+     * @param serviceName Name of the service.
+     * @param packageVersion Optional package version number
+     * (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
+     */
     TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
-        std::string serviceVersion = {})
-        : m_serviceName(serviceName),
-          m_serviceTracer(
-              options.Telemetry.TracingProvider
-                  ? Azure::Core::Tracing::_internal::TracerProviderImplGetter::TracerImplFromTracer(
-                        options.Telemetry.TracingProvider)
-                        ->CreateTracer(serviceName, serviceVersion)
-                  : nullptr)
+        std::string packageVersion = {})
+        : m_serviceName(serviceName), m_packageVersion(packageVersion)
     {
+      // If the caller has configured a tracing provider, use it. Otherwise, use the default
+      // provider.
+      if (options.Telemetry.TracingProvider)
+      {
+        m_serviceTracer
+            = Azure::Core::Tracing::_internal::TracerProviderImplGetter::TracerImplFromTracer(
+                  options.Telemetry.TracingProvider)
+                  ->CreateTracer(serviceName, packageVersion);
+      }
     }
 
     TracingContextFactory() = default;
