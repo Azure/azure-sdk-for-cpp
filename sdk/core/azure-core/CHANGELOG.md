@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely.
+- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
 
 ### Acknowledgments
 
