@@ -31,8 +31,7 @@ namespace Azure { namespace Core { namespace Tracing {
        */
       virtual std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
           std::string const& name,
-          std::string const& version = {}) const
-          = 0;
+          std::string const& version = {}) const = 0;
 
       virtual ~TracerProviderImpl() = default;
     };
