@@ -48,7 +48,7 @@ AttestationClient::AttestationClient(
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
-      "azure-security-attestation-cpp",
+      "security.attestation",
       PackageVersion::ToString(),
       std::move(perRetrypolicies),
       std::move(perCallpolicies));
