@@ -65,7 +65,8 @@ TEST(TelemetryPolicy, telemetryString)
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     Azure::Core::_internal::ClientOptions options;
     options.Telemetry.ApplicationId = test.applicationId;
-    policies.emplace_back(std::make_unique<TelemetryPolicy>(test.serviceName, test.serviceVersion, options.Telemetry));
+    policies.emplace_back(std::make_unique<TelemetryPolicy>(
+        test.serviceName, test.serviceVersion, options.Telemetry));
     policies.emplace_back(std::make_unique<NoOpPolicy>());
     HttpPipeline pipeline(policies);
 
@@ -77,10 +78,10 @@ TEST(TelemetryPolicy, telemetryString)
     auto telemetryHeader = headers.find(TelemetryHeader);
     EXPECT_NE(telemetryHeader, headers.end());
     auto const actualValue = telemetryHeader->second;
-    EXPECT_GE(actualValue.size(), test.expectedPrefix.size() + OSInfoMinLength + sizeof(ClosingBrace));
+    EXPECT_GE(
+        actualValue.size(), test.expectedPrefix.size() + OSInfoMinLength + sizeof(ClosingBrace));
     EXPECT_EQ(actualValue[actualValue.size() - 1], ClosingBrace);
 
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
   }
-
 }

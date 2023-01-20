@@ -68,7 +68,6 @@ private:
 
 } // namespace
 
-
 TEST(TracingContextFactory, SimpleServiceSpanTests)
 {
   {

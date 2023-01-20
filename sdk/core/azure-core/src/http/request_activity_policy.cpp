@@ -56,8 +56,8 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
           TracingAttributes::RequestId.ToString(), requestId.Value());
     }
 
-    // Note that the span captures its values by reference. That means we can't let the userAgent variable
-    // move out of scope until after the span object is destroyed.
+    // Note that the span captures its values by reference. That means we can't let the userAgent
+    // variable move out of scope until after the span object is destroyed.
     auto userAgent{request.GetHeader("User-Agent")};
     if (userAgent.HasValue())
     {
