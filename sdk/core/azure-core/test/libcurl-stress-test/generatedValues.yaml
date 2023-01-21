@@ -1,0 +1,8 @@
+scenarios:
+- image: Dockerfile
+  Scenario: cpp-constantDetach
+  imageBuildDir: ./
+  memory: 1.5Gi
+  testTarget: azure-core-libcurl-stress-test
+  imageTag: stresspgs7b6dif73rup6.azurecr.io/gearama/libcurl-stress-test/dockerfile:gearama
+
