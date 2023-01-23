@@ -6,3 +6,4 @@ Dockerfile
 *.cpp
 *.md
 azure-core-libcurl-stress-test
+[Bb]in/
