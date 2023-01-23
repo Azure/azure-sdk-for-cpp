@@ -45,6 +45,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider
         = opentelemetry::trace::Provider::GetTracerProvider());
 
+    // Schema URL for OpenTelemetry. Azure SDKs currently support version 1.17.0 only.
+    const char* OpenTelemetrySchemaUrl117 = "https://opentelemetry.io/schemas/1.17.0";
+    const char* OpenTelemetrySchemaUrlCurrent = OpenTelemetrySchemaUrl117;
+
   public:
     /**
      * @brief Create a new instance of an OpenTelemetryProvider.

@@ -180,6 +180,19 @@ protected:
 
       EXPECT_EQ(expectedAttributes.size(), attributes.size());
 
+      // Make sure that every expected attribute is somewhere in the actual attributes.
+      for (auto const& expectedAttribute : expectedAttributes.items())
+      {
+        EXPECT_TRUE(
+            std::find_if(
+                attributes.begin(),
+                attributes.end(),
+                [&](std::pair<const std::string, RecordedSpan::Attribute>& item) {
+                  return item.first == expectedAttribute.key();
+                })
+            != attributes.end());
+      }
+
       for (auto const& foundAttribute : attributes)
       {
         EXPECT_TRUE(expectedAttributes.contains(foundAttribute.first));
@@ -257,6 +270,9 @@ protected:
       EXPECT_EQ(
           expectedSpanContents["library"]["version"].get<std::string>(),
           span->GetInstrumentationScope().GetVersion());
+      EXPECT_EQ(
+          expectedSpanContents["library"]["schema"].get<std::string>(),
+          span->GetInstrumentationScope().GetSchemaURL());
     }
     return true;
   }
@@ -270,13 +286,13 @@ TEST_F(OpenTelemetryServiceTests, SimplestTest)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
   }
 
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
@@ -314,7 +330,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
       clientOptions.Telemetry.ApplicationId = "MyApplication";
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-          clientOptions, "my-service", "1.0beta-2");
+          clientOptions, "My.Service", "my-service", "MyServiceVersion1.0");
 
       Azure::Core::Context clientContext;
       auto contextAndSpan = serviceTrace.CreateTracingContext("My API", clientContext);
@@ -329,11 +345,12 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
   "name": "My API",
   "kind": "internal",
   "attributes": {
-     "az.namespace": "my-service"
+     "az.namespace": "My.Service"
   },
   "library": {
     "name": "my-service",
-    "version": "1.0beta-2"
+    "version": "MyServiceVersion1.0",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
   }
 })");
   }
@@ -352,7 +369,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
       clientOptions.Telemetry.TracingProvider = provider;
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-          clientOptions, "my-service", "1.0beta-2");
+          clientOptions, "My.Service", "my-service", "1.0.beta-2");
 
       auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
       EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
@@ -367,11 +384,12 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
   "name": "My API",
   "kind": "internal",
   "attributes": {
-     "az.namespace": "my-service"
+     "az.namespace": "My.Service"
   },
   "library": {
     "name": "my-service",
-    "version": "1.0beta-2"
+    "version": "1.0.beta-2",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
   }
 })");
   }
@@ -390,7 +408,7 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
       clientOptions.Telemetry.TracingProvider = provider;
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-          clientOptions, "my-service", "1.0beta-2");
+          clientOptions, "My.Service", "my-service", "1.0.beta-2");
 
       Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
       createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Internal;
@@ -409,12 +427,13 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
   "name": "My API",
   "kind": "internal",
   "attributes": {
-     "az.namespace": "my-service",
+     "az.namespace": "My.Service",
      "TestAttribute": 3
   },
   "library": {
     "name": "my-service",
-    "version": "1.0beta-2"
+    "version": "1.0.beta-2",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
   }
 })");
   }
@@ -437,7 +456,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
       clientOptions.Telemetry.TracingProvider = provider;
 
       Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-          clientOptions, "my.service", "1.0beta-2");
+          clientOptions, "My.Service", "my.service", "1.0beta-2");
 
       Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
       createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
@@ -461,29 +480,32 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
     // Because Nested API goes out of scope before My API, it will be logged first in the
     // tracing spans.
-    {
-      EXPECT_EQ("Nested API", spans[0]->GetName());
-      EXPECT_TRUE(spans[0]->GetParentSpanId().IsValid());
-      // The nested span should have the outer span as a parent.
-      EXPECT_EQ(spans[1]->GetSpanId(), spans[0]->GetParentSpanId());
-
-      const auto& attributes = spans[0]->GetAttributes();
-      EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my.service", attributes.at("az.namespace").StringValue);
-    }
-    {
-      EXPECT_EQ("My API", spans[1]->GetName());
-      EXPECT_FALSE(spans[1]->GetParentSpanId().IsValid());
-
-      const auto& attributes = spans[1]->GetAttributes();
-      EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my.service", attributes.at("az.namespace").StringValue);
-    }
-
-    EXPECT_EQ("my.service", spans[0]->GetInstrumentationScope().GetName());
-    EXPECT_EQ("my.service", spans[1]->GetInstrumentationScope().GetName());
-    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationScope().GetVersion());
-    EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationScope().GetVersion());
+    VerifySpan(spans[0], R"(
+{
+  "name": "Nested API",
+  "kind": "server",
+  "attributes": {
+    "az.namespace": "My.Service"
+  },
+  "library": {
+    "name": "my.service",
+    "version": "1.0beta-2",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
+  }
+})");
+    VerifySpan(spans[1], R"(
+{
+  "name": "My API",
+  "kind": "client",
+  "attributes": {
+    "az.namespace": "My.Service"
+  },
+  "library": {
+    "name": "my.service",
+    "version": "1.0beta-2",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
+  }
+})");
 
     // The trace ID for the inner and outer requests must be the same, the parent-id/span-id must be
     // different.
@@ -565,12 +587,16 @@ private:
 
 public:
   explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
-      : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
+      : m_tracingFactory(
+          clientOptions,
+          "Azure.Core.OpenTelemetry.Test.Service",
+          "azure-core-opentelemetry-test-service-cpp",
+          "1.0.0.beta-2")
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<RequestIdPolicy>());
     policies.emplace_back(std::make_unique<TelemetryPolicy>(
-        "Azure-Core-OpenTelemetry-Test-Service", "1.0.0.beta-2", clientOptions.Telemetry));
+        "core-opentelemetry-test-service-cpp", "1.0.0.beta-2", clientOptions.Telemetry));
     policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
 
     // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
@@ -584,7 +610,11 @@ public:
       {
         throw Azure::Core::RequestFailedException("it all goes wrong here.");
       }
-      return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+      auto response = std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+
+      response->SetHeader("x-ms-request-id", "12345");
+
+      return response;
     }));
 
     m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(policies);
@@ -666,15 +696,19 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
   "statusCode": "unset",
   "attributes": {
     "az.namespace": "Azure.Core.OpenTelemetry.Test.Service",
+    "az.client_request_id": ".*",
+    "az.service_request_id": "12345",
+    "net.peer.name": "https://www.microsoft.com",
+    "net.peer.port": 443,
     "http.method": "GET",
     "http.url": "https://www.microsoft.com",
-    "requestId": ".*",
-    "http.user_agent": "MyApplication azsdk-cpp-Azure-Core-OpenTelemetry-Test-Service/1.0.0.beta-2.*",
+    "http.user_agent": "MyApplication azsdk-cpp-core-opentelemetry-test-service-cpp/1.0.0.beta-2.*",
     "http.status_code": "200"
   },
   "library": {
-    "name": "Azure.Core.OpenTelemetry.Test.Service",
-    "version": "1.0.0.beta-2"
+    "name": "azure-core-opentelemetry-test-service-cpp",
+    "version": "1.0.0.beta-2",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
   }
 })");
 
@@ -687,8 +721,9 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
     "az.namespace": "Azure.Core.OpenTelemetry.Test.Service"
   },
   "library": {
-    "name": "Azure.Core.OpenTelemetry.Test.Service",
-    "version": "1.0.0.beta-2"
+    "name": "azure-core-opentelemetry-test-service-cpp",
+    "version": "1.0.0.beta-2",
+    "schema": "https://opentelemetry.io/schemas/1.17.0"
   }
 })");
     }

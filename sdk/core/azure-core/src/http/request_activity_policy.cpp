@@ -48,7 +48,13 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
         TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
 
     const std::string sanitizedUrl = m_httpSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl();
-    createOptions.Attributes->AddAttribute("http.url", sanitizedUrl);
+    createOptions.Attributes->AddAttribute(TracingAttributes::HttpUrl.ToString(), sanitizedUrl);
+
+    createOptions.Attributes->AddAttribute(
+        TracingAttributes::NetPeerPort.ToString(), request.GetUrl().GetPort());
+    const std::string host = request.GetUrl().GetScheme() + "://" + request.GetUrl().GetHost();
+    createOptions.Attributes->AddAttribute(TracingAttributes::NetPeerName.ToString(), host);
+
     const Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())
     {
@@ -56,8 +62,6 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
           TracingAttributes::RequestId.ToString(), requestId.Value());
     }
 
-    // Note that the span captures its values by reference. That means we can't let the userAgent
-    // variable move out of scope until after the span object is destroyed.
     auto userAgent{request.GetHeader("User-Agent")};
     if (userAgent.HasValue())
     {

@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       std::string const& version) const
   {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> returnTracer(
-        m_tracerProvider->GetTracer(name, version));
+        m_tracerProvider->GetTracer(name, version, OpenTelemetrySchemaUrlCurrent));
     return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_detail::OpenTelemetryTracer>(
         returnTracer);
   }

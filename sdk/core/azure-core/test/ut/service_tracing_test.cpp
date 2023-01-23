@@ -76,13 +76,13 @@ TEST(TracingContextFactory, SimpleServiceSpanTests)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "my.service", "my-service-cpp", "1.0b2");
   }
 
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "my.service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
@@ -153,7 +153,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     ServiceSpan span = std::move(contextAndSpan.Span);
@@ -169,7 +169,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
     auto testTracer = std::make_shared<TestTracingProvider>();
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     ServiceSpan span = std::move(contextAndSpan.Span);
@@ -190,7 +190,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     ServiceSpan span = std::move(contextAndSpan.Span);

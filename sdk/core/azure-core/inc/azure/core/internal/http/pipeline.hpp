@@ -69,6 +69,11 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
      * @param telemetryPackageVersion The version of the service for sending telemetry.
      * @param perRetryPolicies The service-specific per retry policies.
      * @param perCallPolicies The service-specific per call policies.
+     *
+     * @remark The telemetryPackageName and telemetryPackageVersion SHOULD represent the name and
+     * version of the package as is found in the vcpkg package manager. Note that changing the
+     * telemetryPackageName parameter is considered a breaking change (changing
+     * telemetryPackageVersion is not).
      */
     explicit HttpPipeline(
         Azure::Core::_internal::ClientOptions const& clientOptions,
