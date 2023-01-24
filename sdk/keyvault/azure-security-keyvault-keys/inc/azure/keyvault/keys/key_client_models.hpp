@@ -214,18 +214,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OctHsm;
-
-    /**
-     * @brief An OKP cryptographic algorithm.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Okp;
-
-    /**
-     * @brief An OKP cryptographic algorithm backed by a Hardware Security Module (HSM).
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OkpHsm;
   };
 
   /**
@@ -309,16 +297,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P521;
-
-    /**
-     * @brief Gets the Ed25519 Edwards curve.
-     *
-     * @remark For more information, see
-     * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
-     * types</a>.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName Ed25519;
   };
 
   /**
@@ -422,14 +400,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /// The RSA secret prime.
     std::vector<uint8_t> Q;
 
-    /// The RSA private exponent or EC private key, or OKP private key.
+    /// The RSA private exponent or EC private key.
     std::vector<uint8_t> D;
 
     /// Gets the symmetric key.
     std::vector<uint8_t> K;
     /// Gets the protected key used with "Bring Your Own Key".
     std::vector<uint8_t> T;
-    /// Gets the X coordinate of the elliptic curve point, or OKP public key.
+    /// Gets the X coordinate of the elliptic curve point.
     std::vector<uint8_t> X;
     /// Gets the Y coordinate for the elliptic curve point.
     std::vector<uint8_t> Y;

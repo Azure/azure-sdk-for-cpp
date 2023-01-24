@@ -104,15 +104,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       }
     }
 
-    explicit KeyRequestParameters(CreateOkpKeyOptions const& okpKey)
-        : KeyRequestParameters(okpKey.GetKeyType(), okpKey)
-    {
-      if (okpKey.CurveName.HasValue())
-      {
-        Curve = okpKey.CurveName.Value();
-      }
-    }
-
     std::string Serialize() const override;
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail
