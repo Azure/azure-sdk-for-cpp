@@ -1,0 +1,9 @@
+Dockerfile
+*.go
+*.bat
+*.txt
+*.ps1
+*.cpp
+*.md
+azure-core-libcurl-stress-test
+[Bb]in/
