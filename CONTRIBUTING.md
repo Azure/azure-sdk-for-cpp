@@ -65,6 +65,10 @@ Codespaces is new technology that allows you to use a container as your developm
 CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
+### Dotnet
+
+Required to get and execute test proxy(see /doc/TestProxy.md). [website](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet)
+
 ### Third Party Dependencies
 
 Azure SDK uses Vcpkg manifest mode to declare the [list of required 3rd party dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/main/vcpkg.json) for building the SDK service libraries. It will also get and set up Vcpkg automatically. **You can move on to [Building the project](#building-the-project)** and skip the next part if you are not interested in learning about alternatives for setting up dependencies.
