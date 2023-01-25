@@ -62,7 +62,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Update a setting.
      *
      * @param name Name of the setting to update.
-     * @param value Value of the settnig .
+     * @param value Value of the setting .
      * @param context Operation Context.
      *
      * @returns Response containing the new updated setting.

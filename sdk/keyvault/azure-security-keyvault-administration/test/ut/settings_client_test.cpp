@@ -65,7 +65,7 @@ TEST_F(SettingsClientTest, UpdateSetting)
       EXPECT_EQ(result.Value.Value, "false");
     }
     {
-      
+
       std::string value = "true";
       auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
 
