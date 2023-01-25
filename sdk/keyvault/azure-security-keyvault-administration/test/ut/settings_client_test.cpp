@@ -6,13 +6,14 @@
 #include "azure/keyvault/administration/settings_client.hpp"
 #include "settings_client_base_test.hpp"
 #include <azure/core/base64.hpp>
-#include <azure/keyvault/administration/rest_client.hpp>
+#include <azure/keyvault/administration/rest_client_models.hpp>
 #include <cstddef>
 #include <gtest/gtest.h>
 #include <string>
 #include <thread>
-using namespace std::chrono_literals;
+
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::Models;
 using namespace Azure::Security::KeyVault::Administration::Test;
 
 using namespace std::chrono_literals;
@@ -57,25 +58,23 @@ TEST_F(SettingsClientTest, UpdateSetting)
     // create certificate method contains all the checks
     auto const& client = GetClientForTest(testName);
     {
-      UpdateSettingOptions options;
-      options.Value = "false";
-      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+      std::string value = "false";
+      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
 
       EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
       EXPECT_EQ(result.Value.Value, "false");
     }
     {
-      UpdateSettingOptions options;
-      options.Value = "true";
-      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+      
+      std::string value = "true";
+      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
 
       EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
       EXPECT_EQ(result.Value.Value, "true");
     }
     {
-      UpdateSettingOptions options;
-      options.Value = "false";
-      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", options);
+      std::string value = "false";
+      auto result = client.UpdateSetting("AllowKeyManagementOperationsThroughARM", value);
 
       EXPECT_EQ(result.Value.Name, "AllowKeyManagementOperationsThroughARM");
       EXPECT_EQ(result.Value.Value, "false");
