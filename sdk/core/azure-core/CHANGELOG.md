@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed bug in WinHttp client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
+ignored if they were passed in from `TransportOptions`.
+
 ### Other Changes
 
 ## 1.8.0-beta.3 (2023-01-05)
