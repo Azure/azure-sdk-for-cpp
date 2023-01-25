@@ -67,7 +67,7 @@ CMake version 3.13 or higher is required to build these libraries. Download and 
 
 ### Dotnet
 
-Required to get and execute test proxy(see /doc/TestProxy.md). [website](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet)
+Required to get and execute test proxy (see [/doc/TestProxy.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/TestProxy.md)). Download the dotnet CLI from the project's [website](https://dotnet.microsoft.com/download).
 
 ### Third Party Dependencies
 
