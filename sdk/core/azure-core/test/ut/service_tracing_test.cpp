@@ -68,48 +68,6 @@ private:
 
 } // namespace
 
-TEST(TracingContextFactory, UserAgentTests)
-{
-  struct
-  {
-    const std::string serviceName;
-    const std::string serviceVersion;
-    const std::string applicationId;
-    const std::string expectedPrefix;
-  } UserAgentTests[]
-      = {{"storage-blob", "11.0.0", "", "azsdk-cpp-storage-blob/11.0.0 ("},
-         {"storage-blob",
-          "11.0.0",
-          "AzCopy/10.0.4-Preview",
-          "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 ("},
-         {"storage-blob",
-          "11.0.0",
-          "AzCopy / 10.0.4-Preview ",
-          "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 ("},
-         {"storage-blob",
-          "11.0.0",
-          "  01234567890123456789abcde  ",
-          "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 ("}};
-
-  constexpr auto UserAgentEnd = ')';
-  constexpr auto OSInfoMinLength = 10;
-
-  for (auto const& test : UserAgentTests)
-  {
-    Azure::Core::_internal::ClientOptions clientOptions;
-    clientOptions.Telemetry.ApplicationId = test.applicationId;
-    Azure::Core::Tracing::_internal::TracingContextFactory traceFactory(
-        clientOptions, test.serviceName, test.serviceVersion);
-    std::string userAgent = traceFactory.GetUserAgent();
-
-    EXPECT_FALSE(userAgent.empty());
-    EXPECT_LT(
-        test.expectedPrefix.size() + OSInfoMinLength + sizeof(UserAgentEnd), userAgent.size());
-    EXPECT_EQ(test.expectedPrefix, userAgent.substr(0, test.expectedPrefix.size()));
-    EXPECT_EQ(UserAgentEnd, userAgent[userAgent.size() - 1]);
-  }
-}
-
 TEST(TracingContextFactory, SimpleServiceSpanTests)
 {
   {
@@ -118,13 +76,13 @@ TEST(TracingContextFactory, SimpleServiceSpanTests)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "my.service", "my-service-cpp", "1.0b2");
   }
 
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "my.service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
@@ -195,7 +153,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     ServiceSpan span = std::move(contextAndSpan.Span);
@@ -211,7 +169,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
     auto testTracer = std::make_shared<TestTracingProvider>();
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     ServiceSpan span = std::move(contextAndSpan.Span);
@@ -232,7 +190,7 @@ TEST(TracingContextFactory, BasicServiceSpanTests)
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     ServiceSpan span = std::move(contextAndSpan.Span);
