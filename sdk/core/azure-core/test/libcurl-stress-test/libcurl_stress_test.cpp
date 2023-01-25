@@ -44,11 +44,11 @@ void SendRequest(std::string target)
 
 void Operation(int repetitions)
 {
-  std::string base = "https://xyz.";
+  std::string base = "https://bing.com.";
   for (int i = 0; i < repetitions; i++)
   {
     std::cout << i << std::endl;
-    SendRequest(base + std::to_string(i) + ".abc");
+    SendRequest(base); // + std::to_string(i) + ".abc");
   }
 }
 

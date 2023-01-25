@@ -4,7 +4,7 @@
 apiVersion: v2
 name: libcurl-stress-test
 description: An example of c++ stress test
-version: 0.0.1
+version: 0.0.2
 appVersion: v0.1
 annotations:
   stressTest: 'true'  # enable auto-discovery of this test via `find-all-stress-packages.ps1`
@@ -12,5 +12,5 @@ annotations:
 
 dependencies:
 - name: stress-test-addons
-  version: 0.1.19
+  version: ~0.2.0
   repository: https://stresstestcharts.blob.core.windows.net/helm/
