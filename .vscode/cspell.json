@@ -17,6 +17,7 @@
     ".gitignore",
     ".vscode/cspell.json",
     "vcpkg-custom-ports",
+    "**/assets.json",
     "ci.yml",
     "squid.conf*",
     "eng/common/**/*",

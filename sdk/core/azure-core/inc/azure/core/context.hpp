@@ -245,25 +245,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Returns the tracer provider for the current context.
-     */
-    std::shared_ptr<Tracing::TracerProvider> GetTracerProvider()
-    {
-      return m_contextSharedState->TraceProvider;
-    }
-
-    /**
-     * @brief Sets the tracer provider for the current context.
-     */
-    void SetTracerProvider(std::shared_ptr<Tracing::TracerProvider> tracerProvider)
-    {
-      m_contextSharedState->TraceProvider = tracerProvider;
-    }
-
-    /**
      * @brief The application context (root).
      *
      */
-    static AZ_CORE_DLLEXPORT Context ApplicationContext;
+    static const AZ_CORE_DLLEXPORT Context ApplicationContext;
   };
 }} // namespace Azure::Core

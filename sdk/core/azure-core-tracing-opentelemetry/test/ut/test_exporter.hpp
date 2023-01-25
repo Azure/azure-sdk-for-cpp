@@ -7,15 +7,211 @@
 #include <opentelemetry/sdk/trace/exporter.h>
 
 class RecordedSpan : public opentelemetry::sdk::trace::Recordable {
+public:
+  struct Attribute
+  {
+    enum class AttributeType
+    {
+      Bool,
+      Int32,
+      Int64,
+      UInt32,
+      UInt64,
+      Double,
+      CString,
+      String,
+      BoolArray,
+      Int32Array,
+      UInt32Array,
+      Int64Array,
+      UInt64Array,
+      DoubleArray,
+      StringArray,
+      ByteArray
+    };
+    AttributeType Type;
+    bool BoolValue{};
+    int32_t Int32Value{};
+    int64_t Int64Value{};
+    uint32_t UInt32Value{};
+    uint64_t UInt64Value{};
+    double DoubleValue{};
+    const char* CStringValue{};
+    std::string StringValue;
+    std::vector<bool> BoolArrayValue;
+    std::vector<int32_t> Int32ArrayValue;
+    std::vector<int64_t> Int64ArrayValue;
+    std::vector<uint32_t> UInt32ArrayValue;
+    std::vector<uint64_t> UInt64ArrayValue;
+    std::vector<double> DoubleArrayValue;
+    std::vector<std::string> StringArrayValue;
+    std::vector<uint8_t> ByteArrayValue;
+    Attribute(bool val) : Type{AttributeType::Bool}, BoolValue{val} {}
+    Attribute(const char* val) : Type{AttributeType::CString}, CStringValue{val} {}
+    Attribute(uint32_t val) : Type{AttributeType::UInt32}, UInt32Value{val} {}
+    Attribute(int32_t val) : Type{AttributeType::Int32}, Int32Value{val} {}
+    Attribute(int64_t val) : Type{AttributeType::Int64}, Int64Value{val} {}
+    Attribute(uint64_t val) : Type{AttributeType::UInt64}, UInt64Value{val} {}
+    Attribute(double val) : Type{AttributeType::Double}, DoubleValue{val} {}
+    Attribute(opentelemetry::nostd::string_view const val)
+        : Type{AttributeType::String}, StringValue{val}
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const bool> val)
+        : Type{AttributeType::BoolArray}, BoolArrayValue(val.size(), val.data())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const int32_t> val)
+        : Type{AttributeType::Int32Array}, Int32ArrayValue(val.begin(), val.end())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const uint32_t> val)
+        : Type{AttributeType::UInt32Array}, UInt32ArrayValue(val.begin(), val.end())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const int64_t> val)
+        : Type{AttributeType::Int64Array}, Int64ArrayValue(val.begin(), val.end())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const uint64_t> val)
+        : Type{AttributeType::UInt64Array}, UInt64ArrayValue(val.begin(), val.end())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const double> val)
+        : Type{AttributeType::DoubleArray}, DoubleArrayValue(val.begin(), val.end())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const opentelemetry::nostd::string_view> val)
+        : Type{AttributeType::StringArray}, StringArrayValue(val.begin(), val.end())
+    {
+    }
+    Attribute(opentelemetry::nostd::span<const uint8_t> val)
+        : Type{AttributeType::ByteArray}, ByteArrayValue(val.begin(), val.end())
+    {
+    }
+    AttributeType index() const { return Type; }
+
+    operator bool() const
+    {
+      assert(Type == AttributeType::Bool);
+      return BoolValue;
+    }
+  };
+  class AttributeMap {
+    std::map<std::string, Attribute> m_attributes;
+
+  public:
+    void SetAttribute(std::string const& key, const opentelemetry::common::AttributeValue& value)
+    {
+      switch (value.index())
+      {
+        case opentelemetry::common::AttributeType::kTypeBool: {
+          ;
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<bool>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeCString: {
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<const char*>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeInt: {
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<int32_t>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeInt64: {
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<int64_t>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeUInt: {
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<uint32_t>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeDouble: {
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<double>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeString: {
+          m_attributes.emplace(
+              key, Attribute{opentelemetry::nostd::get<opentelemetry::nostd::string_view>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanBool: {
+          m_attributes.emplace(
+              key,
+              Attribute{opentelemetry::nostd::get<opentelemetry::nostd::span<const bool>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanInt: {
+          m_attributes.emplace(
+              key,
+              Attribute{
+                  opentelemetry::nostd::get<opentelemetry::nostd::span<const int32_t>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanInt64: {
+          m_attributes.emplace(
+              key,
+              Attribute{
+                  opentelemetry::nostd::get<opentelemetry::nostd::span<const int64_t>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanUInt: {
+          m_attributes.emplace(
+              key,
+              Attribute{
+                  opentelemetry::nostd::get<opentelemetry::nostd::span<const uint32_t>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanDouble: {
+          m_attributes.emplace(
+              key,
+              Attribute{
+                  opentelemetry::nostd::get<opentelemetry::nostd::span<const double>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanString: {
+          m_attributes.emplace(
+              key,
+              Attribute{opentelemetry::nostd::get<
+                  opentelemetry::nostd::span<const opentelemetry::nostd::string_view>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeUInt64: {
+          m_attributes.emplace(key, Attribute{opentelemetry::nostd::get<uint64_t>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanUInt64: {
+          m_attributes.emplace(
+              key,
+              Attribute{
+                  opentelemetry::nostd::get<opentelemetry::nostd::span<const uint64_t>>(value)});
+          break;
+        }
+        case opentelemetry::common::AttributeType::kTypeSpanByte: {
+          m_attributes.emplace(
+              key,
+              Attribute{
+                  opentelemetry::nostd::get<opentelemetry::nostd::span<const uint8_t>>(value)});
+          break;
+        }
+
+        break;
+      }
+    }
+    size_t size() const { return m_attributes.size(); }
+    decltype(m_attributes)::iterator begin() { return m_attributes.begin(); }
+    decltype(m_attributes)::iterator end() { return m_attributes.end(); }
+    Attribute const& at(std::string const& key) const { return m_attributes.at(key); }
+  };
   struct Event
   {
     std::string Name;
     std::chrono::system_clock::time_point Timestamp;
-    opentelemetry::sdk::common::AttributeMap Attributes;
+    AttributeMap Attributes;
   };
   opentelemetry::trace::SpanId m_parentSpan;
   opentelemetry::trace::SpanId m_spanId;
-  opentelemetry::sdk::common::AttributeMap m_attributes;
+  AttributeMap m_attributes;
   std::vector<Event> m_events;
   opentelemetry::trace::StatusCode m_statusCode{};
   std::string m_statusDescription;
@@ -51,7 +247,7 @@ public:
       opentelemetry::nostd::string_view key,
       const opentelemetry::common::AttributeValue& value) noexcept override
   {
-    m_attributes.SetAttribute(key, value);
+    m_attributes.SetAttribute(std::string{key}, value);
   };
 
   /**
@@ -72,7 +268,7 @@ public:
     attributes.ForEachKeyValue(
         [&event](
             opentelemetry::nostd::string_view name, opentelemetry::common::AttributeValue value) {
-          event.Attributes.SetAttribute(name, value);
+          event.Attributes.SetAttribute(std::string{name}, value);
           return true;
         });
     m_events.push_back(event);
@@ -159,7 +355,7 @@ public:
   opentelemetry::trace::SpanId GetParentSpanId() { return m_parentSpan; }
   opentelemetry::trace::SpanKind GetSpanKind() { return m_spanKind; }
   opentelemetry::trace::SpanId GetSpanId() { return m_spanId; }
-  opentelemetry::sdk::common::AttributeMap const& GetAttributes() { return m_attributes; }
+  AttributeMap const& GetAttributes() { return m_attributes; }
   opentelemetry::sdk::instrumentationscope::InstrumentationScope& GetInstrumentationScope()
   {
     return *m_scope;

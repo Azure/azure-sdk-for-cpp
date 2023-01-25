@@ -756,13 +756,13 @@ WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
   }
   if (transportOptions.EnableCertificateRevocationListCheck)
   {
-    httpOptions.EnableCertificateRevocationListCheck;
+    httpOptions.EnableCertificateRevocationListCheck = true;
   }
   // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
   // CAs.
   if (!transportOptions.ExpectedTlsRootCertificate.empty())
   {
-    httpOptions.IgnoreUnknownCertificateAuthority;
+    httpOptions.IgnoreUnknownCertificateAuthority = true;
   }
 
   return httpOptions;
