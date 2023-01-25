@@ -15,5 +15,5 @@ add_executable(
 target_link_libraries(azure-core-libcurl-stress-test PRIVATE azure-core)
 
 create_map_file(azure-core-libcurl-stress-test azure-core-libcurl-stress-test.map)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile
-  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+file(COPY ${CMAKE_CURRENT_BINARY_DIR}
+  DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

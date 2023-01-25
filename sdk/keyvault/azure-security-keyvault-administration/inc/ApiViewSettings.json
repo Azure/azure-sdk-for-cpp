@@ -1,0 +1,17 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../azure-security-keyvault-shared/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Security::KeyVault::Administration",
+  "reviewName": "KeyVault Administration Settings Review",
+  "serviceName": "Azure Security Keyvault Administration",
+  "packageName": "azure-security-keyvault-administration-cpp"
+}

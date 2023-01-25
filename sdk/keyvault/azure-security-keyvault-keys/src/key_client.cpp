@@ -167,27 +167,6 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
-Azure::Response<KeyVaultKey> KeyClient::CreateOkpKey(
-    CreateOkpKeyOptions const& okpKeyOptions,
-    Azure::Core::Context const& context) const
-{
-  // Payload for the request
-  std::string const& keyName = okpKeyOptions.GetName();
-  std::string payload = _detail ::KeyRequestParameters(okpKeyOptions).Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse respone
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
-}
-
 Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
     CreateOctKeyOptions const& octKeyOptions,
     Azure::Core::Context const& context) const
