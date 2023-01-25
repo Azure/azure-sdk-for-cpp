@@ -10,6 +10,13 @@
 
 - Fixed bug in WinHttp client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
 ignored if they were passed in from `TransportOptions`.
+- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Johannes Schonberger _([GitHub](https://github.com/ahojnnes))_
 
 ### Other Changes
 

@@ -3,12 +3,9 @@
 
 FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04
 
-ARG targetTest
-ARG build
-
 # copy the tagrget binary
-ADD $targetTest ./$targetTest
-RUN chmod +x ./$targetTest
+COPY ./bin/libcurl-stress-test/azure-core-libcurl-stress-test ./azure-core-libcurl-stress-test
+RUN chmod +x ./azure-core-libcurl-stress-test
 
 # install the mem check tool 
 RUN apt-get update -y
