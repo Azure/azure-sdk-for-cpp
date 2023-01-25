@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed bug in WinHttp client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
+- Fixed bug in WinHTTP client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
 ignored if they were passed in from `TransportOptions`.
 - [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
 
