@@ -5,8 +5,8 @@
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 
-#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/strings.hpp>
+
 #include <string>
 #include <vector>
 
@@ -79,18 +79,5 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
     redirectRequest.SetHeader("x-recording-mode", "playback");
   }
 
-  auto response = nextHttpPolicy.Send(redirectRequest, ctx);
-  if (response->GetStatusCode() == HttpStatusCode::InternalServerError)
-  {
-    Azure::Core::Diagnostics::_internal::Log::Write(
-        Azure::Core::Diagnostics::Logger::Level::Error,
-        "TestProxyPolicy::Send - InternalServerError. Request: " + request.GetMethod().ToString()
-            + " " + request.GetUrl().GetAbsoluteUrl());
-    auto responseBody = response->GetBody();
-    std::string responseBodyText{responseBody.begin(), responseBody.end()};
-    Azure::Core::Diagnostics::_internal::Log::Write(
-        Azure::Core::Diagnostics::Logger::Level::Error,
-        "TestProxyPolicy::Send - Diagnostics error: " + responseBodyText);
-  }
-  return response;
+  return nextHttpPolicy.Send(redirectRequest, ctx);
 }
