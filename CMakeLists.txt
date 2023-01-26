@@ -12,7 +12,7 @@ include(FolderList)
 SetGlobalOptions()
 
 if(FETCH_SOURCE_DEPS)
-  message(FATAL_ERROR, "FETCH_SOURCE_DEPS flag not for global use, instead use when building individual components")
+  message(FATAL_ERROR, "FETCH_SOURCE_DEPS flag not for global use, instead use when building individual components.")
   return()
 endif()
 
