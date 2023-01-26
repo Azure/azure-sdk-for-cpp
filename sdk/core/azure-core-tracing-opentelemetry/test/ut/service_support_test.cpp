@@ -13,10 +13,21 @@
 #include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
 
 #include "test_exporter.hpp" // Span Exporter used for OpenTelemetry tests.
+#if defined(_MSC_VER)
+// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
+// the warnings across the includes.
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4244)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
+#endif
 #include <opentelemetry/sdk/common/global_log_handler.h>
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
