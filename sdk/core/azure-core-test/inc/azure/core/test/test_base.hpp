@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     class TestBase : public ::testing::Test {
-    
+
     private:
       /**
        * @brief Whenever a test case is skipped
@@ -407,19 +407,35 @@ namespace Azure { namespace Core { namespace Test {
        */
       void TearDown() override;
 
-      void static SetUpTestSuite()
+      void  SetUpTestSuiteLocal(std::string const& assetsPath)
       {
+        if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
+        {
 #if defined(_WIN32)
-        std::string pwshCommand = "pwsh Start-TestProxy.ps1 -AssetsPath=";
-
-        system((pwshCommand + GetAssetsPath()).c_str());
+          std::string finalAsets(assetsPath);
+          std::replace(finalAsets.begin(), finalAsets.end(), '/', '\\');
+          std::string pwshCommand
+              = "pwsh -NoProfile -ExecutionPolicy Unrestricted Start-TestProxy.ps1 -AssetsPath "
+              + finalAsets;
+          int result =system(pwshCommand.c_str());
+          if (result != 0)
+          {
+            std::cout << "Non zero exit code for start proxy : " << result;
+          }
 #endif
+        }
       };
-      void static TearDownTestSuite(){};
-
+      void TearDownTestSuiteLocal()
+      {
+        if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
+        {
+          int result = std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted Stop-TestProxy.ps1");
+          std::cout << "Non zero exit code for stop proxy : " << result;
+        }
+      };
       /**
        * Returns the assets.json file path used when invoking the test-proxy playback/record
        */
-      static std::string GetAssetsPath() {throw std::exception("Not Implemented"); }
+      static std::string GetAssetsPath() { return "assets.json"; }
     };
 }}} // namespace Azure::Core::Test

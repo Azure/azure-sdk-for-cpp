@@ -12,6 +12,7 @@ include(GoogleTest)
 # Export the test folder for recordings access.
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 add_compile_definitions(AZURE_TEST_ASSETS_DIR="${CMAKE_CURRENT_LIST_DIR}/../../../")
+# Additional test files to be copied to the output directory.
 
 add_executable (
   azure-security-keyvault-administration-test
@@ -39,3 +40,9 @@ gtest_discover_tests(azure-security-keyvault-administration-test
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
   DISCOVERY_TIMEOUT 600)
+
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/../../../../../eng/scripts/Start-TestProxy.ps1
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/../../../../../eng/scripts/Stop-TestProxy.ps1
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
