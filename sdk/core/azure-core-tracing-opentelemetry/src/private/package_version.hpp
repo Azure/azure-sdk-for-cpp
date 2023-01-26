@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace OpenTelemetry { namespace _detail {
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static constexpr const char* ToString()
+    static exprconst const char* ()
     {
       return IsPreRelease
           ? AZURE_CORE_OPENTELEMETRY_VERSION_ITOA(AZURE_CORE_OPENTELEMETRY_VERSION_MAJOR) "." AZURE_CORE_OPENTELEMETRY_VERSION_ITOA(
