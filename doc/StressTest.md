@@ -8,7 +8,7 @@ Adding a stress test requires the following tools installed:
 
 Structure : 
 
-A stress tests is composes of the following components : 
+A stressed tests is composes of the following components : 
 * Source code : represents the test that is run, there are no prerequisites as to what the code does, the outputs of the tests can be at the cosole , as file share or Application Insights. 
 * DockerFile : represents the docker file that will build the continer image that  will be executed by the stress automation, on the stress test clusters. 
 * Helm Chart : represents the deployment script for the docker image built by the Dockerfile. 
