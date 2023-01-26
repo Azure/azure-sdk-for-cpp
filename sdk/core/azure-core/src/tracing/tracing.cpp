@@ -9,13 +9,24 @@
 
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
-  const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
-  const TracingAttributes TracingAttributes::ServiceRequestId("serviceRequestId");
+  // OTel specific Network attributes:
+
+  // Fully qualified Azure service endpoint (host name component).
+  // For example: 'http://my-account.servicebus.windows.net/'
+  const TracingAttributes TracingAttributes::NetPeerName("net.peer.name");
+  // Port of the Azure Service Endpoint
+  const TracingAttributes TracingAttributes::NetPeerPort("net.peer.port");
+
+  // OTel specific HTTP attributes:
   const TracingAttributes TracingAttributes::HttpUserAgent("http.user_agent");
   const TracingAttributes TracingAttributes::HttpMethod("http.method");
   const TracingAttributes TracingAttributes::HttpUrl("http.url");
-  const TracingAttributes TracingAttributes::RequestId("requestId");
   const TracingAttributes TracingAttributes::HttpStatusCode("http.status_code");
+
+  // AZ specific attributes:
+  const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
+  const TracingAttributes TracingAttributes::RequestId("az.client_request_id");
+  const TracingAttributes TracingAttributes::ServiceRequestId("az.service_request_id");
 
   using Azure::Core::Context;
 

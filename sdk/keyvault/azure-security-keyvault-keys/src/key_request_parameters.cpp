@@ -24,12 +24,15 @@ std::string KeyRequestParameters::Serialize() const
         return type.ToString();
       });
 
-  json attributes;
   // attributes
-  JsonOptional::SetFromNullable(m_options.Enabled, attributes, _detail::EnabledPropertyName);
+  JsonOptional::SetFromNullable(
+      m_options.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
 
   // exportable attribute
-  JsonOptional::SetFromNullable(m_options.Exportable, attributes, _detail::ExportablePropertyName);
+  JsonOptional::SetFromNullable(
+      m_options.Exportable,
+      payload[_detail::AttributesPropertyName],
+      _detail::ExportablePropertyName);
 
   /* Optional */
   // key_size
@@ -43,22 +46,15 @@ std::string KeyRequestParameters::Serialize() const
   // attributes
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.ExpiresOn,
-      attributes,
+      payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
 
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.NotBefore,
-      attributes,
+      payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
-
-  // in order to avoid creating the "attributes":null json field.
-  // The service deserializer on HSM really does not like that
-  if (!attributes.empty())
-  {
-    payload[_detail::AttributesPropertyName] = attributes;
-  }
 
   // tags
   for (auto tag : m_options.Tags)
