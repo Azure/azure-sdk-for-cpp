@@ -39,9 +39,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     class TestBase : public ::testing::Test {
-    public:
-      std::string m_proxyAssetsPath;
-
+    
     private:
       /**
        * @brief Whenever a test case is skipped
@@ -414,7 +412,7 @@ namespace Azure { namespace Core { namespace Test {
 #if defined(_WIN32)
         std::string pwshCommand = "pwsh Start-TestProxy.ps1 -AssetsPath=";
 
-        system( pwshCommand + TestBase::m_proxyAssetsPath);
+        system((pwshCommand + GetAssetsPath()).c_str());
 #endif
       };
       void static TearDownTestSuite(){};
@@ -422,6 +420,6 @@ namespace Azure { namespace Core { namespace Test {
       /**
        * Returns the assets.json file path used when invoking the test-proxy playback/record
        */
-      virtual std::string GetAssetsPath() { return "assets.json"; }
+      static std::string GetAssetsPath() {throw std::exception("Not Implemented"); }
     };
 }}} // namespace Azure::Core::Test

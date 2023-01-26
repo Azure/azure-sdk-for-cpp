@@ -80,6 +80,6 @@ namespace Azure {
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
 
-    SettingsClientTest() {m_proxyAssetsPath = AZURE_TEST_ASSETS_DIR; }
+    static std::string GetAssetsPath() { return std::string(AZURE_TEST_ASSETS_DIR); }
   };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Test
