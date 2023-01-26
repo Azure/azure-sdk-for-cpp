@@ -11,6 +11,7 @@ include(GoogleTest)
 
 # Export the test folder for recordings access.
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
+add_compile_definitions(AZURE_TEST_ASSETS_DIR="${CMAKE_CURRENT_LIST_DIR}/../../../")
 
 add_executable (
   azure-security-keyvault-administration-test

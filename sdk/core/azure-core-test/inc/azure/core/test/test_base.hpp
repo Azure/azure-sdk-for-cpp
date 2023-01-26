@@ -406,6 +406,9 @@ namespace Azure { namespace Core { namespace Test {
      */
     void TearDown() override;
 
+    void static SetUpTestSuite(){};
+    void static TearDownTestSuite(){};
+
     /**
      * Returns the assets.json file path used when invoking the test-proxy playback/record
      */

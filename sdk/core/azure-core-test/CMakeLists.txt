@@ -7,6 +7,7 @@ project(azure-core-test-fw LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+add_compile_definitions(AZURE_TEST_PROXY_SCRIPTS="${CMAKE_CURRENT_LIST_DIR}/../../../eng/scripts")
 
 set(
   AZURE_CORE_TEST_HEADER
