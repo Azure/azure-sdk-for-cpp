@@ -26,6 +26,12 @@ namespace Azure { namespace Storage {
   namespace Test {
 
     class StorageTest : public Azure::Core::Test::TestBase {
+    public:
+      StorageTest()
+      {
+        TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR);
+      }
+ 
     protected:
       const std::string& StandardStorageConnectionString();
       const std::string& PremiumStorageConnectionString();

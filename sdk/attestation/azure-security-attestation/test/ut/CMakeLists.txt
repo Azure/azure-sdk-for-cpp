@@ -17,6 +17,8 @@ add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 # Export the test folder for recordings access.
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
+add_compile_definitions(AZURE_TEST_ASSETS_DIR="${CMAKE_CURRENT_LIST_DIR}/../../../")
+
 include(GoogleTest)
 
 add_executable (
@@ -40,3 +42,10 @@ target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-secur
 gtest_discover_tests(azure-security-attestation-test 
     DISCOVERY_TIMEOUT 600 
     TEST_PREFIX azure-security-attestation.)
+
+
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/../../../../../eng/scripts/Start-TestProxy.ps1
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/../../../../../eng/scripts/Stop-TestProxy.ps1
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

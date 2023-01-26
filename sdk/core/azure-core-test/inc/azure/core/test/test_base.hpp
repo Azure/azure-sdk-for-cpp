@@ -425,7 +425,7 @@ namespace Azure { namespace Core { namespace Test {
 #endif
         }
       };
-      void TearDownTestSuiteLocal()
+      static void TearDownTestSuite()
       {
         if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
         {
