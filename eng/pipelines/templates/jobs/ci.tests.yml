@@ -173,7 +173,6 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
-        name: TestProxyTool
         parameters:
           runProxy: true
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
@@ -187,6 +186,7 @@ jobs:
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
         displayName: Restore Recordings
         condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), ne('${{parameters.ServiceDirectory}}', 'core'),ne('${{parameters.ServiceDirectory}}', 'template'))
+        name: RestoreRecordings
 
       - pwsh: |
           ctest `
@@ -204,7 +204,7 @@ jobs:
       - pwsh: |
           get-content test-proxy.log
         displayName: TestProxy Log
-        condition: and(succeededOrFailed(), eq(variables['TestProxyTool.doThing'], 'Yes'))
+        condition: and(succeededOrFailed(), eq(variables['RestoreRecordings.doThing'], 'Yes'))
         workingDirectory: $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         continueOnError: true
 
