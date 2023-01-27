@@ -173,6 +173,7 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
+        name: TestProxyTool
         parameters:
           runProxy: true
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
@@ -203,7 +204,7 @@ jobs:
       - pwsh: |
           get-content test-proxy.log
         displayName: TestProxy Log
-        condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
+        condition: and(succeededOrFailed(), eq(variables['TestProxyTool.doThing'], 'Yes'))
         workingDirectory: $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         continueOnError: true
 
