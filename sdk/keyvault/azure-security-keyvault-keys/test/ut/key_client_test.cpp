@@ -35,7 +35,7 @@ TEST(KeyVaultKeyClientUnitTest, ServiceVersion)
   // 7.3
   EXPECT_NO_THROW(auto options = KeyClientOptions();
                   KeyClient keyClient("http://account.vault.azure.net", credential, options);
-                  EXPECT_EQ(options.ApiVersion, "7.4-preview.1"););
+                  EXPECT_EQ(options.ApiVersion, "7.3"););
 }
 
 TEST(KeyVaultKeyClientUnitTest, GetUrl)

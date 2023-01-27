@@ -4,12 +4,11 @@
 {{- define "stress.deploy-example" -}}
 metadata:
   labels:
-    testName: "libcurl-stress-test"
-  name: "libcurl-stress-test"
+    chaos: "{{ default false .Stress.chaos }}"
 spec:
   containers:
-    - name: libcurl-stress-test
-      image: stresspgs7b6dif73rup6.azurecr.io/azuresdkforcpp/curlstress:latest
+    - name: main
+      image: {{ .Stress.imageTag }}
       imagePullPolicy: Always
       command:
         [
@@ -19,4 +18,8 @@ spec:
           "./azure-core-libcurl-stress-test",
         ]
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
+      resources:
+        limits:
+          memory: {{.Stress.memory }}
+          cpu: "1"
 {{- end -}}
