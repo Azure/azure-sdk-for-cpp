@@ -174,23 +174,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Creates and stores a new OKP key in Key Vault.
-     *
-     * @remark If the named key already exists, Azure Key Vault creates a new version of the
-     * key.
-     *
-     * @remark This operation requires the keys/create permission.
-     *
-     * @param okpKeyOptions The key options object containing information about the OKP key
-     * being created.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return The Key wrapped in the Response.
-     */
-    Azure::Response<KeyVaultKey> CreateOkpKey(
-        CreateOkpKeyOptions const& okpKeyOptions,
-        Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    /**
      * @brief Get a single page with the properties of all keys in the specified vault. You can
      * use the returned #KeyProperties.Name in subsequent calls to #GetKey.
      *
