@@ -32,7 +32,7 @@ TEST(ResponseT, extractAndGet)
   // Can't get rawResponse again since it was moved
   EXPECT_EQ(nullptr, response.RawResponse);
 
-  // This is fine, we can keep extracting the rawReponse, only that the second time the it would be
+  // This is fine, we can keep extracting the rawResponse, only that the second time the it would be
   // a nullptr
   EXPECT_NO_THROW(rawResponse = std::move(response.RawResponse));
   EXPECT_EQ(nullptr, rawResponse);

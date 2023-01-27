@@ -1,5 +1,5 @@
 ---
-# _cspell:words gunicorn Nlcjpw userx Nlcng dvcm passwordx userc
+# cspell:words gunicorn Nlcjpw userx Nlcng dvcm passwordx userc
 ---
 
 # _Create squid proxy docker container

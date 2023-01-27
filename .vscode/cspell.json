@@ -209,12 +209,6 @@
       ]
     },
     {
-      "filename": "**/sdk/core/azure-core/README.md",
-      "words": [
-        "myprogram"
-      ]
-    },
-    {
       "filename": "**/sdk/core/azure-core/CHANGELOG.md",
       "words": [
         "Chisnall",
