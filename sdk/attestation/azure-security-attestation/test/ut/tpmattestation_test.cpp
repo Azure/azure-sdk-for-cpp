@@ -27,6 +27,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   class TpmAttestationTests : public Azure::Core::Test::TestBase {
   public:
     TpmAttestationTests() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); };
+
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;

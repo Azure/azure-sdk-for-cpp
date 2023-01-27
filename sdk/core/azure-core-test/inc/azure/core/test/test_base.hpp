@@ -407,29 +407,28 @@ namespace Azure { namespace Core { namespace Test {
        */
       void TearDown() override;
 
-      void  SetUpTestSuiteLocal(std::string const& assetsPath)
+      void SetUpTestSuiteLocal(std::string const& assetsPath)
       {
         if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
         {
-#if defined(_WIN32)
           std::string finalAsets(assetsPath);
-          std::replace(finalAsets.begin(), finalAsets.end(), '/', '\\');
           std::string pwshCommand
               = "pwsh -NoProfile -ExecutionPolicy Unrestricted Start-TestProxy.ps1 -AssetsPath "
               + finalAsets;
-          int result =system(pwshCommand.c_str());
+          int result = system(pwshCommand.c_str());
           if (result != 0)
           {
             std::cout << "Non zero exit code for start proxy : " << result;
           }
-#endif
         }
       };
+
       static void TearDownTestSuite()
       {
         if (Azure::Core::_internal::Environment::GetVariable("AZURE_TEST_USE_TEST_PROXY") == "ON")
         {
-          int result = std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted Stop-TestProxy.ps1");
+          int result
+              = std::system("pwsh -NoProfile -ExecutionPolicy Unrestricted Stop-TestProxy.ps1");
           std::cout << "Non zero exit code for stop proxy : " << result;
         }
       };

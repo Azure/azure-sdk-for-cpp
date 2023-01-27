@@ -45,6 +45,7 @@ namespace Azure {
                                         public ::testing::WithParamInterface<int> {
   public:
     KeyVaultCertificateClientTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
+
   private:
     std::unique_ptr<Azure::Security::KeyVault::Certificates::CertificateClient> m_client;
 

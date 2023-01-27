@@ -27,11 +27,8 @@ namespace Azure { namespace Storage {
 
     class StorageTest : public Azure::Core::Test::TestBase {
     public:
-      StorageTest()
-      {
-        TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR);
-      }
- 
+      StorageTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
+
     protected:
       const std::string& StandardStorageConnectionString();
       const std::string& PremiumStorageConnectionString();
@@ -162,8 +159,7 @@ namespace Azure { namespace Storage {
       return x * 1024 * 1024 * 1024 * 1024;
     }
 
-    class CryptFunctionsTest : public StorageTest {
-    };
+    class CryptFunctionsTest : public StorageTest {};
 
     class ClientSecretCredentialTest : public StorageTest {
 
@@ -209,10 +205,10 @@ namespace Azure { namespace Storage {
 
   namespace Files { namespace DataLake { namespace _detail {
 
-    Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url);
-    Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url);
-    std::string GetBlobUrlFromUrl(const std::string& url);
-    std::string GetDfsUrlFromUrl(const std::string& url);
+        Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url);
+        Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url);
+        std::string GetBlobUrlFromUrl(const std::string& url);
+        std::string GetDfsUrlFromUrl(const std::string& url);
 
   }}} // namespace Files::DataLake::_detail
 
