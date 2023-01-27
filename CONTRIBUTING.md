@@ -207,6 +207,11 @@ Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is
 
 Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuarion for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
 
+##### Test-Proxy 
+
+Recording and playing back tests depends on an external tool called "test-proxy" (see doc/TestProxy.md)
+You can start this tool manually or autmatically as part of you development flow. 
+For automatic start you will need to set the envieronment variable "AZURE_TEST_USE_TEST_PROXY" to value "ON".
 
 ##### Running tests
 
