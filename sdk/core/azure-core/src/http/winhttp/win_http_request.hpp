@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         DWORD_PTR dwContext,
         DWORD dwInternetStatus,
         LPVOID lpvStatusInformation,
-        DWORD dwStatusInformationLength) noexcept;
+        DWORD dwStatusInformationLength);
 
     /*
      * Callback from WinHTTP called after the TLS certificates are received when the caller sets

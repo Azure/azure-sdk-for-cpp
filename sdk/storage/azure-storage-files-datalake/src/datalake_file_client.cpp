@@ -88,6 +88,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
+    protocolLayerOptions.LeaseAction = options.LeaseAction;
+    protocolLayerOptions.ProposedLeaseId = options.LeaseId;
+    if (options.LeaseDuration.HasValue())
+    {
+      protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
+    }
     return _detail::FileClient::Append(
         *m_pipeline, m_pathUrl, content, protocolLayerOptions, context);
   }
@@ -123,6 +129,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+    }
+    protocolLayerOptions.LeaseAction = options.LeaseAction;
+    protocolLayerOptions.ProposedLeaseId = options.LeaseId;
+    if (options.LeaseDuration.HasValue())
+    {
+      protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
     }
     return _detail::FileClient::Flush(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
   }

@@ -437,10 +437,50 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.ShareName = std::move(response.Value.ShareName);
     pagedResponse.ShareSnapshot = response.Value.ShareSnapshot.ValueOr(std::string());
-    pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
-    pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Directories = std::move(response.Value.Segment.DirectoryItems);
-    pagedResponse.Files = std::move(response.Value.Segment.FileItems);
+    if (response.Value.Encoded)
+    {
+      pagedResponse.DirectoryPath = Core::Url::Decode(response.Value.DirectoryPath);
+    }
+    else
+    {
+      pagedResponse.DirectoryPath = std::move(response.Value.DirectoryPath);
+    }
+    if (response.Value.Prefix.Encoded)
+    {
+      pagedResponse.Prefix = Core::Url::Decode(response.Value.Prefix.Content);
+    }
+    else
+    {
+      pagedResponse.Prefix = std::move(response.Value.Prefix.Content);
+    }
+    for (auto& item : response.Value.Segment.DirectoryItems)
+    {
+      Models::DirectoryItem directoryItem;
+      if (item.Name.Encoded)
+      {
+        directoryItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        directoryItem.Name = std::move(item.Name.Content);
+      }
+      directoryItem.Details = std::move(item.Details);
+      pagedResponse.Directories.push_back(std::move(directoryItem));
+    }
+    for (auto& item : response.Value.Segment.FileItems)
+    {
+      Models::FileItem fileItem;
+      if (item.Name.Encoded)
+      {
+        fileItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        fileItem.Name = std::move(item.Name.Content);
+      }
+      fileItem.Details = std::move(item.Details);
+      pagedResponse.Files.push_back(std::move(fileItem));
+    }
     pagedResponse.DirectoryId = response.Value.DirectoryId.ValueOr(std::string());
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
@@ -464,7 +504,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     ListDirectoryHandlesPagedResponse pagedResponse;
 
-    pagedResponse.DirectoryHandles = std::move(response.Value.HandleList);
+    for (auto& handle : response.Value.HandleList)
+    {
+      Models::HandleItem directoryHandle;
+      if (handle.Path.Encoded)
+      {
+        directoryHandle.Path = Core::Url::Decode(handle.Path.Content);
+      }
+      else
+      {
+        directoryHandle.Path = std::move(handle.Path.Content);
+      }
+      directoryHandle.ClientIp = std::move(handle.ClientIp);
+      directoryHandle.FileId = std::move(handle.FileId);
+      directoryHandle.HandleId = std::move(handle.HandleId);
+      directoryHandle.LastReconnectedOn = std::move(handle.LastReconnectedOn);
+      directoryHandle.OpenedOn = std::move(handle.OpenedOn);
+      directoryHandle.ParentId = std::move(handle.ParentId);
+      directoryHandle.SessionId = std::move(handle.SessionId);
+
+      pagedResponse.DirectoryHandles.push_back(std::move(directoryHandle));
+    }
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());

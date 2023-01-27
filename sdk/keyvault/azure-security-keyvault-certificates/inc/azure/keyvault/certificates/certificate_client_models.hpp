@@ -1,4 +1,4 @@
-﻿//  Copyright (c) Microsoft Corporation. All rights reserved.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -394,7 +394,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Content type of the certificate when downloaded from getecret.
+   * @brief Content type of the certificate when downloaded from getsecret.
    *
    */
   class CertificateContentType final {
@@ -977,7 +977,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<std::string> Id;
 
     /**
-     * @brief Organization Administators collection.
+     * @brief Organization Administrators collection.
      *
      */
     std::vector<AdministratorDetails> AdminDetails;

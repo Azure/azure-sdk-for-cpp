@@ -17,6 +17,7 @@
     ".gitignore",
     ".vscode/cspell.json",
     "vcpkg-custom-ports",
+    "**/assets.json",
     "ci.yml",
     "squid.conf*",
     "eng/common/**/*",
@@ -34,6 +35,7 @@
     "ABFS",
     "ABNF",
     "Adls",
+    "ahojnnes",
     "Aloctl",
     "azcore",
     "azsdk",
@@ -50,6 +52,7 @@
     "cuse",
     "CUSEUAP",
     "DCMAKE",
+    "DCURL",
     "DDISABLE",
     "deserializers",
     "Deserializes",
@@ -123,6 +126,7 @@
     "retriable",
     "rwxrw",
     "sasia",
+    "Schonberger",
     "scus",
     "SDDL",
     "sdpath",
@@ -186,6 +190,13 @@
     },
     {
       "filename": "**/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client_models.hpp",
+      "words": [
+        "SECG",
+        "SECP"
+      ]
+    },
+    {
+      "filename": "**/sdk/keyvault/azure-security-keyvault-certificates/inc/azure/keyvault/certificates/certificate_client_models.hpp",
       "words": [
         "SECG",
         "SECP"

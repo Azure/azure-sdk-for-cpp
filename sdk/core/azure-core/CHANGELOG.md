@@ -1,6 +1,26 @@
 # Release History
 
-## 1.8.0-beta.3 (Unreleased)
+## 1.8.0-beta.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed bug in WinHTTP client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
+ignored if they were passed in from `TransportOptions`.
+- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Johannes Schonberger _([GitHub](https://github.com/ahojnnes))_
+
+### Other Changes
+
+## 1.8.0-beta.3 (2023-01-05)
 
 ### Features Added
 
@@ -8,9 +28,8 @@
 
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
+- Removed `noexcept` specification from `Azure::DateTime::clock::now()`. 
 
 ## 1.8.0-beta.2 (2022-11-03)
 

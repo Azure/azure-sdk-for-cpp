@@ -514,26 +514,3 @@ TEST(Context, KeyTypePairPrecondition)
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
   EXPECT_TRUE(strValue == s);
 }
-
-TEST(Context, SetTracingProvider)
-{
-  class TestTracingProvider final : public Azure::Core::Tracing::TracerProvider {
-  public:
-    TestTracingProvider() : TracerProvider() {}
-    ~TestTracingProvider() {}
-    std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
-        std::string const&,
-        std::string const&) const override
-    {
-      throw std::runtime_error("Not implemented");
-    };
-  };
-
-  Context context;
-  context.SetTracerProvider(nullptr);
-
-  // Verify we can round trip a tracing provider through the context.
-  auto testProvider = std::make_shared<TestTracingProvider>();
-  context.SetTracerProvider(testProvider);
-  EXPECT_EQ(testProvider, context.GetTracerProvider());
-}

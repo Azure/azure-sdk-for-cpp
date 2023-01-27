@@ -39,7 +39,7 @@ namespace _detail {
     // this clock's time_point), and add that duration to steady clock's time_point to get a new
     // time_point in the steady clock's "coordinate system".
     static constexpr bool is_steady = std::chrono::system_clock::is_steady;
-    static time_point now() noexcept;
+    static time_point now();
   };
 } // namespace _detail
 
@@ -202,7 +202,7 @@ public:
   std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
 };
 
-inline _detail::Clock::time_point _detail::Clock::now() noexcept
+inline _detail::Clock::time_point _detail::Clock::now()
 {
   return DateTime(std::chrono::system_clock::now());
 }

@@ -279,6 +279,196 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, AppendFileWithLease)
+  {
+    const int32_t bufferSize = 4 * 1024; // 4KB data size
+    std::vector<uint8_t> buffer(bufferSize, 'x');
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
+
+    // Append Lease Acquire
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire");
+      client.Create();
+      Files::DataLake::AppendFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
+      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseDuration = std::chrono::seconds(20);
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseState::Leased, properties.Value.LeaseState.Value());
+      EXPECT_TRUE(properties.Value.LeaseDuration.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseDurationType::Fixed,
+          properties.Value.LeaseDuration.Value());
+    }
+    // Append Lease AutoRenew
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_auto_renew");
+      client.Create();
+      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      Files::DataLake::DataLakeLeaseClient leaseClient(client, leaseId);
+      leaseClient.Acquire(std::chrono::seconds(20));
+      Files::DataLake::AppendFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::AutoRenew;
+      options.AccessConditions.LeaseId = leaseId;
+      bufferStream->Rewind();
+      auto response = client.Append(*bufferStream, 0, options);
+      EXPECT_TRUE(response.Value.IsLeaseRenewed.HasValue());
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseState::Leased, properties.Value.LeaseState.Value());
+      EXPECT_TRUE(properties.Value.LeaseDuration.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseDurationType::Fixed,
+          properties.Value.LeaseDuration.Value());
+    }
+    // Append Lease Release
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_release");
+      client.Create();
+      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      Files::DataLake::DataLakeLeaseClient leaseClient(client, leaseId);
+      leaseClient.Acquire(std::chrono::seconds(20));
+      Files::DataLake::AppendFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::Release;
+      options.AccessConditions.LeaseId = leaseId;
+      options.Flush = true;
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseStatus::Unlocked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseState::Available, properties.Value.LeaseState.Value());
+    }
+    // Append Lease AcquireRelease
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire_release");
+      client.Create();
+      Files::DataLake::AppendFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::AcquireRelease;
+      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseDuration = std::chrono::seconds(20);
+      options.Flush = true;
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseStatus::Unlocked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseState::Available, properties.Value.LeaseState.Value());
+    }
+  }
+
+  TEST_F(DataLakeFileClientTest, FlushFileWithLease)
+  {
+    const int32_t bufferSize = 4 * 1024; // 4KB data size
+    std::vector<uint8_t> buffer(bufferSize, 'x');
+    auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        Azure::Core::IO::MemoryBodyStream(buffer));
+
+    // Flush Lease Acquire
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire");
+      client.Create();
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0);
+      Files::DataLake::FlushFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
+      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseDuration = std::chrono::seconds(20);
+      client.Flush(bufferSize, options);
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseState::Leased, properties.Value.LeaseState.Value());
+      EXPECT_TRUE(properties.Value.LeaseDuration.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseDurationType::Fixed,
+          properties.Value.LeaseDuration.Value());
+    }
+    // Flush Lease AutoRenew
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_auto_renew");
+      client.Create();
+      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      Files::DataLake::AppendFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
+      options.LeaseId = leaseId;
+      options.LeaseDuration = std::chrono::seconds(20);
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      Files::DataLake::FlushFileOptions flushOptions;
+      flushOptions.LeaseAction = Files::DataLake::Models::LeaseAction::AutoRenew;
+      flushOptions.AccessConditions.LeaseId = leaseId;
+      auto response = client.Flush(bufferSize, flushOptions);
+      EXPECT_TRUE(response.Value.IsLeaseRenewed.HasValue());
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseStatus::Locked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(Files::DataLake::Models::LeaseState::Leased, properties.Value.LeaseState.Value());
+      EXPECT_TRUE(properties.Value.LeaseDuration.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseDurationType::Fixed,
+          properties.Value.LeaseDuration.Value());
+    }
+    // Flush Lease Release
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_release");
+      client.Create();
+      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      Files::DataLake::AppendFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
+      options.LeaseId = leaseId;
+      options.LeaseDuration = std::chrono::seconds(20);
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0, options);
+      Files::DataLake::FlushFileOptions flushOptions;
+      flushOptions.LeaseAction = Files::DataLake::Models::LeaseAction::Release;
+      flushOptions.AccessConditions.LeaseId = leaseId;
+      client.Flush(bufferSize, flushOptions);
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseStatus::Unlocked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseState::Available, properties.Value.LeaseState.Value());
+    }
+    // Flush Lease AcquireRelease
+    {
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire_release");
+      client.Create();
+      bufferStream->Rewind();
+      client.Append(*bufferStream, 0);
+      Files::DataLake::FlushFileOptions options;
+      options.LeaseAction = Files::DataLake::Models::LeaseAction::AcquireRelease;
+      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseDuration = std::chrono::seconds(20);
+      client.Flush(bufferSize, options);
+      auto properties = client.GetProperties();
+      EXPECT_TRUE(properties.Value.LeaseStatus.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseStatus::Unlocked, properties.Value.LeaseStatus.Value());
+      EXPECT_TRUE(properties.Value.LeaseState.HasValue());
+      EXPECT_EQ(
+          Files::DataLake::Models::LeaseState::Available, properties.Value.LeaseState.Value());
+    }
+  }
+
   TEST_F(DataLakeFileClientTest, FileReadReturns)
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size

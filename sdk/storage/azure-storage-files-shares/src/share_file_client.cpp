@@ -617,7 +617,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     ListFileHandlesPagedResponse pagedResponse;
 
-    pagedResponse.FileHandles = std::move(response.Value.HandleList);
+    for (auto& handle : response.Value.HandleList)
+    {
+      Models::HandleItem fileHandle;
+      if (handle.Path.Encoded)
+      {
+        fileHandle.Path = Core::Url::Decode(handle.Path.Content);
+      }
+      else
+      {
+        fileHandle.Path = std::move(handle.Path.Content);
+      }
+      fileHandle.ClientIp = std::move(handle.ClientIp);
+      fileHandle.FileId = std::move(handle.FileId);
+      fileHandle.HandleId = std::move(handle.HandleId);
+      fileHandle.LastReconnectedOn = std::move(handle.LastReconnectedOn);
+      fileHandle.OpenedOn = std::move(handle.OpenedOn);
+      fileHandle.ParentId = std::move(handle.ParentId);
+      fileHandle.SessionId = std::move(handle.SessionId);
+
+      pagedResponse.FileHandles.push_back(std::move(fileHandle));
+    }
     pagedResponse.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());

@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace _internal {
      *
      * @param other Another extendable enumeration to be compared.
      */
-    bool operator==(T const& other) const noexcept
+    bool operator==(ExtendableEnumeration<T> const& other) const noexcept
     {
       return m_enumerationValue == other.m_enumerationValue;
     }
@@ -73,7 +73,10 @@ namespace Azure { namespace Core { namespace _internal {
      *
      * @param other Another extendable enumeration to be compared.
      */
-    bool operator!=(T const& other) const noexcept { return !operator==(other); }
+    bool operator!=(ExtendableEnumeration<T> const& other) const noexcept
+    {
+      return !operator==(other);
+    }
 
     /**
      * @brief Return the ExtendableEnumeration string representation.

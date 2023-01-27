@@ -172,8 +172,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   class TracingContextFactory final {
   private:
     std::string m_serviceName;
-    std::string m_serviceVersion;
-    std::string m_userAgent;
+    std::string m_packageName;
+    std::string m_packageVersion;
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
 
     /** @brief The key used to retrieve the span and tracer associated with a context object.
@@ -188,22 +188,32 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     static Azure::Core::Context::Key TracingFactoryContextKey;
 
   public:
+    /**
+     * @brief Construct a new Tracing Context Factory object
+     *
+     * @param options Client Options for tracing.
+     * @param serviceName Name of the resource provider for the service [See
+     * also](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
+     * @param packageName Name of the package containing this service client.
+     * @param packageVersion Optional package version number for the package containing this
+     * service. (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
+     */
     TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,
-        std::string serviceName,
-        std::string serviceVersion)
-        : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
-          m_userAgent(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
-              serviceName,
-              serviceVersion,
-              options.Telemetry.ApplicationId)),
-          m_serviceTracer(
-              options.Telemetry.TracingProvider
-                  ? Azure::Core::Tracing::_internal::TracerProviderImplGetter::TracerImplFromTracer(
-                        options.Telemetry.TracingProvider)
-                        ->CreateTracer(serviceName, serviceVersion)
-                  : nullptr)
+        std::string const& serviceName,
+        std::string const& packageName,
+        std::string packageVersion)
+        : m_serviceName{serviceName}, m_packageName{packageName}, m_packageVersion{packageVersion}
     {
+      // If the caller has configured a tracing provider, use it. Otherwise, use the default
+      // provider.
+      if (options.Telemetry.TracingProvider)
+      {
+        m_serviceTracer
+            = Azure::Core::Tracing::_internal::TracerProviderImplGetter::TracerImplFromTracer(
+                  options.Telemetry.TracingProvider)
+                  ->CreateTracer(packageName, packageVersion);
+      }
     }
 
     TracingContextFactory() = default;
@@ -258,10 +268,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
 
-    /** @brief Retrieves the User-Agent header value for this tracing context factory.
-     */
-    std::string const& GetUserAgent() const { return m_userAgent; }
-
     /** @brief Returns true if this TracingContextFactory is connected to a service tracer.
      */
     bool HasTracer() const { return static_cast<bool>(m_serviceTracer); }
@@ -287,8 +293,24 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * [Namespace](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers)
      * of Azure service request is made against.
      *
+     * @remarks Azure Specific attribute.
+     *
      */
     AZ_CORE_DLLEXPORT const static TracingAttributes AzNamespace;
+
+    /** @brief  Value of the[x - ms - client - request - id] header(or other request - id header,
+     * depending on the service) sent by the client.
+     *
+     * @remarks Azure Specific attribute.
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes RequestId;
+
+    /** @brief Value of the [x-ms-request-id]  header (or other request-id header, depending on the
+     * service) sent by the server in response.
+     *
+     * @remarks Azure Specific attribute.
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes ServiceRequestId;
 
     /**
      * @brief HTTP request method.
@@ -315,15 +337,17 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      */
     AZ_CORE_DLLEXPORT const static TracingAttributes HttpUserAgent;
 
-    /** @brief  Value of the[x - ms - client - request - id] header(or other request - id header,
-     * depending on the service) sent by the client.
+    /** @brief Fully qualified Azure service endpoint(host name component)
+     *
+     * For example: 'http://my-account.servicebus.windows.net/'
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes RequestId;
+    AZ_CORE_DLLEXPORT const static TracingAttributes NetPeerName;
 
-    /** @brief Value of the [x-ms-request-id]  header (or other request-id header, depending on the
-     * service) sent by the server in response.
+    /** @brief Port of the Azure Service Endpoint
+     *
+     * For example: 'http://my-account.servicebus.windows.net/'
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes ServiceRequestId;
+    AZ_CORE_DLLEXPORT const static TracingAttributes NetPeerPort;
   };
 
 }}}} // namespace Azure::Core::Tracing::_internal

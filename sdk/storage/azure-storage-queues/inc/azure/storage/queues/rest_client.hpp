@@ -12,10 +12,10 @@
 #include <type_traits>
 #include <vector>
 
+#include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/strings.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
@@ -211,11 +211,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * A set of name-value pairs associated with this queue.
        */
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
     };
     /**
      * @brief Include this parameter to specify that the queues' metadata be returned as part of the
@@ -290,11 +286,7 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     struct QueueProperties final
     {
-      std::map<
-          std::string,
-          std::string,
-          Core::_internal::StringExtensions::CaseInsensitiveComparator>
-          Metadata;
+      Core::CaseInsensitiveMap Metadata;
       /**
        * The approximate number of messages in the queue. This number is not lower than the actual
        * number of messages in the queue, but could be higher.

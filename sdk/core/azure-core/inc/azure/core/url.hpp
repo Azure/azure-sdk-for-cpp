@@ -14,7 +14,6 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <unordered_set>
 
 namespace Azure { namespace Core {
   namespace _detail {
@@ -52,10 +51,6 @@ namespace Azure { namespace Core {
     std::string m_encodedPath;
     // query parameters are all encoded
     std::map<std::string, std::string> m_encodedQueryParameters;
-
-    // List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
-    // this set.
-    const static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
     std::string GetUrlWithoutQuery(bool relative) const;
 

@@ -9,8 +9,8 @@
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
 
-#include <cctype>
 #include <cstdio>
+#include <locale>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
@@ -63,7 +63,7 @@ void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& des
         break;
 
       default:
-        if (!std::isalnum(c))
+        if (!std::isalnum(c, std::locale::classic()))
         {
           throw AuthenticationException(
               "AzureCliCredential: Unsafe command line input found in " + description + ": "

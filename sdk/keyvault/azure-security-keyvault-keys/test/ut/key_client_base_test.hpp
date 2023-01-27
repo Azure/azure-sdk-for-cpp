@@ -33,6 +33,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
 
+    bool CheckSkipHsmForLive()
+    {
+      // if we are in live mode and the test needs a valid HSM url (aka different from the keyvault
+      // url)
+      if (m_testContext.IsLiveMode() && (m_keyVaultUrl == m_keyVaultHsmUrl))
+      {
+        SkipTest();
+      }
+      return IsSkipped();
+    }
+
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.

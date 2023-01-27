@@ -45,6 +45,19 @@ namespace Azure { namespace Identity { namespace _detail {
       std::shared_timed_mutex ElementMutex;
     };
 
+    // The current cache Key, std::string Scopes, may later evolve to a struct that contains more
+    // fields. All that depends on the fields in the TokenRequestContext that are used as
+    // characteristics that go into the network request that gets the token.
+    // If tomorrow we add Multi-Tenant Authentication, and the TenantID stops being an immutable
+    // characteristic of a credential instance, but instead becomes variable depending on the fields
+    // of the TokenRequestContext that are taken into consideration as network request for the token
+    // is being sent, it should go into what will form the new CacheKey struct.
+    // i.e. we want all the variable inputs for obtaining a token to be a part of the key, because
+    // we want to have the same kind of result. There should be no "hidden variables".
+    // Otherwise, the cache will stop functioning properly, because the value you'd get from cache
+    // for a given key will fail to authenticate, but if the cache ends up calling the getNewToken
+    // callback, you'll authenticate successfully (however the other caller who need to get the
+    // token for slightly different context will not be as lucky).
     mutable std::map<std::string, std::shared_ptr<CacheValue>> m_cache;
     mutable std::shared_timed_mutex m_cacheMutex;
 

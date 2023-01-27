@@ -3,12 +3,6 @@
 
 #include "azure/core/http/raw_response.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/internal/strings.hpp"
-
-#include <cctype>
-#include <map>
-#include <string>
-#include <vector>
 
 using namespace Azure::Core::IO;
 using namespace Azure::Core::Http;

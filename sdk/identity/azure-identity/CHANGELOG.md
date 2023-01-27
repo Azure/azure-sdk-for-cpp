@@ -1,12 +1,8 @@
 # Release History
 
-## 1.4.0-beta.3 (Unreleased)
+## 1.4.0-beta.4 (Unreleased)
 
 ### Features Added
-
-- Added Azure CLI Credential.
-- Added authority host overriding support for `ClientCertificateCredential`.
-- Added Azure Stack support for `ClientCertificateCredential`.
 
 ### Breaking Changes
 
@@ -14,7 +10,20 @@
 
 ### Other Changes
 
+## 1.4.0-beta.3 (2023-01-10)
+
+### Features Added
+
+- Added Azure CLI Credential.
+- Added authority host overriding support for `ClientCertificateCredential`.
+- Added Azure Stack support for `ClientCertificateCredential`.
+
+### Bugs Fixed
+
 - Changed token cache mode to per-credential-instance. In order to get benefits from token caching, share the same credential between multiple client instances.
+
+### Other Changes
+
 - Added token cache support to all credentials.
 
 ## 1.4.0-beta.2 (2022-11-08)

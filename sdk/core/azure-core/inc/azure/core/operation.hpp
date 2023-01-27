@@ -139,7 +139,7 @@ namespace Azure { namespace Core {
      * @brief Gets the current #Azure::Core::OperationStatus of the long-running operation.
      *
      */
-    OperationStatus Status() const noexcept { return m_status; }
+    OperationStatus const& Status() const noexcept { return m_status; }
 
     /**
      * @brief Checks if the long-running operation is completed.
@@ -199,7 +199,8 @@ namespace Azure { namespace Core {
     {
       // In the cases where the customer doesn't want to use a context we new one up and pass it
       // through
-      return PollUntilDone(period, Context::ApplicationContext);
+      Context context;
+      return PollUntilDone(period, context);
     }
 
     /**

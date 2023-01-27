@@ -1,4 +1,4 @@
-﻿//  Copyright (c) Microsoft Corporation. All rights reserved.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_certificates_common_request.hpp"

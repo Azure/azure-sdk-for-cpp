@@ -19,6 +19,7 @@ decltype(ClientCredentialCore::AadGlobalAuthority) ClientCredentialCore::AadGlob
 ClientCredentialCore::ClientCredentialCore(std::string tenantId, std::string const& authorityHost)
     : m_authorityHost(Url(authorityHost)), m_tenantId(std::move(tenantId))
 {
+  // ADFS is the Active Directory Federation Service, a tenant ID that is used in Azure Stack.
   m_isAdfs = m_tenantId == "adfs";
 }
 

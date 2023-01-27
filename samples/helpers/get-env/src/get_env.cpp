@@ -3,7 +3,7 @@
 
 #include "get_env.hpp"
 
-#include <cctype>
+#include <locale>
 
 #if defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP
 
@@ -20,7 +20,7 @@ char* std::getenv(const char* name)
     }
 
     // We're still trying to match the name.
-    if (std::toupper(*buf) == std::toupper(name[i]))
+    if (std::toupper(*buf, std::locale::classic()) == std::toupper(name[i], std::locale::classic()))
     {
       // Matching so far, keep matching name and buffer, char by char, case insensitive.
       ++i;

@@ -1,0 +1,16 @@
+{
+  "sourceFilesToProcess": [ "azure\\attestation.hpp" ],
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Security::Attestation",
+  "reviewName": "Azure Attestation API Review",
+  "serviceName": "Microsoft Azure Attestation",
+  "packageName": "azure-security-attestation-cpp"
+}

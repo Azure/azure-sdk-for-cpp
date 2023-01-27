@@ -1,4 +1,4 @@
-﻿{
+{
   "configurations": [
     {
       "name": "x64-DebugWithTests",
@@ -7,7 +7,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_SAMPLES=ON",
+      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": [

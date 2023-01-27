@@ -13,7 +13,7 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/platform.hpp"
-#include <cctype>
+#include <locale>
 #include <sstream>
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -133,10 +133,10 @@ std::string GetOSVersion()
 
 std::string TrimString(std::string s)
 {
-  auto const isSpace = [](int c) { return !std::isspace(c); };
+  auto const isNotSpace = [](char c) { return !std::isspace(c, std::locale::classic()); };
 
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), isSpace));
-  s.erase(std::find_if(s.rbegin(), s.rend(), isSpace).base(), s.end());
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), isNotSpace));
+  s.erase(std::find_if(s.rbegin(), s.rend(), isNotSpace).base(), s.end());
 
   return s;
 }

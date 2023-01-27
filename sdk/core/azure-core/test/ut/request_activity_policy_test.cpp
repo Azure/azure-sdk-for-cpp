@@ -161,7 +161,7 @@ TEST(RequestActivityPolicy, Basic)
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);
@@ -194,7 +194,7 @@ TEST(RequestActivityPolicy, Basic)
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0.0.beta-2");
+        clientOptions, "Azure.Service", "service", "1.0.0.beta-2");
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
@@ -204,6 +204,7 @@ TEST(RequestActivityPolicy, Basic)
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
       policies.emplace_back(std::make_unique<RequestIdPolicy>());
+      policies.emplace_back(std::make_unique<TelemetryPolicy>("my-service", "1.0.0.beta-2"));
       policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
       policies.emplace_back(
           std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
@@ -226,8 +227,8 @@ TEST(RequestActivityPolicy, Basic)
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
     EXPECT_EQ(
         request.GetHeaders()["x-ms-client-request-id"],
-        tracer->GetSpans()[1]->GetAttributes().at("requestId"));
-    std::string expectedUserAgentPrefix{"azsdk-cpp-my-service-cpp/1.0.0.beta-2 ("};
+        tracer->GetSpans()[1]->GetAttributes().at("az.client_request_id"));
+    std::string expectedUserAgentPrefix{"azsdk-cpp-my-service/1.0.0.beta-2 ("};
     EXPECT_EQ(expectedUserAgentPrefix, userAgent.Value().substr(0, expectedUserAgentPrefix.size()));
   }
 }
@@ -240,7 +241,7 @@ TEST(RequestActivityPolicy, TryRetries)
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);
@@ -299,7 +300,7 @@ TEST(RequestActivityPolicy, TryFailures)
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
     Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
-        clientOptions, "my-service-cpp", "1.0b2");
+        clientOptions, "My.Service", "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.Context);

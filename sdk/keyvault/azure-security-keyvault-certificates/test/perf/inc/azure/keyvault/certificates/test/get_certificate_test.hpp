@@ -28,7 +28,7 @@ namespace Azure {
         namespace Test {
 
   /**
-   * @brief A test to measure getting a key performance.
+   * @brief A test to measure getting a certificate performance.
    *
    */
   class GetCertificate : public Azure::Perf::PerfTest {

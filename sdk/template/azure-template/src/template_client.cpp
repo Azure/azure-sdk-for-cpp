@@ -10,9 +10,9 @@
 using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
+// Create a tracing factory for the service.
 TemplateClient::TemplateClient(TemplateClientOptions const& options)
-    : m_tracingFactory(options, "Template", PackageVersion::ToString())
-
+    : m_tracingFactory{options, "Azure.Template", "azure-template-cpp", PackageVersion::ToString()}
 {
 }
 

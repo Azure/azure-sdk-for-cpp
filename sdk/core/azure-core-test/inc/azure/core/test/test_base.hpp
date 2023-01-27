@@ -102,19 +102,10 @@ namespace Azure { namespace Core { namespace Test {
     {
       std::string updated(src);
       std::replace(updated.begin(), updated.end(), '/', '-');
-      return RemovePreffix(updated);
+      return RemovePrefix(updated);
     }
 
-    void SkipTest()
-    {
-      if (!m_wasSkipped)
-      {
-        m_wasSkipped = true;
-        GTEST_SKIP();
-      }
-    }
-
-    std::string RemovePreffix(std::string const& src)
+    std::string RemovePrefix(std::string const& src)
     {
       std::string updated(src);
       // Remove special marker for LIVEONLY
@@ -142,6 +133,15 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<Azure::Core::Test::TestProxyManager> m_testProxy;
 
     bool shouldSkipTest() { return m_wasSkipped; }
+
+    void SkipTest()
+    {
+      if (!m_wasSkipped)
+      {
+        m_wasSkipped = true;
+        GTEST_SKIP();
+      }
+    }
 
     inline void ValidateSkippingTest()
     {
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
         testName = Sanitize(testName);
       }
 
-      return RemovePreffix(testName);
+      return RemovePrefix(testName);
     }
 
     // Reads the current test instance name.
@@ -186,8 +186,7 @@ namespace Azure { namespace Core { namespace Test {
     // creating
     std::string GetTestNameLowerCase(bool sanitize = true)
     {
-      std::string testName(GetTestName(sanitize));
-      return Azure::Core::_internal::StringExtensions::ToLower(testName);
+      return Azure::Core::_internal::StringExtensions::ToLower(GetTestName(sanitize));
     }
 
     /**

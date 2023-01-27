@@ -62,17 +62,16 @@ KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeseria
           action[_detail::TriggerActionsValue],
           _detail::TBEActionsValue);
 
-      auto actionType = action[_detail::ActionActionsValue][TypeActionsValue].get<std::string>();
-      actionType = Azure::Core::_internal::StringExtensions::ToLower(actionType);
+      auto const actionType
+          = action[_detail::ActionActionsValue][TypeActionsValue].get<std::string>();
 
-      if (actionType
-          == Azure::Core::_internal::StringExtensions::ToLower(_detail::RotateActionsValue))
+      if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              actionType, _detail::RotateActionsValue))
       {
         currentAction.Action = LifetimeActionType::Rotate;
       }
-      else if (
-          actionType
-          == Azure::Core::_internal::StringExtensions::ToLower(_detail::NotifyActionsValue))
+      else if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                   actionType, _detail::NotifyActionsValue))
       {
         currentAction.Action = LifetimeActionType::Notify;
       }

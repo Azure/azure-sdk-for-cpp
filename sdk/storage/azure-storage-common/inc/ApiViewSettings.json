@@ -1,0 +1,16 @@
+{
+  "sourceFilesToProcess": null,
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc"
+  ],
+  "sourceFilesToSkip": [
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": true,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Storage",
+  "reviewName": "Azure Storage Common API Review",
+  "serviceName": "Azure Storage",
+  "packageName": "azure-storage-common-cpp"
+}

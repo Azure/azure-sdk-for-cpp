@@ -517,7 +517,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       DWORD_PTR dwContext,
       DWORD internetStatus,
       LPVOID statusInformation,
-      DWORD statusInformationLength) noexcept
+      DWORD statusInformationLength)
   {
     // If we're called before our context has been set (on Open and Close callbacks), ignore the
     // status callback.
@@ -756,13 +756,13 @@ WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
   }
   if (transportOptions.EnableCertificateRevocationListCheck)
   {
-    httpOptions.EnableCertificateRevocationListCheck;
+    httpOptions.EnableCertificateRevocationListCheck = true;
   }
   // If you specify an expected TLS root certificate, you also need to enable ignoring unknown
   // CAs.
   if (!transportOptions.ExpectedTlsRootCertificate.empty())
   {
-    httpOptions.IgnoreUnknownCertificateAuthority;
+    httpOptions.IgnoreUnknownCertificateAuthority = true;
   }
 
   return httpOptions;
