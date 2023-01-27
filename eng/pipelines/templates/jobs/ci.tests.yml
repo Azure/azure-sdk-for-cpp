@@ -202,7 +202,7 @@ jobs:
       - ${{ parameters.PostTestSteps }}
             
       - pwsh: |
-          $fileExists = Test-Path -Path "$(System.DefaultWorkingDirectory)/test-proxy.log" `
+          $fileExists = Test-Path -Path "$(System.DefaultWorkingDirectory)/test-proxy.log" 
           Write-Output "##vso[task.setvariable variable=ProxyLogExists]$fileExists"
         workingDirectory: $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         displayName: Check Test Proxy log
