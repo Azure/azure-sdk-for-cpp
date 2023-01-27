@@ -203,7 +203,7 @@ RawContent        : HTTP/1.1 200 OK
                     Access-Control-Allow-Credentials: true
                     Access-Control-Allow-Origin: *
                     Content-Length: 964
-                    Content-Type: application/js…
+                    Content-Type: application/json
 Headers           : {[Date, System.String[]], [Server, System.String[]], [Access-Control-Allow-Credentials,
                     System.String[]], [Access-Control-Allow-Origin, System.String[]]...}
 Images            : {}
@@ -530,7 +530,7 @@ RawContent        : HTTP/1.1 200 OK
                     Access-Control-Allow-Credentials: true
                     Access-Control-Allow-Origin: *
                     Content-Length: 967
-                    Content-Type: application/js�
+                    Content-Type: application/json
 Headers           : {[Date, System.String[]], [Server, System.String[]], [Access-Control-Allow-Credentials,
                     System.String[]], [Access-Control-Allow-Origin, System.String[]]...}
 Images            : {}
