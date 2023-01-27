@@ -201,17 +201,20 @@ jobs:
         
       - ${{ parameters.PostTestSteps }}
             
+     
       - pwsh: |
-          $fileExists = Test-Path -Path "./test-proxy.log" 
-          Write-Output "##vso[task.setvariable variable=ProxyLogExists;isoutput=true]$fileExists"
-        workingDirectory: $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
-        displayName: Check Test Proxy log
-
-      - pwsh: |
-          get-content test-proxy.log
+          $ErrorActionPreference = 'Continue'
+          try
+          {
+            get-content test-proxy.log
+          }
+          catch
+          {
+            Write-Information 'No test proxy log'
+          }
         displayName: TestProxy Log
-        condition: and(succeededOrFailed(), eq(variables['ProxyLogExists'], True))
-        workingDirectory: $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
+        condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
+        workingDirectory: $(Build.SourcesDirectory)
         continueOnError: true
 
       - task: PublishTestResults@2
