@@ -34,29 +34,14 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
-  constexpr static const char* StandardStorageConnectionStringValue
-      = "=DefaultEndpointsProtocol=https;AccountName=gearamastr;AccountKey=daHwPhp+"
-        "1UoOMaW552WVKthfT8lMD2Q7vRSonSp+JwFpYPq5/"
-        "KHm3DVNbwnIecHoh67AnVTvS2ZF+AStjf0b8w==;EndpointSuffix=core.windows.net";
-  constexpr static const char* PremiumStorageConnectionStringValue
-      = "DefaultEndpointsProtocol=https;AccountName=gearamastr;AccountKey=daHwPhp+"
-        "1UoOMaW552WVKthfT8lMD2Q7vRSonSp+JwFpYPq5/"
-        "KHm3DVNbwnIecHoh67AnVTvS2ZF+AStjf0b8w==;EndpointSuffix=core.windows.net";
-  constexpr static const char* BlobStorageConnectionStringValue
-      = "DefaultEndpointsProtocol=https;AccountName=dgearamastr;AccountKey="
-        "bKIVpBDFMJX8KHKvjnqDBERW+T8KOh2JJ89Nz84Wccn/"
-        "lE05Rta9V8ERmsrp4+B6bJhJjdVhcpjS+AStdr4nsg==;EndpointSuffix=core.windows.net";
-  constexpr static const char* PremiumFileConnectionStringValue
-      = "DefaultEndpointsProtocol=https;AccountName=gearamastrpfile;AccountKey=Zj7jk8ecN8MpvX/"
-        "6yCiCut5oXS6tPqZWARiIOy99xsQVTgk5tsar3tPuC9dvELSmjq12TFjN6f1K+AStJsgODA==;EndpointSuffix="
-        "core.windows.net";
-  constexpr static const char* AdlsGen2ConnectionStringValue
-      = "DefaultEndpointsProtocol=https;AccountName=dgearamastr;AccountKey="
-        "bKIVpBDFMJX8KHKvjnqDBERW+T8KOh2JJ89Nz84Wccn/"
-        "lE05Rta9V8ERmsrp4+B6bJhJjdVhcpjS+AStdr4nsg==;EndpointSuffix=core.windows.net";
-  constexpr static const char* AadTenantIdValue = "72f988bf-86f1-41af-91ab-2d7cd011db47";
-  constexpr static const char* AadClientIdValue = "c1f6b91a-ecc3-4323-8303-8b679c6725d3";
-  constexpr static const char* AadClientSecretValue = "pJS8Q~oHyt6wOyxHUILxn5v5tkaOTcVKjwwaucSf";
+  constexpr static const char* StandardStorageConnectionStringValue = "";
+  constexpr static const char* PremiumStorageConnectionStringValue = "";
+  constexpr static const char* BlobStorageConnectionStringValue = "";
+  constexpr static const char* PremiumFileConnectionStringValue = "";
+  constexpr static const char* AdlsGen2ConnectionStringValue = "";
+  constexpr static const char* AadTenantIdValue = "";
+  constexpr static const char* AadClientIdValue = "";
+  constexpr static const char* AadClientSecretValue = "";
 
   const std::string& StorageTest::StandardStorageConnectionString()
   {
