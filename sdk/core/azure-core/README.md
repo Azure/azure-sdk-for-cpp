@@ -1,14 +1,14 @@
-# Azure SDK Core Library for C++
+# _Azure SDK Core Library for C++
 
 Azure::Core (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++. These libraries follow the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
 The library allows client libraries to expose common functionality in a consistent fashion. Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
-## Getting started
+## _Getting started
 
 Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries. In case you want to download it explicitly (to implement your own client library, for example), you can find the source in here, or use vcpkg to install the package `azure-core-cpp`.
 
-### Include the package
+### _Include the package
 
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
@@ -25,7 +25,7 @@ find_package(azure-core-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-core)
 ```
 
-## Key concepts
+## _Key concepts
 
 The main shared concepts of `Azure::Core` include:
 
@@ -37,7 +37,7 @@ The main shared concepts of `Azure::Core` include:
 - Replaceable HTTP transport layer to send requests and receive responses over the network.
 - HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
 
-### Long Running Operations
+### _Long Running Operations
 
 Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
 
@@ -65,18 +65,18 @@ auto finalResult = operation.Value();
 
 ```
 
-### HTTP Transport adapter
+### _HTTP Transport adapter
 
 Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` _HTTP transport adapter_. [You can learn more about the transport adapter in this doc](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#http-transport-adapter).
 
-## Troubleshooting
+## _Troubleshooting
 
 Three main ways of troubleshooting failures are:
 
 - Inspecting exceptions
 - Enabling logging (see [SDK Log Messages](#sdk-log-messages))
 
-### SDK Log Messages
+### _SDK Log Messages
 
 The simplest way to enable logs is to set `AZURE_LOG_LEVEL` environment variable to one of the values:
 |`AZURE_LOG_LEVEL`|`Azure::Core::Diagnostics::Logger::Level`|Log message level
@@ -119,11 +119,11 @@ Note, the listener callback is executed on the same thread as the operation that
  It is recommended implementation due the minimal amount of log message processing on the callback thread.
 Where message processing is required, consider implementing in a way that the callback pushes the message string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
 
-## Next steps
+## _Next steps
 
 Explore and install available Azure SDK libraries.
 
-## Contributing
+## _Contributing
 
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
@@ -139,7 +139,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors
+### _Additional Helpful Links for Contributors
 
 Many people all over the world have helped make this project better. You'll want to check out:
 
@@ -148,13 +148,13 @@ Many people all over the world have helped make this project better. You'll want
 - [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### Community-->
+<!-- ### _Community-->
 
-### Reporting security issues and security bugs
+### _Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### License
+### _License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 

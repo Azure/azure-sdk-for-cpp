@@ -1,4 +1,4 @@
-# Azure Key Vault Certificates client library for C++
+# _Azure Key Vault Certificates client library for C++
 
 Azure Key Vault is a cloud service that provides secure storage and automated management of certificates used throughout a cloud application. Multiple certificates, and multiple versions of the same certificate, can be kept in the Azure Key Vault. Each certificate in the vault has a policy associated with it which controls the issuance and lifetime of the certificate, along with actions to be taken as certificates near expiry.
 
@@ -6,16 +6,16 @@ The Azure Key Vault certificates client library enables programmatically managin
 
 [Source code][certificate_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
 
-## Getting started
+## _Getting started
 
-### Install the package
+### _Install the package
 Install the Azure Key Vault certificates client library for C++ with vcpkg:
 
 ```cmd
 vcpkg install azure-security-keyvault-certificates-cpp
 ```
 
-### Prerequisites
+### _Prerequisites
 * An [Azure subscription][azure_sub].
 * An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
 
@@ -25,31 +25,31 @@ If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-key-va
 az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
 ```
 
-## Key concepts
-### KeyVault Certificate
+## _Key concepts
+### _KeyVault Certificate
 A `KeyVaultCertificate` is the fundamental resource within Azure Key Vault. You'll use certificates to encrypt and verify encrypted or signed data.
 
-### CertificateClient
+### _CertificateClient
 With a `CertificateClient` you can get certificates from the vault, create new certificates and
 new versions of existing certificates, update certificate metadata, and delete certificates. You
 can also manage certificate issuers, contacts, and management policies of certificates. This is
 illustrated in the examples below.
 
-### Thread safety
+### _Thread safety
 We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
 
-### Additional concepts
+### _Additional concepts
 
 <!-- CLIENT COMMON BAR -->
 [Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
 [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations) |
 <!-- CLIENT COMMON BAR -->
 
-## Examples
+## _Examples
 
 For detailed samples please review the samples provided.
 
-#### Creating a CertificateClient
+#### _Creating a CertificateClient
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -70,7 +70,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-### Start creating a Certificate
+### _Start creating a Certificate
 
 Call StartCreateCertificate to start creating a new certificate, with specified properties and policy.
 
@@ -82,7 +82,7 @@ CertificateCreateOptions options;
 auto response = certificateClient.StartCreateCertificate(certificateName, options);
 ```
 
-### Getting a Certificate once completed
+### _Getting a Certificate once completed
 
 Call PollUntilDone to poll the status of the creation. Once the opperation has completed we will call GetCertificate to get the newly created certificate.
 
@@ -98,7 +98,7 @@ std::cout << "Created certificate with policy. Certificate name : " << certifica
 }
 ```
 
-### Updating certificate properties
+### _Updating certificate properties
 
 Call UpdateCertificateProperties to change one of the certificate properties.
 
@@ -118,7 +118,7 @@ std::cout << "After update certificate is enabled : "
           << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");
 ```
 
-### Deleting a Certificate
+### _Deleting a Certificate
 
 Call StartDeleteCertificate to delete a certificate. This is a long running operation.
 
@@ -127,7 +127,7 @@ auto response = certificateClient.StartDeleteCertificate(certificateName);
 
 ```
 
-### Purging a deleted certificate
+### _Purging a deleted certificate
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the certificate before its `ScheduledPurgeDate`, the certificate needs to be purged.
 
@@ -136,7 +136,7 @@ auto result = response.PollUntilDone(defaultWait);
 certificateClient.PurgeDeletedCertificate(certificateName);
 ```
 
-### Getting properties of Certificates
+### _Getting properties of Certificates
 
 Call GetPropertiesOfCertificates to retrieve information about certificates from Key Vault.
 
@@ -158,11 +158,11 @@ for (auto certificates = certificateClient.GetPropertiesOfCertificates();
 }
 ```
 
-### Creating a new certificate version 
+### _Creating a new certificate version 
 
 Repeat the create certificate procedure, for an existing certificate it will create a new version of it.
 
-### Getting the versions of a certificate 
+### _Getting the versions of a certificate 
 
 To get information about certificate versions call GetPropertiesOfCertificateVersions.
 
@@ -181,7 +181,7 @@ for (auto certificateVersions
             << " certificate versions for certificate " << certificateName1;
 }
 ```
-### Deleting multiple certificates
+### _Deleting multiple certificates
 
 Now we will delete the certificates. Since this is a long running operation we need to wait for the operation to finish
 
@@ -193,7 +193,7 @@ response1.PollUntilDone(defaultWait);
 response2.PollUntilDone(defaultWait);
 ```
 
-### Getting the deleted certificates
+### _Getting the deleted certificates
 
 After the certificates are deleted , but not yet purged we can call GetDeletedCertificates
 
@@ -210,7 +210,7 @@ for (auto deletedCertificates = certificateClient.GetDeletedCertificates();
 }
 ```
 
-### Importing a PEM certificate
+### _Importing a PEM certificate
 
 You will need the certificate content in PEM format to perform this operation. One sample is provided in certificate-ImportCertificate sample.
 
@@ -232,7 +232,7 @@ auto imported = certificateClient.ImportCertificate(pemName, options).Value;
 std::cout << "Imported pem certificate with name " << imported.Name();
 ```
 
-### Importing a PKCS certificate
+### _Importing a PKCS certificate
 
 You will need the certificate content in PKCS format to perform this operation. One sample is provided in certificate-ImportCertificate sample.
 
@@ -254,7 +254,7 @@ auto imported = certificateClient.ImportCertificate(pkcsName, options).Value;
 std::cout << "Imported pkcs certificate with name " << imported.Name();
 ```
 
-## Troubleshooting
+## _Troubleshooting
 
 When you interact with the Azure Key Vault Secrets client library using the C++ SDK, errors returned by the service correspond to the same HTTP status codes returned for requests.
 
@@ -273,11 +273,11 @@ catch (const Azure::Core::RequestFailedException& ex)
 
 You will notice that additional information is logged, like the client request ID of the operation.
 
-### Additional Documentation
+### _Additional Documentation
 
 - For more extensive documentation on Azure Key Vault, see the [API reference documentation][keyvault_rest].
 
-# Next steps
+# _Next steps
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
@@ -300,7 +300,7 @@ Several Azure Key Vault secrets client library samples are available to you in t
   * Import a PEM certificate
   * import a PKCS certificate
 
-## Contributing
+## _Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -315,7 +315,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors
+### _Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -323,12 +323,12 @@ Many people all over the world have helped make this project better.  You'll wan
 * [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 * Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### Community-->
-### Reporting security issues and security bugs
+<!-- ### _Community-->
+### _Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### License
+### _License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 

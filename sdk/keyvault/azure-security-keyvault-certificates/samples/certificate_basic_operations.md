@@ -1,4 +1,4 @@
-# Creating, getting, updating, and deleting certificates
+# _Creating, getting, updating, and deleting certificates
 
 This sample demonstrates how to :
 * create a certificate
@@ -10,7 +10,7 @@ This sample demonstrates how to :
 in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
-## Creating a CertificateClient
+## _Creating a CertificateClient
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -31,7 +31,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a Certificate
+## _Creating a Certificate
 
 Call StartCreateCertificate to create a new certificate, with specified properties and policy.
 
@@ -43,7 +43,7 @@ CertificateCreateOptions options;
 auto response = certificateClient.StartCreateCertificate(certificateName, options);
 ```
 
-## Getting a Certificate
+## _Getting a Certificate
 
 Call PollUntilDone to poll the status of the creation. Once the opperation has completed we will call GetCertificate
 
@@ -59,7 +59,7 @@ std::cout << "Created certificate with policy. Certificate name : " << certifica
 }
 ```
 
-## Updating certificate properties
+## _Updating certificate properties
 
 Call UpdateCertificateProperties to change one of the certificate properties.
 
@@ -79,7 +79,7 @@ std::cout << "After update certificate is enabled : "
           << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");
 ```
 
-## Deleting a Certificate
+## _Deleting a Certificate
 
 Call StartDeleteCertificate to delete a certificate. This is a long running operation.
 
@@ -88,7 +88,7 @@ auto response = certificateClient.StartDeleteCertificate(certificateName);
 
 ```
 
-## Purging a deleted certificate
+## _Purging a deleted certificate
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the certificate before its `ScheduledPurgeDate`, the certificate needs to be purged.
 
@@ -96,7 +96,7 @@ If the Azure Key Vault is soft delete-enabled and you want to permanently delete
 auto result = response.PollUntilDone(defaultWait);
 certificateClient.PurgeDeletedCertificate(certificateName);
 ```
-## Source
+## _Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-basic-operations)

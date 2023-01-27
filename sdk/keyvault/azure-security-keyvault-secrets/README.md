@@ -1,4 +1,4 @@
-# Azure Security Keyvault Secrets Package client library for C++
+# _Azure Security Keyvault Secrets Package client library for C++
 
 Azure Security Keyvault Secrets Package client library for C++ (`azure-security-keyvault-secrets`)  matches necessary patterns that the development team has established to create a unified SDK written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
 
@@ -6,16 +6,16 @@ The library allows client libraries to expose common functionality in a consiste
 
 [Source code][secrets_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
 
-## Getting started
+## _Getting started
 
-### Install the package
+### _Install the package
 Install the Azure Key Vault secrets client library for C++ with vcpkg:
 
 ```cmd
 vcpkg install azure-security-keyvault-secrets-cpp
 ```
 
-### Prerequisites
+### _Prerequisites
 * An [Azure subscription][azure_sub].
 * An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
 
@@ -25,29 +25,29 @@ If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-key-va
 az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
 ```
 
-## Key concepts
+## _Key concepts
 
-### KeyVaultSecret
+### _KeyVaultSecret
 A `Secret` is the fundamental resource within Azure Key Vault. From a developer's perspective, Azure Key Vault APIs accept and return secret values as strings.
 
-### SecretClient
+### _SecretClient
 `SecretClient` provides synchronous operations exists in the SDK. Once you've initialized a `SecretClient`, you can interact with the primary resource types in Azure Key Vault.
 
-### Thread safety
+### _Thread safety
 We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
 
-### Additional concepts
+### _Additional concepts
 
 <!-- CLIENT COMMON BAR -->
 [Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
 [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations) |
 <!-- CLIENT COMMON BAR -->
 
-## Examples
+## _Examples
 
 For detailed samples please review the samples provided.
 
-### Create a client
+### _Create a client
 
 First step is to create  a SecretClient.
 
@@ -61,7 +61,7 @@ auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tena
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-### Create a secret
+### _Create a secret
 
 We call the secret client to create a secret.
 
@@ -72,7 +72,7 @@ std::string secretValue("my secret value");
 secretClient.SetSecret(secretName, secretValue);
 ```
 
-### Get a secret
+### _Get a secret
 
 We retrieve a secret by name.
 
@@ -83,7 +83,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
           << std::endl;
 ```
 
-### Update a secret
+### _Update a secret
 
 Updating an existing secret
 
@@ -97,7 +97,7 @@ std::cout << "Secret's content type is now " << updatedSecret.Properties.Content
           << std::endl;
 ```
 
-### Delete a secret
+### _Delete a secret
 
 Delete an existing secret.
 
@@ -106,7 +106,7 @@ Delete an existing secret.
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-### Delete and purge a secret
+### _Delete and purge a secret
 
 Delete and Purge a secret.
 
@@ -119,7 +119,7 @@ operation.PollUntilDone(std::chrono::milliseconds(2000));
 secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
-### List Secrets
+### _List Secrets
 
 List all the secrets in keyvault. 
 
@@ -135,7 +135,7 @@ for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage(); se
 ```
 
 
-## Troubleshooting
+## _Troubleshooting
 
 When you interact with the Azure Key Vault Secrets client library using the C++ SDK, errors returned by the service correspond to the same HTTP status codes returned for requests.
 
@@ -155,7 +155,7 @@ catch (const Azure::Core::RequestFailedException& ex)
 You will notice that additional information is logged, like the client request ID of the operation.
 
 
-# Next steps
+# _Next steps
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
@@ -179,7 +179,7 @@ Several Azure Key Vault secrets client library samples are available to you in t
   * List all deletes secrets
   * Get properties of a deleted secret
 
-## Contributing
+## _Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -194,7 +194,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors
+### _Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -202,12 +202,12 @@ Many people all over the world have helped make this project better.  You'll wan
 * [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 * Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### Community-->
-### Reporting security issues and security bugs
+<!-- ### _Community-->
+### _Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### License
+### _License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 

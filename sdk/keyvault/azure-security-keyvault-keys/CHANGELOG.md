@@ -1,62 +1,62 @@
-# Release History
+# _Release History
 
-## 4.4.0-beta.1 (Unreleased)
+## _4.4.0-beta.1 (Unreleased)
 
-### Features Added
+### _Features Added
 
-### Breaking Changes
+### _Breaking Changes
 
-### Bugs Fixed
+### _Bugs Fixed
 
-### Other Changes
+### _Other Changes
 
-## 4.3.0 (2022-10-11)
+## _4.3.0 (2022-10-11)
 
-### Features Added
-
-- Keyvault 7.3 support added for Keys. 
-
-## 4.3.0-beta.1 (2022-07-07)
-
-### Features Added
+### _Features Added
 
 - Keyvault 7.3 support added for Keys. 
 
-### Breaking Changes
+## _4.3.0-beta.1 (2022-07-07)
+
+### _Features Added
+
+- Keyvault 7.3 support added for Keys. 
+
+### _Breaking Changes
 
 - Removed ServiceVersion type, replaced with ApiVersion field in the KeyClientOptions type.
 
 
-## 4.2.0 (2021-10-05)
+## _4.2.0 (2021-10-05)
 
-### Features Added
+### _Features Added
 
 - [2833](https://github.com/Azure/azure-sdk-for-cpp/issues/2833) Added `GetCryptographyClient()` to `KeyClient` to return a `CryptographyClient` that uses the same options, policies, and pipeline as the `KeyClient` that created it.
 
-## 4.1.0 (2021-09-08)
+## _4.1.0 (2021-09-08)
 
-### Features Added
+### _Features Added
 
 - Added `GetUrl()` to `KeyClient`.
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - [2750](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure `managedhsm` cloud and any other non-public Azure cloud.
 
-## 4.0.0 (2021-08-10)
+## _4.0.0 (2021-08-10)
 
-### Other Changes
+### _Other Changes
 
 - Consolidated keyvault and cryptography client options and model files into single headers.
 
-## 4.0.0-beta.4 (2021-07-20)
+## _4.0.0-beta.4 (2021-07-20)
 
-### Features Added
+### _Features Added
 
 - Added `GetIv()` to `EncryptParameters` and `DecryptParameters`.
 - Added `BackupKeyResult` for `BackupKey()` return type.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Removed `Azure::Security::KeyVault::Keys::ServiceVersion::V7_0` and `V7_1`.
 - Removed `Azure::Security::KeyVault::Keys::Cryptography::ServiceVersion::V7_0` and `V7_1`.
@@ -75,9 +75,9 @@
 - Changed the return type of `CrytographyClient` APIs like `Encrypt()` to return `Response<T>` rather than the `T` directly.
 - Renamed high-level header from `key_vault_keys.hpp` to `keyvault_keys.hpp`.
 
-## 4.0.0-beta.3 (2021-06-08)
+## _4.0.0-beta.3 (2021-06-08)
 
-### Breaking Changes
+### _Breaking Changes
 
 - Updated `MaxPageResults` type to `int32_t`, from `uint32_t`, affecting:
   - `GetDeletedKeysOptions()`.
@@ -87,15 +87,15 @@
 - Updated `CreateRsaKeyOptions::PublicExponent` type from `uint64_t` to `int64_t`.
 - Updated `CreateOctKeyOptions::KeySize` type from `uint64_t` to `int64_t`.
 
-## 4.0.0-beta.2 (2021-05-18)
+## _4.0.0-beta.2 (2021-05-18)
 
-### New Features
+### _New Features
 
 - Added support for importing and deserializing EC and OCT keys.
 - Added cryptography client.
 - Added `CreateFromResumeToken()` to `DeletedKeyOperation` and `RecoverKeyOperation`.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `GetPropertiesOfKeysSinglePage()` to `GetPropertiesOfKeys()`.
@@ -115,13 +115,13 @@
   - `GetDeletedKeysSinglePage()` now returns `DeletedKey`.
 - Removed `ResumeDeleteKeyOperation()` and `ResumeRecoverKeyOperation()`.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Fix getting a resume token from delete and recover key operations.
 
-## 4.0.0-beta.1 (2021-04-07)
+## _4.0.0-beta.1 (2021-04-07)
 
-### New Features
+### _New Features
 
 - Added `Azure::Security::KeyVault::Keys::KeyClient` for get, create, list, delete, backup, restore, and import key operations.
 - Added high-level and simplified `key_vault.hpp` file for simpler include experience for customers.

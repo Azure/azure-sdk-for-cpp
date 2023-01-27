@@ -1,45 +1,45 @@
-# Release History
+# _Release History
 
-## 4.2.0-beta.1 (Unreleased)
+## _4.2.0-beta.1 (Unreleased)
 
-### Features Added
+### _Features Added
 
-### Breaking Changes
+### _Breaking Changes
 
-### Bugs Fixed
+### _Bugs Fixed
 
-### Other Changes
+### _Other Changes
 
-## 4.1.0 (2022-10-11)
+## _4.1.0 (2022-10-11)
 
-### Features Added
-
-- Keyvault 7.3 support added for Certificates.
-
-## 4.1.0-beta.1 (2022-07-07)
-
-### Features Added
+### _Features Added
 
 - Keyvault 7.3 support added for Certificates.
 
-### Breaking Changes
+## _4.1.0-beta.1 (2022-07-07)
+
+### _Features Added
+
+- Keyvault 7.3 support added for Certificates.
+
+### _Breaking Changes
 
 - Removed ServiceVersion type, replaced with ApiVersion field in the CertificateClientOptions type.
 
-## 4.0.0 (2022-06-07)
+## _4.0.0 (2022-06-07)
 
-### Breaking Changes
+### _Breaking Changes
 
 - Renamed `keyvault_certificates.hpp` to `certificates.hpp`.
 
-## 4.0.0-beta.2 (2022-03-08)
+## _4.0.0-beta.2 (2022-03-08)
 
-### Breaking Changes
+### _Breaking Changes
 - Updated `CreateCertificateOperation.PollUntilDone()` (returned from `StartCreateCertificate()`)  to return the operation status instead of the newly created certificate.
 
-## 4.0.0-beta.1 (2021-11-09)
+## _4.0.0-beta.1 (2021-11-09)
 
-### New Features
+### _New Features
 
 - Initial beta release of Azure Security Key Vault Certificates API for CPP.
   - Added `Azure::Security::KeyVault::Certificates::CertificateClient` for get, create, list, delete, backup, restore, and import certificate operations.

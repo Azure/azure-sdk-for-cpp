@@ -1,47 +1,47 @@
-# Release History
+# _Release History
 
-## 1.8.0-beta.4 (Unreleased)
+## _1.8.0-beta.4 (Unreleased)
 
-### Features Added
+### _Features Added
 
-### Breaking Changes
+### _Breaking Changes
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - Fixed bug in WinHTTP client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
 ignored if they were passed in from `TransportOptions`.
 - [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Johannes Schonberger _([GitHub](https://github.com/ahojnnes))_
 
-### Other Changes
+### _Other Changes
 
-## 1.8.0-beta.3 (2023-01-05)
+## _1.8.0-beta.3 (2023-01-05)
 
-### Features Added
+### _Features Added
 
 - Added support for parsing space character in place of 'T' in RFC3339 DateTimes.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
 - Removed `noexcept` specification from `Azure::DateTime::clock::now()`. 
 
-## 1.8.0-beta.2 (2022-11-03)
+## _1.8.0-beta.2 (2022-11-03)
 
-### Other Changes
+### _Other Changes
 
 - Added the ability to consume version 1.1.1n of OpenSSL.
 - Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
 - Improved cancellation support for WinHTTP transport.
 
-## 1.8.0-beta.1 (2022-10-06)
+## _1.8.0-beta.1 (2022-10-06)
 
-### Features Added
+### _Features Added
 
 - Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.
 - Added universal support for several TLS options:
@@ -50,7 +50,7 @@ Thank you to our developer community members who helped to make Azure Core bette
     - For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.
     - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
 
-### Breaking Changes
+### _Breaking Changes
 
 - Updated retry policy timeouts to conform to Azure guidelines.
   - The default delay between retries is changed from 4 seconds to 800ms.
@@ -58,188 +58,188 @@ Thank you to our developer community members who helped to make Azure Core bette
 
   If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in the `RetryOptions` structure.
 
-## 1.7.2 (2022-09-01)
+## _1.7.2 (2022-09-01)
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - WinHTTP Transport Adapter: Fixed missing reason phrase handling for HTTP/2 responses.
 
-## 1.7.1 (2022-08-04)
+## _1.7.1 (2022-08-04)
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - [[#3794]](https://github.com/Azure/azure-sdk-for-cpp/issues/3794) Fix memory leak in `CurlTransport`.
 - [[#3692]](https://github.com/Azure/azure-sdk-for-cpp/issues/3692) Interrupted poll calls cause spurious HTTP request failures. (A community contribution, courtesy of _[johnwheffner](https://github.com/johnwheffner)_)
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - John Heffner _([GitHub](https://github.com/johnwheffner))_
 
-## 1.7.0 (2022-06-30)
+## _1.7.0 (2022-06-30)
 
-### Features Added
-
-- Added prototypes and initial service support for Distributed Tracing.
-
-## 1.7.0-beta.1 (2022-06-02)
-
-### Features Added
+### _Features Added
 
 - Added prototypes and initial service support for Distributed Tracing.
 
-### Breaking Changes
+## _1.7.0-beta.1 (2022-06-02)
+
+### _Features Added
+
+- Added prototypes and initial service support for Distributed Tracing.
+
+### _Breaking Changes
 
 - Removed `noexcept` specification from `Azure::Core::Context::IsCancelled()`.
 
-## 1.6.0 (2022-05-05)
+## _1.6.0 (2022-05-05)
 
-### Features Added
+### _Features Added
 
 - Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response.
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - [[#3537]](https://github.com/Azure/azure-sdk-for-cpp/issues/3537) Updated field type `CurlTransportOptions.Proxy` from `std::string` to `Azure::Nullable<std::string>`. This allows libcurl to ignore the proxy settings from the environment when the string is empty.
 - [[#3548]](https://github.com/Azure/azure-sdk-for-cpp/issues/3548), [[#1098]](https://github.com/Azure/azure-sdk-for-cpp/issues/1098) Improve performance of the Http transport on Windows by reusing the same session handle across all requests.
 
-### Other Changes
+### _Other Changes
 
 - [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
 - Updated the MD5 Hash implementation to work on top of OpenSSL 3.0. (A community contribution, courtesy of _[jepio](https://github.com/jepio)_)
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Jeremi Piotrowski _([GitHub](https://github.com/jepio))_
 
-## 1.5.0 (2022-03-31)
+## _1.5.0 (2022-03-31)
 
-### Features Added
+### _Features Added
 
 - When a `RequestFailedException` exception is thrown, the `what()` method now includes information about the HTTP request which failed.
 - Adding option `WinHttpTransportOptions.IgnoreUnknownCertificateAuthority`. It can be used to disable verifying server certificate for the `WinHttpTransport`.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Enforce TLS 1.2 or greater for `CurlTransport` and `WinHttpTransport`.
 
-### Other Changes
+### _Other Changes
 
 - Improve output message for `Azure::Core::Http::TransportException`.
 
-## 1.4.0 (2022-03-03)
+## _1.4.0 (2022-03-03)
 
-### Features Added
+### _Features Added
 
 - Stabilized the beta features and changes.
 
-## 1.4.0-beta.1 (2022-02-04)
+## _1.4.0-beta.1 (2022-02-04)
 
-### Features Added
+### _Features Added
 
 - Enabled environment-controlled console logging on UWP.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Removed the `AzureNoReturnPath()` function from the global namespace, and deprecated the associated macros, such as `AZURE_ASSERT` since they are meant for internal use only. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
 - Removed the two parameter `RequestFailedException` ctor, it has no use case and wasn't intended for public use.
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - Fixed `Azure::DateTime::Parse()` validation if the result is going to exceed `9999-12-31T23:59:59.9999999` due to time zone, leap second, or fractional digits rounding up adjustments.
 - [[#3224]](https://github.com/Azure/azure-sdk-for-cpp/issues/3224) Fixed intermittent crash on macOS when logging is turned on.
 - The `Base64::Decode` API will throw a `std::runtime_error` exception if presented with invalid inputs.
 
-### Other Changes
+### _Other Changes
 
-## 1.3.1 (2021-11-05)
+## _1.3.1 (2021-11-05)
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - Fixed linking error when Azure SDK is being built as DLL.
 
-## 1.3.0 (2021-11-04)
+## _1.3.0 (2021-11-04)
 
-### Features Added
+### _Features Added
 
 - Add `NoSignal` option to the `CurlTransportAdapter`.
 - Add `ConnectionTimeout` option to the `CurlTransportAdapter`.
 
-### Bugs Fixed
+### _Bugs Fixed
 
 [2848](https://github.com/Azure/azure-sdk-for-cpp/issues/2848) Update the libcurl transport adapter to work with HTTP/1.1 only.
 
-### Other Changes
+### _Other Changes
 
 - Updated `base64` implementation to remove external dependency.
 - Updated `Uuid` implementation for Linux to remove external dependency.
 
-## 1.2.1 (2021-09-02)
+## _1.2.1 (2021-09-02)
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - [2785](https://github.com/Azure/azure-sdk-for-cpp/issues/2785) Fix to build on g++ 5.5.
 
-### Other Changes
+### _Other Changes
 
 - Fixed compilation error on POSIX platforms where OpenSSL was not available.
 - Support CMake version 3.12
 
-## 1.2.0 (2021-08-05)
+## _1.2.0 (2021-08-05)
 
-### Features Added
+### _Features Added
 
 - Added `Azure::Core::IO::ProgressBodyStream` type that wraps an existing BodyStream based type stream and reports progress via callback when the stream position is updated.
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - [2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
 - [2474](https://github.com/Azure/azure-sdk-for-cpp/issues/2474) Fix compiling with MSVC and `/analyze`.
 - Make WinHTTP transport adapter to NOT use SSL/TLS for unsecured HTTP connections.
 
-### Other Changes
+### _Other Changes
 
 - Updated source code to build with Clang 11. (A community contribution, courtesy of _[davidchisnall](https://github.com/davidchisnall)_)
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - David Chisnall _([GitHub](https://github.com/davidchisnall))_
 
-## 1.1.0 (2021-07-02)
+## _1.1.0 (2021-07-02)
 
-### Bugs Fixed
+### _Bugs Fixed
 
 - Fixed a memory leak issue in `Base64Encode()`. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
 
-### Other Changes
+### _Other Changes
 
 - Made internal-only changes to support the Azure Key Vault client library.
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Jorgen Lind _([GitHub](https://github.com/jorgen))_
 
-## 1.0.0 (2021-06-04)
+## _1.0.0 (2021-06-04)
 
-### Bug Fixes
+### _Bug Fixes
 
 - Make `RequestFailedException` copiable so it can be propagated across thread.
 - By default, add `x-ms-request-id` header to the allow list of headers to log.
 
-## 1.0.0-beta.9 (2021-05-18)
+## _1.0.0-beta.9 (2021-05-18)
 
-### New Features
+### _New Features
 
 - Added `Azure::PagedResponse<T>`.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
@@ -248,21 +248,21 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Changed integer size parameters for buffers from `int64_t` to `size_t` in various places such as `Azure::Core::IO::BodyStream::Read()` APIs.
 - Removed the `Azure::Core::Diagnostics::Logger::Listener` typedef.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Do not re-use a libcurl connection to same host but different port.
 - Fixed curl transport issue to avoid crash at exit when curl connection pool cleanup thread is running.
 - Ensure uniqueness of `Azure::Core::Uuid` on POSIX platforms.
 
-### Other Changes and Improvements
+### _Other Changes and Improvements
 
 - Modified precondition validation of function arguments to now result in assert failures rather than throwing an exception.
 - Remove exposing windows.h header from our public headers.
 - Improved performance of the WinHTTP transport layer on Windows for uploading large payloads.
 
-## 1.0.0-beta.8 (2021-04-07)
+## _1.0.0-beta.8 (2021-04-07)
 
-### New Features
+### _New Features
 
 - Added `Azure::Core::Url::GetScheme()`.
 - Added `Azure::Core::Context::TryGetValue()`.
@@ -270,7 +270,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Added `Azure::Core::Credentials::TokenCredentialOptions`.
 - Added useful fields to the `Azure::Core::RequestFailedException` class such as `StatusCode`, `ReasonPhrase`, and the `RawResponse`, for better diagnosis of errors.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Simplified the `Response<T>` API surface to expose two public fields with direct access: `T Value` and a `unique_ptr` to an `Azure::Core::Http::RawResponse`.
 - Renamed `Azure::Nullable<T>::GetValue()` to `Value()`.
@@ -298,21 +298,21 @@ Thank you to our developer community members who helped to make Azure Core bette
   - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLOptions` to `SslOptions`.
   - Renamed member `Azure::Core::Http::CurlTransportOptions::SSLVerifyPeer` to `SslVerifyPeer`.
 
-### Other Changes and Improvements
+### _Other Changes and Improvements
 
 - Moved `Azure::Core::Http::Request` to its own header file from `http.hpp` to `inc/azure/core/http/raw_response.hpp`.
 - Moved `Azure::Core::Http::HttpStatusCode` to its own header file from `http.hpp` to `inc/azure/core/http/http_status_code.hpp`.
 
-## 1.0.0-beta.7 (2021-03-11)
+## _1.0.0-beta.7 (2021-03-11)
 
-### New Features
+### _New Features
 
 - Added `HttpPolicyOrder` for adding custom Http policies to SDK clients.
 - Added `Azure::Core::Operation<T>::GetRawResponse()`.
 - Added `Azure::Core::PackageVersion`.
 - Added support for logging to console when `AZURE_LOG_LEVEL` environment variable is set.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Changes to `Azure::Core` namespace:
   - Removed `Response<void>`, `ValueBase`, and `ContextValue`.
@@ -362,51 +362,51 @@ Thank you to our developer community members who helped to make Azure Core bette
   - Renamed `azure/core/http/curl/curl.hpp` to `azure/core/http/curl_transport.hpp`.
   - Renamed `azure/core/http/winhttp/win_http_client.hpp` to `azure/core/http/win_http_transport.hpp`.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Make sure to rewind the body stream at the start of each request retry attempt, including the first.
 - Connection pool resets when all connections are closed.
 - Fix `Azure::Context` to support `std::unique_ptr`.
 - Throw `std::runtime_error` from `Response<T>::GetRawResponse()` if the response was already extracted.
 
-## 1.0.0-beta.6 (2021-02-09)
+## _1.0.0-beta.6 (2021-02-09)
 
-### New Features
+### _New Features
 
 - Added support for HTTP conditional requests `MatchConditions` and `RequestConditions`.
 - Added the `Hash` base class and MD5 hashing APIs to the `Azure::Core::Cryptography` namespace available from `azure/core/cryptography/hash.hpp`.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Removed `Context::CancelWhen()`.
 - Removed `LogClassification` and related functionality, added `LogLevel` instead.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`. (A community contribution, courtesy of _[sjoubert](https://github.com/sjoubert)_)
 - Fixed `Retry-After` HTTP header to be treated as case-insensitive. (A community contribution, courtesy of _[sjoubert](https://github.com/sjoubert)_)
 - Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.
 - Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Sylvain Joubert _([GitHub](https://github.com/sjoubert))_
 
-## 1.0.0-beta.5 (2021-02-02)
+## _1.0.0-beta.5 (2021-02-02)
 
-### New Features
+### _New Features
 
 - Added support for HTTP validators `ETag`.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Make `ToLower()` and `LocaleInvariantCaseInsensitiveEqual()` internal by moving them from `Azure::Core::Strings` to `Azure::Core::Internal::Strings`.
 - `BearerTokenAuthenticationPolicy` constructor takes `TokenRequestOptions` struct instead of scopes vector. `TokenRequestOptions` struct has scopes vector as data member.
 - `TokenCredential::GetToken()` takes `TokenRequestOptions` instead of scopes vector.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Fixed the parsing of the last chunk of a chunked response when using the curl transport adapter.
 - Fixed reading the value from `retry-after` header in `RetryPolicy`.
@@ -414,9 +414,9 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Do not pass a placeholder user-agent string as a fallback when using WinHttp.
 - Initialize local variables in implementation to fix warning within release builds on Linux.
 
-## 1.0.0-beta.4 (2021-01-13)
+## _1.0.0-beta.4 (2021-01-13)
 
-### New Features
+### _New Features
 
 - Added a WinHTTP-based `HttpTransport` called `WinHttpTransport` and use that as the default `TransportPolicyOptions.Transport` on Windows when sending and receiving requests and responses over the wire.
 - Added `Range` type to `Azure::Core::Http` namespace.
@@ -430,7 +430,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Added a `platform.hpp` header file for defining commonly used OS-specific `#define` constants.
 - Added `IsCancelled()` on the `Azure::Core::Context` class.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Removed `DateTime::operator Duration()`, `DateTime::Duration` typedef and `DateTime::Now()`.
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
@@ -443,7 +443,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Fixed the Curl transport adapter connection pooling when setting options.
 - Fixed setting up the default transport adapter.
@@ -451,13 +451,13 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Initialize class data members to avoid MSVC warning.
 - Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle. (A community contribution, courtesy of _[ku-sourav](https://github.com/ku-sourav)_)
 
-### Other Changes and Improvements
+### _Other Changes and Improvements
 
 - Added support for distributing the C++ SDK as a source package via vcpkg.
 - Fixed installation error when the SDK is being installed under a non-standard prefix. (A community contribution, courtesy of _[juchem](https://github.com/juchem)_)
 - Fixed linker error when pthread is missing on Linux. (A community contribution, courtesy of _[lordgamez](https://github.com/lordgamez)_)
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
@@ -465,9 +465,9 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Marcelo Juchem _([GitHub](https://github.com/juchem))_
 - `ku-sourav` _([GitHub](https://github.com/ku-sourav))_
 
-## 1.0.0-beta.3 (2020-11-11)
+## _1.0.0-beta.3 (2020-11-11)
 
-### New Features
+### _New Features
 
 - Added `strings.hpp` with `Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Strings::ToLower`.
 - Added `GetPort()` to `Url`.
@@ -479,7 +479,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Added `OperationCanceledException`.
 - Added `Encode` and `Decode` to `Url`.
 
-### Breaking Changes
+### _Breaking Changes
 
 - Removed `azure.hpp`.
 - Removed macro `AZURE_UNREFERENCED_PARAMETER`.
@@ -495,13 +495,13 @@ Thank you to our developer community members who helped to make Azure Core bette
   - Renamed `RemoveQuery` to `RemoveQueryParameter`.
   - Renamed `GetQuery` to `GetQueryParameters`.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Prevent pipeline of length zero to be created.
 - Avoid re-using a connection when a request to upload data fails while using the `CurlTransport`.
 - Add entropy to `Uuid` generation.
 
-### Other Changes and Improvements
+### _Other Changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
 - Add code coverage using gcov with gcc.
@@ -512,19 +512,19 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Validate HTTP headers for invalid characters.
 - Calling `Cancel()` from context now throws `OperationCanceledException`.
 
-## 1.0.0-beta.2 (2020-10-09)
+## _1.0.0-beta.2 (2020-10-09)
 
-### Breaking Changes
+### _Breaking Changes
 
 - Throw Azure::Http::TransportException if creating new connection fails.
 - Response objects store Nullable\<T\>.
 
-### Bug Fixes
+### _Bug Fixes
 
 - Switched to a more stable wait on sockets to address connection timeouts.
 - Replace `Nullable(const T&)` with `Nullable(T)` to avoid extra copy when initialized with an rvalue.
 
-### Other Changes and Improvements
+### _Other Changes and Improvements
 
 - Improved performance on windows when using libcurl.
 - Pinned the version of package dependencies.
@@ -532,12 +532,12 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Added build instructions for running tests. (A community contribution, courtesy of _[ku-sourav](https://github.com/ku-sourav)_)
 - Updated vcpkg build instructions. (A community contribution, courtesy of _[ku-sourav](https://github.com/ku-sourav)_)
 
-### Acknowledgments
+### _Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - `ku-sourav` _([GitHub](https://github.com/ku-sourav))_
 
-## 1.0.0-beta.1 (2020-09-09)
+## _1.0.0-beta.1 (2020-09-09)
 
 - Initial release

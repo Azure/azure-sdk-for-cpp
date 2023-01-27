@@ -1,11 +1,11 @@
-# Migration Guide: From Azure Storage CPP SDK (v7.5) to Azure Storage CPP SDK
+# _Migration Guide: From Azure Storage CPP SDK (v7.5) to Azure Storage CPP SDK
 
 This guide intends to assist customers in migrating from legacy versions of the Azure Storage C++ library for Blobs to version 12.
 While this guide is generally applicable to older versions of the SDK, it was written with v7.5 in mind as the starting point.
 It focuses on side-by-side comparisons for similar operations between the [v7.5 package](https://github.com/Azure/azure-storage-cpp) and [v12 package](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage).
 Familiarity with the v7.5 client library is assumed. For those new to the Azure Storage Blobs client library for C++, please refer to the [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus) for the v12 library rather than this guide.
 
-## Table of contents
+## _Table of contents
 
 - [Migration benefits](#migration-benefits)
 - [General changes](#general-changes)
@@ -22,7 +22,7 @@ Familiarity with the v7.5 client library is assumed. For those new to the Azure 
   - [Resiliency](#resiliency)
 - [Additional information](#additional-information)
 
-## Migration benefits
+## _Migration benefits
 
 Refer to the Tech Community blog post, [Announcing the Azure Storage v12 Client Libraries](https://techcommunity.microsoft.com/t5/azure-storage/announcing-the-azure-storage-v12-client-libraries/ba-p/1482394) or [Introducing the New Azure SDKs](https://aka.ms/azsdk/intro), to understand the benefits of switching to the version 12 client libraries.
 
@@ -36,9 +36,9 @@ Included are the following:
 
 Note: The blog post linked above announces deprecation for previous versions of the library.
 
-## General changes
+## _General changes
 
-### Package and namespaces
+### _Package and namespaces
 
 Version 12 package names and the namespace roots follow the pattern `Azure::[Area]::[Service]` where v7.5 libraries followed the pattern `azure::[area]::[service]`.
 
@@ -52,9 +52,9 @@ Previously the v7.5 package was installed with:
 vcpkg install azure-storage-cpp
 ```
 
-### Authentication
+### _Authentication
 
-#### Azure Active Directory
+#### _Azure Active Directory
 
 v7.5
 
@@ -68,7 +68,7 @@ A `TokenCredential` abstract class (different API surface than v7.5) exists in t
 BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret));
 ```
 
-#### SAS
+#### _SAS
 
 This section regards authenticating a client with an existing SAS
 
@@ -92,7 +92,7 @@ The new library only supports constructing a client with a fully constructed SAS
 BlobClient blobClient(blobUrlWithSas);
 ```
 
-#### Connection string
+#### _Connection string
 
 The following code assumes you have acquired your connection string (you can do so from the Access Keys tab under Settings in your Portal Storage Account blade). It is recommended to store it in an environment variable. Below demonstrates how to parse the connection string in v7.5 vs v12.
 
@@ -114,7 +114,7 @@ You can also directly get a blob client with your connection string, instead of 
 BlobClient blobClient = BlobClient::CreateFromConnectionString(connectionString, containerName, blobName);
 ```
 
-#### Shared Key
+#### _Shared Key
 
 Shared key authentication requires the URI to the storage endpoint, the storage account name, and the shared key as a base64 string. The following code assumes you have acquired your shared key (you can do so from the Access Keys tab under Settings in your Portal Storage Account blade). It is recommended to store it in an environment variable.
 
@@ -133,7 +133,7 @@ BlobServiceClient serviceClient(blobServiceUrl, credential);
 
 If you wish to rotate the key within your `BlobServiceClient` (and any derived clients), you must retain a reference to the `StorageSharedKeyCredential`, which has the instance method `Update(std::string accountKey)`.
 
-### Client Structure
+### _Client Structure
 
 **The legacy SDK used a stateful model.** There were container and blob objects that held state regarding service resources and required the user to manually call their update methods. But blob contents were not a part of this state and had to be uploaded/downloaded whenever they were to be interacted with. This became increasingly confusing over time, and increasingly susceptible to thread safety issues.
 
@@ -144,13 +144,13 @@ The hierarchical structure of Azure Blob Storage can be understood by the follow
 
 In the interest of simplifying the API surface, v12 uses three top level clients to match this structure that can be used to interact with a majority of your resources: `BlobServiceClient`, `BlobContainerClient`, and `BlobClient`. Note that blob-type-specific operations can still be accessed by their specific clients, as in v7.5.
 
-#### Migrating from cloud_blob_directory
+#### _Migrating from cloud_blob_directory
 
 Note the absence of a v12 equivalent for v7.5's `cloud_blob_directory`. Directories were an SDK-only concept that did not exist in Azure Blob Storage, and which were not brought forwards into the modern Storage SDK. As shown by the diagram in [Client Structure](#client-structure), containers only contain a flat list of blobs, but those blobs can be named and listed in ways that imply a folder-like structure. See our [Listing Blobs in a Container](#listing-blobs-in-a-container) migration samples later in this guide for more information.
 
 For those whose workloads revolve around manipulating directories and heavily relied on the legacy SDKs abstraction of this structure, consider the [pros and cons of enabling hierarchical namespace](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-namespace) on your storage account, which would allow switching to the [Data Lake Gen 2 SDK](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake), whose migration is not covered in this document.
 
-#### Class Conversion Reference
+#### _Class Conversion Reference
 
 The following table lists v7.5 classes and their v12 equivalents for quick reference.
 
@@ -164,9 +164,9 @@ The following table lists v7.5 classes and their v12 equivalents for quick refer
 | `cloud_page_blob` | `PageBlobClient` |
 | `cloud_append_blob` | `AppendBlobClient` |
 
-## Migration Samples
+## _Migration Samples
 
-### Creating a Container
+### _Creating a Container
 
 v7.5
 ```C++
@@ -186,9 +186,9 @@ Or you can use the `BlobServiceClient.CreateBlobContainer()` method.
 serviceClient.CreateBlobContainer(containerName);
 ```
 
-### Uploading Blobs to a Container
+### _Uploading Blobs to a Container
 
-#### Uploading from a file
+#### _Uploading from a file
 
 v7.5
 ```C++
@@ -202,7 +202,7 @@ BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(blobName);
 blockBlobClient.UploadFrom(localFilePath);
 ```
 
-#### Uploading from a stream
+#### _Uploading from a stream
 
 v7.5
 ```C++
@@ -214,7 +214,7 @@ v12
 blockBlobClient.Upload(stream);
 ```
 
-#### Uploading text
+#### _Uploading text
 
 v7.5
 ```C++
@@ -227,9 +227,9 @@ uint8_t text[] = "Hello Azure!";
 blockBlobClient.UploadFrom(text, sizeof(text) - 1);
 ```
 
-### Downloading Blobs from a Container
+### _Downloading Blobs from a Container
 
-#### Downloading to a file
+#### _Downloading to a file
 
 v7.5
 ```C++
@@ -243,7 +243,7 @@ auto blobClient = containerClient.GetBlobClient(blobName);
 blobClient.DownloadTo(localFilePath);
 ```
 
-#### Downloading to a stream
+#### _Downloading to a stream
 
 v7.5
 ```C++
@@ -256,7 +256,7 @@ auto response = blobClient.Download();
 BodyStream& stream = *response.Value.BodyStream;
 ```
 
-#### Downloading text
+#### _Downloading text
 
 v7.5
 ```C++
@@ -270,9 +270,9 @@ std::vector<uint8_t> blobContent = response.Value.BodyStream->ReadToEnd();
 std::string text(blobContent.begin(), blobContent.end());
 ```
 
-### Listing Blobs in a Container
+### _Listing Blobs in a Container
 
-#### Flat Listing
+#### _Flat Listing
 
 v7.5
 ```C++
@@ -292,7 +292,7 @@ for (auto blobPage = containerClient.ListBlobs(); blobPage.HasPage(); blobPage.M
 }
 ```
 
-#### Hierarchical Listing
+#### _Hierarchical Listing
 
 See the [list blobs documentation](https://docs.microsoft.com/azure/storage/blobs/storage-blobs-list?tabs=dotnet#flat-listing-versus-hierarchical-listing) for more information on what a hierarchical listing is.
 
@@ -326,7 +326,7 @@ for (auto blobPage = containerClient.ListBlobsByHierarchy("/"); blobPage.HasPage
 }
 ```
 
-### Managing Blob Metadata
+### _Managing Blob Metadata
 
 On the service, blob metadata is overwritten alongside blob data overwrites. If metadata is not provided on a blob content edit, that is interpreted as a metadata clear. Legacy versions of the SDK mitigated this by maintaining blob metadata internally and sending it for you on appropriate requests. This helped in simple cases, but could fall out of sync and required developers to defensively code against metadata changes in a multi-client scenario anyway.
 
@@ -380,9 +380,9 @@ uploadOptions.Metadata = metadata;
 blobClient.UploadFrom(localFilePath, uploadOptions);
 ```
 
-### Content Hashes
+### _Content Hashes
 
-#### Blob Content MD5
+#### _Blob Content MD5
 
 v7.5 calculated blob content MD5 for validation on download by default, assuming there was a stored MD5 in the blob properties. Calculation and storage on upload was opt-in. Note that this value is not generated or validated by the service, and is only retained for the client to validate against.
 
@@ -411,7 +411,7 @@ auto md5 = response.Value.Details.HttpHeaders.ContentHash.Value;
 // validate stream against hash in your workflow
 ```
 
-#### Transactional MD5 and CRC64
+#### _Transactional MD5 and CRC64
 
 Transactional hashes are not stored and have a lifespan of the request they are calculated for. Transactional hashes are verified by the service on upload.
 
@@ -449,9 +449,9 @@ auto hashValue = response.Value.Details.HttpHeaders.ContentHash.Value;
 // validate stream against hash in your workflow
 ```
 
-### Resiliency
+### _Resiliency
 
-#### Retry policy
+#### _Retry policy
 
 v7.5
 ```C++
@@ -467,7 +467,7 @@ options.Retry.RetryDelay = std::chrono::milliseconds(delta_backoff);
 options.Retry.MaxRetries = maxAttempts;
 ```
 
-### Asynchronous API
+### _Asynchronous API
 
 Unfortunately, we don't support asynchronous interface in v12 SDK. You could wrap synchronous functions into asynchronous with some async framework like `std::async`. But note that I/O operations are still performed synchronously under the hood. There's no performance gain with this method.
 
@@ -492,13 +492,13 @@ auto task = std::async([blobClient]() {
 task.wait();
 ```
 
-## Additional information
+## _Additional information
 
-### Samples
+### _Samples
 More examples can be found at:
 - [Azure Storage samples using v12 C++ Client Libraries](https://docs.microsoft.com/azure/storage/common/storage-samples-c-plus-plus?toc=/azure/storage/blobs/toc.json)
 
-### Links and references
+### _Links and references
 - [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus)
 - [Samples](https://docs.microsoft.com/azure/storage/common/storage-samples-c-plus-plus?toc=/azure/storage/blobs/toc.json)
 - [C++ SDK reference](https://azure.github.io/azure-sdk-for-cpp/storage.html#azure-storage-blobs)

@@ -1,4 +1,4 @@
-# Azure SDK for C++ Contributing Guide
+# _Azure SDK for C++ Contributing Guide
 
 Thank you for your interest in contributing to Azure SDK for C++.
 
@@ -8,7 +8,7 @@ Thank you for your interest in contributing to Azure SDK for C++.
 
 - To make code changes, or contribute something new, please follow the [GitHub Forks / Pull requests model](https://docs.github.com/articles/fork-a-repo/): Fork the repo, make the change and propose it back by submitting a pull request.
 
-## Pull Requests
+## _Pull Requests
 
 - **DO** follow the API design and implementation [C++ Guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html).
   - When submitting large changes or features, **DO** have an issue or spec doc that describes the design, usage, and motivating scenario.
@@ -29,7 +29,7 @@ Thank you for your interest in contributing to Azure SDK for C++.
 - **DO** verify if your changes have impact elsewhere. For instance, do you need to update other docs or exiting markdown files that might be impacted?
 - **DO** add relevant unit tests to ensure CI will catch future regressions.
 
-## Merging Pull Requests (for project contributors with write access)
+## _Merging Pull Requests (for project contributors with write access)
 
 - **DO** use ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) by default for individual contributions unless requested by the PR author.
   Do so, even if the PR contains only one commit. It creates a simpler history than "Create a Merge Commit".
@@ -39,41 +39,41 @@ Thank you for your interest in contributing to Azure SDK for C++.
   - Contributor is using an e-mail address other than the primary GitHub address and wants that preserved in the history. Contributor must be willing to squash
     the commits manually before acceptance.
 
-# Developer Guide
+# _Developer Guide
 
-## Codespaces
+## _Codespaces
 
 Codespaces is new technology that allows you to use a container as your development environment. This repo provides a Codespaces container which is supported by both GitHub Codespaces and VS Code Codespaces.
 
-### GitHub Codespaces
+### _GitHub Codespaces
 
 1. From the Azure SDK GitHub repo, click on the "Code -> Open with Codespaces" button.
 1. Open a Terminal. The development environment will be ready for you. Continue to [Building the project](#building-the-project).
 
-### VS Code Codespaces
+### _VS Code Codespaces
 
 1. Install the [VS Code Remote Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
 1. When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select "Remote-Containers: Open Folder in Container..."
 1. Open a Terminal. The development environment will be ready for you. Continue to [Building the project](#building-the-project).
 
-## Full Local Setup
+## _Full Local Setup
 
-### Pre-requisites
+### _Pre-requisites
 
-#### CMake
+#### _CMake
 
 CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
-### Dotnet
+### _Dotnet
 
 Required to get and execute test proxy (see [/doc/TestProxy.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/TestProxy.md)). Download the dotnet CLI from the project's [website](https://dotnet.microsoft.com/download).
 
-### Third Party Dependencies
+### _Third Party Dependencies
 
 Azure SDK uses Vcpkg manifest mode to declare the [list of required 3rd party dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/main/vcpkg.json) for building the SDK service libraries. It will also get and set up Vcpkg automatically. **You can move on to [Building the project](#building-the-project)** and skip the next part if you are not interested in learning about alternatives for setting up dependencies.
 
-#### Customize the Vcpkg dependency integration
+#### _Customize the Vcpkg dependency integration
 
 If the CMake option _-DCMAKE_TOOLCHAIN_FILE=..._ is not defined to generate the project, the Azure SDK project will automatically get Vcpkg and link it to get its dependencies. You can use the next environment variables to change this behavior:
 
@@ -101,7 +101,7 @@ If the CMake option _-DCMAKE_TOOLCHAIN_FILE=..._ is not defined to generate the 
 </center>
 
 
-## Building the project
+## _Building the project
 
 Generate the CMake files and build as you would with any standard CMake project. From the
 repo root, run:
@@ -113,7 +113,7 @@ cmake ..
 cmake --build .
 ```
 
-#### Static Analysis
+#### _Static Analysis
 
 When the project is built using MSVC on Windows, the compiler can run [static analysis](https://docs.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.
 
@@ -121,7 +121,7 @@ Keep in mind that enabling static analysis will significantly impact build time.
 
 The static code analysis is `ON` for the CI pipelines. You can turn this feature `ON` locally to debug errors reported during CI or for the last time you build and test before creating a new PR.
 
-#### CMake build options
+#### _CMake build options
 
 The following CMake options are available for adding/removing project features.
 
@@ -178,9 +178,9 @@ The following CMake options are available for adding/removing project features.
 </tr>
 </table>
 
-#### Testing the project
+#### _Testing the project
 
-##### Test Mode
+##### _Test Mode
 
 Before running unit tests, you have to decide what is the test mode you want to use. To set the test mode,
 use the environment variable `AZURE_TEST_MODE`. See the supported values next:
@@ -199,7 +199,7 @@ When setting `AZURE_TEST_MODE=PLAYBACK`, test cases will consume pre-recorded da
 
 When setting `AZURE_TEST_MODE=RECORD`, test cases will run the as when running `LIVE`. All the AZURE service network responses are recorded in a json file within the /recordings folder from the /test/ut directory. Use this test mode to generate pre-recorded data to be used on `PLAYBACK` mode.
 
-##### Test Environment Configuration
+##### _Test Environment Configuration
 
 Some environment variables are expected to be defined for some test binaries. For example, for `azure-storage-blobs-test`, there should be a `STANDARD_STORAGE_CONNECTION_STRING` variable to let tests know how to connect to the Azure Storage account.
 
@@ -208,7 +208,7 @@ Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is
 Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuarion for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
 
 
-##### Running tests
+##### _Running tests
 
 If you want to run tests, generate build files using below command and then build.
 
@@ -220,35 +220,35 @@ cmake --build .
 Tests are executed via the `ctest` command included with CMake. After setting a [test mode](#test-mode), from the build directory, run:
 
 ```sh
-# use -V for verbose
+# _use -V for verbose
 ctest -V
-# Use -N to list test that are part of test set
+# _Use -N to list test that are part of test set
 ctest -N
-# Use -R to use a regular exp for what to run
-ctest -R Http # runs only HTTP tests
-ctest -R storage # runs all the azure storage unit tests
+# _Use -R to use a regular exp for what to run
+ctest -R Http # _runs only HTTP tests
+ctest -R storage # _runs all the azure storage unit tests
 ```
 
-#### Generating Code Coverage reports
+#### _Generating Code Coverage reports
 
 `gcov` and `gcovr` must be installed on your system.
 Also, make sure to generate the project with Debug mode. Then, option `-DBUILD_TESTING` must be `ON` and to use a GNU compiler (like gcc).
 
 ```sh
-# install gcov and gcovr if missing
-sudo apt-get install gcov gcovr # example for Linux
+# _install gcov and gcovr if missing
+sudo apt-get install gcov gcovr # _example for Linux
 
 cmake -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON ..
 
-# After this, generate reports by calling a package target
-make package-name_cov_xml # for example `azure-core_cov_xml`
-make package-name_cov_html # for example `azure-core_cov_html`
+# _After this, generate reports by calling a package target
+make package-name_cov_xml # _for example `azure-core_cov_xml`
+make package-name_cov_html # _for example `azure-core_cov_html`
 ```
 
 Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be `../build/path/sdk/core/azure-core/`.
 
 If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step.
 
-### Visual Studio 2019
+### _Visual Studio 2019
 
 You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.

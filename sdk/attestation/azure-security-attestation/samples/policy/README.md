@@ -9,11 +9,11 @@ urlFragment: attestation-samples
 
 ---
 
-# Policy Samples for the Microsoft Azure Attestation client library for C++
+# _Policy Samples for the Microsoft Azure Attestation client library for C++
 
 These code samples show how to set and reset attestation policies using the Attestation client library.
 
-## Sample Requirements
+## _Sample Requirements
 
 These samples are written with the assumption that the following environment
 variables have been set by the user:
@@ -24,7 +24,7 @@ variables have been set by the user:
 ATTESTATION_ISOLATED_URL instance.
 * ISOLATED_SIGNING_CERTIFICATE - a Base64 encoded DER X.509 certificate wrapping the public key of the ISOLATED_SIGNING_KEY.
 
-## Samples descriptions
+## _Samples descriptions
 
 The samples are structured as separate source files, one per scenario. The are:
 Sample | What it tests | Notes
@@ -35,9 +35,9 @@ Set_Sealed_Policy | Sets an attestation policy on an isolated attestation instan
 Reset_Policy | Resets the attestation policy for an AAD instance to the default value for the attestation type. |
 Reset_Sealed_Policy | Resets an attestation policy to the default value on an isolated attestation instance | Note: This sample requires the ISOLATED_ environment variables.
 
-## Additional Information
+## _Additional Information
 
-### Attestation Policy
+### _Attestation Policy
 
 An attestation policy is a document which defines authorization and claim generation
 rules for attestation operations.
@@ -77,7 +77,7 @@ to be issued with a value which matches the `x-ms-sgx-mrsigner` claim.
 
 For more information on authoring attestation policy documents, see: [Authoring an attestation policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-## Next Steps
+## _Next Steps
 
 For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
 

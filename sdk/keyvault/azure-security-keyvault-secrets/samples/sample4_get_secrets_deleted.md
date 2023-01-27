@@ -1,8 +1,8 @@
-# Get Secrets, Get Secrets Versions, Get Deleted Secrets, Get Deleted Secret
+# _Get Secrets, Get Secrets Versions, Get Deleted Secrets, Get Deleted Secret
 
 This sample demonstrates how to list all the secrets , all the versions of a secret, list all deleted secrets, and get the properties of a deleted secret.
 
-## Creating a SecretClient
+## _Creating a SecretClient
 
 To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -23,7 +23,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a couple of Secrets
+## _Creating a couple of Secrets
 
 Call SetSecret to create a couple of new secret with names and secret values.
 
@@ -36,7 +36,7 @@ Secret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
 Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 ```
 
-## Getting the properties of all the secrets in the key vault
+## _Getting the properties of all the secrets in the key vault
 
 Call GetPropertiesOfSecrets to get the properties of all the secrets in the key vault. The results of this call are paged to a maximum of 25 SecretProperties per page.
 
@@ -51,7 +51,7 @@ for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage(); se
 }
 ```
 
-## Get the versions of a Secret
+## _Get the versions of a Secret
 
 Call GetPropertiesOfSecretsVersions in order to list all the versions of a secret. Responds similarly with a paged response of up to 25 versions of the secret per page.
 
@@ -69,7 +69,7 @@ for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secret1.N
 }
 ```
 
-## Delete both secrets
+## _Delete both secrets
 
 Call StartDeleteSecret to delete a secret. This is a long running operation. We shall not purge the secrets yet.
 
@@ -85,7 +85,7 @@ operation = secretClient.StartDeleteSecret(secret2.Name);
 operation.PollUntilDone(2s);
 ```
 
-## Get Deleted Secrets
+## _Get Deleted Secrets
 
 Call GetDeletedSecrets to get a list of properties of all deleted secrets. This is a paged response with the same limit of 25 items per response.
 
@@ -101,7 +101,7 @@ for (auto deletedSecrets = secretClient.GetDeletedSecrets(); deletedSecrets.HasP
 }
 ```
 
-## Get Deleted Secret
+## _Get Deleted Secret
 
 Call GetDeletedSecret to get information about a specific deleted secret.
 
@@ -111,7 +111,7 @@ auto deletedSecret = secretClient.GetDeletedSecret(secret1.Name);
 std::cout << "Deleted Secret with name: " << deletedSecret.Value.Name;
 ```
 
-## Purge the secrets to cleanup
+## _Purge the secrets to cleanup
 
 Call PurgeDeletedSecret to finish cleaning up.
 
@@ -120,7 +120,7 @@ Call PurgeDeletedSecret to finish cleaning up.
 secretClient.PurgeDeletedSecret(secret1.Name);
 secretClient.PurgeDeletedSecret(secret2.Name);
 ```
-## Source
+## _Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample4-get-secrets-deleted)

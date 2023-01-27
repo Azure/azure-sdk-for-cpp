@@ -1,9 +1,9 @@
-# Backup and Restore secrets
+# _Backup and Restore secrets
 
 This sample demonstrates how to backup and restore in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
-## Creating a SecretClient
+## _Creating a SecretClient
 
 To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a Secret
+## _Creating a Secret
 
 Call SetSecret to create a secret with the name and secret value.
 
@@ -35,7 +35,7 @@ std::string secretValue("my secret value");
 secretClient.SetSecret(secretName, secretValue);
 ```
 
-## Getting a Secret
+## _Getting a Secret
 
 Call GetSecret to retrieve a secret from Key Vault.
 
@@ -46,7 +46,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
           << std::endl;
 ```
 
-## Creating a Backup for the secret properties
+## _Creating a Backup for the secret properties
 
 Call BackupSecret to retrieve the secret backup.  BackupSecret will will return a vector of bytes representing the backed up content.
 
@@ -57,7 +57,7 @@ std::vector<uint8_t> backupSecret(secretClient.BackupSecret(secret.Name).Value.S
 backUpSize = backupSecret.size();
 ```
 
-## Deleting the secret in order to later restore it
+## _Deleting the secret in order to later restore it
 
 Call StartDeleteSecret to delete a secret. This is a long running operation.
 
@@ -66,7 +66,7 @@ Call StartDeleteSecret to delete a secret. This is a long running operation.
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-## Purging a deleted secret
+## _Purging a deleted secret
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
 
@@ -78,7 +78,7 @@ operation.PollUntilDone(2s);
 secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
-## Restoring a secret
+## _Restoring a secret
 
 Call RestoreSecretBackup  to restore a secret from a backup  obtained at the previous(backup) step.
 
@@ -87,7 +87,7 @@ std::cout << "\t-Restore Secret" << std::endl;
 auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 ```
 
-## Source
+## _Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample2-backup-restore)

@@ -1,53 +1,53 @@
-# Smoketest the Azure SDK for C++ into your application using vcpkg
+# _Smoketest the Azure SDK for C++ into your application using vcpkg
 
 This application instantiates all the sdk clients, and call one API from each in order to check their side by side capabilities
 
-## Pre-requisites
+## _Pre-requisites
 
 There are two options to set up the development environment:
 
-### Manual installation
+### _Manual installation
 
 Install the [Azure SDK for C++ dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#third-party-dependencies).
 
 - CMake project (min version 3.13).
 - C++ version 14 or greater.
 
-## Build
+## _Build
 
-### Linux terminal
+### _Linux terminal
 
 ```bash
 #
-# Building the application.
-# Instructions from application root directory.
+# _Building the application.
+# _Instructions from application root directory.
 #
 
-# Create build directory just the first time.
+# _Create build directory just the first time.
 mkdir build
 cd build
 
-# Generate and build
-# This code assumes that the SDK dependencies were installed with vcpkg
-# When using docker provided container, the TOOLCHAIN option is not required (cmake ..).
+# _Generate and build
+# _This code assumes that the SDK dependencies were installed with vcpkg
+# _When using docker provided container, the TOOLCHAIN option is not required (cmake ..).
 cmake -DCMAKE_TOOLCHAIN_FILE=path/to/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 cmake -build .
 ```
 
-### Windows VS
+### _Windows VS
 
 If you are using Visual Studio, the toolchain to link vcpkg is set with `CMakeSettings.json`. Update this file and set the vcpkg toolchain file for vcpkg (VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake). After setting the toolchain, VS can generate and build the sample. Use VS to open the sample folder only.
 
-## Run application
+## _Run application
 
 Review source code header for `environment variables` that must be set up before running the app.
 
 ```bash
 #
-# Running the Application
-# Instructions from inside the build directory.
+# _Running the Application
+# _Instructions from inside the build directory.
 #
 
-# Run binary (.exe on Windows)
+# _Run binary (.exe on Windows)
 ./smoketest-vcpkg
 ```

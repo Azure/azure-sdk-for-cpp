@@ -1,6 +1,6 @@
-# Stress Test
+# _Stress Test
 
-## Deps
+## _Deps
 Adding a stress test requires the following tools installed:
 * Docker : https://www.docker.com/
 * Helm : https://helm.sh/

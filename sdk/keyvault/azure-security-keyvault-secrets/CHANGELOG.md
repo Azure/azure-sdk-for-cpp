@@ -1,42 +1,42 @@
-# Release History
+# _Release History
 
-## 4.2.0-beta.1 (Unreleased)
+## _4.2.0-beta.1 (Unreleased)
 
-### Features Added
+### _Features Added
 
-### Breaking Changes
+### _Breaking Changes
 
-### Bugs Fixed
+### _Bugs Fixed
 
-### Other Changes
+### _Other Changes
 
-## 4.1.0 (2022-10-11)
+## _4.1.0 (2022-10-11)
 
-### Features Added
-
-- Keyvault 7.3 support added for Secrets.
-
-## 4.1.0-beta.1 (2022-07-07)
-
-### Features Added
+### _Features Added
 
 - Keyvault 7.3 support added for Secrets.
 
-### Breaking Changes
+## _4.1.0-beta.1 (2022-07-07)
+
+### _Features Added
+
+- Keyvault 7.3 support added for Secrets.
+
+### _Breaking Changes
 
 - Removed ServiceVersion type, replaced with ApiVersion field in the SecretClientOptions type.
 
-## 4.0.0 (2022-06-07)
+## _4.0.0 (2022-06-07)
 
-### Breaking Changes
+### _Breaking Changes
 
 - Renamed `keyvault_secrets.hpp` to `secrets.hpp`.
 
-## 4.0.0-beta.2 (2022-03-08)
+## _4.0.0-beta.2 (2022-03-08)
 
 - Second preview.
   - Internal improvements. 
 
-## 4.0.0-beta.1 (2021-09-08)
+## _4.0.0-beta.1 (2021-09-08)
 
 - initial preview

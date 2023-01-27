@@ -1,9 +1,9 @@
-# Encrypting and decrypt keys
+# _Encrypting and decrypt keys
 
 This sample demonstrates how to encrypt and decrypt a single block of plain text with an RSA key.
 To get started, you'll need a URL to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
-## Creating a KeyClient
+## _Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a key
+## _Creating a key
 
 First, we create a RSA key which will be used to encrypt and decrypt.
 
@@ -38,7 +38,7 @@ std::cout << " - Key is returned with name " << cloudRsaKey.Name() << " and type
         << cloudRsaKey.GetKeyType().ToString() << std::endl;
 ```
 
-## Creating a CryptographyClient
+## _Creating a CryptographyClient
 
 We create the `CryptographyClient` which can perform cryptographic operations with the key we just created using the same credential created above.
 
@@ -46,7 +46,7 @@ We create the `CryptographyClient` which can perform cryptographic operations wi
 CryptographyClient cryptoClient(cloudRsaKey.Id(), credential);
 ```
 
-## Encrypting a key
+## _Encrypting a key
 
 Next, we'll encrypt some arbitrary plaintext with the key using the CryptographyClient.
 Note that RSA encryption algorithms have no chaining so they can only encrypt a single block of plaintext securely.
@@ -60,7 +60,7 @@ std::cout << " - Encrypted data using the algorithm " << encryptResult.Algorithm
         << Azure::Core::Convert::Base64Encode(encryptResult.Ciphertext) << std::endl;
 ```
 
-## Decrypting a key
+## _Decrypting a key
 
 Now decrypt the encrypted data. Note that the same algorithm must always be used for both encrypt and decrypt.
 
@@ -73,7 +73,7 @@ std::cout << " - Decrypted data using the algorithm " << decryptResult.Algorithm
         << std::endl;
 ```
 
-## Source
+## _Source
 
 To see the full example source, see:
 

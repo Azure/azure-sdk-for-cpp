@@ -1,4 +1,4 @@
-# Creating, get properties, get versions, delete, get deleted and purge certificates
+# _Creating, get properties, get versions, delete, get deleted and purge certificates
 
 This sample demonstrates how to:
 * create certificates
@@ -11,7 +11,7 @@ This sample demonstrates how to:
 in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
-### Creating a CertificateClient
+### _Creating a CertificateClient
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -32,7 +32,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a Certificate
+## _Creating a Certificate
 
 Call StartCreateCertificate to create a new certificate, with specified properties and policy.
 Call PollUntilDone to poll the status of the creation. Once the opperation has completed we can continue.
@@ -47,7 +47,7 @@ auto response = certificateClient.StartCreateCertificate(certificateName, option
 auto pollResponse = response.PollUntilDone(defaultWait).Value;
 ```
 
-## Getting properties of Certificates
+## _Getting properties of Certificates
 
 Call GetPropertiesOfCertificates to retrieve information about certificates from Key Vault.
 
@@ -69,11 +69,11 @@ for (auto certificates = certificateClient.GetPropertiesOfCertificates();
 }
 ```
 
-## Creating a new certificate version 
+## _Creating a new certificate version 
 
 Repeat the create certificate procedure, for an existing certificate it will create a new version of it.
 
-## Getting the versions of a certificate 
+## _Getting the versions of a certificate 
 
 To get information about certificate versions call GetPropertiesOfCertificateVersions.
 
@@ -92,7 +92,7 @@ for (auto certificateVersions
             << " certificate versions for certificate " << certificateName1;
 }
 ```
-## Deleting the certificates 
+## _Deleting the certificates 
 
 Now we will delete the certificates. Since this is a long running operation we need to wait for the operation to finish
 
@@ -104,7 +104,7 @@ response1.PollUntilDone(defaultWait);
 response2.PollUntilDone(defaultWait);
 ```
 
-## Getting the deleted certificates 
+## _Getting the deleted certificates 
 
 After the certificates are deleted , but not yet purged we can call GetDeletedCertificates
 
@@ -121,7 +121,7 @@ for (auto deletedCertificates = certificateClient.GetDeletedCertificates();
 }
 ```
 
-## Purging the deleted certificates
+## _Purging the deleted certificates
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the certificate before its `ScheduledPurgeDate`, the certificate needs to be purged.
 
@@ -132,7 +132,7 @@ If the Azure Key Vault is soft delete-enabled and you want to permanently delete
   certificateClient.PurgeDeletedCertificate(certificateName2);
 }
 ```
-## Source
+## _Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-get-certificates)

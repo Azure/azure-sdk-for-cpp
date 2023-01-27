@@ -1,14 +1,14 @@
-# Stress test prototype 
+# _Stress test prototype 
 This is work in progress. It's a prototype of how a stress test would look. This PR is to park the work in progress while being dealing with higher priority issues.
-## Components 
-### Code (https://en.wikipedia.org/wiki/C%2B%2B)
+## _Components 
+### _Code (https://en.wikipedia.org/wiki/C%2B%2B)
 The cpp file represents the code for the test, it will generate a number of invalid URLs and then issue CURL send commands. The requests are expected to fail. The point was that it exposes memory leaks in handling the error cases, which we fixed since. 
 
-### Dockerfile (https://www.docker.com/)
+### _Dockerfile (https://www.docker.com/)
 Represents the build file for the container in which the test runs, it is based on ubuntu 22.04 , from mcr. 
 The main change from default ubuntu is making sure we have the valgrind tool installed. Valgrind is a heap monitoring tool that helps identify potential stack traces that might leak memory. While not 100% effective is is great at reducing the surface are for investigations. 
 
-### Helm chart (https://helm.sh/)
+### _Helm chart (https://helm.sh/)
 Chart.yaml together with the bicep file(https://docs.microsoft.com/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the deploy job file , represent the helm chart needed to deploy to the docker image built from the dockerfile to the stress cluster and execute the stress test. 
 
 The helm chart creates a pod with a container based on the docker image, and executes the test under valgrind. 

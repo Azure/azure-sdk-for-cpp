@@ -9,7 +9,7 @@ name: Azure Security KeyVault Secrets samples for C++
 description: Samples for the azure-security-keyVault-secrets client library.
 ---
 
-# Azure.Security.KeyVault.Secrets Samples
+# _Azure.Security.KeyVault.Secrets Samples
 
 - Creating, getting, updating, and deleting secrets
 - Back up and restore a secret

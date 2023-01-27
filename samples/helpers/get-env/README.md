@@ -1,4 +1,4 @@
-# Get Environment Variable for Samples
+# _Get Environment Variable for Samples
 
 This is a helper library for samples that deals with getting environment variables.
 

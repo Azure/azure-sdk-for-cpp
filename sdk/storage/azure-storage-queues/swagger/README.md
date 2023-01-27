@@ -1,8 +1,8 @@
-# Azure Storage C++ Protocol Layer
+# _Azure Storage C++ Protocol Layer
 
 > see https://aka.ms/autorest
 
-## Configuration
+## _Configuration
 
 ```yaml
 package-name: azure-storage-queues
@@ -12,7 +12,7 @@ clear-output-folder: true
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.QueueStorage/preview/2018-03-28/queue.json
 ```
 
-## ModelFour Options
+## _ModelFour Options
 
 ```yaml
 modelerfour:
@@ -21,12 +21,12 @@ modelerfour:
     parameter: pascal
 ```
 
-## Customizations for Track 2 Generator
+## _Customizations for Track 2 Generator
 
 See the [AutoRest samples](https://github.com/Azure/autorest/tree/master/Samples/3b-custom-transformations)
 for more about how we're customizing things.
 
-### Fix Generator Warnings
+### _Fix Generator Warnings
 
 ```yaml
 directive:
@@ -44,7 +44,7 @@ directive:
       delete $.StorageServiceProperties.properties.Cors.items.xml;
 ```
 
-### Delete Unused Query Parameters and Headers
+### _Delete Unused Query Parameters and Headers
 
 ```yaml
 directive:
@@ -62,7 +62,7 @@ directive:
       }
 ```
 
-### API Version
+### _API Version
 
 ```yaml
 directive:
@@ -82,7 +82,7 @@ directive:
       };
 ```
 
-### Rename Operations
+### _Rename Operations
 
 ```yaml
 directive:
@@ -97,7 +97,7 @@ directive:
       $["/{queueName}/messages/{messageid}"].delete.operationId = "Queue_DeleteMessage";
 ```
 
-### Define names for return types
+### _Define names for return types
 
 ```yaml
 directive:
@@ -133,7 +133,7 @@ directive:
       }
 ```
 
-### Global Changes for Definitions, Types etc.
+### _Global Changes for Definitions, Types etc.
 
 ```yaml
 directive:
@@ -144,7 +144,7 @@ directive:
       $.MaxResults["x-ms-client-name"] = "MaxResults";
 ```
 
-### GetServiceProperties
+### _GetServiceProperties
 
 ```yaml
 directive:
@@ -178,7 +178,7 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/QueueServiceProperties";
 ```
 
-### GetServiceStatistics 
+### _GetServiceStatistics 
 
 ```yaml
 directive:
@@ -198,7 +198,7 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/ServiceStatistics";
 ```
 
-### ListQueues
+### _ListQueues
 
 ```yaml
 directive:
@@ -220,7 +220,7 @@ directive:
       delete $.ListQueuesSegmentResponse.properties["MaxResults"];
 ```
 
-### CreateQueue
+### _CreateQueue
 
 ```yaml
 directive:
@@ -240,7 +240,7 @@ directive:
       $["204"].schema = {"$ref": "#/definitions/CreateQueueResult"};
 ```
 
-### DeleteQueue
+### _DeleteQueue
 
 ```yaml
 directive:
@@ -258,7 +258,7 @@ directive:
 ```
 
 
-### GetQueueProperties
+### _GetQueueProperties
 
 ```yaml
 directive:
@@ -278,7 +278,7 @@ directive:
       };
 ```
 
-### GetQueueAccessPolicy
+### _GetQueueAccessPolicy
 
 ```yaml
 directive:
@@ -309,7 +309,7 @@ directive:
       }
 ```
 
-### ReceiveMessages
+### _ReceiveMessages
 
 ```yaml
 directive:
@@ -334,7 +334,7 @@ directive:
       }
 ```
 
-### UpdateMessage
+### _UpdateMessage
 
 ```yaml
 directive:
@@ -346,7 +346,7 @@ directive:
       $.QueueMessage["x-namespace"] = "_detail";
 ```
 
-### EnqueueMessage
+### _EnqueueMessage
 
 ```yaml
 directive:
@@ -364,7 +364,7 @@ directive:
       $.schema["$ref"] = "#/definitions/EnqueuedMessage";
 ```
 
-### PeekMessages
+### _PeekMessages
 
 ```yaml
 directive:
@@ -388,7 +388,7 @@ directive:
       }
 ```
 
-### UpdateMessage
+### _UpdateMessage
 
 ```yaml
 directive:
@@ -398,7 +398,7 @@ directive:
       $.responses["204"].headers["x-ms-time-next-visible"]["x-ms-client-name"] = "NextVisibleOn";
 ```
 
-### UpdateMessageVisibility
+### _UpdateMessageVisibility
 
 ```yaml
 directive:

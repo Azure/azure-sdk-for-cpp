@@ -1,15 +1,15 @@
 ---
-# cspell:words gunicorn Nlcjpw userx Nlcng dvcm passwordx userc
+# _cspell:words gunicorn Nlcjpw userx Nlcng dvcm passwordx userc
 ---
 
-# Create squid proxy docker container
+# _Create squid proxy docker container
 
 Running the proxy tests requires two docker containers, one hosting an anonymous squid proxy, the other hosting an authenticated squid proxy.
 
 This container is derived from the ubuntu/squid container on dockerhub. This container is maintained by the Ubuntu team and has
 a current version of Ubuntu in it, with a version of squid built to match.
 
-## Building the container
+## _Building the container
 
 There are 4 docker images configured for testing proxy tests:
 
@@ -42,12 +42,12 @@ Alternatively, the powershell script `builddocker.ps1` located in the sdk\core\a
 | squid-remote        | Azure Container Instance Anonymous Proxy     | Proxy only works for resources on the azuresdkforcpp.azurewebsites.net domain.                                                |
 | squid-remote.passwd | Azure Container Instance Authenticated Proxy | Proxy only works for resources on the azuresdkforcpp.azurewebsites.net domain. One user supported "user", password "password" |
 
-## Executing the containers
+## _Executing the containers
 
 There are two squid proxy configuration files used, one which supports anonymous proxy access, the other
 which supports basic authentication.
 
-### Executing the anonymous proxy
+### _Executing the anonymous proxy
 
 The anonymous proxy configuration is found in the `proxy` subdirectory, the authenticated proxy is in `proxy.passwd`.
 To start the anonymous proxy, execute the following command:
@@ -58,7 +58,7 @@ To start the anonymous proxy, execute the following command:
 
 This will launch the anonymous proxy running on port 3128.
 
-### Executing the authenticated proxy
+### _Executing the authenticated proxy
 
 To start the authenticated proxy, execute the following command:
 
@@ -70,7 +70,7 @@ This will launch the anonymous proxy running on port 3129.
 
 Alternatively, the `runproxy.ps1` script will start the proxies on localhost.
 
-### Deploying the proxy in azure container instances
+### _Deploying the proxy in azure container instances
 
 To deploy the proxy in an azure container instance, the new-testresource.ps1 script:
 
@@ -93,7 +93,7 @@ ${env:AUTHENTICATEDCONTAINERIPV4ADDRESS} = '20.253.174.195'
 
 ```
 
-## Testing the proxies
+## _Testing the proxies
 
 To verify that the anonymous proxies work, you can execute the following command:
 
@@ -106,9 +106,9 @@ otherwise it will attempt to verify the proxy running on localhost.
 
 The following sections describe how to manually test the proxy.
 
-### Anonymous Proxy
+### _Anonymous Proxy
 
-#### CURL Access
+#### _CURL Access
 
 To verify that the anonymous proxy is working using CURL, you can execute the following command. It instructs CURL to retrieve the contents using the proxy running on localhost at port 3128.
 
@@ -175,7 +175,7 @@ This should result in something similar to the following
 * Connection #0 to host 127.0.0.1 left intact
 ```
 
-#### WinHTTP Access
+#### _WinHTTP Access
 
 To test accessing the anonymous proxy using WinHTTP, from a Windows machine, enter the following:
 
@@ -213,9 +213,9 @@ RawContentLength  : 964
 RelationLink      : {}
 ```
 
-### Authenticated proxy
+### _Authenticated proxy
 
-#### CURL access
+#### _CURL access
 
 Invoke the following command:
 
@@ -498,7 +498,7 @@ Response:
 curl: (56) Received HTTP code 407 from proxy after CONNECT
 ```
 
-#### WinHTTP access
+#### _WinHTTP access
 
 ```powershell
 Invoke-WebRequest -Uri http://azuresdkforcpp.azurewebsites.net/get -Proxy http://127.0.0.1:3129 -ProxyCredential user

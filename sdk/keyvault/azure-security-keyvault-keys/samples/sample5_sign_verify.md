@@ -1,9 +1,9 @@
-# Signing and verifying keys
+# _Signing and verifying keys
 
 This sample demonstrates how to sign data with both a RSA key and an EC key.
 To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
-## Creating a KeyClient
+## _Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating keys
+## _Creating keys
 
 First, we'll create both an RSA key and an EC key which will be used to sign and verify.
 
@@ -46,7 +46,7 @@ std::cout << " - Key is returned with name " << cloudEcKey.Name() << " and type 
         << cloudEcKey.GetKeyType().ToString() << std::endl;
 ```
 
-## Creating CryptographyClients
+## _Creating CryptographyClients
 
 Then, we create the `CryptographyClient` which can perform cryptographic operations with the key we just created using the same credential created above.
 
@@ -56,7 +56,7 @@ CryptographyClient rsaCryptoClient(cloudRsaKey.Id(), credential);
 CryptographyClient ecCryptoClient(cloudEcKey.Id(), credential);
 ```
 
-## Signing keys with the Sign and Verify methods
+## _Signing keys with the Sign and Verify methods
 
 Next, we'll sign some arbitrary data and verify the signatures using the `CryptographyClient` with both the EC and RSA keys we created.
 The `Sign` and `Verify` methods expect a precalculated digest, and the digest needs to be calculated using the hash algorithm which matches the signature algorithm being used.
@@ -83,7 +83,7 @@ std::cout << " - Signed digest using the algorithm " << ecSignResult.Algorithm.T
         << Azure::Core::Convert::Base64Encode(ecSignResult.Signature) << std::endl;
 ```
 
-## Verifying signatures
+## _Verifying signatures
 
 Verify the digest by comparing the signature you created previously.
 
@@ -102,7 +102,7 @@ std::cout << " - Verified the signature using the algorithm "
         << ". Signature is valid: " << (ecVerifyResult.IsValid ? "True" : "False") << std::endl;
 ```
 
-## Signing keys with the SignData and VerifyData methods
+## _Signing keys with the SignData and VerifyData methods
 
 The `SignData` and `VerifyData` methods take the raw data which is to be signed. The calculate the digest for the user so there is no need to compute the digest.
 
@@ -118,7 +118,7 @@ std::cout << " - Signed data using the algorithm " << ecSignDataResult.Algorithm
         << Azure::Core::Convert::Base64Encode(ecSignDataResult.Signature) << std::endl;
 ```
 
-## Verifying signatures with VerifyData methods
+## _Verifying signatures with VerifyData methods
 
 You can provide the same data for which you generated a signature above to `VerifyData` to generate and compare the digest. To be valid, the generated digest must match the given signature.
 
@@ -139,7 +139,7 @@ std::cout << " - Verified the signature using the algorithm "
         << std::endl;
 ```
 
-## Source
+## _Source
 
 To see the full example source, see:
 

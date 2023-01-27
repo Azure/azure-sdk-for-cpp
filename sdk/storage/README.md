@@ -1,8 +1,8 @@
-# Azure Storage Client Library for C++
+# _Azure Storage Client Library for C++
 
 The Azure Storage Client Library for C++ allows you to build applications against Microsoft Azure Storage. For an overview of Azure Storage, see [Introduction to Microsoft Azure Storage](https://docs.microsoft.com/azure/storage/common/storage-introduction).
 
-# Features
+# _Features
 
 - Blobs
     - Create/Delete/List Containers
@@ -16,19 +16,19 @@ The Azure Storage Client Library for C++ allows you to build applications agains
     - Create/Delete Directories
     - Create/Read/Delete Files
 
-# Getting started
+# _Getting started
 
 For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
 
-## Requirements
+## _Requirements
 
 To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 
-## Need Help?
+## _Need Help?
 
 Be sure to check out the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) on MSDN if you need help, or use [StackOverflow](https://stackoverflow.com/questions/tagged/azure).
 
-## Collaborate & Contribute
+## _Collaborate & Contribute
 
 We gladly accept community contributions.
 
@@ -38,11 +38,11 @@ We gladly accept community contributions.
 
 For general suggestions about Azure, use our [Azure feedback forum](https://feedback.azure.com/forums/34192--general-feedback).
 
-## Download & Install
+## _Download & Install
 
-### Install Dependencies
+### _Install Dependencies
 
-#### Windows
+#### _Windows
 
 On Windows, dependencies are managed by [vcpkg](https://github.com/microsoft/vcpkg). You can reference the [Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) to quickly set yourself up.
 After Vcpkg is initialized and bootstrapped, you can install the dependencies:
@@ -50,7 +50,7 @@ After Vcpkg is initialized and bootstrapped, you can install the dependencies:
 vcpkg.exe install curl:x64-windows-static
 ```
 
-#### POSIX Platforms
+#### _POSIX Platforms
 
 You can use the package manager on different POSIX platforms to install the dependencies. The dependencies to be installed are:
 
@@ -59,16 +59,16 @@ You can use the package manager on different POSIX platforms to install the depe
   - OpenSSL.
   - libcurl.
 
-### Build from Source
+### _Build from Source
 
 First, download the repository to your local folder:
 ```BatchFile
 git clone https://github.com/Azure/azure-sdk-for-cpp.git
 ```
 
-#### Windows
+#### _Windows
 
-##### Use CMake to generate the solution file
+##### _Use CMake to generate the solution file
 
 In a new folder you created under the root directory:
 ```BatchFile
@@ -78,14 +78,14 @@ cmake --build .
 
 The built library will be in `.\sdk\<ProjectDir>\<Configuration>\` respectively for Azure Core and Azure Storage. e.g. `azure_core.lib` will be in `.\sdk\core\azure-core\Debug` for debug configuration.
 
-##### Use Visual Studio's Open by folder feature
+##### _Use Visual Studio's Open by folder feature
 Open the root folder of the library with Visual Studio's Open folder feature.
 
 If Vcpkg is not globally integrated, then you need to open CMakeSettings.json and change the `Make toolchain file to be <YOUR_VCPKG_INSTALL_DIR>/scripts/buildsystems/vcpkg.cmake` and save.
 Then you can build Azure Storage libraries by selecting the target in Visual Studio, or simply build all.
 The libraries will be in `<ProjectRoot>\out\build\<Configuration>\sdk\<LibraryName>` respectively.
 
-#### POSIX Platforms
+#### _POSIX Platforms
 
 You can run the following command in a new folder created under the downloaded code's root folder to build the code.
 
@@ -97,11 +97,11 @@ Then you can consume the built library with the header files.
 make/ninja install is work in progress.
 
 
-### Via NuGet
+### _Via NuGet
 WIP
 TODO when ready.
 
-### Via vcpkg
+### _Via vcpkg
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
 To install Azure Storage packages via vcpkg:
@@ -123,12 +123,12 @@ find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
 ```
 
-## Dependencies
+## _Dependencies
 
   - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md)
   - libxml2
 
-## Code Samples
+## _Code Samples
 
 To get started with the coding, please visit the following code samples:
 - [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_getting_started.cpp)

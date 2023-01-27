@@ -1,9 +1,9 @@
-# Importing certificates
+# _Importing certificates
 
 This sample demonstrates how to import a certificate in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
-### Creating a CertificateClient
+### _Creating a CertificateClient
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Importing a PEM certificate
+## _Importing a PEM certificate
 
 You will need the certificate content in PEM format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the GetPemCertificate() string.
 
@@ -47,7 +47,7 @@ auto imported = certificateClient.ImportCertificate(pemName, options).Value;
 std::cout << "Imported pem certificate with name " << imported.Name();
 ```
 
-## Importing a PKCS certificate
+## _Importing a PKCS certificate
 
 You will need the certificate content in PKCS format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the GetPkcsCertificate() string.
 
@@ -71,7 +71,7 @@ std::cout << "Imported pkcs certificate with name " << imported.Name();
 ```
 
 
-## Deleting the certificates
+## _Deleting the certificates
 
 Call StartDeleteCertificate to delete a certificate. This is a long running operation.
 
@@ -81,7 +81,7 @@ auto response1 = certificateClient.StartDeleteCertificate(pemName);
 auto response2 = certificateClient.StartDeleteCertificate(pkcsName);
 ```
 
-## Purging the deleted certificates
+## _Purging the deleted certificates
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the certificate before its `ScheduledPurgeDate`, the certificate needs to be purged.
 
@@ -92,7 +92,7 @@ response2.PollUntilDone(defaultWait);
 certificateClient.PurgeDeletedCertificate(pkcsName);
 certificateClient.PurgeDeletedCertificate(pemName);
 ```
-## Source
+## _Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-import-certificate)

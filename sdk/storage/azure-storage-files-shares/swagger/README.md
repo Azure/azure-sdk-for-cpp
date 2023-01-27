@@ -1,8 +1,8 @@
-# Azure Storage C++ Protocol Layer
+# _Azure Storage C++ Protocol Layer
 
 > see https://aka.ms/autorest
 
-## Configuration
+## _Configuration
 
 ```yaml
 package-name: azure-storage-files-shares
@@ -12,7 +12,7 @@ clear-output-folder: true
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-12-02/file.json
 ```
 
-## ModelFour Options
+## _ModelFour Options
 
 ```yaml
 modelerfour:
@@ -21,12 +21,12 @@ modelerfour:
     parameter: pascal
 ```
 
-## Customizations for Track 2 Generator
+## _Customizations for Track 2 Generator
 
 See the [AutoRest samples](https://github.com/Azure/autorest/tree/master/Samples/3b-custom-transformations)
 for more about how we're customizing things.
 
-### Fix Generator Warnings
+### _Fix Generator Warnings
 
 ```yaml
 directive:
@@ -36,7 +36,7 @@ directive:
       delete $["x-ms-code-generation-settings"];
 ```
 
-### Delete Unused Query Parameters and Headers
+### _Delete Unused Query Parameters and Headers
 
 ```yaml
 directive:
@@ -54,7 +54,7 @@ directive:
       }
 ```
 
-### Delete Unused Operations
+### _Delete Unused Operations
 
 ```yaml
 directive:
@@ -64,7 +64,7 @@ directive:
       delete $["/{shareName}?restype=share&comp=undelete"].put;
 ```
 
-### API Version
+### _API Version
 
 ```yaml
 directive:
@@ -88,7 +88,7 @@ directive:
       $.ApiVersionParameter.enum[0] = "2021-12-02";
 ```
 
-### Rename Operations
+### _Rename Operations
 
 ```yaml
 directive:
@@ -98,7 +98,7 @@ directive:
       $["/{shareName}/{directory}/{fileName}?comp=range&fromURL"].put.operationId = "File_UploadRangeFromUri";
 ```
 
-### Define names for return types
+### _Define names for return types
 
 ```yaml
 directive:
@@ -132,7 +132,7 @@ directive:
       }
 ```
 
-### Return Type namespace
+### _Return Type namespace
 
 ```yaml
 directive:
@@ -199,7 +199,7 @@ directive:
       }
 ```
 
-### Global Changes for Definitions, Types etc.
+### _Global Changes for Definitions, Types etc.
 
 ```yaml
 directive:
@@ -330,7 +330,7 @@ directive:
       }
 ```
 
-### GetFileServiceProperties
+### _GetFileServiceProperties
 
 ```yaml
 directive:
@@ -367,7 +367,7 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/ShareServiceProperties";
 ```
 
-### GetShareStatistics
+### _GetShareStatistics
 
 ```yaml
 directive:
@@ -395,7 +395,7 @@ directive:
       };
 ```
 
-### ListShares
+### _ListShares
 
 ```yaml
 directive:
@@ -417,7 +417,7 @@ directive:
       delete $.ShareItemInternal.required;
 ```
 
-### CreateShare
+### _CreateShare
 
 ```yaml
 directive:
@@ -438,7 +438,7 @@ directive:
       };
 ```
 
-### GetShareProperties
+### _GetShareProperties
 
 ```yaml
 directive:
@@ -478,7 +478,7 @@ directive:
       };
 ```
 
-### GetShareAccessPolicy
+### _GetShareAccessPolicy
 
 ```yaml
 directive:
@@ -505,7 +505,7 @@ directive:
       };
 ```
 
-### DeleteShare
+### _DeleteShare
 
 ```yaml
 directive:
@@ -522,7 +522,7 @@ directive:
       };
 ```
 
-### ListFilesAndDirectories
+### _ListFilesAndDirectories
 
 ```yaml
 directive:
@@ -573,7 +573,7 @@ directive:
       $.FilesAndDirectoriesListSegment.properties["FileItems"]["x-ms-xml"] = {"name": "."};
 ```
 
-### ListHandles
+### _ListHandles
 
 ```yaml
 directive:
@@ -587,7 +587,7 @@ directive:
       $.HandleItem["x-namespace"] = "_detail";
 ```
 
-### ForceCloseFileHandles
+### _ForceCloseFileHandles
 
 ```yaml
 directive:
@@ -598,7 +598,7 @@ directive:
       $["x-ms-marker"]["x-nullable"] = true;
 ```
 
-### ForceCloseDirectoryHandles
+### _ForceCloseDirectoryHandles
 
 ```yaml
 directive:
@@ -609,7 +609,7 @@ directive:
       $["x-ms-marker"]["x-nullable"] = true;
 ```
 
-### CreateDirecotry
+### _CreateDirecotry
 
 ```yaml
 directive:
@@ -634,7 +634,7 @@ directive:
       };
 ```
 
-### DeleteDirectory
+### _DeleteDirectory
 
 ```yaml
 directive:
@@ -651,7 +651,7 @@ directive:
       };
 ```
 
-### GetDirectoryProperties
+### _GetDirectoryProperties
 
 ```yaml
 directive:
@@ -675,7 +675,7 @@ directive:
       };
 ```
 
-### SetDirectoryProperties
+### _SetDirectoryProperties
 
 ```yaml
 directive:
@@ -699,7 +699,7 @@ directive:
       };
 ```
 
-### CreateFile
+### _CreateFile
 
 ```yaml
 directive:
@@ -724,7 +724,7 @@ directive:
       };
 ```
 
-### GetFileProperties
+### _GetFileProperties
 
 ```yaml
 directive:
@@ -773,7 +773,7 @@ directive:
       };
 ```
 
-### SetFileProperties
+### _SetFileProperties
 
 ```yaml
 directive:
@@ -797,7 +797,7 @@ directive:
       };
 ```
 
-### DownloadFile
+### _DownloadFile
 
 ```yaml
 directive:
@@ -881,7 +881,7 @@ directive:
       $["206"].headers["x-ms-content-md5"] = $["200"].headers["x-ms-content-md5"];
 ```
 
-### DeleteFile
+### _DeleteFile
 
 ```yaml
 directive:
@@ -898,7 +898,7 @@ directive:
       };
 ```
 
-### UploadFileRange
+### _UploadFileRange
 
 ```yaml
 directive:
@@ -923,7 +923,7 @@ directive:
       delete $["x-ms-file-last-write-time"];
 ```
 
-### UploadFileRangeFromUri
+### _UploadFileRangeFromUri
 
 ```yaml
 directive:
@@ -938,7 +938,7 @@ directive:
       delete $["x-ms-file-last-write-time"];
 ```
 
-### GetFileRangeList
+### _GetFileRangeList
 
 ```yaml
 directive:
@@ -968,7 +968,7 @@ directive:
       };
 ```
 
-### BreakFileLease
+### _BreakFileLease
 
 ```yaml
 directive:
@@ -978,7 +978,7 @@ directive:
       delete $["x-ms-lease-id"];
 ```
 
-### BreakShareLease
+### _BreakShareLease
 
 ```yaml
 directive:
@@ -988,7 +988,7 @@ directive:
       delete $["x-ms-lease-id"];
 ```
 
-### RenameFile/Directory
+### _RenameFile/Directory
 
 ```yaml
 directive:

@@ -1,8 +1,8 @@
-# Azure Storage C++ Protocol Layer
+# _Azure Storage C++ Protocol Layer
 
 > see https://aka.ms/autorest
 
-## Configuration
+## _Configuration
 
 ```yaml
 package-name: azure-storage-files-datalake
@@ -12,7 +12,7 @@ clear-output-folder: true
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2021-06-08/DataLakeStorage.json
 ```
 
-## ModelFour Options
+## _ModelFour Options
 
 ```yaml
 modelerfour:
@@ -21,12 +21,12 @@ modelerfour:
     parameter: pascal
 ```
 
-## Customizations for Track 2 Generator
+## _Customizations for Track 2 Generator
 
 See the [AutoRest samples](https://github.com/Azure/autorest/tree/master/Samples/3b-custom-transformations)
 for more about how we're customizing things.
 
-### Fix Generator Warnings
+### _Fix Generator Warnings
 
 ```yaml
 directive:
@@ -36,7 +36,7 @@ directive:
       delete $["x-ms-code-generation-settings"];
 ```
 
-### Delete Unused Query Parameters and Headers
+### _Delete Unused Query Parameters and Headers
 
 ```yaml
 directive:
@@ -54,7 +54,7 @@ directive:
       }
 ```
 
-### Delete Unused Operations
+### _Delete Unused Operations
 
 ```yaml
 directive:
@@ -73,7 +73,7 @@ directive:
       delete $["/{filesystem}?restype=container&comp=list&hierarchy"];
 ```
 
-### API Version
+### _API Version
 
 ```yaml
 directive:
@@ -97,7 +97,7 @@ directive:
       $.ApiVersionParameter.enum[0] = "2021-06-08";
 ```
 
-### Rename Operations
+### _Rename Operations
 
 ```yaml
 directive:
@@ -117,7 +117,7 @@ directive:
       }
 ```
 
-### Return Type namespace
+### _Return Type namespace
 
 ```yaml
 directive:
@@ -164,7 +164,7 @@ directive:
       }
 ```
 
-### Global Changes for Definitions, Types etc.
+### _Global Changes for Definitions, Types etc.
 
 ```yaml
 directive:
@@ -221,7 +221,7 @@ directive:
       };
 ```
 
-### ListPaths
+### _ListPaths
 
 ```yaml
 directive:
@@ -249,7 +249,7 @@ directive:
       delete $["Last-Modified"];
 ```
 
-### CreatePath
+### _CreatePath
 
 ```yaml
 directive:
@@ -273,7 +273,7 @@ directive:
 ```
 
 
-### SetExpiry
+### _SetExpiry
 
 ```yaml
 directive:
@@ -286,7 +286,7 @@ directive:
 
 ```
 
-### DeletePath
+### _DeletePath
 
 ```yaml
 directive:
@@ -305,7 +305,7 @@ directive:
       };
 ```
 
-### RenamePath
+### _RenamePath
 
 ```yaml
 directive:
@@ -331,7 +331,7 @@ directive:
       }
 ```
 
-### UndeletePath
+### _UndeletePath
 
 ```yaml
 directive:
@@ -341,7 +341,7 @@ directive:
       $["200"].headers["x-ms-resource-type"]["x-nullable"] = true;
 ```
 
-### GetPathAccessControlList
+### _GetPathAccessControlList
 
 ```yaml
 directive:
@@ -385,7 +385,7 @@ directive:
       };
 ```
 
-### SetAccessControlListRecursive
+### _SetAccessControlListRecursive
 
 ```yaml
 directive:
@@ -426,7 +426,7 @@ directive:
       $.responses["200"].headers["x-ms-continuation"]["x-nullable"] = true;
 ```
 
-### AppendFile
+### _AppendFile
 
 ```yaml
 directive:
@@ -443,7 +443,7 @@ directive:
       delete $["ETag"];
 ```
 
-### FlushFile
+### _FlushFile
 
 ```yaml
 directive:

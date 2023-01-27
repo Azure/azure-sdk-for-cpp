@@ -1,5 +1,5 @@
-# Release History
+# _Release History
 
-## 4.0.0-beta.1 (Unreleased)
+## _4.0.0-beta.1 (Unreleased)
 
 - initial preview of Settings API. 

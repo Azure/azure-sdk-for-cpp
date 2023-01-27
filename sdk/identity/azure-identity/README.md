@@ -1,11 +1,11 @@
-# Azure Identity client library for C++
+# _Azure Identity client library for C++
 The Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK. It provides a set of `TokenCredential` implementations which can be used to construct Azure SDK clients which support AAD token authentication.
 This library follows the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
   [Source code][source] | [API reference documentation][doxygen] | [Azure Active Directory documentation][aad_doc]
 
-## Getting started
-### Include the package
+## _Getting started
+### _Include the package
 
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
@@ -22,14 +22,14 @@ find_package(azure-identity-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-identity)
 ```
 
-## Key concepts
-### Credentials
+## _Key concepts
+### _Credentials
 
 A credential is a class which contains or can obtain the data needed for a service client to authenticate requests. Service clients across Azure SDK accept credentials when they are constructed, and service clients use those credentials to authenticate requests to the service.
 
 The Azure Identity library focuses on OAuth authentication with Azure Active directory, and it offers a variety of credential classes capable of acquiring an AAD token to authenticate service requests. All of the credential classes in this library are implementations of the `TokenCredential` abstract class in [azure-core][azure_core_library], and any of them can be used by to construct service clients capable of authenticating with a `TokenCredential`.
 
-### Authenticating Service Principals
+### _Authenticating Service Principals
 
 <table border="1" width="100%">
   <thead>
@@ -53,10 +53,10 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
   </tbody>
 </table>
 
-## Environment Variables
+## _Environment Variables
 `EnvironmentCredential` can be configured with environment variables. Each type of authentication requires values for specific variables:
 
-#### Service principal with secret
+#### _Service principal with secret
 <table border="1" width="100%">
   <thead>
     <tr>
@@ -80,7 +80,7 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
   </tbody>
 </table>
 
-#### Service principal with certificate
+#### _Service principal with certificate
 <table border="1" width="100%">
   <thead>
     <tr>
@@ -106,13 +106,13 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
 
 Configuration is attempted in the above order. For example, if values for a client secret and certificate are both present, the client secret will be used.
 
-## Managed Identity Support
+## _Managed Identity Support
 The [Managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via the `ManagedIdentityCredential` for the following Azure Services:
 * [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
 * [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
 * [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 
-## Chained Token Credential
+## _Chained Token Credential
 `ChainedTokenCredential` allows users to customize the credentials considered when authenticating.
 
 An example below demonstrates using `ChainedTokenCredential` which will attempt to authenticate using `EnvironmentCredential`, and fall back to authenticate using `ManagedIdentityCredential`.
@@ -126,11 +126,11 @@ auto chainedTokenCredential = std::make_shared<Azure::Identity::ChainedTokenCred
 Azure::Service::Client azureServiceClient("serviceUrl", chainedTokenCredential);
 ```
 
-## Troubleshooting
+## _Troubleshooting
 Credentials raise exceptions either when they fail to authenticate or cannot execute authentication.
 When credentials fail to authenticate, the `AuthenticationException` is thrown and it has the `what()` functions returning the description why authentication failed.
 
-## Contributing
+## _Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -145,7 +145,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors
+### _Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -153,12 +153,12 @@ Many people all over the world have helped make this project better.  You'll wan
 * [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 * Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### Community-->
-### Reporting security issues and security bugs
+<!-- ### _Community-->
+### _Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### License
+### _License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 

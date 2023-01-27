@@ -1,8 +1,8 @@
-# Delete and recover deleted secrets
+# _Delete and recover deleted secrets
 
 This sample demonstrates how to delete and recover a deleted secret in Azure Key Vault.
 
-## Creating a SecretClient
+## _Creating a SecretClient
 
 To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -23,7 +23,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a Secret
+## _Creating a Secret
 
 Call SetSecret to create a new secret with name and secret value.
 
@@ -34,7 +34,7 @@ std::string secretValue("my secret value");
 secretClient.SetSecret(secretName, secretValue);
 ```
 
-## Getting a Secret
+## _Getting a Secret
 
 Call GetSecret to retrieve a secret from Key Vault.
 
@@ -45,7 +45,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
           << std::endl;
 ```
 
-## Deleting a secret
+## _Deleting a secret
 
 Call StartDeleteSecret to delete a secret. This is a long running operation.
 
@@ -54,7 +54,7 @@ Call StartDeleteSecret to delete a secret. This is a long running operation.
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-## Recover a Deleted secret
+## _Recover a Deleted secret
 
 Call StartRecoverDeletedSecret to recover a deleted secret and then poll until the operation is done.
 
@@ -66,7 +66,7 @@ RecoverDeletedSecretOperation recoverOperation = secretClient.StartRecoverDelete
 Secret restoredSecret = recoverOperation.PollUntilDone(2s).Value;
 ```
 
-## Source
+## _Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample3-delete-recover)
