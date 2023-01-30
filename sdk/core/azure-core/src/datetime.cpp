@@ -886,34 +886,38 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
   std::ostringstream dateString;
 
   dateString << std::setfill('0') << std::setw(4) << static_cast<int>(year) << '-' << std::setw(2)
-             << static_cast<int>(month) << '-' << std::setw(2) << static_cast<int>(day) << 'T'
-             << std::setw(2) << static_cast<int>(hour) << ':' << std::setw(2)
-             << static_cast<int>(minute) << ':' << std::setw(2) << static_cast<int>(second);
+             << static_cast<int>(month) << '-' << std::setw(2) << static_cast<int>(day);
 
-  if (fractionFormat == TimeFractionFormat::AllDigits)
+  if (fractionFormat != TimeFractionFormat::Date)
   {
-    dateString << '.' << std::setw(7) << static_cast<int>(fracSec);
-  }
-  else if (fracSec != 0 && fractionFormat != TimeFractionFormat::Truncate)
-  {
-    // Append fractional second, which is a 7-digit value with no trailing zeros
-    // This way, '0001200' becomes '00012'
-    auto setw = 1;
-    auto frac = fracSec;
-    for (auto div = 1000000; div >= 1; div /= 10)
+    dateString << 'T' << std::setw(2) << static_cast<int>(hour) << ':' << std::setw(2)
+               << static_cast<int>(minute) << ':' << std::setw(2) << static_cast<int>(second);
+
+    if (fractionFormat == TimeFractionFormat::AllDigits)
     {
-      if ((fracSec % div) == 0)
+      dateString << '.' << std::setw(7) << static_cast<int>(fracSec);
+    }
+    else if (fracSec != 0 && fractionFormat != TimeFractionFormat::Truncate)
+    {
+      // Append fractional second, which is a 7-digit value with no trailing zeros
+      // This way, '0001200' becomes '00012'
+      auto setw = 1;
+      auto frac = fracSec;
+      for (auto div = 1000000; div >= 1; div /= 10)
       {
-        frac /= div;
-        break;
+        if ((fracSec % div) == 0)
+        {
+          frac /= div;
+          break;
+        }
+        ++setw;
       }
-      ++setw;
+
+      dateString << '.' << std::setw(setw) << static_cast<int>(frac);
     }
 
-    dateString << '.' << std::setw(setw) << static_cast<int>(frac);
+    dateString << 'Z';
   }
-
-  dateString << 'Z';
 
   return dateString.str();
 }

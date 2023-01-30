@@ -152,7 +152,10 @@ public:
     AllDigits,
 
     /// Drop all the fractional time digits.
-    Truncate
+    Truncate,
+
+    /// Include only the date portion, skipping time and time zone.
+    Date,
   };
 
   /**
