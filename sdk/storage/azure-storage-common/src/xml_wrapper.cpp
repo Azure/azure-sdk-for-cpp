@@ -27,6 +27,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
 #if defined(AZ_PLATFORM_WINDOWS)
 
+  void XmlGlobalInitialize() {}
+
   struct XmlReaderContext
   {
     XmlReaderContext()
@@ -394,7 +396,7 @@ namespace Azure { namespace Storage { namespace _internal {
     ~XmlGlobalInitializer() { xmlCleanupParser(); }
   };
 
-  static void XmlGlobalInitialize() { static XmlGlobalInitializer globalInitializer; }
+  void XmlGlobalInitialize() { static XmlGlobalInitializer globalInitializer; }
 
   XmlReader::XmlReader(XmlReader&& other) noexcept { *this = std::move(other); }
   XmlReader& XmlReader::operator=(XmlReader&& other) noexcept
