@@ -92,3 +92,24 @@ TEST(RequestIdPolicy, Unique)
 
   EXPECT_NE(guid1, guid2);
 }
+
+TEST(RequestIdPolicy, NoOverwrite)
+{
+  Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
+  request.SetHeader("x-ms-client-request-id", "0123-45-67-89-abcdef");
+
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+
+    policies.emplace_back(std::make_unique<RequestIdPolicy>());
+    policies.emplace_back(std::make_unique<NoOpPolicy>());
+
+    Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, Azure::Core::Context());
+  }
+
+  auto const headers = request.GetHeaders();
+  auto const requestIdHeader = headers.find("x-ms-client-request-id");
+
+  EXPECT_NE(requestIdHeader, headers.end());
+  EXPECT_EQ(requestIdHeader->second, "0123-45-67-89-abcdef");
+}
