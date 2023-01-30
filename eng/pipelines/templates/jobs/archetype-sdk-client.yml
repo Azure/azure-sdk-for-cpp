@@ -1,3 +1,6 @@
+# cSpell:ignore vsts
+# cSpell:ignore parseazuresdkcpp
+
 parameters:
   - name: Artifacts
     type: object
@@ -84,6 +87,20 @@ jobs:
 
           - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
+          - task:  UniversalPackages@0
+            displayName: Download ApiView Parser.
+            inputs:
+              command: download
+              vstsFeed: 'internal/AzureSDKForCpp'
+              vstsFeedPackage: 'parseazuresdkcpp'
+              downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
+              vstsPackageVersion: 0.6.0
+            condition: >-
+                and(
+                  succeeded(),
+                  ne(variables['Skip.CreateApiReview'], 'true'),eq(variables['System.TeamProject'], 'internal')
+                )
+
           - task: Powershell@2
             inputs:
               filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
@@ -96,6 +113,8 @@ jobs:
                 -SourceBranch $(Build.SourceBranchName)
                 -DefaultBranch $(DefaultBranch)
                 -ConfigFileDir $(Build.ArtifactStagingDirectory)/PackageInfo
+                -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
+                -SourcePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.name }}/inc
               pwsh: true
               workingDirectory: $(Pipeline.Workspace)
             displayName: Create API Review for ${{ artifact.name }}
