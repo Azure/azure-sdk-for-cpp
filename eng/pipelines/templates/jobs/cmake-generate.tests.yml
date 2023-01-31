@@ -76,9 +76,6 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
 
-  - pwsh: vcpkg list
-    displayName: Update vcpkg
-
   - script: cmake --version
     displayName: cmake --version
 
