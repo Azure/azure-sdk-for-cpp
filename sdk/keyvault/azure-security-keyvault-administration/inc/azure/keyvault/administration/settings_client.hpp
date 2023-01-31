@@ -12,10 +12,12 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
-#include <azure/keyvault/administration/rest_client.hpp>
+#include <azure/keyvault/administration/rest_client_models.hpp>
 #include <azure/keyvault/administration/settings_client_options.hpp>
 #include <memory>
 #include <string>
+
+using namespace Azure::Security::KeyVault::Administration::Models;
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   /**
@@ -59,27 +61,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     /**
      * @brief Update a setting.
      *
-     * @param settingName Name of the setting to update.
-     * @param options Options for updating the setting.
+     * @param name Name of the setting to update.
+     * @param value Value of the setting .
      * @param context Operation Context.
      *
      * @returns Response containing the new updated setting.
      */
     Azure::Response<Setting> UpdateSetting(
-        std::string const& settingName,
-        UpdateSettingOptions const& options,
+        std::string const& name,
+        std::string const& value,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Gets an existing setting.
      *
-     * @param settingName Name of setting to get.
+     * @param name Name of setting to get.
      * @param context Operation context.
      *
      * @returns response containing the setting.
      */
     Azure::Response<Setting> GetSetting(
-        std::string const& settingName,
+        std::string const& name,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
     /**

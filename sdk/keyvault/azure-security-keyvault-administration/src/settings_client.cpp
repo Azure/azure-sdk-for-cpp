@@ -64,20 +64,20 @@ SettingsClient::SettingsClient(
 }
 
 Azure::Response<Setting> SettingsClient::UpdateSetting(
-    std::string const& settingName,
-    UpdateSettingOptions const& options,
+    std::string const& name,
+    std::string const& value,
     const Azure::Core::Context& context) const
 {
   std::string jsonBody;
   {
     auto jsonRoot = Azure::Core::Json::_internal::json::object();
-    jsonRoot[ValueField] = options.Value;
+    jsonRoot[ValueField] = value;
     jsonBody = jsonRoot.dump();
   }
   Azure::Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<const uint8_t*>(jsonBody.data()), jsonBody.length());
 
-  auto request = CreateRequest(HttpMethod::Patch, {SettingPathName, settingName}, &requestBody);
+  auto request = CreateRequest(HttpMethod::Patch, {SettingPathName, name}, &requestBody);
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
@@ -89,10 +89,10 @@ Azure::Response<Setting> SettingsClient::UpdateSetting(
 }
 
 Azure::Response<Setting> SettingsClient::GetSetting(
-    std::string const& settingName,
+    std::string const& name,
     const Azure::Core::Context& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {SettingPathName, settingName});
+  auto request = CreateRequest(HttpMethod::Get, {SettingPathName, name});
   auto pRawResponse = m_pipeline->Send(request, context);
   auto httpStatusCode = pRawResponse->GetStatusCode();
   if (httpStatusCode != Azure::Core::Http::HttpStatusCode::Ok)
@@ -140,7 +140,7 @@ Setting SettingsClient::ParseSetting(std::vector<uint8_t> const& responseBody) c
     response.Value = jsonRoot[ValueField].get<std::string>();
     if (jsonRoot.count(TypeField) != 0)
     {
-      response.Type = SettingTypeEnum(jsonRoot[TypeField].get<std::string>());
+      response.Type = SettingType(jsonRoot[TypeField].get<std::string>());
     }
   }
   return response;
