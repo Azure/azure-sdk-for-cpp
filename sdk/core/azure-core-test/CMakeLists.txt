@@ -30,16 +30,8 @@ add_library (
   ${AZURE_CORE_TEST_SOURCE}
   )
 
-# Additional test files to be copied to the output directory.
-set(TEST_ADDITIONAL_FILES 
-    ${CMAKE_CURRENT_LIST_DIR}/../../../eng/scripts/Start-TestProxy.ps1
-    ${CMAKE_CURRENT_LIST_DIR}/../../../eng/scripts/Stop-TestProxy.ps1
-)
-
-add_custom_command(TARGET azure-core-test-fw POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${TEST_ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${TEST_ADDITIONAL_FILES}
-    COMMENT 'Copying non-source output files')
+include(TestProxyPrep)
+SetUpTestProxy("sdk/core")
 
 if (MSVC)
   # - C6326: Google comparisons 
