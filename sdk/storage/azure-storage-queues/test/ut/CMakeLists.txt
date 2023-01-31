@@ -11,7 +11,8 @@ include(GoogleTest)
 
 # Export the test folder for recordings access.
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
-add_compile_definitions(AZURE_TEST_ASSETS_DIR="${CMAKE_CURRENT_LIST_DIR}/../../../")
+include(TestProxyPrep)
+SetUpTestProxy("sdk/storage")
 
 add_executable (
   azure-storage-queues-test
@@ -40,9 +41,3 @@ gtest_discover_tests(azure-storage-queues-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
-# Additional test files to be copied to the output directory.
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/../../../../../eng/scripts/Start-TestProxy.ps1
-  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/../../../../../eng/scripts/Stop-TestProxy.ps1
-  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
