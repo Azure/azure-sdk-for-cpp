@@ -110,7 +110,7 @@ TEST(TracingContextFactory, DeprecatedFactoryCtorForServiceWhichReleasedWithThis
 #pragma warning(pop)
 #elif defined(__clang__)
 #pragma clang diagnostic pop
-#elif defined(__GCC__)
+#elif defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif // _MSC_VER
 }
