@@ -224,7 +224,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @param packageVersion Package version number for the package containing this
      * service. (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
      * 
-     * @remark This constructor is deprecated and should not be used by any service code. It exists only to support
+     * @deprecated This constructor is deprecated and should not be used by any service code. It exists only to support
      * an earlier release of the Attestation SDK and should not be used by any code beyond that.
      */
     [[deprecated]] TracingContextFactory(

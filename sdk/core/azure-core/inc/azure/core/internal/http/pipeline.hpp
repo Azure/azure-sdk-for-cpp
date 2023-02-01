@@ -160,9 +160,9 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
      * @param perRetryPolicies The service-specific per retry policies.
      * @param perCallPolicies The service-specific per call policies.
      *
-     * @remark This constructor is deprecated and should not be used by any service code.It exists
-     * only to support an earlier release of the Attestation SDK and should not be used by any code
-     * beyond that.
+     * @deprecated This constructor is deprecated and should not be used by any service code. It
+     * exists only to support an earlier release of the Attestation SDK and should not be used by
+     * any code beyond that.
      */
 
     [[deprecated]] explicit HttpPipeline(
