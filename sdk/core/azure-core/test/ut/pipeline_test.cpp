@@ -59,7 +59,7 @@ TEST(Pipeline, attestationConstructor)
 #pragma warning(disable : 4996)
 #else
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+#pragma message("Disable deprecated declartatins")
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
   // Construct pipeline without exception
