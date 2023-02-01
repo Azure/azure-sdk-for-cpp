@@ -150,8 +150,22 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
               clientOptions.Transport));
     }
 
-    [[deprecated]]
-    explicit HttpPipeline(
+    /**
+     * @brief Construct a new HTTP Pipeline object from clientOptions.
+     *
+     * @remark The client options includes per retry and per call policies which are merged with the
+     * service-specific per retry policies.
+     *
+     * @param clientOptions The SDK client options.
+     * @param perRetryPolicies The service-specific per retry policies.
+     * @param perCallPolicies The service-specific per call policies.
+     *
+     * @remark This constructor is deprecated and should not be used by any service code.It exists
+     * only to support an earlier release of the Attestation SDK and should not be used by any code
+     * beyond that.
+     */
+
+    [[deprecated]] explicit HttpPipeline(
         Azure::Core::_internal::ClientOptions const& clientOptions,
         std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perRetryPolicies,
         std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies)
@@ -163,7 +177,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
             std::move(perCallPolicies))
     {
     }
-    
+
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *

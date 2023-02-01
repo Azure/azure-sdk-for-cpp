@@ -89,12 +89,15 @@ TEST(TracingContextFactory, SimpleServiceSpanTests)
   }
 }
 
-TEST(TracingContextFactory, AttestationFactoryCtor)
+TEST(TracingContextFactory, DeprecatedFactoryCtorForServiceWhichReleasedWithThisDependency)
 {
   Azure::Core::_internal::ClientOptions clientOptions;
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
+#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wno-deprecated-declarations"
 #endif
 
   Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
@@ -102,6 +105,9 @@ TEST(TracingContextFactory, AttestationFactoryCtor)
 
 #ifdef _MSC_VER
 #pragma warning(pop)
+#else
+#pragma clang diagnostic pop
+
 #endif // _MSC_VER
 }
 namespace {
