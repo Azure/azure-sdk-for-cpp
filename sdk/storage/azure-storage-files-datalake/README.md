@@ -112,7 +112,7 @@ DataLakeFileSystemClient filesystemClient = serviceClient.GetFileSystemClient(fi
 filesystemClient.CreateIfNotExists();
 
 // Create a DataLake Directory
-DataLakeDirectoryClient directoryClient = filesystemClient.CreateDirectory(directoryName);
+DataLakeDirectoryClient directoryClient = filesystemClient.GetDirectoryClient(directoryName);
 directoryClient.CreateIfNotExists();
 
 // Create a DataLake File using a DataLake Directory
@@ -143,7 +143,7 @@ for (auto pathPage = client.ListPaths(false); pathPage.HasPage(); pathPage.MoveT
 
 ## Troubleshooting
 
-All Blob service operations will throw a [StorageException](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
+All File DataLake service operations will throw a [StorageException](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
 on failure with helpful [ErrorCode](https://learn.microsoft.com/en-us/rest/api/storageservices/blob-service-error-codes)s.
 Many of these errors are recoverable.
 
