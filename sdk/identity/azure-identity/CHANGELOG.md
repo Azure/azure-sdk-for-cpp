@@ -2,6 +2,14 @@
 
 ## 1.4.0 (2023-02-07)
 
+### Features Added
+
+- Added token caching. To benefit from it, share the `shared_ptr` to the same credential instance between multiple client instances.
+- Added Azure CLI Credential.
+- Added authority host overriding support for `ClientCertificateCredential`.
+- Added Azure Stack support for `ClientCertificateCredential`.
+- Added Azure App Service API version `2019-08-01` support for `ManagedIdentityCredential`.
+
 ## 1.4.0-beta.3 (2023-01-10)
 
 ### Features Added
