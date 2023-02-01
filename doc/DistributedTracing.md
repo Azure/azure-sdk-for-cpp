@@ -82,19 +82,9 @@ std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
       = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(CreateOpenTelemetryProvider());
 ```
 
-To finish the integration with Azure clients, there are two mechanisms to integrate OpenTelemetry into a client application:
+To finish the integration with Azure clients, you need to associate the OpenTelemetry provider with each service client created via
+the `ClientOptions` structure.
 
-1) `Azure::Core::Context` integration.
-1) Service Client Options integration.
-
-### Integrate an OpenTelemetryProvider via the ApplicationContext
-
-To integrate OpenTelemetry for all Azure Clients in the application, the customer can call `Azure::Core::Context::ApplicationContext.SetTracerProvider` to establish the
-tracer provider for the application.
-
-```c++
-    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
-```
 
 ### Integrate an OpenTelemetryProvider via Service ClientOptions
 
@@ -128,15 +118,18 @@ To add a new `DiagnosticTracingFactory` to the client, simply add the class as a
 
 ```c++
   Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
-
 ```
 
 And construct the new tracing factory in the service constructor:
 
 ```c++
   explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
-      : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", PackageVersion::ToString())
+      : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service",
+      "azure-core-opentelemetry-test-service-cpp", PackageVersion::ToString())
  ```
+
+ Note that the `TracingContextFactory` constructor requires both the service name AND the package name. The package name is used when
+ creating an opentelemetry Tracer, and the service name is used as the "az.namespace" attribute in newly created spans.
 
 ### Update Each Service Method
 
@@ -240,5 +233,7 @@ Generated traces have the following attributes:
 | `http.url`| URL being retrieved (sanitized)| HTTP Spans.
 | `http.status_code` | HTTP status code returned by the service | HTTP Spans.
 | `http.user_agent` | The value of the `User-Agent` HTTP header sent to the service | HTTP Spans.
-| `requestId` | The value of the `x-ms-client-request-id` header sent by the client | HTTP Spans.
-| `serviceRequestId` | The value of the `x-ms-request-id` sent by the server | HTTP Spans.
+| `net.peer.id` | The fully qualified Azure service endpoint (host name component) | HTTP Spans.
+| `net.peer.port` | The TCP Port of the Azure service endpoint if not 80 or 443| HTTP Spans.
+| `az.client_request_id` | The value of the `x-ms-client-request-id` header sent by the client | HTTP Spans.
+| `az.service_request-id` | The value of the `x-ms-request-id` sent by the server | HTTP Spans.
