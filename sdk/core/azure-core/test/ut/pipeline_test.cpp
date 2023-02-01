@@ -57,6 +57,9 @@ TEST(Pipeline, attestationConstructor)
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
+#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wno-deprecated-declarations"
 #endif
   // Construct pipeline without exception
   EXPECT_NO_THROW(Azure::Core::Http::_internal::HttpPipeline pipeline(
@@ -65,6 +68,8 @@ TEST(Pipeline, attestationConstructor)
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>(0)));
 #ifdef _MSC_VER
 #pragma warning(pop)
+#else
+#pragma clang diagnostic pop
 #endif // _MSC_VER
 }
 
