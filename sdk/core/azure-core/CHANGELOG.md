@@ -1,10 +1,6 @@
 # Release History
 
-## 1.8.0-beta.4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.8.0 (2023-02-02)
 
 ### Bugs Fixed
 
@@ -17,8 +13,6 @@ ignored if they were passed in from `TransportOptions`.
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Johannes Schonberger _([GitHub](https://github.com/ahojnnes))_
-
-### Other Changes
 
 ## 1.8.0-beta.3 (2023-01-05)
 
