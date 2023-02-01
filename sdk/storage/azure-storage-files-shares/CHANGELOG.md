@@ -1,14 +1,11 @@
 # Release History
 
-## 12.4.0-beta.1 (Unreleased)
+## 12.4.0-beta.1 (2023-02-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2021-12-02`.
+- Added support for invalid xml characters.
 
 ### Acknowledgments
 
