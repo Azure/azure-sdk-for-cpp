@@ -97,7 +97,7 @@ TEST(TracingContextFactory, DeprecatedFactoryCtorForServiceWhichReleasedWithThis
 #pragma warning(disable : 4996)
 #else
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wno-deprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
   Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
