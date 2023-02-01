@@ -88,6 +88,22 @@ TEST(TracingContextFactory, SimpleServiceSpanTests)
     EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
   }
 }
+
+TEST(TracingContextFactory, AttestationFactoryCtor)
+{
+  Azure::Core::_internal::ClientOptions clientOptions;
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
+  Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
+      clientOptions, "my.service", "1.0b2");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
+}
 namespace {
 // Dummy service tracing class.
 class TestSpan final : public Azure::Core::Tracing::_internal::Span {

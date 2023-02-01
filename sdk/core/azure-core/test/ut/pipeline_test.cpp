@@ -52,6 +52,22 @@ TEST(Pipeline, refrefEmptyPipeline)
       std::invalid_argument);
 }
 
+TEST(Pipeline, attestationConstructor)
+{
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+  // Construct pipeline without exception
+  EXPECT_NO_THROW(Azure::Core::Http::_internal::HttpPipeline pipeline(
+      Azure::Core::_internal::ClientOptions(),
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>(0),
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>(0)));
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
+}
+
 TEST(Pipeline, AdditionalPolicies)
 {
   class TestPolicy : public Azure::Core::Http::Policies::HttpPolicy {

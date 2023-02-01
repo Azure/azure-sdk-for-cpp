@@ -150,6 +150,20 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
               clientOptions.Transport));
     }
 
+    [[deprecated]]
+    explicit HttpPipeline(
+        Azure::Core::_internal::ClientOptions const& clientOptions,
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perRetryPolicies,
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies)
+        : HttpPipeline(
+            clientOptions,
+            "security.attestation",
+            "1.0.0",
+            std::move(perRetryPolicies),
+            std::move(perCallPolicies))
+    {
+    }
+    
     /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *

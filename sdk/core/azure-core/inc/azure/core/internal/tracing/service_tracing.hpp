@@ -215,6 +215,22 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
                   ->CreateTracer(packageName, packageVersion);
       }
     }
+    /**
+     * @brief Construct a new Tracing Context Factory object
+     *
+     * @param options Client Options for tracing.
+     * @param serviceName Name of the resource provider for the service [See
+     * also](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
+     * @param packageVersion Optional package version number for the package containing this
+     * service. (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
+     */
+    [[deprecated]] TracingContextFactory(
+        Azure::Core::_internal::ClientOptions const& options,
+        std::string const& serviceName,
+        std::string packageVersion)
+        : TracingContextFactory(options, serviceName, serviceName, packageVersion)
+    {
+    }
 
     TracingContextFactory() = default;
     TracingContextFactory(TracingContextFactory const&) = default;
