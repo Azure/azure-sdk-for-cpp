@@ -85,3 +85,24 @@ TEST(TelemetryPolicy, telemetryString)
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
   }
 }
+
+TEST(TelemetryPolicy, NoOverwrite)
+{
+  Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
+  request.SetHeader("User-Agent", "do not touch");
+
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+
+    policies.emplace_back(std::make_unique<TelemetryPolicy>("test", "1.0.0"));
+    policies.emplace_back(std::make_unique<NoOpPolicy>());
+
+    Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, Azure::Core::Context());
+  }
+
+  auto const headers = request.GetHeaders();
+  auto const requestIdHeader = headers.find("User-Agent");
+
+  EXPECT_NE(requestIdHeader, headers.end());
+  EXPECT_EQ(requestIdHeader->second, "do not touch");
+}
