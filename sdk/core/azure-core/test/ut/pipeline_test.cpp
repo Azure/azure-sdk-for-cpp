@@ -57,20 +57,23 @@ TEST(Pipeline, attestationConstructor)
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
-#else
+#elif defined(__clang__)
 #pragma clang diagnostic push
-#pragma message("Disable deprecated declartatins")
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
-  // Construct pipeline without exception
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif // Construct pipeline without exception
   EXPECT_NO_THROW(Azure::Core::Http::_internal::HttpPipeline pipeline(
       Azure::Core::_internal::ClientOptions(),
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>(0),
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>(0)));
 #ifdef _MSC_VER
 #pragma warning(pop)
-#else
+#elif defined(__clang__)
 #pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
 #endif // _MSC_VER
 }
 

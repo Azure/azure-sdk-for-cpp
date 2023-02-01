@@ -223,9 +223,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * also](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
      * @param packageVersion Package version number for the package containing this
      * service. (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
-     * 
-     * @deprecated This constructor is deprecated and should not be used by any service code. It exists only to support
-     * an earlier release of the Attestation SDK and should not be used by any code beyond that.
+     *
+     * @deprecated This constructor is deprecated and should not be used by any service code. It
+     * exists only to support an earlier release of the Attestation SDK and should not be used by
+     * any code beyond that.
      */
     [[deprecated]] TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,

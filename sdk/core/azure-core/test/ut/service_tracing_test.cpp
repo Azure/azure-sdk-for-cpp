@@ -95,9 +95,12 @@ TEST(TracingContextFactory, DeprecatedFactoryCtorForServiceWhichReleasedWithThis
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
-#else
+#elif defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
   Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
@@ -105,9 +108,10 @@ TEST(TracingContextFactory, DeprecatedFactoryCtorForServiceWhichReleasedWithThis
 
 #ifdef _MSC_VER
 #pragma warning(pop)
-#else
+#elif defined(__clang__)
 #pragma clang diagnostic pop
-
+#elif defined(__GCC__)
+#pragma GCC diagnostic pop
 #endif // _MSC_VER
 }
 namespace {
