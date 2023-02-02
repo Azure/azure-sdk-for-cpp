@@ -23,7 +23,7 @@ Each package folder contains a package-specific `README.md` file. Most of these 
 
 ## Package Samples and How-To Guides
 
-Each package folder contains a subfolder called `/samples` with additional code samples. These samples can be either short programs contained in `*.c` files, or more complete how-to guides (code samples and some commentary) contained in `*.md` files. You can find shortcuts to main how-to guides in the [**How-To Guides List**](#how-to-guide-list) section below.
+Every package folder contains a subfolder called `/samples` with additional code samples. These samples can be either short programs contained in `*.c` files, or more complete how-to guides (code samples and some commentary) contained in `*.md` files. You can find shortcuts to main how-to guides in the [**How-To Guides List**](#how-to-guide-list) section below.
 
 ## Integration Samples
 
