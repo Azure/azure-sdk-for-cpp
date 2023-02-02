@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added support for parsing space character in place of 'T' in RFC3339 DateTimes.
-- Added support for HTTP proxy servers, both unauthenticated and with Plain authentication.
+- Added support for HTTP proxy servers, both unauthenticated and with basic authentication.
 - Added universal support for several TLS options:
   - Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).
   - Added the ability to enable TLS certificate revocation list checks (off by default).
