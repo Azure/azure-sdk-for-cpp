@@ -49,7 +49,7 @@ set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_HEADER
     inc/azure/keyvault/administration.hpp
     inc/azure/keyvault/administration/dll_import_export.hpp
-    inc/azure/keyvault/administration/rest_client.hpp
+    inc/azure/keyvault/administration/rest_client_models.hpp
     inc/azure/keyvault/administration/rtti.hpp
     inc/azure/keyvault/administration/settings_client.hpp
     inc/azure/keyvault/administration/settings_client_options.hpp

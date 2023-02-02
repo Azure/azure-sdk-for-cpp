@@ -88,6 +88,32 @@ TEST(TracingContextFactory, SimpleServiceSpanTests)
     EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
   }
 }
+
+TEST(TracingContextFactory, DeprecatedFactoryCtorForServiceWhichReleasedWithThisDependency)
+{
+  Azure::Core::_internal::ClientOptions clientOptions;
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+  Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
+      clientOptions, "my.service", "1.0b2");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+}
 namespace {
 // Dummy service tracing class.
 class TestSpan final : public Azure::Core::Tracing::_internal::Span {

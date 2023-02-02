@@ -1,6 +1,6 @@
 # _Stress Test
 
-## _Deps
+## Dependencies
 Adding a stress test requires the following tools installed:
 * Docker : https://www.docker.com/
 * Helm : https://helm.sh/
@@ -9,7 +9,7 @@ Adding a stress test requires the following tools installed:
 Structure : 
 
 A stress tests is composes of the following components : 
-* Source code : represents the test that is run, there are no prerequisites as to what the code does, the outputs of the tests can be at the cosole , as file share or Application Insights. 
+* Source code : represents the test that is run, there are no prerequisites as to what the code does, the outputs of the tests can be at the console , as file share or Application Insights. 
 * DockerFile : represents the docker file that will build the container image that  will be executed by the stress automation, on the stress test clusters. 
 * Helm Chart : represents the deployment script for the docker image built by the Dockerfile. 
 * stress-test-resources.bicep/json ARM template for deploying azure resources required by the 
