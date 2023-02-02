@@ -43,7 +43,7 @@ parameters:
 jobs:
 - job: ValidateLive
   dependsOn: ${{ parameters.DependsOn }}
-  condition: ne(${{ parameters.Matrix }}, '{}')
+  condition: and(ne(variables['Skip.LiveTest'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   pool:
     name: $(Pool)
