@@ -109,7 +109,7 @@ set_target_properties(azure-performance-library-name-test PROPERTIES FOLDER "Tes
 The main source file defines the list of available tests and calls the performance framework `Run` function. Take a loop to the next example.
 
 ```cpp
-//  Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 // The performance framework headers
@@ -169,7 +169,7 @@ In the above code example, the two tests added to the `map` are defined in the p
 The next code example illustrates how to define a very simple empty test.
 
 ```cpp
-//  Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -210,7 +210,7 @@ namespace Azure { namespace Perf { namespace Test {
 A test can define its own options as an addition to the base options from the performance framework. See the next example to learn how to do it.
 
 ```cpp
-//  Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**

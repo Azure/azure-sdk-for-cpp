@@ -1,4 +1,4 @@
-//  Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/test/test_proxy_policy.hpp"
