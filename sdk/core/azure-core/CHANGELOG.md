@@ -13,8 +13,12 @@
     - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
 
 ### Breaking Changes
+- Changed the name of several distributed tracing HTTP span attributes:
+  - `requestId` is renamed to `az.client_request_id`
+  - `serviceRequestId` is renamed to `az.service_request_id`
 
 - Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
+
 - Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
 
 - Updated retry policy timeouts to conform to Azure guidelines.
@@ -26,10 +30,10 @@
 ### Bugs Fixed
 
 - Fixed bug in WinHTTP client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be ignored if they were passed in from `TransportOptions`.
-- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
+- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues in libcurl HTTP transport which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
 
 ### Other Changes
-
+- Update distributed tracing attributes to align with current Azure Distributed Tracing Conventions attributes and names.
 - Added the ability to consume version 1.1.1n of OpenSSL.
 - Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
 - Improved cancellation support for WinHTTP transport.
