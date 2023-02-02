@@ -4,7 +4,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(azure-core-cpp "1.7.0-beta.1")
+find_dependency(azure-core-cpp "1.8.0")
 find_dependency(Threads)
 
 find_dependency(opentelemetry-cpp)
