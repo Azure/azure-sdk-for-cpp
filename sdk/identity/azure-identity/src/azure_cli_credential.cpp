@@ -154,6 +154,7 @@ AccessToken AzureCliCredential::GetToken(
 
 namespace {
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 template <typename> struct UniqueHandleHelper;
 template <> struct UniqueHandleHelper<HANDLE>
 {
@@ -163,6 +164,7 @@ template <> struct UniqueHandleHelper<HANDLE>
 
 template <typename T>
 using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
+#endif // not UWP
 #endif
 
 class ShellProcess;
@@ -171,10 +173,12 @@ class OutputPipe final {
 
 private:
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   UniqueHandle<HANDLE> m_writeHandle;
   UniqueHandle<HANDLE> m_readHandle;
   OVERLAPPED m_overlapped = {};
-#else
+#endif // not UWP
+#else // not Windows
   std::vector<int> m_fd;
 #endif
 
@@ -195,8 +199,10 @@ public:
 class ShellProcess final {
 private:
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   UniqueHandle<HANDLE> m_processHandle;
-#else
+#endif // not UWP
+#else // not Windows
   std::vector<char*> m_argv;
   std::vector<char> m_argvValues;
 
@@ -271,6 +277,7 @@ std::string RunShellCommand(
 }
 
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
 {
   // LCOV_EXCL_START
@@ -283,7 +290,8 @@ void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
   }
   // LCOV_EXCL_STOP
 }
-#else
+#endif // not UWP
+#else // not Windows
 void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 {
   // LCOV_EXCL_START
@@ -299,6 +307,7 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 OutputPipe::OutputPipe()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   SECURITY_ATTRIBUTES pipeSecurity = {};
   pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
   pipeSecurity.bInheritHandle = TRUE;
@@ -318,7 +327,10 @@ OutputPipe::OutputPipe()
   ThrowIfApiCallFails(
       SetHandleInformation(m_readHandle.get(), HANDLE_FLAG_INHERIT, 0),
       "Cannot ensure the read handle for the output pipe is not inherited");
-#else
+#else // UWP
+  throw std::runtime_error("The credential is not supported on UWP.");
+#endif
+#else // not Windows
   m_fd.push_back(-1);
   m_fd.push_back(-1);
 
@@ -342,6 +354,7 @@ OutputPipe::~OutputPipe()
 }
 
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 void AppendToEnvironmentValuesIfNotEmpty(
     std::vector<CHAR>& environmentValues,
     std::string const& envVarName,
@@ -365,7 +378,8 @@ void AppendToEnvironmentValuesIfDefined(
   AppendToEnvironmentValuesIfNotEmpty(
       environmentValues, envVarName, Environment::GetVariable(envVarName.c_str()));
 }
-#else
+#endif // not UWP
+#else // not Windows
 void AppendToArgvValues(
     std::vector<char>& argvValues,
     std::vector<std::remove_reference<decltype(argvValues)>::type::size_type>& argvValuePositions,
@@ -394,6 +408,7 @@ void EnsureShellExists(std::string const& pathToShell)
 ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   // Start the process.
   PROCESS_INFORMATION procInfo = {};
 
@@ -484,7 +499,8 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   // We will only be reading the pipe.
   // So, now that the process is started, we can close write handle on our end.
   outputPipe.m_writeHandle.reset();
-#else
+#endif // not UWP
+#else // not Windows
   // Form the 'argv' array:
   // * An array of pointers to non-const C strings (0-terminated).
   // * Last element is nullptr.
@@ -587,8 +603,10 @@ void ShellProcess::Finalize()
 void ShellProcess::Terminate()
 {
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   static_cast<void>(TerminateProcess(m_processHandle.get(), 0));
-#else
+#endif // not UWP
+#else // not Windows
   if (m_pid > 0)
   {
     static_cast<void>(kill(m_pid, SIGKILL));
@@ -602,6 +620,7 @@ bool OutputPipe::NonBlockingRead(
     bool& willHaveMoreData)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   static_assert(
       sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(CHAR),
       "buffer elements and CHARs should be of the same size");
@@ -627,7 +646,8 @@ bool OutputPipe::NonBlockingRead(
   willHaveMoreData = (GetLastError() != ERROR_BROKEN_PIPE);
 
   return hadData && bytesRead > 0;
-#else
+#endif // not UWP
+#else // not Windows
   static_assert(
       sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(char),
       "buffer elements and chars should be of the same size");
