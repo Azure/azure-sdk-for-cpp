@@ -9,7 +9,7 @@
 
 ### Bugs Fixed
 
-- Fixed setting blob tier failure when target access tier is premium page blob's tier.
+- Fixed a bug where setting premium page blob tier operations always fail.
 
 ## 12.6.2 (2022-10-11)
 

@@ -5,7 +5,7 @@
 ### Features Added
 
 - Bumped up API version to `2021-12-02`.
-- Added support for invalid xml characters.
+- Added support for invalid xml characters in file and directory names for `ShareDirectoryClient::ListFilesAndDirectories()`, `ShareDirectoryClient::ListHandles()` and `ShareFileClient::ListHandles`.
 
 ### Acknowledgments
 
