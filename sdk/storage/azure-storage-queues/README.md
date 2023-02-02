@@ -76,10 +76,8 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 const std::string connectionString = "<connection_string>";
 const std::string queueName = "sample-queue";
 
-auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
-
 // Get a reference to a queue and then create it
-QueueClient queueClient =QueueClient(connectionString, queueName);
+QueueClient queueClient = QueueClient(connectionString, queueName);
 queueClient.Create();
 
 // Send a message to our queue

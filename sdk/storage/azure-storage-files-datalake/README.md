@@ -98,14 +98,14 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 ### Appending Data to a DataLake File
 
 ```C++
+const std::string connectionString = "<connection_string>";
 const std::string fileSystemName = "sample-filesystem";
 const std::string directoryName = "sample-directory";
 const std::string fileName = "sample-file";
+const std::string localFilePath = "<path_to_local_file>";
 
-auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
-
-// Create DataLakeServiceClient using StorageSharedKeyCredentials
-DataLakeServiceClient serviceClient = DataLakeServiceClient(serviceUrl, sharedKeyCredential);
+// Create DataLakeServiceClient
+DataLakeServiceClient serviceClient = DataLakeServiceClient::CreateFromConnectionString(connectionString);
 
 // Get a reference to a filesystem named "sample-filesystem" and then create it
 DataLakeFileSystemClient filesystemClient = serviceClient.GetFileSystemClient(fileSystemName);
@@ -120,8 +120,8 @@ DataLakeFileClient fileClient = directoryClient.GetFileClient(fileName);
 fileClient.CreateIfNotExists();
 
 // Append data to the DataLake File
-FileBodyStream fileStream(localFilePath);
-fileClient.Append(fileStream,0);
+Azure::Core::IO::FileBodyStream fileStream(localFilePath);
+fileClient.Append(fileStream, 0);
 fileClient.Flush(fileStream.Length());
 ```
 ### Reading Data from a DataLake File

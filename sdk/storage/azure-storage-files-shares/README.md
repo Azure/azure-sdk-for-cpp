@@ -77,8 +77,6 @@ Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for
 const std::string shareName = "sample-share";
 const std::string directoryName = "sample-directory";
 const std::string fileName = "sample-file";
-
-// Path to the save the downloaded file
 const std::string localFilePath = "<path_to_local_file>";
 
 // Get a reference to a share and then create it
