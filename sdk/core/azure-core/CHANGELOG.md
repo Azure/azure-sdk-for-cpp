@@ -13,7 +13,9 @@
     - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
 
 ### Breaking Changes
-
+- Changed the name of several distributed tracing HTTP span attributes:
+  - `requestId` is renamed to `az.client_request_id`
+  - `serviceRequestId` is renamed to `az.service_request_id`
 - Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
 - Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
 
