@@ -7,7 +7,7 @@
 - Aligned OpenTelemetry tracing infrastructure with OpenTelemetry 1.17.0 conventions for use with Azure Monitor.
 
 ### Other Changes
-- Updated test collateral to reflect Azure Core tracing changes.
+
 - Suppress several warnings from opentelemetry-cpp package.
 
 ## 1.0.0-beta.3 (2022-08-04)
