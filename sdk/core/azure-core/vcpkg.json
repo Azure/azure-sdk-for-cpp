@@ -1,6 +1,6 @@
 {
   "name": "azure-core-cpp",
-  "version-string": "1.4.0-beta.1",
+  "version-string": "1.8.0",
   "dependencies": [
     {
       "name": "openssl",
