@@ -172,4 +172,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [aad_doc]: https://docs.microsoft.com/azure/active-directory/
 [azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/
- 
+ 1
