@@ -2,4 +2,6 @@
 
 ## 4.0.0-beta.1 (2023-02-07)
 
-- initial preview of Settings API. 
+### Features Added
+
+- Initial preview of Settings API. 
