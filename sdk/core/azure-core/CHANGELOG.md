@@ -3,13 +3,8 @@
 ## 1.8.0-beta.4 (Unreleased)
 
 ### Features Added
-- Aligned OpenTelemetry attributes to align with OpenTelemetry 1.17.0.
 
 ### Breaking Changes
-
-- Removed the 3 parameter constructor for `Azure::Core::_internal::TracingContextFactory` and replaced it with a 4 parameter version which takes
-both the service name and package name.
-- Removed the 3 parameter constructor for `Azure::Core::_internal::HttpPipeline` which is no longer needed.
 
 ### Bugs Fixed
 
