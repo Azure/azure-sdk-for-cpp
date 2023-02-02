@@ -34,6 +34,7 @@
 - [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues in libcurl HTTP transport which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
 
 ### Other Changes
+
 - Update distributed tracing attributes to align with current Azure Distributed Tracing Conventions attributes and names.
 - Added the ability to consume version 1.1.1n of OpenSSL.
 - Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
