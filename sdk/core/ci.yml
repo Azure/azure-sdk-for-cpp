@@ -13,7 +13,6 @@ trigger:
       - cmake-modules/
       - eng/
       - CMakeLists.txt
-      - sdk/core
       - doc/
       - /**/*.md
 
@@ -30,7 +29,6 @@ pr:
       - cmake-modules/
       - eng/
       - CMakeLists.txt
-      - sdk/core
       - doc/
       - /**/*.md
 
