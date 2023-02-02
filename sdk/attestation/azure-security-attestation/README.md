@@ -493,4 +493,3 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [cloud_shell_bash]: https://shell.azure.com/bash
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Fattestation%2Fazure-security-attestation%2FREADME.png)
-1
