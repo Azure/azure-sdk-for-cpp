@@ -5,3 +5,4 @@ The Azure Key Vault Client Libraries for C++ allows you to build applications ag
 ## Latest release
 
 Find the latest Key Vault client for C++ releases [here](https://azure.github.io/azure-sdk/releases/latest/cpp.html).
+ 
