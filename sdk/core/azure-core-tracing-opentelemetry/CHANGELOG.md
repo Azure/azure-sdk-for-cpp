@@ -1,33 +1,33 @@
-# _Release History
+# Release History
 
-## _1.0.0-beta.4 (Unreleased)
+## 1.0.0-beta.4 (Unreleased)
 
-### _Features Added
+### Features Added
 
-### _Breaking Changes
+### Breaking Changes
 
-### _Bugs Fixed
+### Bugs Fixed
 
-### _Other Changes
+### Other Changes
 
-## _1.0.0-beta.3 (2022-08-04)
+## 1.0.0-beta.3 (2022-08-04)
 
-### _Other Changes
+### Other Changes
 
 - Removed hard dependency on `opentelemetry-cpp` package version.
 
-## _1.0.0-beta.2 (2022-06-30)
+## 1.0.0-beta.2 (2022-06-30)
 
-### _Breaking Changes
+### Breaking Changes
 
 - The `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` type can only be instantiated via a factory method: `OpenTelemetryProvider::Create()`.
 
-### _Other Changes
+### Other Changes
 
 - Removed `_internal` APIs from the public API surface. Also removed most of the `_internal` APIs from the public `opentelemetry.hpp` headers.
 
-## _1.0.0-beta.1 (2022-06-07)
+## 1.0.0-beta.1 (2022-06-07)
 
-### _Features Added
+### Features Added
 
 - Initial release

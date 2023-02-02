@@ -9,11 +9,11 @@ urlFragment: attestation-samples
 
 ---
 
-# _Samples for the Microsoft Azure Attestation client library for C++
+# Samples for the Microsoft Azure Attestation client library for C++
 
 These code samples show common scenario operations with the Azure Attestation client library.
 
-## _Service operational modes
+## Service operational modes
 
 As was mentioned in the [README.md file][readme_md], the attestation service
 operates in three different modes:
@@ -32,7 +32,7 @@ Shared | No | Yes | Yes (default always)| No | No | No
 AAD | Yes | Yes | Yes | Yes | Optional | No
 Isolated | Yes| Yes | Yes | Yes | Yes | Yes
 
-### _Shared Mode
+### Shared Mode
 
 Each region in which the MAA service operates has a "shared" attestation instance
 which allows customers to perform basic attestation operations on their enclaves
@@ -50,13 +50,13 @@ Examples of shared instances are:
 * sharedcae.cae.attest.azure.net
 * shareduks.uks.attest.azure.net
 
-### _AAD Mode
+### AAD Mode
 
 AAD mode instances are intended for customers who trust ARM RBAC for authorization
 decisions related to policy management. Attestation policies are allowed to be
 either be signed or unsigned.
 
-### _Isolated Mode
+### Isolated Mode
 
 Isolated mode instances are intended for customers who desire an additional level
 of authorization beyond that which is allowed by ARM RBAC authorization. When a
@@ -66,7 +66,7 @@ key (the certificate can be self-signed, or it can be issued by a certificate
 authority). Attestation policies MUST be signed with one of the private keys
 associated with the instance (either at instance creation or added with the [AddIsolatedModeCertificate][add_isolated_mode_cert] API).
 
-## _Sample Requirements
+## Sample Requirements
 
 These samples are written with the assumption that the following environment
 variables have been set by the user:
@@ -90,7 +90,7 @@ into the attestation service instance because they use [Azure::Core::Credentials
 
 This directory contains functional samples for the attestation service SDK.
 
-## _Samples descriptions
+## Samples descriptions
 
 The samples are roughly grouped into four source files, by functionality:
 
@@ -106,9 +106,9 @@ Policy | test\samples\policy | attestation-policy
 PolicyManagementCertificates | test\samples\policy-management| attestation-policy-management
 Basic Operations | test\samples\basic-operations| attestation-basic-operations
 
-## _Additional Information
+## Additional Information
 
-### _Attestation Policy
+### Attestation Policy
 
 An attestation policy is a document which defines authorization and claim generation
 rules for attestation operations.
@@ -148,7 +148,7 @@ to be issued with a value which matches the `x-ms-sgx-mrsigner` claim.
 
 For more information on authoring attestation policy documents, see: [Authoring an attestation policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-## _Next Steps
+## Next Steps
 
 For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
 

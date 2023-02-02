@@ -1,8 +1,8 @@
-# _Azure Storage C++ Protocol Layer
+# Azure Storage C++ Protocol Layer
 
 > see https://aka.ms/autorest
 
-## _Configuration
+## Configuration
 
 ```yaml
 package-name: azure-storage-blobs
@@ -12,7 +12,7 @@ clear-output-folder: true
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-12-02/blob.json
 ```
 
-## _ModelFour Options
+## ModelFour Options
 
 ```yaml
 modelerfour:
@@ -21,12 +21,12 @@ modelerfour:
     parameter: pascal
 ```
 
-## _Customizations for Track 2 Generator
+## Customizations for Track 2 Generator
 
 See the [AutoRest samples](https://github.com/Azure/autorest/tree/master/Samples/3b-custom-transformations)
 for more about how we're customizing things.
 
-### _Fix Generator Warnings
+### Fix Generator Warnings
 
 ```yaml
 directive:
@@ -45,7 +45,7 @@ directive:
       delete $["x-ms-code-generation-settings"];
 ```
 
-### _Delete Unused Query Parameters and Headers
+### Delete Unused Query Parameters and Headers
 
 ```yaml
 directive:
@@ -63,7 +63,7 @@ directive:
       }
 ```
 
-### _Delete Unused Operations
+### Delete Unused Operations
 
 ```yaml
 directive:
@@ -87,7 +87,7 @@ directive:
       }
 ```
 
-### _API Version
+### API Version
 
 ```yaml
 directive:
@@ -107,7 +107,7 @@ directive:
       };
 ```
 
-### _Rename Operations
+### Rename Operations
 
 ```yaml
 directive:
@@ -137,7 +137,7 @@ directive:
       }
 ```
 
-### _Define names for return types
+### Define names for return types
 
 ```yaml
 directive:
@@ -183,7 +183,7 @@ directive:
       }
 ```
 
-### _Return Type namespace
+### Return Type namespace
 
 ```yaml
 directive:
@@ -252,7 +252,7 @@ directive:
       $.BlockLookupList["x-namespace"] = "_detail";
 ```
 
-### _Rename enums
+### Rename enums
 
 ```yaml
 directive:
@@ -371,7 +371,7 @@ directive:
       }
 ```
 
-### _Global Changes for Definitions, Types etc.
+### Global Changes for Definitions, Types etc.
 
 ```yaml
 directive:
@@ -499,7 +499,7 @@ directive:
       $.ArchiveStatus.description = "For blob storage LRS accounts, valid values are rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is not complete then this value indicates that rehydrate is pending and also tells the destination tier.";
 ```
 
-### _Striped Blob Support
+### Striped Blob Support
 
 ```yaml
 directive:
@@ -567,7 +567,7 @@ directive:
       }
 ```
 
-### _GetBlobServiceProperties
+### GetBlobServiceProperties
 
 ```yaml
 directive:
@@ -605,7 +605,7 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/BlobServiceProperties";
 ```
 
-### _GetServiceStatistics 
+### GetServiceStatistics 
 
 ```yaml
 directive:
@@ -623,7 +623,7 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/ServiceStatistics";
 ```
 
-### _ListBlobContainers
+### ListBlobContainers
 
 ```yaml
 directive:
@@ -673,7 +673,7 @@ directive:
       $.ContainerProperties.properties["RemainingRetentionDays"].description = "Remaining days before this container will be permanantely deleted. Only valid when this container was deleted.";
 ```
 
-### _GetUserDelegationKey
+### GetUserDelegationKey
 
 ```yaml
 directive:
@@ -686,7 +686,7 @@ directive:
       $.UserDelegationKey.properties["SignedExpiry"]["x-ms-client-name"] = "SignedExpiresOn";
 ```
 
-### _GetAccountInfo
+### GetAccountInfo
 
 ```yaml
 directive:
@@ -705,7 +705,7 @@ directive:
       ];
 ```
 
-### _FindBlobsByTags
+### FindBlobsByTags
 
 ```yaml
 directive:
@@ -735,7 +735,7 @@ directive:
       delete $.FilterBlobSegment.properties["Where"];
 ```
 
-### _CreateBlobContainer
+### CreateBlobContainer
 
 ```yaml
 directive:
@@ -752,7 +752,7 @@ directive:
       };
 ```
 
-### _GetBlobContainerProperties
+### GetBlobContainerProperties
 
 ```yaml
 directive:
@@ -774,7 +774,7 @@ directive:
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-nullable"] = true;
 ```
 
-### _GetBlobContainerAccessPolicy
+### GetBlobContainerAccessPolicy
 
 ```yaml
 directive:
@@ -794,7 +794,7 @@ directive:
       }
 ```
 
-### _DeleteBlobContainer
+### DeleteBlobContainer
 
 ```yaml
 directive:
@@ -811,7 +811,7 @@ directive:
       };
 ```
 
-### _GetBlobContainerAccessPolicy
+### GetBlobContainerAccessPolicy
 
 ```yaml
 directive:
@@ -836,7 +836,7 @@ directive:
       delete $.AccessPolicy;
 ```
 
-### _ListBlobsFlat
+### ListBlobsFlat
 
 ```yaml
 directive:
@@ -940,7 +940,7 @@ directive:
       $.BlobPropertiesInternal.properties["LegalHold"].description = "Indicates whether the blob has a legal hold.";
 ```
 
-### _ListBlobsByHierarchy
+### ListBlobsByHierarchy
 
 ```yaml
 directive:
@@ -964,7 +964,7 @@ directive:
       $.push({"$ref": "#/parameters/ListBlobsShowOnly"});
 ```
 
-### _DownloadBlob
+### DownloadBlob
 
 ```yaml
 directive:
@@ -1078,7 +1078,7 @@ directive:
       $["206"].headers["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash"};
 ```
 
-### _GetBlobProperties
+### GetBlobProperties
 
 ```yaml
 directive:
@@ -1166,7 +1166,7 @@ directive:
       $["x-ms-meta"].description = "A set of name-value pair associated with this blob.";
 ```
 
-### _DeleteBlob
+### DeleteBlob
 
 ```yaml
 directive:
@@ -1187,7 +1187,7 @@ directive:
       };
 ```
 
-### _SetBlobHttpHeaders
+### SetBlobHttpHeaders
 
 ```yaml
 directive:
@@ -1198,7 +1198,7 @@ directive:
       $["x-ms-blob-sequence-number"]["x-nullable"] = true;
 ```
 
-### _SetBlobMetadata
+### SetBlobMetadata
 
 ```yaml
 directive:
@@ -1224,7 +1224,7 @@ directive:
       };
 ```
 
-### _CreateBlobSnapshot
+### CreateBlobSnapshot
 
 ```yaml
 directive:
@@ -1254,7 +1254,7 @@ directive:
       };
 ```
 
-### _StartBlobCopyFromUri
+### StartBlobCopyFromUri
 
 ```yaml
 directive:
@@ -1268,7 +1268,7 @@ directive:
       $["x-ms-version-id"]["x-nullable"] = true;
 ```
 
-### _CopyBlobFromUri
+### CopyBlobFromUri
 
 ```yaml
 directive:
@@ -1287,7 +1287,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
-### _QueryBlobContent
+### QueryBlobContent
 
 ```yaml
 directive:
@@ -1365,7 +1365,7 @@ directive:
       }
 ```
 
-### _PutBlockList
+### PutBlockList
 
 ```yaml
 directive:
@@ -1377,7 +1377,7 @@ directive:
       $.BlockLookupList.properties["Latest"]["x-ms-xml"] = {"name": "."};
 ```
 
-### _CreatePageBlob
+### CreatePageBlob
 
 ```yaml
 directive:
@@ -1416,7 +1416,7 @@ directive:
       delete $.responses["201"].headers["Content-MD5"];
 ```
 
-### _UploadPages
+### UploadPages
 
 ```yaml
 directive:
@@ -1432,7 +1432,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
-### _UploadPagesFromUri
+### UploadPagesFromUri
 
 ```yaml
 directive:
@@ -1448,7 +1448,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
-### _ClearPages
+### ClearPages
 
 ```yaml
 directive:
@@ -1460,7 +1460,7 @@ directive:
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
 ```
 
-### _GetPageRanges
+### GetPageRanges
 
 ```yaml
 directive:
@@ -1497,7 +1497,7 @@ directive:
       }
 ```
 
-### _GetPageRangesDiff
+### GetPageRangesDiff
 
 ```yaml
 directive:
@@ -1534,7 +1534,7 @@ directive:
       }
 ```
 
-### _ResizePageBlob
+### ResizePageBlob
 
 ```yaml
 directive:
@@ -1544,7 +1544,7 @@ directive:
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
 ```
 
-### _UpdatePageBlobSequenceNumber
+### UpdatePageBlobSequenceNumber
 
 ```yaml
 directive:
@@ -1554,7 +1554,7 @@ directive:
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
 ```
 
-### _StartCopyPageBlobIncremental
+### StartCopyPageBlobIncremental
 
 ```yaml
 directive:
@@ -1564,7 +1564,7 @@ directive:
       $["x-ms-version-id"] = {"x-ms-client-name": "VersionId", "type": "string", "x-nullable": true, "description": "A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob."};
 ```
 
-### _CreateAppendBlob
+### CreateAppendBlob
 
 ```yaml
 directive:
@@ -1585,7 +1585,7 @@ directive:
       delete $.headers["Content-MD5"];
 ```
 
-### _AppendBlock
+### AppendBlock
 
 ```yaml
 directive:
@@ -1604,7 +1604,7 @@ directive:
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
-### _AppendBlockFromUri
+### AppendBlockFromUri
 
 ```yaml
 directive:
@@ -1623,7 +1623,7 @@ directive:
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
-### _UploadBlockBlob
+### UploadBlockBlob
 
 ```yaml
 directive:
@@ -1638,7 +1638,7 @@ directive:
       $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
 ```
 
-### _StageBlock
+### StageBlock
 
 ```yaml
 directive:
@@ -1653,7 +1653,7 @@ directive:
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
-### _StageBlockFromUri
+### StageBlockFromUri
 
 ```yaml
 directive:
@@ -1668,7 +1668,7 @@ directive:
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
-### _CommitBlockList
+### CommitBlockList
 
 ```yaml
 directive:
@@ -1684,7 +1684,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
-### _GetBlockList
+### GetBlockList
 
 ```yaml
 directive:
@@ -1717,7 +1717,7 @@ directive:
       };
 ```
 
-### _UploadBlockBlobFromUri
+### UploadBlockBlobFromUri
 
 ```yaml
 directive:
@@ -1737,7 +1737,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
 ```
 
-### _SetBlobImmutabilityPolicy
+### SetBlobImmutabilityPolicy
 
 ```yaml
 directive:
@@ -1756,7 +1756,7 @@ directive:
       $.headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "ImmutabilityPolicy.PolicyMode";
 ```
 
-### _SetLegalHold
+### SetLegalHold
 
 ```yaml
 directive:
@@ -1767,7 +1767,7 @@ directive:
 ```
 
 
-### _SubmitBatch
+### SubmitBatch
 
 ```yaml
 directive:

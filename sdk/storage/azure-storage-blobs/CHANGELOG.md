@@ -1,40 +1,40 @@
-# _Release History
+# Release History
 
-## _12.7.0-beta.1 (Unreleased)
+## 12.7.0-beta.1 (Unreleased)
 
-### _Features Added
+### Features Added
 
-### _Breaking Changes
+### Breaking Changes
 
-### _Bugs Fixed
+### Bugs Fixed
 
-### _Other Changes
+### Other Changes
 
-## _12.6.2 (2022-10-11)
+## 12.6.2 (2022-10-11)
 
-### _Other Changes
-
-- No public changes in this release.
-
-## _12.6.1 (2022-09-16)
-
-### _Other changes
+### Other Changes
 
 - No public changes in this release.
 
-## _12.6.0 (2022-09-06)
+## 12.6.1 (2022-09-16)
 
-### _Features Added
+### Other changes
+
+- No public changes in this release.
+
+## 12.6.0 (2022-09-06)
+
+### Features Added
 
 - Features in `12.6.0.beta.1` are now generally available.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Empty file or existing file won't be created/overwritten if the blob to be downloaded doesn't exist.
 
-## _12.6.0-beta.1 (2022-08-09)
+## 12.6.0-beta.1 (2022-08-09)
 
-### _Features Added
+### Features Added
 
 - Bumped up API version to `2021-04-10`.
 - Added support for encryption scope SAS (`ses` query parameter in SAS token).
@@ -43,25 +43,25 @@
 - Added support for tags copy mode (replace or copy from source) when copying blobs from URL.
 - Added support for permanent delete permission in SAS.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed listing blobs failure when blob name contains invalid characters in xml.
 
-## _12.5.0 (2022-08-08)
+## 12.5.0 (2022-08-08)
 
-### _Features Added
+### Features Added
 
 - Features in `12.5.0.beta1` and `12.5.0.beta2` are now generally available.
 
-## _12.5.0-beta.2 (2022-07-07)
+## 12.5.0-beta.2 (2022-07-07)
 
-### _Features Added
+### Features Added
 
 - Added support for Blob Batch.
 
-## _12.5.0-beta.1 (2022-06-07)
+## 12.5.0-beta.1 (2022-06-07)
 
-### _Features Added
+### Features Added
 
 - Bumped up API version to `2020-10-02`.
 - Added new API: `BlockBlobClient::Query()`.
@@ -69,15 +69,15 @@
 - Added support for listing system containers.
 - Added support for listing deleted root blob with active versions.
 
-## _12.4.0 (2022-04-06)
+## 12.4.0 (2022-04-06)
 
-### _Other changes
+### Other changes
 
 - No public changes in this release.
 
-## _12.4.0-beta.1 (2022-03-09)
+## 12.4.0-beta.1 (2022-03-09)
 
-### _Features Added
+### Features Added
 
 - Bumped up API version to `2020-08-04`.
 - Bumped up SAS token version to `2020-08-04`.
@@ -85,35 +85,35 @@
 - New API: `BlobClient::CopyFromUri()`, `BlobClient::SetImmutabilityPolicy()`, `BlobClient::DeleteImmutabilityPolicy()`, `BlobClient::SetLegalHold()`, `BlockBlobClient::UploadFromUri()` and `BlobServiceClient::RenameBlobContainer()`.
 - Added lease access condition support for `BlobClient::SetTags()` and `BlobClient::GetTags()`.
 
-## _12.3.0 (2022-02-14)
+## 12.3.0 (2022-02-14)
 
-### _Features Added
+### Features Added
 
 - Added `VersionId` in `SetBlobMetadataResult`.
 
-## _12.2.1 (2021-11-08)
+## 12.2.1 (2021-11-08)
 
-### _Other Changes
+### Other Changes
 
 - `DefaultEncryptionScope` and `PreventEncryptionScopeOverride` in `BlobContainerProperties` were changed to optional.
 
-## _12.2.0 (2021-09-08)
+## 12.2.0 (2021-09-08)
 
-### _Breaking Changes
+### Breaking Changes
 
 - `StartsOn` and `ExpiresOn` in `SignedIdentifier` were changed to nullable.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed a bug where prefix cannot contain `&` when listing blobs.
 
-### _Other Changes
+### Other Changes
 
 - Create less threads if there isn't too much data to transfer.
 
-## _12.1.0 (2021-08-10)
+## 12.1.0 (2021-08-10)
 
-### _Features Added
+### Features Added
 
 - Added lease ID access condition and tags access condition for `BlobClient::SetAccessTier()`.
 - Added source ETag access conditions and last-modified access conditions for `PageBlobClient::UploadPagesFromUri()`.
@@ -122,29 +122,29 @@
 - Added new fields `AccessTierChangedOn`, `ArchiveStatus`, `RehydratePriority`, `CopyId`, `CopySource`, `CopyStatus`, `CopyStatusDescription`, `IsIncrementalCopy`, `IncrementalCopyDestinationSnapshot`, `CopyProgress`, `CopyCompletedOn`, `Tags`, `DeletedOn` and `RemainingRetentionDays` into `BlobItemDetails`.
 - Added support for including blob tags when listing blobs.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
 - Fixed a bug where sequence number access conditions didn't work for page blob operations.
 - Fixed a bug where `BlobItemDetails::EncryptionKeySha256` was always null because it wasn't correctly parsed from xml.
 - Fixed a bug where `BlockBlobClient::GetBlockList` threw exception if the blob is not committed.
 
-## _12.0.1 (2021-07-07)
+## 12.0.1 (2021-07-07)
 
-### _Bug Fixes
+### Bug Fixes
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
 
-## _12.0.0 (2021-06-08)
+## 12.0.0 (2021-06-08)
 
-### _Other Changes and Improvements
+### Other Changes and Improvements
 
 - Added and updated some samples.
 - Fixed a read consistency issue.
 
-## _12.0.0-beta.11 (2021-05-19)
+## 12.0.0-beta.11 (2021-05-19)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
@@ -155,9 +155,9 @@
 - `BlobServiceClient::UndeleteBlobContainer` doesn't support restoring a deleted container under a different name anymore.
 - Changed the type of block count to `int32_t`.
 
-## _12.0.0-beta.10 (2021-04-16)
+## 12.0.0-beta.10 (2021-04-16)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `Azure::Storage::Blobs::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
@@ -172,15 +172,15 @@
 - Renamed `FilterBlobItem` to `TaggedBlobItem`.
   - `FindBlobsByTags()` now returns `FindBlobsByTagsPagedResponse` and the field `FindBlobsByTagsSinglePageResult::Items` was renamed to `FindBlobsByTagsPagedResponse::TaggedBlobs`.
 
-## _12.0.0-beta.9 (2021-03-23)
+## 12.0.0-beta.9 (2021-03-23)
 
-### _New Features
+### New Features
 
 - Added support for telemetry options.
 - Added `Azure::Storage::Blobs::PackageVersion`.
 - Added `ShareFileClient::GetRangeListDiff`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Changed the return type of `StartCopyFromUri` and `StartCopyIncremental` API from a `Response<T>` to the particular `Operation<T>` type called `StartBlobCopyOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
@@ -215,23 +215,23 @@
 - Renamed access tier members in return types and options from `Tier` to `AccessTier`.
 - Renamed `BlockListTypeOption` to `BlockListType`.
 
-## _12.0.0-beta.8 (2021-02-12)
+## 12.0.0-beta.8 (2021-02-12)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `BreakBlobLeaseResult::Leasetime`.
 - Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
 
-## _12.0.0-beta.7 (2021-02-03)
+## 12.0.0-beta.7 (2021-02-03)
 
-### _New Features
+### New Features
 
 - Added `RequestId` in API return types.
 - Added some new properties in `GetBlobPropertiesResult`, `DownloadBlobResult` and `DownloadBlobToResult`.
 - Added `RangeHashAlgorithm` in `DownloadBlobOptions`.
 - Added `UploadBlob` in `BlobContainerClient`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - `UserDelegationKey` was changed to a member of `GetUserDelegationKeyResult` rather than a typedef like before.
 - `AccessType` in `CreateBlobContainerOptions` was changed to non-nullable.
@@ -253,9 +253,9 @@
 - Removed `BlobPrefix` struct, use `std::string` instead.
 - Refined `BlobContainerItem`, `BlobItem`, `DownloadBlobResult` and `DownloadBlobToResult`.
 
-## _12.0.0-beta.6 (2021-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
-### _New Features
+### New Features
 
 - Added `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
 - Added `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
@@ -264,7 +264,7 @@
 - Added `DeleteBlob` to `BlobContainerClient`.
 - Support setting blob SAS permission with a raw string.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Renamed `AppendBlobAccessConditions::MaxSize` to `IfMaxSizeLessThanOrEqual`.
 - Renamed `AppendBlobAccessConditions::AppendPosition` to `IfAppendPositionEqual`.
@@ -330,14 +330,14 @@
 - Renamed member function `GetUri` of client types to `GetUrl`.
 - `BlobClient::GetBlockBlobClient`, `BlobClient::GetAppendBlobClient` and `BlobClient::GetPageBlobClient` are renamed to `BlobClient::AsBlockBlobClient`, `BlobClient::AsAppendBlobClient` and `BlobClient::AsPageBlobClient` respectively.
 
-## _12.0.0-beta.5 (2020-11-13)
+## 12.0.0-beta.5 (2020-11-13)
 
-### _New Features
+### New Features
 
 - Support for replaceable HTTP transport layer.
 - Add `version.hpp`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Move header `azure/storage/blobs/blob.hpp` to `azure/storage/blobs.hpp`.
 - Service API return types which are typically suffixed with `Result` are moved to the `Models` sub-namespaces and everything else from the protocol layer is made private by moving to the `Details` namespace.
@@ -345,20 +345,20 @@
 - Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead.
 - Rename `BlobSasBuilder::ToSasQueryParameters` to `BlobSasBuilder::GenerateSasToken`.
 
-### _Other Changes and Improvements
+### Other Changes and Improvements
 
 - Default uploading/downloading concurrency is changed from 1 to 5.
 - Remove support for specifying SAS version.
 
-## _1.0.0-beta.4 (2020-10-16)
+## 1.0.0-beta.4 (2020-10-16)
 
-### _New Features
+### New Features
 
 - Bump up API version to 2020-02-10.
 - Support for Last Accessting Time.
 - Add TagCount and ExpiryTime in the responses of getting properties and downloading blobs.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Variable name change: BreakContainerLeaseOptions::breakPeriod -> BreakContainerLeaseOptions::BreakPeriod.
 - Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod.
@@ -367,21 +367,21 @@
 - Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
 - Variable name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
 
-### _Bug Fixes
+### Bug Fixes
 
 - Unencoded Container/Blob name is now encoded.
 
-## _1.0.0-beta.2 (2020-09-09)
+## 1.0.0-beta.2 (2020-09-09)
 
-### _New Features
+### New Features
 
 - Support for Blob Batch.
 - Support for Blob Index.
 - Release based on azure-core_1.0.0-beta.1.
 
-## _1.0.0-beta.1 (2020-08-28)
+## 1.0.0-beta.1 (2020-08-28)
 
-### _New Features
+### New Features
 
 - Added support for Blob features:
   - BlobServiceClient::ListBlobContainersSegment

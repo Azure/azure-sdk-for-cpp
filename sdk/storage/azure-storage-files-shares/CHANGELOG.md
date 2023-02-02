@@ -1,30 +1,30 @@
-# _Release History
+# Release History
 
-## _12.4.0-beta.1 (Unreleased)
+## 12.4.0-beta.1 (Unreleased)
 
-### _Features Added
+### Features Added
 
-### _Breaking Changes
+### Breaking Changes
 
-### _Bugs Fixed
+### Bugs Fixed
 
-### _Other Changes
+### Other Changes
 
-### _Acknowledgments
+### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Storage File Shares better with their contributions to this release:
 
 - ariellink _([GitHub](https://github.com/Ariellink))_
 
-## _12.3.0 (2022-10-11)
+## 12.3.0 (2022-10-11)
 
-### _Features Added
+### Features Added
 
 - New features in `12.3.0-beta.1` are now generally available.
 
-## _12.3.0-beta.1 (2022-09-06)
+## 12.3.0-beta.1 (2022-09-06)
 
-### _Features Added
+### Features Added
 
 - Bumped up API version to `2021-06-08`.
 - Added fields `ProvisionedBandwidthMBps`, `EnabledProtocols` and `RootSquash` in `ShareItemDetails` and `ShareProperties`.
@@ -36,67 +36,67 @@ Thank you to our developer community members who helped to make Azure Storage Fi
 - Added support for specifying last written time when uploading file range.
 - Added support for specifying file changed time when creating/copying file or setting file properties.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
 
-## _12.2.1 (2022-03-09)
+## 12.2.1 (2022-03-09)
 
-### _Other Changes
+### Other Changes
 
 - Deprecated enum `LeaseDuration`, use `LeaseDurationType` instead.
 
-## _12.2.0 (2021-09-08)
+## 12.2.0 (2021-09-08)
 
-### _Breaking Changes
+### Breaking Changes
 
 - `AccessPolicy::StartsOn` and `AccessPolicy::ExpiresOn` are now nullable values.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed a bug where prefix cannot contain `&` when listing files.
 
-### _Other Changes
+### Other Changes
 
 - Create less threads if there isn't too much data to transfer.
 
-## _12.1.0 (2021-08-10)
+## 12.1.0 (2021-08-10)
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed a bug where unspecified SMB properties got overwritten rather than preserved by `SetProperties()`.
 
-## _12.0.1 (2021-07-07)
+## 12.0.1 (2021-07-07)
 
 No API changes since `12.0.0`.
 
-## _12.0.0 (2021-06-08)
+## 12.0.0 (2021-06-08)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
 
-### _Other Changes and Improvements
+### Other Changes and Improvements
 
 - Updated some samples.
 - Fixed a read consistency issue.
 
-## _12.0.0-beta.11 (2021-05-19)
+## 12.0.0-beta.11 (2021-05-19)
 
-### _New Features
+### New Features
 
 - Added `ShareDirectoryClient::ForceCloseAllHandles()` and `ShareFileClient::ForceCloseAllHandles()`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - `ShareLeaseClient::Change()` updates internal lease id.
 - `ShareItem::ShareMetadata` was renamed to `ShareItem::Metadata`.
 
-## _12.0.0-beta.10 (2021-04-16)
+## 12.0.0-beta.10 (2021-04-16)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `Azure::Storage::Files::Shares::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
@@ -108,14 +108,14 @@ No API changes since `12.0.0`.
   - `ShareFileClient::ListHandles()`.
 - Removed `ShareDirectoryClient::ForceCloseAllHandlesSinglePage()` and `ShareFileClient::ForceCloseAllHandlesSinglePage()`.
   
-## _12.0.0-beta.9 (2021-03-23)
+## 12.0.0-beta.9 (2021-03-23)
 
-### _New Features
+### New Features
 
 - Added support for telemetry options.
 - Added `Azure::Storage::Files::Shares::PackageVersion`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Changed the return type of `StartCopy` API from a `Response<T>` to the particular `Operation<T>` type called `StartFileCopyOperation` directly.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
@@ -143,13 +143,13 @@ No API changes since `12.0.0`.
 - Renamed `DeleteSnapshotsOptionType` to `DeleteSnapshotsOption`.
 - Renamed `PermissionCopyModeType` to `PermissionCopyMode`.
 
-## _12.0.0-beta.8 (2021-02-12)
+## 12.0.0-beta.8 (2021-02-12)
 
-### _New Features
+### New Features
 
 - Changed type of `FileAttributes` to extensible enum.
 
-### _Breaking Changes
+### Breaking Changes
 
 - `ListSharesSinglePageOptions::ListSharesInclude` was renamed to `ListSharesSinglePageOptions::ListSharesIncludeFlags`.
 - `DeleteShareOptions::IncludeSnapshots` was renamed to `DeleteShareOptions::DeleteSnapshots`.
@@ -176,16 +176,16 @@ No API changes since `12.0.0`.
 - Removed `LeaseTime` in results returned by lease operations. Also removed `LeaseId` in `ShareBreakLeaseResult`.
 - Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
 
-## _12.0.0-beta.7 (2021-02-04)
+## 12.0.0-beta.7 (2021-02-04)
 
-### _New Features
+### New Features
 
 - Added support for `UploadRangeFromUri` in file client.
 - Added support for `SetProperties` in share client. This API supports update share tier and adjusting share's quota.
 - Added support to get share's tier status in `ListSharesSinglePage` and `GetProperties`.
 - Added `ChangedOn`, `FileId`, `ParentId` to the `FileShareSmbProperties`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `GetDirectoryClient` and `GetFileClient` from `ShareClient`. `ShareDirectoryClient` and `ShareFileClient` now initializes with the name of the resource, not path, to indicate that no path parsing is done for the API
 - `ContentRange` in `FileDownloadResult` is now `Azure::Core::Http::Range`.
@@ -206,18 +206,18 @@ No API changes since `12.0.0`.
 - Renamed `FileProperty` to `FileItemDetails` to align with other SDK's naming pattern for returned items for list operation.
 - Renamed `ShareProperties` to `ShareItemDetails` to align with other SDK's naming pattern for returned items for list operation.
 
-### _Other Changes and Improvements
+### Other Changes and Improvements
 
 - Removed `c_` for constants and renamed to pascal format.
 
-## _12.0.0-beta.6 (2021-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
-### _New Features
+### New Features
 
 - Added support for `CreateIfNotExists` for Share and Directory clients, and `DeleteIfExists` for Share, Directory and File clients.
 - Support setting file SAS permission with a raw string.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed constructors in clients that takes a `Azure::Identity::ClientSecretCredential`.
 - Removed Share Lease related APIs such as `ShareClient::AcquireLease` and `ReleaseLease` since they are not supported in recent service versions.
@@ -236,18 +236,18 @@ No API changes since `12.0.0`.
 - Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
 - Type for ETag was changed to `Azure::Core::ETag`.
 
-## _12.0.0-beta.5 (2020-11-13)
+## 12.0.0-beta.5 (2020-11-13)
 
-### _Breaking Changes
+### Breaking Changes
 
 - `Azure::Storage::Files::Shares::Metrics::IncludeAPIs` is now renamed to `Azure::Storage::Files::Shares::Metrics::IncludeApis`, and is changed to a nullable member.
 - Moved header `azure/storage/files/shares/shares.hpp` to `azure/storage/files/shares.hpp`.
 - Moved returning model types and related functions in `Azure::Storage::Files::Shares` to `Azure::Storage::Files::Shares::Models`, and made other code private by moving it into `Azure::Storage::Files::Shares::Details`.
 - Renamed `Azure::Storage::Files::Shares::ServiceClient` to `Azure::Storage::Files::Shares::ShareServiceClient`.
 
-## _1.0.0-beta.4 (2020-10-16)
+## 1.0.0-beta.4 (2020-10-16)
 
-### _New Features
+### New Features
 
 - Service version is now 2020-02-10.
 - Added support for leasing a share:
@@ -257,7 +257,7 @@ No API changes since `12.0.0`.
   - ShareClient::BreakLease
   - ShareClient::RenewLease
 
-### _Breaking Changes
+### Breaking Changes
 
 - `CreateFromConnectionString` now accepts unencoded file and directory name.
 - Added support for getting range list with previous snapshot. `GetFileRangeListResult` now returns `std::vector<FileRange> Ranges` and `std::vector<FileRange> ClearRanges` instead of `std::vector<Range> RangeList`.
@@ -267,20 +267,20 @@ No API changes since `12.0.0`.
 - `NextMarker` is renamed to `ContinuationToken` in returned result objects.
 - `Marker` is renamed to `PreviousContinuationToken` in returned result objects.
 
-### _Bug Fixes
+### Bug Fixes
 
 - Unencoded Share/File/Directory name is now encoded.
 
-## _1.0.0-beta.2 (2020-09-09)
+## 1.0.0-beta.2 (2020-09-09)
 
-### _New Features
+### New Features
 
 - Added File SAS generation support.
 - Release based on azure-core_1.0.0-beta.1.
 
-## _1.0.0-beta.1 (2020-08-28)
+## 1.0.0-beta.1 (2020-08-28)
 
-### _New Features
+### New Features
 
 - Added support for File features:
   - ServiceClient::ListSharesSegment

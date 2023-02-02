@@ -9,11 +9,11 @@ urlFragment: attestation-samples
 
 ---
 
-# _Isolated Mode Certificate Samples for the Microsoft Azure Attestation client library for C++
+# Isolated Mode Certificate Samples for the Microsoft Azure Attestation client library for C++
 
 These code samples show how to enumerate, add and remove isolated mode management certificates using the Attestation client library.
 
-## _Sample Requirements
+## Sample Requirements
 
 These samples are written with the assumption that the following environment
 variables have been set by the user:
@@ -27,7 +27,7 @@ ATTESTATION_ISOLATED_URL instance.
 Note: The Isolated Mode Certificate samples depend on the OpenSSL library to perform basic cryptographic 
 operations on X.509 certificates.
 
-## _Samples descriptions
+## Samples descriptions
 
 The samples are structured as separate source files, one per scenario. The are:
 Sample | What it tests | Notes
@@ -35,9 +35,9 @@ Sample | What it tests | Notes
 Get_Policy_Certificates| Enumerates the policy management certificates for the specified attestation service instance. |
 Add_Policy_Certificates| Adds and removes a policy management certificates for the specified attestation service instance. |
 
-## _Additional Information
+## Additional Information
 
-## _Next Steps
+## Next Steps
 
 For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
 

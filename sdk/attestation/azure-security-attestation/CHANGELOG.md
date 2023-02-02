@@ -1,33 +1,33 @@
-# _Release History
+# Release History
 
-## _1.1.0-beta.2 (Unreleased)
+## 1.1.0-beta.2 (Unreleased)
 
-### _Features Added
+### Features Added
 
-### _Breaking Changes
+### Breaking Changes
 
-### _Bugs Fixed
+### Bugs Fixed
 
-### _Other Changes
+### Other Changes
 
-## _1.1.0-beta.1 (2022-10-11)
+## 1.1.0-beta.1 (2022-10-11)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Changed `AttestationClient::AttestTpm` to match `AttestOpenEnclave` and `AttestSgxEnclave`:
   - Added `std::vector<uint8_t>` dataToAttest parameter to the `AttestTpm()` client method.
   - Removed `Payload` in `TpmAttestationOptions`.
   - Changed `TpmResult` in `TpmAttestationResult` to type `std::vector<uint8_t>`.
 
-## _1.0.0 (2022-07-07)
+## 1.0.0 (2022-07-07)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Renamed `Version` field to `ApiVersion` and removed the `ServiceVersion` enumeration.
 
-## _1.0.0-beta.3 (2022-06-07)
+## 1.0.0-beta.3 (2022-06-07)
 
-### _Breaking Changes
+### Breaking Changes
 
 - `ValueToSend` field in `TpmAttestationOptions` becomes `Payload`.
 - `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
@@ -35,9 +35,9 @@
 - Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
 - `AttestationClient` and `AttestationAdministrationClient` creation is now done using the factory method `AttestationClient::Create()` and `AttestationAdministrationClient::Create()`. 
 
-## _1.0.0-beta.2 (2022-05-10)
+## 1.0.0-beta.2 (2022-05-10)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Renamed `AttestationOpenIdMetadata` type to `OpenIdMetadata`.
 - Renamed `AttestationSigningCertificateResult` type to `TokenValidationCertificateResult` to more accurately reflect the
@@ -65,12 +65,12 @@
   - `AttestationAdministrationClient::RemovePolicyManagementCertificate` becomes `AttestationAdministrationClient::RemoveIsolatedModeCertificate`.
 - Removed `ClientVersion` API from `AttestationClient` and `AttestationAdministrationClient`
 
-### _Other Changes
+### Other Changes
 
 - Added `Endpoint` property to `AttestationClient` and `AttestationAdministrationClient`
 
-## _1.0.0-beta.1 (2022-04-05)
+## 1.0.0-beta.1 (2022-04-05)
 
-### _Features Added
+### Features Added
 
 - Attestation Package creation

@@ -1,9 +1,9 @@
-# _Back up and restore a key
+# Back up and restore a key
 
 This sample demonstrates how to back up and restore a Key from Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
-## _Creating a KeyClient
+## Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## _Creating a key
+## Creating a key
 
 Let's create an RSA key valid for 1 year.
 If the key already exists in the Azure Key Vault, then a new version of the key is created.
@@ -37,7 +37,7 @@ rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 36
 keyClient.CreateRsaKey(rsaKey);
 ```
 
-## _Backing up a key
+## Backing up a key
 
 You might make backups in case keys get accidentally deleted.
 For long term storage, it is ideal to write the backup to a file, disk, database, etc.
@@ -47,7 +47,7 @@ For the purposes of this sample, we are storing the back up in a temporary memor
 std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).ExtractValue());
 ```
 
-## _Restoring a key
+## Restoring a key
 
 If the key is deleted for any reason, we can use the backup value to restore it in the Azure Key Vault.
 
@@ -55,7 +55,7 @@ If the key is deleted for any reason, we can use the backup value to restore it 
 auto restoredKey = keyClient.RestoreKeyBackup(inMemoryBackup).ExtractValue();
 ```
 
-## _Source
+## Source
 
 To see the full example source, see:
 

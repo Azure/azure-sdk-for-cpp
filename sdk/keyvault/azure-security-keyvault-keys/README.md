@@ -1,4 +1,4 @@
-# _Azure Key Vault key client library for C++
+# Azure Key Vault key client library for C++
 
 Azure Key Vault is a cloud service that provides secure storage of keys for encrypting your data.
 Multiple keys, and multiple versions of the same key, can be kept in the Azure Key Vault.
@@ -11,9 +11,9 @@ The Azure Key Vault keys library client supports RSA keys and Elliptic Curve (EC
 
 [Source code][key_client_src] | [VCPKG][key_client_vcpkg_package] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs] | [Samples][key_client_samples]
 
-## _Getting started
+## Getting started
 
-### _Include the package
+### Include the package
 
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
@@ -30,14 +30,14 @@ find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys)
 ```
 
-### _Prerequisites
+### Prerequisites
 
 - An [Azure subscription][azure_sub].
 - An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
 
 See the final two steps in the next section for details on creating the Key Vault with the Azure CLI.
 
-### _Authenticate the client
+### Authenticate the client
 
 In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient][key_client_class] class. You need a **vault URL**, which you may see as "DNS Name" in the portal,
 and **client secret credentials (client ID, client secret, tenant ID)** to instantiate a client object.
@@ -46,14 +46,14 @@ Client Secret Credential authentication is being used in this Getting Started se
 or other credential providers provided with the Azure SDK, you should install the Azure Identity package:
 
 ```PowerShell
-# _Windows
+# Windows
 vcpkg.exe install azure-identity-cpp
 
-# _Linux
+# Linux
 ./vcpkg install azure-identity-cpp
 ```
 
-#### _Create/Get credentials
+#### Create/Get credentials
 
 Use the [Azure CLI][azure_cli] snippet below to create/get client secret credentials.
 
@@ -120,7 +120,7 @@ If you are creating a Managed HSM resource, use the following CLI command:
     az keyvault create --hsm-name <your-key-vault-name> --resource-group <your-resource-group-name> --administrators <your-service-principal-object-id> --location <your-azure-location>
 ```
 
-#### _Activate your managed HSM
+#### Activate your managed HSM
 
 This section only applies if you are creating a Managed HSM. All data plane commands are disabled until the HSM is activated. You will not be able to create keys or assign roles.
 Only the designated administrators that were assigned during the create command can activate the HSM. To activate the HSM you must download the security domain.
@@ -149,7 +149,7 @@ The example below uses 3 RSA key pairs (only public keys are needed for this com
 az keyvault security-domain download --hsm-name <your-key-vault-name> --sd-wrapping-keys ./certs/cert_0.cer ./certs/cert_1.cer ./certs/cert_2.cer --sd-quorum 2 --security-domain-file ContosoMHSM-SD.json
 ```
 
-#### _Create KeyClient
+#### Create KeyClient
 
 Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI, you can create the [KeyClient][key_client_class]:
 
@@ -166,7 +166,7 @@ client.CreateKey("key-name", KeyVaultKeyType::Rsa);
 key = client.GetKey("key-name");
 ```
 
-#### _Create CryptographyClient
+#### Create CryptographyClient
 
 Once you've created a `KeyVaultKey` in the Azure Key Vault, you can also create the [CryptographyClient][crypto_client_class]:
 
@@ -177,25 +177,25 @@ auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 CryptographyClient cryptoClient(key.Id, credential);
 ```
 
-## _Key concepts
+## Key concepts
 
-### _KeyVaultKey
+### KeyVaultKey
 
 Azure Key Vault supports multiple key types and algorithms, and enables the use of hardware security modules (HSM) for high value keys.
 
-### _KeyClient
+### KeyClient
 
 A `KeyClient` providing synchronous operations exists in the SDK. Once you've initialized a `KeyClient`, you can interact with the primary resource types in Azure Key Vault.
 
-### _CryptographyClient
+### CryptographyClient
 
 A `CryptographyClient` providing synchronous operations exists in the SDK. Once you've initialized a `CryptographyClient`, you can use it to perform cryptographic operations with keys stored in Azure Key Vault.
 
-### _Thread safety
+### Thread safety
 
 We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
 
-### _Additional concepts
+### Additional concepts
 
 <!-- CLIENT COMMON BAR -->
 
@@ -204,13 +204,13 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 <!-- CLIENT COMMON BAR -->
 
-## _Examples
+## Examples
 
 The Azure.Security.KeyVault.Keys package supports synchronous APIs.
 
 The following section provides several code snippets using the `client` [created above](#create-keyclient), covering some of the most common Azure Key Vault key service related tasks:
 
-### _Examples
+### Examples
 
 - [Create a key](#create-a-key)
 - [Retrieve a key](#retrieve-a-key)
@@ -220,7 +220,7 @@ The following section provides several code snippets using the `client` [created
 - [List Keys](#list-keys)
 <!-- - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
 
-#### _Create a key
+#### Create a key
 
 Create a key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
 
@@ -249,7 +249,7 @@ std::cout << ecKey.Name();
 std::cout << ecKey.KeyType.ToString();
 ```
 
-#### _Retrieve a key
+#### Retrieve a key
 
 `GetKey` retrieves a key previously stored in the Azure Key Vault.
 
@@ -260,7 +260,7 @@ std::cout << key.Name();
 std::cout << key.KeyType.ToString();
 ```
 
-#### _Update an existing key
+#### Update an existing key
 
 `UpdateKeyProperties` updates a key previously stored in the Azure Key Vault.
 
@@ -277,7 +277,7 @@ std::cout << updatedKey.Properties.Version;
 std::cout << updatedKey.Properties.UpdatedOn->ToString();
 ```
 
-#### _Delete a key
+#### Delete a key
 
 `StartDeleteKey` starts a long-running operation to delete a key previously stored in the Azure Key Vault.
 You can retrieve the key immediately without waiting for the operation to complete.
@@ -291,7 +291,7 @@ std::cout << key.Name();
 std::cout << key.DeletedOn->ToString();
 ```
 
-#### _Delete and purge a key
+#### Delete and purge a key
 
 You will need to wait for the long-running operation to complete before trying to purge or recover the key.
 
@@ -310,7 +310,7 @@ DeletedKey key = operation.Value();
 client.PurgeDeletedKey(key.Name());
 ```
 
-#### _List Keys
+#### List Keys
 
 This example lists all the keys in the specified Azure Key Vault.
 
@@ -326,9 +326,9 @@ for (auto keys = client.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPa
     }
 ```
 
-## _Troubleshooting
+## Troubleshooting
 
-### _General
+### General
 
 When you interact with the Azure Key Vault key client library using the C++ SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][keyvault_rest] requests.
 
@@ -372,7 +372,7 @@ Headers:
     Expires: -1
 ```
 
-## _Next steps
+## Next steps
 
 Several Azure Key Vault keys client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
@@ -413,13 +413,13 @@ Several Azure Key Vault keys client library samples are available to you in this
   - Apply rotation policy
   - Rotate key
 
-### _Additional Documentation
+### Additional Documentation
 
 - For more extensive documentation on Azure Key Vault, see the [API reference documentation][keyvault_rest].
 <!-- - For Secrets client library see [Secrets client library][secrets_client_library].
 - For Certificates client library see [Certificates client library][certificates_client_library]. -->
 
-## _Contributing
+## Contributing
 
 See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to these libraries.
 

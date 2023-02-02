@@ -1,9 +1,9 @@
-# _Creating, getting, updating, and deleting secrets
+# Creating, getting, updating, and deleting secrets
 
 This sample demonstrates how to create, get, update, and delete and purge a secret in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
-## _Creating a SecretClient
+## Creating a SecretClient
 
 To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## _Creating a Secret
+## Creating a Secret
 
 Call SetSecret to create a new secret with name and secret value.
 
@@ -35,7 +35,7 @@ std::string secretValue("my secret value");
 secretClient.SetSecret(secretName, secretValue);
 ```
 
-## _Getting a Secret
+## Getting a Secret
 
 Call GetSecret to retrieve a secret from Key Vault.
 
@@ -46,7 +46,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
           << std::endl;
 ```
 
-## _Updating secret properties
+## Updating secret properties
 
 Call UpdateSecretProperties to change on of the secret properties.
 
@@ -61,7 +61,7 @@ std::cout << "Secret's content type is now " << updatedSecret.Properties.Content
           << std::endl;
 ```
 
-## _Deleting a secret
+## Deleting a secret
 
 Call StartDeleteSecret to delete a secret. This is a long running operation.
 
@@ -70,7 +70,7 @@ Call StartDeleteSecret to delete a secret. This is a long running operation.
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-## _Purging a deleted secret
+## Purging a deleted secret
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
 
@@ -82,7 +82,7 @@ operation.PollUntilDone(2s);
 secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
-## _Source
+## Source
 
 To see the full example source, see:
 [Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample1-basic-operations)

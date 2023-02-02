@@ -1,14 +1,14 @@
-# _Performance Testing
+# Performance Testing
 
-## _Writing a test 
+## Writing a test 
 
 Adding tests , at the moment relies in making modifications in a couple of repositories. 
 
-## _Azure-SDK-For-Cpp repo
+## Azure-SDK-For-Cpp repo
 
 E.G. https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs 
 
-### _Location
+### Location
 
 Performance tests are located under **"test/perf"** folder under the service folder(e.g. alongside ut folder).
 
@@ -24,11 +24,11 @@ E.G.
 
 ```
 
-### _Structure
+### Structure
 
 As any other CPP project you will need a **CMakeLists.txt** file , along side **src** and **inc** folders
 
-#### _Contents of the **inc** directory
+#### Contents of the **inc** directory
 
 Under inc folder create a subfolder structure following your namespace hierarchy ending with another test folder since these are in the ...Test namespace.
 
@@ -36,7 +36,7 @@ E.G. test/perf/inc/azure/storage/blobs/test
 
 The tests are defined in .hpp files under this folder. 
 
-##### _Test definition
+##### Test definition
 
 In a .hpp file we define a class that will be contain the tests methods. The class is defined in the ::Test namespace for your service. 
 
@@ -50,7 +50,7 @@ The class will inherit from the **PerfTest** base  class and will override sever
 - static Azure::Perf::TestMetadata GetTestMetadata()
   Returns TestMetadate object used to identify the test. 
 
-#### _Contents of the **src** directory
+#### Contents of the **src** directory
 
 Contains one cpp file that contains the main method defintion 
 
@@ -69,7 +69,7 @@ Contains one cpp file that contains the main method defintion
     }
 ```
 
-#### _CMakeLists.txt
+#### CMakeLists.txt
 
 Beyond the regular cmake defintion in your cmake file make sure to add 
 
@@ -85,7 +85,7 @@ The crucial part here is the SETPERFDEPS cmake macro.
 The perf framework will set an environment variable based on the service name with the value representing a version, thus allowing to run the tests against diffrent VCPKG published versions. If the env is not defined then the test will build against the current source code of the service. 
 There can be multiple set perf for each dependency of the service ( e.g. identity, storage). 
 
-## _Pipeline definition
+## Pipeline definition
 The file should be named `perf.yml`, and should be located in the service directory that is to be tested, for consistency and to keep service related resources in the service folder. 
 
 ```yml
@@ -127,7 +127,7 @@ extends:
         displayName: Set Vcpkg Variables
 
     EnvVars: 
-      # _This is set in the InstallLanguageSteps 
+      # This is set in the InstallLanguageSteps 
       VCPKG_BINARY_SOURCES_SECRET: $(VCPKG_BINARY_SOURCES_SECRET)
   
 ```
@@ -138,32 +138,32 @@ The fields of interest here are the parameters:
 - ServiceDirectory which represents the root folder of the service
 - Services which represents the services which these tests target. 
   
-## _Resources
+## Resources
 
 If the tests require certain resources to exist beforehand the pipeline can deploy them based on the presence of the **perf-resources.bicep** file which will be used to deploy the required resources defined within. 
 
-## _Azure-SDK-Tools repo
+## Azure-SDK-Tools repo
 
-## _Location 
+## Location 
 
 The performance automation is located under azure-sdk-tools\tools\perf-automation\Azure.Sdk.Tools.PerfAutomation folder. 
 (https://github.com/Azure/azure-sdk-tools/tree/main/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation) 
 
-## _Test definition
+## Test definition
 
 in the above mentioned folder resided the test defintion file "tests.yml". 
 
-### _The tests exists in other languages
+### The tests exists in other languages
 
 If the test exists in other languages then making the CPP version visible to the framework requires adding an entry with the name **CPP** under **Service**/**Languages**  followed by the packages and versions available for the testing(this ties into the CMakeLists SetPerfDeps macro).
 
 Next under the **Tests**/**Test** node with the desired name add the CPP test name. In this section mind the aArguments list , this ies with the regex in the cpp sdk pipeline.yml definition. 
 
-### _The test does not exist in other languages
+### The test does not exist in other languages
 
 In this case you are the first to add the required nodes. The defintion is fairly simple and straightforward. 
 
-## _Pipeline
+## Pipeline
 
 Once you have everything in place create a pipeline using the definition in your in the cpp repo by going to https://dev.azure.com/azure-sdk/internal/_build?definitionScope=%5Cperf and create a new one under the cpp node. 
 

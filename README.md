@@ -1,10 +1,10 @@
-# _Azure SDK for C++
+# Azure SDK for C++
 
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&branchName=main)
 
 This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our [developer docs](https://azure.github.io/azure-sdk-for-cpp).
 
-## _Getting started
+## Getting started
 
 For the best development experience, we recommend developers use [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
 
@@ -12,15 +12,15 @@ You can find additional information for specific libraries by navigating to the 
 
 For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure SDK for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
 
-### _Download & Install the SDK
+### Download & Install the SDK
 
 Here are some alternatives, from easiest to advanced, how you can get, build and integrate Azure SDK clients to your application.
 
-#### _CMake Project + Vcpkg - manifest mode
+#### CMake Project + Vcpkg - manifest mode
 
 The easiest way to acquire the C++ SDK is leveraging [vcpkg](https://github.com/microsoft/vcpkg#getting-started) package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
 
-##### _1. Create a [CMake](https://cmake.org/cmake/help/latest/) project
+##### 1. Create a [CMake](https://cmake.org/cmake/help/latest/) project
 
 CMake will take care of cross-operating system support.
 
@@ -40,7 +40,7 @@ Install the VSCode extensions: [CMake](https://marketplace.visualstudio.com/item
 
 > You can also manually create the root `CMakeLists.txt` with your own initial configuration and source.
 
-##### _2. Link the Vcpkg toolchain file to your CMake project
+##### 2. Link the Vcpkg toolchain file to your CMake project
 
 Azure SDK provides a CMake module that you can use for your application. You only need to create a folder called _cmake-modules_ on the top level of your CMake project and copy [AzureVcpkg.cmake](https://github.com/Azure/azure-sdk-for-cpp/blob/main/cmake-modules/AzureVcpkg.cmake) to this folder.
 
@@ -53,13 +53,13 @@ The AzureVcpkg module supports three scenarios:
 Add the next lines to your root `CMakeLists.txt` to use `AzureVcpkg.cmake` module:
 
 ```cmake
-# _Add this lines on the top, before the call to `project(name VERSION 0.0.0)
+# Add this lines on the top, before the call to `project(name VERSION 0.0.0)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 include(AzureVcpkg)
 az_vcpkg_integrate()
 ```
 
-##### _3. Add Vcpkg manifest
+##### 3. Add Vcpkg manifest
 
 Add a new file called `vcpkg.json` on the root of your CMake project and add the Azure SDK clients you want to use in your application. For example, the next manifest defines Azure Identity and Blobs.
 
@@ -74,7 +74,7 @@ Add a new file called `vcpkg.json` on the root of your CMake project and add the
 }
 ```
 
-##### _4. Link Azure SDK libraries to your application
+##### 4. Link Azure SDK libraries to your application
 
 Add the next lines to your `CMakeLists.txt` file. It must be added after the cmake target name is defined.
 
@@ -87,12 +87,12 @@ target_link_libraries(quick-sample PRIVATE Azure::azure-identity Azure::azure-st
 > See the list of available SDK clients for C++ [here](https://azure.github.io/azure-sdk/releases/latest/cpp.html)
 
 
-##### _5. Generate project and compile
+##### 5. Generate project and compile
 
 At this point, you can press F7 on Visual Studio or VSCode to generate and build the project. Or you can also run the following commands from a command line:
 
 ```bash
-# _Create a build folder (if there's not one already there)
+# Create a build folder (if there's not one already there)
 mkdir build
 cd build
 cmake ..
@@ -101,18 +101,18 @@ cmake --build .
 
 > Using Vcpkg manifest makes easy to define multiple dependencies and delegate building them to Vcpkg.
 
-#### _CMake Project + fetch content
+#### CMake Project + fetch content
 
 For this scenario, CMake will fetch the Azure SDK source code and make it part of your project. THe SDK client libraries will be compiled at the same time as your application.
 
 Follow the step 1 from above to create a CMake project first.
 
-###### _2. Define CMake fetch content
+###### 2. Define CMake fetch content
 
 Add the following code to your root `CMakeLists.txt` file:
 
 ```cmake
-# _Add this code before creating and linking your application
+# Add this code before creating and linking your application
 
 include(FetchContent)
 FetchContent_Declare(
@@ -123,19 +123,19 @@ FetchContent_Declare(
 FetchContent_GetProperties(azuresdk)
 if(NOT azuresdk_POPULATED)
     FetchContent_Populate(azuresdk)
-    # _Adding all Azure SDK libraries
+    # Adding all Azure SDK libraries
     add_subdirectory(${azuresdk_SOURCE_DIR} ${azuresdk_BINARY_DIR} EXCLUDE_FROM_ALL)
-    # _Adding one Azure SDK Library only (Storage blobs)
-    # _add_subdirectory(${azuresdk_SOURCE_DIR}/sdk/storage/azure-storage-blobs ${azuresdk_BINARY_DIR} EXCLUDE_FROM_ALL)
+    # Adding one Azure SDK Library only (Storage blobs)
+    # add_subdirectory(${azuresdk_SOURCE_DIR}/sdk/storage/azure-storage-blobs ${azuresdk_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 ```
 
-##### _3. Link Azure SDK libraries to your application
+##### 3. Link Azure SDK libraries to your application
 
 The only difference from the previous scenario is that you don't need to call `find_package()`, since the cmake targets are integrated to your project. So you only need:
 
 ```cmake
-# _After creating the cmake target
+# After creating the cmake target
 target_link_libraries(quick-sample PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
 ```
 
@@ -145,17 +145,17 @@ Use step 5 from previous scenario to generate and build your project.
 
 > This scenario requires extra manual configuration to get dependencies, but it is useful as an alternative when Vcpkg is not available
 
-#### _Other combinations
+#### Other combinations
 
 It should be possible to create your application without a CMake project. For example, manually cloning Azure SDK, building libraries and finally linking them to your application. However, this is considered an advanced scenario and it is not either described or maintained (The other scenarios described below are validated with CI pipelines).
 
-#### _Getting Beta Releases in Vcpkg
+#### Getting Beta Releases in Vcpkg
 
 Official vcpkg registry may have beta versions of Azure SDK client libraries, up until a given library gets released as stable. After that, we don't publish post-first-stable beta releases of that library in the official registry.
 
 If you are interested in both stable releases and post-first-stable beta releases, see [Azure SDK Beta Vcpkg Registry](https://github.com/Azure/azure-sdk-vcpkg-betas/). You can update the `AzureVcpkg.cmake` module to use the beta registry.
 
-#### _Using the SDK within your Application
+#### Using the SDK within your Application
 
 The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
 
@@ -213,7 +213,7 @@ int main()
 }
 ```
 
-#### _Key Core concepts
+#### Key Core concepts
 
 Understanding the key concepts from the `Azure Core` library, which is leveraged by all client libraries is helpful in getting started, regardless of which Azure service you want to use.
 
@@ -228,7 +228,7 @@ The main shared concepts of `Azure Core` include:
 - HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
 - Replaceable HTTP transport layer to send requests and receive responses over the network.
 
-#### _`Response <T>` Model Types
+#### `Response <T>` Model Types
 
 Many client library operations **return** the templated `Azure::Core::Response<T>` type from the API calls. This type let's you get the raw HTTP response from the service request call the Azure service APIs make, along with the result of the operation to get more API specific details. This is the templated `T` operation result which can be extracted from the response, using the `Value` field.
 
@@ -244,7 +244,7 @@ Many client library operations **return** the templated `Azure::Core::Response<T
   std::cout << "The size of the blob is: " << propertiesModel.BlobSize << std::endl;
 ```
 
-#### _Long Running Operations
+#### Long Running Operations
 
 Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
 
@@ -268,11 +268,11 @@ You can intermittently poll whether the operation has finished by using the `Pol
   }
 ```
 
-#### _Interacting with Azure SDK for C++
+#### Interacting with Azure SDK for C++
 
 Static SDK members should not be accessed and SDK functions should not be called before the static initialization phase is finished.
 
-#### _Visual Studio - CMakeSettings.json
+#### Visual Studio - CMakeSettings.json
 
 When building your application via Visual Studio, you can create and update a `CMakeSettings.json` file and include the following properties to let Visual Studio know where the packages are installed and which triplet needs to be used:
 
@@ -293,11 +293,11 @@ When building your application via Visual Studio, you can create and update a `C
 }
 ```
 
-### _Azure Requirements
+### Azure Requirements
 
 To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 
-## _Packages available
+## Packages available
 
 Each service might have a number of libraries available. These libraries follow the [Azure SDK Design Guidelines for C++](https://azure.github.io/azure-sdk/cpp_introduction.html) and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at [Azure::Core](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/README.md).
 
@@ -307,7 +307,7 @@ For a complete list of available packages, please see the [latest available pack
 
 > NOTE: If you need to ensure your code is ready for production we strongly recommend using one of the stable, non-beta libraries.
 
-### _Vcpkg
+### Vcpkg
 
 The following SDK library releases are available on [vcpkg](https://github.com/microsoft/vcpkg):
 
@@ -324,7 +324,7 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 
 > NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://github.com/microsoft/vcpkg/blob/master/docs/users/triplets.md) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 
-## _OpenSSL Version
+## OpenSSL Version
 
 Several packages within the Azure SDK for C++ use the OpenSSL library. By default, the Azure SDK will use whatever the most recent version of OpenSSL is within the VCPKG repository.
 
@@ -359,24 +359,24 @@ In addition, if you need to consume OpenSSL from a dynamic linked library/shared
 entries.Set the VCPKG_you can set the environment variable to `x64-windows-static` or `x64-windows-dynamic` depending on whether you want to use the static or dynamic version of OpenSSL. 
 Similarly you can use the x64-linux-dynamic and x64-linux-static triplet to specify consumption of libraries as a shared object or dynamic.
 
-## _Need help
+## Need help
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
 - For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
 - File an issue via [GitHub Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
-## _Navigating the repository
+## Navigating the repository
 
-### _Main branch
+### Main branch
 
 The main branch has the most recent code with new features and bug fixes. It does **not** represent latest released **beta** or **GA** SDK.
 
-### _Release branches (Release tagging)
+### Release branches (Release tagging)
 
 For each package we release there will be a unique Git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
 Format of the release tags are `<package-name>_<package-version>`. For more information please see [our branching strategy](https://github.com/Azure/azure-sdk/blob/main/docs/policies/repobranching.md#release-tagging).
 
-## _Contributing
+## Contributing
 
 For details on contributing to this repository, see the [contributing guide](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md).
 
@@ -386,7 +386,7 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### _Additional Helpful Links for Contributors
+### Additional Helpful Links for Contributors
 
 Many people all over the world have helped make this project better.  You'll want to check out:
 
@@ -395,16 +395,16 @@ Many people all over the world have helped make this project better.  You'll wan
 - [How you can make a change happen!](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests)
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### _Community-->
-### _Reporting security issues and security bugs
+<!-- ### Community-->
+### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### _License
+### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 
-### _Trademarks
+### Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
 

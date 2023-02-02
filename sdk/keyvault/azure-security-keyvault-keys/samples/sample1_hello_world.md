@@ -1,9 +1,9 @@
-# _Creating, getting, updating, and deleting keys
+# Creating, getting, updating, and deleting keys
 
 This sample demonstrates how to create, get, update, and delete a key in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
-## _Creating a KeyClient
+## Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## _Creating a key
+## Creating a key
 
 Let's create an RSA key valid for 1 year.
 If the key already exists in the Azure Key Vault, then a new version of the key is created.
@@ -37,7 +37,7 @@ rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 36
 keyClient.CreateRsaKey(rsaKey);
 ```
 
-## _Getting a key
+## Getting a key
 
 Let's get the cloud RSA key from the Azure Key Vault.
 
@@ -48,7 +48,7 @@ std::cout << "Key is returned with name " << cloudRsaKey.Name() << " and type "
 
 ```
 
-## _Updating key properties
+## Updating key properties
 
 After one year, the cloud RSA key is still required, so we need to update the expiry time of the key.
 The update method can be used to update the expiry attribute of the key.
@@ -61,7 +61,7 @@ std::cout << "Key's updated expiry time is " << updatedKey.Properties.ExpiresOn-
             << std::endl;
 ```
 
-## _Updating a key size
+## Updating a key size
 
 We need the cloud RSA key with bigger key size, so you want to update the key in Azure Key Vault to ensure it has the required size.
 Calling `CreateRsaKey` on an existing key creates a new version of the key in the Azure Key Vault with the new specified size.
@@ -74,7 +74,7 @@ newRsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 *
 keyClient.CreateRsaKey(newRsaKey);
 ```
 
-## _Deleting a key
+## Deleting a key
 
 The cloud RSA key is no longer needed, so we need to delete it from the Key Vault.
 
@@ -82,7 +82,7 @@ The cloud RSA key is no longer needed, so we need to delete it from the Key Vaul
 DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
 ```
 
-## _Purging a deleted key
+## Purging a deleted key
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the key before its `ScheduledPurgeDate`,
 the deleted key needs to be purged. Before it can be purged, you need to wait until the key is fully deleted.
@@ -94,7 +94,7 @@ operation.PollUntilDone(std::chrono::milliseconds(2000));
 keyClient.PurgeDeletedKey(rsaKeyName);
 ```
 
-## _Source
+## Source
 
 - [sample1_hello_world.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample1-hello-world/sample1_hello_world.cpp)
 

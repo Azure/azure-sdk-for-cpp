@@ -1,10 +1,10 @@
-# _Operation\<T>
+# Operation\<T>
 
 The Azure SDK for C++ defines an Operation as an abstract class to support a long running operation ([LRO](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations)).
 
 The SDK clients would define a concrete class from the `Operation<T>` which an end users can consume for getting the status of the running operation.
 
-## _Operation Status
+## Operation Status
 
 The status of the operation defines the stages which the operation can be in from its creation to completion. The following table shows the supported status of an `Operation<T>`.
 
@@ -18,11 +18,11 @@ The status of the operation defines the stages which the operation can be in fro
 
 > Note: A terminal stage means that the status won't change anymore.
 
-## _Consuming an Operation\<T>
+## Consuming an Operation\<T>
 
 Concrete classes derived from `Operation<T>` expose both `Poll()` and `PollUntilDone()` methods. `PollUntilDone()` returns only after operation has run to completion (success, failure or cancelled). Each call to `Poll()` sends a request to the service once time to check the status of the operation; each call to `Poll()` updates the `operation status`.
 
-### _PollUntilDone
+### PollUntilDone
 
 `PollUntilDone()` repeatedly calls `Poll()` until the operation reaches a terminal stage ans either returns the final result (if the operation succeeds) or throws an exception (if the operation fails).
 
@@ -51,7 +51,7 @@ catch (Azure::Core::RequestFailedException const& e)
 }
 ```
 
-### _Poll
+### Poll
 
 The `Poll()` method sends a request to the service to get the current status of the long-running operation (LRO).
 
@@ -91,7 +91,7 @@ if (!operationResult.HasValue())
 auto valueT = operationResult.Value();
 ```
 
-## _Operation\<T> lifetime
+## Operation\<T> lifetime
 
 The `Operation<T>` holds an HTTP raw response. Each Operation\<T> derived class defines the moment when the HTTP raw response is moved to the Operation. This means that an Operation can be created without initially holding an HTTP raw response. In this case, calling `GetRawResponse` method from the Operation will `throw` as no HTTP raw response has been set for it yet.
 

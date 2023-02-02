@@ -1,4 +1,4 @@
-# _Stress Test
+# Stress Test
 
 ## Dependencies
 Adding a stress test requires the following tools installed:

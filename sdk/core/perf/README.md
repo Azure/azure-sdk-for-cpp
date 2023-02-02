@@ -1,18 +1,18 @@
-# _Azure SDK Perf for C++
+# Azure SDK Perf for C++
 
 Azure perf for C++ (`azure-perf`) provides shared primitives, abstractions, and helpers for running performance tests for an Azure SDK clients for C++. It represent the C++ version of the [.NET original version](https://github.com/Azure/azure-sdk-for-net/tree/main/common/Perf).
 
-## _Getting started
+## Getting started
 
 See the [pre-requisites](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pre-requisites) for building before going to the next step.
 
-### _Build
+### Build
 
 Use the build option `BUILD_PERFORMANCE_TESTS` to build the test framework and all the performance tests. See the next example.
 
 ```bash
 #
-# _Building the Performance framework and tests.
+# Building the Performance framework and tests.
 #
 git clone https://github.com/Azure/azure-sdk-for-cpp.git
 cd azure-sdk-for-cpp
@@ -22,21 +22,21 @@ cmake -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON ..
 cmake --build .
 ```
 
-### _Run
+### Run
 
 Once building is completed, a performance test application will be created inside the the test folder from each service SDK. For instance, the Azure core performance test application would be inside: `build/sdk/core/azure-core/test/perf`. See next example for running the performance framework.
 
 ```bash
 #
-# _Running the performance framework tests application
+# Running the performance framework tests application
 #
-# _From within the build folder (build)
+# From within the build folder (build)
 ./sdk/core/perf/test/azure-perf-test
 ```
 
 >Note: When building the code with Windows using Visual Studio, use the [CMake project view](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=msvc-160) to run the performance tests. Find the tests directly in the tests folder from the cmake tree next to all other test cmake projects.
 
-#### _Options for running
+#### Options for running
 
 After running the performance test application like it is mentioned above (without any command line arguments) the application will list the available test names to be run. The application will expect the test name to be executed as a mandatory argument. If the input test name is not found, the application will return an error and will terminate. The next pattern represents the right usage of the performance test application:
 ```bash
@@ -61,41 +61,41 @@ The next options can be used for any test:
 | Rate       | -r, --rate       | Target throughput (ops/sec)                      | NA    | -r 3000
 | Warm up    | -w, --warmup     | Duration of warmup in seconds                    | 5     | -w 0 (no warm up)
 
-## _Creating a perf test
+## Creating a perf test
 
 Find below how to create a new CMake performance test project from scratch to an existing CMake project. Then how to add the performance tests to it.
 
-### _The CMake project
+### The CMake project
 
 The main CMake project represents the definition of the main performance test application. It defines the name of the binary to be produced and the libraries to be linked to it. The recommended folder where this project should be is inside the `test` folder from a service package (i.e. sdk/core/azure-core/test/performance).
 
 Follow the next template to create the main CMake project
 ```cmake
-# _Copyright (c) Microsoft Corporation. All rights reserved.
-# _SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
 
-# _Configure CMake project.
+# Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(provide-a-project-name-here LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# _Name the binary to be created.
+# Name the binary to be created.
 add_executable (
   azure-performance-library-name-test
     src/main.cpp
 )
 
-# _Include the headers from the project.
+# Include the headers from the project.
 target_include_directories(
   azure-performance-library-name-test
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
 
-# _link the `azure-perf` lib together with any other library which will be used for the tests. Below example is using azure-core only.
+# link the `azure-perf` lib together with any other library which will be used for the tests. Below example is using azure-core only.
 target_link_libraries(azure-performance-library-name-test PRIVATE azure-core azure-perf)
-# _Make sure the project will appear in the test folder for Visual Studio CMake view
+# Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-performance-library-name-test PROPERTIES FOLDER "Tests")
 
 ```
@@ -104,7 +104,7 @@ set_target_properties(azure-performance-library-name-test PROPERTIES FOLDER "Tes
 >- Create the `src` and `inc` folders.
 >- Add a `main.cpp` file to the `src` folder.
 
-### _The `main.cpp`
+### The `main.cpp`
 
 The main source file defines the list of available tests and calls the performance framework `Run` function. Take a loop to the next example.
 
@@ -164,7 +164,7 @@ The `Run` method from the performance framework will parse the command line argu
 
 In the above code example, the two tests added to the `map` are defined in the project headers. Each test is defined in its own header. See below example for how to define a test.
 
-### _Create a performance test
+### Create a performance test
 
 The next code example illustrates how to define a very simple empty test.
 
@@ -205,7 +205,7 @@ namespace Azure { namespace Perf { namespace Test {
 
 ```
 
-### _Create a performance test with options
+### Create a performance test with options
 
 A test can define its own options as an addition to the base options from the performance framework. See the next example to learn how to do it.
 
@@ -266,7 +266,7 @@ namespace Azure { namespace Perf { namespace Test {
 ```
 
 
-## _Contributing
+## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -281,7 +281,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### _Additional Helpful Links for Contributors
+### Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -289,10 +289,10 @@ Many people all over the world have helped make this project better.  You'll wan
 * [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 * Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-### _Reporting security issues and security bugs
+### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### _License
+### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.

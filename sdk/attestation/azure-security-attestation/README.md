@@ -1,5 +1,5 @@
 <!-- cspell:words opentelemetry -->
-# _Azure Attestation Package client library for C++
+# Azure Attestation Package client library for C++
 
 Microsoft Azure Attestation is a unified solution for remotely verifying the trustworthiness of a platform and integrity of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
 
@@ -10,11 +10,11 @@ Azure Attestation enables cutting-edge security paradigms such as Azure Confiden
 
 Azure Attestation receives evidence from compute entities, turns them into a set of claims, validates them against configurable policies, and produces cryptographic proofs for claims-based applications (for example, relying parties and auditing authorities).
 
-## _Getting started
+## Getting started
 
 For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
 
-### _Prerequisites
+### Prerequisites
 
 - [Azure Subscription][azure_subscription]. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 - An existing [Azure Attestation instance][azure_attestation]. If you need to create an attestation instance, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-instance-name>` with your own, unique names:
@@ -23,11 +23,11 @@ For the best development experience, we recommend that developers use the [CMake
 az attestation create --resource-group <your-resource-group-name> --name <your-service instance name>
 ```
 
-### _Download & Install
+### Download & Install
 
-### _Install Dependencies
+### Install Dependencies
 
-#### _Windows
+#### Windows
 
 On Windows, dependencies are managed by [vcpkg](https://github.com/microsoft/vcpkg). You can reference the [Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) to quickly set yourself up.
 After Vcpkg is initialized and bootstrapped, you can install the dependencies:
@@ -37,7 +37,7 @@ vcpkg.exe install curl:x64-windows-static
 vcpkg.exe install openssl:x64-windows-static
 ```
 
-#### _POSIX Platforms
+#### POSIX Platforms
 
 You can use the package manager on different POSIX platforms to install the dependencies. The dependencies to be installed are:
 
@@ -45,7 +45,7 @@ You can use the package manager on different POSIX platforms to install the depe
 - OpenSSL.
 - libcurl.
 
-### _Build from Source
+### Build from Source
 
 First, download the repository to your local folder:
 
@@ -53,9 +53,9 @@ First, download the repository to your local folder:
 git clone https://github.com/Azure/azure-sdk-for-cpp.git
 ```
 
-#### _Windows
+#### Windows
 
-##### _Use CMake to generate the solution file
+##### Use CMake to generate the solution file
 
 In a new folder you created under the root directory:
 
@@ -66,7 +66,7 @@ cmake --build .
 
 The built library will be in `.\sdk\<ProjectDir>\<Configuration>\` respectively for Azure Core and Azure Attestation. e.g. `azure_core.lib` will be in `.\sdk\core\azure-core\Debug` for debug configuration.
 
-##### _Use Visual Studio's Open by folder feature
+##### Use Visual Studio's Open by folder feature
 
 Open the root folder of the library with Visual Studio's Open folder feature.
 
@@ -74,7 +74,7 @@ If Vcpkg is not globally integrated, then you need to open CMakeSettings.json an
 Then you can build Azure Storage libraries by selecting the target in Visual Studio, or simply build all.
 The libraries will be in `<ProjectRoot>\out\build\<Configuration>\sdk\<LibraryName>` respectively.
 
-#### _POSIX Platforms
+#### POSIX Platforms
 
 You can run the following command in a new folder created under the downloaded code's root folder to build the code.
 
@@ -86,7 +86,7 @@ cmake --build .
 Then you can consume the built library with the header files.
 make/ninja install is work in progress.
 
-### _Via vcpkg
+### Via vcpkg
 
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
@@ -104,12 +104,12 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-security-attestat
 
 ```
 
-## _Dependencies
+## Dependencies
 
 - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md)
 - OpenSSL
 
-### _Authenticate the client
+### Authenticate the client
 
 Many of the APIs supported by the Azure Attestation service require authentication (some do not, if an API does not require
 authentication, the documentation for that API will reflect that the attestation service instance does not require authentication).
@@ -119,7 +119,7 @@ To interact with the authenticated APIs supported by the Azure Attestation servi
 The simplest way of providing a bearer token is to use the  `ClientSecretCredential` authentication method by providing client secret credentials is being used in this
 getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
-## _Key concepts
+## Key concepts
 
 The Microsoft Azure Attestation service runs in two separate modes: "Isolated" and "AAD". When the service is running in "Isolated" mode, the customer needs to
 provide additional information beyond their authentication credentials to verify that they are authorized to modify the state of an attestation instance.
@@ -137,15 +137,15 @@ Each attestation instance operates in one of three separate modes of operation:
 - AAD mode.
 - Shared mode.
 
-### _Isolated Mode Attestation Instances
+### Isolated Mode Attestation Instances
 
 In "Isolated" mode, the customer indicates that they want to ensure that Microsoft administrators cannot influence the inputs or outputs of an attestation service instance. When the attestation service instance is running in Isolated mode, the customer is expected to provide additional proof that they are authorized to make changes to the attestation service instance.
 
-### _AAD Mode Attestation Instances
+### AAD Mode Attestation Instances
 
 In "AAD" mode, access to the service is controlled solely by Azure Role Based Access Control. When the
 
-### _Shared Mode Attestation Instances
+### Shared Mode Attestation Instances
 
 Each region in which the Microsoft Azure Attestation service is available supports a "shared" instance, which
 can be used to attest SGX enclaves which only need verification against the azure baseline (there are no policies applied to the
@@ -168,31 +168,31 @@ The following APIs are not available in the shared instance:
 
 The APIs available in the shared instance do not require AAD authentication.
 
-### _Attestation
+### Attestation
 
 SGX or TPM attestation is the process of validating evidence collected from a trusted execution environment to ensure that it
 meets both the Azure baseline for that environment and customer defined policies applied to that environment.
 
-#### _Attestation token signing certificate discovery and validation
+#### Attestation token signing certificate discovery and validation
 
 Most responses from the MAA service are expressed in the form of a JSON Web Token. This token will be signed by a signing certificate
 issued by the MAA service for the specified instance. If the MAA service instance is running in a region where the service runs in an SGX enclave, then
 the certificate issued by the server can be verified using the [oe_verify_attestation_certificate() API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html).
 
-### _Isolated Mode Management
+### Isolated Mode Management
 
 Each attestation service instance has a policy applied to it which defines additional criteria which the customer has defined.
 
 For more information on attestation policies, see [Attestation Policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-### _Isolated Mode certificate management
+### Isolated Mode certificate management
 
 When an attestation instance is running in "Isolated" mode, the customer who created the instance will have provided
 a certificate at the time the instance is created. All administrative operations (for instance, policy modification operations)
 require that the customer sign the policy data with one of the existing policy management certificates. The
 Isolated Mode Certificate Management APIs enable clients to add, remove or enumerate these certificates.
 
-### _Examples
+### Examples
 
 - [Create an attestation client](#create-an-attestation-client)
 - [Retrieve token validation certificates](#retrieve-token-certificates)
@@ -205,7 +205,7 @@ Isolated Mode Certificate Management APIs enable clients to add, remove or enume
 - [Add Isolated Mode certificate](#add-a-new-isolated-mode-signing-certificate)
 - [Remove Isolated Mode certificate](#remove-isolated-mode-signing-certificate)
 
-#### _Create an attestation client
+#### Create an attestation client
 
 The `AttestationClient::Create` method is used to create instances of the attestation client:
 
@@ -226,7 +226,7 @@ auto client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
 
-#### _Retrieve Token Certificates
+#### Retrieve Token Certificates
 
 Use `GetTokenValidationCertificates` to retrieve the set of certificates, which can be used to validate the token returned
 from the attestation service.
@@ -244,7 +244,7 @@ for (const auto& signer : validationCertificates.Value.Signers)
 
 ```
 
-#### _Attest an SGX Enclave
+#### Attest an SGX Enclave
 
 Use the `AttestSgxEnclave` method to attest an SGX enclave.
 
@@ -258,7 +258,7 @@ Use the `AttestSgxEnclave` method to attest an SGX enclave.
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
  ```
 
-#### _Create an administrative client
+#### Create an administrative client
 
 All administrative clients are authenticated.
 
@@ -270,7 +270,7 @@ std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
 AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(m_endpoint, credential));
 ```
 
-#### _Retrieve current attestation policy for OpenEnclave
+#### Retrieve current attestation policy for OpenEnclave
 
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
@@ -282,7 +282,7 @@ Use the `GetAttestationPolicy` API to retrieve the current attestation policy fo
 
 ```
 
-#### _Set unsigned attestation policy (AAD clients only)
+#### Set unsigned attestation policy (AAD clients only)
 
 When an attestation instance is in AAD mode, the caller can use a convenience method to set an unsigned attestation
 policy on the instance.
@@ -308,7 +308,7 @@ authorizationrules
     }
 ```
 
-#### _Set signed attestation policy
+#### Set signed attestation policy
 
 For isolated mode attestation instances, the set or reset policy request must be signed using the key that is associated
 with the attestation signing certificates configured on the attestation instance.
@@ -348,7 +348,7 @@ authorizationrules
     }
 ```
 
-#### _List Isolated Mode signing certificates
+#### List Isolated Mode signing certificates
 
 When an attestation instance is in `Isolated` mode, the policy APIs need additional proof of authorization. This proof is
 provided via the `AttestationSigningKey` parameter passed into the set and reset policy APIs.
@@ -370,7 +370,7 @@ std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
               << " certificates configured on this instance." << std::endl;
 ```
 
-#### _Add a new Isolated Mode signing certificate
+#### Add a new Isolated Mode signing certificate
 
 Adds a new certificate to the set of policy management certificates. The request to add the policy management certificate
 must be signed with the private key associated with one of the existing policy management certificates (this ensures that
@@ -405,7 +405,7 @@ ignored (this possibly surprising behavior is there because retries could cause 
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;
 ```
 
-#### _Remove Isolated Mode signing certificate
+#### Remove Isolated Mode signing certificate
 
 Removes a certificate from the set of policy management certificates. The request to remove the policy management certificate
 must be signed with the private key associated with one of the existing policy management certificates (this ensures that
@@ -430,15 +430,15 @@ std::cout << "The result of the certificate remove operation is: "
         << addResult.Value.Body.CertificateModification.ToString() << std::endl;
 ```
 
-## _Troubleshooting
+## Troubleshooting
 
 Troubleshooting information for the MAA service can be found [here](https://docs.microsoft.com/azure/attestation/troubleshoot-guide)
 
-## _Next steps
+## Next steps
 
 For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/).
 
-## _Contributing
+## Contributing
 
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor
@@ -453,7 +453,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### _Additional Helpful Links for Contributors
+### Additional Helpful Links for Contributors
 
 Many people all over the world have helped make this project better.  You'll want to check out:
 
@@ -462,12 +462,12 @@ Many people all over the world have helped make this project better.  You'll wan
 - [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### _Community-->
-### _Reporting security issues and security bugs
+<!-- ### Community-->
+### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### _License
+### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 <!-- LINKS -->

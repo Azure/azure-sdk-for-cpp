@@ -1,34 +1,34 @@
-# _Release History
+# Release History
 
-## _12.6.0-beta.1 (Unreleased)
+## 12.6.0-beta.1 (Unreleased)
 
-### _Features Added
+### Features Added
 
-### _Breaking Changes
+### Breaking Changes
 
-### _Bugs Fixed
+### Bugs Fixed
 
-### _Other Changes
+### Other Changes
 
-## _12.5.0 (2023-01-10)
+## 12.5.0 (2023-01-10)
 
 - New features in `12.5.0-beta.1` are now generally available.
 
 
-## _12.5.0-beta.1 (2022-11-08)
+## 12.5.0-beta.1 (2022-11-08)
 
-### _Features Added
+### Features Added
 - Added support for encryption scope:
   - Added new fields `DefaultEncryptionScope` and `PreventEncryptionScopeOverride` in `FileSystemItemDetails`, `FileSystemProperties` and `CreateFileSystemOptions`.
   - Added new field `EncryptionScope` in `PathProperties`.
 
-## _12.4.0 (2022-11-08)
+## 12.4.0 (2022-11-08)
 
 - New features in `12.4.0-beta.1` are now generally available.
 
-## _12.4.0-beta.1 (2022-10-11)
+## 12.4.0-beta.1 (2022-10-11)
 
-### _Features Added
+### Features Added
 
 - Added support for encryption scope in SAS builder.
 - Added support for customer-provided key.
@@ -41,77 +41,77 @@
   - DataLakeFileSystemClient::UndeletePath
   - DataLakeFileClient::Query
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed a bug where file/directory renaming cannot be authenticated with SAS.
 - Empty file or existing file won't be created/overwritten if the file to be downloaded doesn't exist.
 
-## _12.3.1 (2022-03-09)
+## 12.3.1 (2022-03-09)
 
-### _Other Changes
+### Other Changes
 
 - No public changes in this release.
 
-## _12.3.0 (2022-02-14)
+## 12.3.0 (2022-02-14)
 
-### _Other Changes
+### Other Changes
 
 - Deprecated enum `LeaseDuration`, use `LeaseDurationType` instead.
 
-## _12.2.0 (2021-09-08)
+## 12.2.0 (2021-09-08)
 
-### _Breaking Changes
+### Breaking Changes
 
 - `StartsOn` and `ExpiresOn` in `SignedIdentifier` were changed to nullable.
 
-### _Bugs Fixed
+### Bugs Fixed
 
 - Fixed a bug where prefix cannot contain `&` when listing files.
 
-### _Other Changes
+### Other Changes
 
 - Create less threads if there isn't too much data to transfer.
 
-## _12.1.0 (2021-08-10)
+## 12.1.0 (2021-08-10)
 
-### _Features Added
+### Features Added
 
 - Added `ETag` and `LastModified` into `ScheduleFileDeletionResult`.
 
-## _12.0.1 (2021-07-07)
+## 12.0.1 (2021-07-07)
 
-### _Bug Fixes
+### Bug Fixes
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
 
-## _12.0.0 (2021-06-08)
+## 12.0.0 (2021-06-08)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Renamed `ContentLength` in `FlushFileResult` to `FileSize`.
 
-### _Other Changes and Improvements
+### Other Changes and Improvements
 
 - Removed `IfUnmodifiedSince` from access conditions of setting filesystem metadata operation.
 - Updated some samples.
 - Fixed a read consistency issue.
 
-## _12.0.0-beta.11 (2021-05-19)
+## 12.0.0-beta.11 (2021-05-19)
 
-### _New Features
+### New Features
 
 - Added `DataLakePathClient::SetAccessControlListRecursive()`, `UpdateAccessControlListRecursive()` and `RemoveAccessControlListRecursive()`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - Default chunk size for concurrent upload was changed to nullable.
 - `DataLakeLeaseClient::Change()` updates internal lease id.
 
-## _12.0.0-beta.10 (2021-04-16)
+## 12.0.0-beta.10 (2021-04-16)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `Azure::Storage::Files::DataLake::PackageVersion`.
 - Renamed `GetUserDelegationKeyOptions::startsOn` to `StartsOn`.
@@ -121,18 +121,18 @@
   - `DataLakeDirectoryClient::ListPaths()`.
 - Removed `DataLakePathClient::SetAccessControlListRecursiveSinglePage()`, `UpdateAccessControlListRecursiveSinglePage()` and `RemoveAccessControlListRecursiveSinglePage()`.
 
-### _Bug Fixes
+### Bug Fixes
 
 - Rename functions always fail because `/` was left out in the renamed source path.
 
-## _12.0.0-beta.9 (2021-03-23)
+## 12.0.0-beta.9 (2021-03-23)
 
-### _New Features
+### New Features
 
 - Added support for telemetry options.
 - Added `Azure::Storage::Files::DataLake::PackageVersion`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - DataLake client constructors won't automatically convert blob url to dfs url anymore.
 - String conversion functions of extensible enums were renamed from `Get()` to `ToString()`.
@@ -151,9 +151,9 @@
 - Removed `IsAccessTierInferred` and `AccessTierChangedOn` from `PathProperties`.
 - Renamed `LeaseDurationType` to `LeaseDuration`, `LeaseStateType` to `LeaseState` and `LeaseStatusType` to `LeaseStatus`.
 
-## _12.0.0-beta.8 (2021-02-12)
+## 12.0.0-beta.8 (2021-02-12)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `DataLakeFileSystemClient::GetPathClient`.
 - Renamed `SetDataLakePathAccessControlRecursiveListSinglePageOptions::MaxEntries` to `PageSizeHint`.
@@ -167,9 +167,9 @@
 - In `PathSetAccessControlRecursiveResult`, `DirectoriesSuccessful` is renamed to `NumberOfSuccessfulDirectories`, `FilesSuccessful` is renamed to `NumberOfSuccessfulFiles`, `FailureCount` is renamed to `NumberOfFailures`.
 - Moved `Azure::Core::Context` out of options bag of each API, and make it the last optional parameter.
 
-## _12.0.0-beta.7 (2021-02-03)
+## 12.0.0-beta.7 (2021-02-03)
 
-### _New Features
+### New Features
 
 - Added `Owner`, `Permissions`, and `Group` to `GetDataLakePathAccessControlResult`.
 - `DownloadDataLakeFileResult` now has a new field `FileSize`.
@@ -185,7 +185,7 @@
 - Added `UpdateAccessControlListRecursiveSinglePage` to update the access control recursively for a datalake path.
 - Added `RemoveAccessControlListRecursiveSinglePage` to remove the access control recursively for a datalake path.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Removed `GetDfsUri` in all clients since they are currently implementation details.
 - Removed `Data` suffix for `FlushData` and `AppendData` and modified all related structs to align the change.
@@ -217,20 +217,20 @@
 - Renamed `DataLakeFileClient::Read` to `DataLakeFileClient::Download`. Also changed the member `Azure::Core::Nullable<bool> RangeGetContentMd5` in the option to be `Azure::Core::Nullable<HashAlgorithm> RangeHashAlgorithm` instead.
 - Moved some less commonly used properties into a details data structure for `Download`, `DownloadTo` and `ListFileSystemsSinglePage` API, and enriched the content of the mentioned details data structure.
  
-### _Other Changes and Improvements
+### Other Changes and Improvements
 
 - Changed `DataLakeFileClient::Flush`'s `endingOffset` parameter's name to `position`.
 - Renamed `DataLakePathClient::GetAccessControls` to `DataLakePathClient::GetAccessControlList`.
 - Removed unused parameters, options, results and functions in protocol layer.
 
-## _12.0.0-beta.6 (2021-01-14)
+## 12.0.0-beta.6 (2021-01-14)
 
-### _New Features
+### New Features
 
 - Support setting DataLake SAS permission with a raw string.
 - Added support for `CreateIfNotExists` and `DeleteIfExists` for FileSystem, Path, Directory and File clients.
 
-### _Breaking Changes
+### Breaking Changes
 
 - Moved DataLake SAS into `Azure::Storage::Sas` namespace.
 - `EncrytionKeySha256` are changed to binary (`std::vector<uint8_t>`).
@@ -253,17 +253,17 @@
 - Renamed `GetSubDirectoryClient` to `GetSubdirectoryClient`.
 - Removed `NamespaceEnabled` field in `CreateDataLakeFileSystemResult`.
 
-## _12.0.0-beta.5 (2020-11-13)
+## 12.0.0-beta.5 (2020-11-13)
 
-### _Breaking Changes
+### Breaking Changes
 
 - Moved header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`.
 - Moved returning model types and related functions in `Azure::Storage::Files::DataLake` to `Azure::Storage::Files::DataLake::Models`, and made other code private by moving it into `Azure::Storage::Files::DataLake::Details`.
 - Renamed `Azure::Storage::Files::DataLake::ServiceClient` to `Azure::Storage::Files::DataLake::DataLakeServiceClient`.
 
-## _1.0.0-beta.4 (2020-10-16)
+## 1.0.0-beta.4 (2020-10-16)
 
-### _New Features
+### New Features
 
 - Service version is now 2020-02-10.
 - Added support for SAS generation in DataLake service.
@@ -271,25 +271,25 @@
 - Added support for `DirectoryClient::SetAccessControlRecursive`.
 - `PathAppendDataResult` now returns `ContentMD5`, `ContentCrc64` and `IsServerEncrypted`.
 
-### _Breaking Changes
+### Breaking Changes
 
 - `CreateFromConnectionString` now accepts unencoded file, path and directory name.
 - `ETag` and `LastModified` is now `std::string` instead of `Azure::Core::Nullable<std::string>` in `CreateDirectoryResult`, `CreateFileResult` and `CreatePathResult`.
 - `Continuation` is renamed to `ContinuationToken` in options and returned result objects.
 
-### _Bug Fixes
+### Bug Fixes
 
 - Unencoded FileSystem/File/Path/Directory name is now encoded.
 
-## _1.0.0-beta.2 (2020-09-09)
+## 1.0.0-beta.2 (2020-09-09)
 
-### _New Features
+### New Features
 
 - Release based on azure-core_1.0.0-beta.1.
 
-## _1.0.0-beta.1 (2020-08-28)
+## 1.0.0-beta.1 (2020-08-28)
 
-### _New Features
+### New Features
 
 - Added support for DataLake features:
   - ServiceClient::ListFileSystems

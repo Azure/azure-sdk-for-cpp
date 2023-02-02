@@ -9,11 +9,11 @@ urlFragment: attestation-samples
 
 ---
 
-# _Attestation Samples for the Microsoft Azure Attestation client library for C++
+# Attestation Samples for the Microsoft Azure Attestation client library for C++
 
 These code samples show basic and low level operations using the Azure Attestation client library.
 
-## _Sample Requirements
+## Sample Requirements
 
 These samples are written with the assumption that the following environment
 variables have been set by the user:
@@ -24,7 +24,7 @@ variables have been set by the user:
   sample should be run - used to interact with the shared endpoint for that
   region.
 
-## _Samples descriptions
+## Samples descriptions
 
 The samples are structured as separate source files, one per scenario. The are:
 Sample | What it tests | Notes
@@ -34,7 +34,7 @@ CreateAdminClient | Demonstrates creating an Attestation Administration client, 
 GetOpenIdMetadata | Retrieves OpenID metadata for an attestation service instance.|
 GetSigningCertificates | Retrieves the attestation signing certificates for an attestation instance. |
 
-## _Additional Information
+## Additional Information
 
 <!-- LINKS -->
 <!-- links are known to be broken, they will be fixed after this initial pull

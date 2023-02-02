@@ -1,4 +1,4 @@
-# _Azure Security KeyVault Administration client library for C++
+# Azure Security KeyVault Administration client library for C++
 
 Azure Key Vault Managed HSM is a fully-managed, highly-available, single-tenant, standards-compliant cloud service that enables you to safeguard
 cryptographic keys for your cloud applications using FIPS 140-2 Level 3 validated HSMs.
@@ -9,16 +9,16 @@ The library allows client libraries to expose common functionality in a consiste
 
 [Source code][administration_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
 
-## _Getting started
+## Getting started
 
-### _Install the package
+### Install the package
 Install the Azure Key Vault Administration Setting client library for C++ with vcpkg:
 
 ```cmd
 vcpkg install azure-security-keyvault-administration-cpp
 ```
 
-### _Prerequisites
+### Prerequisites
 
 * An [Azure subscription][azure_sub].
 * An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the [Azure CLI][azure_cli].
@@ -36,7 +36,7 @@ To get `<your-user-object-id>` you can run the following CLI command:
 az ad user show --id <your-user-principal> --query id
 ```
 
-#### _Activate your managed HSM
+#### Activate your managed HSM
 
 All data plane commands are disabled until the HSM is activated. You will not be able to create keys or assign roles.
 Only the designated administrators that were assigned during the create command can activate the HSM. To activate the HSM you must download the security domain.
@@ -65,7 +65,7 @@ The example below uses 3 RSA key pairs (only public keys are needed for this com
 az keyvault security-domain download --hsm-name <your-managed-hsm-name> --sd-wrapping-keys ./certs/cert_0.cer ./certs/cert_1.cer ./certs/cert_2.cer --sd-quorum 2 --security-domain-file ContosoMHSM-SD.json
 ```
 
-#### _Controlling access to your managed HSM
+#### Controlling access to your managed HSM
 
 The designated administrators assigned during creation are automatically added to the "Managed HSM Administrators" [built-in role][built_in_roles],
 who are able to download a security domain and [manage roles for data plane access][access_control], among other limited permissions.
@@ -78,22 +78,22 @@ az keyvault role assignment create --hsm-name <your-managed-hsm-name> --role "Ma
 
 Please read [best practices][best_practices] for properly securing your managed HSM.
 
-## _Key Concepts
-### _Thread safety
+## Key Concepts
+### Thread safety
 We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
 
-### _Additional concepts
+### Additional concepts
 
 <!-- CLIENT COMMON BAR -->
 [Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
 [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations) |
 <!-- CLIENT COMMON BAR -->
 
-## _Examples 
+## Examples 
 
 For detailed samples please review the code provided. 
 
-#### _GetSettings 
+#### GetSettings 
 
 To get all the available settings present on the Keyvault instance we will first create a client : 
 ```CPP
@@ -115,7 +115,7 @@ To get the settings we will call the GetSettings API
   SettingsListResult settingsList = settingsClient.GetSettings().Value;
 ```
 
-#### _GetSetting
+#### GetSetting
 
 To get a specific setting we will call the GetSetting API bassing the setting name as a string parameter. 
 
@@ -123,7 +123,7 @@ To get a specific setting we will call the GetSetting API bassing the setting na
   Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
 ```
 
-#### _UpdateSetting
+#### UpdateSetting
 
 To update the value of any of the the available settings, we will call the UpdateSettings API as follows:
 ```CPP
@@ -134,7 +134,7 @@ Setting updatedSetting
    = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
 ```
 
-## _Contributing
+## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -149,7 +149,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### _Additional Helpful Links for Contributors
+### Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -157,12 +157,12 @@ Many people all over the world have helped make this project better.  You'll wan
 * [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 * Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### _Community-->
-### _Reporting security issues and security bugs
+<!-- ### Community-->
+### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### _License
+### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 

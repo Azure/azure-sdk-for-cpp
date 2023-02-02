@@ -1,11 +1,11 @@
-# _Azure SDK Core Tracing Library for C++
+# Azure SDK Core Tracing Library for C++
 
 Azure::Core::Tracing::OpenTelemetry (`azure-core-tracing-opentelemetry`) provides an implementation
 to enable customers to implement tracing in the Azure SDK for C++ libraries.
 
-## _Getting started
+## Getting started
 
-### _Include the package
+### Include the package
 
 The easiest way to acquire the OpenTelemetry library is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
@@ -22,13 +22,13 @@ find_package(azure-core-tracing-opentelemetry-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-core-tracing-opentelemetry)
 ```
 
-## _Key concepts
+## Key concepts
 
 The `azure-core-tracing-opentelemetry` package supports enabling tracing for Azure SDK packages, using an [OpenTelemetry](https://opentelemetry.io/) `Tracer`.
 
 By default, all libraries log with a `NoOpTracer` that takes no action. To enable tracing, you will need to set a global tracer provider following the instructions in the [OpenTelemetry getting started guide](https://opentelemetry-cpp.readthedocs.io/en/latest/api/GettingStarted.html) or the [Enabling Tracing using OpenTelemetry example](#enabling-tracing-using-opentelemetry) below.
 
-### _Span Propagation
+### Span Propagation
 
 Core Tracing supports both automatic and manual span propagation. Automatic propagation is handled using OpenTelemetry's API and will work well in most scenarios.
 
@@ -36,15 +36,15 @@ For customers who require manual propagation, all client library operations acce
 be passed in and used as the currently active context. Please see the [Manual Span Propagation example](#manual-span-propagation-using-opentelemetry) 
 below for more details.
 
-### _OpenTelemetry Compatibility
+### OpenTelemetry Compatibility
 
 Most Azure SDKs use [OpenTelemetry](https://opentelemetry.io/) to support tracing. Specifically, we depend on 
 the [opentelemetry-cpp](https://github.com/open-telemetry/opentelemetry-cpp/blob/main/docs/building-with-vcpkg.md) VCPKG package.
 
 
-## _Examples
+## Examples
 
-### _Enabling tracing using OpenTelemetry
+### Enabling tracing using OpenTelemetry
 
 ```cpp
 // Start by creating an OpenTelemetry Provider using the
@@ -57,7 +57,7 @@ ApplicationContext().SetTracerProvider(tracerProvider);
 
 After this, the SDK API implementations will be able to retrieve the tracer provider and produce tracing events automatically.
 
-### _Enabling tracing using a non-default TracerProvider
+### Enabling tracing using a non-default TracerProvider
 
 ```cpp
 // Start by creating an OpenTelemetry Provider.
@@ -85,7 +85,7 @@ std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider =
 ApplicationContext().SetTracerProvider(tracerProvider);
 ```
 
-### _Manual Span Propagation using OpenTelemetry
+### Manual Span Propagation using OpenTelemetry
 
 In Azure Service methods, the `Azure::Context` value passed into the tracer optionally has an associated Span.
 
@@ -99,26 +99,26 @@ cause a new span to be created using the span in the provided `Azure::Context` o
 ```
 
 
-## _Next steps
+## Next steps
 
 You can build and run the tests locally by executing `azure-core-tracing-opentelemetry-test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
 
-## _Troubleshooting
+## Troubleshooting
 
 If you run into issues while using this library, please feel free to [file an issue](https://github.com/Azure/azure-sdk-for-cpp/issues/new).
 
-### _OpenTelemetry Compatibility Errors
+### OpenTelemetry Compatibility Errors
 
 
 > Ideally you'd want to use OpenTelemetry 1.3.0 or higher.
 
-<!-- ### _Community-->
+<!-- ### Community-->
 
-### _Reporting security issues and security bugs
+### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
-### _License
+### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 

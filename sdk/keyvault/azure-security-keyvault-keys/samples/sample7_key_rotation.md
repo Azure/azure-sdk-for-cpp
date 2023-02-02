@@ -1,9 +1,9 @@
-# _Creating, updating rotation policy, and rotating keys
+# Creating, updating rotation policy, and rotating keys
 
 This sample demonstrates how to create a key, update the rotation policy of the key, rotate the key in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
-## _Creating a KeyClient
+## Creating a KeyClient
 
 To create a new `KeyClient` to create, get, update, or delete keys, you need the endpoint to an Azure Key Vault and credentials.
 
@@ -24,7 +24,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## _Creating a key
+## Creating a key
 
 Let's create an EC key.
 If the key already exists in the Azure Key Vault, then a new version of the key is created.
@@ -38,7 +38,7 @@ std::cout << "Created key " << createKeyResponse.Value.Name() << "with id "
           << createKeyResponse.Value.Properties.Version << std::endl;
 ```
 
-## _Create the key rotation policy 
+## Create the key rotation policy 
 
 Next we will define the key rotation policy as needed.
 
@@ -58,7 +58,7 @@ policy.LifetimeActions.emplace_back(lifetimeAction2);
 policy.Attributes.ExpiryTime = "P48M";
 ```
 
-## _Updating key properties
+## Updating key properties
 
 Now we will update the key with the new rotation policy.
 
@@ -69,7 +69,7 @@ std::cout << "Updated rotation policy " << putPolicy.Id << " for key "
           << createKeyResponse.Value.Name() << std::endl;
 ```
 
-## _Calling Rotate and checking the result
+## Calling Rotate and checking the result
 
 Next we will rotate the key and check the result of the api call.
 ```cpp Snippet:KeysSample7RotateKey
@@ -81,7 +81,7 @@ std::cout << "Rotated key " << originalKey.Value.Name() << std::endl
           << "New Version " << rotatedKey.Value.Properties.Version << std::endl;
 ```
 
-## _Deleting a key
+## Deleting a key
 
 The cloud RSA key is no longer needed, so we need to delete it from the Key Vault.
 
@@ -89,7 +89,7 @@ The cloud RSA key is no longer needed, so we need to delete it from the Key Vaul
 DeleteKeyOperation operation = keyClient.StartDeleteKey(rsaKeyName);
 ```
 
-## _Purging a deleted key
+## Purging a deleted key
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the key before its `ScheduledPurgeDate`,
 the deleted key needs to be purged. Before it can be purged, you need to wait until the key is fully deleted.
@@ -101,7 +101,7 @@ operation.PollUntilDone(std::chrono::milliseconds(2000));
 keyClient.PurgeDeletedKey(rsaKeyName);
 ```
 
-## _Source
+## Source
 
 - [sample7_key_rotation.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample7-key-rotation/sample7_key_rotation.cpp)
 

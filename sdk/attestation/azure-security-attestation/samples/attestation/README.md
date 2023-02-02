@@ -9,11 +9,11 @@ urlFragment: attestation-samples
 
 ---
 
-# _Attestation Samples for the Microsoft Azure Attestation client library for C++
+# Attestation Samples for the Microsoft Azure Attestation client library for C++
 
 These code samples show common scenario operations for the Attestation APIs within the Azure Attestation client library.
 
-## _Sample Requirements
+## Sample Requirements
 
 These samples are written with the assumption that the following environment
 variables have been set by the user:
@@ -24,7 +24,7 @@ variables have been set by the user:
   sample should be run - used to interact with the shared endpoint for that
   region.
 
-## _Samples descriptions
+## Samples descriptions
 
 The samples are structured as separate source files, one per scenario. The are:
 Sample | What it tests | Notes
@@ -35,9 +35,9 @@ AttestSgxEnclaveWithRuntimeBinary | Calling AttestSgxEnclave with RuntimeData se
 AttestSgxEnclaveWithRuntimeJson | Calling AttestSgxEnclave with RuntimeData sent to the service which should be interpreted as JSON data |
 AttestOpenEnclaveWithDraftPolicy | Calling AttestOpenEnclave with a draft attestation policy which can be used to test attestation policies to determine their effect |
 
-## _Additional Information
+## Additional Information
 
-### _Attestation Policy
+### Attestation Policy
 
 An attestation policy is a document which defines authorization and claim generation
 rules for attestation operations.
@@ -77,7 +77,7 @@ to be issued with a value which matches the `x-ms-sgx-mrsigner` claim.
 
 For more information on authoring attestation policy documents, see: [Authoring an attestation policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-## _Next Steps
+## Next Steps
 
 For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
 
