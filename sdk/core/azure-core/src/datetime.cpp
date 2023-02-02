@@ -39,7 +39,7 @@ DateTime GetSystemClockEpoch()
       static_cast<int8_t>(systemClockEpochUtcStructTm->tm_min),
       static_cast<int8_t>(systemClockEpochUtcStructTm->tm_sec));
 }
-
+// gets max date time
 DateTime GetMaxDateTime()
 {
   auto const systemClockMax = std::chrono::duration_cast<DateTime::clock::duration>(
