@@ -211,15 +211,18 @@ namespace Azure { namespace Storage { namespace Test {
 
   uint64_t StorageTest::RandomInt(uint64_t minNumber, uint64_t maxNumber)
   {
-    std::uniform_int_distribution<uint64_t> distribution(minNumber, maxNumber);
-    return distribution(m_randomGenerator);
+    uint64_t val = m_randomGenerator();
+    if (minNumber == 0 && maxNumber == std::numeric_limits<decltype(maxNumber)>::max())
+    {
+      return val;
+    }
+    return minNumber + val % (maxNumber - minNumber + 1);
   }
 
   char StorageTest::RandomChar()
   {
     const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    std::uniform_int_distribution<size_t> distribution(0, sizeof(charset) - 2);
-    return charset[distribution(m_randomGenerator)];
+    return charset[RandomInt(0, sizeof(charset) - 2)];
   }
 
   std::string StorageTest::RandomString(size_t size)
@@ -257,11 +260,10 @@ namespace Azure { namespace Storage { namespace Test {
       *(start_addr++) = RandomChar();
     }
 
-    std::uniform_int_distribution<uint64_t> distribution(
-        0ULL, std::numeric_limits<uint64_t>::max());
     while (start_addr + rand_int_size <= end_addr)
     {
-      *reinterpret_cast<uint64_t*>(start_addr) = distribution(m_randomGenerator);
+      *reinterpret_cast<uint64_t*>(start_addr)
+          = RandomInt(0ULL, std::numeric_limits<uint64_t>::max());
       start_addr += rand_int_size;
     }
     while (start_addr < end_addr)
