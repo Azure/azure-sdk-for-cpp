@@ -22,10 +22,6 @@
     {
       "name": "vcpkg-cmake-config",
       "host": true
-    },
-    {
-      "name": "wil",
-      "platform": "windows"
     }
   ],
   "default-features": [
@@ -71,6 +67,7 @@
     },
     "winhttp": {
       "description": "WinHTTP HTTP transport implementation",
+      "supports": "windows",
       "dependencies": [
         {
           "name": "azure-core-cpp",
