@@ -82,7 +82,12 @@ public:
 };
 } // namespace
 
+#if !defined(AZ_PLATFORM_WINDOWS) \
+    || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
 TEST(AzureCliCredential, Success)
+#else
+TEST(AzureCliCredential, NotAvailable)
+#endif
 {
   constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\","
                          "\"expiresOn\":\"2022-08-24 00:43:08.000000\","
@@ -93,6 +98,8 @@ TEST(AzureCliCredential, Success)
 
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
+#if !defined(AZ_PLATFORM_WINDOWS) \
+    || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
   auto const token = azCliCred.GetToken(trc, {});
 
   EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -100,8 +107,19 @@ TEST(AzureCliCredential, Success)
   EXPECT_EQ(
       token.ExpiresOn,
       DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
+#else // UWP
+  // The credential should throw during GetToken() and not during construction, because it allows
+  // customers to put it into ChainedTokenCredential and successfully use it there without writing
+  // ifdefs for UWP. It is not too late to throw - for example, if Azure CLI is not installed, then
+  // the credential will also find out during GetToken() and not during construction (if we had to
+  // find out during the construction, we'd have to fire up some 'az' command in constructor; again,
+  // that would also make it hard to put the credential into ChainedTokenCredential).
+  EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+#endif // UWP
 }
 
+#if !defined(AZ_PLATFORM_WINDOWS) \
+    || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
 TEST(AzureCliCredential, Error)
 {
   AzureCliTestCredential const azCliCred(
@@ -308,3 +326,4 @@ TEST(AzureCliCredential, StrictIso8601TimeFormat)
       token.ExpiresOn,
       DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
+#endif // not UWP

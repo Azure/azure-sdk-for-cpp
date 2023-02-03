@@ -13,6 +13,12 @@ std::unique_ptr<RawResponse> Azure::Core::Http::Policies::_internal::TelemetryPo
     NextHttpPolicy nextPolicy,
     Context const& context) const
 {
-  request.SetHeader("User-Agent", m_telemetryId);
+  static std::string const UserAgent{"User-Agent"};
+
+  if (!request.GetHeader(UserAgent).HasValue())
+  {
+    request.SetHeader(UserAgent, m_telemetryId);
+  }
+
   return nextPolicy.Send(request, context);
 }

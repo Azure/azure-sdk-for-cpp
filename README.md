@@ -328,6 +328,8 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 
 Several packages within the Azure SDK for C++ use the OpenSSL library. By default, the Azure SDK will use whatever the most recent version of OpenSSL is within the VCPKG repository.
 
+### Using a specific version of OpenSSL
+
 If you need to use a specific version of OpenSSL, you can use the vcpkg custom ports feature to specify the version of OpenSSL to use. 
 For example, if you want to use OpenSSL 1.1.1, you should create a folder named `vcpkg-custom-ports` next to to your vcpkg.json file.
 
@@ -358,6 +360,14 @@ vcpkg -DVCPKG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=<path to the vcpkg-custom-p
 In addition, if you need to consume OpenSSL from a dynamic linked library/shared object, you can set the VCPKG triplet to reflect that you want to build the library with dynamic 
 entries.Set the VCPKG_you can set the environment variable to `x64-windows-static` or `x64-windows-dynamic` depending on whether you want to use the static or dynamic version of OpenSSL. 
 Similarly you can use the x64-linux-dynamic and x64-linux-static triplet to specify consumption of libraries as a shared object or dynamic.
+
+### Using the system package manager to install OpenSSL
+
+If you are using a Linux distribution that uses the system package manager to install libraries, you can use the system package
+manager to install OpenSSL.
+
+The vcpkg team has a [feature](https://devblogs.microsoft.com/cppblog/using-system-package-manager-dependencies-with-vcpkg/)
+which allows you to use the system package manager to install dependencies.
 
 ## Need help
 
