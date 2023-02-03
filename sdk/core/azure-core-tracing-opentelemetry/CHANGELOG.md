@@ -1,14 +1,14 @@
 # Release History
 
-## 1.0.0-beta.4 (Unreleased)
+## 1.0.0-beta.4 (2023-02-02)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Aligned OpenTelemetry tracing infrastructure with OpenTelemetry 1.17.0 conventions for use with Azure Monitor.
 
 ### Other Changes
+
+- Suppress several warnings from opentelemetry-cpp package.
 
 ## 1.0.0-beta.3 (2022-08-04)
 
