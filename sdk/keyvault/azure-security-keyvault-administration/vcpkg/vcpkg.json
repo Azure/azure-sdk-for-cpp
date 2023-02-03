@@ -14,7 +14,7 @@
     {
       "name": "azure-core-cpp",
       "default-features": false,
-      "version>=": "1.8.0"
+      "version>=": "1.7.2"
     },
     {
       "name": "vcpkg-cmake",
