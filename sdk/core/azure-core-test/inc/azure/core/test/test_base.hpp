@@ -22,13 +22,6 @@
 #include <regex>
 #include <thread>
 
-#define CHECK_SKIP_TEST() \
-  std::string const readTestNameAndUpdateTestContext = GetTestName(); \
-  if (shouldSkipTest()) \
-  { \
-    GTEST_SKIP(); \
-  }
-
 using namespace std::chrono_literals;
 
 namespace Azure { namespace Core { namespace Test {
@@ -374,6 +367,12 @@ namespace Azure { namespace Core { namespace Test {
       if (!m_wasSkipped && !m_testContext.IsLiveMode())
       {
         m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
+      }
+
+      std::string const readTestNameAndUpdateTestContext = GetTestName();
+      if (shouldSkipTest())
+      {
+        GTEST_SKIP();
       }
     }
 
