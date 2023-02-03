@@ -1,24 +1,50 @@
 # Release History
 
-## 1.8.0-beta.4 (Unreleased)
+## 1.8.0 (2023-02-02)
 
 ### Features Added
 
+- Added support for parsing space character in place of 'T' in RFC3339 DateTimes.
+- Added support for HTTP proxy servers, both unauthenticated and with basic authentication.
+- Added universal support for several TLS options:
+  - Added the ability to set the expected TLS root certificate for TLS connection (useful if a proxy server uses a TLS certificate that is not chained to a known root).
+  - Added the ability to enable TLS certificate revocation list checks (off by default).
+    - For libcurl only: Allow TLS connection to succeed if CRL retrieval fails.
+    - *NOTE*: This change only applies if libcurl is built using the OpenSSL crypto backend. It does NOT apply if libcurl uses the schannel (Windows default) or SecureTransport (macOS/iOS default).
+
 ### Breaking Changes
+
+- Changed the name of several distributed tracing HTTP span attributes:
+  - `requestId` is renamed to `az.client_request_id`
+  - `serviceRequestId` is renamed to `az.service_request_id`
+
+- Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
+
+- Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
+
+- Updated retry policy timeouts to conform to Azure guidelines.
+  - The default delay between retries is changed from 4 seconds to 800ms.
+  - The maximum retry delay is changed from 2 minutes to 60 seconds (one minute).
+
+  If the original behavior is desired, customers can adjust these timeouts by changing the `RetryDelay` and `MaxRetryDelay` fields in the `RetryOptions` structure.
 
 ### Bugs Fixed
 
-- Fixed bug in WinHTTP client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be
-ignored if they were passed in from `TransportOptions`.
-- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
+- Fixed bug in WinHTTP client which caused the `IgnoreUnknownCertificateAuthority` and `EnableCertificateRevocationListCheck` fields to be ignored if they were passed in from `TransportOptions`.
+- [[#4206]](https://github.com/Azure/azure-sdk-for-cpp/issues/4206) Fixed connectivity issues in libcurl HTTP transport which can occur if a TCP connection is dropped prematurely. (A community contribution, courtesy of _[ahojnnes](https://github.com/ahojnnes)_)
+
+### Other Changes
+
+- Update distributed tracing attributes to align with current Azure Distributed Tracing Conventions attributes and names.
+- Added the ability to consume version 1.1.1n of OpenSSL.
+- Added support for Identity token caching, and for configuring token refresh offset in `BearerTokenAuthenticationPolicy`.
+- Improved cancellation support for WinHTTP transport.
 
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - Johannes Schonberger _([GitHub](https://github.com/ahojnnes))_
-
-### Other Changes
 
 ## 1.8.0-beta.3 (2023-01-05)
 
@@ -29,7 +55,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 ### Breaking Changes
 
 - Bearer token authentication will not work for endpoint URL protocol schemes other than `"https"`. This ensures token security and is consistent with the Azure SDKs for other languages.
-- Removed `noexcept` specification from `Azure::DateTime::clock::now()`. 
+- Removed `noexcept` specification from `Azure::DateTime::clock::now()`.
 
 ## 1.8.0-beta.2 (2022-11-03)
 
