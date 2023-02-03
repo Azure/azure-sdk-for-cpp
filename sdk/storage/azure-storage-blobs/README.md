@@ -120,7 +120,7 @@ for (auto blobPage = containerClient.ListBlobs(); blobPage.HasPage(); blobPage.M
 ## Troubleshooting
 
 All Blob service operations will throw a [StorageException](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
-on failure with helpful [ErrorCode](https://learn.microsoft.com/en-us/rest/api/storageservices/blob-service-error-codes)s.
+on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes)s.
 Many of these errors are recoverable.
 
 ```C++
@@ -165,10 +165,10 @@ additional questions or comments.
 
 <!-- LINKS -->
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
-[storage_account_overview]: https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview
-[create_account_with_azure_portal]: https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal
-[create_account_with_powershell]: https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-powershell
-[create_account_with_azure_cli]: https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
+[storage_account_overview]: https://learn.microsoft.com/azure/storage/common/storage-account-overview
+[create_account_with_azure_portal]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
+[create_account_with_powershell]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
+[create_account_with_azure_cli]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
 [storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
