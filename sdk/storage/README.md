@@ -2,15 +2,15 @@
 
 Azure Storage is a Microsoft-managed service providing cloud storage that is highly available, secure, durable, scalable, and redundant. Azure Storage includes Blobs (objects), Queues, and Files.
 
-- [Azure.Storage.Blobs](azure-storage-blobs/README.md) is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data that does not adhere to a particular data model or definition, such as text or binary data.
+- [Azure.Storage.Blobs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/README.md) is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data that does not adhere to a particular data model or definition, such as text or binary data.
 
-- [Azure.Storage.Queues](azure-storage-queues/README.md) is a service for storing large numbers of messages.  A queue message can be up to 64 KB in size and a queue may contain millions of messages, up to the total capacity limit of a storage account.
+- [Azure.Storage.Queues](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-queues/README.md) is a service for storing large numbers of messages.  A queue message can be up to 64 KB in size and a queue may contain millions of messages, up to the total capacity limit of a storage account.
 
-- [Azure.Storage.Files.Shares](azure-storage-files-shares/README.md) offers fully managed file shares in the cloud that are accessible via the industry standard Server Message Block (SMB) protocol.  Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS.
+- [Azure.Storage.Files.Shares](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-shares/README.md) offers fully managed file shares in the cloud that are accessible via the industry standard Server Message Block (SMB) protocol.  Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS.
 
-- [Azure.Storage.Files.DataLake](azure-storage-files-datalake/README.md) includes all the capabilities required to make it easy for developers, data scientists, and analysts to store data of any size, shape, and speed, and do all types of processing and analytics across platforms and languages.
+- [Azure.Storage.Files.DataLake](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-datalake/README.md) includes all the capabilities required to make it easy for developers, data scientists, and analysts to store data of any size, shape, and speed, and do all types of processing and analytics across platforms and languages.
 
-- [Azure.Storage.Common](azure-storage-common/README.md) provides infrastructure shared by the other Azure Storage client libraries like shared key authentication and exceptions.
+- [Azure.Storage.Common](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/README.md) provides infrastructure shared by the other Azure Storage client libraries like shared key authentication and exceptions.
 
 ## Contributing
 
