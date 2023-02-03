@@ -499,7 +499,10 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   // We will only be reading the pipe.
   // So, now that the process is started, we can close write handle on our end.
   outputPipe.m_writeHandle.reset();
-#endif // not UWP
+#else // UWP
+  static_cast<void>(command);
+  static_cast<void>(outputPipe);
+#endif // UWP
 #else // not Windows
   // Form the 'argv' array:
   // * An array of pointers to non-const C strings (0-terminated).
@@ -646,7 +649,12 @@ bool OutputPipe::NonBlockingRead(
   willHaveMoreData = (GetLastError() != ERROR_BROKEN_PIPE);
 
   return hadData && bytesRead > 0;
-#endif // not UWP
+#else // UWP
+  static_cast<void>(buffer);
+  static_cast<void>(bytesRead);
+  static_cast<void>(willHaveMoreData);
+  throw std::runtime_error("The credential is not supported on UWP.");
+#endif // UWP
 #else // not Windows
   static_assert(
       sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(char),
