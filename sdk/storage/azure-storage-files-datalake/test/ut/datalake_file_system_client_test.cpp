@@ -32,7 +32,10 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeFileSystemClientTest::SetUp()
   {
     DataLakeServiceClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_fileSystemName = GetLowercaseIdentifier();
     m_fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
         m_dataLakeServiceClient->GetFileSystemClient(m_fileSystemName));

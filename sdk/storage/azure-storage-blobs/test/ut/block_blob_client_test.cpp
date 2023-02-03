@@ -33,6 +33,10 @@ namespace Azure { namespace Storage { namespace Test {
   void BlockBlobClientTest::SetUp()
   {
     BlobContainerClientTest::SetUp();
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_blobName = RandomString();
     m_blockBlobClient = std::make_shared<Blobs::BlockBlobClient>(
         m_blobContainerClient->GetBlockBlobClient(m_blobName));
@@ -1488,8 +1492,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, ConcurrentDownload_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     auto blobClient = *m_blockBlobClient;
     const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
     blobClient.UploadFrom(blobContent.data(), blobContent.size());
@@ -1675,7 +1677,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, ConcurrentUpload_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
 
     const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
 

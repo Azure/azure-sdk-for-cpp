@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
 
     // Need to call this function to skip live-only cases
-    GetTestName();
+    CHECK_SKIP_TEST();
     if (m_testContext.IsLiveMode())
     {
       m_randomGenerator.seed(std::random_device{}());

@@ -31,7 +31,10 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareClientTest::SetUp()
   {
     FileShareServiceClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_shareName = GetLowercaseIdentifier();
     m_shareClient = std::make_shared<Files::Shares::ShareClient>(
         m_shareServiceClient->GetShareClient(m_shareName));

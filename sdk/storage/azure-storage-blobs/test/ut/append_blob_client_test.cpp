@@ -18,6 +18,10 @@ namespace Azure { namespace Storage { namespace Test {
   void AppendBlobClientTest::SetUp()
   {
     BlobContainerClientTest::SetUp();
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_blobName = RandomString();
     m_appendBlobClient = std::make_shared<Blobs::AppendBlobClient>(
         m_blobContainerClient->GetAppendBlobClient(m_blobName));

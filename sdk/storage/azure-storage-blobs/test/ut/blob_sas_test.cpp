@@ -12,8 +12,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BlobSasTest_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     auto blobContainerClient = GetBlobContainerClientForTest(LowercaseRandomString());
     blobContainerClient.CreateIfNotExists();
 

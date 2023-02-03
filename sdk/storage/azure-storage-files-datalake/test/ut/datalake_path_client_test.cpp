@@ -13,7 +13,10 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakePathClientTest::SetUp()
   {
     DataLakeFileSystemClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_pathName = RandomString();
     m_pathClient = std::make_shared<Files::DataLake::DataLakePathClient>(
         m_fileSystemClient->GetFileClient(m_pathName));

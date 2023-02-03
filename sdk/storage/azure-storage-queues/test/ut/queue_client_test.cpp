@@ -24,7 +24,10 @@ namespace Azure { namespace Storage { namespace Test {
   void QueueClientTest::SetUp()
   {
     StorageTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     auto options = InitClientOptions<Queues::QueueClientOptions>();
     m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
         Queues::QueueServiceClient::CreateFromConnectionString(

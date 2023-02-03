@@ -22,6 +22,10 @@ namespace Azure { namespace Storage { namespace Test {
   void PageBlobClientTest::SetUp()
   {
     BlobContainerClientTest::SetUp();
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_blobName = RandomString();
     m_pageBlobClient = std::make_shared<Blobs::PageBlobClient>(
         m_blobContainerClient->GetPageBlobClient(m_blobName));

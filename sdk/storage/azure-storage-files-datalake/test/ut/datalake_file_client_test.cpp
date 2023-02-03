@@ -29,6 +29,10 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeFileClientTest::SetUp()
   {
     DataLakeFileSystemClientTest::SetUp();
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_fileName = RandomString();
     m_fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(m_fileName));
@@ -240,8 +244,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, AppendFileWithFlush)
   {
-    const int32_t bufferSize = 4 * 1024; // 4KB data size
-    std::vector<uint8_t> buffer(bufferSize, 'x');
+    const int32_t bufferSize = 1;
+    auto buffer = RandomBuffer(bufferSize);
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
 
@@ -274,18 +278,18 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, AppendFileWithLease)
   {
-    const int32_t bufferSize = 4 * 1024; // 4KB data size
-    std::vector<uint8_t> buffer(bufferSize, 'x');
+    const int32_t bufferSize = 1;
+    auto buffer = RandomBuffer(bufferSize);
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
 
     // Append Lease Acquire
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_acquire");
       client.Create();
       Files::DataLake::AppendFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
-      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseId = RandomUUID();
       options.LeaseDuration = std::chrono::seconds(20);
       bufferStream->Rewind();
       client.Append(*bufferStream, 0, options);
@@ -301,9 +305,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // Append Lease AutoRenew
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_auto_renew");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_auto_renew");
       client.Create();
-      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      const std::string leaseId = RandomUUID();
       Files::DataLake::DataLakeLeaseClient leaseClient(client, leaseId);
       leaseClient.Acquire(std::chrono::seconds(20));
       Files::DataLake::AppendFileOptions options;
@@ -324,9 +328,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // Append Lease Release
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_release");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_release");
       client.Create();
-      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      const std::string leaseId = RandomUUID();
       Files::DataLake::DataLakeLeaseClient leaseClient(client, leaseId);
       leaseClient.Acquire(std::chrono::seconds(20));
       Files::DataLake::AppendFileOptions options;
@@ -345,11 +349,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // Append Lease AcquireRelease
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire_release");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_acquire_release");
       client.Create();
       Files::DataLake::AppendFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::AcquireRelease;
-      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseId = RandomUUID();
       options.LeaseDuration = std::chrono::seconds(20);
       options.Flush = true;
       bufferStream->Rewind();
@@ -366,20 +370,20 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, FlushFileWithLease)
   {
-    const int32_t bufferSize = 4 * 1024; // 4KB data size
-    std::vector<uint8_t> buffer(bufferSize, 'x');
+    const int32_t bufferSize = 1;
+    auto buffer = RandomBuffer(bufferSize);
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
 
     // Flush Lease Acquire
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_acquire");
       client.Create();
       bufferStream->Rewind();
       client.Append(*bufferStream, 0);
       Files::DataLake::FlushFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
-      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseId = RandomUUID();
       options.LeaseDuration = std::chrono::seconds(20);
       client.Flush(bufferSize, options);
       auto properties = client.GetProperties();
@@ -394,9 +398,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // Flush Lease AutoRenew
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_auto_renew");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_auto_renew");
       client.Create();
-      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      const std::string leaseId = RandomUUID();
       Files::DataLake::AppendFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
       options.LeaseId = leaseId;
@@ -420,9 +424,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // Flush Lease Release
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_release");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_release");
       client.Create();
-      const std::string leaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      const std::string leaseId = RandomUUID();
       Files::DataLake::AppendFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::Acquire;
       options.LeaseId = leaseId;
@@ -443,13 +447,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // Flush Lease AcquireRelease
     {
-      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "_acquire_release");
+      auto client = m_fileSystemClient->GetFileClient(RandomString() + "_acquire_release");
       client.Create();
       bufferStream->Rewind();
       client.Append(*bufferStream, 0);
       Files::DataLake::FlushFileOptions options;
       options.LeaseAction = Files::DataLake::Models::LeaseAction::AcquireRelease;
-      options.LeaseId = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+      options.LeaseId = RandomUUID();
       options.LeaseDuration = std::chrono::seconds(20);
       client.Flush(bufferSize, options);
       auto properties = client.GetProperties();
@@ -620,8 +624,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, ConcurrentDownload_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     auto fileClient = *m_fileClient;
     const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
     fileClient.UploadFrom(blobContent.data(), blobContent.size());
@@ -807,8 +809,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, ConcurrentUpload_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency,

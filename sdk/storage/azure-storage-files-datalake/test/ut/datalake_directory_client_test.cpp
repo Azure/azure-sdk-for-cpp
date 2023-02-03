@@ -14,7 +14,10 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeDirectoryClientTest::SetUp()
   {
     DataLakeFileSystemClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_directoryName = RandomString();
     m_directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
         m_fileSystemClient->GetDirectoryClient(m_directoryName));

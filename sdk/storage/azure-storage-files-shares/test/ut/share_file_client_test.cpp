@@ -18,7 +18,10 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareFileClientTest::SetUp()
   {
     FileShareDirectoryClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_fileName = RandomString();
     m_fileClient = std::make_shared<Files::Shares::ShareFileClient>(
         m_fileShareDirectoryClient->GetFileClient(m_fileName));
@@ -368,8 +371,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, ConcurrentUpload_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency,
@@ -452,8 +453,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, ConcurrentDownload_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     auto fileContent = RandomBuffer(8 * 1024 * 1024);
     m_fileClient->UploadFrom(fileContent.data(), 8 * 1024 * 1024);
     auto testDownloadToBuffer = [&](int concurrency,

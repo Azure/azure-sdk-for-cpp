@@ -9,7 +9,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BatchSubmitDelete_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
     const std::string containerNamePrefix = LowercaseRandomString();
 
     const std::string containerName1 = containerNamePrefix + "1";
@@ -49,7 +48,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BatchSnapshotVersion_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
     const std::string containerNamePrefix = LowercaseRandomString();
 
     const std::string containerName1 = containerNamePrefix + "1";
@@ -133,7 +131,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BatchTokenAuthorization_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret());
@@ -160,7 +157,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BatchExceptions_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
     const std::string containerName = LowercaseRandomString();
     const std::string blobName = "b1";
 

@@ -11,7 +11,10 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareDirectoryClientTest::SetUp()
   {
     FileShareClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_directoryName = RandomString();
     m_fileShareDirectoryClient = std::make_shared<Files::Shares::ShareDirectoryClient>(
         m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(m_directoryName));

@@ -22,7 +22,10 @@ namespace Azure { namespace Storage { namespace Test {
   void BlobContainerClientTest::SetUp()
   {
     BlobServiceClientTest::SetUp();
-
+    if (shouldSkipTest())
+    {
+      return;
+    }
     m_containerName = GetLowercaseIdentifier();
     m_blobContainerClient = std::make_shared<Blobs::BlobContainerClient>(
         m_blobServiceClient->GetBlobContainerClient(m_containerName));
@@ -403,9 +406,6 @@ namespace Azure { namespace Storage { namespace Test {
   // Hence, the test can't be recorded and need to run on live mode always.
   TEST_F(BlobContainerClientTest, AccessControlList)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-    CHECK_SKIP_TEST()
-
     auto containerClient = *m_blobContainerClient;
     containerClient.CreateIfNotExists();
 
@@ -611,9 +611,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, CustomerProvidedKey)
   {
-    // will skip test under some cased where test can't run (usually LIVE only tests)
-    CHECK_SKIP_TEST()
-
     auto sourceContainerClient = *m_blobContainerClient;
 
     auto getRandomCustomerProvidedKey = [&]() {

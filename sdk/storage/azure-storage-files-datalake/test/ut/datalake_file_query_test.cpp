@@ -318,8 +318,6 @@ xx
 
   TEST_F(DataLakeFileClientTest, QueryLargeBlob_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     constexpr size_t DataSize = static_cast<size_t>(32_MB);
