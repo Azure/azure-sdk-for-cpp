@@ -72,7 +72,8 @@
         {
           "name": "azure-core-cpp",
           "default-features": false
-        }
+        },
+        "wil"
       ]
     }
   }
