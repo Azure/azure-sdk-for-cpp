@@ -68,5 +68,6 @@ namespace Azure { namespace Storage { namespace _internal {
   };
 
   void XmlGlobalInitialize();
+  void XmlGlobalDeinitialize();
 
 }}} // namespace Azure::Storage::_internal
