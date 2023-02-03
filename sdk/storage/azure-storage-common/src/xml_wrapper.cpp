@@ -7,6 +7,7 @@
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <mutex>
 
 #include <azure/core/platform.hpp>
 
@@ -28,6 +29,7 @@ namespace Azure { namespace Storage { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
 
   void XmlGlobalInitialize() {}
+  void XmlGlobalDeinitialize() {}
 
   struct XmlReaderContext
   {
@@ -390,13 +392,17 @@ namespace Azure { namespace Storage { namespace _internal {
 
 #else
 
-  struct XmlGlobalInitializer final
+  void XmlGlobalInitialize()
   {
-    XmlGlobalInitializer() { xmlInitParser(); }
-    ~XmlGlobalInitializer() { xmlCleanupParser(); }
-  };
+    static std::once_flag flag;
+    std::call_once(flag, [] { xmlInitParser(); });
+  }
 
-  void XmlGlobalInitialize() { static XmlGlobalInitializer globalInitializer; }
+  void XmlGlobalDeinitialize()
+  {
+    static std::once_flag flag;
+    std::call_once(flag, [] { xmlCleanupParser(); });
+  }
 
   XmlReader::XmlReader(XmlReader&& other) noexcept { *this = std::move(other); }
   XmlReader& XmlReader::operator=(XmlReader&& other) noexcept
