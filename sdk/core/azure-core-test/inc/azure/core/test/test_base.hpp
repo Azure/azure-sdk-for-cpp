@@ -134,6 +134,15 @@ namespace Azure { namespace Core { namespace Test {
 
     bool shouldSkipTest() { return m_wasSkipped; }
 
+    void SkipTest()
+    {
+      if (!m_wasSkipped)
+      {
+        m_wasSkipped = true;
+        GTEST_SKIP();
+      }
+    }
+
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
