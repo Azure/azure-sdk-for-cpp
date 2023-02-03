@@ -10,11 +10,11 @@ if(@BUILD_TRANSPORT_CURL@)
   find_dependency(CURL @CURL_MIN_REQUIRED_VERSION@)
 endif()
 
-if(WIN32)
-  if (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-    find_dependency(wil)
-  endif()
-else()
+if(@BUILD_TRANSPORT_WINHTTP@)
+  find_dependency(wil)
+endif()
+
+if (NOT WIN32)
   find_dependency(OpenSSL)
 endif()
 
