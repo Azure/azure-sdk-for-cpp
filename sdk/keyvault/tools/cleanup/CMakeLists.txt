@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   cleanup-keyvault
-  cleanup.cpp
+  src/cleanup.cpp
 )
 create_per_service_target_build_for_sample(keyvault cleanup-keyvault)
 

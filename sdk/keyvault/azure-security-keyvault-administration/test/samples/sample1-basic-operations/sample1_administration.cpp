@@ -47,11 +47,8 @@ int main()
     std::cout << "Retrieved setting with name " << setting.Name << ", with value " << setting.Value
               << std::endl;
 
-    UpdateSettingOptions options;
-    options.Value = setting.Value;
-
     Setting updatedSetting
-        = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
+        = settingsClient.UpdateSetting(settingsList.Value[0].Name, setting.Value).Value;
 
     std::cout << "Retrieved updated setting with name " << updatedSetting.Name << ", with value "
               << updatedSetting.Value << std::endl;

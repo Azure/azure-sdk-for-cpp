@@ -93,7 +93,7 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
   include(GNUInstallDirs)
 
   # When installing, copy our "inc" directory (headers) to "include" directory at the install location.
-  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/inc/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/azure")
 
   # Copy license as "copyright" (vcpkg dictates naming and location).
   install(FILES "${AZ_ROOT_DIR}/LICENSE.txt" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/${targetName}-cpp" RENAME "copyright")
