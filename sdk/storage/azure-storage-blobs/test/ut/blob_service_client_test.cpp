@@ -438,7 +438,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobServiceClientTest, UserDelegationKey)
+  TEST_F(BlobServiceClientTest, UserDelegationKey_LIVEONLY_)
   {
     auto serviceClient = *m_blobServiceClient;
 

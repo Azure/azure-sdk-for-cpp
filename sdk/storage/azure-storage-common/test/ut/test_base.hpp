@@ -107,6 +107,11 @@ namespace Azure { namespace Storage {
        *
        * To make record-playback testing work, you have to call these functions in a determined way,
        * e.g. always in the same order, the same times and with the same parameters.
+       *
+       * Note that in C++, evaluation order of function parameters is undefined. So you CANNOT do:
+       * `auto ret = RandomInt() + RandomInt();`
+       * or
+       * `auto ret = function1(RandomInt()) + function2(RandomInt());`
        */
       uint64_t RandomInt(
           uint64_t minNumber = std::numeric_limits<uint64_t>::min(),

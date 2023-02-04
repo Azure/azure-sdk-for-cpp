@@ -75,9 +75,8 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }
       {
-        auto client = m_shareClient->GetRootDirectoryClient()
-                          .GetSubdirectoryClient(RandomString())
-                          .GetSubdirectoryClient(RandomString());
+        auto client = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(RandomString());
+        client = client.GetSubdirectoryClient(RandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }

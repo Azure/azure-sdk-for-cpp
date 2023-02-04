@@ -5,7 +5,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(StorageTest, ClientSecretCredentialWorks)
+  TEST_F(StorageTest, ClientSecretCredentialWorks_LIVEONLY_)
   {
     const std::string containerName = LowercaseRandomString();
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
