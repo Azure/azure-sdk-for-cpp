@@ -23,6 +23,9 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   class KeyVaultKeyClient : public Azure::Core::Test::TestBase {
+  public:
+    KeyVaultKeyClient() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
+
   private:
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
 

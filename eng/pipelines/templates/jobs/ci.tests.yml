@@ -186,6 +186,7 @@ jobs:
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
         displayName: Restore Recordings
         condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), ne('${{parameters.ServiceDirectory}}', 'core'),ne('${{parameters.ServiceDirectory}}', 'template'))
+        name: RestoreRecordings
 
       - pwsh: |
           ctest `
@@ -200,7 +201,9 @@ jobs:
         
       - ${{ parameters.PostTestSteps }}
             
+     
       - pwsh: |
+          $ErrorActionPreference = 'SilentlyContinue'
           get-content test-proxy.log
         displayName: TestProxy Log
         condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))

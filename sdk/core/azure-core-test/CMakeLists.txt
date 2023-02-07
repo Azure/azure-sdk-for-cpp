@@ -30,6 +30,9 @@ add_library (
   ${AZURE_CORE_TEST_SOURCE}
   )
 
+include(TestProxyPrep)
+SetUpTestProxy("sdk/core")
+
 if (MSVC)
   # - C6326: Google comparisons 
   target_compile_options(azure-core-test-fw PUBLIC /wd6326)
