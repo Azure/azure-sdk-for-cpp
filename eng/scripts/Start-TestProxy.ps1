@@ -37,6 +37,6 @@ if($error){
     }
 }
 
-echo "Start test proxy with argument list --storage-location $AssetsPath"
+echo "Start test proxy with argument list -l $AssetsPath"
 #starts it in a separate process that will outlive pwsh in order to serve requests.
-Start-Process 'test-proxy' -ArgumentList "--storage-location $AssetsPath" 
+Start-Process 'test-proxy' -ArgumentList "start -l $AssetsPath" -WorkingDirectory $AssetsPath

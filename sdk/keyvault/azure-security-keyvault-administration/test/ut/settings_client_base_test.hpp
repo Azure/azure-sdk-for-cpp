@@ -79,5 +79,7 @@ namespace Azure {
     {
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
+
+    SettingsClientTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
   };
 }}}}} // namespace Azure::Security::KeyVault::Administration::Test
