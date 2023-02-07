@@ -17,6 +17,9 @@ add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 # Export the test folder for recordings access.
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
+include(TestProxyPrep)
+SetUpTestProxy("sdk/attestation")
+
 include(GoogleTest)
 
 add_executable (
