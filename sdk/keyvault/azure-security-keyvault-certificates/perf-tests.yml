@@ -1,0 +1,17 @@
+Service: keyvault-certificates
+
+Project: azure-security-keyvault-certificates-perf
+
+PrimaryPackage: azure-security-keyvault-certificates-cpp
+
+PackageVersions:
+- azure-security-keyvault-certificates-cpp: 4.1.0
+  azure-core-cpp: 1.7.1
+- azure-security-keyvault-certificates-cpp: source
+  azure-core-cpp: source
+
+Tests:
+- Test: get-certificate
+  Class: GetCertificate
+  Arguments:
+  - --parallel 64
