@@ -334,13 +334,17 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string filename3 = RandomString() + "file3";
       const std::string filename4 = RandomString() + "file4";
 
-      auto oldFileClient = fileSystemClientWithCPK.GetFileClient(filename1);
-      oldFileClient.Create();
-      auto newFileClient = fileSystemClientWithCPK.RenameFile(filename1, filename2).Value;
-      auto properties = newFileClient.GetProperties().Value;
+      auto oldFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClientWithCPK.GetFileClient(filename1));
+      oldFileClient->Create();
+      auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClientWithCPK.RenameFile(filename1, filename2).Value);
+      auto properties = newFileClient->GetProperties().Value;
       EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
-      auto newFileClientWithoutEncryptionKey = fileSystemClientWithoutCPK.GetFileClient(filename2);
-      EXPECT_THROW(newFileClientWithoutEncryptionKey.GetProperties(), StorageException);
+      auto newFileClientWithoutEncryptionKey
+          = std::make_shared<Files::DataLake::DataLakeFileClient>(
+              fileSystemClientWithoutCPK.GetFileClient(filename2));
+      EXPECT_THROW(newFileClientWithoutEncryptionKey->GetProperties(), StorageException);
       EXPECT_NO_THROW(fileSystemClientWithoutCPK.RenameFile(filename2, filename3));
 
       // Rename Directory
@@ -349,19 +353,21 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string newDirectoryName = baseName + "dir2";
       const std::string newDirectoryName2 = baseName + "dir3";
 
-      auto oldDirectoryClient = fileSystemClientWithCPK.GetDirectoryClient(oldDirectoryName);
-      oldDirectoryClient.Create();
-      oldDirectoryClient.GetFileClient(baseName + "file3").Create();
-      oldDirectoryClient.GetSubdirectoryClient(baseName + "dir4").Create();
+      auto oldDirectoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClientWithCPK.GetDirectoryClient(oldDirectoryName));
+      oldDirectoryClient->Create();
+      oldDirectoryClient->GetFileClient(baseName + "file3").Create();
+      oldDirectoryClient->GetSubdirectoryClient(baseName + "dir4").Create();
 
-      auto newDirectoryClient
-          = fileSystemClientWithCPK.RenameDirectory(oldDirectoryName, newDirectoryName).Value;
-      properties = newDirectoryClient.GetProperties().Value;
+      auto newDirectoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClientWithCPK.RenameDirectory(oldDirectoryName, newDirectoryName).Value);
+      properties = newDirectoryClient->GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionKeySha256.HasValue());
       EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
       auto newDirectoryClientWithoutEncryptionKey
-          = fileSystemClientWithoutCPK.GetDirectoryClient(newDirectoryName);
-      EXPECT_THROW(newDirectoryClientWithoutEncryptionKey.GetProperties(), StorageException);
+          = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+              fileSystemClientWithoutCPK.GetDirectoryClient(newDirectoryName));
+      EXPECT_THROW(newDirectoryClientWithoutEncryptionKey->GetProperties(), StorageException);
       EXPECT_NO_THROW(
           fileSystemClientWithoutCPK.RenameDirectory(newDirectoryName, newDirectoryName2));
 
@@ -375,28 +381,28 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string pathName = "path";
       const std::string pathName2 = "path2";
 
-      auto pathClientWithCPK
-          = Files::DataLake::DataLakePathClient(fileSystemClientWithCPK.GetFileClient(pathName));
-      auto pathClientWithoutCPK
-          = Files::DataLake::DataLakePathClient(fileSystemClientWithoutCPK.GetFileClient(pathName));
-      auto pathClient2WithCPK
-          = Files::DataLake::DataLakePathClient(fileSystemClientWithCPK.GetFileClient(pathName2));
+      auto pathClientWithCPK = std::make_shared<Files::DataLake::DataLakePathClient>(
+          fileSystemClientWithCPK.GetFileClient(pathName));
+      auto pathClientWithoutCPK = std::make_shared<Files::DataLake::DataLakePathClient>(
+          fileSystemClientWithoutCPK.GetFileClient(pathName));
+      auto pathClient2WithCPK = std::make_shared<Files::DataLake::DataLakePathClient>(
+          fileSystemClientWithCPK.GetFileClient(pathName2));
 
-      EXPECT_NO_THROW(pathClientWithCPK.Create(Files::DataLake::Models::PathResourceType::File));
-      EXPECT_NO_THROW(pathClientWithCPK.SetMetadata(RandomMetadata()));
-      auto properties = pathClientWithCPK.GetProperties().Value;
+      EXPECT_NO_THROW(pathClientWithCPK->Create(Files::DataLake::Models::PathResourceType::File));
+      EXPECT_NO_THROW(pathClientWithCPK->SetMetadata(RandomMetadata()));
+      auto properties = pathClientWithCPK->GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionKeySha256.HasValue());
       EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
 
-      EXPECT_THROW(pathClientWithoutCPK.SetMetadata(RandomMetadata()), StorageException);
-      EXPECT_THROW(pathClientWithoutCPK.GetProperties(), StorageException);
-      EXPECT_NO_THROW(pathClientWithoutCPK.GetAccessControlList());
+      EXPECT_THROW(pathClientWithoutCPK->SetMetadata(RandomMetadata()), StorageException);
+      EXPECT_THROW(pathClientWithoutCPK->GetProperties(), StorageException);
+      EXPECT_NO_THROW(pathClientWithoutCPK->GetAccessControlList());
       EXPECT_NO_THROW(
-          pathClientWithoutCPK.SetHttpHeaders(Files::DataLake::Models::PathHttpHeaders()));
-      EXPECT_NO_THROW(pathClientWithoutCPK.SetPermissions("rwxrw-rw-"));
+          pathClientWithoutCPK->SetHttpHeaders(Files::DataLake::Models::PathHttpHeaders()));
+      EXPECT_NO_THROW(pathClientWithoutCPK->SetPermissions("rwxrw-rw-"));
 
       auto createResult
-          = pathClient2WithCPK.Create(Files::DataLake::Models::PathResourceType::File).Value;
+          = pathClient2WithCPK->Create(Files::DataLake::Models::PathResourceType::File).Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
       EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
     }
@@ -405,35 +411,38 @@ namespace Azure { namespace Storage { namespace Test {
     {
       const std::string fileName = "file";
       const std::string fileName2 = "file2";
-      auto fileClientWithCPK = fileSystemClientWithCPK.GetFileClient(fileName);
-      auto fileClientWithoutCPK = fileSystemClientWithoutCPK.GetFileClient(fileName);
-      auto fileClient2WithCPK = fileSystemClientWithCPK.GetFileClient(fileName2);
+      auto fileClientWithCPK = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClientWithCPK.GetFileClient(fileName));
+      auto fileClientWithoutCPK = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClientWithoutCPK.GetFileClient(fileName));
+      auto fileClient2WithCPK = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClientWithCPK.GetFileClient(fileName2));
 
       // upload test
-      EXPECT_NO_THROW(fileClientWithCPK.Create());
-      EXPECT_NO_THROW(fileClientWithCPK.UploadFrom(buffer.data(), buffer.size()));
-      auto result = fileClientWithCPK.Download();
+      EXPECT_NO_THROW(fileClientWithCPK->Create());
+      EXPECT_NO_THROW(fileClientWithCPK->UploadFrom(buffer.data(), buffer.size()));
+      auto result = fileClientWithCPK->Download();
       auto downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(buffer, downloaded);
-      EXPECT_NO_THROW(fileClientWithCPK.Delete());
+      EXPECT_NO_THROW(fileClientWithCPK->Delete());
       // append test
-      EXPECT_NO_THROW(fileClientWithCPK.Create());
+      EXPECT_NO_THROW(fileClientWithCPK->Create());
       bodyStream.Rewind();
-      EXPECT_NO_THROW(fileClientWithCPK.Append(bodyStream, 0));
+      EXPECT_NO_THROW(fileClientWithCPK->Append(bodyStream, 0));
       bodyStream.Rewind();
-      EXPECT_THROW(fileClientWithoutCPK.Append(bodyStream, buffer.size()), StorageException);
-      EXPECT_NO_THROW(fileClientWithCPK.Flush(buffer.size()));
-      result = fileClientWithCPK.Download();
+      EXPECT_THROW(fileClientWithoutCPK->Append(bodyStream, buffer.size()), StorageException);
+      EXPECT_NO_THROW(fileClientWithCPK->Flush(buffer.size()));
+      result = fileClientWithCPK->Download();
       downloaded = ReadBodyStream(result.Value.Body);
       EXPECT_EQ(buffer, downloaded);
-      EXPECT_NO_THROW(fileClientWithCPK.SetMetadata(RandomMetadata()));
-      auto properties = fileClientWithCPK.GetProperties().Value;
+      EXPECT_NO_THROW(fileClientWithCPK->SetMetadata(RandomMetadata()));
+      auto properties = fileClientWithCPK->GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionKeySha256.HasValue());
       EXPECT_EQ(customerProvidedKey.KeyHash, properties.EncryptionKeySha256.Value());
-      EXPECT_THROW(fileClientWithoutCPK.Flush(buffer.size()), StorageException);
-      EXPECT_THROW(fileClientWithoutCPK.Download(), StorageException);
+      EXPECT_THROW(fileClientWithoutCPK->Flush(buffer.size()), StorageException);
+      EXPECT_THROW(fileClientWithoutCPK->Download(), StorageException);
 
-      auto createResult = fileClient2WithCPK.Create().Value;
+      auto createResult = fileClient2WithCPK->Create().Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
       EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
     }
@@ -448,46 +457,52 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string fileName2 = "file2";
       const std::string fileName3 = "file3";
 
-      auto directoryClientWithCPK = fileSystemClientWithCPK.GetDirectoryClient(directoryName);
-      auto directoryClientWithoutCPK = fileSystemClientWithoutCPK.GetDirectoryClient(directoryName);
+      auto directoryClientWithCPK = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClientWithCPK.GetDirectoryClient(directoryName));
+      auto directoryClientWithoutCPK = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClientWithoutCPK.GetDirectoryClient(directoryName));
 
       // create subdirectory/file
-      EXPECT_NO_THROW(directoryClientWithCPK.Create());
-      auto subdirectoryClientWithCPK
-          = directoryClientWithCPK.GetSubdirectoryClient(subdirectoryName1);
-      EXPECT_NO_THROW(subdirectoryClientWithCPK.Create());
-      auto fileClientWithCPK = directoryClientWithCPK.GetFileClient(fileName1);
-      EXPECT_NO_THROW(fileClientWithCPK.Create());
-      auto subdirectoryProperties = subdirectoryClientWithCPK.GetProperties().Value;
+      EXPECT_NO_THROW(directoryClientWithCPK->Create());
+      auto subdirectoryClientWithCPK = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          directoryClientWithCPK->GetSubdirectoryClient(subdirectoryName1));
+      EXPECT_NO_THROW(subdirectoryClientWithCPK->Create());
+      auto fileClientWithCPK = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          directoryClientWithCPK->GetFileClient(fileName1));
+      EXPECT_NO_THROW(fileClientWithCPK->Create());
+      auto subdirectoryProperties = subdirectoryClientWithCPK->GetProperties().Value;
       EXPECT_EQ(customerProvidedKey.KeyHash, subdirectoryProperties.EncryptionKeySha256.Value());
-      auto fileProperties = fileClientWithCPK.GetProperties();
+      auto fileProperties = fileClientWithCPK->GetProperties();
       EXPECT_EQ(customerProvidedKey.KeyHash, fileProperties.Value.EncryptionKeySha256.Value());
 
       // rename file
       auto newFileClient
-          = directoryClientWithCPK.RenameFile(fileName1, directoryName + "/" + fileName2).Value;
+          = directoryClientWithCPK->RenameFile(fileName1, directoryName + "/" + fileName2).Value;
       auto newFileProperties = newFileClient.GetProperties().Value;
       EXPECT_EQ(customerProvidedKey.KeyHash, newFileProperties.EncryptionKeySha256.Value());
-      auto newFileClientWithoutCPK
-          = fileSystemClientWithoutCPK.GetFileClient(directoryName + "/" + fileName2);
-      EXPECT_THROW(newFileClientWithoutCPK.GetProperties(), StorageException);
+      auto newFileClientWithoutCPK = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClientWithoutCPK.GetFileClient(directoryName + "/" + fileName2));
+      EXPECT_THROW(newFileClientWithoutCPK->GetProperties(), StorageException);
       EXPECT_NO_THROW(
-          directoryClientWithoutCPK.RenameFile(fileName2, directoryName + "/" + fileName3));
+          directoryClientWithoutCPK->RenameFile(fileName2, directoryName + "/" + fileName3));
 
       auto newSubdirectoryClientWithCPK
           = directoryClientWithCPK
-                .RenameSubdirectory(subdirectoryName1, directoryName + "/" + subdirectoryName2)
+                ->RenameSubdirectory(subdirectoryName1, directoryName + "/" + subdirectoryName2)
                 .Value;
       auto newSubdirectoryProperties = newSubdirectoryClientWithCPK.GetProperties().Value;
       EXPECT_EQ(customerProvidedKey.KeyHash, newSubdirectoryProperties.EncryptionKeySha256.Value());
       auto newsubdirectoryClientWithoutCPK
-          = fileSystemClientWithoutCPK.GetDirectoryClient(directoryName + "/" + subdirectoryName2);
-      EXPECT_THROW(newsubdirectoryClientWithoutCPK.GetProperties(), StorageException);
-      EXPECT_NO_THROW(directoryClientWithoutCPK.RenameSubdirectory(
+          = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+              fileSystemClientWithoutCPK.GetDirectoryClient(
+                  directoryName + "/" + subdirectoryName2));
+      EXPECT_THROW(newsubdirectoryClientWithoutCPK->GetProperties(), StorageException);
+      EXPECT_NO_THROW(directoryClientWithoutCPK->RenameSubdirectory(
           subdirectoryName2, directoryName + "/" + subdirectoryName3));
 
-      auto directoryClient2WithCPK = fileSystemClientWithCPK.GetDirectoryClient(directoryName2);
-      auto createResult = directoryClient2WithCPK.Create().Value;
+      auto directoryClient2WithCPK = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClientWithCPK.GetDirectoryClient(directoryName2));
+      auto createResult = directoryClient2WithCPK->Create().Value;
       EXPECT_TRUE(createResult.EncryptionKeySha256.HasValue());
       EXPECT_EQ(customerProvidedKey.KeyHash, createResult.EncryptionKeySha256.Value());
     }
