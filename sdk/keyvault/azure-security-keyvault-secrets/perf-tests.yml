@@ -1,0 +1,17 @@
+Service: keyvault-secrets
+
+Project: azure-security-keyvault-secrets-perf
+
+PrimaryPackage: azure-security-keyvault-secrets-cpp
+
+PackageVersions:
+- azure-security-keyvault-secrets-cpp: 4.1.0
+  azure-core-cpp: 1.7.1
+- azure-security-keyvault-secrets-cpp: source
+  azure-core-cpp: source
+
+Tests:
+- Test: get-secret
+  Class: GetSecret
+  Arguments:
+  - --parallel 64
