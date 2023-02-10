@@ -28,16 +28,14 @@ namespace Azure { namespace Storage {
 
     class StorageTest : public Azure::Core::Test::TestBase {
     public:
-<<<<<<< HEAD
       StorageTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
-=======
+
       const static Azure::ETag DummyETag;
       const static Azure::ETag DummyETag2;
       /* cspell:disable-next-line */
       constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
       /* cspell:disable-next-line */
       constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
->>>>>>> 476e518c (test-proxy)
 
     protected:
       const std::string& StandardStorageConnectionString();
