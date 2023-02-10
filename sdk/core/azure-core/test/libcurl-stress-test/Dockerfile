@@ -3,8 +3,7 @@
 
 FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04
 
-RUN su
-# install the mem check tool 
+# install the mem check tool along side the other deps
 RUN apt-get update -y
 RUN apt-get install gcc cmake make g++ git zip unzip build-essential pkg-config wget curl valgrind -y
 RUN wget -O vcpkg.tar.gz https://github.com/microsoft/vcpkg/archive/master.tar.gz
