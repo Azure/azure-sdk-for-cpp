@@ -32,7 +32,7 @@
 /sdk/storage/            @vinjiang @katmsft @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman @microzchang
 
 # PRLabel: %EngSys
-/sdk/template/           @danieljurek @weshaggard
+/sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter 
 
 ################
 # Automation
