@@ -1,0 +1,13 @@
+Service: core
+
+Project: azure-perf-test
+
+PackageVersions:
+- azure-core-cpp: 1.7.2
+- azure-core-cpp: source
+
+Tests:
+  - Test: extendedOptions
+    Class: extendedOptions
+    Arguments:
+    - -e 1

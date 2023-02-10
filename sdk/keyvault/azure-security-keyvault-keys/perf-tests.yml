@@ -1,0 +1,17 @@
+Service: keyvault-keys
+
+Project: azure-security-keyvault-keys-perf
+
+PrimaryPackage: azure-security-keyvault-keys-cpp
+
+PackageVersions:
+- azure-security-keyvault-keys-cpp: 4.3.0
+  azure-core-cpp: 1.7.1
+- azure-security-keyvault-keys-cpp: source
+  azure-core-cpp: source
+
+Tests:
+- Test: get-key
+  Class: GetKey
+  Arguments:
+  - --parallel 64

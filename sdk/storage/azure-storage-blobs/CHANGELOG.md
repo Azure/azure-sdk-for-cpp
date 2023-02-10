@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.0-beta.1 (Unreleased)
+## 12.7.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,17 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.7.0-beta.1 (2023-02-07)
+
+### Features Added
+
+- Bumped up API version to `2021-12-02`.
+- Added support for new access tier `Cold`.
+
+### Bugs Fixed
+
+- Fixed a bug where setting premium page blob tier operations always fail.
 
 ## 12.6.2 (2022-10-11)
 
