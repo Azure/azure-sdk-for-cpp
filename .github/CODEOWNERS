@@ -1,19 +1,12 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
 # https://github.com/Azure/azure-sdk/blob/main/docs/policies/opensource.md#codeowners
 
-################
-# Automation
-################
-
-# Git Hub integration and bot rules
-/.github/                @jsquire @rickwinter @ronniegeraghty
-
 ###########
 # SDK
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
+/**                      @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 /sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # Samples
@@ -39,11 +32,16 @@
 /sdk/storage/            @vinjiang @katmsft @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman @microzchang
 
 # PRLabel: %EngSys
-/sdk/template/           @danieljurek @weshaggard
+/sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter 
+
+################
+# Automation
+################
+
+# Git Hub integration and bot rules
+/.github/                @jsquire @rickwinter @ronniegeraghty
 
 ###########
 # Eng Sys
 ###########
 /eng/                    @danieljurek @weshaggard @benbp
-/**/ci.yml               @danieljurek
-/**/tests.yml            @danieljurek
