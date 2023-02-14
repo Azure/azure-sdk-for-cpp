@@ -7,6 +7,9 @@ parameters:
   displayName: Tests (regex of tests to run)
   type: string
   default: '^(get-key)$'
+- name: TestsFile 
+  type: string 
+  default: '/sdk/keyvault/azure-security-keyvault-keys/perf-tests.yml'
 - name: Arguments
   displayName: Arguments (regex of arguments to run)
   type: string
