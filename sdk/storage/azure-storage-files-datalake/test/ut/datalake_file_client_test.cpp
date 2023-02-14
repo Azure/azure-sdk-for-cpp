@@ -772,9 +772,9 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     const int64_t blobSize = blobContent.size();
-    std::vector<std::future<void>> futures;
     for (int c : {1, 2, 4})
     {
+      std::vector<std::future<void>> futures;
       // random range
       for (int i = 0; i < 16; ++i)
       {
@@ -800,10 +800,10 @@ namespace Azure { namespace Storage { namespace Test {
             fileClient.DownloadTo(downloadBuffer.data(), static_cast<size_t>(length - 1), options),
             std::runtime_error);
       }
-    }
-    for (auto& f : futures)
-    {
-      f.get();
+      for (auto& f : futures)
+      {
+        f.get();
+      }
     }
   }
 
