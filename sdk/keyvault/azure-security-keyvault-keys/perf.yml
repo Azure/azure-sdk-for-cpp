@@ -33,6 +33,7 @@ extends:
     ServiceDirectory: keyvault
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
+    TestsFile: ${{ parameters.TestsFile }}
     Arguments: ${{ parameters.Arguments }}
     Iterations: ${{ parameters.Iterations }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
