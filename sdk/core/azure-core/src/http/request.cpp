@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::IO::_internal;
 
