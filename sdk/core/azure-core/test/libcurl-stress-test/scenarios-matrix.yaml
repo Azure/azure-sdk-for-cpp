@@ -11,6 +11,6 @@ matrix:
       imageBuildDir: "../../../../../"
   scenarios:
     constantDetach:
-      testTarget: ./azure-core-libcurl-stress-test
+      testTarget: azure-core-libcurl-stress-test
       memory: "1.5Gi"
     
