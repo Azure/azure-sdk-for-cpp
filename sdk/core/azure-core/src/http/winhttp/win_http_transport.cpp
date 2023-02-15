@@ -918,6 +918,16 @@ _detail::WinHttpRequest::WinHttpRequest(
     }
   }
 
+  if (options.IgnoreInvalidCertificateCommonName)
+  {
+    auto option = SECURITY_FLAG_IGNORE_CERT_CN_INVALID;
+    if (!WinHttpSetOption(
+            m_requestHandle.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
+    {
+      GetErrorAndThrow("Error while setting ignore invalid certificate common name.");
+    }
+  }
+
   if (options.EnableCertificateRevocationListCheck)
   {
     DWORD value = WINHTTP_ENABLE_SSL_REVOCATION;
