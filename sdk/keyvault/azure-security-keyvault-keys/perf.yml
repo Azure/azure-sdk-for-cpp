@@ -7,9 +7,6 @@ parameters:
   displayName: Tests (regex of tests to run)
   type: string
   default: '^(get-key)$'
-- name: TestsFile 
-  type: string 
-  default: '/sdk/keyvault/azure-security-keyvault-keys/perf-tests.yml'
 - name: Arguments
   displayName: Arguments (regex of arguments to run)
   type: string
@@ -30,7 +27,7 @@ extends:
       - pwsh: |
           Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
         displayName: Set Vcpkg Variables
-    ServiceDirectory: keyvault
+    ServiceDirectory: keyvault/azure-security-keyvault-keys
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     TestsFile: ${{ parameters.TestsFile }}
