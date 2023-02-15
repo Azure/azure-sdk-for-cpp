@@ -106,7 +106,7 @@
       "StaticConfigs": {
         "Win2022": {
           "VcpkgInstall": "openssl",
-          "OSVmImage": "MMS2022",
+          "OSVmImage": "MMS2022Compliant",
           "Pool": "azsdk-pool-mms-win-2022-general",
           "CMAKE_GENERATOR": "Visual Studio 17 2022",
           "PublishMapFiles": "true"
