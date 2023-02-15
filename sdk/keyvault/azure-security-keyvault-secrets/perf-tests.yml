@@ -14,4 +14,5 @@ Tests:
 - Test: get-secret
   Class: GetSecret
   Arguments:
-  - --parallel 64
+    - --warmup 0 --duration 1
+    - --parallel 4

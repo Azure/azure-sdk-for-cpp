@@ -27,7 +27,7 @@ extends:
       - pwsh: |
           Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
         displayName: Set Vcpkg Variables
-    ServiceDirectory: "keyvault/azure-security-keyvault-keys"
+    ServiceDirectory: keyvault/azure-security-keyvault-keys
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}
