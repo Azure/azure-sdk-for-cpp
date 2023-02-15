@@ -866,9 +866,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(downloadBuffer, expectedData);
     };
 
-    std::vector<std::future<void>> futures;
     for (int c : {1, 2, 4})
     {
+      std::vector<std::future<void>> futures;
       // random range
       for (int i = 0; i < 16; ++i)
       {
@@ -882,10 +882,10 @@ namespace Azure { namespace Storage { namespace Test {
         futures.emplace_back(
             std::async(std::launch::async, testUploadFromFile, c, fileSize, 0, 25_KB));
       }
-    }
-    for (auto& f : futures)
-    {
-      f.get();
+      for (auto& f : futures)
+      {
+        f.get();
+      }
     }
   }
 
