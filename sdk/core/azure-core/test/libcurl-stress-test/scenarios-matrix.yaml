@@ -8,9 +8,9 @@ matrix:
   images:
     cpp:
       image: Dockerfile
-      imageBuildDir: "./"
+      imageBuildDir: "../../../../../"
   scenarios:
     constantDetach:
-      testTarget: azure-core-libcurl-stress-test
+      testTarget: ./azure-core-libcurl-stress-test
       memory: "1.5Gi"
     
