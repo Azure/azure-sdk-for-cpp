@@ -48,11 +48,11 @@ function getTargetOs {
         return $OsVMImage
     }
 
-    if ($OsVMImage -match "^windows-2019$|^win-2019$") {
+    if ($OsVMImage -eq "windows-2019") {
         return "win-2019"
     }
 
-    if ($OsVMImage -match "^windows-2022$|^win-2022$") {
+    if ($OsVMImage -eq "windows-2022") {
         return "win-2022"
     }
 
