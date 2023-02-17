@@ -4,7 +4,7 @@ jobs:
     displayName: Daily vcpkg PR
     pool:
       name: azsdk-pool-mms-win-2022-general
-      vmImage: MMS2022
+      vmImage: windows-2022
 
     variables:
       # The branch in the azure-sdk/vcpkg repo that is updated daily with the
