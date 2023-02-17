@@ -3,7 +3,7 @@
     "OSConfig": {
       "Windows": {
         "Pool": "azsdk-pool-mms-win-2022-general",
-        "OSVmImage": "MMS2022Compliant",
+        "OSVmImage": "windows-2022",
         "CmakeEnvArg": ""
       },
       "Linux": {
