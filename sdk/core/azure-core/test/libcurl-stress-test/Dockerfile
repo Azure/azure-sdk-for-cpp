@@ -29,5 +29,5 @@ WORKDIR /
 COPY --from=build ./build/sdk/core/azure-core/test/libcurl-stress-test/azure-core-libcurl-stress-test ./azure-core-libcurl-stress-test
 RUN chmod +x ./azure-core-libcurl-stress-test
 
-#CMD valgrind --tool=memcheck -s ./azure-core-libcurl-stress-test
+CMD ./azure-core-libcurl-stress-test
 # this should be run by the scenarios matrix , run valgrind only when needed since it impacts performance and resources. 
