@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This tool helps cleanup resources ( keys, certificates, secrets) existing in a key vault,
+ * @brief This tool helps cleanup resources (keys, certificates, secrets) existing in a key vault,
  * Attempts to restore it as close to original as possible without having to recreate the key vault.
  *
  * @remark The following environment variables must be set before running the sample.
