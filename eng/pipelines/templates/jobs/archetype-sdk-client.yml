@@ -69,7 +69,7 @@ jobs:
         displayName: Create API Review for ${{ artifact.name }}
         pool:
           name: azsdk-pool-mms-win-2022-general
-          vmImage: MMS2022
+          vmImage: windows-2022
         steps:
           - task: Powershell@2
             inputs:
@@ -111,7 +111,7 @@ jobs:
     - job: GenerateReleaseArtifacts
       pool:
         name: azsdk-pool-mms-win-2022-general
-        vmImage: MMS2022
+        vmImage: windows-2022
       variables:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
