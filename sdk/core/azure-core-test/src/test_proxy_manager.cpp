@@ -94,7 +94,6 @@ void TestProxyManager::StartPlaybackRecord(TestMode testMode)
 {
   if (IsPlaybackMode() || IsRecordMode())
   {
-    std::string mode = (IsPlaybackMode() ? "playback" : "record");
     return;
   }
 

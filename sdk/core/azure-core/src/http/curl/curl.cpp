@@ -413,13 +413,13 @@ CURLcode CurlSession::Perform(Context const& context)
     if (hostHeader == headers.end())
     {
       Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
-      std::string headerValue = this->m_request.GetUrl().GetHost();
+      std::string hostName = this->m_request.GetUrl().GetHost();
       auto port = this->m_request.GetUrl().GetPort();
       if (port != 0)
       {
-        headerValue += ":" + std::to_string(port);
+        hostName += ":" + std::to_string(port);
       }
-      this->m_request.SetHeader("Host", headerValue);
+      this->m_request.SetHeader("Host", hostName);
     }
     if (this->m_request.GetMethod() != HttpMethod::Get
         && this->m_request.GetMethod() != HttpMethod::Head

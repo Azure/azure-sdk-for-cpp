@@ -53,11 +53,10 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
   // Copy all headers
   for (auto& header : request.GetHeaders())
   {
-    if (header.first == "host")
+    if (header.first != "host")
     {
-      continue;
+      redirectRequest.SetHeader(header.first, header.second);
     }
-    redirectRequest.SetHeader(header.first, header.second);
   }
   // QP
   for (auto const& qp : request.GetUrl().GetQueryParameters())
