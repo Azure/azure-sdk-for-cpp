@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-12-02/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2022-11-02/file.json
 ```
 
 ## ModelFour Options
@@ -79,13 +79,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2021-12-02"],
+        "enum": ["2022-11-02"],
         "description": "The version used for the operations to Azure storage services."
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2021-12-02";
+      $.ApiVersionParameter.enum[0] = "2022-11-02";
 ```
 
 ### Rename Operations
