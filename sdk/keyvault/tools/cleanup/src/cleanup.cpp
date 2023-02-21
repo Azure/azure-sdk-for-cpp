@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for
- * C++ to create, get, update, delete and purge a secret.
+ * @brief This tool helps cleanup resources (keys, certificates, secrets) existing in a key vault,
+ * Attempts to restore it as close to original as possible without having to recreate the key vault.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
