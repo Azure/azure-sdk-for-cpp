@@ -106,8 +106,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const ShareRootSquash ShareRootSquash::RootSquash("RootSquash");
     const ShareRootSquash ShareRootSquash::AllSquash("AllSquash");
     const DeleteSnapshotsOption DeleteSnapshotsOption::Include("include");
-    const ShareFileRequestIntent ShareFileRequestIntent::None("none");
-    const ShareFileRequestIntent ShareFileRequestIntent::Backup("backup");
+    const ShareTokenIntent ShareTokenIntent::Backup("backup");
+    const ShareTokenIntent ShareTokenIntent::None("");
     FileAttributes::FileAttributes(const std::string& value)
     {
       const std::string delimiter = " | ";

@@ -630,18 +630,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Valid value is backup.
      */
-    class ShareFileRequestIntent final {
+    class ShareTokenIntent final {
     public:
-      ShareFileRequestIntent() = default;
-      explicit ShareFileRequestIntent(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const ShareFileRequestIntent& other) const
-      {
-        return m_value == other.m_value;
-      }
-      bool operator!=(const ShareFileRequestIntent& other) const { return !(*this == other); }
+      ShareTokenIntent() = default;
+      explicit ShareTokenIntent(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ShareTokenIntent& other) const { return m_value == other.m_value; }
+      bool operator!=(const ShareTokenIntent& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileRequestIntent None;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileRequestIntent Backup;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent None;
 
     private:
       std::string m_value;
@@ -1961,7 +1958,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct CreateSharePermissionOptions final
       {
         Models::_detail::SharePermission SharePermission;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateSharePermissionResult> CreatePermission(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -1971,7 +1968,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct GetSharePermissionOptions final
       {
         std::string FilePermissionKey;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::SharePermission> GetPermission(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2041,7 +2038,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateDirectoryResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2052,7 +2049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Nullable<bool> AllowTrailingDot;
         Nullable<std::string> Sharesnapshot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::DirectoryProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2062,7 +2059,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct DeleteDirectoryOptions final
       {
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::DeleteDirectoryResult> Delete(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2078,7 +2075,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetDirectoryPropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2089,7 +2086,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::map<std::string, std::string> Metadata;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetDirectoryMetadataResult> SetMetadata(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2105,7 +2102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ListFilesIncludeFlags> Include;
         Nullable<bool> IncludeExtendedInfo;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ListFilesAndDirectoriesSegmentResponse>
       ListFilesAndDirectoriesSegment(
@@ -2120,7 +2117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Sharesnapshot;
         Nullable<bool> Recursive;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ListHandlesResponse> ListHandles(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2134,7 +2131,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string HandleId;
         Nullable<bool> Recursive;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ForceCloseDirectoryHandlesResult> ForceCloseHandles(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2157,7 +2154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::map<std::string, std::string> Metadata;
         Nullable<bool> AllowTrailingDot;
         Nullable<bool> AllowSourceTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::RenameDirectoryResult> Rename(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2185,7 +2182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
         Nullable<std::string> LeaseId;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateFileResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2198,7 +2195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Range;
         Nullable<bool> RangeGetContentMD5;
         Nullable<std::string> LeaseId;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::DownloadFileResult> Download(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2210,7 +2207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<bool> AllowTrailingDot;
         Nullable<std::string> Sharesnapshot;
         Nullable<std::string> LeaseId;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::FileProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2221,7 +2218,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Nullable<bool> AllowTrailingDot;
         Nullable<std::string> LeaseId;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::DeleteFileResult> Delete(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2245,7 +2242,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileChangeTime;
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetFilePropertiesResult> SetHttpHeaders(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2257,7 +2254,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetFileMetadataResult> SetMetadata(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2269,7 +2266,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<int32_t> Duration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::AcquireFileLeaseResult> AcquireLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2280,7 +2277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::string LeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ReleaseFileLeaseResult> ReleaseLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2292,7 +2289,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string LeaseId;
         Nullable<std::string> ProposedLeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ChangeFileLeaseResult> ChangeLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2303,7 +2300,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::BreakFileLeaseResult> BreakLease(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2318,7 +2315,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::UploadFileRangeResult> UploadRange(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2352,7 +2349,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Range;
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::GetFileRangeListResult> GetRangeList(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2375,7 +2372,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
         Nullable<bool> AllowSourceTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::StartFileCopyResult> StartCopy(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2387,7 +2384,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string CopyId;
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::AbortFileCopyResult> AbortCopy(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2400,7 +2397,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<int32_t> MaxResults;
         Nullable<std::string> Sharesnapshot;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ListHandlesResponse> ListHandles(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2413,7 +2410,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Sharesnapshot;
         std::string HandleId;
         Nullable<bool> AllowTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::ForceFileCloseHandlesResult> ForceCloseHandles(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2437,7 +2434,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileContentType;
         Nullable<bool> AllowTrailingDot;
         Nullable<bool> AllowSourceTrailingDot;
-        Nullable<Models::ShareFileRequestIntent> FileRequestIntent;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::RenameFileResult> Rename(
           Core::Http::_internal::HttpPipeline& pipeline,
