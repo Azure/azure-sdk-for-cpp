@@ -638,7 +638,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const ShareTokenIntent& other) const { return !(*this == other); }
       const std::string& ToString() const { return m_value; }
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent None;
 
     private:
       std::string m_value;

@@ -222,7 +222,7 @@ directive:
       $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
       delete $.FileChangeTime.format;
       $.FileLastWriteTimeMode["x-ms-enum"]["values"] = [{"value": "now", "name": "Now"},{"value": "preserve", "name": "Preserve"}];
-      $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "backup", "name": "Backup"}, {"value": "", "name": "None"}];
+      $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
   - from: swagger-document
     where: $.definitions
     transform: >
