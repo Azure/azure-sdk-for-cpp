@@ -1,0 +1,16 @@
+{
+  "sourceFilesToProcess": null,
+  "sourceFilesToSkip": [
+  ],
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc"
+  ],
+  "additionalCompilerSwitches": [],
+  "allowInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::",
+  "reviewName": "Azure Template API Review",
+  "serviceName": "Azure Template",
+  "packageName": "azure-template"
+}
