@@ -16,7 +16,7 @@ RUN ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg
 
 ADD . /src
 WORKDIR /build
-# during CMake generate step VCPKG runs in manifest mode, as such it will sync the packages to the level 
+# During CMake generate step VCPKG runs in manifest mode, as such it will sync the packages to the level 
 # of the hash specified in src/azure-sdk-for-cpp/cmake-modules/AzureVcpkg.cmake in the VCPKG_COMMIT_STRING
 # environment variable thus the packages we run with are not the latest versions but the ones the code
 # was developed against. 
