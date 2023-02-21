@@ -20,6 +20,7 @@ pr:
   paths:
     include:
       - sdk/storage
+      - eng/common/testproxy
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

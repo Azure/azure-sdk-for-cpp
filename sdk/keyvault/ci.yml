@@ -21,6 +21,7 @@ pr:
   paths:
     include:
       - sdk/keyvault
+      - eng/common/testproxy
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
