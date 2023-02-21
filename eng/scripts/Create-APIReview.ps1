@@ -14,30 +14,31 @@ Param(
     [Parameter(Mandatory=$True)]
     [string] $DefaultBranch,
     [Parameter(Mandatory=$True)]
-    [string] $ConfigFileDir
+    [string] $ConfigFileDir,
+    [Parameter(Mandatory=$True)]
+    [string] $ParserPath,
+    [Parameter(Mandatory=$True)]
+    [string] $SourcePath
 )
 
 Write-Host "$PSScriptRoot"
 . (Join-Path $PSScriptRoot .. common scripts common.ps1)
 $createReviewScript = (Join-Path $PSScriptRoot .. common scripts Create-APIReview.ps1)
-Set-Location $PSScriptRoot
 
-Write-Host "Creating API review artifact for $ArtifactName"
+$apiviewSettings = Join-Path $SourcePath "ApiViewSettings.json"
+if (!(Test-Path $apiviewSettings))
+{
+    Write-Host "ApiViewSettings.json file is not found in $($SourcePath). APIView settings file is required to generate API review file."
+    exit 1
+}
+
+Write-Host "Creating API review artifact for $($ArtifactName)"
 New-Item -ItemType Directory -Path $OutPath/$ArtifactName -force
+$parentPath = Split-Path $ParserPath  -Parent
+Write-Host "Contents in $($parentPath)"
+Get-ChildItem -Path $parentPath -Recurse
 
-$gitroot = Join-Path $PSScriptRoot .. ..
-Write-Host "Get-ApiViewCommandLine.ps1 $gitroot $ArtifactName"
-$cmdLine = & $PSScriptRoot/Get-ApiViewCommandLine.ps1 $gitroot $ArtifactName
-Write-Host "Executing clang++ command:"
-Write-Host $cmdLine
-$cmd, $cmdArgs = $cmdLine -split ' '
-# Get-ApiViewCommandLine.ps1 returns a string representing a clang++ command that needs to be run, e.g.
-# clang++ <space separated list of header files> -Xclang -ast-dump -I <space separated list of header files>
-# ApiView expects a zip of this ast as the format for a C++ language artifact.
-& $cmd $cmdArgs > clangAstOutput
-
-Compress-Archive -Path clangAstOutput -DestinationPath $OutPath/$ArtifactName/$ArtifactName
-Rename-Item $OutPath/$ArtifactName/$ArtifactName.zip -NewName "$ArtifactName.cppast"
+& $ParserPath -o $OutPath/$ArtifactName/$ArtifactName.json $SourcePath
 
 Write-Host "Send request to APIView to create review for $ArtifactName"
 &($createReviewScript) -ArtifactPath $OutPath -APIViewUri $ApiviewUri -APIKey $ApiKey -APILabel $ApiLabel -PackageName $ArtifactName -SourceBranch $SourceBranch -DefaultBranch $DefaultBranch -ConfigFileDir $ConfigFileDir
