@@ -634,6 +634,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+
+    /**
+     * Encryption context of the file. Encryption context is metadata that is not encrypted when
+     * stored on the file. The primary application of this field is to store non-encrypted data that
+     * can be used to derive the customer-provided key for a file.
+     * Not applicable for directories.
+     */
+    Azure::Nullable<std::string> EncryptionContext;
   };
 
   /**

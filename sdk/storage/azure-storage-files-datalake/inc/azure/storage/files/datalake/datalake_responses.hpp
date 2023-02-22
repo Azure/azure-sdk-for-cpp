@@ -267,6 +267,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Nullable<std::string> EncryptionScope;
 
       /**
+       * Encryption context of the file. Encryption context is metadata that is not encrypted when
+       * stored on the file. The primary application of this field is to store non-encrypted data
+       * that can be used to derive the customer-provided key for a file.
+       * Not applicable for directories.
+       */
+      Nullable<std::string> EncryptionContext;
+
+      /**
        * The creation time of the path.
        */
       Nullable<DateTime> CreatedOn;
@@ -348,6 +356,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
+
+      /**
+       * Encryption context of the file. Encryption context is metadata that is not encrypted when
+       * stored on the file. The primary application of this field is to store non-encrypted data
+       * that can be used to derive the customer-provided key for a file.
+       * Not applicable for directories.
+       */
+      Nullable<std::string> EncryptionContext;
 
       /**
        * The copy ID of the path, if the path is created from a copy operation.
@@ -664,6 +680,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The encryption scope.
        */
       Azure::Nullable<std::string> EncryptionScope;
+
+      /*
+       * Encryption context of the file. Encryption context is metadata that is not encrypted when
+       * stored on the file. The primary application of this field is to store non-encrypted data
+       * that can be used to derive the customer-provided key for a file.
+       * Not applicable for directories.
+       */
+      Nullable<std::string> EncryptionContext;
     };
 
     /**
