@@ -359,7 +359,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void StorageTest::InitLoggingOptions(Azure::Core::_internal::ClientOptions& options)
   {
-    // cspell:ignore mibps, numofmessages, rscc, rscd, rsce
+    // cspell:ignore mibps, numofmessages, rscc, rscd, rsce, rscl, rsct
     const std::set<std::string> allowedHttpHeaders = {
         "x-ms-version",
         "x-ms-write",
