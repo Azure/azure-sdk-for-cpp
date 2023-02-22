@@ -4,17 +4,16 @@
 #include <azure/storage/files/datalake.hpp>
 
 #include "datalake_file_system_client_test.hpp"
-#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
   class DataLakePathClientTest : public DataLakeFileSystemClientTest {
   protected:
-    void SetUp();
-    void TearDown();
+    void SetUp() override;
 
-    std::vector<Files::DataLake::Models::Acl> GetValidAcls();
+    std::vector<Files::DataLake::Models::Acl> GetAclsForTesting();
 
+  protected:
     std::shared_ptr<Files::DataLake::DataLakePathClient> m_pathClient;
     std::string m_pathName;
   };

@@ -69,12 +69,11 @@ id,name,price
       "b25fY29sdW1ucyI6IFtdfQAYKmZhc3RwYXJxdWV0LXB5dGhvbiB2ZXJzaW9uIDAuOC4xIChidWlsZCAwKQDXAwAAUEFS"
       "MQ==");
 
-  TEST_F(BlockBlobClientTest, QueryJsonInputCsvOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryJsonInputCsvOutput)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
-    client.UploadFrom(
+    blobClient.UploadFrom(
         reinterpret_cast<const uint8_t*>(JsonQueryTestData.data()), JsonQueryTestData.size());
 
     Blobs::QueryBlobOptions queryOptions;
@@ -83,8 +82,8 @@ id,name,price
     {
       queryOptions.OutputTextConfiguration
           = Blobs::BlobQueryOutputTextOptions::CreateCsvTextOptions();
-      auto queryResponse
-          = client.Query("SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
+      auto queryResponse = blobClient.Query(
+          "SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
       auto data = queryResponse.Value.BodyStream->ReadToEnd();
       EXPECT_EQ(
           std::string(data.begin(), data.end()),
@@ -98,8 +97,8 @@ id,name,price
     {
       queryOptions.OutputTextConfiguration
           = Blobs::BlobQueryOutputTextOptions::CreateCsvTextOptions("|", ".", "[", "\\", true);
-      auto queryResponse
-          = client.Query("SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
+      auto queryResponse = blobClient.Query(
+          "SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
 
       auto data = queryResponse.Value.BodyStream->ReadToEnd();
       EXPECT_EQ(
@@ -108,12 +107,11 @@ id,name,price
     }
   }
 
-  TEST_F(BlockBlobClientTest, QueryCsvInputJsonOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryCsvInputJsonOutput)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
-    client.UploadFrom(
+    blobClient.UploadFrom(
         reinterpret_cast<const uint8_t*>(CsvQueryTestData.data()), CsvQueryTestData.size());
 
     Blobs::QueryBlobOptions queryOptions;
@@ -121,8 +119,8 @@ id,name,price
         = Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions("\n", ",", "\"", "\\", true);
     queryOptions.OutputTextConfiguration
         = Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions("|");
-    auto queryResponse
-        = client.Query("SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
+    auto queryResponse = blobClient.Query(
+        "SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
 
     auto data = queryResponse.Value.BodyStream->ReadToEnd();
     EXPECT_EQ(
@@ -130,12 +128,11 @@ id,name,price
         R"json({"id":"103","name":"apples","price":"99"}|{"id":"106","name":"lemons","price":"69"}|{"id":"110","name":"bananas","price":"39"}|{"id":"112","name":"sapote,mamey","price":"50"}|)json");
   }
 
-  TEST_F(BlockBlobClientTest, QueryCsvInputArrowOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryCsvInputArrowOutput)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
-    client.UploadFrom(
+    blobClient.UploadFrom(
         reinterpret_cast<const uint8_t*>(CsvQueryTestData.data()), CsvQueryTestData.size());
 
     Blobs::QueryBlobOptions queryOptions;
@@ -156,8 +153,8 @@ id,name,price
     fields.push_back(field);
     queryOptions.OutputTextConfiguration
         = Blobs::BlobQueryOutputTextOptions::CreateArrowTextOptions(std::move(fields));
-    auto queryResponse
-        = client.Query("SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
+    auto queryResponse = blobClient.Query(
+        "SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
 
     auto data = queryResponse.Value.BodyStream->ReadToEnd();
     const auto expectedData = Core::Convert::Base64Decode(
@@ -180,12 +177,11 @@ id,name,price
     EXPECT_EQ(data, expectedData);
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_QueryParquetInputArrowOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryParquetInputArrowOutput)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
-    client.UploadFrom(ParquetQueryTestData.data(), ParquetQueryTestData.size());
+    blobClient.UploadFrom(ParquetQueryTestData.data(), ParquetQueryTestData.size());
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.InputTextConfiguration
@@ -203,8 +199,8 @@ id,name,price
     fields.push_back(field);
     queryOptions.OutputTextConfiguration
         = Blobs::BlobQueryOutputTextOptions::CreateArrowTextOptions(std::move(fields));
-    auto queryResponse
-        = client.Query("SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
+    auto queryResponse = blobClient.Query(
+        "SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
     auto data = queryResponse.Value.BodyStream->ReadToEnd();
     const auto expectedData = Core::Convert::Base64Decode(
         "/////"
@@ -239,10 +235,9 @@ id,name,price
     EXPECT_EQ(data, expectedData);
   }
 
-  TEST_F(BlockBlobClientTest, QueryWithError_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryWithError)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
     const std::string malformedData =
         R"json(
@@ -253,13 +248,15 @@ id,name,price
 {"id": 104, "name": "clementines", "price": 399}
 xx
 )json";
-    client.UploadFrom(reinterpret_cast<const uint8_t*>(malformedData.data()), malformedData.size());
+    blobClient.UploadFrom(
+        reinterpret_cast<const uint8_t*>(malformedData.data()), malformedData.size());
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.InputTextConfiguration = Blobs::BlobQueryInputTextOptions::CreateJsonTextOptions();
     queryOptions.OutputTextConfiguration
         = Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions();
-    auto queryResponse = client.Query("SELECT * FROM BlobStorage WHERE price > 0;", queryOptions);
+    auto queryResponse
+        = blobClient.Query("SELECT * FROM BlobStorage WHERE price > 0;", queryOptions);
 
     try
     {
@@ -296,7 +293,7 @@ xx
         ++numNonFatalErrors;
       }
     };
-    queryResponse = client.Query("SELECT * FROM BlobStorage WHERE price > 0;", queryOptions);
+    queryResponse = blobClient.Query("SELECT * FROM BlobStorage WHERE price > 0;", queryOptions);
     queryResponse.Value.BodyStream->ReadToEnd();
 
     EXPECT_EQ(numNonFatalErrors, 2);
@@ -304,22 +301,20 @@ xx
     EXPECT_TRUE(progressCallbackCalled);
   }
 
-  TEST_F(BlockBlobClientTest, QueryDefaultInputOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryDefaultInputOutput)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
     const std::string csvData = "100,oranges,100";
-    client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
-    auto queryResponse = client.Query("SELECT * from BlobStorage;");
+    blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
+    auto queryResponse = blobClient.Query("SELECT * from BlobStorage;");
 
     auto data = queryResponse.Value.BodyStream->ReadToEnd();
   }
 
   TEST_F(BlockBlobClientTest, QueryLargeBlob_LIVEONLY_)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
+    auto blobClient = *m_blockBlobClient;
 
     constexpr size_t DataSize = static_cast<size_t>(32_MB);
 
@@ -334,13 +329,13 @@ xx
       jsonData += "{\"_1\":\"" + counter + "\",\"_2\":\"" + record + "\"}\n";
     }
 
-    client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
+    blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.InputTextConfiguration = Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions();
     queryOptions.OutputTextConfiguration
         = Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions();
-    auto queryResponse = client.Query("SELECT * FROM BlobStorage;", queryOptions);
+    auto queryResponse = blobClient.Query("SELECT * FROM BlobStorage;", queryOptions);
 
     size_t comparePos = 0;
     std::vector<uint8_t> readBuffer(4096);
@@ -358,80 +353,77 @@ xx
     }
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLeaseId_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLeaseId)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
-    client.UploadFrom(nullptr, 0);
+    auto blobClient = *m_blockBlobClient;
 
-    Blobs::BlobLeaseClient leaseClient(client, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+    blobClient.UploadFrom(nullptr, 0);
+
+    Blobs::BlobLeaseClient leaseClient(blobClient, RandomUUID());
     leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
 
     Blobs::QueryBlobOptions queryOptions;
-    queryOptions.AccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    queryOptions.AccessConditions.LeaseId = RandomUUID();
+    EXPECT_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
 
     queryOptions.AccessConditions.LeaseId = leaseClient.GetLeaseId();
-    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    EXPECT_NO_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions));
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionTags_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionTags)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
-    client.UploadFrom(nullptr, 0);
+    auto blobClient = *m_blockBlobClient;
+    blobClient.UploadFrom(nullptr, 0);
 
     std::map<std::string, std::string> tags = {{"k1", "value1"}};
-    client.SetTags(tags);
+    blobClient.SetTags(tags);
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.AccessConditions.TagConditions = "k1 = 'value1'";
-    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    EXPECT_NO_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions));
     queryOptions.AccessConditions.TagConditions = "k1 = 'dummy'";
-    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    EXPECT_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLastModifiedTime_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLastModifiedTime)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
-    client.UploadFrom(nullptr, 0);
+    auto blobClient = *m_blockBlobClient;
+    blobClient.UploadFrom(nullptr, 0);
 
-    auto lastModifiedTime = client.GetProperties().Value.LastModified;
+    auto lastModifiedTime = blobClient.GetProperties().Value.LastModified;
     auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(2);
     auto timeAfterStr = lastModifiedTime + std::chrono::seconds(2);
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.AccessConditions.IfModifiedSince = timeBeforeStr;
-    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    EXPECT_NO_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions));
     queryOptions.AccessConditions.IfModifiedSince = timeAfterStr;
-    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    EXPECT_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
 
     queryOptions = Blobs::QueryBlobOptions();
     queryOptions.AccessConditions.IfUnmodifiedSince = timeBeforeStr;
-    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    EXPECT_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
     queryOptions.AccessConditions.IfUnmodifiedSince = timeAfterStr;
-    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    EXPECT_NO_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions));
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionETag_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionETag)
   {
-    auto const testName(GetTestName());
-    auto client = GetBlockBlobClient(testName);
-    client.UploadFrom(nullptr, 0);
+    auto blobClient = *m_blockBlobClient;
+    blobClient.UploadFrom(nullptr, 0);
 
-    auto etag = client.GetProperties().Value.ETag;
+    auto etag = blobClient.GetProperties().Value.ETag;
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.AccessConditions.IfMatch = etag;
-    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    EXPECT_NO_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions));
     queryOptions.AccessConditions.IfMatch = DummyETag;
-    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    EXPECT_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
 
     queryOptions = Blobs::QueryBlobOptions();
     queryOptions.AccessConditions.IfNoneMatch = DummyETag;
-    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    EXPECT_NO_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions));
     queryOptions.AccessConditions.IfNoneMatch = etag;
-    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    EXPECT_THROW(blobClient.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
   }
 }}} // namespace Azure::Storage::Test

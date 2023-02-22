@@ -42,7 +42,10 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
   {
     // This is a download with keep connection open. Let's switch the request
     redirectRequest = Azure::Core::Http::Request(
-        request.GetMethod(), Azure::Core::Url(m_testProxy->GetTestProxy()), false);
+        request.GetMethod(),
+        Azure::Core::Url(m_testProxy->GetTestProxy()),
+        request.GetBodyStream(),
+        false);
   }
 
   redirectRequest.GetUrl().SetPath(request.GetUrl().GetPath());
@@ -50,7 +53,10 @@ std::unique_ptr<RawResponse> TestProxyPolicy::Send(
   // Copy all headers
   for (auto& header : request.GetHeaders())
   {
-    redirectRequest.SetHeader(header.first, header.second);
+    if (header.first != "host")
+    {
+      redirectRequest.SetHeader(header.first, header.second);
+    }
   }
   // QP
   for (auto const& qp : request.GetUrl().GetQueryParameters())

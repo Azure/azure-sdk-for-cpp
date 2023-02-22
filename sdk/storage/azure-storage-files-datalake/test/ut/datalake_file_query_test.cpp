@@ -69,10 +69,9 @@ id,name,price
       "b25fY29sdW1ucyI6IFtdfQAYKmZhc3RwYXJxdWV0LXB5dGhvbiB2ZXJzaW9uIDAuOC4xIChidWlsZCAwKQDXAwAAUEFS"
       "MQ==");
 
-  TEST_F(DataLakeFileClientTest, QueryJsonInputCsvOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryJsonInputCsvOutput)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     client.UploadFrom(
         reinterpret_cast<const uint8_t*>(JsonQueryTestData.data()), JsonQueryTestData.size());
@@ -110,10 +109,9 @@ id,name,price
     }
   }
 
-  TEST_F(DataLakeFileClientTest, QueryCsvInputJsonOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryCsvInputJsonOutput)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     client.UploadFrom(
         reinterpret_cast<const uint8_t*>(CsvQueryTestData.data()), CsvQueryTestData.size());
@@ -133,10 +131,9 @@ id,name,price
         R"json({"id":"103","name":"apples","price":"99"}|{"id":"106","name":"lemons","price":"69"}|{"id":"110","name":"bananas","price":"39"}|{"id":"112","name":"sapote,mamey","price":"50"}|)json");
   }
 
-  TEST_F(DataLakeFileClientTest, QueryCsvInputArrowOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryCsvInputArrowOutput)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     client.UploadFrom(
         reinterpret_cast<const uint8_t*>(CsvQueryTestData.data()), CsvQueryTestData.size());
@@ -184,10 +181,9 @@ id,name,price
     EXPECT_EQ(data, expectedData);
   }
 
-  TEST_F(DataLakeFileClientTest, QueryParquetInputArrowOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryParquetInputArrowOutput)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     client.UploadFrom(ParquetQueryTestData.data(), ParquetQueryTestData.size());
 
@@ -243,10 +239,9 @@ id,name,price
     EXPECT_EQ(data, expectedData);
   }
 
-  TEST_F(DataLakeFileClientTest, QueryWithError_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryWithError)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     const std::string malformedData =
         R"json(
@@ -310,10 +305,9 @@ xx
     EXPECT_TRUE(progressCallbackCalled);
   }
 
-  TEST_F(DataLakeFileClientTest, QueryDefaultInputOutput_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryDefaultInputOutput)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     const std::string csvData = "100,oranges,100";
     client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
@@ -324,8 +318,7 @@ xx
 
   TEST_F(DataLakeFileClientTest, QueryLargeBlob_LIVEONLY_)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
 
     constexpr size_t DataSize = static_cast<size_t>(32_MB);
 
@@ -365,29 +358,25 @@ xx
     }
   }
 
-  TEST_F(DataLakeFileClientTest, QueryBlobAccessConditionLeaseId_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryBlobAccessConditionLeaseId)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
     client.UploadFrom(nullptr, 0);
 
-    Files::DataLake::DataLakeLeaseClient leaseClient(
-        client, Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId());
+    Files::DataLake::DataLakeLeaseClient leaseClient(client, RandomUUID());
     leaseClient.Acquire(Files::DataLake::DataLakeLeaseClient::InfiniteLeaseDuration);
 
     Files::DataLake::QueryFileOptions queryOptions;
-    queryOptions.AccessConditions.LeaseId
-        = Files::DataLake::DataLakeLeaseClient::CreateUniqueLeaseId();
+    queryOptions.AccessConditions.LeaseId = RandomUUID();
     EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
 
     queryOptions.AccessConditions.LeaseId = leaseClient.GetLeaseId();
     EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
   }
 
-  TEST_F(DataLakeFileClientTest, QueryBlobAccessConditionLastModifiedTime_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryBlobAccessConditionLastModifiedTime)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
     client.UploadFrom(nullptr, 0);
 
     auto lastModifiedTime = client.GetProperties().Value.LastModified;
@@ -407,10 +396,9 @@ xx
     EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
   }
 
-  TEST_F(DataLakeFileClientTest, QueryBlobAccessConditionETag_LIVEONLY_)
+  TEST_F(DataLakeFileClientTest, QueryBlobAccessConditionETag)
   {
-    auto const testName(GetTestName());
-    auto client = m_fileSystemClient->GetFileClient(testName);
+    auto client = m_fileSystemClient->GetFileClient(RandomString());
     client.UploadFrom(nullptr, 0);
 
     auto etag = client.GetProperties().Value.ETag;

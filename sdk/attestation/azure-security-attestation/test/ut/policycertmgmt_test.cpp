@@ -171,8 +171,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_F(CertificateTests, AddPolicyManagementCertificate_LIVEONLY_)
   {
-    CHECK_SKIP_TEST()
-
     auto adminClient(CreateClient(ServiceInstanceType::Isolated));
 
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
@@ -233,8 +231,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_F(CertificateTests, RemovePolicyManagementCertificate_LIVEONLY_)
   {
-    CHECK_SKIP_TEST()
-
     auto adminClient(CreateClient(ServiceInstanceType::Isolated));
 
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));

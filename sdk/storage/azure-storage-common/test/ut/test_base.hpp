@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cstdint>
 #include <limits>
+#include <random>
 #include <vector>
 
 #include <azure/core/base64.hpp>
@@ -29,6 +30,13 @@ namespace Azure { namespace Storage {
     public:
       StorageTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
 
+      const static Azure::ETag DummyETag;
+      const static Azure::ETag DummyETag2;
+      /* cspell:disable-next-line */
+      constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
+      /* cspell:disable-next-line */
+      constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
+
     protected:
       const std::string& StandardStorageConnectionString();
       const std::string& PremiumStorageConnectionString();
@@ -39,40 +47,47 @@ namespace Azure { namespace Storage {
       const std::string& AadClientId();
       const std::string& AadClientSecret();
 
-      std::string GetContainerValidName() const
+      void SetUp() override;
+      void TearDown() override;
+
+      /**
+       * @brief Retruns a string related to test suite name and test case name.
+       */
+      std::string GetIdentifier() const
       {
-        std::string name(m_testContext.GetTestSuiteName() + m_testContext.GetTestName());
-        // Make sure the name is less than 63 characters long
-        auto const nameSize = name.size();
-        size_t const maxContainerNameSize = 63;
-        if (nameSize > maxContainerNameSize)
-        {
-          name = std::string(name.begin() + nameSize - maxContainerNameSize, name.end());
-        }
-        // Check name won't start with `-`
+        size_t MaxLength = 63;
+        std::string name = m_testContext.GetTestSuiteName() + m_testContext.GetTestName();
         if (name[0] == '-')
         {
-          name = std::string(name.begin() + 1, name.end());
+          name = name.substr(1);
         }
-        return Azure::Core::_internal::StringExtensions::ToLower(name);
+        if (name.length() > MaxLength)
+        {
+          name.resize(MaxLength);
+        }
+        return name;
       }
 
-      std::string GetFileSystemValidName() const
+      /**
+       * @brief Retruns a lowercase string related to test suite name and test case name.
+       */
+      std::string GetLowercaseIdentifier() const
       {
-        std::string name(m_testContext.GetTestSuiteName() + m_testContext.GetTestName());
-        // Make sure the name is less than 63 characters long
-        auto const nameSize = name.size();
-        size_t const maxContainerNameSize = 63;
-        if (nameSize > maxContainerNameSize)
+        return Azure::Core::_internal::StringExtensions::ToLower(GetIdentifier());
+      }
+
+      bool IsValidTime(const Azure::DateTime& datetime) const
+      {
+        // Playback won't check dates
+        if (m_testContext.IsPlaybackMode())
         {
-          name = std::string(name.begin() + nameSize - maxContainerNameSize, name.end());
+          return true;
         }
-        // Check name won't start with `-`
-        if (name[0] == '-')
-        {
-          name = std::string(name.begin() + 1, name.end());
-        }
-        return Azure::Core::_internal::StringExtensions::ToLower(name);
+
+        // We assume datetime within a week is valid.
+        const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
+        const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
+        return datetime > minTime && datetime < maxTime;
       }
 
       static std::string GetTestEncryptionScope()
@@ -85,29 +100,31 @@ namespace Azure { namespace Storage {
           const Azure::Core::Url& url,
           const std::string& queryParameters);
 
-      /* cspell:disable-next-line */
-      constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
-      /* cspell:disable-next-line */
-      constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
-
-      static uint64_t RandomInt(
+      /**
+       * Random functions below are not thread-safe. You must NOT call them from multiple threads.
+       *
+       * To make record-playback testing work, you have to call these functions in a determined way,
+       * e.g. always in the same order, the same times and with the same parameters.
+       *
+       * Note that in C++, evaluation order of function parameters is undefined. So you CANNOT do:
+       * `auto ret = RandomInt() + RandomInt();`
+       * or
+       * `auto ret = function1(RandomInt()) + function2(RandomInt());`
+       */
+      uint64_t RandomInt(
           uint64_t minNumber = std::numeric_limits<uint64_t>::min(),
           uint64_t maxNumber = std::numeric_limits<uint64_t>::max());
-
-      static std::string RandomString(size_t size = 10);
-
-      std::string GetStringOfSize(size_t size = 10, bool lowercase = false);
-
-      static std::string LowercaseRandomString(size_t size = 10);
-
-      static Storage::Metadata GetMetadata(size_t size = 5);
-
-      static void RandomBuffer(char* buffer, size_t length);
-      static void RandomBuffer(uint8_t* buffer, size_t length)
+      char RandomChar();
+      std::string RandomString(size_t size = 10);
+      std::string LowercaseRandomString(size_t size = 10);
+      Storage::Metadata RandomMetadata(size_t size = 5);
+      void RandomBuffer(char* buffer, size_t length);
+      void RandomBuffer(uint8_t* buffer, size_t length)
       {
         RandomBuffer(reinterpret_cast<char*>(buffer), length);
       }
-      static std::vector<uint8_t> RandomBuffer(size_t length);
+      std::vector<uint8_t> RandomBuffer(size_t length);
+      std::string RandomUUID();
 
       static std::vector<uint8_t> ReadBodyStream(
           std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
@@ -135,14 +152,11 @@ namespace Azure { namespace Storage {
         return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
       }
 
-      void SetUp() override
-      {
-        Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-      }
+    protected:
+      std::vector<std::function<void()>> m_resourceCleanupFunctions;
 
-    public:
-      const static Azure::ETag DummyETag;
-      const static Azure::ETag DummyETag2;
+    private:
+      std::mt19937_64 m_randomGenerator;
     };
 
     constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
@@ -158,49 +172,6 @@ namespace Azure { namespace Storage {
     {
       return x * 1024 * 1024 * 1024 * 1024;
     }
-
-    class CryptFunctionsTest : public StorageTest {
-    };
-
-    class ClientSecretCredentialTest : public StorageTest {
-
-    private:
-      std::unique_ptr<Azure::Storage::Blobs::BlobContainerClient> m_client;
-
-    protected:
-      std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
-      std::string m_containerName;
-
-      // Required to rename the test propertly once the test is started.
-      // We can only know the test instance name until the test instance is run.
-      Azure::Storage::Blobs::BlobContainerClient const& GetClientForTest(
-          std::string const& testName)
-      {
-        // set the interceptor for the current test
-        m_testContext.RenameTest(testName);
-        return *m_client;
-      }
-
-      void SetUp() override
-      {
-        StorageTest::SetUp();
-        m_containerName = Azure::Core::_internal::StringExtensions::ToLower(GetTestName());
-
-        m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret());
-
-        Azure::Storage::Blobs::BlobClientOptions options;
-
-        m_client = InitTestClient<
-            Azure::Storage::Blobs::BlobContainerClient,
-            Azure::Storage::Blobs::BlobClientOptions>(
-            Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-                StandardStorageConnectionString(), m_containerName)
-                .GetUrl(),
-            m_credential,
-            options);
-      }
-    };
 
   } // namespace Test
 

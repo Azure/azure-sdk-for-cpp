@@ -1,24 +1,26 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "test/ut/test_base.hpp"
-
 #include <azure/storage/files/shares.hpp>
+
+#include "share_service_client_test.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class FileShareClientTest : public Azure::Storage::Test::StorageTest {
+  class FileShareClientTest : public FileShareServiceClientTest {
   protected:
-    void SetUp();
-    void TearDown();
+    void SetUp() override;
 
-    Files::Shares::Models::FileHttpHeaders GetInterestingHttpHeaders();
+    Files::Shares::ShareClient GetShareClientForTest(
+        const std::string& shareName,
+        Files::Shares::ShareClientOptions clientOptions = Files::Shares::ShareClientOptions());
+    Files::Shares::ShareClient GetPremiumShareClientForTest(
+        const std::string& shareName,
+        Files::Shares::ShareClientOptions clientOptions = Files::Shares::ShareClientOptions());
 
+  protected:
     std::shared_ptr<Files::Shares::ShareClient> m_shareClient;
     std::string m_shareName;
-    Files::Shares::ShareClientOptions m_options;
-    std::string m_testName;
-    std::string m_testNameLowercase;
   };
 
 }}} // namespace Azure::Storage::Test

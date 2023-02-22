@@ -3,49 +3,24 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "test/ut/test_base.hpp"
+#include "blob_container_client_test.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class BlobBatchClientTest : public StorageTest {
-  private:
-    std::unique_ptr<Azure::Storage::Blobs::BlobServiceClient> m_client;
-
-  protected:
-    // Required to rename the test propertly once the test is started.
-    // We can only know the test instance name until the test instance is run.
-    Azure::Storage::Blobs::BlobServiceClient const& GetClientForTest(std::string const& testName)
-    {
-      // set the interceptor for the current test
-      m_testContext.RenameTest(testName);
-      return *m_client;
-    }
-
-    void SetUp() override
-    {
-      StorageTest::SetUp();
-
-      auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-      m_client = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
-          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
-              StandardStorageConnectionString(), options));
-    }
-  };
-
-  TEST_F(BlobBatchClientTest, DISABLED_SubmitDeleteBatch)
+  TEST_F(BlobContainerClientTest, BatchSubmitDelete_LIVEONLY_)
   {
-    const std::string testName = GetTestNameLowerCase();
+    const std::string containerNamePrefix = LowercaseRandomString();
 
-    const std::string containerName1 = testName + "1";
+    const std::string containerName1 = containerNamePrefix + "1";
     const std::string blob1Name = "b1";
     const std::string blob2Name = "b2";
-    const std::string containerName2 = testName + "2";
+    const std::string containerName2 = containerNamePrefix + "2";
     const std::string blob3Name = "b3";
 
-    auto serviceClient = GetClientForTest(testName);
-    auto container1Client = serviceClient.GetBlobContainerClient(containerName1);
+    auto serviceClient = *m_blobServiceClient;
+    auto container1Client = GetBlobContainerClientForTest(containerName1);
     container1Client.CreateIfNotExists();
-    auto container2Client = serviceClient.GetBlobContainerClient(containerName2);
+    auto container2Client = GetBlobContainerClientForTest(containerName2);
     container2Client.CreateIfNotExists();
     auto blob1Client = container1Client.GetAppendBlobClient(blob1Name);
     blob1Client.Create();
@@ -69,19 +44,16 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blob1Client.GetProperties(), StorageException);
     EXPECT_THROW(blob2Client.GetProperties(), StorageException);
     EXPECT_NO_THROW(blob3Client.GetProperties());
-
-    container1Client.Delete();
-    container2Client.Delete();
   }
 
-  TEST_F(BlobBatchClientTest, DISABLED_SnapshotVersion)
+  TEST_F(BlobContainerClientTest, BatchSnapshotVersion_LIVEONLY_)
   {
-    const std::string testName = GetTestNameLowerCase();
+    const std::string containerNamePrefix = LowercaseRandomString();
 
-    const std::string containerName1 = testName + "1";
+    const std::string containerName1 = containerNamePrefix + "1";
     const std::string blob1Name = "blockblob1";
-    auto serviceClient = GetClientForTest(testName);
-    auto container1Client = serviceClient.GetBlobContainerClient(containerName1);
+    auto serviceClient = *m_blobServiceClient;
+    auto container1Client = GetBlobContainerClientForTest(containerName1);
     container1Client.CreateIfNotExists();
     auto blob1Client = container1Client.GetBlockBlobClient(blob1Name);
     auto versionId = blob1Client.UploadFrom(nullptr, 0).Value.VersionId.Value();
@@ -113,15 +85,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(r4.GetResponse());
     EXPECT_THROW(blob1Client.WithVersionId(versionId).GetProperties(), StorageException);
     EXPECT_THROW(blob1Client.WithSnapshot(snapshotId).GetProperties(), StorageException);
-
-    container1Client.DeleteIfExists();
   }
 
-  TEST_F(BlobBatchClientTest, SubmitSetTierBatch_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, BatchSubmitSetTier_LIVEONLY_)
   {
-    const std::string testName = GetTestNameLowerCase();
-
-    const std::string containerName = testName;
+    const std::string containerName = LowercaseRandomString();
     const std::string blob1Name = "b1";
     const std::string blob2Name = "b2";
 
@@ -136,11 +104,13 @@ namespace Azure { namespace Storage { namespace Test {
           *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
     }();
 
-    auto serviceClient = GetClientForTest(testName);
-    serviceClient.GetBlobContainerClient(containerName).CreateIfNotExists();
+    auto serviceClient = *m_blobServiceClient;
+    GetBlobContainerClientForTest(containerName).CreateIfNotExists();
+    Blobs::BlobClientOptions clientOptions;
+    InitClientOptions(clientOptions);
     auto containerClient = Blobs::BlobContainerClient(
         serviceClient.GetBlobContainerClient(containerName).GetUrl() + containerSasToken,
-        InitClientOptions<Blobs::BlobClientOptions>());
+        clientOptions);
     auto blob1Client = containerClient.GetBlockBlobClient(blob1Name);
     blob1Client.UploadFrom(nullptr, 0);
     auto blob2Client = containerClient.GetBlockBlobClient(blob2Name);
@@ -157,26 +127,23 @@ namespace Azure { namespace Storage { namespace Test {
         blob1Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Cool);
     EXPECT_EQ(
         blob2Client.GetProperties().Value.AccessTier.Value(), Blobs::Models::AccessTier::Archive);
-
-    serviceClient.DeleteBlobContainer(containerName);
   }
 
-  TEST_F(BlobBatchClientTest, DISABLED_TokenAuthorization)
+  TEST_F(BlobContainerClientTest, BatchTokenAuthorization_LIVEONLY_)
   {
-    const std::string testName = GetTestNameLowerCase();
-
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret());
-    Blobs::BlobClientOptions options;
+    Blobs::BlobClientOptions clientOptions;
+    InitClientOptions(clientOptions);
 
-    auto serviceClient = InitTestClient<Blobs::BlobServiceClient, Blobs::BlobClientOptions>(
-        GetClientForTest(testName).GetUrl(), credential, options);
+    auto serviceClient
+        = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);
 
-    const std::string containerName = testName;
+    const std::string containerName = LowercaseRandomString();
     const std::string blobName = "b1";
 
-    auto containerClient = serviceClient->GetBlobContainerClient(containerName);
+    auto containerClient = serviceClient.GetBlobContainerClient(containerName);
     containerClient.CreateIfNotExists();
     auto blobClient = containerClient.GetAppendBlobClient(blobName);
     blobClient.Create();
@@ -186,19 +153,15 @@ namespace Azure { namespace Storage { namespace Test {
     auto submitBatchResponse = containerClient.SubmitBatch(batch);
 
     EXPECT_TRUE(delete1Response.GetResponse().Value.Deleted);
-
-    containerClient.Delete();
   }
 
-  TEST_F(BlobBatchClientTest, Exceptions_LIVEONLY_)
+  TEST_F(BlobContainerClientTest, BatchExceptions_LIVEONLY_)
   {
-    const std::string testName = GetTestNameLowerCase();
-
-    const std::string containerName = testName;
+    const std::string containerName = LowercaseRandomString();
     const std::string blobName = "b1";
 
-    auto serviceClient = GetClientForTest(testName);
-    auto containerClient = serviceClient.GetBlobContainerClient(containerName);
+    auto serviceClient = *m_blobServiceClient;
+    auto containerClient = GetBlobContainerClientForTest(containerName);
     containerClient.CreateIfNotExists();
     auto blobClient = containerClient.GetBlockBlobClient(blobName);
     blobClient.UploadFrom(nullptr, 0);
