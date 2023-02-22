@@ -11,11 +11,9 @@ namespace Azure { namespace Storage { namespace Test {
   class FileShareFileClientTest : public FileShareDirectoryClientTest {
   protected:
     void SetUp();
-    void TearDown();
 
     std::shared_ptr<Files::Shares::ShareFileClient> m_fileClient;
     std::string m_fileName;
-    std::vector<uint8_t> m_fileContent;
   };
 
 }}} // namespace Azure::Storage::Test

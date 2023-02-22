@@ -24,37 +24,58 @@ namespace Azure { namespace Storage { namespace Test {
   void QueueClientTest::SetUp()
   {
     StorageTest::SetUp();
-    CHECK_SKIP_TEST();
-
-    m_options = InitClientOptions<Queues::QueueClientOptions>();
+    if (shouldSkipTest())
+    {
+      return;
+    }
+    auto options = InitClientOptions<Queues::QueueClientOptions>();
     m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
         Queues::QueueServiceClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), m_options));
-    m_testName = GetTestName();
-    m_testNameLowercase = GetTestNameLowerCase();
+            StandardStorageConnectionString(), options));
 
-    m_queueName = m_testNameLowercase + "base";
+    m_queueName = GetLowercaseIdentifier();
     m_queueClient
         = std::make_shared<Queues::QueueClient>(m_queueServiceClient->GetQueueClient(m_queueName));
-    m_queueClient->Create();
+
+    while (true)
+    {
+      try
+      {
+        m_queueClient->Create();
+        break;
+      }
+      catch (StorageException& e)
+      {
+        if (e.ErrorCode != "QueueBeingDeleted")
+        {
+          throw;
+        }
+        SUCCEED() << "Queue is being deleted. Will try again after 3 seconds.";
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+      }
+    }
+
+    m_resourceCleanupFunctions.push_back(
+        [queueClient = *m_queueClient]() { queueClient.Delete(); });
   }
 
-  void QueueClientTest::TearDown()
+  Queues::QueueClient QueueClientTest::GetQueueClientForTest(
+      const std::string& queueName,
+      Queues::QueueClientOptions clientOptions)
   {
-    CHECK_SKIP_TEST();
-    m_queueClient->Delete();
-    StorageTest::TearDown();
+    InitClientOptions(clientOptions);
+    auto queueClient = Queues::QueueClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), queueName, clientOptions);
+    m_resourceCleanupFunctions.push_back([queueClient]() { queueClient.Delete(); });
+
+    return queueClient;
   }
 
   TEST_F(QueueClientTest, CreateDelete)
   {
-    auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_testNameLowercase, m_options);
+    auto queueClient = GetQueueClientForTest(LowercaseRandomString());
     Azure::Storage::Queues::CreateQueueOptions options;
-    Azure::Storage::Metadata metadata;
-    metadata["key1"] = "one";
-    metadata["key2"] = "TWO";
-    options.Metadata = metadata;
+    options.Metadata = RandomMetadata();
     auto res = queueClient.Create(options);
     EXPECT_TRUE(res.Value.Created);
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
@@ -70,11 +91,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
 
-    queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_testNameLowercase + "UPPERCASE", m_options);
+    queueClient = GetQueueClientForTest(LowercaseRandomString() + "UPPERCASE");
     EXPECT_THROW(queueClient.Create(), StorageException);
-    queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_testNameLowercase + "2", m_options);
+
+    queueClient = GetQueueClientForTest(LowercaseRandomString());
     {
       auto response = queueClient.Delete();
       EXPECT_FALSE(response.Value.Deleted);
@@ -127,11 +147,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
-  TEST_F(QueueClientTest, AccessControlList_LIVEONLY_)
+  TEST_F(QueueClientTest, AccessControlList)
   {
-    auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
-    queueClient.Create();
+    auto queueClient = *m_queueClient;
 
     std::vector<Queues::Models::SignedIdentifier> signedIdentifiers;
     {
@@ -170,8 +188,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(queueClient.SetAccessPolicy(accessPolicy));
 
     auto ret = queueClient.GetAccessPolicy();
-    EXPECT_EQ(ret.Value.SignedIdentifiers, signedIdentifiers);
-
+    if (m_testContext.IsLiveMode())
+    {
+      EXPECT_EQ(ret.Value.SignedIdentifiers, signedIdentifiers);
+    }
     queueClient.Delete();
   }
 

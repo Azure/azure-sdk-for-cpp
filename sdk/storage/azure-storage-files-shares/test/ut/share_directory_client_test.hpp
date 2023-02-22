@@ -10,15 +10,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   class FileShareDirectoryClientTest : public FileShareClientTest {
   protected:
-    void SetUp();
-    void TearDown();
-
-    std::pair<
-        std::vector<Files::Shares::Models::FileItem>,
-        std::vector<Files::Shares::Models::DirectoryItem>>
-    ListAllFilesAndDirectories(
-        const std::string& directoryPath = std::string(),
-        const std::string& prefix = std::string());
+    void SetUp() override;
 
     std::shared_ptr<Files::Shares::ShareDirectoryClient> m_fileShareDirectoryClient;
     std::string m_directoryName;

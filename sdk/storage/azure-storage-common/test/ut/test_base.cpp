@@ -43,6 +43,37 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* AadClientIdValue = "";
   constexpr static const char* AadClientSecretValue = "";
 
+  void StorageTest::SetUp()
+  {
+    Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+
+    if (m_testContext.IsLiveMode())
+    {
+      m_randomGenerator.seed(std::random_device{}());
+    }
+    else
+    {
+      auto seedStr = GetIdentifier();
+      std::seed_seq seedSeq(seedStr.begin(), seedStr.end());
+      m_randomGenerator.seed(seedSeq);
+    }
+  }
+
+  void StorageTest::TearDown()
+  {
+    for (auto& f : m_resourceCleanupFunctions)
+    {
+      try
+      {
+        f();
+      }
+      catch (...)
+      {
+      }
+    }
+    TestBase::TearDown();
+  }
+
   const std::string& StorageTest::StandardStorageConnectionString()
   {
     const static std::string connectionString = [&]() -> std::string {
@@ -176,53 +207,27 @@ namespace Azure { namespace Storage { namespace Test {
     return absoluteUrl;
   }
 
-  static thread_local std::mt19937_64 random_generator(std::random_device{}());
-
   uint64_t StorageTest::RandomInt(uint64_t minNumber, uint64_t maxNumber)
   {
-    std::uniform_int_distribution<uint64_t> distribution(minNumber, maxNumber);
-    return distribution(random_generator);
+    uint64_t val = m_randomGenerator();
+    if (minNumber == 0 && maxNumber == std::numeric_limits<decltype(maxNumber)>::max())
+    {
+      return val;
+    }
+    return minNumber + val % (maxNumber - minNumber + 1);
   }
 
-  static char RandomChar()
+  char StorageTest::RandomChar()
   {
     const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    std::uniform_int_distribution<size_t> distribution(0, sizeof(charset) - 2);
-    return charset[distribution(random_generator)];
+    return charset[RandomInt(0, sizeof(charset) - 2)];
   }
 
   std::string StorageTest::RandomString(size_t size)
   {
     std::string str;
     str.resize(size);
-    std::generate(str.begin(), str.end(), RandomChar);
-    return str;
-  }
-
-  std::string StorageTest::GetStringOfSize(size_t size, bool lowercase)
-  {
-    auto const testName = GetTestName();
-    auto const testNameSize = testName.size();
-    auto duplicationTimes = size / testNameSize;
-    auto leftToFill = size % testNameSize;
-    std::string str;
-
-    while (duplicationTimes != 0)
-    {
-      str.append(testName);
-      duplicationTimes -= 1;
-    }
-    while (leftToFill != 0)
-    {
-      // do % 10 to use only one digit per appending
-      str.append(std::to_string(leftToFill % 10));
-      leftToFill -= 1;
-    }
-
-    if (lowercase)
-    {
-      return Azure::Core::_internal::StringExtensions::ToLower(str);
-    }
+    std::generate(str.begin(), str.end(), [this]() { return RandomChar(); });
     return str;
   }
 
@@ -231,12 +236,12 @@ namespace Azure { namespace Storage { namespace Test {
     return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
-  Storage::Metadata StorageTest::GetMetadata(size_t size)
+  Storage::Metadata StorageTest::RandomMetadata(size_t size)
   {
     Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
-      result["meta" + std::to_string(i % 10)] = "value";
+      result["meta" + LowercaseRandomString(5)] = RandomString(10);
     }
     return result;
   }
@@ -253,17 +258,56 @@ namespace Azure { namespace Storage { namespace Test {
       *(start_addr++) = RandomChar();
     }
 
-    std::uniform_int_distribution<uint64_t> distribution(
-        0ULL, std::numeric_limits<uint64_t>::max());
     while (start_addr + rand_int_size <= end_addr)
     {
-      *reinterpret_cast<uint64_t*>(start_addr) = distribution(random_generator);
+      *reinterpret_cast<uint64_t*>(start_addr)
+          = RandomInt(0ULL, std::numeric_limits<uint64_t>::max());
       start_addr += rand_int_size;
     }
     while (start_addr < end_addr)
     {
       *(start_addr++) = RandomChar();
     }
+  }
+
+  std::vector<uint8_t> StorageTest::RandomBuffer(size_t length)
+  {
+    std::vector<uint8_t> result(length);
+    if (length != 0)
+    {
+      char* dataPtr = reinterpret_cast<char*>(&result[0]);
+      RandomBuffer(dataPtr, length);
+    }
+    return result;
+  }
+
+  std::string StorageTest::RandomUUID()
+  {
+    std::vector<uint8_t> randomNum = RandomBuffer(16);
+    char buffer[37];
+
+    std::snprintf(
+        buffer,
+        sizeof(buffer),
+        "%2.2x%2.2x%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x",
+        randomNum[0],
+        randomNum[1],
+        randomNum[2],
+        randomNum[3],
+        randomNum[4],
+        randomNum[5],
+        randomNum[6],
+        randomNum[7],
+        randomNum[8],
+        randomNum[9],
+        randomNum[10],
+        randomNum[11],
+        randomNum[12],
+        randomNum[13],
+        randomNum[14],
+        randomNum[15]);
+
+    return std::string(buffer);
   }
 
   std::vector<uint8_t> StorageTest::ReadFile(const std::string& filename)
@@ -301,17 +345,6 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   void StorageTest::DeleteFile(const std::string& filename) { std::remove(filename.data()); }
-
-  std::vector<uint8_t> StorageTest::RandomBuffer(size_t length)
-  {
-    std::vector<uint8_t> result(length);
-    if (length != 0)
-    {
-      char* dataPtr = reinterpret_cast<char*>(&result[0]);
-      RandomBuffer(dataPtr, length);
-    }
-    return result;
-  }
 
   std::string StorageTest::InferSecondaryUrl(const std::string primaryUrl)
   {

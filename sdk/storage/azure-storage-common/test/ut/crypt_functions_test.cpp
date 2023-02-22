@@ -9,6 +9,9 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
+  class CryptFunctionsTest : public StorageTest {
+  };
+
   std::vector<uint8_t> ToBinaryVector(const char* text)
   {
     const uint8_t* start = reinterpret_cast<const uint8_t*>(text);
@@ -109,34 +112,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         crc64Streaming.Final(),
         crc64Single.Final(reinterpret_cast<const uint8_t*>(allData.data()), allData.size()));
-  }
-
-  TEST_F(CryptFunctionsTest, Crc64Hash_ExpectThrow)
-  {
-    std::string data = "";
-    const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
-    Crc64Hash instance;
-
-#if GTEST_HAS_DEATH_TEST
-    ASSERT_DEATH(instance.Final(nullptr, 1), "");
-    ASSERT_DEATH(instance.Append(nullptr, 1), "");
-#endif
-
-    EXPECT_EQ(
-        Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())), "AAAAAAAAAAA=");
-
-#if GTEST_HAS_DEATH_TEST
-#if defined(NDEBUG)
-    // Release build won't provide assert msg
-    ASSERT_DEATH(instance.Final(), "");
-    ASSERT_DEATH(instance.Final(ptr, data.length()), "");
-    ASSERT_DEATH(instance.Append(ptr, data.length()), "");
-#else
-    ASSERT_DEATH(instance.Final(), "Cannot call Final");
-    ASSERT_DEATH(instance.Final(ptr, data.length()), "Cannot call Final");
-    ASSERT_DEATH(instance.Append(ptr, data.length()), "Cannot call Append after calling Final");
-#endif
-#endif
   }
 
   TEST_F(CryptFunctionsTest, Crc64Hash_CtorDtor)

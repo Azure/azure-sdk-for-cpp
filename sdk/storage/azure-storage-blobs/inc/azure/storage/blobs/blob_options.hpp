@@ -924,6 +924,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional conditions that source must meet to perform this operation.
+     * @remarks Azure storage service doesn't support tags access condition for this operation.
+     * Don't use it.
      */
     struct : public Azure::ModifiedConditions,
              public Azure::MatchConditions,

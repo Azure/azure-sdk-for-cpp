@@ -9,20 +9,10 @@ namespace Azure { namespace Storage { namespace Test {
 
   class FileShareServiceClientTest : public Azure::Storage::Test::StorageTest {
   protected:
-    void SetUp();
-    void TearDown();
+    void SetUp() override;
 
-    std::vector<Files::Shares::Models::ShareItem> ListAllShares(
-        const std::string& prefix = std::string());
-
-    std::shared_ptr<Files::Shares::ShareServiceClient> m_fileShareServiceClient;
-    std::vector<std::string> m_shareNameSetA;
-    std::string m_sharePrefixA;
-    std::vector<std::string> m_shareNameSetB;
-    std::string m_sharePrefixB;
-    Files::Shares::ShareClientOptions m_options;
-    std::string m_testName;
-    std::string m_testNameLowercase;
+  protected:
+    std::shared_ptr<Files::Shares::ShareServiceClient> m_shareServiceClient;
   };
 
 }}} // namespace Azure::Storage::Test

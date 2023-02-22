@@ -3,7 +3,6 @@
 
 #include <azure/core/internal/json/json.hpp>
 
-#include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_base.hpp"
 
 #include <fstream>

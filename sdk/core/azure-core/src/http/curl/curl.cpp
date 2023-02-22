@@ -413,10 +413,18 @@ CURLcode CurlSession::Perform(Context const& context)
     if (hostHeader == headers.end())
     {
       Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No Host in request headers. Adding it");
-      this->m_request.SetHeader("Host", this->m_request.GetUrl().GetHost());
+      std::string hostName = this->m_request.GetUrl().GetHost();
+      auto port = this->m_request.GetUrl().GetPort();
+      if (port != 0)
+      {
+        hostName += ":" + std::to_string(port);
+      }
+      this->m_request.SetHeader("Host", hostName);
     }
-    auto isContentLengthHeaderInRequest = headers.find("content-length");
-    if (isContentLengthHeaderInRequest == headers.end())
+    if (this->m_request.GetMethod() != HttpMethod::Get
+        && this->m_request.GetMethod() != HttpMethod::Head
+        && this->m_request.GetMethod() != HttpMethod::Delete
+        && headers.find("content-length") == headers.end())
     {
       Log::Write(Logger::Level::Verbose, LogMsgPrefix + "No content-length in headers. Adding it");
       this->m_request.SetHeader(

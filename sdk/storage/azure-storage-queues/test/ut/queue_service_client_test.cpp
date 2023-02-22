@@ -43,7 +43,6 @@ namespace Azure { namespace Storage { namespace Test {
     void SetUp()
     {
       StorageTest::SetUp();
-      CHECK_SKIP_TEST();
 
       m_options = InitClientOptions<Queues::QueueClientOptions>();
       m_testName = GetTestName();

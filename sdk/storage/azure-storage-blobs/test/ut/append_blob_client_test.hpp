@@ -9,42 +9,21 @@
 namespace Azure { namespace Storage { namespace Test {
 
   class AppendBlobClientTest : public BlobContainerClientTest {
-  private:
-    std::shared_ptr<Azure::Storage::Blobs::AppendBlobClient> m_appendBlobClient;
+  protected:
+    void SetUp() override;
+
+    Blobs::AppendBlobClient GetAppendBlobClientForTest(
+        const std::string& blobName,
+        Blobs::BlobClientOptions clientOptions = Blobs::BlobClientOptions())
+    {
+      auto containerClient = GetBlobContainerClientForTest(m_containerName, clientOptions);
+      return containerClient.GetAppendBlobClient(blobName);
+    }
 
   protected:
-    Azure::Storage::Blobs::CreateAppendBlobOptions m_blobUploadOptions;
+    std::shared_ptr<Azure::Storage::Blobs::AppendBlobClient> m_appendBlobClient;
+    std::string m_blobName;
     std::vector<uint8_t> m_blobContent;
-
-    virtual void SetUp() override;
-    virtual void TearDown() override;
-
-    Azure::Storage::Blobs::AppendBlobClient const& GetAppendBlobClient(std::string const& blobName)
-    {
-      // Create container
-      auto containerClient = GetBlobContainerTestClient();
-      containerClient.CreateIfNotExists();
-
-      m_appendBlobClient = std::make_unique<Azure::Storage::Blobs::AppendBlobClient>(
-          containerClient.GetAppendBlobClient(blobName));
-
-      m_blobContent = std::vector<uint8_t>(100, 'x');
-      m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"key2", "Value2"}};
-      m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
-      m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
-      m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
-      m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
-      m_blobUploadOptions.HttpHeaders.ContentEncoding = "identify";
-      m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
-      m_appendBlobClient->Create(m_blobUploadOptions);
-      auto blockContent
-          = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-      m_appendBlobClient->AppendBlock(blockContent);
-      m_blobUploadOptions.HttpHeaders.ContentHash
-          = m_appendBlobClient->GetProperties().Value.HttpHeaders.ContentHash;
-
-      return *m_appendBlobClient;
-    }
   };
 
 }}} // namespace Azure::Storage::Test

@@ -13,8 +13,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, DataLakeSasTest_LIVEONLY_)
   {
-    CHECK_SKIP_TEST();
-
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

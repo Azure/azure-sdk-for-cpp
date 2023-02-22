@@ -8,7 +8,11 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `Host` request header is not set for non-default port (80, 443).
+
 ### Other Changes
+
+- Libcurl transport doesn't add `Content-Length` request header for GET/HEAD/DELETE requests anymore.
 
 ## 1.8.0 (2023-02-02)
 
