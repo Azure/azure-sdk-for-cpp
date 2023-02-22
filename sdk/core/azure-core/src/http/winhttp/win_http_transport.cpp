@@ -765,6 +765,12 @@ WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
     httpOptions.IgnoreUnknownCertificateAuthority = true;
   }
 
+  if (!transportOptions.SslVerifyPeer)
+  {
+    httpOptions.IgnoreUnknownCertificateAuthority = true;
+    httpOptions.IgnoreInvalidCertificateCommonName = true;
+  }
+
   return httpOptions;
 }
 } // namespace

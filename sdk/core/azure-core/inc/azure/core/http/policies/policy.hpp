@@ -174,6 +174,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     bool EnableCertificateRevocationListCheck{false};
 
     /**
+     * @brief Verify peer's SSL certificate.
+     *
+     * @remark This field is only used if the customer has not specified a default transport
+     * adapter. If the customer has set a Transport adapter, this option is ignored.
+     */
+    bool SslVerifyPeer{true};
+
+    /**
      * @brief Base64 encoded DER representation of an X.509 certificate expected in the certificate
      * chain used in TLS connections.
      *
