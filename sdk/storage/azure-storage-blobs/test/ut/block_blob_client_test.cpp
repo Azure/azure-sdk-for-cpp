@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
     m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
     m_blobUploadOptions.AccessTier = Azure::Storage::Blobs::Models::AccessTier::Hot;
-    m_blobContent = RandomBuffer(1_KB);
+    m_blobContent = RandomBuffer(static_cast<size_t>(1_KB));
     auto blobContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(blobContent, m_blobUploadOptions);
