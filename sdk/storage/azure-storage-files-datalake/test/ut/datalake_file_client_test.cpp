@@ -217,8 +217,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, FileDataActions)
   {
-    const int32_t bufferSize = 4 * 1024; // 4KB data size
-    std::vector<uint8_t> buffer(bufferSize, 'x');
+    const int32_t bufferSize = 10;
+    std::vector<uint8_t> buffer = RandomBuffer(bufferSize);
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
     auto properties1 = m_fileClient->GetProperties();
@@ -468,8 +468,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, FileReadReturns)
   {
-    const int32_t bufferSize = 4 * 1024; // 4KB data size
-    std::vector<uint8_t> buffer(bufferSize, 'x');
+    const int32_t bufferSize = 20;
+    std::vector<uint8_t> buffer = RandomBuffer(bufferSize);
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
     std::string newFileName("fileForTest");

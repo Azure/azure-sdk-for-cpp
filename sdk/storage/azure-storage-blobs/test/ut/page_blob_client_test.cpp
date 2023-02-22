@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobName = RandomString();
     m_pageBlobClient = std::make_shared<Blobs::PageBlobClient>(
         m_blobContainerClient->GetPageBlobClient(m_blobName));
-    m_blobContent = std::vector<uint8_t>(static_cast<size_t>(1_KB), 'x');
+    m_blobContent = RandomBuffer(1_KB);
     auto blobContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_pageBlobClient->Create(2_KB);

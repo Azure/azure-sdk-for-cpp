@@ -26,8 +26,8 @@ namespace Azure { namespace Storage { namespace Test {
     m_appendBlobClient = std::make_shared<Blobs::AppendBlobClient>(
         m_blobContainerClient->GetAppendBlobClient(m_blobName));
     m_appendBlobClient->Create();
-    std::vector<uint8_t> blobContent1(static_cast<size_t>(1_KB), 'x');
-    std::vector<uint8_t> blobContent2(static_cast<size_t>(512), 'a');
+    std::vector<uint8_t> blobContent1 = RandomBuffer(1_KB);
+    std::vector<uint8_t> blobContent2 = RandomBuffer(512);
     auto blobContent = Azure::Core::IO::MemoryBodyStream(blobContent1.data(), blobContent1.size());
     m_appendBlobClient->AppendBlock(blobContent);
     blobContent = Azure::Core::IO::MemoryBodyStream(blobContent2.data(), blobContent2.size());
