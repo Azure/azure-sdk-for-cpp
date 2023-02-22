@@ -14,5 +14,4 @@ Tests:
 - Test: get-certificate
   Class: GetCertificate
   Arguments:
-    - --warmup 0 --duration 1
     - --parallel 4
