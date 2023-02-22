@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       StorageTest::SetUp();
 
-      m_options = InitClientOptions<Queues::QueueClientOptions>();
+      m_options = InitStorageClientOptions<Queues::QueueClientOptions>();
       m_testName = GetTestName();
       m_testNameLowercase = GetTestNameLowerCase();
       m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
