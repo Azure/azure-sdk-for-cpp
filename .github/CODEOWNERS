@@ -29,7 +29,7 @@
 /sdk/keyvault/           @vhvb1989 @gearama @antkmsft @rickwinter
 
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman @microzchang
+/sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman @microzchang
 
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter 
