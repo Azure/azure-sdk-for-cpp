@@ -472,7 +472,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, DISABLED_CreateWithEncryptionContext)
   {
     std::string encryptionContext = "encryptionContext";
-    std::string fileName = GetTestNameLowerCase() + "_file";
+    const std::string fileName = RandomString();
     auto fileClient = m_fileSystemClient->GetFileClient(fileName);
     Files::DataLake::CreateFileOptions options;
     options.EncryptionContext = encryptionContext;
