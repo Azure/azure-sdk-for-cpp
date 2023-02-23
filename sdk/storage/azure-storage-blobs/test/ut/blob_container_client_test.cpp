@@ -538,7 +538,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       std::string containerName = GetLowercaseIdentifier() + "1";
-      std::string blobName = GetTestName() + "1";
+      std::string blobName = RandomString() + "1";
       Blobs::BlobClientOptions options;
       options.EncryptionScope = testEncryptionScope;
       auto containerClient2 = GetBlobContainerClientForTest(containerName, options);
@@ -581,7 +581,7 @@ namespace Azure { namespace Storage { namespace Test {
       containerClient2.Delete();
     }
     {
-      std::string blobName = GetTestName() + "2";
+      std::string blobName = RandomString() + "2";
       Blobs::BlobClientOptions options;
       options.EncryptionScope = testEncryptionScope;
       auto appendBlobClient

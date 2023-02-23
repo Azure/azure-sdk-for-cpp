@@ -45,8 +45,6 @@ namespace Azure { namespace Storage { namespace Test {
       StorageTest::SetUp();
 
       m_options = InitClientOptions<Queues::QueueClientOptions>();
-      m_testName = GetTestName();
-      m_testNameLowercase = GetTestNameLowerCase();
       m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
           Queues::QueueServiceClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_options));
@@ -55,8 +53,6 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::shared_ptr<Queues::QueueServiceClient> m_queueServiceClient;
     Queues::QueueClientOptions m_options;
-    std::string m_testName;
-    std::string m_testNameLowercase;
   };
 
   TEST_F(QueueServiceClientTest, ListQueues)
@@ -268,7 +264,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(QueueServiceClientTest, CreateDeleteQueue)
   {
-    std::string queueName = m_testNameLowercase;
+    std::string queueName = LowercaseRandomString();
     auto queueClient = m_queueServiceClient->CreateQueue(queueName);
     EXPECT_NO_THROW(queueClient.Value.GetProperties());
 
