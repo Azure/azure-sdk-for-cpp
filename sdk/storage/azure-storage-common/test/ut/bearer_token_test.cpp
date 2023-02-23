@@ -14,9 +14,9 @@ namespace Azure { namespace Storage { namespace Test {
         AadTenantId(),
         AadClientId(),
         AadClientSecret(),
-        InitClientOptions<Core::Credentials::TokenCredentialOptions>());
+        InitStorageClientOptions<Core::Credentials::TokenCredentialOptions>());
     containerClient = Blobs::BlobContainerClient(
-        containerClient.GetUrl(), credential, InitClientOptions<Blobs::BlobClientOptions>());
+        containerClient.GetUrl(), credential, InitStorageClientOptions<Blobs::BlobClientOptions>());
 
     EXPECT_NO_THROW(containerClient.Create());
     EXPECT_NO_THROW(containerClient.Delete());

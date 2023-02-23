@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
     void SetUp() override
     {
       StorageTest::SetUp();
-      auto options = InitClientOptions<Files::DataLake::DataLakeClientOptions>();
+      auto options = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
       m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
           Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), options));

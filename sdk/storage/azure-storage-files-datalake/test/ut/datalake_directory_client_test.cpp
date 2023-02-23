@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Files::DataLake::DataLakeDirectoryClient directoryClientSas(
         Files::DataLake::_detail::GetDfsUrlFromUrl(baseDirectoryClient.GetUrl()) + GetSas(),
-        InitClientOptions<Files::DataLake::DataLakeClientOptions>());
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
     directoryClientSas.RenameFile(sourceFilename, destinationFilename);
     EXPECT_THROW(
         baseDirectoryClient.GetFileClient(sourceFilename).GetProperties(), StorageException);

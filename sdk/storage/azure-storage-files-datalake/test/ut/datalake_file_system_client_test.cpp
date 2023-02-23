@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& fileSystemName,
       Files::DataLake::DataLakeClientOptions clientOptions)
   {
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
     auto fsClient = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
         AdlsGen2ConnectionString(), fileSystemName, clientOptions);
     m_resourceCleanupFunctions.push_back([fsClient]() { fsClient.DeleteIfExists(); });
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(),
               fileSystemName,
-              InitClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
+              InitStorageClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
       EXPECT_NO_THROW(connectionStringClient.Create());
       EXPECT_NO_THROW(connectionStringClient.Delete());
     }
@@ -711,7 +711,7 @@ namespace Azure { namespace Storage { namespace Test {
     fileClient.CreateIfNotExists();
 
     Files::DataLake::DataLakeClientOptions options;
-    InitClientOptions(options);
+    InitStorageClientOptions(options);
     Files::DataLake::DataLakeFileSystemClient fileSystemClientSas(
         Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()) + GetSas(),
         options);

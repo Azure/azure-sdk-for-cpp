@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(),
           m_fileSystemName,
           baseName + "1",
-          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       std::string pathPermissions = "rwxrw-rw-";
       EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
@@ -353,7 +353,7 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(),
           m_fileSystemName,
           baseName + "2",
-          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       Files::DataLake::SetPathPermissionsOptions options1, options2;
       options1.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(),
           m_fileSystemName,
           baseName + "3",
-          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       Files::DataLake::SetPathPermissionsOptions options1, options2;
       options1.AccessConditions.IfMatch = response.Value.ETag;

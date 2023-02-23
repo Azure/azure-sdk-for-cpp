@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     StorageTest::SetUp();
 
-    auto options = InitClientOptions<Files::Shares::ShareClientOptions>();
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
             StandardStorageConnectionString(), options));

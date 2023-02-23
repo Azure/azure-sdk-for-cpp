@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceClient = *m_blobServiceClient;
     GetBlobContainerClientForTest(containerName).CreateIfNotExists();
     Blobs::BlobClientOptions clientOptions;
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
     auto containerClient = Blobs::BlobContainerClient(
         serviceClient.GetBlobContainerClient(containerName).GetUrl() + containerSasToken,
         clientOptions);
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret());
     Blobs::BlobClientOptions clientOptions;
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
 
     auto serviceClient
         = Blobs::BlobServiceClient(m_blobServiceClient->GetUrl(), credential, clientOptions);

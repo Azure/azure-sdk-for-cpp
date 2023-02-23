@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = GetAppendBlobClientForTest(RandomString());
 
     auto blobClientWithoutAuth = Azure::Storage::Blobs::AppendBlobClient(
-        blobClient.GetUrl(), InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+        blobClient.GetUrl(), InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(), StorageException);
     {
       auto response = blobClient.CreateIfNotExists();

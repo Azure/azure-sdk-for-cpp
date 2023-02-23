@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       return;
     }
-    auto options = InitClientOptions<Queues::QueueClientOptions>();
+    auto options = InitStorageClientOptions<Queues::QueueClientOptions>();
     m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
         Queues::QueueServiceClient::CreateFromConnectionString(
             StandardStorageConnectionString(), options));
@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& queueName,
       Queues::QueueClientOptions clientOptions)
   {
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
     auto queueClient = Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), queueName, clientOptions);
     m_resourceCleanupFunctions.push_back([queueClient]() { queueClient.Delete(); });

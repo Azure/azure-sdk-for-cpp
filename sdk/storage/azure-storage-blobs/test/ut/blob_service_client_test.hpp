@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       StorageTest::SetUp();
 
-      auto options = InitClientOptions<Blobs::BlobClientOptions>();
+      auto options = InitStorageClientOptions<Blobs::BlobClientOptions>();
       m_blobServiceClient = std::make_shared<Blobs::BlobServiceClient>(
           Blobs::BlobServiceClient::CreateFromConnectionString(
               StandardStorageConnectionString(), options));

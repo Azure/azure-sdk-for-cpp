@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& containerName,
       Blobs::BlobClientOptions clientOptions)
   {
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
     auto blobContainerClient = Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), containerName, clientOptions);
     m_resourceCleanupFunctions.push_back(
