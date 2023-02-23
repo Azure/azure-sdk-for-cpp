@@ -355,7 +355,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto secondaryServiceClient = Blobs::BlobServiceClient(
         InferSecondaryUrl(serviceClient.GetUrl()),
         keyCredential,
-        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+        InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 
     auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
@@ -448,7 +448,7 @@ namespace Azure { namespace Storage { namespace Test {
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret());
     Blobs::BlobClientOptions options;
-    InitClientOptions(options);
+    InitStorageClientOptions(options);
 
     auto blobServiceClient1 = Blobs::BlobServiceClient(serviceClient.GetUrl(), credential, options);
 

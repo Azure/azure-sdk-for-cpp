@@ -152,8 +152,24 @@ namespace Azure { namespace Storage {
         return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
       }
 
+      template <class T> T InitStorageClientOptions()
+      {
+        T options;
+        InitStorageClientOptions(options);
+        return options;
+      }
+      template <class T> void InitStorageClientOptions(T& options)
+      {
+        InitClientOptions(options);
+        InitLoggingOptions(options);
+      }
+
     protected:
       std::vector<std::function<void()>> m_resourceCleanupFunctions;
+
+    private:
+      void InitLoggingOptions(Azure::Core::_internal::ClientOptions& options);
+      using TestBase::InitClientOptions;
 
     private:
       std::mt19937_64 m_randomGenerator;

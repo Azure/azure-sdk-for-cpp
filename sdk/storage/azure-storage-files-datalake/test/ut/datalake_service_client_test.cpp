@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Test {
               .GetUrl();
     auto datalakeServiceClient = Azure::Storage::Files::DataLake::DataLakeServiceClient(
         datalakeServiceUrl + sasToken,
-        InitClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
+        InitStorageClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
     EXPECT_NO_THROW(datalakeServiceClient.ListFileSystems());
   }
 

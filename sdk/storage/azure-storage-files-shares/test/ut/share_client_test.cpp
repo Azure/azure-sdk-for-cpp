@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& shareName,
       Files::Shares::ShareClientOptions clientOptions)
   {
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         StandardStorageConnectionString(), shareName, clientOptions);
     m_resourceCleanupFunctions.push_back([shareClient]() {
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string& shareName,
       Files::Shares::ShareClientOptions clientOptions)
   {
-    InitClientOptions(clientOptions);
+    InitStorageClientOptions(clientOptions);
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         PremiumFileConnectionString(), shareName, clientOptions);
     m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
@@ -531,7 +531,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, PremiumShare)
   {
-    auto shareClientOptions = InitClientOptions<Files::Shares::ShareClientOptions>();
+    auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
         PremiumFileConnectionString(), shareClientOptions);
     {
