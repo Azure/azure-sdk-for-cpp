@@ -52,13 +52,11 @@ namespace Azure { namespace Storage { namespace Test {
       }
     };
 
-    m_testContext.RenameTest(GetTestName());
-
     auto peekPolicyPtr = std::make_unique<PeekHttpRequestPolicy>(callback);
     Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     clientOptions.PerRetryPolicies.emplace_back(std::move(peekPolicyPtr));
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), GetTestNameLowerCase(), clientOptions);
+        StandardStorageConnectionString(), LowercaseRandomString(), clientOptions);
     containerClient.DeleteIfExists();
     EXPECT_FALSE(timeout.HasValue());
 

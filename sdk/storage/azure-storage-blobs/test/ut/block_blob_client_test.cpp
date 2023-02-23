@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
     m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
     m_blobUploadOptions.AccessTier = Azure::Storage::Blobs::Models::AccessTier::Hot;
-    m_blobContent = std::vector<uint8_t>(static_cast<size_t>(1_KB), 'x');
+    m_blobContent = RandomBuffer(static_cast<size_t>(1_KB));
     auto blobContent
         = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(blobContent, m_blobUploadOptions);
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
     tags["key2"] = "value2";
     tags["key3 +-./:=_"] = "v1 +-./:=_";
 
-    std::vector<uint8_t> blobContent(10, 'a');
+    std::vector<uint8_t> blobContent = RandomBuffer(10);
     {
       Blobs::UploadBlockBlobOptions options;
       options.Tags = tags;
@@ -1221,7 +1221,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, UploadFromUri)
   {
     auto srcBlobClient = *m_blockBlobClient;
-    std::vector<uint8_t> blobContent(100, 'a');
+    std::vector<uint8_t> blobContent = RandomBuffer(100);
     srcBlobClient.UploadFrom(blobContent.data(), blobContent.size());
     std::map<std::string, std::string> srcTags;
     srcTags["srctags"] = "a1212";
@@ -1302,7 +1302,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blobClient = *m_blockBlobClient;
 
-    const std::vector<uint8_t> content(static_cast<size_t>(1), 'a');
+    const std::vector<uint8_t> content = RandomBuffer(1);
     const std::string blockId = Base64EncodeText(std::string(64, '0'));
     auto blockContent = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
     blobClient.StageBlock(blockId, blockContent);
