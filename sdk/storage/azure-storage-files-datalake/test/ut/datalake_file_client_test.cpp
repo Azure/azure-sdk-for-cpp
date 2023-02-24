@@ -874,13 +874,13 @@ namespace Azure { namespace Storage { namespace Test {
       {
         int64_t fileSize = RandomInt(1, 1_MB);
         futures.emplace_back(
-            std::async(std::launch::async, testUploadFromBuffer, c, fileSize, 4_KB, 4_KB));
+            std::async(std::launch::async, testUploadFromBuffer, c, fileSize, 4_KB, 56_KB));
         futures.emplace_back(
-            std::async(std::launch::async, testUploadFromFile, c, fileSize, 2_KB, 16_KB));
+            std::async(std::launch::async, testUploadFromFile, c, fileSize, 2_KB, 172_KB));
         futures.emplace_back(
-            std::async(std::launch::async, testUploadFromBuffer, c, fileSize, 0, 12_KB));
+            std::async(std::launch::async, testUploadFromBuffer, c, fileSize, 0, 109_KB));
         futures.emplace_back(
-            std::async(std::launch::async, testUploadFromFile, c, fileSize, 0, 25_KB));
+            std::async(std::launch::async, testUploadFromFile, c, fileSize, 0, 256_KB));
       }
       for (auto& f : futures)
       {
