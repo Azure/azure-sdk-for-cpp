@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
               || transportOptions.ProxyUserName.HasValue()
               || transportOptions.EnableCertificateRevocationListCheck
               || !transportOptions.ExpectedTlsRootCertificate.empty())
-          || !transportOptions.SslVerifyPeer;
+          || transportOptions.DisableTlsCertificateValidation;
     }
   } // namespace
 

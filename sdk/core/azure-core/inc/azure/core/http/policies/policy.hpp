@@ -174,12 +174,17 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     bool EnableCertificateRevocationListCheck{false};
 
     /**
-     * @brief Verify peer's SSL certificate.
+     * @brief Disable SSL/TLS certificate verification. This option allows transport layer to
+     * perform insecure SSL/TLS connections and skip SSL/TLS certificate checks while still having
+     * SSL/TLS-encrypted communications.
+     *
+     * @remark Disabling TLS security is generally a bad idea because it allows malicious actors to
+     * spoof the target server and should never be enabled in production code.
      *
      * @remark This field is only used if the customer has not specified a default transport
      * adapter. If the customer has set a Transport adapter, this option is ignored.
      */
-    bool SslVerifyPeer{true};
+    bool DisableTlsCertificateValidation{false};
 
     /**
      * @brief Base64 encoded DER representation of an X.509 certificate expected in the certificate

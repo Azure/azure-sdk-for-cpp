@@ -765,7 +765,7 @@ WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
     httpOptions.IgnoreUnknownCertificateAuthority = true;
   }
 
-  if (!transportOptions.SslVerifyPeer)
+  if (transportOptions.DisableTlsCertificateValidation)
   {
     httpOptions.IgnoreUnknownCertificateAuthority = true;
     httpOptions.IgnoreInvalidCertificateCommonName = true;
