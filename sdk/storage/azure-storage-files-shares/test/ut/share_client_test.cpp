@@ -529,6 +529,8 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareClientTest, GetStatistics) { EXPECT_NO_THROW(m_shareClient->GetStatistics()); }
+
   TEST_F(FileShareClientTest, PremiumShare)
   {
     auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();

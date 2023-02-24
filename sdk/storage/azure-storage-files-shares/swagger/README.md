@@ -378,6 +378,10 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share&comp=stats"].get.responses["200"]
     transform: >
+      $.headers["ETag"]["x-ms-client-default"] = "";
+      $.headers["ETag"]["x-nullable"] = true;
+      $.headers["Last-Modified"]["x-ms-client-default"] = "";
+      $.headers["Last-Modified"]["x-nullable"] = true;
       $.schema = {
         "description": "Stats for the share.",
         "type": "object",
