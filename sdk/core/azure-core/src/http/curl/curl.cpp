@@ -311,6 +311,7 @@ Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions
     curlOptions.SslOptions.PemEncodedExpectedRootCertificates
         = PemEncodeFromBase64(transportOptions.ExpectedTlsRootCertificate, "CERTIFICATE");
   }
+  curlOptions.SslVerifyPeer = !transportOptions.DisableTlsCertificateValidation;
   return curlOptions;
 }
 

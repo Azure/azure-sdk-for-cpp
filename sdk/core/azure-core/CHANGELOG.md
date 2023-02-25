@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.
+- Added `DisableTlsCertificateValidation` in `TransportOptions`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -765,6 +765,12 @@ WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
     httpOptions.IgnoreUnknownCertificateAuthority = true;
   }
 
+  if (transportOptions.DisableTlsCertificateValidation)
+  {
+    httpOptions.IgnoreUnknownCertificateAuthority = true;
+    httpOptions.IgnoreInvalidCertificateCommonName = true;
+  }
+
   return httpOptions;
 }
 } // namespace
@@ -915,6 +921,16 @@ _detail::WinHttpRequest::WinHttpRequest(
             m_requestHandle.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
     {
       GetErrorAndThrow("Error while setting ignore unknown server certificate.");
+    }
+  }
+
+  if (options.IgnoreInvalidCertificateCommonName)
+  {
+    auto option = SECURITY_FLAG_IGNORE_CERT_CN_INVALID;
+    if (!WinHttpSetOption(
+            m_requestHandle.get(), WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
+    {
+      GetErrorAndThrow("Error while setting ignore invalid certificate common name.");
     }
   }
 
