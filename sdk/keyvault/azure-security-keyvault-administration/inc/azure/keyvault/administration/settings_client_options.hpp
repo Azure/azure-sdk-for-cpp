@@ -18,7 +18,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
 
   /**
-   * @brief Define the options to create a Keyvault Administration client.
+   * @brief Define the options to create a Key Vault Administration client.
    *
    */
   struct SettingsClientOptions final : public Azure::Core::_internal::ClientOptions
@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Service Version used.
      *
      */
-    const std::string ApiVersion{"7.4-preview.1"};
+    const std::string ApiVersion{"7.4"};
   };
 
 }}}} // namespace Azure::Security::KeyVault::Administration
