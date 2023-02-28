@@ -178,62 +178,6 @@ TEST_F(KeyVaultKeyClient, CreateRsaKey)
   }
 }
 
-// No tests for octKey since the server does not support it.
-// FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
-TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
-{
-  auto const keyName = GetTestName();
-  // This client requires an HSM client
-  CreateHsmClient();
-  auto const& client = GetClientForTest(keyName);
-
-  {
-    auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
-    ecHsmKey.Enabled = true;
-    ecHsmKey.KeyOperations = {KeyOperation::Sign};
-    auto keyResponse = client.CreateEcKey(ecHsmKey);
-    CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.Value;
-    EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
-  }
-  {
-    // Now get the key
-    auto keyResponse = client.GetKey(keyName);
-    CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.Value;
-    EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
-    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
-  }
-}
-// FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
-TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
-{
-  auto const keyName = GetTestName();
-  // This client requires an HSM client
-  CreateHsmClient();
-  auto const& client = GetClientForTest(keyName);
-  {
-    auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
-    rsaHsmKey.Enabled = true;
-    rsaHsmKey.KeyOperations = {KeyOperation::Sign};
-    auto keyResponse = client.CreateRsaKey(rsaHsmKey);
-    CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.Value;
-    EXPECT_EQ(keyVaultKey.Name(), keyName);
-  }
-  {
-    // Now get the key
-    auto keyResponse = client.GetKey(keyName);
-    CheckValidResponse(keyResponse);
-    auto keyVaultKey = keyResponse.Value;
-    EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
-    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
-  }
-}
-
 std::string BinaryToHexString(std::vector<uint8_t> const& src)
 {
   static constexpr char hexMap[]

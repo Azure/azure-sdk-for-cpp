@@ -22,9 +22,9 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  class KeyVaultKeyClient : public Azure::Core::Test::TestBase {
+  class KeyVaultKeyHSMClient : public Azure::Core::Test::TestBase {
   public:
-    KeyVaultKeyClient() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
+    KeyVaultKeyHSMClient() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
 
   private:
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
@@ -53,16 +53,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       return *m_client;
     }
 
-    std::unique_ptr<Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient>
-    GetCryptoClient(std::string const& keyId)
-    {
-      Azure::Security::KeyVault::Keys::Cryptography::CryptographyClientOptions options;
-      return InitTestClient<
-          Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient,
-          Azure::Security::KeyVault::Keys::Cryptography::CryptographyClientOptions>(
-          keyId, m_credential, options);
-    }
-
     // Create
     virtual void SetUp() override
     {
@@ -83,6 +73,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       UpdateWaitingTime(m_testPollingIntervalMs);
     }
 
+    void CreateHsmClient(std::string hsmUrl = "")
+    {
+      KeyClientOptions options;
+      m_client = InitTestClient<
+          Azure::Security::KeyVault::Keys::KeyClient,
+          Azure::Security::KeyVault::Keys::KeyClientOptions>(
+          hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
+    }
+
   public:
     template <class T>
     static inline void CheckValidResponse(
@@ -97,73 +96,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
               expectedCode));
     }
 
-    static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
-
-    static inline void CleanUpKeyVault(KeyClient const& keyClient)
-    {
-      std::vector<DeletedKey> deletedKeys;
-      for (auto keyResponse = keyClient.GetDeletedKeys(); keyResponse.HasPage();
-           keyResponse.MoveToNextPage())
-      {
-        for (auto& key : keyResponse.Items)
-        {
-          deletedKeys.emplace_back(key);
-        }
-      }
-      if (deletedKeys.size() > 0)
-      {
-        for (auto& deletedKey : deletedKeys)
-        {
-          keyClient.PurgeDeletedKey(deletedKey.Name());
-        }
-        // Wait for purge is completed
-        std::this_thread::sleep_for(std::chrono::minutes(1));
-      }
-    }
-
-    static inline void RemoveAllKeysFromVault(KeyClient const& keyClient, bool waitForPurge = true)
-    {
-      std::vector<DeleteKeyOperation> deletedKeys;
-      GetPropertiesOfKeysOptions options;
-      for (auto keyResponse = keyClient.GetPropertiesOfKeys(); keyResponse.HasPage();
-           keyResponse.MoveToNextPage())
-      {
-        for (auto& key : keyResponse.Items)
-        {
-          deletedKeys.emplace_back(keyClient.StartDeleteKey(key.Name));
-        }
-      }
-      if (deletedKeys.size() > 0)
-      {
-        std::cout << std::endl
-                  << "Cleaning vault. " << deletedKeys.size()
-                  << " Will be deleted and purged now...";
-        for (auto& deletedKey : deletedKeys)
-        {
-          auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::minutes(1));
-          keyClient.PurgeDeletedKey(readyToPurgeKey.Value.Name());
-          std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey.Value.Name();
-        }
-        std::cout << std::endl << "Complete purge operation.";
-        // Wait for purge is completed
-        if (waitForPurge)
-        {
-          std::this_thread::sleep_for(std::chrono::minutes(1));
-        }
-      }
-    }
-  };
-
-  // This class makes crypto tests to have a delay before running to avoid server Throttled
-  class KeyVaultKeyClientWithParam : public KeyVaultKeyClient,
-                                     public ::testing::WithParamInterface<int> {
-
-  protected:
-    // Just call base class setup and introduce the wait delay
-    virtual void SetUp() override
-    {
-      KeyVaultKeyClient::SetUp();
-      TestSleep();
-    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test
