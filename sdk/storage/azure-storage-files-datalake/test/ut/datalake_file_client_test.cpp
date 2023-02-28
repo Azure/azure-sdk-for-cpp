@@ -469,6 +469,34 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, DISABLED_CreateWithEncryptionContext)
+  {
+    std::string encryptionContext = "encryptionContext";
+    const std::string fileName = RandomString();
+    auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+    Files::DataLake::CreateFileOptions options;
+    options.EncryptionContext = encryptionContext;
+    // Assert Create
+    EXPECT_NO_THROW(fileClient.Create(options));
+    // Assert GetProperties
+    auto properties = fileClient.GetProperties();
+    EXPECT_TRUE(properties.Value.EncryptionContext.HasValue());
+    EXPECT_EQ(encryptionContext, properties.Value.EncryptionContext.Value());
+    // Assert Download
+    auto downloadResult = fileClient.Download();
+    EXPECT_TRUE(downloadResult.Value.Details.EncryptionContext.HasValue());
+    EXPECT_EQ(encryptionContext, downloadResult.Value.Details.EncryptionContext.Value());
+    // Assert ListPaths
+    auto paths = m_fileSystemClient->ListPaths(false).Paths;
+    auto iter = std::find_if(
+        paths.begin(), paths.end(), [&fileName](const Files::DataLake::Models::PathItem& path) {
+          return path.Name == fileName;
+        });
+    EXPECT_NE(paths.end(), iter);
+    EXPECT_TRUE(iter->EncryptionContext.HasValue());
+    EXPECT_EQ(encryptionContext, iter->EncryptionContext.Value());
+  }
+
   TEST_F(DataLakeFileClientTest, FileReadReturns)
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size

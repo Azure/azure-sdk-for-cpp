@@ -208,6 +208,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
     protocolLayerOptions.ProposedLeaseId = options.LeaseId;
+    protocolLayerOptions.EncryptionContext = options.EncryptionContext;
     if (options.Acls.HasValue())
     {
       protocolLayerOptions.Acl = Models::Acl::SerializeAcls(options.Acls.Value());
@@ -341,6 +342,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.VersionId = std::move(response.Value.VersionId);
     ret.IsCurrentVersion = std::move(response.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
+    ret.EncryptionContext = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::EncryptionContextHeaderName);
     return Azure::Response<Models::PathProperties>(std::move(ret), std::move(response.RawResponse));
   }
 
