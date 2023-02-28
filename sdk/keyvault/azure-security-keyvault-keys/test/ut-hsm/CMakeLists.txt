@@ -23,7 +23,7 @@ add_executable (
    )
 
 create_per_service_target_build(keyvault azure-security-keyvault-keys-hsm-test)
-create_map_file(azure-security-keyvault-keys-test azure-security-keyvault-keys-hsm-test.map)
+create_map_file(azure-security-keyvault-keys-hsm-test azure-security-keyvault-keys-hsm-test.map)
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-keys-hsm-test PUBLIC /wd6326 /wd26495 /wd26812)

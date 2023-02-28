@@ -65,7 +65,6 @@ TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey)
   }
 }
 
-
 TEST_F(KeyVaultKeyHSMClient, GetRandomBytes)
 {
   if (m_keyVaultUrl.compare(m_keyVaultHsmUrl) != 0)

@@ -86,6 +86,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
     }
-
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test
