@@ -15,7 +15,7 @@
 
 ### Other Changes
 
-- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017.
+- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
 - Libcurl transport doesn't add `Content-Length` request header for GET/HEAD/DELETE requests anymore.
 
 ### Acknowledgments
