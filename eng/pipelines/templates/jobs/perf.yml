@@ -38,7 +38,7 @@ extends:
       - pwsh: |
           Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
         displayName: Set Vcpkg Variables
-      - ${{ if and( parameters.IncludeCpp, parameters.Profile ) }}:
+      - ${{ if parameters.Profile }}:
         - task: Bash@3
           inputs:
             targetType: 'inline'
