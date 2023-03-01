@@ -20,6 +20,9 @@ parameters:
 - name: AdditionalArguments
   type: string
   default: ''
+- name: Profile
+  type: boolean
+  default: false
 - name: EnvVars
   type: object
   default: []
@@ -31,11 +34,20 @@ extends:
     - template: /eng/pipelines/templates/variables/globals.yml
     Language: Cpp
     LanguageVersion: 'N/A'
-    InstallLanguageSteps: ${{ parameters.InstallLanguageSteps }}
+    InstallLanguageSteps:
+      - pwsh: |
+          Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+        displayName: Set Vcpkg Variables
+      - ${{ if and( parameters.IncludeCpp, parameters.Profile ) }}:
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: sudo apt install valgrind -y
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}
     Iterations: ${{ parameters.Iterations }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
+    Profile: ${{ parameters.Profile }}
     EnvVars: ${{ parameters.EnvVars}}
