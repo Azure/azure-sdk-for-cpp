@@ -4,4 +4,4 @@
 
 ### Features Added
 
-- Initial preview of Settings API. 
+- Initial preview of Settings API.
