@@ -392,7 +392,10 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(
           fileClient.UploadFrom(blobContent.data(), static_cast<size_t>(bufferSize), options));
       std::vector<uint8_t> downloadBuffer(static_cast<size_t>(bufferSize), '\x00');
-      fileClient.DownloadTo(downloadBuffer.data(), downloadBuffer.size());
+      Files::Shares::DownloadFileToOptions downloadOptions;
+      downloadOptions.TransferOptions.Concurrency = 1;
+      ASSERT_NO_THROW(
+          fileClient.DownloadTo(downloadBuffer.data(), downloadBuffer.size(), downloadOptions));
       std::vector<uint8_t> expectedData(
           blobContent.begin(), blobContent.begin() + static_cast<size_t>(bufferSize));
       EXPECT_EQ(downloadBuffer, expectedData);
@@ -422,7 +425,10 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.UploadFrom(tempFileName, options));
       DeleteFile(tempFileName);
       std::vector<uint8_t> downloadBuffer(static_cast<size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadBuffer.data(), downloadBuffer.size());
+      Files::Shares::DownloadFileToOptions downloadOptions;
+      downloadOptions.TransferOptions.Concurrency = 1;
+      ASSERT_NO_THROW(
+          fileClient.DownloadTo(downloadBuffer.data(), downloadBuffer.size(), downloadOptions));
       std::vector<uint8_t> expectedData(
           blobContent.begin(), blobContent.begin() + static_cast<size_t>(fileSize));
       EXPECT_EQ(downloadBuffer, expectedData);
