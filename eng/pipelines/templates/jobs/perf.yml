@@ -43,6 +43,7 @@ extends:
           inputs:
             targetType: 'inline'
             script: sudo apt install valgrind -y
+            displayName: Install valgrind
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
