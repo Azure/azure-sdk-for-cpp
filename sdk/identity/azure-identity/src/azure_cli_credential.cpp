@@ -5,6 +5,7 @@
 
 #include "private/token_credential_impl.hpp"
 
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
@@ -43,11 +44,15 @@ using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
+using Azure::Core::Diagnostics::Logger;
+using Azure::Core::Diagnostics::_internal::Log;
 using Azure::Identity::AzureCliCredentialOptions;
 using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
+std::string const MsgPrefix = "Identity: AzureCliCredential";
+
 void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& description)
 {
   for (auto const c : input)
@@ -66,8 +71,7 @@ void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& des
         if (!std::isalnum(c, std::locale::classic()))
         {
           throw AuthenticationException(
-              "AzureCliCredential: Unsafe command line input found in " + description + ": "
-              + input);
+              MsgPrefix + ": Unsafe command line input found in " + description + ": " + input);
         }
     }
   }
@@ -82,6 +86,16 @@ AzureCliCredential::AzureCliCredential(
 {
   static_cast<void>(options);
   ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
+
+  auto const logLevel = Logger::Level::Informational;
+  if (Log::ShouldWrite(logLevel))
+  {
+    Log::Write(
+        logLevel,
+        MsgPrefix
+            + " created.\n"
+              "Successful creation does not guarantee further succesful token retrieval.");
+  }
 }
 
 AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
@@ -147,7 +161,15 @@ AccessToken AzureCliCredential::GetToken(
     }
     catch (std::exception const& e)
     {
-      throw AuthenticationException(std::string("AzureCliCredential::GetToken(): ") + e.what());
+      auto const errorMsg = MsgPrefix + " didn't get the token: \"" + e.what() + '\"';
+
+      auto const logLevel = Logger::Level::Warning;
+      if (Log::ShouldWrite(logLevel))
+      {
+        Log::Write(logLevel, errorMsg);
+      }
+
+      throw AuthenticationException(errorMsg);
     }
   });
 }

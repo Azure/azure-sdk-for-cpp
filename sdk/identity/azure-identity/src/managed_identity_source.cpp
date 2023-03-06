@@ -5,24 +5,62 @@
 
 #include <azure/core/internal/environment.hpp>
 
+#include <azure/core/internal/diagnostics/log.hpp>
+
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
 #include <utility>
 
 using namespace Azure::Identity::_detail;
+
 using Azure::Core::_internal::Environment;
+using Azure::Core::Diagnostics::Logger;
+using Azure::Core::Diagnostics::_internal::Log;
+
+namespace {
+std::string const IdentityPrefix = "Identity: ";
+std::string const CredPrefix = "ManagedIdentityCredential";
+
+std::string WithSourceMessage(std::string const& credSource)
+{
+  return std::string(" with ") + credSource + " source";
+}
+
+void PrintEnvNotSetUpMessage(std::string const& credSource)
+{
+  auto const logLevel = Logger::Level::Verbose;
+  if (Log::ShouldWrite(logLevel))
+  {
+    Log::Write(
+        logLevel,
+        IdentityPrefix + CredPrefix + ": Environment is not set up for the credential to be created"
+            + WithSourceMessage(credSource) + '.');
+  }
+}
+} // namespace
 
 Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
     std::string const& url,
-    char const* envVarName)
+    char const* envVarName,
+    std::string const credSource)
 {
   using Azure::Core::Url;
   using Azure::Core::Credentials::AuthenticationException;
 
   try
   {
-    return Url(url);
+    auto const endpointUrl = Url(url);
+
+    auto const logLevel = Logger::Level::Informational;
+    if (Log::ShouldWrite(logLevel))
+    {
+      Log::Write(
+          logLevel,
+          IdentityPrefix + CredPrefix + " will be created" + WithSourceMessage(credSource) + '.');
+    }
+
+    return endpointUrl;
   }
   catch (std::invalid_argument const&)
   {
@@ -31,24 +69,40 @@ Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
   {
   }
 
-  throw AuthenticationException(
-      std::string("The environment variable ") + envVarName + " contains an invalid URL.");
+  auto const errorMessage = CredPrefix + WithSourceMessage(credSource)
+      + ": Failed to create: The environment variable \'" + envVarName
+      + "\' contains an invalid URL.";
+
+  auto const logLevel = Logger::Level::Warning;
+  if (Log::ShouldWrite(logLevel))
+  {
+    Log::Write(logLevel, IdentityPrefix + errorMessage);
+  }
+
+  throw AuthenticationException(errorMessage);
 }
 
 template <typename T>
 std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options,
-    const char* endpointVarName,
-    const char* secretVarName)
+    char const* endpointVarName,
+    char const* secretVarName,
+    char const* appServiceVersion)
 {
-  auto msiEndpoint = Environment::GetVariable(endpointVarName);
-  auto msiSecret = Environment::GetVariable(secretVarName);
+  auto const msiEndpoint = Environment::GetVariable(endpointVarName);
+  auto const msiSecret = Environment::GetVariable(secretVarName);
 
-  return (msiEndpoint.empty() || msiSecret.empty())
-      ? nullptr
-      : std::unique_ptr<ManagedIdentitySource>(
-          new T(clientId, options, ParseEndpointUrl(msiEndpoint, endpointVarName), msiSecret));
+  auto const credSource = std::string("App Service ") + appServiceVersion;
+
+  if (!msiEndpoint.empty() && !msiSecret.empty())
+  {
+    return std::unique_ptr<ManagedIdentitySource>(new T(
+        clientId, options, ParseEndpointUrl(msiEndpoint, endpointVarName, credSource), msiSecret));
+  }
+
+  PrintEnvNotSetUpMessage(credSource);
+  return nullptr;
 }
 
 AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
@@ -113,7 +167,7 @@ std::unique_ptr<ManagedIdentitySource> AppServiceV2017ManagedIdentitySource::Cre
     Core::Credentials::TokenCredentialOptions const& options)
 {
   return AppServiceManagedIdentitySource::Create<AppServiceV2017ManagedIdentitySource>(
-      clientId, options, "MSI_ENDPOINT", "MSI_SECRET");
+      clientId, options, "MSI_ENDPOINT", "MSI_SECRET", "2017");
 }
 
 std::unique_ptr<ManagedIdentitySource> AppServiceV2019ManagedIdentitySource::Create(
@@ -121,7 +175,7 @@ std::unique_ptr<ManagedIdentitySource> AppServiceV2019ManagedIdentitySource::Cre
     Core::Credentials::TokenCredentialOptions const& options)
 {
   return AppServiceManagedIdentitySource::Create<AppServiceV2019ManagedIdentitySource>(
-      clientId, options, "IDENTITY_ENDPOINT", "IDENTITY_HEADER");
+      clientId, options, "IDENTITY_ENDPOINT", "IDENTITY_HEADER", "2019");
 }
 
 std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
@@ -131,10 +185,16 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
   constexpr auto EndpointVarName = "MSI_ENDPOINT";
   auto msiEndpoint = Environment::GetVariable(EndpointVarName);
 
-  return (msiEndpoint.empty())
-      ? nullptr
-      : std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
-          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName)));
+  std::string const credSource = "Cloud Shell";
+
+  if (!msiEndpoint.empty())
+  {
+    return std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
+        clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName, credSource)));
+  }
+
+  PrintEnvNotSetUpMessage(credSource);
+  return nullptr;
 }
 
 CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(
@@ -200,8 +260,11 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
   constexpr auto EndpointVarName = "IDENTITY_ENDPOINT";
   auto identityEndpoint = Environment::GetVariable(EndpointVarName);
 
+  std::string const credSource = "Azure Arc";
+
   if (identityEndpoint.empty() || Environment::GetVariable("IMDS_ENDPOINT").empty())
   {
+    PrintEnvNotSetUpMessage(credSource);
     return nullptr;
   }
 
@@ -214,7 +277,7 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
   }
 
   return std::unique_ptr<ManagedIdentitySource>(new AzureArcManagedIdentitySource(
-      options, ParseEndpointUrl(identityEndpoint, EndpointVarName)));
+      options, ParseEndpointUrl(identityEndpoint, EndpointVarName, credSource)));
 }
 
 AzureArcManagedIdentitySource::AzureArcManagedIdentitySource(
@@ -313,6 +376,16 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  auto const logLevel = Logger::Level::Informational;
+  if (Log::ShouldWrite(logLevel))
+  {
+    Log::Write(
+        logLevel,
+        IdentityPrefix + CredPrefix + " will be created"
+            + WithSourceMessage("Azure Instance Metadata Service")
+            + ".\nSuccessful creation does not guarantee further successful token retrieval.");
+  }
+
   return std::unique_ptr<ManagedIdentitySource>(new ImdsManagedIdentitySource(clientId, options));
 }
 

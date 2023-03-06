@@ -28,7 +28,11 @@ namespace Azure { namespace Identity { namespace _detail {
 
   protected:
     _detail::TokenCache m_tokenCache;
-    static Core::Url ParseEndpointUrl(std::string const& url, char const* envVarName);
+
+    static Core::Url ParseEndpointUrl(
+        std::string const& url,
+        char const* envVarName,
+        std::string const credSource);
 
     explicit ManagedIdentitySource(
         std::string clientId,
@@ -61,8 +65,9 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options,
-        const char* endpointVarName,
-        const char* secretVarName);
+        char const* endpointVarName,
+        char const* secretVarName,
+        char const* appServiceVersion);
 
   public:
     Core::Credentials::AccessToken GetToken(
