@@ -1,12 +1,19 @@
 param(
     [string] $ReleaseArtifactSourceDirectory,
     [string] $VcpkgFolder,
-    [string] $VcpkgPortName
+    [string] $VcpkgPortName,
+    [switch] $DailyRelease
 )
 
 ."$PSSCriptRoot/../common/scripts/common.ps1"
 
 Set-StrictMode -Version 3
+
+if ($DailyRelease) { 
+    Write-Host "Release is daily, publish to vcpkg"
+    Write-Host "##vso[task.setvariable variable=PublishToVcpkg]true"
+    exit 0
+}
 
 $packageJsonContents = Get-Content `
     -Path "$ReleaseArtifactSourceDirectory/package-info.json" `

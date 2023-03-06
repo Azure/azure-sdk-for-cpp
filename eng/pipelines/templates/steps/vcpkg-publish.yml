@@ -32,6 +32,7 @@ steps:
         -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
         -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
         -VcpkgPortName '${{ parameters.VcpkgPortName }}'
+        -DailyRelease:$${{ parameters.DailyRelease }}
     displayName: Check whether to release to vcpkg
 
   - task: Powershell@2
