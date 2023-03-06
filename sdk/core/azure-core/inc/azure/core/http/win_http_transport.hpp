@@ -71,6 +71,11 @@ namespace Azure { namespace Core {
       bool IgnoreUnknownCertificateAuthority{false};
 
       /**
+       * @brief When `true`, allows an invalid common name in a certificate.
+       */
+      bool IgnoreInvalidCertificateCommonName{false};
+
+      /**
        * Proxy information.
        */
 

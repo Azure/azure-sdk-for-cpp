@@ -22,13 +22,6 @@
 #include <regex>
 #include <thread>
 
-#define CHECK_SKIP_TEST() \
-  std::string const readTestNameAndUpdateTestContext = GetTestName(); \
-  if (shouldSkipTest()) \
-  { \
-    GTEST_SKIP(); \
-  }
-
 using namespace std::chrono_literals;
 
 namespace Azure { namespace Core { namespace Test {
@@ -143,28 +136,6 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
-    inline void ValidateSkippingTest()
-    {
-      if (m_wasSkipped)
-      {
-        GTEST_SKIP();
-      }
-    }
-
-    bool IsValidTime(const Azure::DateTime& datetime)
-    {
-      // Playback won't check dates
-      if (m_testContext.IsPlaybackMode())
-      {
-        return true;
-      }
-
-      // We assume datetime within a week is valid.
-      const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
-      const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
-      return datetime > minTime && datetime < maxTime;
-    }
-
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
@@ -236,11 +207,13 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_unique<T>(url, credential, options);
     }
 
+    template <class T> void InitClientOptions(T& options) { PrepareOptions(options); }
+
     template <class T> T InitClientOptions()
     {
       // Run instrumentation before creating the client
       T options;
-      PrepareOptions(options);
+      InitClientOptions(options);
       return options;
     }
 
@@ -394,6 +367,12 @@ namespace Azure { namespace Core { namespace Test {
       if (!m_wasSkipped && !m_testContext.IsLiveMode())
       {
         m_testProxy = std::make_unique<Azure::Core::Test::TestProxyManager>(m_testContext);
+      }
+
+      std::string const readTestNameAndUpdateTestContext = GetTestName();
+      if (shouldSkipTest())
+      {
+        GTEST_SKIP();
       }
     }
 

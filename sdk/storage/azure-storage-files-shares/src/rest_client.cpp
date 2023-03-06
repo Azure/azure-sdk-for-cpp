@@ -1663,9 +1663,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
       }
-      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
-      response.LastModified = DateTime::Parse(
-          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
       return Response<Models::ShareStatistics>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::CreateDirectoryResult> DirectoryClient::Create(

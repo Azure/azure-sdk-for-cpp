@@ -28,11 +28,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
      */
     bool AreAnyTransportOptionsSpecified(TransportOptions const& transportOptions)
     {
-      return (
-          transportOptions.HttpProxy.HasValue() || transportOptions.ProxyPassword.HasValue()
-          || transportOptions.ProxyUserName.HasValue()
-          || transportOptions.EnableCertificateRevocationListCheck
-          || !transportOptions.ExpectedTlsRootCertificate.empty());
+      return (transportOptions.HttpProxy.HasValue() || transportOptions.ProxyPassword.HasValue()
+              || transportOptions.ProxyUserName.HasValue()
+              || transportOptions.EnableCertificateRevocationListCheck
+              || !transportOptions.ExpectedTlsRootCertificate.empty())
+          || transportOptions.DisableTlsCertificateValidation;
     }
   } // namespace
 

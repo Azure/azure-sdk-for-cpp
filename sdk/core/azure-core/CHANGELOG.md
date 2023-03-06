@@ -4,13 +4,19 @@
 
 ### Features Added
 
+- Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.
+- Added `DisableTlsCertificateValidation` in `TransportOptions`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed a bug where `Host` request header is not set for non-default port (80, 443).
+
 ### Other Changes
 
-- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017.
+- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
+- Libcurl transport doesn't add `Content-Length` request header for GET/HEAD/DELETE requests anymore.
 
 ### Acknowledgments
 

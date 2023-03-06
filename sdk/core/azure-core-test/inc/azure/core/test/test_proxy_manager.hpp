@@ -140,18 +140,6 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-     * Sets proxy to stop RECORD test and save the recording file.
-     *
-     */
-    void SetStopRecordMode();
-
-    /**
-     * Sets proxy to stop PLAYBACK test.
-     *
-     */
-    void SetStopPlaybackMode();
-
-    /**
      * Gets the test recording ID
      *
      * @returns recording ID
