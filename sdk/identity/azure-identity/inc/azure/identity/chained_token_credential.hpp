@@ -65,9 +65,9 @@ namespace Azure { namespace Identity {
         std::string const& enclosingCredential,
         std::vector<std::string> sourceDescriptions);
 
-    std::string m_logPrefix;
-    std::vector<std::string> m_sourceDescriptions;
     Sources m_sources;
+    std::vector<std::string> m_sourceDescriptions;
+    std::string m_logPrefix;
   };
 
 }} // namespace Azure::Identity
