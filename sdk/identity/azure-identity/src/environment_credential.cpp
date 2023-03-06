@@ -146,7 +146,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
             {AzureClientCertificatePathEnvVarName, !clientCertificatePath.empty()},
             {AzureAuthorityHostEnvVarName, !authority.empty()},
         };
-        for (auto const status : envVarStatus)
+        for (auto const& status : envVarStatus)
         {
           logMsg += std::string(" * '") + status.first + "' " + "is"
               + (status.second ? " " : " NOT ") + "set\n";
@@ -213,7 +213,7 @@ void PrintCredentialCreationLogMessage(
 
   std::string envVars;
   std::string credParams;
-  for (auto i = 0; i < envVarsToParamsSize - 1;
+  for (size_t i = 0; i < envVarsToParamsSize - 1;
        ++i) // not iterating over the last element for ", and".
   {
     envVars += Tick + envVarsToParams[i].first + TickComma;

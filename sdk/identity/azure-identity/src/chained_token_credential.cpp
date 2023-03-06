@@ -40,7 +40,7 @@ ChainedTokenCredential::ChainedTokenCredential(
     if (!m_sourceDescriptions.empty())
     {
       auto const sourceDescriptionsSize = m_sourceDescriptions.size();
-      for (auto i = 0; i < (sourceDescriptionsSize - 1); ++i)
+      for (size_t i = 0; i < (sourceDescriptionsSize - 1); ++i)
       {
         credentialsList += m_sourceDescriptions[i] + ", ";
       }
@@ -94,7 +94,7 @@ AccessToken ChainedTokenCredential::GetToken(
   }
   else
   {
-    for (auto i = 0; i < sourcesSize; ++i)
+    for (size_t i = 0; i < sourcesSize; ++i)
     {
       try
       {
