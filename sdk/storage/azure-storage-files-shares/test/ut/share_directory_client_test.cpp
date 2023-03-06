@@ -843,7 +843,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
 
-    auto testTrailingDot = [&](bool allowTrailingDot) {
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
 
       auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
@@ -857,16 +857,28 @@ namespace Azure { namespace Storage { namespace Test {
       auto createResult = directoryClient.Create().Value;
 
       // ListFilesAndDirectories
-      auto directories = rootDirectoryClient.ListFilesAndDirectories().Directories;
-      auto iter = std::find_if(
-          directories.begin(),
-          directories.end(),
-          [&allowTrailingDot, &directoryName, &directoryNameWithTrailingDot](
-              const Files::Shares::Models::DirectoryItem& directory) {
-            std::string name = allowTrailingDot ? directoryNameWithTrailingDot : directoryName;
-            return directory.Name == name;
-          });
-      EXPECT_NE(iter, directories.end());
+      bool isFound = false;
+      for (auto page = rootDirectoryClient.ListFilesAndDirectories(); page.HasPage();
+           page.MoveToNextPage())
+      {
+        auto directories = page.Directories;
+        auto iter = std::find_if(
+            directories.begin(),
+            directories.end(),
+            [&allowTrailingDot, &directoryName, &directoryNameWithTrailingDot](
+                const Files::Shares::Models::DirectoryItem& directory) {
+              std::string name = allowTrailingDot.HasValue() && allowTrailingDot.Value()
+                  ? directoryNameWithTrailingDot
+                  : directoryName;
+              return directory.Name == name;
+            });
+        if (iter != directories.end())
+        {
+          isFound = true;
+          break;
+        }
+      }
+      EXPECT_TRUE(isFound);
 
       // GetProperties
       auto properties = directoryClient.GetProperties().Value;
@@ -892,6 +904,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(directoryClient.Delete());
     };
 
+    // allowTrailingDot not set
+    testTrailingDot(Nullable<bool>());
     // allowTrailingDot = true
     testTrailingDot(true);
     // allowTrailingDot = false
@@ -905,8 +919,8 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
 
-    auto testTrailingDot = [&](bool allowSourceTrailingDot) {
-      options.AllowTrailingDot = true;
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot, Nullable<bool> allowSourceTrailingDot) {
+      options.AllowTrailingDot = allowTrailingDot;
       options.AllowSourceTrailingDot = allowSourceTrailingDot;
 
       auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
@@ -918,6 +932,9 @@ namespace Azure { namespace Storage { namespace Test {
 
       directoryClient.Create();
 
+      bool allowTarget = allowTrailingDot.HasValue() && allowTrailingDot.Value();
+      bool allowSource = allowSourceTrailingDot.HasValue() && allowSourceTrailingDot.Value();
+
       // Rename File
       const std::string fileName = RandomString() + "_file";
       const std::string fileNameWithTrailingDot = fileName + ".";
@@ -926,7 +943,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = directoryClient.GetFileClient(fileNameWithTrailingDot);
       fileClient.Create(512);
       auto destFileClient = directoryClient.GetFileClient(destFileNameWithTrailingDot);
-      if (allowSourceTrailingDot)
+      if (allowTarget == allowSource)
       {
         EXPECT_NO_THROW(
             destFileClient
@@ -957,7 +974,7 @@ namespace Azure { namespace Storage { namespace Test {
       subdirectoryClient.Create();
       auto destSubdirectoryClient
           = directoryClient.GetSubdirectoryClient(destSubdirectoryNameWithTrailingDot);
-      if (allowSourceTrailingDot)
+      if (allowTarget == allowSource)
       {
         EXPECT_NO_THROW(
             destSubdirectoryClient
@@ -982,9 +999,15 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(directoryClient.Delete());
     };
 
-    // allowSourceTrailingDot = true
-    testTrailingDot(true);
-    // allowSourceTrailingDot = false
-    testTrailingDot(false);
+    // allowTrailingDot not set, allowSourceTrailingDot not set
+    testTrailingDot(Nullable<bool>(),Nullable<bool>());
+    // allowTrailingDot = true, allowSourceTrailingDot =true
+    testTrailingDot(true,true);
+    // allowTrailingDot = true, allowSourceTrailingDot = false
+    testTrailingDot(true, false);
+    // allowTrailingDot = false, allowSourceTrailingDot = true
+    testTrailingDot(false, true);
+    // allowTrailingDot = false, allowSourceTrailingDot = false
+    testTrailingDot(false, false);
   }
 }}} // namespace Azure::Storage::Test
