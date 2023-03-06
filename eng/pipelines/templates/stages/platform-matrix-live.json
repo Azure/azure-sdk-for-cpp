@@ -126,7 +126,7 @@
     {
       "StaticConfigs": {
         "Win2022": {
-          "Pool": "Azure Pipelines",
+          "Pool": "azsdk-pool-mms-win-2022-general",
           "OSVmImage": "windows-2022",
           "CMAKE_GENERATOR": "Visual Studio 17 2022",
           "RunProxyTests": true
