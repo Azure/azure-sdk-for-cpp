@@ -68,7 +68,7 @@ ChainedTokenCredential::ChainedTokenCredential(
   if (m_sourceDescriptions.empty())
   {
     auto const sourcesSize = m_sources.size();
-    for (auto i = 1; i <= sourcesSize; ++i)
+    for (size_t i = 1; i <= sourcesSize; ++i)
     {
       m_sourceDescriptions.push_back(std::string("credential #") + std::to_string(i));
     }
