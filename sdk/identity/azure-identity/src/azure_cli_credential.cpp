@@ -94,7 +94,7 @@ AzureCliCredential::AzureCliCredential(
         logLevel,
         MsgPrefix
             + " created.\n"
-              "Successful creation does not guarantee further succesful token retrieval.");
+              "Successful creation does not guarantee further successful token retrieval.");
   }
 }
 

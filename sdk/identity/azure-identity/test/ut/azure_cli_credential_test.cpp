@@ -130,21 +130,21 @@ TEST(AzureCliCredential, Error)
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
 
   AzureCliTestCredential const azCliCred(
-      EchoCommand("ERROR: Please run 'az login' to setup account."));
+      EchoCommand("ERROR: Please run az login to setup account."));
 
   EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
   EXPECT_EQ(log[0].first, Logger::Level::Informational);
   EXPECT_EQ(
       log[0].second,
       "Identity: AzureCliCredential created."
-      "\nSuccessful creation does not guarantee further succesful token retrieval.");
+      "\nSuccessful creation does not guarantee further successful token retrieval.");
 
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
   log.clear();
   auto const errorMsg = "Identity: AzureCliCredential didn't get the token:"
-                        " \"ERROR: Please run 'az login' to setup account."
+                        " \"ERROR: Please run az login to setup account."
 #if defined(AZ_PLATFORM_WINDOWS)
                         "\r"
 #endif

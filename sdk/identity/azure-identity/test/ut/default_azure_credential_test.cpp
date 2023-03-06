@@ -73,7 +73,7 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(
             log[2].second,
             "Identity: AzureCliCredential created."
-            "\nSuccessful creation does not guarantee further succesful token retrieval.");
+            "\nSuccessful creation does not guarantee further successful token retrieval.");
 
         EXPECT_EQ(log[3].first, Logger::Level::Verbose);
         EXPECT_EQ(

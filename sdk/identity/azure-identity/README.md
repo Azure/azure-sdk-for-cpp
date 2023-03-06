@@ -60,7 +60,7 @@ The `DefaultAzureCredential` attempts to authenticate via the following mechanis
 
 `DefaultAzureCredential` uses [`ChainedTokenCredential`](#chained-token-credential) that consists of a chain of `EnvironmentCredential`, `AzureCliCredential`, and `ManagedIdentityCredential`. Implementation, including the order in which credentials are applied is documented, but it may change from release to release.
 
-`DefaultAzureCrdential` intends to provide a credential that "just works out of the box and without requiring any information", if only the environment is set up sufficiently for the credential to work.
+`DefaultAzureCredential` intends to provide a credential that "just works out of the box and without requiring any information", if only the environment is set up sufficiently for the credential to work.
 Therefore, it could be simple to use, but since it uses a chain of credentials, it could be a bit complicated to diagnose if the environment setup is not sufficient.
 TO help with this, `DefaultAzureCredential` code paths are instrumented with [log messages](#troubleshooting).
 
@@ -70,7 +70,7 @@ See the [code samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/
 
 ## Chained Token Credential
 
-`ChainedTokenCredential` allows users to set up custom authentication flow consisting of multiple creentials.
+`ChainedTokenCredential` allows users to set up custom authentication flow consisting of multiple credentials.
 
 An example below demonstrates using `ChainedTokenCredential` which will attempt to authenticate using `EnvironmentCredential`, and fall back to authenticate using `ManagedIdentityCredential`.
 ```cpp
@@ -139,7 +139,7 @@ Configuration is attempted in the above order. For example, if values for a clie
 
 ## Troubleshooting
 
-1. Azure Identity [SDK log messages](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) contain disgnostic infrmation, and start with "`Identity: `".
+1. Azure Identity [SDK log messages](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) contain disgnostic information, and start with "`Identity: `".
 1. Credentials raise exceptions either when they fail to authenticate or cannot execute authentication. When a credential fails to authenticate, an `AuthenticationException` is thrown. The exception has the `what()` function that provides more information about the failure.
 
 ## Contributing
