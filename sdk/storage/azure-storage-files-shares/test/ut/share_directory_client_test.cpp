@@ -919,7 +919,8 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
 
-    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot, Nullable<bool> allowSourceTrailingDot) {
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot,
+                               Nullable<bool> allowSourceTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
       options.AllowSourceTrailingDot = allowSourceTrailingDot;
 
@@ -1000,9 +1001,9 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     // allowTrailingDot not set, allowSourceTrailingDot not set
-    testTrailingDot(Nullable<bool>(),Nullable<bool>());
+    testTrailingDot(Nullable<bool>(), Nullable<bool>());
     // allowTrailingDot = true, allowSourceTrailingDot =true
-    testTrailingDot(true,true);
+    testTrailingDot(true, true);
     // allowTrailingDot = true, allowSourceTrailingDot = false
     testTrailingDot(true, false);
     // allowTrailingDot = false, allowSourceTrailingDot = true
