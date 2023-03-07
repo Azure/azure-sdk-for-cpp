@@ -90,7 +90,7 @@ TEST(FileBodyStream, BadInput)
   EXPECT_THROW(Azure::Core::IO::FileBodyStream("FileNotFound"), std::runtime_error);
 }
 
-constexpr int64_t FileSize = 1000 * 100;
+constexpr int64_t FileSize = 1024 * 100;
 
 TEST(FileBodyStream, Length)
 {
