@@ -1030,4 +1030,266 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, AllowTrailingDot)
+  {
+    const std::string fileName = RandomString();
+    const std::string fileNameWithTrailingDot = fileName + ".";
+    const std::string connectionString = StandardStorageConnectionString();
+    const std::string shareName = m_shareName;
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
+      options.AllowTrailingDot = allowTrailingDot;
+
+      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+          connectionString, options);
+      auto shareClient = shareServiceClient.GetShareClient(shareName);
+      auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+      auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
+
+      size_t fileSize = 512;
+      std::vector<uint8_t> content(RandomBuffer(fileSize));
+      auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+      // Create
+      auto createResult = fileClient.Create(fileSize).Value;
+
+      // ListFilesAndDirectories
+      bool isFound = false;
+      for (auto page = rootDirectoryClient.ListFilesAndDirectories(); page.HasPage();
+           page.MoveToNextPage())
+      {
+        auto files = page.Files;
+        auto iter = std::find_if(
+            files.begin(),
+            files.end(),
+            [&allowTrailingDot, &fileName, &fileNameWithTrailingDot](
+                const Files::Shares::Models::FileItem& file) {
+              std::string name = allowTrailingDot.HasValue() && allowTrailingDot.Value()
+                  ? fileNameWithTrailingDot
+                  : fileName;
+              return file.Name == name;
+            });
+        if (iter != files.end())
+        {
+          isFound = true;
+          break;
+        }
+      }
+      EXPECT_TRUE(isFound);
+
+      // GetProperties
+      auto properties = fileClient.GetProperties().Value;
+      EXPECT_EQ(createResult.LastModified, properties.LastModified);
+      EXPECT_EQ(createResult.ETag, properties.ETag);
+
+      // ListHandles
+      auto handles = fileClient.ListHandles().FileHandles;
+      EXPECT_EQ(handles.size(), 0L);
+
+      // Download
+      EXPECT_NO_THROW(fileClient.Download());
+
+      // SetProperties
+      EXPECT_NO_THROW(fileClient.SetProperties(
+          Files::Shares::Models::FileHttpHeaders(), Files::Shares::Models::FileSmbProperties()));
+
+      // SetMetadata
+      EXPECT_NO_THROW(fileClient.SetMetadata(RandomMetadata()));
+
+      // ForceCloseHandles
+      auto closeHandlesResult = fileClient.ForceCloseAllHandles();
+      EXPECT_EQ(closeHandlesResult.NumberOfHandlesClosed, 0);
+      EXPECT_EQ(closeHandlesResult.NumberOfHandlesFailedToClose, 0);
+
+      // UploadRange
+      EXPECT_NO_THROW(fileClient.UploadRange(0L, memBodyStream));
+
+      // GetRangeList
+      auto range = fileClient.GetRangeList().Value;
+      EXPECT_EQ(range.Ranges.size(), 1L);
+
+      // ClearRange
+      EXPECT_NO_THROW(fileClient.ClearRange(0, fileSize));
+
+      // UploadFrom buffer
+      EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), fileSize));
+
+      // UploadFrom file
+      const std::string tempFilename = "file" + RandomString();
+      WriteFile(tempFilename, content);
+      EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename));
+
+      // Delete
+      EXPECT_NO_THROW(fileClient.Delete());
+    };
+
+    // allowTrailingDot not set
+    testTrailingDot(Nullable<bool>());
+    // allowTrailingDot = true
+    testTrailingDot(true);
+    // allowTrailingDot = false
+    testTrailingDot(false);
+  }
+
+  TEST_F(FileShareFileClientTest, CopyAllowTrailingDot_LIVEONLY_)
+  {
+    const std::string fileName = RandomString();
+    const std::string fileNameWithTrailingDot = fileName + ".";
+    const std::string connectionString = StandardStorageConnectionString();
+    const std::string shareName = m_shareName;
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot,
+                               Nullable<bool> allowSourceTrailingDot) {
+      options.AllowTrailingDot = allowTrailingDot;
+      options.AllowSourceTrailingDot = allowSourceTrailingDot;
+
+      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+          connectionString, options);
+      auto shareClient = shareServiceClient.GetShareClient(shareName);
+      auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+      auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
+
+      size_t fileSize = 1 * 1024 * 1024;
+      std::vector<uint8_t> content(RandomBuffer(fileSize));
+      auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+      auto createResult = fileClient.Create(fileSize).Value;
+      fileClient.UploadRange(0, memBodyStream);
+
+      bool allowTarget = allowTrailingDot.HasValue() && allowTrailingDot.Value();
+      bool allowSource = allowSourceTrailingDot.HasValue() && allowSourceTrailingDot.Value();
+
+      {
+        const std::string destFileNameWithTrailingDot = fileName + "_dest" + ".";
+        auto destFileClient = rootDirectoryClient.GetFileClient(destFileNameWithTrailingDot);
+
+        // StartCopy
+        if (allowTarget == allowSource)
+        {
+          auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
+          EXPECT_EQ(
+              copyOperation.GetRawResponse().GetStatusCode(),
+              Azure::Core::Http::HttpStatusCode::Accepted);
+          copyOperation.Poll();
+          EXPECT_TRUE(copyOperation.Value().CopyId.HasValue());
+
+          // AbortCopy
+          // This exception is intentionally. It is difficult to test AbortCopyAsync() in a
+          // deterministic way.
+          try
+          {
+            destFileClient.AbortCopy(copyOperation.Value().CopyId.Value());
+          }
+          catch (StorageException& e)
+          {
+            EXPECT_EQ(e.ErrorCode, "NoPendingCopyOperation");
+          }
+
+          EXPECT_NO_THROW(destFileClient.Delete());
+        }
+        else
+        {
+          EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUrl()), StorageException);
+        }
+      }
+
+      {
+        // uploadRange
+        const std::string destFileNameWithTrailingDot = fileName + "_dest2" + ".";
+        auto destFileClient = rootDirectoryClient.GetFileClient(destFileNameWithTrailingDot);
+        destFileClient.Create(fileSize);
+        Azure::Core::Http::HttpRange sourceRange;
+        Azure::Core::Http::HttpRange destRange;
+        sourceRange.Length = fileSize;
+        destRange.Offset = 0;
+        destRange.Length = fileSize;
+
+        // Get the SAS of the file
+        Sas::ShareSasBuilder fileSasBuilder;
+        fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+        fileSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+        fileSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+        fileSasBuilder.ShareName = shareName;
+        fileSasBuilder.FilePath = allowSource ? fileNameWithTrailingDot : fileName;
+        fileSasBuilder.Resource = Sas::ShareSasResource::File;
+        fileSasBuilder.SetPermissions(Sas::ShareSasPermissions::Read);
+        std::string sourceSas = fileSasBuilder.GenerateSasToken(
+            *_internal::ParseConnectionString(connectionString).KeyCredential);
+
+        if (allowTarget == allowSource)
+        {
+          EXPECT_NO_THROW(destFileClient.UploadRangeFromUri(
+              destRange.Offset, fileClient.GetUrl() + sourceSas, sourceRange));
+        }
+        else
+        {
+          EXPECT_THROW(
+              destFileClient.UploadRangeFromUri(
+                  destRange.Offset, fileClient.GetUrl() + sourceSas, sourceRange),
+              StorageException);
+        }
+
+        EXPECT_NO_THROW(destFileClient.Delete());
+      }
+
+      // Delete
+      EXPECT_NO_THROW(fileClient.Delete());
+    };
+
+    // allowTrailingDot not set, allowSourceTrailingDot not set
+    testTrailingDot(Nullable<bool>(), Nullable<bool>());
+    // allowTrailingDot = true, allowSourceTrailingDot =true
+    testTrailingDot(true, true);
+    // allowTrailingDot = true, allowSourceTrailingDot = false
+    testTrailingDot(true, false);
+    // allowTrailingDot = false, allowSourceTrailingDot = true
+    testTrailingDot(false, true);
+    // allowTrailingDot = false, allowSourceTrailingDot = false
+    testTrailingDot(false, false);
+  }
+
+  TEST_F(FileShareFileClientTest, LeaseAllowTrailingDot)
+  {
+    const std::string fileNameWithTrailingDot = RandomString() + ".";
+    const std::string connectionString = StandardStorageConnectionString();
+    const std::string shareName = m_shareName;
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
+      options.AllowTrailingDot = allowTrailingDot;
+
+      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+          connectionString, options);
+      auto shareClient = shareServiceClient.GetShareClient(shareName);
+      auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+      auto fileClient = rootDirectoryClient.GetFileClient(fileNameWithTrailingDot);
+      std::string leaseId1 = RandomUUID();
+      Files::Shares::ShareLeaseClient leaseClient(fileClient, leaseId1);
+
+      size_t fileSize = 512;
+      fileClient.Create(fileSize);
+
+      // Acquire
+      EXPECT_NO_THROW(leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration));
+
+      // Change
+      std::string leaseId2 = RandomUUID();
+      EXPECT_NO_THROW(leaseClient.Change(leaseId2));
+
+      // Break
+      EXPECT_NO_THROW(leaseClient.Break());
+
+      // Release
+      EXPECT_NO_THROW(leaseClient.Release());
+    };
+
+    // allowTrailingDot not set
+    testTrailingDot(Nullable<bool>());
+    // allowTrailingDot = true
+    testTrailingDot(true);
+    // allowTrailingDot = false
+    testTrailingDot(false);
+  }
 }}} // namespace Azure::Storage::Test
