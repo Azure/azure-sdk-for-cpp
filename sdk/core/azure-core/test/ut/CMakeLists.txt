@@ -109,6 +109,11 @@ if (DISABLE_PROXY_TESTS)
   add_compile_definitions(DISABLE_PROXY_TESTS)
 endif()
 
+if (ENABLE_PROXY_TESTS)
+  message(STATUS "Enabling proxy tests." )
+  add_compile_definitions(ENABLE_PROXY_TESTS)
+endif()
+
 # If the System.TeamProjectId ADO variable is set, we are running in the pipeline, behave accordingly.
 if (ENV{SYSTEM_TEAMPROJECTID})
   add_compile_definitions(IN_CI_PIPELINE)

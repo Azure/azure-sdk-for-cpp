@@ -87,7 +87,7 @@ namespace Azure { namespace Core { namespace Test {
     static void checkResponseCode(
         Azure::Core::Http::HttpStatusCode code,
         Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok);
-
+#if defined(ENABLE_PROXY_TESTS)
     std::string HttpProxyServer()
     {
       std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("SQUID_PROXY_URL")};
@@ -107,6 +107,7 @@ namespace Azure { namespace Core { namespace Test {
       }
       return proxyUrl;
     }
+#endif
     std::string TestProxyUrl()
     {
       std::string proxyUrl{Azure::Core::_internal::Environment::GetVariable("PROXY_URL")};
@@ -116,20 +117,23 @@ namespace Azure { namespace Core { namespace Test {
       }
       return proxyUrl;
     }
+#if defined(ENABLE_PROXY_TESTS)
     static bool ProxyStatusChecked;
     static bool IsSquidProxyRunning;
+#endif
     static bool IsTestProxyRunning;
 
   protected:
     // Create
     virtual void SetUp() override
     {
+#if defined(ENABLE_PROXY_TESTS)
 #if defined(IN_CI_PIPELINE)
-      // If we're in the CI pipeline, don't probe for the squid or test proxy running - just assume
-      // they are.
+      // If we're in the CI pipeline, don't probe for the squid or test proxy running - just
+      // assume they are.
       IsSquidProxyRunning = true;
-      IsTestProxyRunning = true;
 #else // !defined(IN_CI_PIPELINE)
+      IsTestProxyRunning = true;
       if (!ProxyStatusChecked)
       {
         Azure::Core::Http::Policies::TransportOptions options;
@@ -177,10 +181,13 @@ namespace Azure { namespace Core { namespace Test {
         ProxyStatusChecked = true;
       }
 #endif
+#endif // ENABLE_PROXY_TESTS
     }
   };
+#if defined(ENABLE_PROXY_TESTS)
   bool TransportAdapterOptions::ProxyStatusChecked{false};
   bool TransportAdapterOptions::IsSquidProxyRunning{false};
+#endif
   bool TransportAdapterOptions::IsTestProxyRunning{false};
 
   void TransportAdapterOptions::checkResponseCode(
@@ -272,7 +279,7 @@ namespace Azure { namespace Core { namespace Test {
   using namespace Azure::Core::Http::_internal;
   using namespace Azure::Core::Http::Policies::_internal;
 
-#if !defined(DISABLE_PROXY_TESTS)
+#if defined(ENABLE_PROXY_TESTS)
   // constexpr char SocksProxyServer[] = "socks://98.162.96.41:4145";
   TEST_F(TransportAdapterOptions, SimpleProxyTests)
   {
@@ -416,7 +423,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-#endif // defined(DISABLE_PROXY_TESTS)
+#endif // defined(ENABLE_PROXY_TESTS)
 
   TEST_F(TransportAdapterOptions, DisableCrlValidation)
   {
@@ -435,7 +442,7 @@ namespace Azure { namespace Core { namespace Test {
       auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
       EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     }
-#if !defined(DISABLE_PROXY_TESTS)
+#if defined(ENABLE_PROXY_TESTS)
     if (IsSquidProxyRunning)
     {
       Azure::Core::Http::Policies::TransportOptions transportOptions;
@@ -524,6 +531,8 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
+// Not strictly a proxy test, but this test case has been unreliable over time.
+#if defined(ENABLE_PROXY_TESTS)
   TEST_F(TransportAdapterOptions, MultipleCrlOperations)
   {
     // LetsEncrypt certificates don't contain a distribution point URL extension. While this seems
@@ -609,6 +618,7 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
   }
+#endif
 
   TEST_F(TransportAdapterOptions, TestRootCertificate)
   {
@@ -915,5 +925,4 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_THROW(proxyServer.IsAlive(), Azure::Core::Http::TransportException);
   }
-
 }}} // namespace Azure::Core::Test

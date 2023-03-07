@@ -7,10 +7,20 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON",
+      "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": [
+        {
+          "name": "INSTALL_GTEST",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        },
         {
           "name": "VCPKG_TARGET_TRIPLET",
           "value": "x64-windows-static",
@@ -23,6 +33,26 @@
         },
         {
           "name": "VCPKG_MANIFEST_MODE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TRANSPORT_CURL",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SAMPLES",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_PERFORMANCE_TESTS",
           "value": "True",
           "type": "BOOL"
         }
@@ -75,6 +105,11 @@
           "type": "BOOL"
         },
         {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
           "name": "BUILD_SAMPLES",
           "value": "True",
           "type": "BOOL"
@@ -100,6 +135,11 @@
         {
           "name": "MSVC_USE_STATIC_CRT",
           "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
           "type": "BOOL"
         }
       ]
@@ -129,6 +169,11 @@
           "name": "MSVC_USE_STATIC_CRT",
           "value": "True",
           "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
+          "type": "BOOL"
         }
       ]
     },
@@ -154,8 +199,8 @@
           "type": "BOOL"
         },
         {
-          "name": "DISABLE_PROXY_TESTS",
-          "value": "True",
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
           "type": "BOOL"
         },
         {
@@ -220,6 +265,11 @@
           "name": "BUILD_PERFORMANCE_TESTS",
           "value": "true",
           "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
+          "type": "BOOL"
         }
       ]
     },
@@ -237,6 +287,11 @@
         {
           "name": "BUILD_TESTING",
           "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
           "type": "BOOL"
         },
         {
@@ -288,6 +343,11 @@
           "type": "BOOL"
         },
         {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
           "name": "BUILD_TRANSPORT_CURL",
           "value": "True",
           "type": "BOOL"
@@ -323,6 +383,11 @@
         {
           "name": "BUILD_TESTING",
           "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
           "type": "BOOL"
         },
         {
@@ -365,6 +430,11 @@
         {
           "name": "BUILD_TESTING",
           "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
           "type": "BOOL"
         },
         {
@@ -417,6 +487,11 @@
         {
           "name": "BUILD_TESTING",
           "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ENABLE_PROXY_TESTS",
+          "value": "False",
           "type": "BOOL"
         },
         {
