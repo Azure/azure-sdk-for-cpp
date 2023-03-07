@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/files/shares/share_sas_builder.hpp"
+#include "azure/storage/files/shares/rest_client.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -11,7 +12,7 @@
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
-    constexpr static const char* SasVersion = "2020-02-10";
+    constexpr static const char* SasVersion = Files::Shares::_detail::ApiVersion;
 
     std::string ShareSasResourceToString(ShareSasResource resource)
     {

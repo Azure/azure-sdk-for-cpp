@@ -1,14 +1,10 @@
 # Release History
 
-## 12.4.0-beta.1 (Unreleased)
+## 12.3.1 (2023-03-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up SAS token service version to `2021-12-02`.
 
 ## 12.3.0 (2022-09-06)
 
