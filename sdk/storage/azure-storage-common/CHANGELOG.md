@@ -1,14 +1,14 @@
 # Release History
 
-## 12.4.0-beta.1 (Unreleased)
+## 12.3.1 (2023-03-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Bumped up SAS token service version to `2021-12-02`.
 
 ### Other Changes
+
+- Bumped up azure-core version to `1.8.0`.
 
 ## 12.3.0 (2022-09-06)
 

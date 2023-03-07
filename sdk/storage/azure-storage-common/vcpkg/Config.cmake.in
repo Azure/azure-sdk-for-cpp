@@ -5,7 +5,7 @@
 
 include(CMakeFindDependencyMacro)
 find_dependency(Threads)
-find_dependency(azure-core-cpp "1.7.1")
+find_dependency(azure-core-cpp "1.8.0")
 
 if(NOT WIN32)
   find_dependency(LibXml2)
