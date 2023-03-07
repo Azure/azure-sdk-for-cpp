@@ -410,6 +410,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::GetDirectoryPropertiesOptions();
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::DirectoryClient::GetProperties(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
   }

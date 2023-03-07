@@ -1109,6 +1109,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto range = fileClient.GetRangeList().Value;
       EXPECT_EQ(range.Ranges.size(), 1L);
 
+      // GetRangeListDiff
+      auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
+      EXPECT_NO_THROW(fileClient.GetRangeListDiff(snapshot));
+
       // ClearRange
       EXPECT_NO_THROW(fileClient.ClearRange(0, fileSize));
 
@@ -1291,5 +1295,133 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(true);
     // allowTrailingDot = false
     testTrailingDot(false);
+  }
+
+  TEST_F(FileShareFileClientTest, DISABLED_OAuth)
+  {
+    const std::string fileName = RandomString();
+
+    // Create from client secret credential.
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret());
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    auto shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, options);
+    auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+    auto fileClient = rootDirectoryClient.GetFileClient(fileName);
+    std::string leaseId1 = RandomUUID();
+    Files::Shares::ShareLeaseClient leaseClient(fileClient, leaseId1);
+
+    size_t fileSize = 512;
+    std::vector<uint8_t> content(RandomBuffer(fileSize));
+    auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+    // Create
+    EXPECT_NO_THROW(fileClient.Create(fileSize));
+
+    // GetProperties
+    EXPECT_NO_THROW(fileClient.GetProperties());
+
+    // ListHandles
+    EXPECT_NO_THROW(fileClient.ListHandles());
+
+    // Download
+    EXPECT_NO_THROW(fileClient.Download());
+
+    // SetProperties
+    EXPECT_NO_THROW(fileClient.SetProperties(
+        Files::Shares::Models::FileHttpHeaders(), Files::Shares::Models::FileSmbProperties()));
+
+    // SetMetadata
+    EXPECT_NO_THROW(fileClient.SetMetadata(RandomMetadata()));
+
+    // ForceCloseHandles
+    EXPECT_NO_THROW(fileClient.ForceCloseAllHandles());
+
+    // UploadRange
+    EXPECT_NO_THROW(fileClient.UploadRange(0L, memBodyStream));
+
+    // GetRangeList
+    EXPECT_NO_THROW(fileClient.GetRangeList());
+
+    // GetRangeListDiff
+    auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
+    EXPECT_NO_THROW(fileClient.GetRangeListDiff(snapshot));
+
+    // ClearRange
+    EXPECT_NO_THROW(fileClient.ClearRange(0, fileSize));
+
+    // UploadFrom buffer
+    EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), fileSize));
+
+    // UploadFrom file
+    const std::string tempFilename = "file" + RandomString();
+    WriteFile(tempFilename, content);
+    EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename));
+
+    // Acquire
+    EXPECT_NO_THROW(leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration));
+
+    // Change
+    std::string leaseId2 = RandomUUID();
+    EXPECT_NO_THROW(leaseClient.Change(leaseId2));
+
+    // Break
+    EXPECT_NO_THROW(leaseClient.Break());
+
+    // Release
+    EXPECT_NO_THROW(leaseClient.Release());
+
+    // Delete
+    EXPECT_NO_THROW(fileClient.Delete());
+  }
+
+  TEST_F(FileShareFileClientTest, DISABLED_OAuthCopy)
+  {
+    const std::string fileName = RandomString();
+
+    // Create from client secret credential.
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret());
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    auto shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, options);
+    auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+    auto fileClient = rootDirectoryClient.GetFileClient(fileName);
+
+    size_t fileSize = 1 * 1024 * 1024;
+    std::vector<uint8_t> content(RandomBuffer(fileSize));
+    auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+    auto createResult = fileClient.Create(fileSize).Value;
+    fileClient.UploadRange(0, memBodyStream);
+
+    const std::string destFileName = fileName + "_dest";
+    auto destFileClient = rootDirectoryClient.GetFileClient(destFileName);
+
+    // StartCopy
+    auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
+    EXPECT_EQ(
+        copyOperation.GetRawResponse().GetStatusCode(),
+        Azure::Core::Http::HttpStatusCode::Accepted);
+    copyOperation.Poll();
+    EXPECT_TRUE(copyOperation.Value().CopyId.HasValue());
+
+    // AbortCopy
+    // This exception is intentionally. It is difficult to test AbortCopyAsync() in a
+    // deterministic way.
+    try
+    {
+      destFileClient.AbortCopy(copyOperation.Value().CopyId.Value());
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ(e.ErrorCode, "NoPendingCopyOperation");
+    }
+    EXPECT_NO_THROW(destFileClient.Delete());
   }
 }}} // namespace Azure::Storage::Test

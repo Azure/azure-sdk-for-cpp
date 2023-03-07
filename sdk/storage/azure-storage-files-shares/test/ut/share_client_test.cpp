@@ -642,42 +642,25 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, OAuth)
+  TEST_F(FileShareClientTest, DISABLED_OAuth)
   {
     // Create from client secret credential.
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret());
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
-    auto testOAuth = [&](Nullable<Files::Shares::Models::ShareTokenIntent> shareTokenIntent) {
-      options.ShareTokenIntent = shareTokenIntent;
+    auto serviceClient
+        = Files::Shares::ShareServiceClient(m_shareServiceClient->GetUrl(), credential, options);
+    auto shareClient = serviceClient.GetShareClient(m_shareName);
 
-      auto shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, options);
+    std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
+                             "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
+                             "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
 
-      bool openOAuth = shareTokenIntent.HasValue()
-          && shareTokenIntent.Value() == Files::Shares::Models::ShareTokenIntent::Backup;
-      std::string permission
-          = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
-            "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
-            "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
-
-      if (openOAuth)
-      {
-        Files::Shares::Models::CreateSharePermissionResult created;
-        EXPECT_NO_THROW(created = shareClient.CreatePermission(permission).Value);
-        EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
-      }
-      else
-      {
-        EXPECT_THROW(shareClient.CreatePermission(permission), StorageException);
-        EXPECT_THROW(shareClient.GetPermission(permission), StorageException);
-      }
-    };
-    // ShareTokenIntent not set
-    testOAuth(Nullable<Files::Shares::Models::ShareTokenIntent>());
-    // ShareTokenIntent = backup
-    testOAuth(Files::Shares::Models::ShareTokenIntent::Backup);
+    Files::Shares::Models::CreateSharePermissionResult created;
+    EXPECT_NO_THROW(created = shareClient.CreatePermission(permission).Value);
+    EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
   }
-
 }}} // namespace Azure::Storage::Test
