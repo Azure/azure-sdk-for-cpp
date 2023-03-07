@@ -47,7 +47,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initialize a new instance of ShareFileClient using shared key authentication.
-     * @param shareUrl The URL of the file this client's request targets.
+     * @param shareFileUrl The URL of the file this client's request targets.
      * @param credential The token credential used to sign requests.
      * @param options Optional parameters used to initialize the client.
      */
