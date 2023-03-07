@@ -15,7 +15,7 @@
           "Pool": "Azure Pipelines",
           "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
           "PublishMapFiles": "true"
         }
       },
@@ -59,7 +59,7 @@
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
         },
         "Win32Api_release_curl": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON ",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON ",
           "BuildArgs": "--parallel 8 --config Release",
           "PublishMapFiles": "true"
         }
