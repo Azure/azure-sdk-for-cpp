@@ -42,6 +42,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
+     * @brief Initialize a new instance of ShareServiceClient using shared key authentication.
+     * @param shareUrl The service URL this client's request targets.
+     * @param credential The token credential used to sign requests.
+     * @param options Optional parameters used to initialize the client.
+     */
+    explicit ShareServiceClient(
+        const std::string& serviceUrl,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        const ShareClientOptions& options = ShareClientOptions());
+
+    /**
      * @brief Initialize a new instance of ShareServiceClient using anonymous access or shared
      * access signature.
      * @param serviceUrl The service URL this client's request targets.
@@ -104,5 +115,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Nullable<bool> m_allowTrailingDot;
     Nullable<bool> m_allowSourceTrailingDot;
+    Nullable<Models::ShareTokenIntent> m_shareTokenIntent;
   };
 }}}} // namespace Azure::Storage::Files::Shares
