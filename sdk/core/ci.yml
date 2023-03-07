@@ -46,7 +46,7 @@ stages:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
       BranchCoverageTarget: 50
-      PreTestSteps:
+#      PreTestSteps:
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -70,7 +70,7 @@ stages:
 #          displayName: Verify Proxy Server Working Correctly.
 #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
             
-      PostTestSteps:
+#      PostTestSteps:
 #        - pwsh: |
 #            docker ps -q -f ancestor=ubuntu/squid | ForEach-Object { `
 #                docker stop $_ `
