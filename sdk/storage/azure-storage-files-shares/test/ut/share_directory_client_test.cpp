@@ -834,4 +834,181 @@ namespace Azure { namespace Storage { namespace Test {
     {
     }
   }
+
+  TEST_F(FileShareDirectoryClientTest, AllowTrailingDot)
+  {
+    const std::string directoryName = RandomString();
+    const std::string directoryNameWithTrailingDot = directoryName + ".";
+    const std::string connectionString = StandardStorageConnectionString();
+    const std::string shareName = m_shareName;
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
+      options.AllowTrailingDot = allowTrailingDot;
+
+      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+          connectionString, options);
+      auto shareClient = shareServiceClient.GetShareClient(shareName);
+      auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+      auto directoryClient
+          = rootDirectoryClient.GetSubdirectoryClient(directoryNameWithTrailingDot);
+
+      // Create
+      auto createResult = directoryClient.Create().Value;
+
+      // ListFilesAndDirectories
+      bool isFound = false;
+      for (auto page = rootDirectoryClient.ListFilesAndDirectories(); page.HasPage();
+           page.MoveToNextPage())
+      {
+        auto directories = page.Directories;
+        auto iter = std::find_if(
+            directories.begin(),
+            directories.end(),
+            [&allowTrailingDot, &directoryName, &directoryNameWithTrailingDot](
+                const Files::Shares::Models::DirectoryItem& directory) {
+              std::string name = allowTrailingDot.HasValue() && allowTrailingDot.Value()
+                  ? directoryNameWithTrailingDot
+                  : directoryName;
+              return directory.Name == name;
+            });
+        if (iter != directories.end())
+        {
+          isFound = true;
+          break;
+        }
+      }
+      EXPECT_TRUE(isFound);
+
+      // GetProperties
+      auto properties = directoryClient.GetProperties().Value;
+      EXPECT_EQ(createResult.LastModified, properties.LastModified);
+      EXPECT_EQ(createResult.ETag, properties.ETag);
+
+      // ListHandles
+      auto handles = directoryClient.ListHandles().DirectoryHandles;
+      EXPECT_EQ(handles.size(), 0L);
+
+      // SetProperties
+      EXPECT_NO_THROW(directoryClient.SetProperties(Files::Shares::Models::FileSmbProperties()));
+
+      // SetMetadata
+      EXPECT_NO_THROW(directoryClient.SetMetadata(RandomMetadata()));
+
+      // ForceCloseHandles
+      auto closeHandlesResult = directoryClient.ForceCloseAllHandles();
+      EXPECT_EQ(closeHandlesResult.NumberOfHandlesClosed, 0);
+      EXPECT_EQ(closeHandlesResult.NumberOfHandlesFailedToClose, 0);
+
+      // Delete
+      EXPECT_NO_THROW(directoryClient.Delete());
+    };
+
+    // allowTrailingDot not set
+    testTrailingDot(Nullable<bool>());
+    // allowTrailingDot = true
+    testTrailingDot(true);
+    // allowTrailingDot = false
+    testTrailingDot(false);
+  }
+
+  TEST_F(FileShareDirectoryClientTest, RenameAllowTrailingDot)
+  {
+    const std::string directoryNameWithTrailingDot = RandomString() + ".";
+    const std::string connectionString = StandardStorageConnectionString();
+    const std::string shareName = m_shareName;
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+
+    auto testTrailingDot = [&](Nullable<bool> allowTrailingDot,
+                               Nullable<bool> allowSourceTrailingDot) {
+      options.AllowTrailingDot = allowTrailingDot;
+      options.AllowSourceTrailingDot = allowSourceTrailingDot;
+
+      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+          connectionString, options);
+      auto shareClient = shareServiceClient.GetShareClient(shareName);
+      auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+      auto directoryClient
+          = rootDirectoryClient.GetSubdirectoryClient(directoryNameWithTrailingDot);
+
+      directoryClient.Create();
+
+      bool allowTarget = allowTrailingDot.HasValue() && allowTrailingDot.Value();
+      bool allowSource = allowSourceTrailingDot.HasValue() && allowSourceTrailingDot.Value();
+
+      // Rename File
+      const std::string fileName = RandomString() + "_file";
+      const std::string fileNameWithTrailingDot = fileName + ".";
+      const std::string destFileName = fileName + "_dest";
+      const std::string destFileNameWithTrailingDot = destFileName + ".";
+      auto fileClient = directoryClient.GetFileClient(fileNameWithTrailingDot);
+      fileClient.Create(512);
+      auto destFileClient = directoryClient.GetFileClient(destFileNameWithTrailingDot);
+      if (allowTarget == allowSource)
+      {
+        EXPECT_NO_THROW(
+            destFileClient
+            = directoryClient
+                  .RenameFile(
+                      fileNameWithTrailingDot,
+                      directoryNameWithTrailingDot + "/" + destFileNameWithTrailingDot)
+                  .Value);
+        EXPECT_NO_THROW(destFileClient.Delete());
+      }
+      else
+      {
+        EXPECT_THROW(
+            directoryClient.RenameFile(
+                fileNameWithTrailingDot,
+                directoryNameWithTrailingDot + "/" + destFileNameWithTrailingDot),
+            StorageException);
+        EXPECT_NO_THROW(fileClient.Delete());
+      }
+
+      // Rename Directory
+      const std::string subdirectoryName = RandomString() + "_sub";
+      const std::string subdirectoryNameWithTrailingDot = subdirectoryName + ".";
+      const std::string destSubdirectoryName = subdirectoryName + "_dest";
+      const std::string destSubdirectoryNameWithTrailingDot = destSubdirectoryName + ".";
+      auto subdirectoryClient
+          = directoryClient.GetSubdirectoryClient(subdirectoryNameWithTrailingDot);
+      subdirectoryClient.Create();
+      auto destSubdirectoryClient
+          = directoryClient.GetSubdirectoryClient(destSubdirectoryNameWithTrailingDot);
+      if (allowTarget == allowSource)
+      {
+        EXPECT_NO_THROW(
+            destSubdirectoryClient
+            = directoryClient
+                  .RenameSubdirectory(
+                      subdirectoryNameWithTrailingDot,
+                      directoryNameWithTrailingDot + "/" + destSubdirectoryNameWithTrailingDot)
+                  .Value);
+        EXPECT_NO_THROW(destSubdirectoryClient.Delete());
+      }
+      else
+      {
+        EXPECT_THROW(
+            directoryClient.RenameSubdirectory(
+                subdirectoryNameWithTrailingDot,
+                directoryNameWithTrailingDot + "/" + destSubdirectoryNameWithTrailingDot),
+            StorageException);
+        EXPECT_NO_THROW(subdirectoryClient.Delete());
+      }
+
+      // Delete
+      EXPECT_NO_THROW(directoryClient.Delete());
+    };
+
+    // allowTrailingDot not set, allowSourceTrailingDot not set
+    testTrailingDot(Nullable<bool>(), Nullable<bool>());
+    // allowTrailingDot = true, allowSourceTrailingDot =true
+    testTrailingDot(true, true);
+    // allowTrailingDot = true, allowSourceTrailingDot = false
+    testTrailingDot(true, false);
+    // allowTrailingDot = false, allowSourceTrailingDot = true
+    testTrailingDot(false, true);
+    // allowTrailingDot = false, allowSourceTrailingDot = false
+    testTrailingDot(false, false);
+  }
 }}} // namespace Azure::Storage::Test

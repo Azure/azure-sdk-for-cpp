@@ -43,7 +43,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareUrl(shareUrl)
+      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -63,7 +64,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
-      : m_shareUrl(shareUrl)
+      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -80,7 +82,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
   {
-    return ShareDirectoryClient(m_shareUrl, m_pipeline);
+    ShareDirectoryClient directoryClient(m_shareUrl, m_pipeline);
+    directoryClient.m_allowTrailingDot = m_allowTrailingDot;
+    directoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
+    return directoryClient;
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const

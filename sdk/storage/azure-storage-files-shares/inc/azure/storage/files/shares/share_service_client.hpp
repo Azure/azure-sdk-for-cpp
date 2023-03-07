@@ -102,5 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    Nullable<bool> m_allowTrailingDot;
+    Nullable<bool> m_allowSourceTrailingDot;
   };
 }}}} // namespace Azure::Storage::Files::Shares
