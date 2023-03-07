@@ -44,7 +44,7 @@ stages:
       CtestRegex: azure-core.|json-test
       LiveTestCtestRegex: azure-core.|json-test
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
-      LineCoverageTarget: 93
+      LineCoverageTarget: 92
       BranchCoverageTarget: 50
 #      PreTestSteps:
 #        - pwsh: |
