@@ -42,6 +42,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies { namespa
     // Windows, when both are defined.
 #if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
     return ::AzureSdkGetCustomHttpTransport();
+    transportOptions;
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
     // Since C++11: If multiple threads attempt to initialize the same static local variable
     // concurrently, the initialization occurs exactly once. We depend on this behavior to ensure
