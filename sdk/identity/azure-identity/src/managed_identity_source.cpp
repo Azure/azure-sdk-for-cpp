@@ -20,11 +20,11 @@ using Azure::Core::Diagnostics::_internal::Log;
 
 namespace {
 std::string const IdentityPrefix = "Identity: ";
-std::string const CredPrefix = "ManagedIdentityCredential";
+constexpr auto CredPrefix = "ManagedIdentityCredential";
 
 std::string WithSourceMessage(std::string const& credSource)
 {
-  return std::string(" with ") + credSource + " source";
+  return " with " + credSource + " source";
 }
 
 void PrintEnvNotSetUpMessage(std::string const& credSource)
@@ -43,7 +43,7 @@ void PrintEnvNotSetUpMessage(std::string const& credSource)
 Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
     std::string const& url,
     char const* envVarName,
-    std::string const credSource)
+    std::string const& credSource)
 {
   using Azure::Core::Url;
   using Azure::Core::Credentials::AuthenticationException;
@@ -185,15 +185,15 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
   constexpr auto EndpointVarName = "MSI_ENDPOINT";
   auto msiEndpoint = Environment::GetVariable(EndpointVarName);
 
-  std::string const credSource = "Cloud Shell";
+  std::string const CredSource = "Cloud Shell";
 
   if (!msiEndpoint.empty())
   {
     return std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
-        clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName, credSource)));
+        clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName, CredSource)));
   }
 
-  PrintEnvNotSetUpMessage(credSource);
+  PrintEnvNotSetUpMessage(CredSource);
   return nullptr;
 }
 

@@ -32,7 +32,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static Core::Url ParseEndpointUrl(
         std::string const& url,
         char const* envVarName,
-        std::string const credSource);
+        std::string const& credSource);
 
     explicit ManagedIdentitySource(
         std::string clientId,

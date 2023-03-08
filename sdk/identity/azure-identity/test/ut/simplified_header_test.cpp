@@ -12,43 +12,23 @@
 
 #include <gtest/gtest.h>
 
+#if !defined(AZ_IDENTITY_DLLEXPORT)
+#error "azure/identity.hpp does not include dll_import_export.hpp"
+#endif
+
+#if !defined(AZ_IDENTITY_RTTI)
+#error "azure/identity.hpp does not include rtti.hpp"
+#endif
+
 TEST(SimplifiedHeader, identity)
 {
   using namespace Azure::Identity;
 
-  static_assert(
-      sizeof(AzureCliCredential) != 0,
-      "azure/identity.hpp does not include azure_cli_credential.hpp");
-
-  static_assert(
-      sizeof(ChainedTokenCredential) != 0,
-      "azure/identity.hpp does not include chained_token_credential.hpp");
-
-  static_assert(
-      sizeof(ClientCertificateCredential) != 0,
-      "azure/identity.hpp does not include client_certificate_credential.hpp");
-
-  static_assert(
-      sizeof(ClientSecretCredential) != 0,
-      "azure/identity.hpp does not include client_secret_credential.hpp");
-
-  static_assert(
-      sizeof(DefaultAzureCredential) != 0,
-      "azure/identity.hpp does not include default_azure_credential.hpp");
-
-#if !defined(AZ_IDENTITY_DLLEXPORT)
-  static_assert(false, "azure/identity.hpp does not include dll_import_export.hpp");
-#endif
-
-  static_assert(
-      sizeof(EnvironmentCredential) != 0,
-      "azure/identity.hpp does not include environment_credential.hpp");
-
-  static_assert(
-      sizeof(ManagedIdentityCredential) != 0,
-      "azure/identity.hpp does not include managed_identity_credential.hpp");
-
-#if !defined(AZ_IDENTITY_RTTI)
-  static_assert(false, "azure/identity.hpp does not include rtti.hpp");
-#endif
+  static_cast<void>(sizeof(AzureCliCredential));
+  static_cast<void>(sizeof(ChainedTokenCredential));
+  static_cast<void>(sizeof(ClientCertificateCredential));
+  static_cast<void>(sizeof(ClientSecretCredential));
+  static_cast<void>(sizeof(DefaultAzureCredential));
+  static_cast<void>(sizeof(EnvironmentCredential));
+  static_cast<void>(sizeof(ManagedIdentityCredential));
 }

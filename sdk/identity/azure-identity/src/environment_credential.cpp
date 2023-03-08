@@ -24,11 +24,11 @@ using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_internal::Log;
 
 namespace {
-auto const AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
-auto const AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
-auto const AzureClientSecretEnvVarName = "AZURE_CLIENT_SECRET";
-auto const AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
-auto const AzureClientCertificatePathEnvVarName = "AZURE_CLIENT_CERTIFICATE_PATH";
+constexpr auto AzureTenantIdEnvVarName = "AZURE_TENANT_ID";
+constexpr auto AzureClientIdEnvVarName = "AZURE_CLIENT_ID";
+constexpr auto AzureClientSecretEnvVarName = "AZURE_CLIENT_SECRET";
+constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
+constexpr auto AzureClientCertificatePathEnvVarName = "AZURE_CLIENT_CERTIFICATE_PATH";
 
 std::string const LogMsgPrefix = "Identity: EnvironmentCredential";
 
@@ -124,8 +124,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
     auto const logLevel = Logger::Level::Warning;
     if (Log::ShouldWrite(logLevel))
     {
-      std::string const basicMessage
-          = LogMsgPrefix + " was not initialized with underlying credential";
+      auto const basicMessage = LogMsgPrefix + " was not initialized with underlying credential";
 
       if (!Log::ShouldWrite(Logger::Level::Verbose))
       {
@@ -133,7 +132,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
       }
       else
       {
-        std::string logMsg = basicMessage + ": Both '" + AzureTenantIdEnvVarName + "' and '"
+        auto logMsg = basicMessage + ": Both '" + AzureTenantIdEnvVarName + "' and '"
             + AzureClientIdEnvVarName + "', and at least one of '" + AzureClientSecretEnvVarName
             + "', '" + AzureClientCertificatePathEnvVarName + "' needs to be set. Additionally, '"
             + AzureAuthorityHostEnvVarName
@@ -164,7 +163,7 @@ AccessToken EnvironmentCredential::GetToken(
 {
   if (!m_credentialImpl)
   {
-    std::string const AuthUnavailable = LogMsgPrefix + " authentication unavailable. ";
+    auto const AuthUnavailable = LogMsgPrefix + " authentication unavailable. ";
 
     {
       auto const logLevel = Logger::Level::Warning;
@@ -206,9 +205,9 @@ void PrintCredentialCreationLogMessage(
   AZURE_ASSERT(envVarsToParamsSize > 1);
   // LCOV_EXCL_STOP
 
-  std::string const Tick = "'";
-  std::string const Comma = ", ";
-  std::string const TickComma = Tick + Comma;
+  constexpr auto Tick = "'";
+  constexpr auto Comma = ", ";
+
   std::string const And = "and ";
 
   std::string envVars;
@@ -216,8 +215,8 @@ void PrintCredentialCreationLogMessage(
   for (size_t i = 0; i < envVarsToParamsSize - 1;
        ++i) // not iterating over the last element for ", and".
   {
-    envVars += Tick + envVarsToParams[i].first + TickComma;
-    credParams += envVarsToParams[i].second + Comma;
+    envVars += Tick + std::string(envVarsToParams[i].first) + Tick + Comma;
+    credParams += std::string(envVarsToParams[i].second) + Comma;
   }
 
   envVars += And + Tick + envVarsToParams.back().first + Tick;

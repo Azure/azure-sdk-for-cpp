@@ -26,26 +26,26 @@ ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources s
 ChainedTokenCredential::ChainedTokenCredential(
     ChainedTokenCredential::Sources sources,
     std::string const& enclosingCredential,
-    std::vector<std::string> sourceDescriptions)
-    : m_sources(std::move(sources)), m_sourceDescriptions(std::move(sourceDescriptions))
+    std::vector<std::string> sourcesFriendlyNames)
+    : m_sources(std::move(sources)), m_sourcesFriendlyNames(std::move(sourcesFriendlyNames))
 {
   // LCOV_EXCL_START
-  AZURE_ASSERT(m_sourceDescriptions.empty() || m_sourceDescriptions.size() == m_sources.size());
+  AZURE_ASSERT(m_sourcesFriendlyNames.empty() || m_sourcesFriendlyNames.size() == m_sources.size());
   // LCOV_EXCL_STOP
 
   auto const logLevel = m_sources.empty() ? Logger::Level::Warning : Logger::Level::Informational;
   if (Log::ShouldWrite(logLevel))
   {
     std::string credentialsList;
-    if (!m_sourceDescriptions.empty())
+    if (!m_sourcesFriendlyNames.empty())
     {
-      auto const sourceDescriptionsSize = m_sourceDescriptions.size();
+      auto const sourceDescriptionsSize = m_sourcesFriendlyNames.size();
       for (size_t i = 0; i < (sourceDescriptionsSize - 1); ++i)
       {
-        credentialsList += m_sourceDescriptions[i] + ", ";
+        credentialsList += m_sourcesFriendlyNames[i] + ", ";
       }
 
-      credentialsList += m_sourceDescriptions.back();
+      credentialsList += m_sourcesFriendlyNames.back();
     }
 
     Log::Write(
@@ -55,7 +55,7 @@ ChainedTokenCredential::ChainedTokenCredential(
                    ? "ChainedTokenCredential: Created"
                    : (enclosingCredential + ": Created ChainedTokenCredential"))
             + " with "
-            + (m_sourceDescriptions.empty()
+            + (m_sourcesFriendlyNames.empty()
                    ? (std::to_string(m_sources.size()) + " credentials.")
                    : (std::string("the following credentials: ") + credentialsList + '.')));
   }
@@ -65,12 +65,12 @@ ChainedTokenCredential::ChainedTokenCredential(
                                      : (enclosingCredential + " -> ChainedTokenCredential"))
       + ": ";
 
-  if (m_sourceDescriptions.empty())
+  if (m_sourcesFriendlyNames.empty())
   {
     auto const sourcesSize = m_sources.size();
     for (size_t i = 1; i <= sourcesSize; ++i)
     {
-      m_sourceDescriptions.push_back(std::string("credential #") + std::to_string(i));
+      m_sourcesFriendlyNames.push_back(std::string("credential #") + std::to_string(i));
     }
   }
 }
@@ -106,7 +106,7 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Successfully got token from " + m_sourceDescriptions[i] + '.');
+                m_logPrefix + "Successfully got token from " + m_sourcesFriendlyNames[i] + '.');
           }
         }
 
@@ -120,7 +120,7 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Failed to get token from " + m_sourceDescriptions[i] + ": "
+                m_logPrefix + "Failed to get token from " + m_sourcesFriendlyNames[i] + ": "
                     + e.what());
           }
         }

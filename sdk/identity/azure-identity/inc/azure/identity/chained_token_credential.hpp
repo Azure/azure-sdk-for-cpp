@@ -63,10 +63,10 @@ namespace Azure { namespace Identity {
     explicit ChainedTokenCredential(
         Sources sources,
         std::string const& enclosingCredential,
-        std::vector<std::string> sourceDescriptions);
+        std::vector<std::string> sourcesFriendlyNames);
 
     Sources m_sources;
-    std::vector<std::string> m_sourceDescriptions;
+    std::vector<std::string> m_sourcesFriendlyNames;
     std::string m_logPrefix;
   };
 
