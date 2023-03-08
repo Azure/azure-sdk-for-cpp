@@ -2,8 +2,12 @@
   "tool": "Credential Scanner",
   "suppressions": [
     {
-      "file": ["eng/common/testproxy/dotnet-devcert.pfx"],
+      "file": [ "eng/common/testproxy/dotnet-devcert.pfx" ],
       "_justification": "File contains private key used by test code."
+    },
+    {
+      "file": [ "sdk/attestation/azure-security-attestation/test/ut/crypto_test.cpp" ],
+      "_justification": "File contains a PEM encoded RSA private key used by test code."
     },
     {
       "placeholder": [
