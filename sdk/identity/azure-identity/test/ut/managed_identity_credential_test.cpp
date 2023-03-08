@@ -40,6 +40,8 @@ TEST(ManagedIdentityCredential, AppServiceV2019)
 
         auto credential = std::make_unique<ManagedIdentityCredential>(options);
 
+        EXPECT_EQ(credential->GetCredentialName(), "ManagedIdentityCredential");
+
         EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
         EXPECT_EQ(log[0].first, Logger::Level::Informational);
         EXPECT_EQ(

@@ -162,6 +162,8 @@ TEST(AzureCliCredential, EmptyOutput)
 {
   AzureCliTestCredential const azCliCred(EmptyOutputCommand);
 
+  EXPECT_EQ(azCliCred.GetCredentialName(), "AzureCliCredential");
+
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 

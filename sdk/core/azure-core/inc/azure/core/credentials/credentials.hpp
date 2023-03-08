@@ -76,6 +76,12 @@ namespace Azure { namespace Core { namespace Credentials {
         Context const& context) const = 0;
 
     /**
+     * @brief Gets the name of the credential.
+     *
+     */
+    virtual std::string GetCredentialName() const;
+
+    /**
      * @brief Destructs `%TokenCredential`.
      *
      */

@@ -61,14 +61,16 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
+    /**
+     * @brief Gets the name of the credential.
+     *
+     */
+    std::string GetCredentialName() const override;
+
   private:
-    explicit ChainedTokenCredential(
-        Sources sources,
-        std::string const& enclosingCredential,
-        std::vector<std::string> sourcesFriendlyNames);
+    explicit ChainedTokenCredential(Sources sources, std::string const& enclosingCredential);
 
     Sources m_sources;
-    std::vector<std::string> m_sourcesFriendlyNames;
     std::string m_logPrefix;
   };
 

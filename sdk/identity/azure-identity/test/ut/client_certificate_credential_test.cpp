@@ -39,11 +39,15 @@ TEST(ClientCertificateCredential, Regular)
         ClientCertificateCredentialOptions options;
         options.Transport.Transport = transport;
 
-        return std::make_unique<ClientCertificateCredential>(
+        auto cred = std::make_unique<ClientCertificateCredential>(
             "01234567-89ab-cdef-fedc-ba8976543210",
             "fedcba98-7654-3210-0123-456789abcdef",
             TempCertFile::Path,
             options);
+
+        EXPECT_EQ(cred->GetCredentialName(), "ClientCertificateCredential");
+
+        return cred;
       },
       {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{

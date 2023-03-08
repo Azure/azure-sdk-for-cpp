@@ -30,12 +30,15 @@ constexpr auto AzureClientSecretEnvVarName = "AZURE_CLIENT_SECRET";
 constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
 constexpr auto AzureClientCertificatePathEnvVarName = "AZURE_CLIENT_CERTIFICATE_PATH";
 
-std::string const LogMsgPrefix = "Identity: EnvironmentCredential";
+std::string const CredentialName = "EnvironmentCredential";
+std::string const LogMsgPrefix = "Identity: " + CredentialName;
 
 void PrintCredentialCreationLogMessage(
     std::vector<std::pair<char const*, char const*>> const& envVarsToParams,
     char const* credThatGetsCreated);
 } // namespace
+
+std::string EnvironmentCredential::GetCredentialName() const { return CredentialName; }
 
 EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
 {
@@ -171,7 +174,7 @@ AccessToken EnvironmentCredential::GetToken(
       {
         Log::Write(
             logLevel,
-            AuthUnavailable + "See earlier EnvironmentCredential log messages for details.");
+            AuthUnavailable + "See earlier " + CredentialName + " log messages for details.");
       }
     }
 

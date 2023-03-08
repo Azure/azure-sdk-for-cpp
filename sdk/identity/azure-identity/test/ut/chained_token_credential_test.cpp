@@ -51,6 +51,8 @@ TEST(ChainedTokenCredential, Success)
   auto c2 = std::make_shared<TestCredential>("Token2");
   ChainedTokenCredential cred({c1, c2});
 
+  EXPECT_EQ(cred.GetCredentialName(), "ChainedTokenCredential");
+
   EXPECT_FALSE(c1->WasInvoked);
   EXPECT_FALSE(c2->WasInvoked);
 

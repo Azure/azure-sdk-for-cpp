@@ -47,6 +47,8 @@ TEST(DefaultAzureCredential, LogMessages)
 
         auto credential = std::make_unique<DefaultAzureCredential>(options);
 
+        EXPECT_EQ(credential->GetCredentialName(), "DefaultAzureCredential");
+
         EXPECT_EQ(log.size(), LogMsgVec::size_type(9));
 
         EXPECT_EQ(log[0].first, Logger::Level::Verbose);

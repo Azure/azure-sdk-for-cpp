@@ -51,7 +51,8 @@ using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
-std::string const MsgPrefix = "Identity: AzureCliCredential";
+std::string const CredentialName = "AzureCliCredential";
+std::string const MsgPrefix = "Identity: " + CredentialName;
 
 void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& description)
 {
@@ -77,6 +78,8 @@ void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& des
   }
 }
 } // namespace
+
+std::string AzureCliCredential::GetCredentialName() const { return CredentialName; }
 
 AzureCliCredential::AzureCliCredential(
     std::string tenantId,

@@ -7,6 +7,8 @@
 using namespace Azure::Identity;
 
 namespace {
+std::string const CredentialName = "ManagedIdentityCredential";
+
 std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
@@ -33,10 +35,12 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
 
   // LCOV_EXCL_START
   throw AuthenticationException(
-      "ManagedIdentityCredential authentication unavailable. No Managed Identity endpoint found.");
+      CredentialName + " authentication unavailable. No Managed Identity endpoint found.");
   // LCOV_EXCL_STOP
 }
 } // namespace
+
+std::string ManagedIdentityCredential::GetCredentialName() const { return CredentialName; }
 
 ManagedIdentityCredential::~ManagedIdentityCredential() = default;
 

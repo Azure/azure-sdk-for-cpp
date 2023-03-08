@@ -4,7 +4,6 @@
 #include "azure/identity/chained_token_credential.hpp"
 
 #include "azure/core/internal/diagnostics/log.hpp"
-#include <azure/core/azure_assert.hpp>
 
 #include <utility>
 
@@ -16,7 +15,10 @@ using Azure::Core::Diagnostics::_internal::Log;
 
 namespace {
 std::string const IdentityPrefix = "Identity: ";
-}
+std::string const CredentialName = "ChainedTokenCredential";
+} // namespace
+
+std::string ChainedTokenCredential::GetCredentialName() const { return CredentialName; }
 
 ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
     : ChainedTokenCredential(sources, {}, {})
@@ -25,53 +27,36 @@ ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources s
 
 ChainedTokenCredential::ChainedTokenCredential(
     ChainedTokenCredential::Sources sources,
-    std::string const& enclosingCredential,
-    std::vector<std::string> sourcesFriendlyNames)
-    : m_sources(std::move(sources)), m_sourcesFriendlyNames(std::move(sourcesFriendlyNames))
+    std::string const& enclosingCredential)
+    : m_sources(std::move(sources)),
+      m_logPrefix(
+          IdentityPrefix
+          + (enclosingCredential.empty() ? CredentialName
+                                         : (enclosingCredential + " -> " + CredentialName))
+          + ": ")
 {
-  // LCOV_EXCL_START
-  AZURE_ASSERT(m_sourcesFriendlyNames.empty() || m_sourcesFriendlyNames.size() == m_sources.size());
-  // LCOV_EXCL_STOP
-
   auto const logLevel = m_sources.empty() ? Logger::Level::Warning : Logger::Level::Informational;
   if (Log::ShouldWrite(logLevel))
   {
-    std::string credentialsList;
-    if (!m_sourcesFriendlyNames.empty())
+    std::string credSourceDetails = " with EMPTY chain of credentials.";
+    if (!sources.empty())
     {
-      auto const sourceDescriptionsSize = m_sourcesFriendlyNames.size();
-      for (size_t i = 0; i < (sourceDescriptionsSize - 1); ++i)
+      credSourceDetails = " with the following credentials: ";
+      auto const sourcesSize = m_sources.size();
+      for (size_t i = 0; i < (sourcesSize - 1); ++i)
       {
-        credentialsList += m_sourcesFriendlyNames[i] + ", ";
+        credSourceDetails += m_sources[i]->GetCredentialName() + ", ";
       }
 
-      credentialsList += m_sourcesFriendlyNames.back();
+      credSourceDetails += m_sources.back()->GetCredentialName() + '.';
     }
 
     Log::Write(
         logLevel,
         IdentityPrefix
-            + (enclosingCredential.empty()
-                   ? "ChainedTokenCredential: Created"
-                   : (enclosingCredential + ": Created ChainedTokenCredential"))
-            + " with "
-            + (m_sourcesFriendlyNames.empty()
-                   ? (std::to_string(m_sources.size()) + " credentials.")
-                   : (std::string("the following credentials: ") + credentialsList + '.')));
-  }
-
-  m_logPrefix = IdentityPrefix
-      + (enclosingCredential.empty() ? "ChainedTokenCredential"
-                                     : (enclosingCredential + " -> ChainedTokenCredential"))
-      + ": ";
-
-  if (m_sourcesFriendlyNames.empty())
-  {
-    auto const sourcesSize = m_sources.size();
-    for (size_t i = 1; i <= sourcesSize; ++i)
-    {
-      m_sourcesFriendlyNames.push_back(std::string("credential #") + std::to_string(i));
-    }
+            + (enclosingCredential.empty() ? (CredentialName + ": Created")
+                                           : (enclosingCredential + ": Created " + CredentialName))
+            + credSourceDetails);
   }
 }
 
@@ -106,7 +91,8 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Successfully got token from " + m_sourcesFriendlyNames[i] + '.');
+                m_logPrefix + "Successfully got token from " + m_sources[i]->GetCredentialName()
+                    + '.');
           }
         }
 
@@ -120,7 +106,7 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Failed to get token from " + m_sourcesFriendlyNames[i] + ": "
+                m_logPrefix + "Failed to get token from " + m_sources[i]->GetCredentialName() + ": "
                     + e.what());
           }
         }
@@ -139,5 +125,5 @@ AccessToken ChainedTokenCredential::GetToken(
     }
   }
 
-  throw AuthenticationException("Failed to get token from ChainedTokenCredential.");
+  throw AuthenticationException("Failed to get token from " + CredentialName + '.');
 }
