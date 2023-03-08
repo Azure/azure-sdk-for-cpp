@@ -3,6 +3,7 @@
 
 #include "azure/identity/azure_cli_credential.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/platform.hpp>
 
 #include <atomic>
@@ -122,13 +123,39 @@ TEST(AzureCliCredential, NotAvailable)
     || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
 TEST(AzureCliCredential, Error)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Informational);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   AzureCliTestCredential const azCliCred(
-      EchoCommand("ERROR: Please run 'az login' to setup account."));
+      EchoCommand("ERROR: Please run az login to setup account."));
+
+  EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+  EXPECT_EQ(log[0].first, Logger::Level::Informational);
+  EXPECT_EQ(
+      log[0].second,
+      "Identity: AzureCliCredential created."
+      "\nSuccessful creation does not guarantee further successful token retrieval.");
 
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
+  log.clear();
+  auto const errorMsg = "Identity: AzureCliCredential didn't get the token:"
+                        " \"ERROR: Please run az login to setup account."
+#if defined(AZ_PLATFORM_WINDOWS)
+                        "\r"
+#endif
+                        "\n\"";
+
   EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+  EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+  EXPECT_EQ(log[0].first, Logger::Level::Warning);
+  EXPECT_EQ(log[0].second, errorMsg);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(AzureCliCredential, EmptyOutput)

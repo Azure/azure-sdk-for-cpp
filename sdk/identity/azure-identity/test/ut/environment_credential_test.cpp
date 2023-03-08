@@ -4,6 +4,7 @@
 #include "azure/identity/environment_credential.hpp"
 
 #include "credential_test_helper.hpp"
+#include <azure/core/diagnostics/logger.hpp>
 
 #include <gtest/gtest.h>
 
@@ -14,8 +15,14 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(EnvironmentCredential, RegularClientSecretCredential)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -28,7 +35,19 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential: 'AZURE_TENANT_ID', 'AZURE_CLIENT_ID', "
+            "'AZURE_CLIENT_SECRET', and 'AZURE_AUTHORITY_HOST' environment variables are set, so "
+            "ClientSecretCredential with corresponding tenantId, clientId, clientSecret, and "
+            "authorityHost gets created.");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
@@ -65,12 +84,21 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
   using namespace std::chrono_literals;
   EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
   EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Informational); // Setting it to Informational instead of Verbose
+                                                  // will result in less detailed log message.
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -83,7 +111,16 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential gets created with ClientSecretCredential.");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
@@ -118,6 +155,8 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   using namespace std::chrono_literals;
   EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
   EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(EnvironmentCredential, Unavailable)
@@ -125,8 +164,14 @@ TEST(EnvironmentCredential, Unavailable)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -139,22 +184,57 @@ TEST(EnvironmentCredential, Unavailable)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential was not initialized with underlying credential: Both "
+            "'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID', and at least one of 'AZURE_CLIENT_SECRET', "
+            "'AZURE_CLIENT_CERTIFICATE_PATH' needs to be set. Additionally, "
+            "'AZURE_AUTHORITY_HOST' could be set to override the default authority host."
+            " Currently:\n"
+            " * 'AZURE_TENANT_ID' is NOT set\n"
+            " * 'AZURE_CLIENT_ID' is NOT set\n"
+            " * 'AZURE_CLIENT_SECRET' is NOT set\n"
+            " * 'AZURE_CLIENT_CERTIFICATE_PATH' is NOT set\n"
+            " * 'AZURE_AUTHORITY_HOST' is NOT set\n");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
-      [](auto& credential, auto& tokenRequestContext, auto& context) {
+      [&](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
         EXPECT_THROW(
             token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential authentication unavailable. "
+            "See earlier EnvironmentCredential log messages for details.");
+        log.clear();
+
         return token;
       }));
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -167,7 +247,18 @@ TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential: 'AZURE_TENANT_ID', 'AZURE_CLIENT_ID', and "
+            "'AZURE_CLIENT_SECRET' environment variables are set, so ClientSecretCredential with "
+            "corresponding tenantId, clientId, and clientSecret gets created.");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
@@ -204,6 +295,8 @@ TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
   using namespace std::chrono_literals;
   EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
   EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(EnvironmentCredential, ClientSecretNoTenantId)
@@ -211,8 +304,14 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -225,16 +324,45 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential was not initialized with underlying credential: Both "
+            "'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID', and at least one of 'AZURE_CLIENT_SECRET', "
+            "'AZURE_CLIENT_CERTIFICATE_PATH' needs to be set. Additionally, "
+            "'AZURE_AUTHORITY_HOST' could be set to override the default authority host."
+            " Currently:\n"
+            " * 'AZURE_TENANT_ID' is NOT set\n"
+            " * 'AZURE_CLIENT_ID' is set\n"
+            " * 'AZURE_CLIENT_SECRET' is set\n"
+            " * 'AZURE_CLIENT_CERTIFICATE_PATH' is NOT set\n"
+            " * 'AZURE_AUTHORITY_HOST' is set\n");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
-      [](auto& credential, auto& tokenRequestContext, auto& context) {
+      [&](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
         EXPECT_THROW(
             token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential authentication unavailable. "
+            "See earlier EnvironmentCredential log messages for details.");
+        log.clear();
+
         return token;
       }));
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(EnvironmentCredential, ClientSecretNoClientId)
@@ -242,8 +370,15 @@ TEST(EnvironmentCredential, ClientSecretNoClientId)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Warning); // Setting it to Warning instead of Verbose will result
+                                            // in less detailed Warning message.
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -256,16 +391,36 @@ TEST(EnvironmentCredential, ClientSecretNoClientId)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential was not initialized with underlying credential.");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
-      [](auto& credential, auto& tokenRequestContext, auto& context) {
+      [&](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
         EXPECT_THROW(
             token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential authentication unavailable. "
+            "See earlier EnvironmentCredential log messages for details.");
+        log.clear();
+
         return token;
       }));
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(EnvironmentCredential, ClientSecretNoClientSecret)
@@ -273,8 +428,14 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -287,14 +448,43 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        auto credential = std::make_unique<EnvironmentCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential was not initialized with underlying credential: Both "
+            "'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID', and at least one of 'AZURE_CLIENT_SECRET', "
+            "'AZURE_CLIENT_CERTIFICATE_PATH' needs to be set. Additionally, "
+            "'AZURE_AUTHORITY_HOST' could be set to override the default authority host."
+            " Currently:\n"
+            " * 'AZURE_TENANT_ID' is set\n"
+            " * 'AZURE_CLIENT_ID' is set\n"
+            " * 'AZURE_CLIENT_SECRET' is NOT set\n"
+            " * 'AZURE_CLIENT_CERTIFICATE_PATH' is NOT set\n"
+            " * 'AZURE_AUTHORITY_HOST' is set\n");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
-      [](auto& credential, auto& tokenRequestContext, auto& context) {
+      [&](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
         EXPECT_THROW(
             token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: EnvironmentCredential authentication unavailable. "
+            "See earlier EnvironmentCredential log messages for details.");
+        log.clear();
+
         return token;
       }));
+
+  Logger::SetListener(nullptr);
 }

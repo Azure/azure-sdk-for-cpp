@@ -1,14 +1,14 @@
 # Release History
 
-## 1.5.0-beta.1 (Unreleased)
+## 1.5.0-beta.1 (2023-03-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added `DefaultAzureCredential`.
 
 ### Other Changes
+
+- Improved log messages.
 
 ## 1.4.0 (2023-02-07)
 

@@ -9,17 +9,22 @@
  */
 
 #include <azure/identity.hpp>
+
 #include <gtest/gtest.h>
 
-class DllExportTest final {
-  AZ_IDENTITY_DLLEXPORT static const bool DllExportHIncluded;
-};
+#if !defined(AZ_IDENTITY_DLLEXPORT)
+#error "azure/identity.hpp does not include dll_import_export.hpp"
+#endif
 
 TEST(SimplifiedHeader, identity)
 {
   using namespace Azure::Identity;
 
-  EXPECT_NO_THROW(ClientSecretCredential clientSecretCredential("", "", ""));
-  EXPECT_NO_THROW(EnvironmentCredential environmentCredential);
-  EXPECT_NO_THROW(static_cast<void>(static_cast<ManagedIdentityCredential const*>(nullptr)));
+  static_cast<void>(sizeof(AzureCliCredential));
+  static_cast<void>(sizeof(ChainedTokenCredential));
+  static_cast<void>(sizeof(ClientCertificateCredential));
+  static_cast<void>(sizeof(ClientSecretCredential));
+  static_cast<void>(sizeof(DefaultAzureCredential));
+  static_cast<void>(sizeof(EnvironmentCredential));
+  static_cast<void>(sizeof(ManagedIdentityCredential));
 }

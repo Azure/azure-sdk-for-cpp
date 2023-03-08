@@ -4,6 +4,7 @@
 #include "azure/identity/managed_identity_credential.hpp"
 
 #include "credential_test_helper.hpp"
+#include <azure/core/diagnostics/logger.hpp>
 
 #include <fstream>
 
@@ -17,8 +18,14 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(ManagedIdentityCredential, AppServiceV2019)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -31,7 +38,16 @@ TEST(ManagedIdentityCredential, AppServiceV2019)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        auto credential = std::make_unique<ManagedIdentityCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: ManagedIdentityCredential will be created with App Service 2019 source.");
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -99,6 +115,8 @@ TEST(ManagedIdentityCredential, AppServiceV2019)
 
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, AppServiceV2019ClientId)
@@ -193,12 +211,18 @@ TEST(ManagedIdentityCredential, AppServiceV2019ClientId)
 
 TEST(ManagedIdentityCredential, AppServiceV2019InvalidUrl)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
   using Azure::Core::Credentials::AuthenticationException;
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -217,10 +241,21 @@ TEST(ManagedIdentityCredential, AppServiceV2019InvalidUrl)
             = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log[0].first, Logger::Level::Warning);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: ManagedIdentityCredential with App Service 2019 source: "
+            "Failed to create: The environment variable \'IDENTITY_ENDPOINT\' "
+            "contains an invalid URL.");
+        log.clear();
+
         return appServiceV2019ManagedIdentityCredential;
       },
       {},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, AppServiceV2019UnsupportedUrl)
@@ -257,8 +292,14 @@ TEST(ManagedIdentityCredential, AppServiceV2019UnsupportedUrl)
 
 TEST(ManagedIdentityCredential, AppServiceV2017)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -271,7 +312,24 @@ TEST(ManagedIdentityCredential, AppServiceV2017)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        auto credential = std::make_unique<ManagedIdentityCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
+
+        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2019 source.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: ManagedIdentityCredential will be created with App Service 2017 source.");
+
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -339,6 +397,8 @@ TEST(ManagedIdentityCredential, AppServiceV2017)
 
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, AppServiceV2017ClientId)
@@ -497,8 +557,14 @@ TEST(ManagedIdentityCredential, AppServiceV2017UnsupportedUrl)
 
 TEST(ManagedIdentityCredential, CloudShell)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -511,7 +577,30 @@ TEST(ManagedIdentityCredential, CloudShell)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        auto credential = std::make_unique<ManagedIdentityCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(3));
+
+        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2019 source.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2017 source.");
+
+        EXPECT_EQ(log[2].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[2].second,
+            "Identity: ManagedIdentityCredential will be created with Cloud Shell source.");
+
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -566,6 +655,8 @@ TEST(ManagedIdentityCredential, CloudShell)
 
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, CloudShellClientId)
@@ -681,6 +772,12 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
 
 TEST(ManagedIdentityCredential, AzureArc)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   {
     std::ofstream secretFile(
         "managed_identity_credential_test1.txt", std::ios_base::out | std::ios_base::trunc);
@@ -703,7 +800,7 @@ TEST(ManagedIdentityCredential, AzureArc)
   }
 
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -716,7 +813,36 @@ TEST(ManagedIdentityCredential, AzureArc)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        auto credential = std::make_unique<ManagedIdentityCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(4));
+
+        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2019 source.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2017 source.");
+
+        EXPECT_EQ(log[2].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[2].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with Cloud Shell source.");
+
+        EXPECT_EQ(log[3].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[3].second,
+            "Identity: ManagedIdentityCredential will be created with Azure Arc source.");
+
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       {{HttpStatusCode::Unauthorized,
@@ -829,6 +955,8 @@ TEST(ManagedIdentityCredential, AzureArc)
 
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, AzureArcClientId)
@@ -1032,8 +1160,14 @@ TEST(ManagedIdentityCredential, AzureArcInvalidUrl)
 
 TEST(ManagedIdentityCredential, Imds)
 {
+  using Azure::Core::Diagnostics::Logger;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -1046,7 +1180,44 @@ TEST(ManagedIdentityCredential, Imds)
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        auto credential = std::make_unique<ManagedIdentityCredential>(options);
+
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(5));
+
+        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[0].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2019 source.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2017 source.");
+
+        EXPECT_EQ(log[2].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[2].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with Cloud Shell source.");
+
+        EXPECT_EQ(log[3].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[3].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with Azure Arc source.");
+
+        EXPECT_EQ(log[4].first, Logger::Level::Informational);
+        EXPECT_EQ(
+            log[4].second,
+            "Identity: ManagedIdentityCredential will be created "
+            "with Azure Instance Metadata Service source."
+            "\nSuccessful creation does not guarantee further successful token retrieval.");
+
+        log.clear();
+
+        return credential;
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -1114,6 +1285,8 @@ TEST(ManagedIdentityCredential, Imds)
 
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, ImdsClientId)
