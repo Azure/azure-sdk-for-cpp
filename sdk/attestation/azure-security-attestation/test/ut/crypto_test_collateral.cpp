@@ -1,13 +1,9 @@
-#include "crypto_test_collateral.hpp"
-
-// Test ephemeral ECDS public and private keys for test purposes.
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-
-#include "attestation_collateral.hpp"
-#include <azure/core/base64.hpp>
+#include "crypto_test_collateral.hpp"
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
+  // Test ephemeral ECDS public and private keys for test purposes.
 
   constexpr char const* testEcdsPrivateKey(R"(-----BEGIN PRIVATE KEY-----
 MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg6g5VraUfx16neNxT
