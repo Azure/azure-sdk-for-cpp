@@ -81,21 +81,6 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   }
 }
 
-TEST_F(KeyVaultKeyClient, GetRandomBytes)
-{
-  if (m_keyVaultUrl.compare(m_keyVaultHsmUrl) != 0)
-  {
-    auto const keyName = GetTestName();
-    CreateHsmClient();
-    auto const& client = GetClientForTest(keyName);
-    GetRandomBytesOptions options;
-    options.Count = 4;
-    auto result = client.GetRandomBytes(options);
-    EXPECT_EQ(result.Value.RandomBytes.size(), size_t(options.Count));
-  }
-  EXPECT_TRUE(true);
-}
-
 TEST(GetRandomBytesOptions, Serialize)
 {
   GetRandomBytesOptions options;

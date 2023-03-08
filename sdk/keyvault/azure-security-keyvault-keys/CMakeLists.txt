@@ -146,6 +146,7 @@ if(BUILD_TESTING)
   endif()
   
   add_subdirectory(test/ut)
+  add_subdirectory(test/ut-hsm)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
