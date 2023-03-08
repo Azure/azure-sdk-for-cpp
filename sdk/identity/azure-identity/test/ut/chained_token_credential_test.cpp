@@ -42,6 +42,8 @@ public:
     token.Token = m_token;
     return token;
   }
+
+  std::string GetCredentialName() const override { return "TestCredential"; }
 };
 } // namespace
 
@@ -112,7 +114,9 @@ TEST(ChainedTokenCredential, Logging)
     ChainedTokenCredential cred({});
     EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
     EXPECT_EQ(log[0].first, Logger::Level::Warning);
-    EXPECT_EQ(log[0].second, "Identity: ChainedTokenCredential: Created with 0 credentials.");
+    EXPECT_EQ(
+        log[0].second,
+        "Identity: ChainedTokenCredential: Created with EMPTY chain of credentials.");
 
     log.clear();
     EXPECT_THROW(static_cast<void>(cred.GetToken({}, {})), AuthenticationException);
@@ -130,7 +134,9 @@ TEST(ChainedTokenCredential, Logging)
     ChainedTokenCredential cred({c});
     EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
     EXPECT_EQ(log[0].first, Logger::Level::Informational);
-    EXPECT_EQ(log[0].second, "Identity: ChainedTokenCredential: Created with 1 credentials.");
+    EXPECT_EQ(
+        log[0].second,
+        "Identity: ChainedTokenCredential: Created with the following credentials: TestCredential.");
 
     log.clear();
     EXPECT_FALSE(c->WasInvoked);
@@ -143,7 +149,7 @@ TEST(ChainedTokenCredential, Logging)
     EXPECT_EQ(log[0].first, Logger::Level::Verbose);
     EXPECT_EQ(
         log[0].second,
-        "Identity: ChainedTokenCredential: Failed to get token from credential #1: "
+        "Identity: ChainedTokenCredential: Failed to get token from TestCredential: "
         "Test Error");
 
     EXPECT_EQ(log[1].first, Logger::Level::Warning);
@@ -160,7 +166,10 @@ TEST(ChainedTokenCredential, Logging)
     ChainedTokenCredential cred({c1, c2});
     EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
     EXPECT_EQ(log[0].first, Logger::Level::Informational);
-    EXPECT_EQ(log[0].second, "Identity: ChainedTokenCredential: Created with 2 credentials.");
+    EXPECT_EQ(
+        log[0].second,
+        "Identity: ChainedTokenCredential: Created with the following credentials: "
+        "TestCredential, TestCredential.");
 
     log.clear();
     EXPECT_FALSE(c1->WasInvoked);
@@ -177,13 +186,13 @@ TEST(ChainedTokenCredential, Logging)
     EXPECT_EQ(log[0].first, Logger::Level::Verbose);
     EXPECT_EQ(
         log[0].second,
-        "Identity: ChainedTokenCredential: Failed to get token from credential #1: "
+        "Identity: ChainedTokenCredential: Failed to get token from TestCredential: "
         "Test Error");
 
     EXPECT_EQ(log[1].first, Logger::Level::Informational);
     EXPECT_EQ(
         log[1].second,
-        "Identity: ChainedTokenCredential: Successfully got token from credential #2.");
+        "Identity: ChainedTokenCredential: Successfully got token from TestCredential.");
   }
 
   Logger::SetListener(nullptr);

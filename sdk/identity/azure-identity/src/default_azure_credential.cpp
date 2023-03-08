@@ -53,9 +53,7 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   // Using the ChainedTokenCredential's private constructor for more detailed log messages.
   m_credentials.reset(new ChainedTokenCredential(
       ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred},
-      CredentialName, // extra args for the ChainedTokenCredential's private constructor.
-      std::vector<std::string>{
-          "EnvironmentCredential", "AzureCliCredential", "ManagedIdentityCredential"}));
+      CredentialName)); // extra arg for the ChainedTokenCredential's private constructor.
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;

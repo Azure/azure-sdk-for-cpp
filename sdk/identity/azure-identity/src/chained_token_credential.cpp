@@ -21,7 +21,7 @@ std::string const CredentialName = "ChainedTokenCredential";
 std::string ChainedTokenCredential::GetCredentialName() const { return CredentialName; }
 
 ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
-    : ChainedTokenCredential(sources, {}, {})
+    : ChainedTokenCredential(sources, {})
 {
 }
 
@@ -39,7 +39,7 @@ ChainedTokenCredential::ChainedTokenCredential(
   if (Log::ShouldWrite(logLevel))
   {
     std::string credSourceDetails = " with EMPTY chain of credentials.";
-    if (!sources.empty())
+    if (!m_sources.empty())
     {
       credSourceDetails = " with the following credentials: ";
       auto const sourcesSize = m_sources.size();
