@@ -6,6 +6,10 @@
 
 - New features in `12.4.0-beta.1` are now generally available.
 
+### Bugs Fixed
+
+- Fixed a bug where `ShareClient::GetStatistics` threw exception when storage service doesn't return `ETag` and `Last-Modified` headers.
+
 ## 12.4.0-beta.1 (2023-02-07)
 
 ### Features Added
