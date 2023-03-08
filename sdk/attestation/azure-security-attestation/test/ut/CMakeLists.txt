@@ -32,7 +32,9 @@ add_executable (
      attestation_collateral.cpp 
      attestation_metadata.cpp
      policycertmgmt_test.cpp
-     tpmattestation_test.cpp)
+     tpmattestation_test.cpp 
+     crypto_test_collateral.cpp
+)
 
 create_per_service_target_build(attestation azure-security-attestation-test)
 
