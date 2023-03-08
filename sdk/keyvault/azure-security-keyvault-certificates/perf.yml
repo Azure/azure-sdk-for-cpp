@@ -15,6 +15,9 @@ parameters:
   displayName: Iterations (times to run each test)
   type: number
   default: '5'
+- name: Profile
+  type: boolean
+  default: false
 - name: AdditionalArguments
   displayName: AdditionalArguments (passed to PerfAutomation)
   type: string 
@@ -23,16 +26,13 @@ parameters:
 extends:
   template: /eng/pipelines/templates/jobs/perf.yml
   parameters:
-    InstallLanguageSteps:
-      - pwsh: |
-          Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
-        displayName: Set Vcpkg Variables
     ServiceDirectory: keyvault/azure-security-keyvault-certificates
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}
     Iterations: ${{ parameters.Iterations }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
+    Profile: ${{ parameters.Profile }}
     EnvVars:
       # This is set in the InstallLanguageSteps
       VCPKG_BINARY_SOURCES_SECRET: $(VCPKG_BINARY_SOURCES_SECRET)
