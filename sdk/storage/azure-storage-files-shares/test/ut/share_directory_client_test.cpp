@@ -1011,4 +1011,68 @@ namespace Azure { namespace Storage { namespace Test {
     // allowTrailingDot = false, allowSourceTrailingDot = false
     testTrailingDot(false, false);
   }
+
+  TEST_F(FileShareDirectoryClientTest, DISABLED_OAuth)
+  {
+    const std::string directoryName = RandomString();
+
+    // Create from client secret credential.
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret());
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    auto shareClient = Files::Shares::ShareClient(m_shareClient->GetUrl(), credential, options);
+    auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
+    auto directoryClient = rootDirectoryClient.GetSubdirectoryClient(directoryName);
+
+    // Create
+    EXPECT_NO_THROW(directoryClient.Create());
+
+    // ListFilesAndDirectories
+    EXPECT_NO_THROW(directoryClient.ListFilesAndDirectories());
+
+    // ListHandles
+    EXPECT_NO_THROW(directoryClient.ListHandles());
+
+    // GetProperties
+    EXPECT_NO_THROW(directoryClient.GetProperties());
+
+    // SetProperties
+    EXPECT_NO_THROW(directoryClient.SetProperties(Files::Shares::Models::FileSmbProperties()));
+
+    // SetMetadata
+    EXPECT_NO_THROW(directoryClient.SetMetadata(RandomMetadata()));
+
+    // ForceCloseHandles
+    EXPECT_NO_THROW(directoryClient.ForceCloseAllHandles());
+
+    // Rename File
+    const std::string fileName = RandomString() + "_file";
+    const std::string destFileName = fileName + "_dest";
+    auto fileClient = directoryClient.GetFileClient(fileName);
+    fileClient.Create(512);
+    auto destFileClient = directoryClient.GetFileClient(destFileName);
+    EXPECT_NO_THROW(
+        destFileClient
+        = directoryClient.RenameFile(fileName, directoryName + "/" + destFileName).Value);
+    EXPECT_NO_THROW(destFileClient.Delete());
+
+    // Rename Directory
+    const std::string subdirectoryName = RandomString() + "_sub";
+    const std::string destSubdirectoryName = subdirectoryName + "_dest";
+    auto subdirectoryClient = directoryClient.GetSubdirectoryClient(subdirectoryName);
+    subdirectoryClient.Create();
+    auto destSubdirectoryClient = directoryClient.GetSubdirectoryClient(destSubdirectoryName);
+    EXPECT_NO_THROW(
+        destSubdirectoryClient
+        = directoryClient
+              .RenameSubdirectory(subdirectoryName, directoryName + "/" + destSubdirectoryName)
+              .Value);
+    EXPECT_NO_THROW(destSubdirectoryClient.Delete());
+
+    // Delete
+    EXPECT_NO_THROW(directoryClient.Delete());
+  }
 }}} // namespace Azure::Storage::Test
