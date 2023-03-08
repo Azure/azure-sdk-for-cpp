@@ -24,6 +24,8 @@ namespace Azure { namespace Identity {
    *
    */
   class ChainedTokenCredential final : public Core::Credentials::TokenCredential {
+    // Friend declaration is needed for DefaultAzureCredential to access ChainedTokenCredential's
+    // private constructor built to be used specifically by it.
     friend class DefaultAzureCredential;
 
   public:
