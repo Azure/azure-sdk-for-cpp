@@ -16,10 +16,6 @@
 #error "azure/identity.hpp does not include dll_import_export.hpp"
 #endif
 
-#if !defined(AZ_IDENTITY_RTTI)
-#error "azure/identity.hpp does not include rtti.hpp"
-#endif
-
 TEST(SimplifiedHeader, identity)
 {
   using namespace Azure::Identity;
