@@ -1,17 +1,7 @@
 # Release History
 
-## 4.0.0-beta.2 (Unreleased)
+## 4.0.0-beta.2 (2023-03-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
-## 4.0.0-beta.1 (Unreleased)
-
-### Features Added
-
-- Initial preview of Settings API. 
+- Initial preview of Settings API.
