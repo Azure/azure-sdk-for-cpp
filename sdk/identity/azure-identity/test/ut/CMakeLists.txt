@@ -22,6 +22,7 @@ add_executable (
     client_secret_credential_test.cpp
     credential_test_helper.cpp
     credential_test_helper.hpp
+    default_azure_credential_test.cpp
     environment_credential_test.cpp
     macro_guard_test.cpp
     managed_identity_credential_test.cpp
