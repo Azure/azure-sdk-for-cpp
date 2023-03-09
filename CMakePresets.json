@@ -1,0 +1,288 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 13,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-default",
+      "displayName": "Windows ",
+      "description": "Sets Ninja generator, and compilers. Configures vcpkg in manifest mode.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_MANIFEST_MODE": true
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
+        }
+      }
+    },
+    {
+      "name": "x64-static",
+      "displayName": "Windows x64 Static",
+      "description": "Ninja Generator, x64 architecture.",
+      "inherits": "windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "x86-static",
+      "displayName": "Windows x86 Static",
+      "description": "Ninja Generator, x86 architecture.",
+      "inherits": "windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x86-windows-static",
+        "MSVC_USE_STATIC_CRT": true
+      },
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "x64",
+      "displayName": "Windows x64",
+      "description": "Ninja Generator, x64 architecture.",
+      "inherits": "windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "x86",
+      "displayName": "Windows x86",
+      "description": "Ninja Generator, x86 architecture.",
+      "inherits": "windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x86-windows"
+      },
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "X64 Debug",
+      "description": "Windows X64 Release ",
+      "inherits": "x64",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64-release",
+      "displayName": "X64 Release",
+      "description": "Windows X64 Release ",
+      "inherits": "x64",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "x86-debug",
+      "displayName": "x86 Debug",
+      "description": "Windows x86 Debug",
+      "inherits": "x86",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x86-release",
+      "displayName": "x86 Release",
+      "description": "Windows x86 Release ",
+      "inherits": "x86",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "x64-static-debug",
+      "displayName": "Windows x64 Debug",
+      "description": "Windows x64 Debug",
+      "inherits": "x64-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64-static-release",
+      "displayName": "Windows x64 Release, static",
+      "description": "Windows x64 Release, static",
+      "inherits": "x64-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "x86-static-debug",
+      "displayName": "Windows x86 Debug, static",
+      "description": "Windows x86 Debug, static",
+      "inherits": "x86-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x86-static-release",
+      "displayName": "Windows x86 Release, static",
+      "description": "Windows x86 Release, static",
+      "inherits": "x86-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "x86-static-debug-tests",
+      "displayName": "x86 Debug With Tests, static",
+      "description": "Windows x86 Debug build with Tests configured",
+      "inherits": "x86-static-debug",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "ENABLE_PROXY_TESTS": false
+      }
+    },
+    {
+      "name": "x86-static-release-tests",
+      "displayName": "x86 Release With Tests, static, libcurl",
+      "description": "Windows x86 Release build with Tests configured",
+      "inherits": "x86-static-release",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "ENABLE_PROXY_TESTS": false,
+        "BUILD_SAMPLES": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "RUN_LONG_UNIT_TESTS": true,
+        "BUILD_TRANSPORT_CURL": true
+      }
+    },
+    {
+      "name": "x64-static-debug-tests",
+      "displayName": "X64 Debug With Tests, static, winhttp",
+      "description": "Windows X64 Debug build with Tests configured",
+      "inherits": "x64-static-debug",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "ENABLE_PROXY_TESTS": false,
+        "BUILD_SAMPLES": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "BUILD_TRANSPORT_WINHTTP": true
+      }
+    },
+    {
+      "name": "x64-static-debug-tests-curl",
+      "displayName": "X64 Debug With Tests, static, libcurl",
+      "description": "Windows X64 Debug build with Tests configured",
+      "inherits": "x64-static-debug-tests",
+      "cacheVariables": {
+        "BUILD_TRANSPORT_CURL": true
+      }
+    },
+    {
+      "name": "x64-static-debug-tests-winhttp",
+      "displayName": "X64 Debug With Tests, static, winhttp",
+      "description": "Windows X64 Debug build with Tests configured",
+      "inherits": "x64-static-debug-tests",
+      "cacheVariables": {
+        "BUILD_TRANSPORT_WINHTTP": true
+      }
+    },
+    {
+      "name": "x64-static-debug-tests-OpenSSL111",
+      "displayName": "X64 Debug With Tests, static, OpenSSL 1.1.1, libcurl",
+      "description": "Windows X64 Debug build with Tests configured on OpenSSL 1.1.1",
+      "inherits": "x64-static-debug-tests",
+      "cacheVariables": {
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}\\vcpkg-custom-ports"
+      }
+    },
+    {
+      "name": "x86-static-release-tests-curl",
+      "displayName": "x86 Release With Tests, static, libcurl",
+      "description": "Windows x86 Release build with Tests configured",
+      "inherits": "x86-static-release-tests",
+      "cacheVariables": {
+        "BUILD_TRANSPORT_CURL": true
+      }
+    },
+    {
+      "name": "x86-release-tests",
+      "displayName": "x86 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
+      "inherits": "x86-release",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "BUILD_TRANSPORT_CURL": true,
+        "BUILD_TRANSPORT_CUSTOM": true,
+        "BUILD_TRANSPORT_WINHTTP": true,
+        "BUILD_PERFORMANCE_TESTS": true
+      }
+    },
+    {
+      "name": "x64-release-tests",
+      "displayName": "X64 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
+      "inherits": "x64-release",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "BUILD_TRANSPORT_CURL": true,
+        "BUILD_TRANSPORT_CUSTOM": true,
+        "BUILD_TRANSPORT_WINHTTP": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "BUILD_SAMPLES": true
+      }
+    },
+    {
+      "name": "x64-static-debug-perftests",
+      "displayName": "X64 Debug With Perf Tests, static",
+      "inherits": "x64-static-debug",
+      "cacheVariables": {
+        "INSTALL_GTEST": false,
+        "BUILD_TESTING": true,
+        "BUILD_TRANSPORT_CURL": true,
+        "BUILD_TRANSPORT_WINHTTP": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "BUILD_SAMPLES": true
+      }
+    },
+    {
+      "name": "x64-static-release-perftests",
+      "displayName": "X64 Release With Perf Tests, static",
+      "inherits": "x64-static-release",
+      "cacheVariables": {
+        "INSTALL_GTEST": false,
+        "BUILD_TESTING": true,
+        "BUILD_TRANSPORT_CURL": true,
+        "BUILD_TRANSPORT_WINHTTP": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "BUILD_SAMPLES": true
+      }
+    }
+  ]
+}
