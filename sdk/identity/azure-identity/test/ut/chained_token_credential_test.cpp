@@ -136,7 +136,8 @@ TEST(ChainedTokenCredential, Logging)
     EXPECT_EQ(log[0].first, Logger::Level::Informational);
     EXPECT_EQ(
         log[0].second,
-        "Identity: ChainedTokenCredential: Created with the following credentials: TestCredential.");
+        "Identity: ChainedTokenCredential: Created with the following credentials: "
+        "TestCredential.");
 
     log.clear();
     EXPECT_FALSE(c->WasInvoked);
