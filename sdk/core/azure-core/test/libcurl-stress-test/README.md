@@ -19,10 +19,10 @@ Where namespace will be created if missing , search directory can be any folder 
 
 ATM the docker image is build by hand and hard-coded in the chart to simplify matters.  
 
-To build the image run "docker build -t stresstesttbiruti6oi24k.acr.io/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
+To build the image run "docker build -t <acr>/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
 
-To push to mcr : "docker push stresstesttbiruti6oi24k.acr.io/azuresdkforcpp/curlstress:v8"
-Obviously after logging in to the acr "az acr login -n stresspgs7b6dif73rup6.azurecr.io"
+To push to mcr : "docker push <acr>/azuresdkforcpp/curlstress:v8"
+Obviously after logging in to the acr "az acr login -n <acr>"
 
 To use another image you will need to go to line 12 in deploy job and update with your new file. 
 
