@@ -7,8 +7,8 @@
         "CmakeEnvArg": ""
       },
       "Linux": {
-        "Pool": "azsdk-pool-mms-ubuntu-2204-general",
-        "OSVmImage": "MMSUbuntu22.04",
+        "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+        "OSVmImage": "MMSUbuntu20.04",
         "CmakeEnvArg": "",
         "AptDependencies": "libcurl4-openssl-dev"
       },
