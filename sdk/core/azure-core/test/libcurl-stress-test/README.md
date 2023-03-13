@@ -15,9 +15,9 @@ The helm chart creates a pod with a container based on the docker image, and exe
 
 To deploy the chart you will need to run "azure-sdk-for-cpp\eng\common\scripts\stress-testing> .\deploy-stress-tests.ps1 -Namespace azuresdkforcpp -SearchDirectory E:\src\azure-sdk-for-cpp\sdk\core\azure-core\test -PushImage"
 
-Where name space will be created if missing , search directory can be any folder where it will search for charts in it and all it's sub dirs, push image will call it to build the docker image. 
+Where namespace will be created if missing , search directory can be any folder where it will search for charts in it and all it's sub dirs, push image will call it to build the docker image. 
 
-ATM the docker image is build by hand and hard coded in the chart to simplify matters.  
+ATM the docker image is build by hand and hard-coded in the chart to simplify matters.  
 
 To build the image run "docker build -t stresstesttbiruti6oi24k.acr.io/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
 
