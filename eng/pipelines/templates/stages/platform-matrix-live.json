@@ -21,11 +21,11 @@
     },
     {
       "StaticConfigs": {
-        "Ubu1804": {
+        "Ubu2204": {
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 4",
-          "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-          "OSVmImage": "MMSUbuntu18.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2204-general",
+          "OSVmImage": "MMSUbuntu22.04",
           "RunProxyTests": true
         }
       },
