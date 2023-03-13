@@ -5,8 +5,8 @@ This is work in progress. It's a prototype of how a stress test would look. This
 The cpp file represents the code for the test, it will generate a number of invalid URLs and then issue CURL send commands. The requests are expected to fail. The point was that it exposes memory leaks in handling the error cases, which we fixed since. 
 
 ### Dockerfile (https://www.docker.com/)
-Represents the build file for the container in which the test runs, it is based on ubuntu 22.04 , from mcr. 
-The main change from default ubuntu is making sure we have the valgrind tool installed. Valgrind is a heap monitoring tool that helps identify potential stack traces that might leak memory. While not 100% effective is is great at reducing the surface are for investigations. 
+Represents the build file for the container in which the test runs, it is based on Ubuntu 22.04 , from MCR. 
+The main change from default Ubuntu is making sure we have the valgrind tool installed. Valgrind is a heap monitoring tool that helps identify potential stack traces that might leak memory. While not 100% effective is great at reducing the surface are for investigations. 
 
 ### Helm chart (https://helm.sh/)
 Chart.yaml together with the bicep file(https://docs.microsoft.com/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the deploy job file , represent the helm chart needed to deploy to the docker image built from the dockerfile to the stress cluster and execute the stress test. 
@@ -15,9 +15,9 @@ The helm chart creates a pod with a container based on the docker image, and exe
 
 To deploy the chart you will need to run "azure-sdk-for-cpp\eng\common\scripts\stress-testing> .\deploy-stress-tests.ps1 -Namespace azuresdkforcpp -SearchDirectory E:\src\azure-sdk-for-cpp\sdk\core\azure-core\test -PushImage"
 
-Where namaspace will be created if missing , search directory can be any folder where it will search for charts in it and all it's sub dirs, push image will call it to build the docker image. 
+Where name space will be created if missing , search directory can be any folder where it will search for charts in it and all it's sub dirs, push image will call it to build the docker image. 
 
-ATM the docker image is build by hand and harcoded in the chart to simplify matters.  
+ATM the docker image is build by hand and hard coded in the chart to simplify matters.  
 
 To build the image run "docker build -t stresstesttbiruti6oi24k.acr.io/azuresdkforcpp/curlstress:v8  --build-arg targetTest=azure-core-libcurl-stress-test --build-arg build=on  ."
 
