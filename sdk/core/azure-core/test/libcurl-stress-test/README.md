@@ -6,12 +6,12 @@ The cpp file represents the code for the test, it will generate a number of inva
 
 ### Dockerfile (https://www.docker.com/)
 Represents the build file for the container in which the test runs, it is based on Ubuntu 22.04 , from MCR. 
-The main change from default Ubuntu is making sure we have the valgrind tool installed. Valgrind is a heap monitoring tool that helps identify potential stack traces that might leak memory. While not 100% effective is great at reducing the surface are for investigations. 
+The main change from default Ubuntu is making sure we have the Valgrind tool installed. Valgrind is a heap monitoring tool that helps identify potential stack traces that might leak memory. While not 100% effective is great at reducing the surface are for investigations. 
 
 ### Helm chart (https://helm.sh/)
 Chart.yaml together with the bicep file(https://docs.microsoft.com/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the deploy job file , represent the helm chart needed to deploy to the docker image built from the dockerfile to the stress cluster and execute the stress test. 
 
-The helm chart creates a pod with a container based on the docker image, and executes the test under valgrind. 
+The helm chart creates a pod with a container based on the docker image, and executes the test under Valgrind. 
 
 To deploy the chart you will need to run "azure-sdk-for-cpp\eng\common\scripts\stress-testing> .\deploy-stress-tests.ps1 -Namespace azuresdkforcpp -SearchDirectory E:\src\azure-sdk-for-cpp\sdk\core\azure-core\test -PushImage"
 
