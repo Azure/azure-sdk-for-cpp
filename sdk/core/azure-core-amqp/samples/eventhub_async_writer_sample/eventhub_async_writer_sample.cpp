@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <azure/core/amqp/Connection.hpp>
 #include <azure/core/amqp/message_sender.hpp>
 #include <azure/core/amqp/network/sasl_transport.hpp>
@@ -10,8 +13,9 @@
 
 int main()
 {
-  auto credentials{std::make_shared<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>(
-      EH_CONNECTION_STRING)};
+  auto credentials{
+      std::make_shared<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>(
+          EH_CONNECTION_STRING)};
   Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.HostName = credentials->GetHostName();

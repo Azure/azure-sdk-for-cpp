@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <gtest/gtest.h>
 #include <utility>
 
@@ -222,7 +225,8 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       }
 
     public:
-      EchoTransport(XIO_INSTANCE_TAG* parentXio) : Azure::Core::_internal::Amqp::Network::Transport(parentXio)
+      EchoTransport(XIO_INSTANCE_TAG* parentXio)
+          : Azure::Core::_internal::Amqp::Network::Transport(parentXio)
       {
       }
       TransportOpenResult WaitForOpen()

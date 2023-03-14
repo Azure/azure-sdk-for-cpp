@@ -1,13 +1,16 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <gtest/gtest.h>
 
-#include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/Connection.hpp"
+#include "azure/core/amqp/Session.hpp"
+#include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
-#include "azure/core/amqp/Session.hpp"
 #include <functional>
 
 class TestConnections : public testing::Test {
@@ -132,7 +135,9 @@ TEST_F(TestConnections, ConnectionOpenClose)
     options.HostName = "localhost";
     options.Port = 5671;
     //    std::shared_ptr<Azure::Core::_internal::Amqp::Network::SocketTransport> sockets
-    //        = std::make_shared<Azure::Core::_internal::Amqp::Network::SocketTransport>("localhost", 5671);
+    //        =
+    //        std::make_shared<Azure::Core::_internal::Amqp::Network::SocketTransport>("localhost",
+    //        5671);
     Azure::Core::_internal::Amqp::Connection connection("amqp://localhost:5671", nullptr, options);
   }
 }
@@ -204,7 +209,8 @@ private:
       Azure::Core::_internal::Amqp::Connection const& connection,
       Azure::Core::_internal::Amqp::Endpoint& endpoint) override
   {
-    m_listeningSession = std::make_unique<Azure::Core::_internal::Amqp::Session>(connection, endpoint, this);
+    m_listeningSession
+        = std::make_unique<Azure::Core::_internal::Amqp::Session>(connection, endpoint, this);
     m_listeningSession->SetIncomingWindow(10000);
     m_listeningSession->Begin();
 

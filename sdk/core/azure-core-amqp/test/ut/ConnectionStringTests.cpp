@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <gtest/gtest.h>
 #include <utility>
 
@@ -47,6 +50,7 @@ TEST_F(ConnectionStringTest, SaslPlainConnectionGood)
 TEST_F(ConnectionStringTest, SaslPlainConnectionBad)
 {
   {
-    EXPECT_ANY_THROW([]() { Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential xx(""); }());
+    EXPECT_ANY_THROW(
+        []() { Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential xx(""); }());
   }
 }

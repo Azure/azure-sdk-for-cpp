@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/message_sender.hpp>
@@ -11,8 +14,9 @@
 
 int main()
 {
-  auto credential{std::make_shared<Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
-      EH_CONNECTION_STRING)};
+  auto credential{
+      std::make_shared<Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
+          EH_CONNECTION_STRING)};
   Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
@@ -30,7 +34,7 @@ int main()
   Azure::Core::_internal::Amqp::MessageSenderOptions senderOptions;
   senderOptions.EnableTrace = true;
   senderOptions.Name = "sender-link";
-  senderOptions.SourceAddress= "ingress";
+  senderOptions.SourceAddress = "ingress";
   senderOptions.SenderSettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 

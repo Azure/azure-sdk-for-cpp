@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include "azure/core/amqp/models/message_source.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>

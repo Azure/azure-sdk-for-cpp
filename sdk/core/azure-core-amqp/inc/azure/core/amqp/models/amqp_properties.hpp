@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #pragma once
 
 #include "amqp_value.hpp"
@@ -14,9 +17,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     // uAMQP interop functions.
   public:
-    Properties(PROPERTIES_INSTANCE_TAG* properties) : m_properties(properties)
-    {
-    }
+    Properties(PROPERTIES_INSTANCE_TAG* properties) : m_properties(properties) {}
     operator PROPERTIES_INSTANCE_TAG*() const { return m_properties; }
 
   public:

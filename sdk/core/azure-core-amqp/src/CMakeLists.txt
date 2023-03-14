@@ -1,4 +1,7 @@
-﻿# CMakeList.txt : CMake project for azure-core-amqp, include source and define
+﻿# Copyright(c) Microsoft Corporation.All rights reserved.
+# SPDX - License - Identifier : MIT
+
+# CMakeList.txt : CMake project for azure-core-amqp, include source and define
 # project specific logic here.
 #
 
@@ -7,7 +10,7 @@ find_package(umock_c)
 find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
 
-# Add source to this project's executable.
+# Add source to this projects executable.
 add_library(azure-core-amqp 
 	AMQP/connection.cpp
 	Models/amqp_value.cpp

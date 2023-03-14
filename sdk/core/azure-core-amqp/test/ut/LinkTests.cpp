@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <gtest/gtest.h>
 
 #include "azure/core/amqp//message_sender.hpp"
@@ -170,8 +173,11 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
 
     return true;
   }
-  virtual void OnEndpointFrameReceived(Connection const&, Azure::Core::Amqp::Models::Value, uint32_t, uint8_t*)
-      override
+  virtual void OnEndpointFrameReceived(
+      Connection const&,
+      Azure::Core::Amqp::Models::Value,
+      uint32_t,
+      uint8_t*) override
   {
   }
 
