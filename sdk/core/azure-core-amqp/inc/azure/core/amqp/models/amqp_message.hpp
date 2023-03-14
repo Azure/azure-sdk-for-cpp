@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     void AddBodyAmqpData(BinaryData binaryData);
 
-    BinaryData GetBodyAmqpData(uint32_t index) const;
+    BinaryData GetBodyAmqpData(size_t index) const;
     size_t GetBodyAmqpDataCount() const;
 
     void SetBodyAmqpValue(Value value);

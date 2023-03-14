@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     }
   } // namespace
 
-  // Create a conection with an existing networking Transport.
+  // Create a connection with an existing networking Transport.
   Connection::Connection(
       std::shared_ptr<Network::Transport> transport,
       ConnectionEvents* eventHandler,
@@ -317,7 +317,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     uint32_t maxFrameSize;
     if (connection_get_remote_max_frame_size(m_connection, &maxFrameSize))
     {
-      throw std::runtime_error("Could not get remot max frame size.");
+      throw std::runtime_error("Could not get remote max frame size.");
     }
     return maxFrameSize;
   }
@@ -325,7 +325,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection, ratio))
     {
-      throw std::runtime_error("Could not set remote itle timeout.");
+      throw std::runtime_error("Could not set remote idle timeout.");
     }
   }
 
