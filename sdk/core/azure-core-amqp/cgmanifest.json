@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/open-telemetry/opentelemetry-cpp",
+          "CommitHash": "da2911cf4458c7068f967c17c65d07eeba449a08"
+        }
+      }
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/google/googletest",
+          "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
+        }
+      },
+      "DevelopmentDependency": true
+    }
+  ]
+}
