@@ -121,7 +121,6 @@ set(
     src/azure_assert.cpp
     src/base64.cpp
     src/context.cpp
-    
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
     src/datetime.cpp

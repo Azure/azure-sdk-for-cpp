@@ -29,13 +29,11 @@ TEST(ClientSecretCredential, Regular)
         ClientSecretCredentialOptions options;
         options.Transport.Transport = transport;
 
-        auto cred = std::make_unique<ClientSecretCredential>(
+        return std::make_unique<ClientSecretCredential>(
             "01234567-89ab-cdef-fedc-ba8976543210",
             "fedcba98-7654-3210-0123-456789abcdef",
             "CLIENTSECRET",
             options);
-
-        return cred;
       },
       {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
