@@ -1,9 +1,10 @@
 {
   "name": "amqp-prototype",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "dependencies": [
     {
-      "name": "azure-uamqp-c"
+      "name": "azure-uamqp-c",
+      "platform": "!uwp"
     },
     {
       "name": "azure-core-cpp"

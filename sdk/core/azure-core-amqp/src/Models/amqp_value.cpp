@@ -1,7 +1,8 @@
-#pragma once
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
 
-#include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "azure/core/amqp/models/amqp_properties.hpp"
 
 // Note: These blank lines are significant because clang-format orders includes alphabetically, but
 // there are dependencies in the uAMQP headers which require this ordering.

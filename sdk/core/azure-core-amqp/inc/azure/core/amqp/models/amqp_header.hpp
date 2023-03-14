@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #pragma once
 
 #include <chrono>
@@ -12,9 +15,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   public:
     // uAMQP integration functions.
-    Header(HEADER_INSTANCE_TAG* header) : m_header(header)
-    {
-    }
+    Header(HEADER_INSTANCE_TAG* header) : m_header(header) {}
     operator HEADER_INSTANCE_TAG*() const { return m_header; }
 
   public:

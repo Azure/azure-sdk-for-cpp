@@ -1,3 +1,5 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
 
 #include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
 
@@ -11,7 +13,8 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  AmqpHeaderTransport::AmqpHeaderTransport(XIO_HANDLE parentTransport) : Azure::Core::_internal::Amqp::Network::Transport()
+  AmqpHeaderTransport::AmqpHeaderTransport(XIO_HANDLE parentTransport)
+      : Azure::Core::_internal::Amqp::Network::Transport()
   {
     HEADER_DETECT_IO_CONFIG detectIoConfig{};
     HEADER_DETECT_ENTRY headerDetectEntries[] = {

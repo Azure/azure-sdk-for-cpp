@@ -1,6 +1,9 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include <azure/core/amqp/Connection.hpp>
-#include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/common/async_operation_queue.hpp>
+#include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/models/message_source.hpp>
 #include <azure/core/amqp/models/message_target.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
@@ -99,7 +102,8 @@ public:
 
   // Wait for incoming messages. This method is somewhat more complicated because it
   // needs to wait on multiple waiters (both the connection and the transport).
-  template <class... Waiters> Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
+  template <class... Waiters>
+  Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
   {
     auto result = m_messageQueue.WaitForPolledResult(waiters...);
     return std::move(std::get<0>(*result));

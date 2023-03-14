@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include "azure/core/amqp/network/Transport.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
@@ -45,9 +48,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     {
       throw std::logic_error("Cannot close an unopened transport.");
     }
-    auto closeOperation = std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
-        decltype(onCloseComplete),
-        CloseCallbackWrapper<decltype(onCloseComplete)>>>(onCloseComplete);
+    auto closeOperation
+        = std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
+            decltype(onCloseComplete),
+            CloseCallbackWrapper<decltype(onCloseComplete)>>>(onCloseComplete);
     if (m_xioInstance)
     {
       if (xio_close(

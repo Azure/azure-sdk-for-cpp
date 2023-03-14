@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/connection_string_credential.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
@@ -182,9 +185,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do it.
     if (m_connectionCredential)
     {
-      auto sasCredential{
-          std::static_pointer_cast<Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
-              m_connectionCredential)};
+      auto sasCredential{std::static_pointer_cast<
+          Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
+          m_connectionCredential)};
       Authenticate(
           CredentialType::ServiceBusSas,
           sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),

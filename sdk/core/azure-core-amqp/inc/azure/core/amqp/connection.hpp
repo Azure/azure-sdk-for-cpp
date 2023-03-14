@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #pragma once
 
 #include <chrono>
@@ -49,7 +52,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> Transport{};
 
     // Optional SASL plain credentials.
-    std::shared_ptr<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential> SaslCredentials{};
+    std::shared_ptr<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>
+        SaslCredentials{};
   };
 
   class Error;

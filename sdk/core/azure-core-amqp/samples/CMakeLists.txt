@@ -1,3 +1,6 @@
+# Copyright(c) Microsoft Corporation.All rights reserved.
+# SPDX - License - Identifier : MIT
+
 # CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #

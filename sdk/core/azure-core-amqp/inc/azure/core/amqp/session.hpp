@@ -1,9 +1,12 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #pragma once
 
-#include "common/async_operation_queue.hpp"
-#include "connection_string_credential.hpp"
 #include "Models/amqp_value.hpp"
 #include "Network/Transport.hpp"
+#include "common/async_operation_queue.hpp"
+#include "connection_string_credential.hpp"
 
 #include <chrono>
 #include <memory>

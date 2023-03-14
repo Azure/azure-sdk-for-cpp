@@ -1,3 +1,6 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX - License - Identifier : MIT
+
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
 
