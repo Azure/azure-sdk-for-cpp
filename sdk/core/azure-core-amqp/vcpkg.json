@@ -1,5 +1,5 @@
 {
-  "name": "ampq-prototype",
+  "name": "amqp-prototype",
   "version": "1.0.0",
   "dependencies": [
     {
