@@ -217,7 +217,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  BinaryData Message::GetBodyAmqpData(uint32_t index) const
+  BinaryData Message::GetBodyAmqpData(size_t index) const
   {
     BINARY_DATA binaryData;
     if (message_get_body_amqp_data_in_place(m_message, index, &binaryData))
@@ -256,7 +256,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (message.GetBodyAmqpDataCount() != 0)
     {
       os << "AMQP Data: [";
-      for (auto i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
+      for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
       {
         auto data = message.GetBodyAmqpData(i);
         os << "Data: " << data.length << " bytes: " << data;
