@@ -52,11 +52,11 @@ using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
 constexpr auto IdentityPrefix = "Identity: ";
+}
 
-void ThrowIfNotSafeCmdLineInput(
-    std::string const& credentialName,
+void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     std::string const& input,
-    std::string const& description)
+    std::string const& description) const
 {
   for (auto const c : input)
   {
@@ -74,14 +74,12 @@ void ThrowIfNotSafeCmdLineInput(
         if (!std::isalnum(c, std::locale::classic()))
         {
           throw AuthenticationException(
-              IdentityPrefix + credentialName + ": Unsafe command line input found in "
+              IdentityPrefix + GetCredentialName() + ": Unsafe command line input found in "
               + description + ": " + input);
         }
     }
   }
 }
-} // namespace
-
 AzureCliCredential::AzureCliCredential(
     std::string tenantId,
     DateTime::duration cliProcessTimeout,
@@ -91,15 +89,14 @@ AzureCliCredential::AzureCliCredential(
 {
   static_cast<void>(options);
 
-  auto const credentialName = GetCredentialName();
-  ThrowIfNotSafeCmdLineInput(credentialName, m_tenantId, "TenantID");
+  ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
 
   auto const logLevel = Logger::Level::Informational;
   if (Log::ShouldWrite(logLevel))
   {
     Log::Write(
         logLevel,
-        IdentityPrefix + credentialName
+        IdentityPrefix + GetCredentialName()
             + " created.\n"
               "Successful creation does not guarantee further successful token retrieval.");
   }
@@ -121,7 +118,7 @@ AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
 std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::string const& tenantId)
     const
 {
-  ThrowIfNotSafeCmdLineInput(GetCredentialName(), scopes, "Scopes");
+  ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())

@@ -171,9 +171,8 @@ AccessToken EnvironmentCredential::GetToken(
 {
   if (!m_credentialImpl)
   {
-    auto const credentialName = GetCredentialName();
-
-    auto const AuthUnavailable = IdentityPrefix + credentialName + " authentication unavailable. ";
+    auto const AuthUnavailable
+        = IdentityPrefix + GetCredentialName() + " authentication unavailable. ";
 
     {
       auto const logLevel = Logger::Level::Warning;
@@ -181,7 +180,7 @@ AccessToken EnvironmentCredential::GetToken(
       {
         Log::Write(
             logLevel,
-            AuthUnavailable + "See earlier " + credentialName + " log messages for details.");
+            AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
       }
     }
 

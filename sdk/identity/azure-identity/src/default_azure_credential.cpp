@@ -23,8 +23,6 @@ constexpr auto IdentityPrefix = "Identity: ";
 DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
 {
-  auto const credentialName = GetCredentialName();
-
   // Initializing m_credential below and not in the member initializer list to have a specific order
   // of log messages.
   auto const logLevel = Logger::Level::Verbose;
@@ -32,15 +30,15 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   {
     Log::Write(
         logLevel,
-        std::string(IdentityPrefix) + "Creating " + credentialName
+        std::string(IdentityPrefix) + "Creating " + GetCredentialName()
             + " which combines mutiple parameterless credentials "
               "into a single one (by using ChainedTokenCredential).\n"
-            + credentialName
+            + GetCredentialName()
             + " is only recommended for the early stages of development, "
               "and not for usage in production environment."
               "\nOnce the developer focuses on the Credentials and Authentication aspects "
               "of their application, "
-            + credentialName
+            + GetCredentialName()
             + " needs to be replaced with the credential that "
               "is the better fit for the application.");
   }
@@ -53,7 +51,7 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   // Using the ChainedTokenCredential's private constructor for more detailed log messages.
   m_credentials.reset(new ChainedTokenCredential(
       ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred},
-      credentialName)); // extra arg for the ChainedTokenCredential's private constructor.
+      GetCredentialName())); // extra arg for the ChainedTokenCredential's private constructor.
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;

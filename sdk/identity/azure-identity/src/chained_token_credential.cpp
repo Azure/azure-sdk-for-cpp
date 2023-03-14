@@ -27,10 +27,9 @@ ChainedTokenCredential::ChainedTokenCredential(
     std::string const& enclosingCredential)
     : TokenCredential("ChainedTokenCredential"), m_sources(std::move(sources))
 {
-  auto const credentialName = GetCredentialName();
   m_logPrefix = IdentityPrefix
-      + (enclosingCredential.empty() ? credentialName
-                                     : (enclosingCredential + " -> " + credentialName))
+      + (enclosingCredential.empty() ? GetCredentialName()
+                                     : (enclosingCredential + " -> " + GetCredentialName()))
       + ": ";
 
   auto const logLevel = m_sources.empty() ? Logger::Level::Warning : Logger::Level::Informational;
@@ -58,8 +57,9 @@ ChainedTokenCredential::ChainedTokenCredential(
     Log::Write(
         logLevel,
         IdentityPrefix
-            + (enclosingCredential.empty() ? (credentialName + ": Created")
-                                           : (enclosingCredential + ": Created " + credentialName))
+            + (enclosingCredential.empty()
+                   ? (GetCredentialName() + ": Created")
+                   : (enclosingCredential + ": Created " + GetCredentialName()))
             + credSourceDetails);
   }
 }
