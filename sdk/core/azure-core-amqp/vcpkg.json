@@ -1,0 +1,18 @@
+{
+  "name": "ampq-prototype",
+  "version": "1.0.0",
+  "dependencies": [
+    {
+      "name": "azure-uamqp-c"
+    },
+    {
+      "name": "azure-core-cpp"
+    },
+    {
+      "name": "azure-identity-cpp"
+    },
+    {
+      "name": "gtest"
+    }
+  ]
+}

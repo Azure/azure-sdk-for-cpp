@@ -1,0 +1,106 @@
+#pragma once
+
+#include "azure/core/amqp/models/amqp_header.hpp"
+
+#include <azure_uamqp_c/amqp_definitions_milliseconds.h>
+
+#include <azure_uamqp_c/amqp_definitions_header.h>
+#include <chrono>
+#include <iostream>
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models {
+
+  Header::Header() : m_header(header_create())
+  {
+    if (!m_header)
+    {
+      throw std::runtime_error("Could not create header.");
+    }
+  }
+
+  Header::~Header() { header_destroy(m_header); }
+
+  bool Header::IsDurable() const
+  {
+    bool isDurable;
+    if (header_get_durable(m_header, &isDurable))
+    {
+      throw std::runtime_error("Could not get durable state from header.");
+    }
+    return isDurable;
+  }
+  void Header::IsDurable(bool durable) { header_set_durable(m_header, durable); }
+
+  uint8_t Header::Priority() const
+  {
+    uint8_t priority;
+    if (header_get_priority(m_header, &priority))
+    {
+      throw std::runtime_error("Could not get priority from header.");
+    }
+    return priority;
+  }
+  void Header::SetPriority(uint8_t priority) { header_set_priority(m_header, priority); }
+
+  std::chrono::milliseconds Header::GetTimeToLive() const
+  {
+    milliseconds ms;
+    if (header_get_ttl(m_header, &ms))
+    {
+      throw std::runtime_error("Could not get header TTL.");
+    }
+    return std::chrono::milliseconds(ms);
+  }
+  void Header::SetTimeToLive(std::chrono::milliseconds timeToLive)
+  {
+    if (header_set_ttl(m_header, static_cast<milliseconds>(timeToLive.count())))
+    {
+      throw std::runtime_error("Could not set header TTL.");
+    }
+  }
+
+  bool Header::IsFirstAcquirer() const
+  {
+    bool firstAcquirer;
+    if (header_get_first_acquirer(m_header, &firstAcquirer))
+    {
+      throw std::runtime_error("Could not get first acquirer value.");
+    }
+    return firstAcquirer;
+  }
+  void Header::SetFirstAcquirer(bool value)
+  {
+    if (header_set_first_acquirer(m_header, value))
+    {
+      throw std::runtime_error("Could not set first acquirer value.");
+    }
+  }
+
+  uint32_t Header::GetDeliveryCount() const
+  {
+    uint32_t count;
+    if (header_get_delivery_count(m_header, &count))
+    {
+      throw std::runtime_error("Could not get delivery count.");
+    }
+    return count;
+  }
+  void Header::SetDeliveryCount(uint32_t value)
+  {
+    if (header_set_delivery_count(m_header, value))
+    {
+      throw std::runtime_error("Could not set delivery count.");
+    }
+  }
+
+  std::ostream& operator<<(std::ostream& os, Header const& header)
+  {
+    os << "Header{"
+       << "durable=" << header.IsDurable() << ", "
+       << "priority=" << header.Priority() << ", "
+       << "ttl=" << header.GetTimeToLive().count() << " milliseconds, "
+       << "firstAcquirer=" << header.IsFirstAcquirer() << ", "
+       << "deliveryCount=" << header.GetDeliveryCount() << "}";
+    return os;
+  }
+}}}} // namespace Azure::Core::Amqp::Models
