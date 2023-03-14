@@ -1,0 +1,18 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "languageId": "cpp",
+  "dictionaries": [
+    "powershell",
+    "cpp"
+  ],
+  "ignorePaths": [
+    "**/test/ut/recordings/*.json"
+  ],
+  "words": [
+    "dowork",
+    "SASLCLIENTIO",
+    "socketio",
+    "tlsio"
+  ]
+}
