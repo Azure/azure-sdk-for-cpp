@@ -38,9 +38,8 @@ void PrintCredentialCreationLogMessage(
     char const* credThatGetsCreated);
 } // namespace
 
-std::string EnvironmentCredential::GetCredentialName() const { return "EnvironmentCredential"; }
-
 EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
+    : TokenCredential("EnvironmentCredential")
 {
   auto const logMsgPrefix = IdentityPrefix + GetCredentialName();
 

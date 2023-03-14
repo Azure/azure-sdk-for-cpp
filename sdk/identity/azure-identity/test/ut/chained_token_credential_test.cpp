@@ -25,7 +25,7 @@ private:
   std::string m_token;
 
 public:
-  TestCredential(std::string token = "") : m_token(token) {}
+  TestCredential(std::string token = "") : TokenCredential("TestCredential"), m_token(token) {}
 
   mutable bool WasInvoked = false;
 
@@ -42,8 +42,6 @@ public:
     token.Token = m_token;
     return token;
   }
-
-  std::string GetCredentialName() const override { return "TestCredential"; }
 };
 } // namespace
 

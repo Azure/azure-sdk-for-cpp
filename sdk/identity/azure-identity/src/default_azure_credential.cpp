@@ -20,9 +20,8 @@ namespace {
 constexpr auto IdentityPrefix = "Identity: ";
 } // namespace
 
-std::string DefaultAzureCredential::GetCredentialName() const { return "DefaultAzureCredential"; }
-
 DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& options)
+    : TokenCredential("DefaultAzureCredential")
 {
   auto const credentialName = GetCredentialName();
 

@@ -82,13 +82,12 @@ void ThrowIfNotSafeCmdLineInput(
 }
 } // namespace
 
-std::string AzureCliCredential::GetCredentialName() const { return "AzureCliCredential"; }
-
 AzureCliCredential::AzureCliCredential(
     std::string tenantId,
     DateTime::duration cliProcessTimeout,
     Core::Credentials::TokenCredentialOptions const& options)
-    : m_tenantId(std::move(tenantId)), m_cliProcessTimeout(std::move(cliProcessTimeout))
+    : TokenCredential("AzureCliCredential"), m_tenantId(std::move(tenantId)),
+      m_cliProcessTimeout(std::move(cliProcessTimeout))
 {
   static_cast<void>(options);
 

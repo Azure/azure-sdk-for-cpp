@@ -85,12 +85,6 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
-    /**
-     * @brief Gets the name of the credential.
-     *
-     */
-    std::string GetCredentialName() const override;
-
 #if !defined(TESTING_BUILD)
   private:
 #else

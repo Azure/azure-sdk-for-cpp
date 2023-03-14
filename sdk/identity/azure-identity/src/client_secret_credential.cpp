@@ -15,15 +15,13 @@ using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
-std::string ClientSecretCredential::GetCredentialName() const { return "ClientSecretCredential"; }
-
 ClientSecretCredential::ClientSecretCredential(
     std::string tenantId,
     std::string const& clientId,
     std::string const& clientSecret,
     std::string const& authorityHost,
     TokenCredentialOptions const& options)
-    : m_clientCredentialCore(tenantId, authorityHost),
+    : TokenCredential("ClientSecretCredential"), m_clientCredentialCore(tenantId, authorityHost),
       m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),
       m_requestBody(
           std::string("grant_type=client_credentials&client_id=") + Url::Encode(clientId)

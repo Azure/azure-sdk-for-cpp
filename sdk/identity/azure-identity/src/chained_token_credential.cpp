@@ -17,8 +17,6 @@ namespace {
 constexpr auto IdentityPrefix = "Identity: ";
 } // namespace
 
-std::string ChainedTokenCredential::GetCredentialName() const { return "ChainedTokenCredential"; }
-
 ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
     : ChainedTokenCredential(sources, {})
 {
@@ -27,7 +25,7 @@ ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources s
 ChainedTokenCredential::ChainedTokenCredential(
     ChainedTokenCredential::Sources sources,
     std::string const& enclosingCredential)
-    : m_sources(std::move(sources))
+    : TokenCredential("ChainedTokenCredential"), m_sources(std::move(sources))
 {
   auto const credentialName = GetCredentialName();
   m_logPrefix = IdentityPrefix
