@@ -107,7 +107,7 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @deprecated Use the constructor with parameter.
      */
-    [[deprecated("Use the construtor with parameter.")]] TokenCredential()
+    [[deprecated("Use the constructor with parameter.")]] TokenCredential()
         : TokenCredential(std::string{})
     {
     }
