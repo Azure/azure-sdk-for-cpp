@@ -76,8 +76,7 @@ namespace Azure { namespace Core { namespace Credentials {
      */
     virtual AccessToken GetToken(
         TokenRequestContext const& tokenRequestContext,
-        Context const& context) const
-        = 0;
+        Context const& context) const = 0;
 
     /**
      * @brief Gets the name of the credential.
