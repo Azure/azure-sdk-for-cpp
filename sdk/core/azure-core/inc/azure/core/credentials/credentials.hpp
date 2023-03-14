@@ -97,8 +97,8 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @param credentialName Name of the credential for diagnostic messages.
      */
-    TokenCredential(std::string credentialName)
-        : m_credentialName(std::move(credentialName.empty() ? "Custom Credential" : credentialName))
+    TokenCredential(std::string const& credentialName)
+        : m_credentialName(credentialName.empty() ? "Custom Credential" : credentialName)
     {
     }
 
