@@ -7,6 +7,17 @@ cmake_minimum_required (VERSION 3.8)
 # Include sub-projects.
 add_subdirectory ("src")
 
+include(AzureVersion)
+include(AzureCodeCoverage)
+include(AzureTransportAdapters)
+include(AzureDoxygen)
+include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
+# Add create_map_file function
+include(CreateMapFile)
+
+
+
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
@@ -29,6 +40,8 @@ target_include_directories(
     CORE_AMQP
     azure/core/amqp/rtti.hpp
   )
+  # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+  create_code_coverage(amqp azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
