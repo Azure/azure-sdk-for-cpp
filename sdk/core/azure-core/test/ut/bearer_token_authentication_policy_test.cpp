@@ -16,7 +16,7 @@ private:
 public:
   explicit TestTokenCredential(
       std::shared_ptr<Azure::Core::Credentials::AccessToken const> accessToken)
-      : m_accessToken(accessToken)
+      : TokenCredential("TestTokenCredential"), m_accessToken(accessToken)
   {
   }
 

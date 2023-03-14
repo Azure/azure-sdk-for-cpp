@@ -13,6 +13,22 @@ using Azure::Core::Http::HttpMethod;
 using Azure::Identity::EnvironmentCredential;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
+TEST(EnvironmentCredential, GetCredentialName)
+{
+  CredentialTestHelper::EnvironmentOverride const env({
+      {"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+      {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+      {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+      {"AZURE_AUTHORITY_HOST", ""},
+      {"AZURE_USERNAME", ""},
+      {"AZURE_PASSWORD", ""},
+      {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+  });
+
+  EnvironmentCredential const cred;
+  EXPECT_EQ(cred.GetCredentialName(), "EnvironmentCredential");
+}
+
 TEST(EnvironmentCredential, RegularClientSecretCredential)
 {
   using Azure::Core::Diagnostics::Logger;

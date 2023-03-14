@@ -30,15 +30,19 @@ constexpr auto AzureClientSecretEnvVarName = "AZURE_CLIENT_SECRET";
 constexpr auto AzureAuthorityHostEnvVarName = "AZURE_AUTHORITY_HOST";
 constexpr auto AzureClientCertificatePathEnvVarName = "AZURE_CLIENT_CERTIFICATE_PATH";
 
-std::string const LogMsgPrefix = "Identity: EnvironmentCredential";
+constexpr auto IdentityPrefix = "Identity: ";
 
 void PrintCredentialCreationLogMessage(
+    std::string const& logMsgPrefix,
     std::vector<std::pair<char const*, char const*>> const& envVarsToParams,
     char const* credThatGetsCreated);
 } // namespace
 
 EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
+    : TokenCredential("EnvironmentCredential")
 {
+  auto const logMsgPrefix = IdentityPrefix + GetCredentialName();
+
   auto tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
   auto clientId = Environment::GetVariable(AzureClientIdEnvVarName);
 
@@ -54,6 +58,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
       if (!authority.empty())
       {
         PrintCredentialCreationLogMessage(
+            logMsgPrefix,
             {
                 {AzureTenantIdEnvVarName, "tenantId"},
                 {AzureClientIdEnvVarName, "clientId"},
@@ -72,6 +77,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
       else
       {
         PrintCredentialCreationLogMessage(
+            logMsgPrefix,
             {
                 {AzureTenantIdEnvVarName, "tenantId"},
                 {AzureClientIdEnvVarName, "clientId"},
@@ -88,6 +94,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
       if (!authority.empty())
       {
         PrintCredentialCreationLogMessage(
+            logMsgPrefix,
             {
                 {AzureTenantIdEnvVarName, "tenantId"},
                 {AzureClientIdEnvVarName, "clientId"},
@@ -106,6 +113,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
       else
       {
         PrintCredentialCreationLogMessage(
+            logMsgPrefix,
             {
                 {AzureTenantIdEnvVarName, "tenantId"},
                 {AzureClientIdEnvVarName, "clientId"},
@@ -124,7 +132,7 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
     auto const logLevel = Logger::Level::Warning;
     if (Log::ShouldWrite(logLevel))
     {
-      auto const basicMessage = LogMsgPrefix + " was not initialized with underlying credential";
+      auto const basicMessage = logMsgPrefix + " was not initialized with underlying credential";
 
       if (!Log::ShouldWrite(Logger::Level::Verbose))
       {
@@ -163,7 +171,8 @@ AccessToken EnvironmentCredential::GetToken(
 {
   if (!m_credentialImpl)
   {
-    auto const AuthUnavailable = LogMsgPrefix + " authentication unavailable. ";
+    auto const AuthUnavailable
+        = IdentityPrefix + GetCredentialName() + " authentication unavailable. ";
 
     {
       auto const logLevel = Logger::Level::Warning;
@@ -171,7 +180,7 @@ AccessToken EnvironmentCredential::GetToken(
       {
         Log::Write(
             logLevel,
-            AuthUnavailable + "See earlier EnvironmentCredential log messages for details.");
+            AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
       }
     }
 
@@ -184,6 +193,7 @@ AccessToken EnvironmentCredential::GetToken(
 
 namespace {
 void PrintCredentialCreationLogMessage(
+    std::string const& logMsgPrefix,
     std::vector<std::pair<char const*, char const*>> const& envVarsToParams,
     char const* credThatGetsCreated)
 {
@@ -193,7 +203,7 @@ void PrintCredentialCreationLogMessage(
     {
       Log::Write(
           Logger::Level::Informational,
-          LogMsgPrefix + " gets created with " + credThatGetsCreated + '.');
+          logMsgPrefix + " gets created with " + credThatGetsCreated + '.');
     }
 
     return;
@@ -224,7 +234,7 @@ void PrintCredentialCreationLogMessage(
 
   Log::Write(
       Logger::Level::Verbose,
-      LogMsgPrefix + ": " + envVars + " environment variables are set, so " + credThatGetsCreated
+      logMsgPrefix + ": " + envVars + " environment variables are set, so " + credThatGetsCreated
           + " with corresponding " + credParams + " gets created.");
 }
 } // namespace

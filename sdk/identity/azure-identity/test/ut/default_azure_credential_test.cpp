@@ -17,6 +17,28 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 namespace {
 } // namespace
 
+TEST(DefaultAzureCredential, GetCredentialName)
+{
+  CredentialTestHelper::EnvironmentOverride const env({
+      {"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+      {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+      {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+      {"AZURE_AUTHORITY_HOST", ""},
+      {"AZURE_USERNAME", ""},
+      {"AZURE_PASSWORD", ""},
+      {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+      {"MSI_ENDPOINT", ""},
+      {"MSI_SECRET", ""},
+      {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+      {"IMDS_ENDPOINT", ""},
+      {"IDENTITY_HEADER", "CLIENTSECRET"},
+      {"IDENTITY_SERVER_THUMBPRINT", ""},
+  });
+
+  DefaultAzureCredential const cred;
+  EXPECT_EQ(cred.GetCredentialName(), "DefaultAzureCredential");
+}
+
 TEST(DefaultAzureCredential, LogMessages)
 {
   using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;

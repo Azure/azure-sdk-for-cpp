@@ -34,15 +34,16 @@ public:
       HttpMethod httpMethod,
       Url url,
       TokenCredentialOptions const& options)
-      : m_httpMethod(std::move(httpMethod)), m_url(std::move(url)),
-        m_tokenCredentialImpl(new TokenCredentialImpl(options))
+      : TokenCredential("TokenCredentialImplTester"), m_httpMethod(std::move(httpMethod)),
+        m_url(std::move(url)), m_tokenCredentialImpl(new TokenCredentialImpl(options))
   {
   }
 
   explicit TokenCredentialImplTester(
       std::function<void()> throwingFunction,
       TokenCredentialOptions const& options)
-      : m_throwingFunction(std::move(throwingFunction)),
+      : TokenCredential("TokenCredentialImplTester"),
+        m_throwingFunction(std::move(throwingFunction)),
         m_tokenCredentialImpl(new TokenCredentialImpl(options))
   {
   }
@@ -63,7 +64,40 @@ public:
     });
   }
 };
+
+// Disable deprecation warning
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+// This credential is needed to test the default behavior when the customer has custom credential
+// they implemented while using earlier versions of the SDK which didn't have a constructor with
+// credentialName.
+class CustomTokenCredential : public TokenCredential {
+public:
+  AccessToken GetToken(TokenRequestContext const&, Context const&) const override { return {}; }
+};
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+
 } // namespace
+
+TEST(CustomTokenCredential, GetCredentialName)
+{
+  CustomTokenCredential cred;
+  EXPECT_EQ(cred.GetCredentialName(), "Custom Credential");
+}
 
 TEST(TokenCredentialImpl, Normal)
 {

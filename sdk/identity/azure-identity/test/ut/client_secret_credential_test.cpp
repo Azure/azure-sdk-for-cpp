@@ -12,6 +12,16 @@ using Azure::Identity::ClientSecretCredential;
 using Azure::Identity::ClientSecretCredentialOptions;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
+TEST(ClientSecretCredential, GetCredentialName)
+{
+  ClientSecretCredential const cred(
+      "01234567-89ab-cdef-fedc-ba8976543210",
+      "fedcba98-7654-3210-0123-456789abcdef",
+      "CLIENTSECRET");
+
+  EXPECT_EQ(cred.GetCredentialName(), "ClientSecretCredential");
+}
+
 TEST(ClientSecretCredential, Regular)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(

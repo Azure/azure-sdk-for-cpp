@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Improved diagnostics to utilize `Azure::Core::Credentials::TokenCredential::GetCredentialName()`.
+
 ## 1.5.0-beta.1 (2023-03-07)
 
 ### Features Added

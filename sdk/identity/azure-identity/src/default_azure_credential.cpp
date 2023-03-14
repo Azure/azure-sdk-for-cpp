@@ -17,10 +17,11 @@ using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_internal::Log;
 
 namespace {
-std::string const IdentityPrefix = "Identity: ";
-}
+constexpr auto IdentityPrefix = "Identity: ";
+} // namespace
 
 DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& options)
+    : TokenCredential("DefaultAzureCredential")
 {
   // Initializing m_credential below and not in the member initializer list to have a specific order
   // of log messages.
@@ -29,13 +30,16 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   {
     Log::Write(
         logLevel,
-        IdentityPrefix
-            + "Creating DefaultAzureCredential which combines mutiple parameterless credentials "
-              "into a single one (by using ChainedTokenCredential)."
-              "\nDefaultAzureCredential is only recommended for the early stages of development, "
+        std::string(IdentityPrefix) + "Creating " + GetCredentialName()
+            + " which combines mutiple parameterless credentials "
+              "into a single one (by using ChainedTokenCredential).\n"
+            + GetCredentialName()
+            + " is only recommended for the early stages of development, "
               "and not for usage in production environment."
-              "\nOnce the developer focuses on the Credentials and Authentication aspects of their "
-              "application, DefaultAzureCredential needs to be replaced with the credential that "
+              "\nOnce the developer focuses on the Credentials and Authentication aspects "
+              "of their application, "
+            + GetCredentialName()
+            + " needs to be replaced with the credential that "
               "is the better fit for the application.");
   }
 
@@ -47,9 +51,7 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   // Using the ChainedTokenCredential's private constructor for more detailed log messages.
   m_credentials.reset(new ChainedTokenCredential(
       ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred},
-      "DefaultAzureCredential", // extra args for the ChainedTokenCredential's private constructor.
-      std::vector<std::string>{
-          "EnvironmentCredential", "AzureCliCredential", "ManagedIdentityCredential"}));
+      GetCredentialName())); // extra arg for the ChainedTokenCredential's private constructor.
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;
@@ -64,9 +66,10 @@ AccessToken DefaultAzureCredential::GetToken(
   }
   catch (AuthenticationException const&)
   {
-    throw AuthenticationException("Failed to get token from DefaultAzureCredential."
-                                  "\nSee Azure::Core::Diagnostics::Logger for details "
-                                  "(https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/"
-                                  "identity/azure-identity#troubleshooting).");
+    throw AuthenticationException(
+        "Failed to get token from " + GetCredentialName()
+        + ".\nSee Azure::Core::Diagnostics::Logger for details "
+          "(https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/"
+          "identity/azure-identity#troubleshooting).");
   }
 }

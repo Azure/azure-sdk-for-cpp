@@ -30,9 +30,20 @@ std::vector<std::string> SplitString(const std::string& s, char separator);
 std::string ToString(std::vector<uint8_t> const& vec);
 } // namespace
 
+TEST(ClientCertificateCredential, GetCredentialName)
+{
+  TempCertFile const tempCertFile;
+  ClientCertificateCredential const cred(
+      "01234567-89ab-cdef-fedc-ba8976543210",
+      "fedcba98-7654-3210-0123-456789abcdef",
+      TempCertFile::Path);
+
+  EXPECT_EQ(cred.GetCredentialName(), "ClientCertificateCredential");
+}
+
 TEST(ClientCertificateCredential, Regular)
 {
-  TempCertFile tempCertFile;
+  TempCertFile const tempCertFile;
 
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -167,7 +178,7 @@ TEST(ClientCertificateCredential, Regular)
 
 TEST(ClientCertificateCredential, AzureStack)
 {
-  TempCertFile tempCertFile;
+  TempCertFile const tempCertFile;
 
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -294,7 +305,7 @@ TEST(ClientCertificateCredential, AzureStack)
 
 TEST(ClientCertificateCredential, Authority)
 {
-  TempCertFile tempCertFile;
+  TempCertFile const tempCertFile;
 
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
