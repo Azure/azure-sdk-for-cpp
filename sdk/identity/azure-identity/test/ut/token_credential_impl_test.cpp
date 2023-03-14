@@ -63,7 +63,19 @@ public:
     });
   }
 };
+
+class CustomTokenCredential : public TokenCredential {
+public:
+  AccessToken GetToken(TokenRequestContext const&, Context const&) const override { return {}; }
+};
+
 } // namespace
+
+TEST(CustomTokenCredential, GetCredentialName)
+{
+  CustomTokenCredential cred;
+  EXPECT_EQ(cred.GetCredentialName(), "Custom Credential");
+}
 
 TEST(TokenCredentialImpl, Normal)
 {

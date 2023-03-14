@@ -42,13 +42,19 @@ ChainedTokenCredential::ChainedTokenCredential(
     if (!m_sources.empty())
     {
       credSourceDetails = " with the following credentials: ";
+
       auto const sourcesSize = m_sources.size();
       for (size_t i = 0; i < (sourcesSize - 1); ++i)
       {
-        credSourceDetails += m_sources[i]->GetCredentialName() + ", ";
+        if (i != 0)
+        {
+          credSourceDetails += ", ";
+        }
+
+        credSourceDetails += m_sources[i]->GetCredentialName();
       }
 
-      credSourceDetails += m_sources.back()->GetCredentialName() + '.';
+      credSourceDetails += '.';
     }
 
     Log::Write(
