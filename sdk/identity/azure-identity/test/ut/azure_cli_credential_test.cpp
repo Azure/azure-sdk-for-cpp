@@ -158,11 +158,15 @@ TEST(AzureCliCredential, Error)
   Logger::SetListener(nullptr);
 }
 
+TEST(AzureCliCredential, GetCredentialName)
+{
+  AzureCliTestCredential const cred(EmptyOutputCommand);
+  EXPECT_EQ(cred.GetCredentialName(), "AzureCliCredential");
+}
+
 TEST(AzureCliCredential, EmptyOutput)
 {
   AzureCliTestCredential const azCliCred(EmptyOutputCommand);
-
-  EXPECT_EQ(azCliCred.GetCredentialName(), "AzureCliCredential");
 
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");

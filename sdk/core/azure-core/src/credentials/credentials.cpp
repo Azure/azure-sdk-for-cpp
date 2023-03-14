@@ -5,8 +5,4 @@
 
 using Azure::Core::Credentials::TokenCredential;
 
-namespace {
-std::string const DefaultCredentialName = "Custom Credential";
-}
-
-std::string TokenCredential::GetCredentialName() const { return DefaultCredentialName; }
+std::string TokenCredential::GetCredentialName() const { return "Custom Credential"; }

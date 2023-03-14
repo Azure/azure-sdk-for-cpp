@@ -14,11 +14,10 @@ using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_internal::Log;
 
 namespace {
-std::string const IdentityPrefix = "Identity: ";
-std::string const CredentialName = "ChainedTokenCredential";
+constexpr auto IdentityPrefix = "Identity: ";
 } // namespace
 
-std::string ChainedTokenCredential::GetCredentialName() const { return CredentialName; }
+std::string ChainedTokenCredential::GetCredentialName() const { return "ChainedTokenCredential"; }
 
 ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
     : ChainedTokenCredential(sources, {})
@@ -28,13 +27,14 @@ ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources s
 ChainedTokenCredential::ChainedTokenCredential(
     ChainedTokenCredential::Sources sources,
     std::string const& enclosingCredential)
-    : m_sources(std::move(sources)),
-      m_logPrefix(
-          IdentityPrefix
-          + (enclosingCredential.empty() ? CredentialName
-                                         : (enclosingCredential + " -> " + CredentialName))
-          + ": ")
+    : m_sources(std::move(sources))
 {
+  auto const credentialName = GetCredentialName();
+  m_logPrefix = IdentityPrefix
+      + (enclosingCredential.empty() ? credentialName
+                                     : (enclosingCredential + " -> " + credentialName))
+      + ": ";
+
   auto const logLevel = m_sources.empty() ? Logger::Level::Warning : Logger::Level::Informational;
   if (Log::ShouldWrite(logLevel))
   {
@@ -54,8 +54,8 @@ ChainedTokenCredential::ChainedTokenCredential(
     Log::Write(
         logLevel,
         IdentityPrefix
-            + (enclosingCredential.empty() ? (CredentialName + ": Created")
-                                           : (enclosingCredential + ": Created " + CredentialName))
+            + (enclosingCredential.empty() ? (credentialName + ": Created")
+                                           : (enclosingCredential + ": Created " + credentialName))
             + credSourceDetails);
   }
 }
@@ -125,5 +125,5 @@ AccessToken ChainedTokenCredential::GetToken(
     }
   }
 
-  throw AuthenticationException("Failed to get token from " + CredentialName + '.');
+  throw AuthenticationException("Failed to get token from " + GetCredentialName() + '.');
 }

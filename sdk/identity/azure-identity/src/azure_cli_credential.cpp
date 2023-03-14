@@ -51,10 +51,12 @@ using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
-std::string const CredentialName = "AzureCliCredential";
-std::string const MsgPrefix = "Identity: " + CredentialName;
+constexpr auto IdentityPrefix = "Identity: ";
 
-void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& description)
+void ThrowIfNotSafeCmdLineInput(
+    std::string const& credentialName,
+    std::string const& input,
+    std::string const& description)
 {
   for (auto const c : input)
   {
@@ -72,14 +74,15 @@ void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& des
         if (!std::isalnum(c, std::locale::classic()))
         {
           throw AuthenticationException(
-              MsgPrefix + ": Unsafe command line input found in " + description + ": " + input);
+              IdentityPrefix + credentialName + ": Unsafe command line input found in "
+              + description + ": " + input);
         }
     }
   }
 }
 } // namespace
 
-std::string AzureCliCredential::GetCredentialName() const { return CredentialName; }
+std::string AzureCliCredential::GetCredentialName() const { return "AzureCliCredential"; }
 
 AzureCliCredential::AzureCliCredential(
     std::string tenantId,
@@ -88,14 +91,16 @@ AzureCliCredential::AzureCliCredential(
     : m_tenantId(std::move(tenantId)), m_cliProcessTimeout(std::move(cliProcessTimeout))
 {
   static_cast<void>(options);
-  ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
+
+  auto const credentialName = GetCredentialName();
+  ThrowIfNotSafeCmdLineInput(credentialName, m_tenantId, "TenantID");
 
   auto const logLevel = Logger::Level::Informational;
   if (Log::ShouldWrite(logLevel))
   {
     Log::Write(
         logLevel,
-        MsgPrefix
+        IdentityPrefix + credentialName
             + " created.\n"
               "Successful creation does not guarantee further successful token retrieval.");
   }
@@ -117,7 +122,7 @@ AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
 std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::string const& tenantId)
     const
 {
-  ThrowIfNotSafeCmdLineInput(scopes, "Scopes");
+  ThrowIfNotSafeCmdLineInput(GetCredentialName(), scopes, "Scopes");
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
@@ -164,7 +169,8 @@ AccessToken AzureCliCredential::GetToken(
     }
     catch (std::exception const& e)
     {
-      auto const errorMsg = MsgPrefix + " didn't get the token: \"" + e.what() + '\"';
+      auto const errorMsg
+          = IdentityPrefix + GetCredentialName() + " didn't get the token: \"" + e.what() + '\"';
 
       auto const logLevel = Logger::Level::Warning;
       if (Log::ShouldWrite(logLevel))

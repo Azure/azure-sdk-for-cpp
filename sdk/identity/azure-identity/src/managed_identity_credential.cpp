@@ -7,16 +7,17 @@
 using namespace Azure::Identity;
 
 namespace {
-std::string const CredentialName = "ManagedIdentityCredential";
-
 std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
+    std::string const& credentialName,
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
   using namespace Azure::Core::Credentials;
   using namespace Azure::Identity::_detail;
   static std::unique_ptr<ManagedIdentitySource> (*managedIdentitySourceCreate[])(
-      std::string const& clientId, TokenCredentialOptions const& options)
+      std::string const& credName,
+      std::string const& clientId,
+      TokenCredentialOptions const& options)
       = {AppServiceV2019ManagedIdentitySource::Create,
          AppServiceV2017ManagedIdentitySource::Create,
          CloudShellManagedIdentitySource::Create,
@@ -27,7 +28,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   // For that reason, it is not possible to cover that execution branch in tests.
   for (auto create : managedIdentitySourceCreate) // LCOV_EXCL_LINE
   {
-    if (auto source = create(clientId, options))
+    if (auto source = create(credentialName, clientId, options))
     {
       return source;
     }
@@ -35,20 +36,20 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
 
   // LCOV_EXCL_START
   throw AuthenticationException(
-      CredentialName + " authentication unavailable. No Managed Identity endpoint found.");
+      credentialName + " authentication unavailable. No Managed Identity endpoint found.");
   // LCOV_EXCL_STOP
 }
 } // namespace
 
-std::string ManagedIdentityCredential::GetCredentialName() const { return CredentialName; }
+std::string ManagedIdentityCredential::GetCredentialName() const { return "ManagedIdentityCredential"; }
 
 ManagedIdentityCredential::~ManagedIdentityCredential() = default;
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : m_managedIdentitySource(CreateManagedIdentitySource(clientId, options))
 {
+  m_managedIdentitySource = CreateManagedIdentitySource(GetCredentialName(), clientId, options);
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

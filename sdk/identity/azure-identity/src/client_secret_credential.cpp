@@ -15,11 +15,7 @@ using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
-namespace {
-std::string CredentialName = "ClientSecretCredential";
-}
-
-std::string ClientSecretCredential::GetCredentialName() const { return CredentialName; }
+std::string ClientSecretCredential::GetCredentialName() const { return "ClientSecretCredential"; }
 
 ClientSecretCredential::ClientSecretCredential(
     std::string tenantId,

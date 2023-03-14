@@ -74,11 +74,10 @@ void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
 }
 
-namespace {
-std::string CredentialName = "ClientCertificateCredential";
+std::string ClientCertificateCredential::GetCredentialName() const
+{
+  return "ClientCertificateCredential";
 }
-
-std::string ClientCertificateCredential::GetCredentialName() const { return CredentialName; }
 
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
