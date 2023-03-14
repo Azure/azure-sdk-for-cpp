@@ -23,7 +23,8 @@
       "platform": "windows"
     },
     {
-      "name": "azure-uamqp-c"
+      "name": "azure-uamqp-c",
+      "platform": "!uwp"
     }
   ],
   "overrides": [
