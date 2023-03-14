@@ -21,6 +21,9 @@
     {
       "name": "wil",
       "platform": "windows"
+    },
+    {
+      "name": "azure-uamqp-c"
     }
   ],
   "overrides": [

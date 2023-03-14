@@ -1,0 +1,15 @@
+{
+  "sourceFilesToProcess": null,
+  "sourceFilesToSkip": [],
+  "additionalIncludeDirectories": [
+  ],
+  "additionalCompilerSwitches": [
+  ],
+  "allowInternal": true,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::",
+  "reviewName": "Azure Core AMQP API Review",
+  "serviceName": null,
+  "packageName": "azure-core-amqp-cpp"
+}

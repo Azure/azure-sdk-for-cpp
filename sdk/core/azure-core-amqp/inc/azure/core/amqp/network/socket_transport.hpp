@@ -1,0 +1,18 @@
+#pragma once
+
+#include "Transport.hpp"
+#include <exception>
+
+struct XIO_INSTANCE_TAG;
+
+namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+
+  class SocketTransport : public Azure::Core::_internal::Amqp::Network::Transport {
+
+  public:
+    SocketTransport();
+    SocketTransport(std::string const& hostName, uint16_t hostPort);
+    ~SocketTransport() = default;
+  };
+
+}}}}} // namespace Azure::Core::_internal::Amqp::Network
