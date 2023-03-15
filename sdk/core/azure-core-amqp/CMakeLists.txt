@@ -63,25 +63,25 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/amqp/session.cpp
 	src/amqp/link.cpp
 	src/amqp/message_sender.cpp
+	src/amqp/message_receiver.cpp
 	src/amqp/cancellable.cpp
 	src/amqp/connection_string_credential.cpp
 	src/amqp/claim_based_security.cpp
-	src/Models/amqp_value.cpp
-	src/Models/amqp_header.cpp
-	src/Models/amqp_message.cpp
-	src/Models/amqp_properties.cpp
-	src/Network/tls_transport.cpp
-	src/Network/socket_transport.cpp 
-	src/Network/socket_listener.cpp
-	src/Common/global_state.cpp
-	src/Network/transport.cpp 
-	src/Network/amqp_header_transport.cpp
-	src/amqp/message_receiver.cpp
-	src/Models/messaging_values.cpp
-	src/Network/sasl_transport.cpp
-	src/Models/TransferInstance.cpp
-	src/Models/message_source.cpp
-	src/Models/message_target.cpp
+	src/common/global_state.cpp
+	src/models/amqp_value.cpp
+	src/models/amqp_header.cpp
+	src/models/amqp_message.cpp
+	src/models/amqp_properties.cpp
+	src/models/messaging_values.cpp
+	src/models/TransferInstance.cpp
+	src/models/message_source.cpp
+	src/models/message_target.cpp
+	src/network/tls_transport.cpp
+	src/network/socket_transport.cpp 
+	src/network/socket_listener.cpp
+	src/network/transport.cpp 
+	src/network/amqp_header_transport.cpp
+	src/network/sasl_transport.cpp
 )
 
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
