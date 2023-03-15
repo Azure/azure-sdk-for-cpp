@@ -210,8 +210,6 @@ jobs:
                 targetType: inline
                 script: |
                   # If there is no vcpkg directory skip staging the vcpkg port artifacts
-                  Write-Host "Enumerate ports..."
-                  Get-Child-Item -Path build/vcpkg/ports
                   if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
                     Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
                     exit

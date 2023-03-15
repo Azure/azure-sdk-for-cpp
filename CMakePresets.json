@@ -59,7 +59,8 @@
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows"
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "BUILD_SHARED_LIBS": true
       },
       "architecture": {
         "value": "x64",
@@ -73,7 +74,8 @@
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x86-windows"
+        "VCPKG_TARGET_TRIPLET": "x86-windows",
+        "BUILD_SHARED_LIBS": true
       },
       "architecture": {
         "value": "x86",
@@ -194,7 +196,8 @@
         "ENABLE_PROXY_TESTS": false,
         "BUILD_SAMPLES": true,
         "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_TRANSPORT_WINHTTP": true
+        "BUILD_TRANSPORT_WINHTTP": true,
+        "BUILD_TRANSPORT_CURL": true
       }
     },
     {
