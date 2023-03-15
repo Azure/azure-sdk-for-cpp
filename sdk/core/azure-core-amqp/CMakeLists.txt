@@ -67,7 +67,7 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/Network/tls_transport.cpp
 	src/Network/socket_transport.cpp 
 	src/Network/socket_listener.cpp
-	src/common/global_state.cpp
+	src/Common/global_state.cpp
 	src/Network/transport.cpp 
 	src/AMQP/session.cpp
 	src/Network/amqp_header_transport.cpp
