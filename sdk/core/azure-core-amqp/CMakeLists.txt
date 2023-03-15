@@ -75,7 +75,7 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/models/message_source.cpp
 	src/models/message_target.cpp
 	src/models/messaging_values.cpp
-	src/models/TransferInstance.cpp
+	src/models/transfer_instance.cpp
 	src/network/amqp_header_transport.cpp
 	src/network/sasl_transport.cpp
 	src/network/socket_listener.cpp
