@@ -149,23 +149,23 @@ std::string TrimString(std::string s)
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-      std::string UserAgentGenerator::GenerateUserAgent(
-          std::string const& componentName,
-          std::string const& componentVersion,
-          std::string const& applicationId)
-      {
-        // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-        std::ostringstream telemetryId;
+    std::string UserAgentGenerator::GenerateUserAgent(
+        std::string const& componentName,
+        std::string const& componentVersion,
+        std::string const& applicationId)
+    {
+    // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+    std::ostringstream telemetryId;
 
-        if (!applicationId.empty())
-        {
-          telemetryId << TrimString(applicationId).substr(0, 24) << " ";
-        }
+    if (!applicationId.empty())
+    {
+        telemetryId << TrimString(applicationId).substr(0, 24) << " ";
+    }
 
-        static std::string const osVer = GetOSVersion();
-        telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer
-                    << ")";
+    static std::string const osVer = GetOSVersion();
+    telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer
+                << ")";
 
-        return telemetryId.str();
-      }
+    return telemetryId.str();
+    }
 }}}} // namespace Azure::Core::Http::_detail
