@@ -50,7 +50,7 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
 
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
       GetCredentialName(),
-      std::move(ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred}));
+      ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred});
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;
