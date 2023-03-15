@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed potentially high CPU usage on Windows.
+
 ### Other Changes
 
 ## 1.1.0 (2023-02-07)

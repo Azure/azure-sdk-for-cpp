@@ -13,6 +13,7 @@
 ### Bugs Fixed
 
 - Fixed a bug where `Host` request header is not set for non-default port (80, 443).
+- Fixed potentially high CPU usage on Windows.
 
 ### Other Changes
 

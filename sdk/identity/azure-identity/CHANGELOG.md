@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed potentially high CPU usage on Windows.
+
 ### Other Changes
 
 - Improved diagnostics to utilize `Azure::Core::Credentials::TokenCredential::GetCredentialName()`.

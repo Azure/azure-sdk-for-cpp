@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/datetime.hpp"
+#include "azure/core/internal/strings.hpp"
 #include "azure/core/platform.hpp"
 
 #include <algorithm>
@@ -320,7 +321,7 @@ T ParseNumber(
     for (; i < MaxChars; ++i)
     {
       auto const ch = str[*cursor + i];
-      if (std::isdigit(ch, std::locale::classic()))
+      if (Core::_internal::StringExtensions::IsDigit(ch))
       {
         value = (value * 10) + (static_cast<decltype(value)>(static_cast<unsigned char>(ch)) - '0');
         continue;
@@ -655,7 +656,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
             if (charsRead == 7 && (DateTimeLength - cursor) > 0)
             {
               auto const ch = dateTime[cursor];
-              if (std::isdigit(ch, std::locale::classic()))
+              if (Core::_internal::StringExtensions::IsDigit(ch))
               {
                 auto const num = static_cast<int>(static_cast<unsigned char>(ch) - '0');
                 if (num > 4)
@@ -677,7 +678,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
 
           for (auto i = DateTimeLength - cursor; i > 0; --i)
           {
-            if (std::isdigit(dateTime[cursor], std::locale::classic()))
+            if (Core::_internal::StringExtensions::IsDigit(dateTime[cursor]))
             {
               ++minDateTimeLength;
               ++cursor;

@@ -11,6 +11,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/strings.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/platform.hpp"
 #include <locale>
@@ -133,10 +134,14 @@ std::string GetOSVersion()
 
 std::string TrimString(std::string s)
 {
-  auto const isNotSpace = [](char c) { return !std::isspace(c, std::locale::classic()); };
+  s.erase(
+      s.begin(),
+      std::find_if_not(s.begin(), s.end(), Azure::Core::_internal::StringExtensions::IsSpace));
 
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), isNotSpace));
-  s.erase(std::find_if(s.rbegin(), s.rend(), isNotSpace).base(), s.end());
+  s.erase(
+      std::find_if_not(s.rbegin(), s.rend(), Azure::Core::_internal::StringExtensions::IsSpace)
+          .base(),
+      s.end());
 
   return s;
 }
@@ -144,22 +149,23 @@ std::string TrimString(std::string s)
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-  std::string UserAgentGenerator::GenerateUserAgent(
-      std::string const& componentName,
-      std::string const& componentVersion,
-      std::string const& applicationId)
-  {
-    // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-    std::ostringstream telemetryId;
+      std::string UserAgentGenerator::GenerateUserAgent(
+          std::string const& componentName,
+          std::string const& componentVersion,
+          std::string const& applicationId)
+      {
+        // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        std::ostringstream telemetryId;
 
-    if (!applicationId.empty())
-    {
-      telemetryId << TrimString(applicationId).substr(0, 24) << " ";
-    }
+        if (!applicationId.empty())
+        {
+          telemetryId << TrimString(applicationId).substr(0, 24) << " ";
+        }
 
-    static std::string const osVer = GetOSVersion();
-    telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer << ")";
+        static std::string const osVer = GetOSVersion();
+        telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer
+                    << ")";
 
-    return telemetryId.str();
-  }
+        return telemetryId.str();
+      }
 }}}} // namespace Azure::Core::Http::_detail

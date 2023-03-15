@@ -22,7 +22,7 @@ Url::Url(std::string const& url)
 
     if (schemePos != std::string::npos)
     {
-      m_scheme = Azure::Core::_internal::StringExtensions::ToLower(url.substr(0, schemePos));
+      m_scheme = _internal::StringExtensions::ToLower(url.substr(0, schemePos));
       urlIter += schemePos + SchemeEnd.length();
     }
   }
@@ -43,8 +43,8 @@ Url::Url(std::string const& url)
   if (*urlIter == ':')
   {
     ++urlIter;
-    auto const portIter = std::find_if_not(
-        urlIter, url.end(), [](auto c) { return std::isdigit(c, std::locale::classic()); });
+    auto const portIter
+        = std::find_if_not(urlIter, url.end(), _internal::StringExtensions::IsDigit);
 
     auto const portNumber = std::stoi(std::string(urlIter, portIter));
 
@@ -105,8 +105,8 @@ std::string Url::Decode(std::string const& value)
     {
       case '%':
         if ((valueSize - i) < 3 // need at least 3 characters: "%XY"
-            || !std::isxdigit(value[i + 1], std::locale::classic())
-            || !std::isxdigit(value[i + 2], std::locale::classic()))
+            || !_internal::StringExtensions::IsHexDigit(value[i + 1])
+            || !_internal::StringExtensions::IsHexDigit(value[i + 2]))
         {
           throw std::runtime_error("failed when decoding URL component");
         }
@@ -133,7 +133,7 @@ bool ShouldEncode(char c)
 {
   static std::unordered_set<char> const ExtraNonEncodableChars = {'-', '.', '_', '~'};
 
-  return !std::isalnum(c, std::locale::classic())
+  return !_internal::StringExtensions::IsAlphaNumeric(c)
       && ExtraNonEncodableChars.find(c) == ExtraNonEncodableChars.end();
 }
 } // namespace

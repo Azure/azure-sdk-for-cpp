@@ -3,6 +3,7 @@
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/strings.hpp"
 #include "azure/core/url.hpp"
 
 #include <algorithm>
@@ -32,7 +33,7 @@ bool IsInvalidHeaderNameChar(char c)
   static std::unordered_set<char> const HeaderNameExtraValidChars
       = {' ', '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~'};
 
-  return !std::isalnum(c, std::locale::classic())
+  return !Azure::Core::_internal::StringExtensions::IsAlphaNumeric(c)
       && HeaderNameExtraValidChars.find(c) == HeaderNameExtraValidChars.end();
 }
 } // namespace
