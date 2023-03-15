@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/models/transfer_instance.hpp"
+#include "azure/core/amqp/message_receiver.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
