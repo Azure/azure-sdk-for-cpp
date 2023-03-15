@@ -74,9 +74,8 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(log[0].first, Logger::Level::Verbose);
         EXPECT_EQ(
             log[0].second,
-            "Identity: Creating DefaultAzureCredential which combines mutiple parameterless "
-            "credentials "
-            "into a single one (by using ChainedTokenCredential)."
+            "Identity: Creating DefaultAzureCredential which combines "
+            "mutiple parameterless credentials into a single one."
             "\nDefaultAzureCredential is only recommended for the early stages of development, "
             "and not for usage in production environment."
             "\nOnce the developer focuses on the Credentials and Authentication aspects of their "
@@ -131,8 +130,7 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(log[8].first, Logger::Level::Informational);
         EXPECT_EQ(
             log[8].second,
-            "Identity: DefaultAzureCredential: Created ChainedTokenCredential "
-            "with the following credentials: "
+            "Identity: DefaultAzureCredential: Created with the following credentials: "
             "EnvironmentCredential, AzureCliCredential, ManagedIdentityCredential.");
 
         log.clear();
@@ -149,8 +147,7 @@ TEST(DefaultAzureCredential, LogMessages)
   EXPECT_EQ(log[3].first, Logger::Level::Informational);
   EXPECT_EQ(
       log[3].second,
-      "Identity: DefaultAzureCredential -> ChainedTokenCredential: "
-      "Successfully got token from EnvironmentCredential.");
+      "Identity: DefaultAzureCredential: Successfully got token from EnvironmentCredential.");
 
   Logger::SetListener(nullptr);
 }

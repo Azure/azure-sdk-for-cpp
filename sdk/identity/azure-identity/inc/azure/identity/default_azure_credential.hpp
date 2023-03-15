@@ -8,13 +8,15 @@
 
 #pragma once
 
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
-
-#include <azure/identity/chained_token_credential.hpp>
 
 #include <memory>
 
 namespace Azure { namespace Identity {
+  namespace _detail {
+    class ChainedTokenCredentialImpl;
+  }
 
   /**
    * @brief Default Azure Credential combines multiple credentials that depend on the setup
@@ -22,7 +24,7 @@ namespace Azure { namespace Identity {
    * sufficiently for at least one of such credentials to work, `DefaultAzureCredential` will work
    * as well.
    *
-   * @details This credential is using the #ChainedTokenCredential of 3 credentials in the order:
+   * @details This credential is using several credentials in the following order:
    * #EnvironmentCredential, #AzureCliCredential, and #ManagedIdentityCredential. Even though the
    * credentials being used and their order is documented, it may be changed in the future versions
    * of the SDK, potentially bringing breaking changes in its behavior.
@@ -68,7 +70,7 @@ namespace Azure { namespace Identity {
         Core::Context const& context) const override;
 
   private:
-    std::shared_ptr<ChainedTokenCredential> m_credentials;
+    std::unique_ptr<_detail::ChainedTokenCredentialImpl> m_impl;
   };
 
 }} // namespace Azure::Identity
