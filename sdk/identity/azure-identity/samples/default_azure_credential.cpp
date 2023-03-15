@@ -14,7 +14,7 @@ int main()
     // Step 1: Initialize Default Azure Credential.
     // Default Azure Credential is good for samples and initial development stages only.
     // It is not recommended used it in a production environment.
-    // To diagnose, see https://aka.ms/azsdkcpp/identity/troubleshooting
+    // To diagnose, see https://aka.ms/azsdk/cpp/identity/troubleshooting
 
     auto defaultAzureCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
