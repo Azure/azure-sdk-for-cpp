@@ -10,8 +10,17 @@
 #include <azure_c_shared_utility/xio.h>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+  namespace {
+    void EnsureGlobalStateInitialized()
+    {
+      // Force the global instance to exist. This is required to ensure that uAMQP and
+      // azure-c-shared-utility is
+      auto globalInstance = Common::_detail::GlobalState::GlobalStateInstance();
+      (void)globalInstance;
+    }
+  } // namespace
 
-  Transport::Transport() : m_xioInstance(nullptr) {}
+  Transport::Transport() : m_xioInstance(nullptr) { EnsureGlobalStateInitialized(); }
   Transport::Transport(XIO_HANDLE handle) : m_xioInstance{handle} {}
 
   void Transport::SetInstance(XIO_HANDLE handle)
@@ -19,10 +28,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     assert(m_xioInstance == nullptr);
     m_xioInstance = handle;
 
-    { // Force the global instance to exist.
-      auto globalInstance = Common::_detail::GlobalState::GlobalStateInstance();
-      (void)globalInstance;
-    }
+    EnsureGlobalStateInitialized();
   }
 
   Transport::~Transport()
