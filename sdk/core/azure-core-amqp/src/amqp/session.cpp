@@ -2,8 +2,8 @@
 // SPDX - License - Identifier : MIT
 
 #include "azure/core/amqp/session.hpp"
-#include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/claims_based_security.hpp"
+#include "azure/core/amqp/connection.hpp"
 #include <azure_uamqp_c/session.h>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {

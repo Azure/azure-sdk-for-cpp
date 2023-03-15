@@ -3,15 +3,15 @@
 
 #include <gtest/gtest.h>
 
-#include "azure/core/amqp/message_sender.hpp"
-#include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/session.hpp"
 #include "azure/core/amqp/common/async_operation_queue.hpp"
+#include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
+#include "azure/core/amqp/message_sender.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
+#include "azure/core/amqp/session.hpp"
 #include <functional>
 
 class TestLinks : public testing::Test {

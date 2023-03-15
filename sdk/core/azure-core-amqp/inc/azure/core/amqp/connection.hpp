@@ -7,11 +7,11 @@
 #include <memory>
 #include <string>
 
-#include "models/amqp_value.hpp"
-#include "network/Transport.hpp"
-#include "session.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
+#include "models/amqp_value.hpp"
+#include "network/transport.hpp"
+#include "session.hpp"
 #include <azure/core/credentials/credentials.hpp>
 
 struct CONNECTION_INSTANCE_TAG;
