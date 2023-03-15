@@ -13,9 +13,21 @@
 #include <stdexcept>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+
+  namespace {
+    void EnsureGlobalStateInitialized()
+    {
+      // Force the global instance to exist. This is required to ensure that uAMQP and
+      // azure-c-shared-utility is
+      auto globalInstance = Common::_detail::GlobalState::GlobalStateInstance();
+      (void)globalInstance;
+    }
+  } // namespace
+
   SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler)
       : m_socket{socketlistener_create(port)}, m_eventHandler{eventHandler}
   {
+    EnsureGlobalStateInitialized();
   }
 
   SocketListener::~SocketListener()

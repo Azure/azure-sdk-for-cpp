@@ -73,27 +73,27 @@
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_CORE_DLL) || (0 /*@AZ_CORE_DLL_INSTALLED_AS_PACKAGE@*/)
-#define AZ_CORE_BUILT_AS_DLL 1
+#if defined(AZ_CORE_AMQP_DLL) || (0 /*@AZ_CORE_AMQP_DLL_INSTALLED_AS_PACKAGE@*/)
+#define AZ_CORE_AMQP_BUILT_AS_DLL 1
 #else
-#define AZ_CORE_BUILT_AS_DLL 0
+#define AZ_CORE_AMQP_BUILT_AS_DLL 0
 #endif
 
-#if AZ_CORE_BUILT_AS_DLL
+#if AZ_CORE_AMQP_BUILT_AS_DLL
 #if defined(_MSC_VER)
-#if defined(AZ_CORE_BEING_BUILT)
-#define AZ_CORE_DLLEXPORT __declspec(dllexport)
+#if defined(AZ_CORE_AMQP_BEING_BUILT)
+#define AZ_CORE_AMQP_DLLEXPORT __declspec(dllexport)
 #else // !defined(AZ_CORE_BEING_BUILT)
-#define AZ_CORE_DLLEXPORT __declspec(dllimport)
+#define AZ_CORE_AMQP_DLLEXPORT __declspec(dllimport)
 #endif // AZ_CORE_BEING_BUILT
 #else // !defined(_MSC_VER)
-#define AZ_CORE_DLLEXPORT
+#define AZ_CORE_AMQP_DLLEXPORT
 #endif // _MSC_VER
 #else // !AZ_CORE_BUILT_AS_DLL
-#define AZ_CORE_DLLEXPORT
+#define AZ_CORE_AMQP_DLLEXPORT
 #endif // AZ_CORE_BUILT_AS_DLL
 
-#undef AZ_CORE_BUILT_AS_DLL
+#undef AZ_CORE_AMQP_BUILT_AS_DLL
 
 /**
  * @brief Azure SDK abstractions.
@@ -106,39 +106,15 @@ namespace Azure {
 namespace Core {
 
   /**
-   * @brief Credential-related abstractions.
+   * @brief AMQP-related abstractions.
    */
-  namespace Credentials {
-  }
-
-  /**
-   * @brief Cryptography-related abstractions.
-   */
-  namespace Cryptography {
-  }
-
-  /**
-   * @brief Diagnostics-related abstractions, such as logging.
-   */
-  namespace Diagnostics {
-  }
-
-  /**
-   * @brief Abstractions related to HTTP transport layer.
-   */
-  namespace Http {
+  namespace Amqp {
 
     /**
-     * @brief Abstractions related to controlling the behavior of HTTP requests.
+     * @Brief AMQP Public model types.
      */
-    namespace Policies {
+    namespace Models {
     }
-  } // namespace Http
-
-  /**
-   * @brief Abstractions related to communications with Azure.
-   */
-  namespace IO {
-  }
+  } // namespace Amqp
 } // namespace Core
 } // namespace Azure
