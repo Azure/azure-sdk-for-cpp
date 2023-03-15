@@ -59,7 +59,13 @@ set (AZURE_CORE_AMQP_HEADER
 )
 
 set(AZURE_CORE_AMQP_SOURCE
-	src/AMQP/connection.cpp
+	src/amqp/connection.cpp
+	src/amqp/session.cpp
+	src/amqp/link.cpp
+	src/amqp/message_sender.cpp
+	src/amqp/cancellable.cpp
+	src/amqp/connection_string_credential.cpp
+	src/amqp/claim_based_security.cpp
 	src/Models/amqp_value.cpp
 	src/Models/amqp_header.cpp
 	src/Models/amqp_message.cpp
@@ -69,17 +75,11 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/Network/socket_listener.cpp
 	src/Common/global_state.cpp
 	src/Network/transport.cpp 
-	src/AMQP/session.cpp
 	src/Network/amqp_header_transport.cpp
-	src/AMQP/message_receiver.cpp
+	src/amqp/message_receiver.cpp
 	src/Models/messaging_values.cpp
-	src/AMQP/link.cpp
-	src/AMQP/message_sender.cpp
-	src/AMQP/cancellable.cpp
 	src/Network/sasl_transport.cpp
 	src/Models/TransferInstance.cpp
-	src/AMQP/connection_string_credential.cpp
-	src/AMQP/claim_based_security.cpp
 	src/Models/message_source.cpp
 	src/Models/message_target.cpp
 )
