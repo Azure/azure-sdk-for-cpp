@@ -461,11 +461,6 @@
           "name": "MSVC_USE_STATIC_CRT",
           "value": "True",
           "type": "BOOL"
-        },
-        {
-          "name": "ENABLE_AZURE_CORE_AMQP",
-          "value": "True",
-          "type": "BOOL"
         }
       ]
     },

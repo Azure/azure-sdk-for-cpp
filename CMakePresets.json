@@ -198,6 +198,15 @@
       }
     },
     {
+      "name": "x64-static-debug-amqp-tests",
+      "displayName": "X64 Debug With Tests, static, AMQP",
+      "description": "Windows X64 Debug build with Tests and AMQP configured",
+      "inherits": "x64-static-debug-tests",
+      "cacheVariables": {
+        "ENABLE_AZURE_CORE_AMQP": true
+      }
+    },
+    {
       "name": "x64-static-debug-tests-curl",
       "displayName": "X64 Debug With Tests, static, libcurl",
       "description": "Windows X64 Debug build with Tests configured",
