@@ -179,6 +179,7 @@ jobs:
               -DBUILD_TESTING=OFF
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
+              -DENABLE_AZURE_CORE_AMQP=ON
 
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com
@@ -209,6 +210,8 @@ jobs:
                 targetType: inline
                 script: |
                   # If there is no vcpkg directory skip staging the vcpkg port artifacts
+                  Write-Host "Enumerate ports..."
+                  Get-Child-Item -Path build/vcpkg/ports
                   if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
                     Write-Host "No vcpkg port directory at build/vcpkg/ports/${{ artifact.VcpkgPortName }}"
                     exit
