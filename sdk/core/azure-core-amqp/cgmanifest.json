@@ -5,8 +5,8 @@
       "Component": {
         "Type": "git",
         "git": {
-          "RepositoryUrl": "https://github.com/open-telemetry/opentelemetry-cpp",
-          "CommitHash": "da2911cf4458c7068f967c17c65d07eeba449a08"
+          "RepositoryUrl": "https://github.com/Azure/azure-uamqp-c",
+          "CommitHash": "117c8378b80fdafec639dafb6693b7c044281abc"
         }
       }
     },

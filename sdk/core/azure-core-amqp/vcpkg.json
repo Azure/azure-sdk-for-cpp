@@ -1,13 +1,23 @@
 {
-  "name": "amqp-prototype",
-  "version": "1.0.0-beta.1",
+  "name": "azure-core-amqp",
+  "version-string": "1.0.0-beta.1",
+  "supports": "!uwp",
   "dependencies": [
+    {
+      "name": "azure-core-cpp",
+      "default-features": false
+    },
     {
       "name": "azure-uamqp-c",
       "platform": "!uwp"
     },
     {
-      "name": "azure-core-cpp"
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
     },
     {
       "name": "azure-identity-cpp"
