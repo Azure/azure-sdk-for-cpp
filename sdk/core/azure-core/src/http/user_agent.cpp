@@ -153,7 +153,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       std::string const& componentName,
       std::string const& componentVersion,
       std::string const& applicationId)
-    {
+  {
     // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
     std::ostringstream telemetryId;
 
