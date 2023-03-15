@@ -69,6 +69,6 @@ AccessToken DefaultAzureCredential::GetToken(
     throw AuthenticationException(
         "Failed to get token from " + GetCredentialName()
         + ".\nSee Azure::Core::Diagnostics::Logger for details "
-          "(https://aka.ms/azsdkcpp/identity/troubleshooting).");
+          "(https://aka.ms/azsdk/cpp/identity/troubleshooting).");
   }
 }
