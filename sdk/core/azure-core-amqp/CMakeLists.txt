@@ -37,9 +37,16 @@ find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 set (AZURE_CORE_AMQP_HEADER
+    inc/azure/core/amqp/cancellable.hpp
+    inc/azure/core/amqp/claims_based_security.hpp
     inc/azure/core/amqp/common/async_operation_queue.hpp
     inc/azure/core/amqp/common/completion_operation.hpp
     inc/azure/core/amqp/common/global_state.hpp
+    inc/azure/core/amqp/connection.hpp
+    inc/azure/core/amqp/connection_string_credential.hpp
+    inc/azure/core/amqp/link.hpp
+    inc/azure/core/amqp/message_receiver.hpp
+    inc/azure/core/amqp/message_sender.hpp
     inc/azure/core/amqp/models/amqp_header.hpp
     inc/azure/core/amqp/models/amqp_message.hpp
     inc/azure/core/amqp/models/amqp_properties.hpp
@@ -48,40 +55,33 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/models/message_target.hpp
     inc/azure/core/amqp/models/messaging_values.hpp
     inc/azure/core/amqp/models/transfer_instance.hpp
-    inc/azure/core/amqp/cancellable.hpp
-    inc/azure/core/amqp/claims_based_security.hpp
-    inc/azure/core/amqp/connection_string_credential.hpp
-    inc/azure/core/amqp/connection.hpp
-    inc/azure/core/amqp/link.hpp
-    inc/azure/core/amqp/message_receiver.hpp
-    inc/azure/core/amqp/message_sender.hpp
     inc/azure/core/amqp/session.hpp
 )
 
 set(AZURE_CORE_AMQP_SOURCE
-	src/amqp/connection.cpp
-	src/amqp/session.cpp
-	src/amqp/link.cpp
-	src/amqp/message_sender.cpp
-	src/amqp/message_receiver.cpp
 	src/amqp/cancellable.cpp
-	src/amqp/connection_string_credential.cpp
 	src/amqp/claim_based_security.cpp
+	src/amqp/connection.cpp
+	src/amqp/connection_string_credential.cpp
+	src/amqp/link.cpp
+	src/amqp/message_receiver.cpp
+	src/amqp/message_sender.cpp
+	src/amqp/session.cpp
 	src/common/global_state.cpp
-	src/models/amqp_value.cpp
 	src/models/amqp_header.cpp
 	src/models/amqp_message.cpp
 	src/models/amqp_properties.cpp
-	src/models/messaging_values.cpp
-	src/models/TransferInstance.cpp
+	src/models/amqp_value.cpp
 	src/models/message_source.cpp
 	src/models/message_target.cpp
-	src/network/tls_transport.cpp
-	src/network/socket_transport.cpp 
-	src/network/socket_listener.cpp
-	src/network/transport.cpp 
+	src/models/messaging_values.cpp
+	src/models/TransferInstance.cpp
 	src/network/amqp_header_transport.cpp
 	src/network/sasl_transport.cpp
+	src/network/socket_listener.cpp
+	src/network/socket_transport.cpp
+	src/network/tls_transport.cpp
+	src/network/transport.cpp 
 )
 
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
