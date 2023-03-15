@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "Connection.hpp"
+#include "connection.hpp"
 #include "cancellable.hpp"
 #include "claims_based_security.hpp"
 #include "common/async_operation_queue.hpp"

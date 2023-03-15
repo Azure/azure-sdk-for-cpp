@@ -7,9 +7,9 @@
 #include <memory>
 #include <string>
 
-#include "Models/amqp_value.hpp"
-#include "Network/Transport.hpp"
-#include "Session.hpp"
+#include "models/amqp_value.hpp"
+#include "network/Transport.hpp"
+#include "session.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include <azure/core/credentials/credentials.hpp>

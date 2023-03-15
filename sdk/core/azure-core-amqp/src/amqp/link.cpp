@@ -1,9 +1,9 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX - License - Identifier : MIT
 
-#include "azure/core/amqp/Link.hpp"
-#include "azure/core/amqp//message_sender.hpp"
-#include "azure/core/amqp/Session.hpp"
+#include "azure/core/amqp/link.hpp"
+#include "azure/core/amqp/message_sender.hpp"
+#include "azure/core/amqp/session.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
