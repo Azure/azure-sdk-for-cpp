@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "azure/core/amqp/Session.hpp"
+#include "azure/core/amqp/session.hpp"
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"

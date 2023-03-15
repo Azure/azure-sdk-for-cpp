@@ -1,7 +1,7 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX - License - Identifier : MIT
 
-#include "azure/core/amqp/Session.hpp"
+#include "azure/core/amqp/session.hpp"
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/connection.hpp"

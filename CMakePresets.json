@@ -185,6 +185,19 @@
       }
     },
     {
+      "name": "x64-debug-tests",
+      "displayName": "X64 Debug With Tests, static, winhttp",
+      "description": "Windows X64 Debug build with Tests configured",
+      "inherits": "x64-debug",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "ENABLE_PROXY_TESTS": false,
+        "BUILD_SAMPLES": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "BUILD_TRANSPORT_WINHTTP": true
+      }
+    },
+    {
       "name": "x64-static-debug-tests",
       "displayName": "X64 Debug With Tests, static, winhttp",
       "description": "Windows X64 Debug build with Tests configured",
@@ -202,6 +215,15 @@
       "displayName": "X64 Debug With Tests, static, AMQP",
       "description": "Windows X64 Debug build with Tests and AMQP configured",
       "inherits": "x64-static-debug-tests",
+      "cacheVariables": {
+        "ENABLE_AZURE_CORE_AMQP": true
+      }
+    },
+    {
+      "name": "x64-debug-amqp-tests",
+      "displayName": "X64 Debug With Tests, AMQP",
+      "description": "Windows X64 Debug build with Tests and AMQP configured",
+      "inherits": "x64-debug-tests",
       "cacheVariables": {
         "ENABLE_AZURE_CORE_AMQP": true
       }
