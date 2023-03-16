@@ -12,7 +12,7 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where `Host` request header is not set for non-default port (80, 443).
+- [[#4213]](https://github.com/Azure/azure-sdk-for-cpp/issues/4213) Fixed a bug where `Host` request header is not set for non-default port (80, 443).
 
 ### Other Changes
 
