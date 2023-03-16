@@ -67,7 +67,7 @@ TEST(Context, BasicStdString)
   Context::Key const key;
 
   // New context from previous
-  auto c2 = context.WithValue<std::string&>(key, s);
+  auto c2 = context.WithValue(key, s);
   std::string value;
   EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
   EXPECT_EQ(value, s);
