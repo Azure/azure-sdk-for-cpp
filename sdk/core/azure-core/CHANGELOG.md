@@ -13,7 +13,7 @@
 ### Bugs Fixed
 
 - Fixed a bug where `Host` request header is not set for non-default port (80, 443).
-- Fixed potentially high CPU usage on Windows.
+- [[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443) Fixed potentially high CPU usage on Windows.
 
 ### Other Changes
 
