@@ -6,6 +6,8 @@
 #include "azure/core/amqp/message_sender.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "azure/core/amqp/private/session_impl.hpp"
+
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/link.h>
@@ -22,7 +24,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       : m_session{session}, m_source(source), m_target(target)
   {
     m_link = link_create(
-        session,
+        *session.GetImpl(),
         name.c_str(),
         role == SessionRole::Sender ? role_sender : role_receiver,
         Azure::Core::_internal::Amqp::Models::Messaging::CreateSource(source),
@@ -39,7 +41,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       : m_session{session}, m_source(source), m_target(target)
   {
     m_link = link_create_from_endpoint(
-        session,
+        *session.GetImpl(),
         linkEndpoint.Release(),
         name.c_str(),
         role == SessionRole::Sender ? role_sender : role_receiver,

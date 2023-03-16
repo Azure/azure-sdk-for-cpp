@@ -33,7 +33,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   class Transfer;
   namespace _detail {
     enum class SessionRole;
-  }
+    class SessionImpl;
+  } // namespace _detail
 
   struct SessionOptions
   {
@@ -73,16 +74,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   };
 
   // A "Link Endpoint" is an intermediate type used to create new Links in an OnLinkAttached
-  // callback. Note that LinkEndpoints do not support copy semantics, and the only way to retrieve
-  // the underlying LINK_ENDPOINT_INSTANCE_TAG is to call Release(). That is because the primary use
-  // scenario for a LinkEndpoint is to call link_create_from_endpoint, and link_create_from_endpoint
-  // takes ownership of the underlying LINK_ENDPOINT object.
+  // callback. Note that LinkEndpoints do not support copy semantics, and the only way to
+  // retrieve the underlying LINK_ENDPOINT_INSTANCE_TAG is to call Release(). That is because
+  // the primary use scenario for a LinkEndpoint is to call link_create_from_endpoint, and
+  // link_create_from_endpoint takes ownership of the underlying LINK_ENDPOINT object.
   struct LinkEndpoint
   {
     LINK_ENDPOINT_INSTANCE_TAG* m_endpoint;
     LinkEndpoint(LINK_ENDPOINT_INSTANCE_TAG* endpoint) : m_endpoint{endpoint} {};
-    /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As such,
-     * we are not allowed to free it.*/
+    /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As
+     * such, we are not allowed to free it.*/
     ~LinkEndpoint(){};
     LinkEndpoint(Endpoint const&) = delete;
     LinkEndpoint& operator=(LinkEndpoint const&) = delete;
@@ -139,26 +140,21 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     Session(Connection const& parentConnection, Endpoint& newEndpoint, SessionEvents* eventHandler);
     Session(Connection const& parentConnection, SessionEvents* eventHandler);
+    Session(std::shared_ptr<_detail::SessionImpl> impl) : m_impl{impl} {}
     ~Session() noexcept;
 
     Session(Session const&) = delete;
     Session& operator=(Session const&) = delete;
     Session(Session&&) noexcept = delete;
     Session& operator=(Session&&) noexcept = delete;
-    operator SESSION_INSTANCE_TAG*() const { return m_session; }
-
-    //// Authenticate the client with the server using the specified credential type and token.
-    // void Authenticate(
-    //     CredentialType credentialType,
-    //     std::string const& audience,
-    //     std::string const& token);
-
+    //    operator SESSION_INSTANCE_TAG*() const { return m_session; }
+    std::shared_ptr<_detail::SessionImpl> GetImpl() const { return m_impl; }
     void SetIncomingWindow(uint32_t incomingWindow);
-    uint32_t GetIncomingWindow();
+    uint32_t GetIncomingWindow() const;
     void SetOutgoingWindow(uint32_t outgoingWindow);
-    uint32_t GetOutgoingWindow();
+    uint32_t GetOutgoingWindow() const;
     void SetHandleMax(uint32_t handleMax);
-    uint32_t GetHandleMax();
+    uint32_t GetHandleMax() const;
 
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
@@ -176,28 +172,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
         uint32_t* deliveryNumber,
         Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete);
-#if 0
-    MOCKABLE_FUNCTION(, void, session_destroy, SESSION_HANDLE, session);
-    MOCKABLE_FUNCTION(, SESSION_SEND_TRANSFER_RESULT, session_send_transfer, LINK_ENDPOINT_HANDLE, link_endpoint, TRANSFER_HANDLE, transfer, PAYLOAD*, payloads, size_t, payload_count, delivery_number*, delivery_id, ON_SEND_COMPLETE, on_send_complete, void*, callback_context);
-
-#endif
 
   private:
-    Session();
-    SESSION_INSTANCE_TAG* m_session;
-    Connection const& m_connectionToPoll;
-    SessionEvents* m_eventHandler{};
-    std::shared_ptr<Cbs> m_claimsBasedSecurity;
-
-    //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;
-
-    static bool OnLinkAttachedFn(
-        void* context,
-        LINK_ENDPOINT_INSTANCE_TAG* newLinkEndpoint,
-        const char* name,
-        bool role,
-        AMQP_VALUE_DATA_TAG* source,
-        AMQP_VALUE_DATA_TAG* target,
-        AMQP_VALUE_DATA_TAG* properties);
+    std::shared_ptr<_detail::SessionImpl> m_impl;
   };
 }}}} // namespace Azure::Core::_internal::Amqp

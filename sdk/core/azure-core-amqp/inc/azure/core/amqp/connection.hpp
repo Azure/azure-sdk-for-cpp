@@ -14,21 +14,11 @@
 #include "session.hpp"
 #include <azure/core/credentials/credentials.hpp>
 
-extern "C"
-{
-  struct CONNECTION_INSTANCE_TAG;
-  struct ENDPOINT_INSTANCE_TAG;
-  struct AMQP_VALUE_DATA_TAG;
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4471)
-#endif
-  enum CONNECTION_STATE_TAG;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-}
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
+
+  namespace _detail {
+    class ConnectionImpl;
+  }
 
   class Session;
 
@@ -133,8 +123,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     Connection& operator=(Connection const&) = delete;
     Connection(Connection&&) noexcept = delete;
     Connection& operator=(Connection&&) = delete;
+    Connection(std::shared_ptr<_detail::ConnectionImpl> impl) : m_impl{impl} {}
 
-    operator CONNECTION_INSTANCE_TAG*() const { return m_connection; }
+    std::shared_ptr<_detail::ConnectionImpl> GetImpl() const { return m_impl; }
 
     void Open();
     void Listen();
@@ -146,17 +137,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     void Poll() const;
 
-    uint32_t GetMaxFrameSize();
-    uint32_t GetRemoteMaxFrameSize();
+    uint32_t GetMaxFrameSize() const;
+    uint32_t GetRemoteMaxFrameSize() const;
     void SetMaxFrameSize(uint32_t frameSize);
-    uint16_t GetMaxChannel();
+    uint16_t GetMaxChannel() const;
     void SetMaxChannel(uint16_t frameSize);
-    std::chrono::milliseconds GetIdleTimeout();
+    std::chrono::milliseconds GetIdleTimeout() const;
     void SetIdleTimeout(std::chrono::milliseconds timeout);
     void SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio);
 
     void SetProperties(Azure::Core::Amqp::Models::Value properties);
-    Azure::Core::Amqp::Models::Value GetProperties();
+    Azure::Core::Amqp::Models::Value GetProperties() const;
     uint64_t HandleDeadlines(); // ???
     Endpoint CreateEndpoint();
     void StartEndpoint(Endpoint const& endpoint);
@@ -172,46 +163,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     void SetTrace(bool enableTrace);
 
   private:
-    std::shared_ptr<Network::Transport> m_transport;
-    CONNECTION_INSTANCE_TAG* m_connection{};
-    std::string m_hostName;
-    std::string m_containerId;
-    Common::AsyncOperationQueue<std::unique_ptr<Session>> m_newSessionQueue;
-    ConnectionEvents* m_eventHandler{};
-    CredentialType m_credentialType;
-    std::shared_ptr<ConnectionStringCredential> m_credential{};
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential{};
-
-    Connection(
-        ConnectionEvents* eventHandler,
-        CredentialType credentialType,
-        ConnectionOptions const& options);
-
-    void CreateUnderlyingConnection(std::string const& hostName, ConnectionOptions const& options);
-
-    static void OnEndpointFrameReceivedFn(
-        void* context,
-        AMQP_VALUE_DATA_TAG* value,
-        uint32_t framePayloadSize,
-        uint8_t* payloadBytes);
-    static void OnConnectionStateChangedFn(
-        void* context,
-        CONNECTION_STATE_TAG newState,
-        CONNECTION_STATE_TAG oldState);
-    // Note: We cannot take ownership of this instance tag.
-    static bool OnNewEndpointFn(void* context, ENDPOINT_INSTANCE_TAG* endpoint);
-    static void OnIoErrorFn(void* context);
-
-#if 0
-    
-    MOCKABLE_FUNCTION(, CONNECTION_HANDLE, connection_create, XIO_HANDLE, io, const char*, hostname, const char*, container_id, ON_NEW_ENDPOINT, on_new_endpoint, void*, callback_context);
-    MOCKABLE_FUNCTION(, CONNECTION_HANDLE, connection_create2, XIO_HANDLE, xio, const char*, hostname, const char*, container_id, ON_NEW_ENDPOINT, on_new_endpoint, void*, callback_context, ON_CONNECTION_STATE_CHANGED, on_connection_state_changed, void*, on_connection_state_changed_context, ON_IO_ERROR, on_io_error, void*, on_io_error_context);
-    MOCKABLE_FUNCTION(, void, connection_destroy, CONNECTION_HANDLE, connection);
-    
-
-    MOCKABLE_FUNCTION(, ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE, connection_subscribe_on_connection_close_received, CONNECTION_HANDLE, connection, ON_CONNECTION_CLOSE_RECEIVED, on_connection_close_received, void*, context);
-    MOCKABLE_FUNCTION(, void, connection_unsubscribe_on_connection_close_received, ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE, event_subscription);
-
-#endif
+    std::shared_ptr<_detail::ConnectionImpl> m_impl;
   };
 }}}} // namespace Azure::Core::_internal::Amqp
