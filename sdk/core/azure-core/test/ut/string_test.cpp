@@ -48,7 +48,7 @@ TEST(String, isDigit)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::IsDigit(c) == std::isdigit(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::IsDigit(c), std::isdigit(c, std::locale::classic()));
   }
 }
 
@@ -58,7 +58,7 @@ TEST(String, isHexDigit)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::IsHexDigit(c) == std::isxdigit(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::IsHexDigit(c), std::isxdigit(c, std::locale::classic()));
   }
 }
 
@@ -68,7 +68,7 @@ TEST(String, isAlphaNumeric)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::IsAlphaNumeric(c) == std::isalnum(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::IsAlphaNumeric(c), std::isalnum(c, std::locale::classic()));
   }
 }
 
@@ -78,7 +78,7 @@ TEST(String, isSpace)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::IsSpace(c) == std::isspace(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::IsSpace(c), std::isspace(c, std::locale::classic()));
   }
 }
 
@@ -88,7 +88,7 @@ TEST(String, isPrintable)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::IsPrintable(c) == std::isprint(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::IsPrintable(c), std::isprint(c, std::locale::classic()));
   }
 }
 
