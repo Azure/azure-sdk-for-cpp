@@ -11,7 +11,7 @@ using namespace Azure::Core;
 TEST(Uuid, Basic)
 {
   auto uuid = Uuid::CreateUuid();
-  EXPECT_TRUE(uuid.ToString().length() == 36);
+  EXPECT_EQ(uuid.ToString().length(), 36);
 }
 
 TEST(Uuid, Randomness)
@@ -25,7 +25,7 @@ TEST(Uuid, Randomness)
     // ret.second == false means the insert failed.
     EXPECT_TRUE(ret.second);
   }
-  EXPECT_TRUE(uuids.size() == size);
+  EXPECT_EQ(uuids.size(), size);
 }
 
 TEST(Uuid, separatorPosition)
