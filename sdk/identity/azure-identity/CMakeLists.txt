@@ -62,6 +62,7 @@ set(
 
 set(
   AZURE_IDENTITY_SOURCE
+    src/private/chained_token_credential_impl.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
     src/private/token_credential_impl.hpp

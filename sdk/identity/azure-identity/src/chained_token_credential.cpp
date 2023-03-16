@@ -2,36 +2,42 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/identity/chained_token_credential.hpp"
-
 #include "azure/core/internal/diagnostics/log.hpp"
+#include "private/chained_token_credential_impl.hpp"
 
 #include <utility>
 
 using namespace Azure::Identity;
+using namespace Azure::Identity::_detail;
 using namespace Azure::Core::Credentials;
 using Azure::Core::Context;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_internal::Log;
 
+ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
+    : TokenCredential("ChainedTokenCredential"),
+      m_impl(std::make_unique<ChainedTokenCredentialImpl>(GetCredentialName(), std::move(sources)))
+{
+}
+
+ChainedTokenCredential::~ChainedTokenCredential() = default;
+
+AccessToken ChainedTokenCredential::GetToken(
+    TokenRequestContext const& tokenRequestContext,
+    Context const& context) const
+{
+  return m_impl->GetToken(GetCredentialName(), tokenRequestContext, context);
+}
+
 namespace {
 constexpr auto IdentityPrefix = "Identity: ";
 } // namespace
 
-ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
-    : ChainedTokenCredential(sources, {})
+ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
+    std::string const& credentialName,
+    ChainedTokenCredential::Sources&& sources)
+    : m_sources(std::move(sources))
 {
-}
-
-ChainedTokenCredential::ChainedTokenCredential(
-    ChainedTokenCredential::Sources sources,
-    std::string const& enclosingCredential)
-    : TokenCredential("ChainedTokenCredential"), m_sources(std::move(sources))
-{
-  m_logPrefix = IdentityPrefix
-      + (enclosingCredential.empty() ? GetCredentialName()
-                                     : (enclosingCredential + " -> " + GetCredentialName()))
-      + ": ";
-
   auto const logLevel = m_sources.empty() ? Logger::Level::Warning : Logger::Level::Informational;
   if (Log::ShouldWrite(logLevel))
   {
@@ -54,19 +60,12 @@ ChainedTokenCredential::ChainedTokenCredential(
       credSourceDetails += '.';
     }
 
-    Log::Write(
-        logLevel,
-        IdentityPrefix
-            + (enclosingCredential.empty()
-                   ? (GetCredentialName() + ": Created")
-                   : (enclosingCredential + ": Created " + GetCredentialName()))
-            + credSourceDetails);
+    Log::Write(logLevel, IdentityPrefix + credentialName + ": Created" + credSourceDetails);
   }
 }
 
-ChainedTokenCredential::~ChainedTokenCredential() = default;
-
-AccessToken ChainedTokenCredential::GetToken(
+AccessToken ChainedTokenCredentialImpl::GetToken(
+    std::string const& credentialName,
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
@@ -78,7 +77,9 @@ AccessToken ChainedTokenCredential::GetToken(
     if (Log::ShouldWrite(logLevel))
     {
       Log::Write(
-          logLevel, m_logPrefix + "Authentication did not succeed: List of sources is empty.");
+          logLevel,
+          IdentityPrefix + credentialName
+              + ": Authentication did not succeed: List of sources is empty.");
     }
   }
   else
@@ -95,8 +96,8 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Successfully got token from " + m_sources[i]->GetCredentialName()
-                    + '.');
+                IdentityPrefix + credentialName + ": Successfully got token from "
+                    + m_sources[i]->GetCredentialName() + '.');
           }
         }
 
@@ -110,8 +111,8 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Failed to get token from " + m_sources[i]->GetCredentialName() + ": "
-                    + e.what());
+                IdentityPrefix + credentialName + ": Failed to get token from "
+                    + m_sources[i]->GetCredentialName() + ": " + e.what());
           }
         }
 
@@ -122,12 +123,13 @@ AccessToken ChainedTokenCredential::GetToken(
           {
             Log::Write(
                 logLevel,
-                m_logPrefix + "Didn't succeed to get a token from any credential in the chain.");
+                IdentityPrefix + credentialName
+                    + ": Didn't succeed to get a token from any credential in the chain.");
           }
         }
       }
     }
   }
 
-  throw AuthenticationException("Failed to get token from " + GetCredentialName() + '.');
+  throw AuthenticationException("Failed to get token from " + credentialName + '.');
 }

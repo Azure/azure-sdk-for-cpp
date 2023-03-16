@@ -6,6 +6,7 @@
 #include "azure/identity/azure_cli_credential.hpp"
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
+#include "private/chained_token_credential_impl.hpp"
 
 #include "azure/core/internal/diagnostics/log.hpp"
 
@@ -31,8 +32,7 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
     Log::Write(
         logLevel,
         std::string(IdentityPrefix) + "Creating " + GetCredentialName()
-            + " which combines mutiple parameterless credentials "
-              "into a single one (by using ChainedTokenCredential).\n"
+            + " which combines mutiple parameterless credentials into a single one.\n"
             + GetCredentialName()
             + " is only recommended for the early stages of development, "
               "and not for usage in production environment."
@@ -48,10 +48,9 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   auto const azCliCred = std::make_shared<AzureCliCredential>(options);
   auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
 
-  // Using the ChainedTokenCredential's private constructor for more detailed log messages.
-  m_credentials.reset(new ChainedTokenCredential(
-      ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred},
-      GetCredentialName())); // extra arg for the ChainedTokenCredential's private constructor.
+  m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
+      GetCredentialName(),
+      ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred});
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;
@@ -62,7 +61,7 @@ AccessToken DefaultAzureCredential::GetToken(
 {
   try
   {
-    return m_credentials->GetToken(tokenRequestContext, context);
+    return m_impl->GetToken(GetCredentialName(), tokenRequestContext, context);
   }
   catch (AuthenticationException const&)
   {
