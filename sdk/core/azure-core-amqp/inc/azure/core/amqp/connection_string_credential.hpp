@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::string const& GetSharedAccessKey() const { return m_sharedAccessKey; }
     std::string const& GetEntityPath() const { return m_entityPath; }
     std::string const& GetHostName() const { return m_hostName; }
-    uint16_t const GetPort() const { return m_port; }
+    uint16_t GetPort() const { return m_port; }
 
   private:
     void ParseConnectionString(const std::string& connectionString);
@@ -64,14 +64,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::string GetAudience();
 
     // Return a SASL transport configured for SASL Anonymous.
-    virtual std::shared_ptr<Network::Transport> GetTransport() const;
+    virtual std::shared_ptr<Network::Transport> GetTransport() const override;
   };
 
   class SaslPlainConnectionStringCredential : public ConnectionStringCredential {
   public:
     SaslPlainConnectionStringCredential(const std::string& connectionString);
 
-    std::shared_ptr<Network::Transport> GetTransport() const;
+    std::shared_ptr<Network::Transport> GetTransport() const override;
     CredentialType GetCredentialType() const override { return CredentialType::SaslPlain; }
 
   private:

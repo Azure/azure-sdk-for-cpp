@@ -17,7 +17,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     cbs_set_trace(m_cbs, true);
   }
 
-  Cbs::~Cbs()
+  Cbs::~Cbs() noexcept
   {
     if (m_cbs)
     {
@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   void Cbs::OnCbsErrorFn(void* context)
   {
     auto cbs = static_cast<Cbs*>(const_cast<void*>(context));
-    cbs;
+    (void)cbs;
   }
 
   void Cbs::OnCbsOpenCompleteFn(void* context, CBS_OPEN_COMPLETE_RESULT openCompleteResult)
