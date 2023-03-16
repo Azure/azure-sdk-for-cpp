@@ -4,16 +4,15 @@
 #pragma once
 
 #include "azure/core/amqp/message_sender.hpp"
+#include <azure_uamqp_c/message_sender.h>
 #include <tuple>
 
 extern "C"
 {
-  struct MESSAGE_SENDER_INSTANCE_TAG;
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4471)
 #endif
-  enum MESSAGE_SENDER_STATE_TAG;
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
@@ -64,13 +63,13 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     static void OnMessageSenderStateChangedFn(
         void* context,
-        MESSAGE_SENDER_STATE_TAG newState,
-        MESSAGE_SENDER_STATE_TAG oldState);
+        MESSAGE_SENDER_STATE newState,
+        MESSAGE_SENDER_STATE oldState);
 
     virtual void OnStateChanged(MessageSenderState newState, MessageSenderState oldState);
     void Authenticate(CredentialType type, std::string const& audience, std::string const& token);
 
-    MESSAGE_SENDER_INSTANCE_TAG* m_messageSender{};
+    MESSAGE_SENDER_HANDLE m_messageSender{};
     std::unique_ptr<_detail::Link> m_link;
 
     Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;

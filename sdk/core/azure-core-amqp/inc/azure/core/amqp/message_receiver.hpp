@@ -13,21 +13,10 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <vector>
 
-extern "C"
-{
-  struct MESSAGE_RECEIVER_INSTANCE_TAG;
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4471)
-#endif
-  enum MESSAGE_RECEIVER_STATE_TAG;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-  struct AMQP_VALUE_DATA_TAG;
-  struct MESSAGE_INSTANCE_TAG;
-}
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
+  namespace _detail {
+    class MessageReceiverImpl;
+  }
 
   enum class MessageReceiverState
   {
@@ -113,12 +102,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& receiverSource,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* receiverEvents = nullptr);
+
+    MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}
     ~MessageReceiver() noexcept;
 
-    MessageReceiver(MessageReceiver const&) = delete;
-    MessageReceiver& operator=(MessageReceiver const&) = delete;
-    MessageReceiver(MessageReceiver&&) noexcept;
-    MessageReceiver& operator=(MessageReceiver&&) noexcept;
+    MessageReceiver(MessageReceiver const&) = default;
+    MessageReceiver& operator=(MessageReceiver const&) = default;
+    MessageReceiver(MessageReceiver&&) = default;
+    MessageReceiver& operator=(MessageReceiver&&) = default;
 
     void Open();
     void Close();
@@ -130,44 +121,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Azure::Core::Amqp::Models::Value deliveryState);
     void SetTrace(bool traceEnabled);
 
-    //    Models::Message WaitForIncomingMessage();
-    template <class... Waiters>
-    Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
-    {
-      auto result = m_messageQueue.WaitForPolledResult(waiters...);
-      return std::move(std::get<0>(*result));
-    }
+    // template <class... Waiters>
+    // Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
+    //{
+    //   auto result = m_messageQueue.WaitForPolledResult(waiters...);
+    //   return std::move(std::get<0>(*result));
+    // }
+
+    Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Connection& connection);
 
   private:
-    MESSAGE_RECEIVER_INSTANCE_TAG* m_messageReceiver{};
-    std::unique_ptr<_detail::Link> m_link;
-    MessageReceiverOptions m_options;
-    std::string m_source;
-    Session const& m_session;
-    Connection const* m_connection;
-    std::shared_ptr<ConnectionStringCredential> m_connectionCredential;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<Cbs> m_claimsBasedSecurity;
-
-    Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;
-    Common::AsyncOperationQueue<MessageReceiverState, MessageReceiverState> m_stateChangeQueue;
-
-    MessageReceiverEvents* m_eventHandler{};
-
-    static AMQP_VALUE_DATA_TAG* OnMessageReceivedFn(
-        const void* context,
-        MESSAGE_INSTANCE_TAG* message);
-
-    virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
-        Azure::Core::Amqp::Models::Message message);
-
-    static void OnMessageReceiverStateChangedFn(
-        const void* context,
-        MESSAGE_RECEIVER_STATE_TAG newState,
-        MESSAGE_RECEIVER_STATE_TAG oldState);
-
-    virtual void OnStateChanged(MessageReceiverState newState, MessageReceiverState oldState);
-
-    void Authenticate(CredentialType type, std::string const& audience, std::string const& token);
+    std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
   };
 }}}} // namespace Azure::Core::_internal::Amqp
