@@ -129,38 +129,32 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
 
   if (!m_credentialImpl)
   {
-    auto const logLevel = Logger::Level::Warning;
+    Log::Write(
+        Logger::Level::Warning, logMsgPrefix + " was not initialized with underlying credential.");
+
+    auto const logLevel = Logger::Level::Verbose;
     if (Log::ShouldWrite(logLevel))
     {
-      auto const basicMessage = logMsgPrefix + " was not initialized with underlying credential";
+      auto logMsg = logMsgPrefix + ": Both '" + AzureTenantIdEnvVarName + "' and '"
+          + AzureClientIdEnvVarName + "', and at least one of '" + AzureClientSecretEnvVarName
+          + "', '" + AzureClientCertificatePathEnvVarName + "' needs to be set. Additionally, '"
+          + AzureAuthorityHostEnvVarName
+          + "' could be set to override the default authority host. Currently:\n";
 
-      if (!Log::ShouldWrite(Logger::Level::Verbose))
+      std::pair<char const*, bool> envVarStatus[] = {
+          {AzureTenantIdEnvVarName, !tenantId.empty()},
+          {AzureClientIdEnvVarName, !clientId.empty()},
+          {AzureClientSecretEnvVarName, !clientSecret.empty()},
+          {AzureClientCertificatePathEnvVarName, !clientCertificatePath.empty()},
+          {AzureAuthorityHostEnvVarName, !authority.empty()},
+      };
+      for (auto const& status : envVarStatus)
       {
-        Log::Write(logLevel, basicMessage + '.');
+        logMsg += std::string(" * '") + status.first + "' " + "is" + (status.second ? " " : " NOT ")
+            + "set\n";
       }
-      else
-      {
-        auto logMsg = basicMessage + ": Both '" + AzureTenantIdEnvVarName + "' and '"
-            + AzureClientIdEnvVarName + "', and at least one of '" + AzureClientSecretEnvVarName
-            + "', '" + AzureClientCertificatePathEnvVarName + "' needs to be set. Additionally, '"
-            + AzureAuthorityHostEnvVarName
-            + "' could be set to override the default authority host. Currently:\n";
 
-        std::pair<char const*, bool> envVarStatus[] = {
-            {AzureTenantIdEnvVarName, !tenantId.empty()},
-            {AzureClientIdEnvVarName, !clientId.empty()},
-            {AzureClientSecretEnvVarName, !clientSecret.empty()},
-            {AzureClientCertificatePathEnvVarName, !clientCertificatePath.empty()},
-            {AzureAuthorityHostEnvVarName, !authority.empty()},
-        };
-        for (auto const& status : envVarStatus)
-        {
-          logMsg += std::string(" * '") + status.first + "' " + "is"
-              + (status.second ? " " : " NOT ") + "set\n";
-        }
-
-        Log::Write(logLevel, logMsg);
-      }
+      Log::Write(logLevel, logMsg);
     }
   }
 }
@@ -174,15 +168,9 @@ AccessToken EnvironmentCredential::GetToken(
     auto const AuthUnavailable
         = IdentityPrefix + GetCredentialName() + " authentication unavailable. ";
 
-    {
-      auto const logLevel = Logger::Level::Warning;
-      if (Log::ShouldWrite(logLevel))
-      {
-        Log::Write(
-            logLevel,
-            AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
-      }
-    }
+    Log::Write(
+        Logger::Level::Warning,
+        AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
 
     throw AuthenticationException(
         AuthUnavailable + "Environment variables are not fully configured.");
@@ -197,15 +185,12 @@ void PrintCredentialCreationLogMessage(
     std::vector<std::pair<char const*, char const*>> const& envVarsToParams,
     char const* credThatGetsCreated)
 {
+  Log::Write(
+      Logger::Level::Informational,
+      logMsgPrefix + " gets created with " + credThatGetsCreated + '.');
+
   if (!Log::ShouldWrite(Logger::Level::Verbose))
   {
-    if (Log::ShouldWrite(Logger::Level::Informational))
-    {
-      Log::Write(
-          Logger::Level::Informational,
-          logMsgPrefix + " gets created with " + credThatGetsCreated + '.');
-    }
-
     return;
   }
 

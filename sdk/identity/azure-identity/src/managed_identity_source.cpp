@@ -28,14 +28,10 @@ std::string WithSourceMessage(std::string const& credSource)
 
 void PrintEnvNotSetUpMessage(std::string const& credName, std::string const& credSource)
 {
-  auto const logLevel = Logger::Level::Verbose;
-  if (Log::ShouldWrite(logLevel))
-  {
-    Log::Write(
-        logLevel,
-        IdentityPrefix + credName + ": Environment is not set up for the credential to be created"
-            + WithSourceMessage(credSource) + '.');
-  }
+  Log::Write(
+      Logger::Level::Verbose,
+      IdentityPrefix + credName + ": Environment is not set up for the credential to be created"
+          + WithSourceMessage(credSource) + '.');
 }
 } // namespace
 
@@ -52,13 +48,9 @@ Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
   {
     auto const endpointUrl = Url(url);
 
-    auto const logLevel = Logger::Level::Informational;
-    if (Log::ShouldWrite(logLevel))
-    {
-      Log::Write(
-          logLevel,
-          IdentityPrefix + credName + " will be created" + WithSourceMessage(credSource) + '.');
-    }
+    Log::Write(
+        Logger::Level::Informational,
+        IdentityPrefix + credName + " will be created" + WithSourceMessage(credSource) + '.');
 
     return endpointUrl;
   }
@@ -73,12 +65,7 @@ Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
       + ": Failed to create: The environment variable \'" + envVarName
       + "\' contains an invalid URL.";
 
-  auto const logLevel = Logger::Level::Warning;
-  if (Log::ShouldWrite(logLevel))
-  {
-    Log::Write(logLevel, IdentityPrefix + errorMessage);
-  }
-
+  Log::Write(Logger::Level::Warning, IdentityPrefix + errorMessage);
   throw AuthenticationException(errorMessage);
 }
 
@@ -385,15 +372,11 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
-  auto const logLevel = Logger::Level::Informational;
-  if (Log::ShouldWrite(logLevel))
-  {
-    Log::Write(
-        logLevel,
-        IdentityPrefix + credName + " will be created"
-            + WithSourceMessage("Azure Instance Metadata Service")
-            + ".\nSuccessful creation does not guarantee further successful token retrieval.");
-  }
+  Log::Write(
+      Logger::Level::Informational,
+      IdentityPrefix + credName + " will be created"
+          + WithSourceMessage("Azure Instance Metadata Service")
+          + ".\nSuccessful creation does not guarantee further successful token retrieval.");
 
   return std::unique_ptr<ManagedIdentitySource>(new ImdsManagedIdentitySource(clientId, options));
 }
