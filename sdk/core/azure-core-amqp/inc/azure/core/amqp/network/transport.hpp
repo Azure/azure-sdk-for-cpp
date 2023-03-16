@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   public:
     Transport(XIO_INSTANCE_TAG* instance);
-    Transport(Transport&& instance);
+    Transport(Transport&& instance) = delete;
     virtual ~Transport();
     virtual bool Open();
     virtual bool Close(TransportCloseCompleteFn);

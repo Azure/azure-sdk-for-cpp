@@ -3,7 +3,6 @@
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
-#include <azure/core/amqp/network/sasl_transport.hpp>
 #include <chrono>
 #include <iostream>
 #include <limits>

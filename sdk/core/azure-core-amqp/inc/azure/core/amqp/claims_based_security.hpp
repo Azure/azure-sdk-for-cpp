@@ -7,20 +7,10 @@
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/session.hpp"
 
-extern "C"
-{
-  struct CBS_INSTANCE_TAG;
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4471)
-#endif
-  enum CBS_OPERATION_RESULT_TAG;
-  enum CBS_OPEN_COMPLETE_RESULT_TAG;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-}
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
+  namespace _detail {
+    class CbsImpl;
+  }
 
   enum class CbsOperationResult
   {
@@ -71,20 +61,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     void SetTrace(bool traceEnabled);
 
   private:
-    CBS_INSTANCE_TAG* m_cbs;
-
-    Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
-    Azure::Core::_internal::Amqp::Common::
-        AsyncOperationQueue<CbsOperationResult, uint32_t, std::string>
-            m_operationResultQueue;
-    static void OnCbsOpenCompleteFn(void* context, CBS_OPEN_COMPLETE_RESULT_TAG openResult);
-    static void OnCbsErrorFn(void* context);
-    static void OnCbsOperationCompleteFn(
-        void* context,
-        CBS_OPERATION_RESULT_TAG operationResult,
-        uint32_t statusCode,
-        const char* statusDescription);
-
-    Connection const& m_connectionToPoll;
+    std::shared_ptr<_detail::CbsImpl> m_impl;
   };
 }}}} // namespace Azure::Core::_internal::Amqp

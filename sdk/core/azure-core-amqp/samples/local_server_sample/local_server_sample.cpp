@@ -111,7 +111,6 @@ public:
 
 private:
   Connection* m_connection{};
-  //  std::shared_ptr<Network::Transport> m_transportToPoll;
   Common::AsyncOperationQueue<std::unique_ptr<Connection>> m_connectionQueue;
   Common::AsyncOperationQueue<std::unique_ptr<Session>> m_sessionQueue;
   Common::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
