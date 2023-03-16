@@ -70,7 +70,6 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
     Context const& context) const
 {
   auto const sourcesSize = m_sources.size();
-
   for (size_t i = 0; i < sourcesSize; ++i)
   {
     try
