@@ -30,17 +30,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       lock.unlock();
       m_operationCondition.notify_one();
     }
-#if 0
-    std::unique_ptr<std::tuple<T...>> WaitForQueueResult()
-    {
-      std::unique_lock<std::mutex> lock(m_operationComplete);
-      m_operationCondition.wait(lock, [this] { return !m_operationQueue.empty(); });
-      std::unique_ptr<std::tuple<T...>> rv;
-      rv = std::move(m_operationQueue.front());
-      m_operationQueue.pop_front();
-      return rv;
-    }
-#endif
+
     template <class... Poller>
     std::unique_ptr<std::tuple<T...>> WaitForPolledResult(Poller&... pollers)
     {
@@ -78,7 +68,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     void Poll() {}
 
-    template <class T, class... Ts> void Poll(T const& first, Ts const&... rest)
+    template <class PT, class... Ts> void Poll(PT const& first, Ts const&... rest)
     {
       first.Poll();
       Poll(rest...);
