@@ -7,10 +7,19 @@
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/session.hpp"
 
-struct CBS_INSTANCE_TAG;
-enum CBS_OPERATION_RESULT_TAG : int;
-enum CBS_OPEN_COMPLETE_RESULT_TAG : int;
-
+extern "C"
+{
+  struct CBS_INSTANCE_TAG;
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4471)
+#endif
+  enum CBS_OPERATION_RESULT_TAG;
+  enum CBS_OPEN_COMPLETE_RESULT_TAG;
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+}
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   enum class CbsOperationResult
