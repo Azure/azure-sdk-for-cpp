@@ -71,14 +71,6 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
 {
   auto const sourcesSize = m_sources.size();
 
-  if (sourcesSize == 0)
-  {
-    Log::Write(
-        Logger::Level::Warning,
-        IdentityPrefix + credentialName
-            + ": Authentication did not succeed: List of sources is empty.");
-  }
-
   for (size_t i = 0; i < sourcesSize; ++i)
   {
     try
@@ -101,13 +93,16 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
 
       if ((sourcesSize - 1) == i) // On the last credential
       {
-        Log::Write(
-            Logger::Level::Warning,
-            IdentityPrefix + credentialName
-                + ": Didn't succeed to get a token from any credential in the chain.");
       }
     }
   }
+
+  Log::Write(
+      Logger::Level::Warning,
+      IdentityPrefix + credentialName
+          + (sourcesSize == 0
+                 ? ": Authentication did not succeed: List of sources is empty."
+                 : ": Didn't succeed to get a token from any credential in the chain."));
 
   throw AuthenticationException("Failed to get token from " + credentialName + '.');
 }
