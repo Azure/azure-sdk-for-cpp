@@ -11,9 +11,18 @@
 #include <string>
 #include <vector>
 
-struct LINK_INSTANCE_TAG;
-enum LINK_STATE_TAG : int;
-
+extern "C"
+{
+  struct LINK_INSTANCE_TAG;
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4471)
+#endif
+  enum LINK_STATE_TAG;
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+}
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   class Session;
   struct LinkEndpoint;

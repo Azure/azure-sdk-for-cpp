@@ -7,9 +7,11 @@
 #include <stdexcept>
 #include <string>
 
-enum IO_OPEN_RESULT_TAG : int;
-// enum IO_SEND_RESULT_TAG;
-struct XIO_INSTANCE_TAG;
+extern "C"
+{
+  enum IO_OPEN_RESULT_TAG : int;
+  struct XIO_INSTANCE_TAG;
+}
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
@@ -50,9 +52,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     bool m_isOpen{false};
 
     static void OnOpenCompleteFn(void* context, IO_OPEN_RESULT_TAG openResult);
-    virtual void OnOpenComplete(TransportOpenResult openResult) { openResult; }
+    virtual void OnOpenComplete(TransportOpenResult openResult) { (void)openResult; }
     static void OnBytesReceivedFn(void* context, const unsigned char* buffer, size_t size);
-    virtual void OnBytesReceived(const unsigned char* buffer, size_t size) { buffer, size; };
+    virtual void OnBytesReceived(const unsigned char* buffer, size_t size)
+    {
+      (void)buffer, (void)size;
+    };
     static void OnIoErrorFn(void* context);
     virtual void OnIoError(){};
 

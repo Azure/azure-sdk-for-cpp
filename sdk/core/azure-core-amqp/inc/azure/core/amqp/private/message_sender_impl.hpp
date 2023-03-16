@@ -6,10 +6,20 @@
 #include "azure/core/amqp/message_sender.hpp"
 #include <tuple>
 
-struct MESSAGE_SENDER_INSTANCE_TAG;
-enum MESSAGE_SENDER_STATE_TAG : int;
-struct AMQP_VALUE_DATA_TAG;
-struct MESSAGE_INSTANCE_TAG;
+extern "C"
+{
+  struct MESSAGE_SENDER_INSTANCE_TAG;
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4471)
+#endif
+  enum MESSAGE_SENDER_STATE_TAG;
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+  struct AMQP_VALUE_DATA_TAG;
+  struct MESSAGE_INSTANCE_TAG;
+}
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
 

@@ -14,11 +14,20 @@
 #include "session.hpp"
 #include <azure/core/credentials/credentials.hpp>
 
-struct CONNECTION_INSTANCE_TAG;
-struct ENDPOINT_INSTANCE_TAG;
-struct AMQP_VALUE_DATA_TAG;
-enum CONNECTION_STATE_TAG : int;
-
+extern "C"
+{
+  struct CONNECTION_INSTANCE_TAG;
+  struct ENDPOINT_INSTANCE_TAG;
+  struct AMQP_VALUE_DATA_TAG;
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4471)
+#endif
+  enum CONNECTION_STATE_TAG;
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+}
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   class Session;

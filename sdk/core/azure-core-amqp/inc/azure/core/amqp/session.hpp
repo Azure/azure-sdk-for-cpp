@@ -13,9 +13,12 @@
 #include <string>
 #include <vector>
 
-struct SESSION_INSTANCE_TAG;
-struct ENDPOINT_INSTANCE_TAG;
-struct LINK_ENDPOINT_INSTANCE_TAG;
+extern "C"
+{
+  struct SESSION_INSTANCE_TAG;
+  struct ENDPOINT_INSTANCE_TAG;
+  struct LINK_ENDPOINT_INSTANCE_TAG;
+}
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
