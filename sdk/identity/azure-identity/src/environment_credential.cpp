@@ -185,7 +185,8 @@ void PrintCredentialCreationLogMessage(
       IdentityLog::Level::Informational,
       logMsgPrefix + " gets created with " + credThatGetsCreated + '.');
 
-  if (!IdentityLog::ShouldWrite(IdentityLog::Level::Verbose))
+  auto const logLevel = IdentityLog::Level::Verbose;
+  if (!IdentityLog::ShouldWrite(logLevel))
   {
     return;
   }
@@ -214,7 +215,7 @@ void PrintCredentialCreationLogMessage(
   credParams += And + envVarsToParams.back().second;
 
   IdentityLog::Write(
-      IdentityLog::Level::Verbose,
+      logLevel,
       logMsgPrefix + ": " + envVars + " environment variables are set, so " + credThatGetsCreated
           + " with corresponding " + credParams + " gets created.");
 }
