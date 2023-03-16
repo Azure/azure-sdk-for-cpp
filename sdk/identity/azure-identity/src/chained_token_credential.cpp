@@ -90,10 +90,6 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
           Logger::Level::Verbose,
           IdentityPrefix + credentialName + ": Failed to get token from "
               + m_sources[i]->GetCredentialName() + ": " + e.what());
-
-      if ((sourcesSize - 1) == i) // On the last credential
-      {
-      }
     }
   }
 
