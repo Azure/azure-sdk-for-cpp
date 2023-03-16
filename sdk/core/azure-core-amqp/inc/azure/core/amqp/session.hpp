@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "models/amqp_value.hpp"
-#include "network/Transport.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
+#include "models/amqp_value.hpp"
+#include "network/transport.hpp"
 
 #include <chrono>
 #include <memory>
