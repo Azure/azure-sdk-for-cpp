@@ -26,22 +26,19 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
 {
   // Initializing m_credential below and not in the member initializer list to have a specific order
   // of log messages.
-  auto const logLevel = Logger::Level::Verbose;
-  if (Log::ShouldWrite(logLevel))
-  {
-    Log::Write(
-        logLevel,
-        std::string(IdentityPrefix) + "Creating " + GetCredentialName()
-            + " which combines mutiple parameterless credentials into a single one.\n"
-            + GetCredentialName()
-            + " is only recommended for the early stages of development, "
-              "and not for usage in production environment."
-              "\nOnce the developer focuses on the Credentials and Authentication aspects "
-              "of their application, "
-            + GetCredentialName()
-            + " needs to be replaced with the credential that "
-              "is the better fit for the application.");
-  }
+
+  Log::Write(
+      Logger::Level::Verbose,
+      std::string(IdentityPrefix) + "Creating " + GetCredentialName()
+          + " which combines mutiple parameterless credentials into a single one.\n"
+          + GetCredentialName()
+          + " is only recommended for the early stages of development, "
+            "and not for usage in production environment."
+            "\nOnce the developer focuses on the Credentials and Authentication aspects "
+            "of their application, "
+          + GetCredentialName()
+          + " needs to be replaced with the credential that "
+            "is the better fit for the application.");
 
   // Creating credentials in order to ensure the order of log messages.
   auto const envCred = std::make_shared<EnvironmentCredential>(options);

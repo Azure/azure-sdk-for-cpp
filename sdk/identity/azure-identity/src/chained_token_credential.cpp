@@ -69,67 +69,34 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  auto const sourcesSize = m_sources.size();
-
-  if (sourcesSize == 0)
+  for (auto const& source : m_sources)
   {
-    const auto logLevel = Logger::Level::Warning;
-    if (Log::ShouldWrite(logLevel))
+    try
+    {
+      auto token = source->GetToken(tokenRequestContext, context);
+
+      Log::Write(
+          Logger::Level::Informational,
+          IdentityPrefix + credentialName + ": Successfully got token from "
+              + source->GetCredentialName() + '.');
+
+      return token;
+    }
+    catch (AuthenticationException const& e)
     {
       Log::Write(
-          logLevel,
-          IdentityPrefix + credentialName
-              + ": Authentication did not succeed: List of sources is empty.");
+          Logger::Level::Verbose,
+          IdentityPrefix + credentialName + ": Failed to get token from "
+              + source->GetCredentialName() + ": " + e.what());
     }
   }
-  else
-  {
-    for (size_t i = 0; i < sourcesSize; ++i)
-    {
-      try
-      {
-        auto token = m_sources[i]->GetToken(tokenRequestContext, context);
 
-        {
-          auto const logLevel = Logger::Level::Informational;
-          if (Log::ShouldWrite(logLevel))
-          {
-            Log::Write(
-                logLevel,
-                IdentityPrefix + credentialName + ": Successfully got token from "
-                    + m_sources[i]->GetCredentialName() + '.');
-          }
-        }
-
-        return token;
-      }
-      catch (AuthenticationException const& e)
-      {
-        {
-          auto const logLevel = Logger::Level::Verbose;
-          if (Log::ShouldWrite(logLevel))
-          {
-            Log::Write(
-                logLevel,
-                IdentityPrefix + credentialName + ": Failed to get token from "
-                    + m_sources[i]->GetCredentialName() + ": " + e.what());
-          }
-        }
-
-        if ((sourcesSize - 1) == i) // On the last credential
-        {
-          auto const logLevel = Logger::Level::Warning;
-          if (Log::ShouldWrite(logLevel))
-          {
-            Log::Write(
-                logLevel,
-                IdentityPrefix + credentialName
-                    + ": Didn't succeed to get a token from any credential in the chain.");
-          }
-        }
-      }
-    }
-  }
+  Log::Write(
+      Logger::Level::Warning,
+      IdentityPrefix + credentialName
+          + (m_sources.empty()
+                 ? ": Authentication did not succeed: List of sources is empty."
+                 : ": Didn't succeed to get a token from any credential in the chain."));
 
   throw AuthenticationException("Failed to get token from " + credentialName + '.');
 }
