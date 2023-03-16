@@ -12,7 +12,6 @@
 #include <azure/core/platform.hpp>
 
 #include <cstdio>
-#include <locale>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>

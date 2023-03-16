@@ -7,7 +7,6 @@
 #include "azure/core/url.hpp"
 
 #include <algorithm>
-#include <locale>
 #include <unordered_set>
 #include <utility>
 

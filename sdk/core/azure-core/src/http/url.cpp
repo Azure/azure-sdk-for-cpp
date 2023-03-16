@@ -6,7 +6,6 @@
 
 #include <algorithm>
 #include <limits>
-#include <locale>
 #include <stdexcept>
 #include <unordered_set>
 

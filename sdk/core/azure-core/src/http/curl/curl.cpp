@@ -71,7 +71,6 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
-#include <locale>
 #include <sstream>
 #include <string>
 #include <thread>

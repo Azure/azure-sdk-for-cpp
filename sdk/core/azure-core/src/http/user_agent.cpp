@@ -14,7 +14,6 @@
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/platform.hpp"
-#include <locale>
 #include <sstream>
 
 #if defined(AZ_PLATFORM_WINDOWS)

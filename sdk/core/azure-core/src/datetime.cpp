@@ -9,7 +9,6 @@
 #include <ctime>
 #include <iomanip>
 #include <limits>
-#include <locale>
 #include <sstream>
 #include <stdexcept>
 
