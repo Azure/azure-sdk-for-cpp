@@ -69,17 +69,16 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  auto const sourcesSize = m_sources.size();
-  for (size_t i = 0; i < sourcesSize; ++i)
+  for (auto const& source : m_sources)
   {
     try
     {
-      auto token = m_sources[i]->GetToken(tokenRequestContext, context);
+      auto token = source->GetToken(tokenRequestContext, context);
 
       Log::Write(
           Logger::Level::Informational,
           IdentityPrefix + credentialName + ": Successfully got token from "
-              + m_sources[i]->GetCredentialName() + '.');
+              + source->GetCredentialName() + '.');
 
       return token;
     }
@@ -88,14 +87,14 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
       Log::Write(
           Logger::Level::Verbose,
           IdentityPrefix + credentialName + ": Failed to get token from "
-              + m_sources[i]->GetCredentialName() + ": " + e.what());
+              + source->GetCredentialName() + ": " + e.what());
     }
   }
 
   Log::Write(
       Logger::Level::Warning,
       IdentityPrefix + credentialName
-          + (sourcesSize == 0
+          + (m_sources.empty()
                  ? ": Authentication did not succeed: List of sources is empty."
                  : ": Didn't succeed to get a token from any credential in the chain."));
 
