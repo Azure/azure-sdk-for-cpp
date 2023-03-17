@@ -12,15 +12,15 @@ TEST(Nullable, Basic)
 {
   Nullable<std::string> testString{"hello world"};
   EXPECT_TRUE(testString.HasValue());
-  EXPECT_TRUE(testString.Value() == "hello world");
+  EXPECT_EQ(testString.Value(), "hello world");
 
   Nullable<int> testInt{54321};
   EXPECT_TRUE(testInt.HasValue());
-  EXPECT_TRUE(testInt.Value() == 54321);
+  EXPECT_EQ(testInt.Value(), 54321);
 
   Nullable<double> testDouble{10.0};
   EXPECT_TRUE(testDouble.HasValue());
-  EXPECT_TRUE(testDouble.Value() == 10.0);
+  EXPECT_EQ(testDouble.Value(), 10.0);
 }
 
 TEST(Nullable, Empty)
@@ -55,18 +55,18 @@ TEST(Nullable, Assignment)
   Nullable<std::string> instance{"hello world"};
   auto instance2 = instance;
   EXPECT_TRUE(instance2.HasValue());
-  EXPECT_TRUE(instance2.Value() == "hello world");
+  EXPECT_EQ(instance2.Value(), "hello world");
 
   auto instance3 = std::move(instance);
   EXPECT_TRUE(instance3.HasValue());
-  EXPECT_TRUE(instance3.Value() == "hello world");
+  EXPECT_EQ(instance3.Value(), "hello world");
 
   EXPECT_TRUE(instance.HasValue());
 
   // This is not a guarantee that the string will be empty
   //  It is an implementation detail that the contents are moved
   //  Should a future compiler change this assumption this test will need updates
-  EXPECT_TRUE(instance.Value() == "");
+  EXPECT_EQ(instance.Value(), "");
   EXPECT_TRUE(instance.HasValue());
 }
 
@@ -76,22 +76,22 @@ TEST(Nullable, ValueAssignment)
   EXPECT_FALSE(intVal.HasValue());
   intVal = 7;
   EXPECT_TRUE(intVal.HasValue());
-  EXPECT_TRUE(intVal.Value() == 7);
+  EXPECT_EQ(intVal.Value(), 7);
 
   Nullable<double> doubleVal;
   EXPECT_FALSE(doubleVal.HasValue());
   doubleVal = 10.12345;
   EXPECT_TRUE(doubleVal.HasValue());
-  EXPECT_TRUE(doubleVal.Value() == 10.12345);
+  EXPECT_EQ(doubleVal.Value(), 10.12345);
 
   Nullable<std::string> strVal;
   EXPECT_FALSE(strVal.HasValue());
   strVal = std::string("Hello World");
   EXPECT_TRUE(strVal.HasValue());
-  EXPECT_TRUE(strVal.Value() == "Hello World");
+  EXPECT_EQ(strVal.Value(), "Hello World");
 
   strVal = "New String";
-  EXPECT_TRUE(strVal.Value() == "New String");
+  EXPECT_EQ(strVal.Value(), "New String");
 
   strVal.Reset();
   EXPECT_FALSE(strVal.HasValue());
@@ -111,13 +111,13 @@ TEST(Nullable, Swap)
   val3.Swap(val4);
   EXPECT_TRUE(val3);
   EXPECT_TRUE(val4);
-  EXPECT_TRUE(val3.Value() == 678910);
-  EXPECT_TRUE(val4.Value() == 12345);
+  EXPECT_EQ(val3.Value(), 678910);
+  EXPECT_EQ(val4.Value(), 12345);
 
   val1.Swap(val3);
   EXPECT_TRUE(val1);
   EXPECT_FALSE(val3);
-  EXPECT_TRUE(val1.Value() == 678910);
+  EXPECT_EQ(val1.Value(), 678910);
   EXPECT_FALSE(val3.HasValue());
 }
 
@@ -134,19 +134,19 @@ TEST(Nullable, CopyConstruction)
   Nullable<int> val4(val3);
   EXPECT_TRUE(val3);
   EXPECT_TRUE(val4);
-  EXPECT_TRUE(val3.Value() == 12345);
-  EXPECT_TRUE(val4.Value() == 12345);
+  EXPECT_EQ(val3.Value(), 12345);
+  EXPECT_EQ(val4.Value(), 12345);
 
   // Literal
   Nullable<int> val5 = 54321;
   EXPECT_TRUE(val5);
-  EXPECT_TRUE(val5.Value() == 54321);
+  EXPECT_EQ(val5.Value(), 54321);
 
   // Value
   const int i = 1;
   Nullable<int> val6(i);
   EXPECT_TRUE(val6);
-  EXPECT_TRUE(val6.Value() == 1);
+  EXPECT_EQ(val6.Value(), 1);
 }
 
 TEST(Nullable, Disengage)
@@ -162,12 +162,12 @@ TEST(Nullable, ValueOr)
   Nullable<int> val2;
 
   EXPECT_TRUE(val1);
-  EXPECT_TRUE(val1.ValueOr(678910) == 12345);
+  EXPECT_EQ(val1.ValueOr(678910), 12345);
   // Ensure the value was unmodified in ValueOr
-  EXPECT_TRUE(val1.Value() == 12345);
+  EXPECT_EQ(val1.Value(), 12345);
 
   EXPECT_FALSE(val2);
-  EXPECT_TRUE(val2.ValueOr(678910) == 678910);
+  EXPECT_EQ(val2.ValueOr(678910), 678910);
   // Ensure val2 is still disengaged after call to ValueOr
   EXPECT_FALSE(val2);
 }

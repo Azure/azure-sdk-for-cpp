@@ -431,7 +431,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       auto serializedObject = TestObjectSerializer::Serialize(testObject);
 
       auto targetObject = TestObjectSerializer::Deserialize(json::parse(serializedObject));
-      EXPECT_TRUE(testObject == targetObject);
+      EXPECT_EQ(testObject, targetObject);
     }
   }
 

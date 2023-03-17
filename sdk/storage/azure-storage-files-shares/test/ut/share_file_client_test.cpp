@@ -330,12 +330,12 @@ namespace Azure { namespace Storage { namespace Test {
       auto aLease
           = leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration).Value;
       EXPECT_TRUE(aLease.ETag.HasValue());
-      EXPECT_TRUE(aLease.LastModified >= lastModified);
+      EXPECT_GE(aLease.LastModified, lastModified);
       EXPECT_EQ(aLease.LeaseId, leaseId1);
       lastModified = m_fileClient->GetProperties().Value.LastModified;
       aLease = leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration).Value;
       EXPECT_TRUE(aLease.ETag.HasValue());
-      EXPECT_TRUE(aLease.LastModified >= lastModified);
+      EXPECT_GE(aLease.LastModified, lastModified);
       EXPECT_EQ(aLease.LeaseId, leaseId1);
 
       auto properties = m_fileClient->GetProperties().Value;
@@ -347,14 +347,14 @@ namespace Azure { namespace Storage { namespace Test {
       lastModified = m_fileClient->GetProperties().Value.LastModified;
       auto cLease = leaseClient.Change(leaseId2).Value;
       EXPECT_TRUE(cLease.ETag.HasValue());
-      EXPECT_TRUE(cLease.LastModified >= lastModified);
+      EXPECT_GE(cLease.LastModified, lastModified);
       EXPECT_EQ(cLease.LeaseId, leaseId2);
       EXPECT_EQ(leaseClient.GetLeaseId(), leaseId2);
 
       lastModified = m_fileClient->GetProperties().Value.LastModified;
       auto fileInfo = leaseClient.Release().Value;
       EXPECT_TRUE(fileInfo.ETag.HasValue());
-      EXPECT_TRUE(fileInfo.LastModified >= lastModified);
+      EXPECT_GE(fileInfo.LastModified, lastModified);
     }
 
     {
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto lastModified = m_fileClient->GetProperties().Value.LastModified;
       auto brokenLease = leaseClient.Break().Value;
       EXPECT_TRUE(brokenLease.ETag.HasValue());
-      EXPECT_TRUE(brokenLease.LastModified >= lastModified);
+      EXPECT_GE(brokenLease.LastModified, lastModified);
     }
   }
 

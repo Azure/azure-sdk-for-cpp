@@ -51,7 +51,7 @@ TEST(Operation, PollUntilDone)
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> elapsed = end - start;
   // StringOperation test code is implemented to poll 2 times
-  EXPECT_TRUE(elapsed >= 1s);
+  EXPECT_GE(elapsed, 1s);
 
   EXPECT_TRUE(operation.IsDone());
   EXPECT_TRUE(operation.HasValue());

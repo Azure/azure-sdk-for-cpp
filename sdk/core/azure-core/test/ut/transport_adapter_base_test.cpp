@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Check content-length header to be greater than 0
     int64_t contentLengthHeader = std::stoull(response->GetHeaders().at("content-length"));
-    EXPECT_TRUE(contentLengthHeader > 0);
+    EXPECT_GT(contentLengthHeader, 0);
   }
 
   TEST_P(TransportAdapter, put)
@@ -221,7 +221,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // Check content-length header to be greater than 0
     int64_t contentLengthHeader = std::stoull(response->GetHeaders().at("content-length"));
-    EXPECT_TRUE(contentLengthHeader > 0);
+    EXPECT_GT(contentLengthHeader, 0);
   }
 
   TEST_P(TransportAdapter, putWithStream)
@@ -301,7 +301,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Response<std::string> responseT(expectedType, std::move(response));
     auto& r = responseT.RawResponse;
 
-    EXPECT_TRUE(r->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    EXPECT_EQ(r->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
     auto expectedResponseBodySize = std::stoull(r->GetHeaders().at("content-length"));
     CheckBodyFromBuffer(*r, expectedResponseBodySize);
 

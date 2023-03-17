@@ -194,14 +194,14 @@ protected:
       // Make sure that every expected attribute is somewhere in the actual attributes.
       for (auto const& expectedAttribute : expectedAttributes.items())
       {
-        EXPECT_TRUE(
+        EXPECT_NE(
             std::find_if(
                 attributes.begin(),
                 attributes.end(),
                 [&](std::pair<const std::string, RecordedSpan::Attribute>& item) {
                   return item.first == expectedAttribute.key();
-                })
-            != attributes.end());
+                }),
+            attributes.end());
       }
 
       for (auto const& foundAttribute : attributes)

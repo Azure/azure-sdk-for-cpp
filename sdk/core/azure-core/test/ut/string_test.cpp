@@ -16,6 +16,7 @@ TEST(String, invariantCompare)
   EXPECT_TRUE(StringExtensions::LocaleInvariantCaseInsensitiveEqual("AA", "aa"));
   EXPECT_TRUE(StringExtensions::LocaleInvariantCaseInsensitiveEqual("aA", "aa"));
   EXPECT_TRUE(StringExtensions::LocaleInvariantCaseInsensitiveEqual("ABC", "abc"));
+
   EXPECT_FALSE(StringExtensions::LocaleInvariantCaseInsensitiveEqual("", "a"));
   EXPECT_FALSE(StringExtensions::LocaleInvariantCaseInsensitiveEqual("a", ""));
   EXPECT_FALSE(StringExtensions::LocaleInvariantCaseInsensitiveEqual("A", "aA"));
@@ -28,7 +29,7 @@ TEST(String, toLowerC)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::ToLower(c) == std::tolower(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::ToLower(c), std::tolower(c, std::locale::classic()));
   }
 }
 
@@ -38,46 +39,44 @@ TEST(String, toUpperC)
   for (unsigned i = 0; i <= 255; ++i)
   {
     auto const c = static_cast<char>(static_cast<unsigned char>(i));
-    EXPECT_TRUE(StringExtensions::ToUpper(c) == std::toupper(c, std::locale::classic()));
+    EXPECT_EQ(StringExtensions::ToUpper(c), std::toupper(c, std::locale::classic()));
   }
 }
 
 TEST(String, toLower)
 {
   using Azure::Core::_internal::StringExtensions;
-  EXPECT_TRUE(StringExtensions::ToLower("") == "");
-  EXPECT_TRUE(StringExtensions::ToLower("a") == "a");
-  EXPECT_TRUE(StringExtensions::ToLower("A") == "a");
-  EXPECT_TRUE(StringExtensions::ToLower("AA") == "aa");
-  EXPECT_TRUE(StringExtensions::ToLower("aA") == "aa");
-  EXPECT_TRUE(StringExtensions::ToLower("ABC") == "abc");
-  EXPECT_TRUE(
-      StringExtensions::ToLower("abcdefghijklmnopqrstuvwxyz") == "abcdefghijklmnopqrstuvwxyz");
-  EXPECT_TRUE(
-      StringExtensions::ToLower("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == "abcdefghijklmnopqrstuvwxyz");
-  EXPECT_TRUE(StringExtensions::ToLower("ABC-1-,!@#$%^&*()_+=ABC") == "abc-1-,!@#$%^&*()_+=abc");
-  EXPECT_FALSE(StringExtensions::ToLower("") == "a");
-  EXPECT_FALSE(StringExtensions::ToLower("a") == "");
-  EXPECT_FALSE(StringExtensions::ToLower("a") == "aA");
-  EXPECT_FALSE(StringExtensions::ToLower("abc") == "abcd");
+  EXPECT_EQ(StringExtensions::ToLower(""), "");
+  EXPECT_EQ(StringExtensions::ToLower("a"), "a");
+  EXPECT_EQ(StringExtensions::ToLower("A"), "a");
+  EXPECT_EQ(StringExtensions::ToLower("AA"), "aa");
+  EXPECT_EQ(StringExtensions::ToLower("aA"), "aa");
+  EXPECT_EQ(StringExtensions::ToLower("ABC"), "abc");
+  EXPECT_EQ(StringExtensions::ToLower("abcdefghijklmnopqrstuvwxyz"), "abcdefghijklmnopqrstuvwxyz");
+  EXPECT_EQ(StringExtensions::ToLower("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), "abcdefghijklmnopqrstuvwxyz");
+  EXPECT_EQ(StringExtensions::ToLower("ABC-1-,!@#$%^&*()_+=ABC"), "abc-1-,!@#$%^&*()_+=abc");
+
+  EXPECT_NE(StringExtensions::ToLower(""), "a");
+  EXPECT_NE(StringExtensions::ToLower("a"), "");
+  EXPECT_NE(StringExtensions::ToLower("a"), "aA");
+  EXPECT_NE(StringExtensions::ToLower("abc"), "abcd");
 }
 
 TEST(String, toUpper)
 {
   using Azure::Core::_internal::StringExtensions;
-  EXPECT_TRUE(StringExtensions::ToUpper("") == "");
-  EXPECT_TRUE(StringExtensions::ToUpper("a") == "A");
-  EXPECT_TRUE(StringExtensions::ToUpper("A") == "A");
-  EXPECT_TRUE(StringExtensions::ToUpper("AA") == "AA");
-  EXPECT_TRUE(StringExtensions::ToUpper("aA") == "AA");
-  EXPECT_TRUE(
-      StringExtensions::ToUpper("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  EXPECT_TRUE(StringExtensions::ToUpper("ABC") == "ABC");
-  EXPECT_TRUE(
-      StringExtensions::ToUpper("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  EXPECT_TRUE(StringExtensions::ToUpper("ABC-1-,!@#$%^&*()_+=ABC") == "ABC-1-,!@#$%^&*()_+=ABC");
-  EXPECT_FALSE(StringExtensions::ToUpper("") == "A");
-  EXPECT_FALSE(StringExtensions::ToUpper("a") == "");
-  EXPECT_FALSE(StringExtensions::ToUpper("a") == "aA");
-  EXPECT_FALSE(StringExtensions::ToUpper("abc") == "abcd");
+  EXPECT_EQ(StringExtensions::ToUpper(""), "");
+  EXPECT_EQ(StringExtensions::ToUpper("a"), "A");
+  EXPECT_EQ(StringExtensions::ToUpper("A"), "A");
+  EXPECT_EQ(StringExtensions::ToUpper("AA"), "AA");
+  EXPECT_EQ(StringExtensions::ToUpper("aA"), "AA");
+  EXPECT_EQ(StringExtensions::ToUpper("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  EXPECT_EQ(StringExtensions::ToUpper("ABC"), "ABC");
+  EXPECT_EQ(StringExtensions::ToUpper("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  EXPECT_EQ(StringExtensions::ToUpper("ABC-1-,!@#$%^&*()_+=ABC"), "ABC-1-,!@#$%^&*()_+=ABC");
+
+  EXPECT_NE(StringExtensions::ToUpper(""), "A");
+  EXPECT_NE(StringExtensions::ToUpper("a"), "");
+  EXPECT_NE(StringExtensions::ToUpper("a"), "aA");
+  EXPECT_NE(StringExtensions::ToUpper("abc"), "abcd");
 }
