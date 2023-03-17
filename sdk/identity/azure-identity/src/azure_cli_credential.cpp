@@ -92,15 +92,11 @@ AzureCliCredential::AzureCliCredential(
 
   ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
 
-  auto const logLevel = Logger::Level::Informational;
-  if (Log::ShouldWrite(logLevel))
-  {
-    Log::Write(
-        logLevel,
-        IdentityPrefix + GetCredentialName()
-            + " created.\n"
-              "Successful creation does not guarantee further successful token retrieval.");
-  }
+  Log::Write(
+      Logger::Level::Informational,
+      IdentityPrefix + GetCredentialName()
+          + " created.\n"
+            "Successful creation does not guarantee further successful token retrieval.");
 }
 
 AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
@@ -169,12 +165,7 @@ AccessToken AzureCliCredential::GetToken(
       auto const errorMsg
           = IdentityPrefix + GetCredentialName() + " didn't get the token: \"" + e.what() + '\"';
 
-      auto const logLevel = Logger::Level::Warning;
-      if (Log::ShouldWrite(logLevel))
-      {
-        Log::Write(logLevel, errorMsg);
-      }
-
+      Log::Write(Logger::Level::Warning, errorMsg);
       throw AuthenticationException(errorMsg);
     }
   });

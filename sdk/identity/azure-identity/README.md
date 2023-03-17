@@ -58,7 +58,7 @@ The `DefaultAzureCredential` attempts to authenticate via the following mechanis
 1. **Azure CLI** - If the developer has authenticated an account via the Azure CLI `az login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, the `DefaultAzureCredential` will authenticate with that account.
 
-`DefaultAzureCredential` uses [`ChainedTokenCredential`](#chained-token-credential) that consists of a chain of `EnvironmentCredential`, `AzureCliCredential`, and `ManagedIdentityCredential`. Implementation, including the order in which credentials are applied is documented, but it may change from release to release.
+Even though the credentials being used and their order is documented, it may change from release to release.
 
 `DefaultAzureCredential` intends to provide a credential that "just works out of the box and without requiring any information", if only the environment is set up sufficiently for the credential to work.
 Therefore, it could be simple to use, but since it uses a chain of credentials, it could be a bit complicated to diagnose if the environment setup is not sufficient.
