@@ -87,8 +87,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& target,
         Connection const& connection,
         MessageSenderOptions const& options)
-        : m_connection{connection}, m_session{session}, m_target{target}, m_options{options},
-          m_connectionCredential{credential}
+        : m_connection{connection}, m_session{session},
+          m_connectionCredential{credential}, m_target{target}, m_options{options}
+
     {
     }
 
@@ -98,8 +99,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& target,
         Connection const& connection,
         MessageSenderOptions const& options)
-        : m_connection{connection}, m_session{session}, m_target{target}, m_options{options},
-          m_tokenCredential{credential}
+        : m_connection{connection}, m_session{session},
+          m_tokenCredential{credential}, m_target{target}, m_options{options}
     {
     }
 
