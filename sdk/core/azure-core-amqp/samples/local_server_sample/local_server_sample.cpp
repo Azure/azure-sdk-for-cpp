@@ -174,7 +174,7 @@ private:
     Azure::Core::_internal::Amqp::Models::MessageTarget messageTarget(target);
 
     MessageReceiverOptions options;
-    options.ReceiverSettleMode = ReceiverSettleMode::First;
+    options.SettleMode = ReceiverSettleMode::First;
     options.EnableTrace = true;
     options.Name = name;
     options.TargetName = static_cast<std::string>(messageTarget.GetAddress());

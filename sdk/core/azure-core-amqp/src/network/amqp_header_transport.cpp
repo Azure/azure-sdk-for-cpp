@@ -10,6 +10,7 @@
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <type_traits>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
@@ -24,7 +25,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         //           {header_detect_io_get_sasl_amqp_header(), nullptr}
     };
     detectIoConfig.underlying_io = parentTransport;
-    detectIoConfig.header_detect_entry_count = _countof(headerDetectEntries);
+    detectIoConfig.header_detect_entry_count = std::extent<decltype(headerDetectEntries)>::value;
     detectIoConfig.header_detect_entries = headerDetectEntries;
     auto xio = xio_create(header_detect_io_get_interface_description(), &detectIoConfig);
 

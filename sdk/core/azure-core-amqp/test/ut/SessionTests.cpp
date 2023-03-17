@@ -12,6 +12,7 @@
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
 #include <functional>
+#include <random>
 
 class TestSessions : public testing::Test {
 protected:
@@ -112,11 +113,13 @@ TEST_F(TestSessions, SessionBeginEnd)
 
   // Ensure someone is listening on the connection for when we call Session.Begin.
   TestListenerEvents events;
-  Network::SocketListener listener(5672, &events);
+  std::random_device dev;
+  uint16_t testPort = dev() % 1000 + 5000;
+  Network::SocketListener listener(testPort, &events);
   listener.Start();
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, {});
 
   {
     Session session(connection, nullptr);

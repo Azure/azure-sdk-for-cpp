@@ -28,12 +28,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   enum class TransportOpenResult
   {
+    Invalid,
     Ok,
     Error,
     Cancelled
   };
   enum class TransportSendResult
   {
+    Invalid,
     Unknown,
     Ok,
     Error,

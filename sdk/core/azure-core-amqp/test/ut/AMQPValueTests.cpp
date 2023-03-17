@@ -31,7 +31,7 @@ TEST_F(TestValues, SimpleCreate)
   }
   {
     Value value{};
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_TRUE(value.IsNull());
   }
 
   {
@@ -64,12 +64,12 @@ TEST_F(TestValues, SimpleCreate)
   }
 
   {
-    Value value(32ll);
+    Value value(static_cast<int64_t>(32ll));
     EXPECT_EQ(AmqpValueType::Long, value.GetType());
     EXPECT_EQ(32ll, static_cast<int64_t>(value));
   }
   {
-    Value value(39ull);
+    Value value(static_cast<uint64_t>(39ull));
     EXPECT_EQ(AmqpValueType::ULong, value.GetType());
     EXPECT_EQ(39ull, static_cast<uint64_t>(value));
   }

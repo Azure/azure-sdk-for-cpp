@@ -12,6 +12,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   enum class MessageBodyType
   {
+    Invalid,
     None,
     Data,
     Sequence,

@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::shared_ptr<Network::Transport> transport,
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options)
-        : m_eventHandler{eventHandler}, m_options{options}, m_hostName{options.HostName}
+        : m_hostName{options.HostName}, m_options{options}, m_eventHandler{eventHandler}
     {
       if (options.SaslCredentials)
       {
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& requestUri,
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options)
-        : m_eventHandler{eventHandler}, m_options{options}
+        : m_options{options}, m_eventHandler{eventHandler}
     {
       EnsureGlobalStateInitialized();
 
@@ -136,7 +136,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     }
 
     ConnectionImpl::ConnectionImpl(ConnectionEvents* eventHandler, ConnectionOptions const& options)
-        : m_eventHandler{eventHandler}
+        : m_options{options}, m_eventHandler{eventHandler}
     {
       EnsureGlobalStateInitialized();
 

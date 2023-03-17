@@ -110,6 +110,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         TransportOpenResult openResult{TransportOpenResult::Error};
         switch (ioOpenResult)
         {
+          case IO_OPEN_RESULT_INVALID:
+            openResult = TransportOpenResult::Invalid;
+            break;
           case IO_OPEN_OK:
             openResult = TransportOpenResult::Ok;
             break;
@@ -159,13 +162,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       return true;
     }
 
-    template <typename CompleteFn> struct SendCallbackWrapper
+    template <typename CompleteFn> struct SendCallbackRewriter
     {
       static void OnOperation(CompleteFn onComplete, IO_SEND_RESULT sendResult)
       {
         TransportSendResult result{TransportSendResult::Ok};
         switch (sendResult)
         {
+          case IO_SEND_RESULT_INVALID:
+            result = TransportSendResult::Invalid;
+            break;
           case IO_SEND_OK:
             result = TransportSendResult::Ok;
             break;
@@ -187,7 +193,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     {
       auto operation{std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
           decltype(sendComplete),
-          SendCallbackWrapper<decltype(sendComplete)>>>(sendComplete)};
+          SendCallbackRewriter<decltype(sendComplete)>>>(sendComplete)};
       if (xio_send(
               m_xioInstance,
               buffer,

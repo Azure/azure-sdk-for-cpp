@@ -1,13 +1,13 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX - License - Identifier : MIT
 
-#include <gtest/gtest.h>
-#include <utility>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
+#include <gtest/gtest.h>
+#include <random>
+#include <utility>
 
 using namespace Azure::Core::_internal::Amqp::Network;
 using namespace Azure::Core::_internal::Amqp::Common;
@@ -30,6 +30,8 @@ std::string StringFromSendResult(TransportSendResult ts)
       return "Error";
     case TransportSendResult::Cancelled:
       return "Cancelled";
+    case TransportSendResult::Invalid:
+      return "**INVALID**";
   }
   throw std::logic_error("??? Unknown Transport Send Result...");
 }
@@ -44,6 +46,8 @@ std::string StringFromOpenResult(TransportOpenResult to)
       return "Error";
     case TransportOpenResult::Cancelled:
       return "Cancelled";
+    case TransportOpenResult::Invalid:
+      return "**INVALID**";
   }
   throw std::logic_error("??? Unknown Transport Open Result...");
 }
@@ -103,7 +107,7 @@ TEST_F(TestSocketTransport, SimpleSend)
         memcpy(val.get(), bytes, size);
         receiveBytesQueue.CompleteOperation(size, std::move(val));
       }
-      void OnIoError()
+      void OnIoError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
@@ -202,7 +206,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       AsyncOperationQueue<TransportOpenResult> openResultQueue;
       AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
       AsyncOperationQueue<bool> errorQueue;
-      virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport)
+      virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport) override
       {
         GTEST_LOG_(INFO) << "Listener started, new connection.";
         auto listenerTransport = std::make_unique<Transport>(newTransport, this);
@@ -231,7 +235,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
                            << StringFromSendResult(sendResult);
         });
       }
-      void OnIoError()
+      void OnIoError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
@@ -239,7 +243,10 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     };
 
     TestListenerEvents events;
-    SocketListener listener(5672, &events);
+    std::random_device dev;
+    uint16_t testPort = dev() % 1000 + 5000;
+
+    SocketListener listener(testPort, &events);
     listener.Start();
 
     class SendingEvents : public TransportEvents {
@@ -263,7 +270,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
         receiveBytesQueue.CompleteOperation(echoedBytes);
       }
-      void OnIoError()
+      void OnIoError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
@@ -282,7 +289,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       }
     };
     SendingEvents sendingEvents;
-    SocketTransport sender("localhost", 5672, &sendingEvents);
+    SocketTransport sender("localhost", testPort, &sendingEvents);
 
     EXPECT_TRUE(sender.Open());
 

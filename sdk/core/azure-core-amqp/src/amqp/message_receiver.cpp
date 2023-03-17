@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
   }
 
-  MessageReceiver::~MessageReceiver() {}
+  MessageReceiver::~MessageReceiver() noexcept {}
 
   void MessageReceiver::Open() { m_impl->Open(); }
   void MessageReceiver::Close() { m_impl->Close(); }
@@ -96,8 +96,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_eventHandler(eventHandler), m_options{options}, m_source{source}, m_session{session},
-          m_connection{&connectionToPoll}, m_connectionCredential{credential}
+        : m_options{options}, m_source{source}, m_session{session}, m_connection{&connectionToPoll},
+          m_connectionCredential{credential}, m_eventHandler(eventHandler)
     {
     }
     MessageReceiverImpl::MessageReceiverImpl(
@@ -107,8 +107,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_eventHandler(eventHandler), m_options{options}, m_source{source}, m_session{session},
-          m_connection{&connectionToPoll}, m_tokenCredential{credential}
+        : m_options{options}, m_source{source}, m_session{session}, m_connection{&connectionToPoll},
+          m_tokenCredential{credential}, m_eventHandler(eventHandler)
     {
     }
     MessageReceiverImpl::MessageReceiverImpl(
@@ -116,8 +116,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_eventHandler(eventHandler), m_options{options}, m_source{source}, m_session{session},
-          m_connection{nullptr}
+        : m_options{options}, m_source{source}, m_session{session}, m_connection{nullptr},
+          m_eventHandler(eventHandler)
     {
     }
 
@@ -129,7 +129,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_eventHandler(eventHandler), m_options{options}, m_source{source}, m_session{session}
+        : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
     {
       m_link = std::make_unique<_detail::Link>(
           session,
@@ -167,8 +167,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       return Azure::Core::_internal::Amqp::Models::Messaging::DeliveryAccepted();
     }
 
-    MessageReceiverImpl::~MessageReceiverImpl()
+    MessageReceiverImpl::~MessageReceiverImpl() noexcept
     {
+      // If we're registered for events, null out the event handler, so we don't get called back
+      // during the destroy.
+      if (m_eventHandler)
+      {
+        m_eventHandler = nullptr;
+      }
       if (m_messageReceiver)
       {
         messagereceiver_destroy(m_messageReceiver);

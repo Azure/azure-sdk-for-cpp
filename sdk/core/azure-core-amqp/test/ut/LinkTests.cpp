@@ -13,6 +13,7 @@
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
 #include <functional>
+#include <random>
 
 class TestLinks : public testing::Test {
 protected:
@@ -132,8 +133,8 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
       ConnectionState newState,
       ConnectionState oldState) override
   {
-    oldState;
-    newState;
+    (void)oldState;
+    (void)newState;
   }
   virtual bool OnNewEndpoint(
       Azure::Core::_internal::Amqp::Connection const& connection,
@@ -158,7 +159,7 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
       //      Azure::Core::_internal::Amqp::SessionRole role,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value properties) override
+      Azure::Core::Amqp::Models::Value) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     auto newLink = std::make_unique<Azure::Core::_internal::Amqp::_detail::Link>(
@@ -204,11 +205,14 @@ public:
 TEST_F(TestLinks, LinkAttachDetach)
 {
   LinkSocketListenerEvents events;
+
+  std::random_device dev;
+  uint16_t testPort = dev() % 1000 + 5000;
   // Create a connection
-  Connection connection("amqp://localhost:5672", &events, {});
+  Connection connection("amqp://localhost:" + std::to_string(testPort), &events, {});
   Session session(connection, nullptr);
 
-  Network::SocketListener listener(5672, &events);
+  Network::SocketListener listener(testPort, &events);
   listener.Start();
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");

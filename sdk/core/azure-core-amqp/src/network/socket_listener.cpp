@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   } // namespace
 
   SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler)
-      : m_socket{socketlistener_create(port)}, m_eventHandler{eventHandler}
+      : m_eventHandler{eventHandler}, m_socket{socketlistener_create(port)}
   {
     EnsureGlobalStateInitialized();
   }
@@ -70,7 +70,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     if (socketlistener_start(m_socket, SocketListener::OnSocketAcceptedFn, this))
     {
-      throw std::runtime_error("Could not start listener.");
+      auto err = errno;
+      throw std::runtime_error(
+          "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+          + "\".");
     }
     m_started = true;
   }

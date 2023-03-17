@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   }
   void MessageSender::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
 
-  MessageSender::~MessageSender() {}
+  MessageSender::~MessageSender() noexcept {}
 
   namespace _detail {
 
@@ -77,7 +77,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& target,
         Connection const& connection,
         MessageSenderOptions const& options)
-        : m_session{session}, m_connection{connection}, m_options{options}, m_target{target}
+        : m_connection{connection}, m_session{session}, m_target{target}, m_options{options}
     {
     }
 
@@ -87,8 +87,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& target,
         Connection const& connection,
         MessageSenderOptions const& options)
-        : m_session{session}, m_connection{connection}, m_options{options}, m_target{target},
-          m_connectionCredential{credential}
+        : m_connection{connection}, m_session{session},
+          m_connectionCredential{credential}, m_target{target}, m_options{options}
+
     {
     }
 
@@ -98,12 +99,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& target,
         Connection const& connection,
         MessageSenderOptions const& options)
-        : m_session{session}, m_connection{connection}, m_options{options}, m_target{target},
-          m_tokenCredential{credential}
+        : m_connection{connection}, m_session{session},
+          m_tokenCredential{credential}, m_target{target}, m_options{options}
     {
     }
 
-    MessageSenderImpl::~MessageSenderImpl()
+    MessageSenderImpl::~MessageSenderImpl() noexcept
     {
       if (m_messageSender)
       {
@@ -208,17 +209,19 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           m_options.SourceAddress,
           m_target);
       m_link->SetMaxMessageSize(m_options.MaxMessageSize);
-      m_link->SetSenderSettleMode(m_options.SenderSettleMode);
+      m_link->SetSenderSettleMode(m_options.SettleMode);
 
       m_messageSender = messagesender_create(
           m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);
 
       if (messagesender_open(m_messageSender))
       {
-        throw std::runtime_error("Could not open message sender");
+        auto err = errno;
+        throw std::runtime_error(
+            "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
+            + "\".");
       }
     }
-
     void MessageSenderImpl::Close()
     {
       if (messagesender_close(m_messageSender))
@@ -227,7 +230,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
     }
 
-    template <typename CompleteFn> struct WrapSendComplete
+    template <typename CompleteFn> struct RewriteSendComplete
     {
       static void OnOperation(
           CompleteFn onComplete,
@@ -237,6 +240,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         MessageSendResult result{MessageSendResult::Ok};
         switch (sendResult)
         {
+          case MESSAGE_SEND_RESULT_INVALID:
+            result = MessageSendResult::Invalid;
+            break;
           case MESSAGE_SEND_OK:
             result = MessageSendResult::Ok;
             break;
@@ -260,7 +266,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       auto operation(std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
                          decltype(onSendComplete),
-                         WrapSendComplete<decltype(onSendComplete)>>>(onSendComplete));
+                         RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
       auto result = messagesender_send_async(
           m_messageSender,
           message,

@@ -55,6 +55,7 @@ TEST_F(TestConnections, ConnectionAttributes)
 
   {
     auto idleTimeout = connection.GetIdleTimeout();
+    (void)idleTimeout;
     EXPECT_NO_THROW(connection.SetIdleTimeout(std::chrono::milliseconds(1532)));
     EXPECT_EQ(std::chrono::milliseconds(1532), connection.GetIdleTimeout());
   }
@@ -62,7 +63,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     auto maxFrameSize = connection.GetMaxFrameSize();
     EXPECT_NO_THROW(connection.SetMaxFrameSize(1024 * 64));
     EXPECT_EQ(1024 * 64, connection.GetMaxFrameSize());
-    maxFrameSize;
+    (void)maxFrameSize;
 
     EXPECT_NO_THROW(
         connection.GetRemoteMaxFrameSize()); // Likely doesn't work unless there's a remote.
@@ -72,7 +73,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     auto maxChannel = connection.GetMaxChannel();
     EXPECT_NO_THROW(connection.SetMaxChannel(128));
     EXPECT_EQ(128, connection.GetMaxChannel());
-    maxChannel;
+    (void)maxChannel;
   }
 
   {
@@ -182,12 +183,12 @@ private:
       //      Azure::Core::Amqp::_detail::SessionRole role,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value properties) override
+      Azure::Core::Amqp::Models::Value) override
   {
     Azure::Core::_internal::Amqp::MessageReceiverOptions receiverOptions;
     receiverOptions.Name = name;
     receiverOptions.TargetName = static_cast<std::string>(target);
-    receiverOptions.ReceiverSettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+    receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
 
     m_messageReceiver = std::make_unique<Azure::Core::_internal::Amqp::MessageReceiver>(
         session, newLinkInstance, static_cast<std::string>(source), receiverOptions);
@@ -202,8 +203,8 @@ private:
       Azure::Core::_internal::Amqp::ConnectionState newState,
       Azure::Core::_internal::Amqp::ConnectionState oldState) override
   {
-    oldState;
-    newState;
+    (void)oldState;
+    (void)newState;
   }
   virtual bool OnNewEndpoint(
       Azure::Core::_internal::Amqp::Connection const& connection,
@@ -221,9 +222,9 @@ private:
       Azure::Core::_internal::Amqp::Connection const& connection,
       Azure::Core::Amqp::Models::Value value,
       uint32_t framePayloadSize,
-      uint8_t* payloadBytes)
+      uint8_t* payloadBytes) override
   {
-    connection, value, framePayloadSize, payloadBytes;
+    (void)connection, (void)value, (void)framePayloadSize, (void)payloadBytes;
   }
   // Inherited via MessageReceiver
   virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
@@ -236,11 +237,11 @@ private:
   virtual void OnMessageReceiverStateChanged(
       Azure::Core::_internal::Amqp::MessageReceiver const& receiver,
       Azure::Core::_internal::Amqp::MessageReceiverState newState,
-      Azure::Core::_internal::Amqp::MessageReceiverState oldState)
+      Azure::Core::_internal::Amqp::MessageReceiverState oldState) override
   {
-    receiver;
-    newState;
-    oldState;
+    (void)receiver;
+    (void)newState;
+    (void)oldState;
   }
 
   std::unique_ptr<Azure::Core::_internal::Amqp::Session> m_listeningSession;

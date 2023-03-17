@@ -10,19 +10,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-extern "C"
-{
-  struct LINK_INSTANCE_TAG;
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4471)
-#endif
-  enum LINK_STATE_TAG;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-}
+struct LINK_INSTANCE_TAG;
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   class Session;
   struct LinkEndpoint;
@@ -37,6 +25,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   };
 
   namespace _detail {
+    class LinkImpl;
 
     enum class LinkState
     {
@@ -100,7 +89,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           SessionRole role,
           std::string const& source,
           std::string const& target);
-      //    Link(LINK_INSTANCE_TAG* instance) { m_link = instance; }
+      Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
       ~Link() noexcept;
 
       Link(Link const&) = delete;
@@ -108,13 +97,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       Link(Link&&) noexcept = delete;
       Link& operator=(Link&&) noexcept = delete;
 
-      LINK_INSTANCE_TAG* Release()
-      {
-        auto rv = m_link;
-        m_link = nullptr;
-        return rv;
-      }
-      LINK_INSTANCE_TAG* Get() const { return m_link; }
+      LINK_INSTANCE_TAG* Release();
+      LINK_INSTANCE_TAG* Get();
 
       void SetSenderSettleMode(SenderSettleMode senderSettleMode);
       SenderSettleMode GetSenderSettleMode() const;
@@ -140,8 +124,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       uint32_t GetReceivedMessageId() const;
 
-      Session const& GetSession() const { return m_session; }
-
       void Attach(LinkEvents* eventHandler);
 
       void Detach(
@@ -151,31 +133,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           Azure::Core::Amqp::Models::Value& info);
 
     private:
-      LINK_INSTANCE_TAG* m_link;
-      Session const& m_session;
-      bool m_isListening{false};
-      LinkEvents* m_eventHandler{nullptr};
-      std::string m_source;
-      std::string m_target;
-
-      static AMQP_VALUE_DATA_TAG* OnTransferReceivedFn(
-          void* context,
-          TRANSFER_INSTANCE_TAG* transfer,
-          uint32_t payload_size,
-          const uint8_t* payload_bytes);
-      static void OnLinkStateChangedFn(
-          void* context,
-          LINK_STATE_TAG newState,
-          LINK_STATE_TAG oldState);
-      static void OnLinkFlowOnFn(void* context);
-
-#if 0
-MOCKABLE_FUNCTION(, int, link_send_disposition, LINK_HANDLE, link, delivery_number, message_number, AMQP_VALUE, delivery_state);
-MOCKABLE_FUNCTION(, ASYNC_OPERATION_HANDLE, link_transfer_async, LINK_HANDLE, handle, message_format, message_format, PAYLOAD*, payloads, size_t, payload_count, ON_DELIVERY_SETTLED, on_delivery_settled, void*, callback_context, LINK_TRANSFER_RESULT*, link_transfer_result,tickcounter_ms_t, timeout);
-MOCKABLE_FUNCTION(, ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE, link_subscribe_on_link_detach_received, LINK_HANDLE, link, ON_LINK_DETACH_RECEIVED, on_link_detach_received, void*, context);
-MOCKABLE_FUNCTION(, void, link_unsubscribe_on_link_detach_received, ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE, event_subscription);
-
-#endif
+      std::shared_ptr<LinkImpl> m_impl;
     };
   } // namespace _detail
 }}}} // namespace Azure::Core::_internal::Amqp

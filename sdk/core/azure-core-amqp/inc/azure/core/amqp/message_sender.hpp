@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   struct MessageSenderOptions
   {
     std::string Name;
-    SenderSettleMode SenderSettleMode{};
+    SenderSettleMode SettleMode{};
     std::string SourceAddress;
     std::vector<std::string> AuthenticationScopes;
     uint32_t MaxMessageSize{};
@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::vector<std::string> Capabilities;
     LinkDurability Durability{};
     bool DynamicAddress{false};
-    ExpiryPolicy ExpiryPolicy{};
+    ExpiryPolicy SenderExpiryPolicy{};
     std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
     bool IgnoreDispositionErrors{false};
 
