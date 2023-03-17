@@ -169,6 +169,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     MessageReceiverImpl::~MessageReceiverImpl() noexcept
     {
+      // If we're registered for events, null out the event handler, so we don't get called back
+      // during the destroy.
+      if (m_eventHandler)
+      {
+        m_eventHandler = nullptr;
+      }
       if (m_messageReceiver)
       {
         messagereceiver_destroy(m_messageReceiver);
