@@ -13,7 +13,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   class AmqpHeaderTransport final : public Transport {
 
   public:
-    AmqpHeaderTransport(XIO_INSTANCE_TAG* parentTransport, TransportEvents*eventHandler);
+    AmqpHeaderTransport(XIO_INSTANCE_TAG* parentTransport, TransportEvents* eventHandler);
     ~AmqpHeaderTransport() = default;
   };
 

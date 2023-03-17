@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "Transport.hpp"
+#include "transport.hpp"
 #include <exception>
 
 struct XIO_INSTANCE_TAG;
@@ -14,7 +14,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   public:
     SocketTransport();
-    SocketTransport(std::string const& hostName, uint16_t hostPort, TransportEvents* eventHandler=nullptr);
+    SocketTransport(
+        std::string const& hostName,
+        uint16_t hostPort,
+        TransportEvents* eventHandler = nullptr);
     ~SocketTransport() = default;
   };
 

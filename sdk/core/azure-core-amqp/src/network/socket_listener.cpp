@@ -73,7 +73,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       throw std::runtime_error("Could not start listener.");
     }
     m_started = true;
-
   }
 
   void SocketListener::Stop()

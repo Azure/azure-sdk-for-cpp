@@ -6,7 +6,6 @@
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include "models/amqp_value.hpp"
-#include "network/transport.hpp"
 
 #include <chrono>
 #include <memory>
@@ -166,12 +165,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     void SendAttach(Endpoint& endpoint, Attach& attach);
     void SendDisposition(Endpoint& endpoint, Disposition& disposition);
     void SendDetach(Endpoint& endpoint, Detach& detach);
-    //SessionSendTransferResult SendTransfer(
-    //    Endpoint& endpoint,
-    //    Transfer& transfer,
-    //    std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-    //    uint32_t* deliveryNumber,
-    //    Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete);
+    // SessionSendTransferResult SendTransfer(
+    //     Endpoint& endpoint,
+    //     Transfer& transfer,
+    //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
+    //     uint32_t* deliveryNumber,
+    //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete);
 
   private:
     std::shared_ptr<_detail::SessionImpl> m_impl;
