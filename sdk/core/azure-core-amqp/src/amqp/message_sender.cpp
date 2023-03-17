@@ -209,7 +209,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           m_options.SourceAddress,
           m_target);
       m_link->SetMaxMessageSize(m_options.MaxMessageSize);
-      m_link->SetSenderSettleMode(m_options.SenderSettleMode);
+      m_link->SetSenderSettleMode(m_options.SettleMode);
 
       m_messageSender = messagesender_create(
           m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);

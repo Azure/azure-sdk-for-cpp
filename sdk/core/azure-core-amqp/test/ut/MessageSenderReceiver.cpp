@@ -292,7 +292,7 @@ TEST_F(TestMessages, SenderSendAsync)
     MessageSenderOptions options;
     options.Name = "sender-link";
     options.SourceAddress = "ingress";
-    options.SenderSettleMode = SenderSettleMode::Settled;
+    options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
     MessageSender sender(session, "localhost/ingress", connection, options);
     sender.Open();
@@ -343,7 +343,7 @@ TEST_F(TestMessages, SenderSendSync)
 
   {
     MessageSenderOptions options;
-    options.SenderSettleMode = SenderSettleMode::Settled;
+    options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
     options.SourceAddress = "ingress";
     options.Name = "sender-link";

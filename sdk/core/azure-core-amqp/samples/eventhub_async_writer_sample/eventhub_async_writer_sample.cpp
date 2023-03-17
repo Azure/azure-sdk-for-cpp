@@ -30,7 +30,7 @@ int main()
   senderOptions.Name = "sender-link";
 
   senderOptions.SourceAddress = "ingress";
-  senderOptions.SenderSettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled;
+  senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
   Azure::Core::_internal::Amqp::MessageSender sender(
