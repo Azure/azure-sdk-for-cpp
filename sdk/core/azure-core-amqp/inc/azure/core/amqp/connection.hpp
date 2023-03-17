@@ -3,16 +3,14 @@
 
 #pragma once
 
-#include <chrono>
-#include <memory>
-#include <string>
-
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include "models/amqp_value.hpp"
-#include "network/transport.hpp"
 #include "session.hpp"
 #include <azure/core/credentials/credentials.hpp>
+#include <chrono>
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
@@ -154,11 +152,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     uint16_t GetEndpointIncomingChannel(Endpoint endpoint);
     void DestroyEndpoint(Endpoint endpoint);
-    //void EncodeFrame(
-    //    Endpoint endpoint,
-    //    Azure::Core::Amqp::Models::Value performative,
-    //    std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-    //    Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn onSendComplete);
+    // void EncodeFrame(
+    //     Endpoint endpoint,
+    //     Azure::Core::Amqp::Models::Value performative,
+    //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
+    //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn
+    //     onSendComplete);
 
     void SetTrace(bool enableTrace);
 

@@ -13,7 +13,9 @@ Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
     std::string const& saslKeyName,
     std::string const& saslKey,
     std::string const& hostName,
-    uint16_t hostPort, TransportEvents*eventHandler) : Transport(eventHandler)
+    uint16_t hostPort,
+    TransportEvents* eventHandler)
+    : Transport(eventHandler)
 {
   auto tlsioConfig = platform_get_default_tlsio();
   TLSIO_CONFIG tlsConfig{};
@@ -33,7 +35,9 @@ Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
 
 Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
     std::string const& hostName,
-    uint16_t hostPort, TransportEvents*eventHandler) : Transport(eventHandler)
+    uint16_t hostPort,
+    TransportEvents* eventHandler)
+    : Transport(eventHandler)
 {
   auto tlsioConfig = platform_get_default_tlsio();
   TLSIO_CONFIG tlsConfig{};

@@ -5,12 +5,12 @@
 #include "azure/core/amqp/claims_based_security.hpp"
 #include <azure_uamqp_c/cbs.h>
 
-
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
   class CbsImpl {
 
   public:
-    CbsImpl(Azure::Core::_internal::Amqp::Session const& session,
+    CbsImpl(
+        Azure::Core::_internal::Amqp::Session const& session,
         Azure::Core::_internal::Amqp::Connection const& connectionToPoll);
     virtual ~CbsImpl() noexcept;
 

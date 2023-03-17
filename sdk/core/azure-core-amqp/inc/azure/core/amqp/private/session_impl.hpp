@@ -48,12 +48,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     void SendAttach(Endpoint& endpoint, Attach& attach);
     void SendDisposition(Endpoint& endpoint, Disposition& disposition);
     void SendDetach(Endpoint& endpoint, Detach& detach);
-    //SessionSendTransferResult SendTransfer(
-    //    Endpoint& endpoint,
-    //    Transfer& transfer,
-    //    std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-    //    uint32_t* deliveryNumber,
-    //    Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete);
+    // SessionSendTransferResult SendTransfer(
+    //     Endpoint& endpoint,
+    //     Transfer& transfer,
+    //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
+    //     uint32_t* deliveryNumber,
+    //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete);
 
   private:
     SessionImpl();
