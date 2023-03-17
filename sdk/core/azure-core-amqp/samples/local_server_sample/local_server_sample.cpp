@@ -123,7 +123,7 @@ private:
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
     std::shared_ptr<Network::Transport> amqpTransport{
-        std::make_shared<Network::AmqpHeaderTransport>(xio)};
+        std::make_shared<Network::AmqpHeaderTransport>(xio, nullptr)};
     ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";

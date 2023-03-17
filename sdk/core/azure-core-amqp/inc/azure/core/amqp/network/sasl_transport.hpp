@@ -8,7 +8,7 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  class SaslTransport : public Azure::Core::_internal::Amqp::Network::Transport {
+  class SaslTransport final : public Azure::Core::_internal::Amqp::Network::Transport {
 
   public:
     // Configure the transport using SASL plain.
@@ -16,9 +16,13 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         std::string const& saslKeyName,
         std::string const& saslKey,
         std::string const& hostName,
-        uint16_t hostPort);
+        uint16_t hostPort,
+        TransportEvents* eventHandler = nullptr);
     // Configure the transport using SASL Anonymous.
-    SaslTransport(std::string const& hostName, uint16_t hostPort);
+    SaslTransport(
+        std::string const& hostName,
+        uint16_t hostPort,
+        TransportEvents* eventHandler = nullptr);
     ~SaslTransport() = default;
   };
 

@@ -4,17 +4,19 @@
 #pragma once
 #include <exception>
 #include <functional>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
 extern "C"
 {
-  enum IO_OPEN_RESULT_TAG : int;
   struct XIO_INSTANCE_TAG;
 }
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
-
+  namespace _detail {
+    struct TransportImpl;
+  }
   enum class TransportState
   {
     Closed,
@@ -38,8 +40,20 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     Cancelled
   };
 
-  struct Transport
+  class Transport;
+
+  struct TransportEvents
   {
+    virtual void OnOpenComplete(TransportOpenResult openResult) = 0;
+    virtual void OnBytesReceived(
+        Transport const& transport,
+        const unsigned char* buffer,
+        size_t size)
+        = 0;
+    virtual void OnIoError() = 0;
+  };
+
+  class Transport {
     using TransportOpenCompleteFn = std::function<void(TransportOpenResult)>;
     using TransportCloseCompleteFn = std::function<void()>;
     using TransportSendCompleteFn = std::function<void(TransportSendResult)>;
@@ -47,33 +61,23 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         = std::function<void(uint8_t const* buffer, size_t size)>;
     using TransportErrorCompleteFn = std::function<void()>;
 
-  private:
-    XIO_INSTANCE_TAG* m_xioInstance{};
-    bool m_isOpen{false};
-
-    static void OnOpenCompleteFn(void* context, IO_OPEN_RESULT_TAG openResult);
-    virtual void OnOpenComplete(TransportOpenResult openResult) { (void)openResult; }
-    static void OnBytesReceivedFn(void* context, const unsigned char* buffer, size_t size);
-    virtual void OnBytesReceived(const unsigned char* buffer, size_t size)
-    {
-      (void)buffer, (void)size;
-    };
-    static void OnIoErrorFn(void* context);
-    virtual void OnIoError(){};
-
-  protected:
-    Transport();
-
-    void SetInstance(XIO_INSTANCE_TAG* instance);
-
   public:
-    Transport(XIO_INSTANCE_TAG* instance);
+    Transport(std::shared_ptr<_detail::TransportImpl> impl) : m_impl{impl} {}
+    Transport(XIO_INSTANCE_TAG* xioInstance, TransportEvents* events);
     Transport(Transport&& instance) = delete;
     virtual ~Transport();
     virtual bool Open();
     virtual bool Close(TransportCloseCompleteFn);
     virtual bool Send(uint8_t*, size_t, TransportSendCompleteFn) const;
     void Poll() const;
-    operator XIO_INSTANCE_TAG*() { return m_xioInstance; }
+    virtual std::shared_ptr<_detail::TransportImpl> GetImpl() const { return m_impl; }
+
+  protected:
+    Transport(TransportEvents* events);
+
+    void SetInstance(XIO_INSTANCE_TAG* xioInstance);
+
+  private:
+    std::shared_ptr<_detail::TransportImpl> m_impl;
   };
 }}}}} // namespace Azure::Core::_internal::Amqp::Network

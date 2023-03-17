@@ -154,11 +154,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     uint16_t GetEndpointIncomingChannel(Endpoint endpoint);
     void DestroyEndpoint(Endpoint endpoint);
-    void EncodeFrame(
-        Endpoint endpoint,
-        Azure::Core::Amqp::Models::Value performative,
-        std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-        Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn onSendComplete);
+    //void EncodeFrame(
+    //    Endpoint endpoint,
+    //    Azure::Core::Amqp::Models::Value performative,
+    //    std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
+    //    Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn onSendComplete);
 
     void SetTrace(bool enableTrace);
 

@@ -10,13 +10,17 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  SocketTransport::SocketTransport(std::string const& host, uint16_t port) : Transport()
+  SocketTransport::SocketTransport(
+      std::string const& host,
+      uint16_t port,
+      TransportEvents* eventHandler)
+      : Transport(eventHandler)
   {
     SOCKETIO_CONFIG socketConfig{host.c_str(), port};
 
     SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
   }
 
-  SocketTransport::SocketTransport() : Transport() {}
+  SocketTransport::SocketTransport() : Transport(nullptr) {}
 
 }}}}} // namespace Azure::Core::_internal::Amqp::Network

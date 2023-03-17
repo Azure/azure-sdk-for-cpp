@@ -8,11 +8,11 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  class TlsTransport : public Transport {
+  class TlsTransport final : public Transport {
 
   public:
-    TlsTransport();
-    TlsTransport(std::string const& hostName, uint16_t hostPort);
+    TlsTransport(TransportEvents*eventHandler = nullptr);
+    TlsTransport(std::string const& hostName, uint16_t hostPort, TransportEvents* eventHandler=nullptr);
     ~TlsTransport() = default;
   };
 
