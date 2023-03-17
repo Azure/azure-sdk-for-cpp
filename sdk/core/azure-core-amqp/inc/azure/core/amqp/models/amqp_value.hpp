@@ -43,6 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   enum class AmqpValueType
   {
+    Invalid,
     Null,
     Bool,
     UByte,

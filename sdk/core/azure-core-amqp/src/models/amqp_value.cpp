@@ -463,6 +463,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     switch (amqpvalue_get_type(m_value))
     {
+      case AMQP_TYPE_INVALID:
+        return AmqpValueType::Invalid;
       case AMQP_TYPE_NULL:
         return AmqpValueType::Null;
       case AMQP_TYPE_BOOL:
@@ -593,8 +595,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   size_t LogRawData(
       std::ostream& os,
       size_t startOffset,
-      _In_reads_bytes_(cb) const uint8_t* const pb,
-      _In_ size_t cb)
+      const uint8_t* const pb,
+      size_t cb)
   {
     // scratch buffer which will hold the data being logged.
     std::stringstream ss;

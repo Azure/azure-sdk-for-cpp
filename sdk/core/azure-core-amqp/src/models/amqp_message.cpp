@@ -179,6 +179,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         return MessageBodyType::Sequence;
       case MESSAGE_BODY_TYPE_VALUE:
         return MessageBodyType::Value;
+      case MESSAGE_BODY_TYPE_INVALID:
+        return MessageBodyType::Invalid;
     }
     return MessageBodyType::None;
   }
