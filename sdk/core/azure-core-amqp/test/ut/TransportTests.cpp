@@ -30,6 +30,8 @@ std::string StringFromSendResult(TransportSendResult ts)
       return "Error";
     case TransportSendResult::Cancelled:
       return "Cancelled";
+    case TransportSendResult::Invalid:
+      return "**INVALID**";
   }
   throw std::logic_error("??? Unknown Transport Send Result...");
 }
@@ -202,7 +204,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       AsyncOperationQueue<TransportOpenResult> openResultQueue;
       AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
       AsyncOperationQueue<bool> errorQueue;
-      virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport)
+      virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport) override
       {
         GTEST_LOG_(INFO) << "Listener started, new connection.";
         auto listenerTransport = std::make_unique<Transport>(newTransport, this);
@@ -231,7 +233,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
                            << StringFromSendResult(sendResult);
         });
       }
-      void OnIoError()
+      void OnIoError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);

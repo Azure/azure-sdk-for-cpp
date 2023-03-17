@@ -132,8 +132,8 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
       ConnectionState newState,
       ConnectionState oldState) override
   {
-    oldState;
-    newState;
+    (void)oldState;
+    (void)newState;
   }
   virtual bool OnNewEndpoint(
       Azure::Core::_internal::Amqp::Connection const& connection,
@@ -158,7 +158,7 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
       //      Azure::Core::_internal::Amqp::SessionRole role,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value properties) override
+      Azure::Core::Amqp::Models::Value) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     auto newLink = std::make_unique<Azure::Core::_internal::Amqp::_detail::Link>(
