@@ -5,8 +5,8 @@
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/message_sender.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
+#include "azure/core/amqp/private/link_impl.hpp"
 #include "azure/core/amqp/private/session_impl.hpp"
-#include "azure/core/amqp/session.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
@@ -16,6 +16,71 @@
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
 
   Link::Link(
+      Session const& session,
+      std::string const& name,
+      SessionRole role,
+      std::string const& source,
+      std::string const& target)
+      : m_impl{std::make_shared<LinkImpl>(session, name, role, source, target)}
+  {
+  }
+
+  Link::Link(
+      Session const& session,
+      LinkEndpoint& linkEndpoint,
+      std::string const& name,
+      SessionRole role,
+      std::string const& source,
+      std::string const& target)
+      : m_impl{std::make_shared<LinkImpl>(session, linkEndpoint, name, role, source, target)}
+  {
+  }
+
+  Link::~Link() noexcept {}
+
+  LINK_HANDLE Link::Get() { return m_impl->Get(); }
+  LINK_HANDLE Link::Release() { return m_impl->Release(); }
+  std::string const& Link::GetSource() const { return m_impl->GetSource(); }
+  std::string const& Link::GetTarget() const { return m_impl->GetTarget(); }
+  SenderSettleMode Link::GetSenderSettleMode() const { return m_impl->GetSenderSettleMode(); }
+  void Link::SetSenderSettleMode(SenderSettleMode mode) { m_impl->SetSenderSettleMode(mode); }
+  ReceiverSettleMode Link::GetReceiverSettleMode() const { return m_impl->GetReceiverSettleMode(); }
+  void Link::SetReceiverSettleMode(ReceiverSettleMode mode) { m_impl->SetReceiverSettleMode(mode); }
+  void Link::SetInitialDeliveryCount(uint32_t initialDeliveryCount)
+  {
+    m_impl->SetInitialDeliveryCount(initialDeliveryCount);
+  }
+  uint32_t Link::GetInitialDeliveryCount() const { return m_impl->GetInitialDeliveryCount(); }
+  void Link::SetMaxMessageSize(uint64_t maxMessageSize)
+  {
+    m_impl->SetMaxMessageSize(maxMessageSize);
+  }
+  uint64_t Link::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
+  uint64_t Link::GetPeerMaxMessageSize() const { return m_impl->GetPeerMaxMessageSize(); }
+  void Link::SetAttachProperties(Azure::Core::Amqp::Models::Value attachProperties)
+  {
+    m_impl->SetAttachProperties(attachProperties);
+  }
+  void Link::SetMaxLinkCredit(uint32_t credit) { m_impl->SetMaxLinkCredit(credit); }
+  std::string Link::GetName() const { return m_impl->GetName(); }
+
+  uint32_t Link::GetReceivedMessageId() const { return m_impl->GetReceivedMessageId(); }
+
+  void Link::Attach(LinkEvents* eventHandler) { return m_impl->Attach(eventHandler); }
+
+  void Link::Detach(
+      bool close,
+      std::string const& errorCondition,
+      std::string const& errorDescription,
+      Azure::Core::Amqp::Models::Value& info)
+  {
+    return m_impl->Detach(close, errorCondition, errorDescription, info);
+  }
+
+  /****/
+  /* LINK Implementation */
+
+  LinkImpl::LinkImpl(
       Session const& session,
       std::string const& name,
       SessionRole role,
@@ -31,7 +96,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         Azure::Core::_internal::Amqp::Models::Messaging::CreateTarget(target));
   }
 
-  Link::Link(
+  LinkImpl::LinkImpl(
       Session const& session,
       LinkEndpoint& linkEndpoint,
       std::string const& name,
@@ -49,7 +114,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         Azure::Core::_internal::Amqp::Models::Messaging::CreateTarget(target));
   }
 
-  Link::~Link() noexcept
+  LinkImpl::~LinkImpl() noexcept
   {
     if (m_link)
     {
@@ -58,17 +123,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  std::string const& Link::GetSource() const { return m_source; }
-  std::string const& Link::GetTarget() const { return m_target; }
+  std::string const& LinkImpl::GetSource() const { return m_source; }
+  std::string const& LinkImpl::GetTarget() const { return m_target; }
 
-  void Link::SetMaxMessageSize(uint64_t size)
+  void LinkImpl::SetMaxMessageSize(uint64_t size)
   {
     if (link_set_max_message_size(m_link, size))
     {
       throw std::runtime_error("Could not set max message size");
     }
   }
-  uint64_t Link::GetMaxMessageSize() const
+  uint64_t LinkImpl::GetMaxMessageSize() const
   {
     uint64_t maxMessageSize;
     if (link_get_max_message_size(m_link, &maxMessageSize))
@@ -78,7 +143,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     return maxMessageSize;
   }
 
-  std::string Link::GetName() const
+  std::string LinkImpl::GetName() const
   {
     const char* name;
     if (link_get_name(m_link, &name))
@@ -87,7 +152,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
     return name;
   }
-  SenderSettleMode Link::GetSenderSettleMode() const
+  SenderSettleMode LinkImpl::GetSenderSettleMode() const
   {
     sender_settle_mode settleMode;
     if (link_get_snd_settle_mode(m_link, &settleMode))
@@ -97,27 +162,27 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     switch (settleMode)
     {
       case sender_settle_mode_mixed:
-        return SenderSettleMode::Mixed;
+        return Azure::Core::_internal::Amqp::SenderSettleMode::Mixed;
       case sender_settle_mode_settled:
-        return SenderSettleMode::Settled;
+        return Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
       case sender_settle_mode_unsettled:
-        return SenderSettleMode::Unsettled;
+        return Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled;
       default:
         throw std::logic_error("Unknown settle mode.");
     }
   }
-  void Link::SetSenderSettleMode(SenderSettleMode mode)
+  void LinkImpl::SetSenderSettleMode(SenderSettleMode mode)
   {
     sender_settle_mode settleMode;
     switch (mode)
     {
-      case SenderSettleMode::Unsettled:
+      case Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled:
         settleMode = sender_settle_mode_unsettled;
         break;
-      case SenderSettleMode::Settled:
+      case Azure::Core::_internal::Amqp::SenderSettleMode::Settled:
         settleMode = sender_settle_mode_settled;
         break;
-      case SenderSettleMode::Mixed:
+      case Azure::Core::_internal::Amqp::SenderSettleMode::Mixed:
         settleMode = sender_settle_mode_mixed;
         break;
       default:
@@ -129,7 +194,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  ReceiverSettleMode Link::GetReceiverSettleMode() const
+  ReceiverSettleMode LinkImpl::GetReceiverSettleMode() const
   {
     receiver_settle_mode settleMode;
     if (link_get_rcv_settle_mode(m_link, &settleMode))
@@ -146,7 +211,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         throw std::logic_error("Unknown settle mode.");
     }
   }
-  void Link::SetReceiverSettleMode(ReceiverSettleMode mode)
+  void LinkImpl::SetReceiverSettleMode(ReceiverSettleMode mode)
   {
     receiver_settle_mode settleMode;
     switch (mode)
@@ -166,7 +231,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  uint32_t Link::GetInitialDeliveryCount() const
+  uint32_t LinkImpl::GetInitialDeliveryCount() const
   {
     uint32_t deliveryCount;
     if (link_get_initial_delivery_count(m_link, &deliveryCount))
@@ -176,7 +241,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     return deliveryCount;
   }
 
-  uint64_t Link::GetPeerMaxMessageSize() const
+  uint64_t LinkImpl::GetPeerMaxMessageSize() const
   {
     uint64_t peerMax;
     if (link_get_peer_max_message_size(m_link, &peerMax))
@@ -186,7 +251,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     return peerMax;
   }
 
-  uint32_t Link::GetReceivedMessageId() const
+  uint32_t LinkImpl::GetReceivedMessageId() const
   {
     uint32_t messageId;
     if (link_get_received_message_id(m_link, &messageId))
@@ -196,21 +261,21 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     return messageId;
   }
 
-  void Link::SetInitialDeliveryCount(uint32_t count)
+  void LinkImpl::SetInitialDeliveryCount(uint32_t count)
   {
     if (link_set_initial_delivery_count(m_link, count))
     {
       throw std::runtime_error("Could not set initial delivery count.");
     }
   }
-  void Link::SetAttachProperties(Azure::Core::Amqp::Models::Value properties)
+  void LinkImpl::SetAttachProperties(Azure::Core::Amqp::Models::Value properties)
   {
     if (link_set_attach_properties(m_link, properties))
     {
       throw std::runtime_error("Could not set attach properties.");
     }
   }
-  void Link::SetMaxLinkCredit(uint32_t credit)
+  void LinkImpl::SetMaxLinkCredit(uint32_t credit)
   {
     if (link_set_max_link_credit(m_link, credit))
     {
@@ -218,7 +283,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  void Link::Attach(LinkEvents* eventHandler)
+  void LinkImpl::Attach(LinkEvents* eventHandler)
   {
     if (link_attach(
             m_link,
@@ -230,7 +295,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       throw std::runtime_error("Could not set attach properties.");
     }
   }
-  void Link::Detach(
+  void LinkImpl::Detach(
       bool close,
       std::string const& condition,
       std::string const& description,
@@ -247,18 +312,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  AMQP_VALUE Link::OnTransferReceivedFn(
+  AMQP_VALUE LinkImpl::OnTransferReceivedFn(
       void* context,
       TRANSFER_HANDLE transfer,
       uint32_t payloadSize,
       const uint8_t* payloadBytes)
   {
-    Link* link = static_cast<Link*>(context);
+    LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_eventHandler)
     {
       Models::TransferInstance transferInstance(transfer);
       return link->m_eventHandler->OnTransferReceived(
-          *link, transferInstance, payloadSize, payloadBytes);
+          link->shared_from_this(), transferInstance, payloadSize, payloadBytes);
     }
     return {};
   }
@@ -283,23 +348,28 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         throw std::logic_error("Unknown link state");
     }
   }
-  void Link::OnLinkStateChangedFn(void* context, LINK_STATE newLinkState, LINK_STATE oldLinkState)
+  void LinkImpl::OnLinkStateChangedFn(
+      void* context,
+      LINK_STATE newLinkState,
+      LINK_STATE oldLinkState)
   {
-    Link* link = static_cast<Link*>(context);
+    LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_eventHandler)
     {
 
       link->m_eventHandler->OnLinkStateChanged(
-          *link, LinkStateFromLINK_STATE(newLinkState), LinkStateFromLINK_STATE(oldLinkState));
+          link->shared_from_this(),
+          LinkStateFromLINK_STATE(newLinkState),
+          LinkStateFromLINK_STATE(oldLinkState));
     }
   }
 
-  void Link::OnLinkFlowOnFn(void* context)
+  void LinkImpl::OnLinkFlowOnFn(void* context)
   {
-    Link* link = static_cast<Link*>(context);
+    LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_eventHandler)
     {
-      link->m_eventHandler->OnLinkFlowOn(*link);
+      link->m_eventHandler->OnLinkFlowOn(link->shared_from_this());
     }
   }
 

@@ -46,6 +46,8 @@ std::string StringFromOpenResult(TransportOpenResult to)
       return "Error";
     case TransportOpenResult::Cancelled:
       return "Cancelled";
+    case TransportOpenResult::Invalid:
+      return "**INVALID**";
   }
   throw std::logic_error("??? Unknown Transport Open Result...");
 }
