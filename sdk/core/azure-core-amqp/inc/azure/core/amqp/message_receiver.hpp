@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
     std::string Name;
     std::vector<std::string> AuthenticationScopes;
-    ReceiverSettleMode ReceiverSettleMode{ReceiverSettleMode::First};
+    ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
     std::string TargetName;
     bool EnableTrace{false};
 
@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     LinkDurability Durability{};
     bool DynamicAddress{false};
     ExpiryPolicy SenderExpiryPolicy{};
-    ExpiryPolicy ExpiryPolicy{};
+    ExpiryPolicy ReceiverExpiryPolicy{};
     std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
     // LinkFilter
     bool ManualCredits{};

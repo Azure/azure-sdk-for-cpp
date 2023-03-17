@@ -178,7 +178,7 @@ private:
     Azure::Core::_internal::Amqp::Models::MessageSource messageSource(source);
     receiverOptions.TargetName = static_cast<std::string>(messageTarget.GetAddress());
     receiverOptions.Name = name;
-    receiverOptions.ReceiverSettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+    receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
     receiverOptions.DynamicAddress = messageSource.GetDynamic();
     auto receiver = std::make_unique<MessageReceiver>(
         session,

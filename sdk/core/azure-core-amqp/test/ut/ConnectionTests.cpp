@@ -188,7 +188,7 @@ private:
     Azure::Core::_internal::Amqp::MessageReceiverOptions receiverOptions;
     receiverOptions.Name = name;
     receiverOptions.TargetName = static_cast<std::string>(target);
-    receiverOptions.ReceiverSettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+    receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
 
     m_messageReceiver = std::make_unique<Azure::Core::_internal::Amqp::MessageReceiver>(
         session, newLinkInstance, static_cast<std::string>(source), receiverOptions);
