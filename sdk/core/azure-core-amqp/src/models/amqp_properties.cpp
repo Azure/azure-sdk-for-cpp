@@ -8,8 +8,8 @@
 
 #include <azure_uamqp_c/amqp_definitions_properties.h>
 #include <iostream>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

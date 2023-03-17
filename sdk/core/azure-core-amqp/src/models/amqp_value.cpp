@@ -592,11 +592,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return os;
   }
 
-  size_t LogRawData(
-      std::ostream& os,
-      size_t startOffset,
-      const uint8_t* const pb,
-      size_t cb)
+  size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
   {
     // scratch buffer which will hold the data being logged.
     std::stringstream ss;
