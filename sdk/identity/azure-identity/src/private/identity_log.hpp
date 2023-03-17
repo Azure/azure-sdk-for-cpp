@@ -11,12 +11,12 @@ namespace Azure { namespace Identity { namespace _detail {
   public:
     using Level = Core::Diagnostics::Logger::Level;
 
-    static auto Write(Level level, std::string const& message)
+    static void Write(Level level, std::string const& message)
     {
-      return Core::Diagnostics::_internal::Log::Write(level, "Identity: " + message);
+      Core::Diagnostics::_internal::Log::Write(level, "Identity: " + message);
     }
 
-    static auto ShouldWrite(Level level)
+    static bool ShouldWrite(Level level)
     {
       return Core::Diagnostics::_internal::Log::ShouldWrite(level);
     }

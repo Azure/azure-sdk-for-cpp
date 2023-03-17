@@ -9,6 +9,7 @@
 
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
+
 using namespace Azure::Identity;
 using namespace Azure::Core::Credentials;
 

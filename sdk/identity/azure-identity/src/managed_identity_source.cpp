@@ -16,6 +16,7 @@ using namespace Azure::Identity::_detail;
 
 using Azure::Core::_internal::Environment;
 using Azure::Identity::_detail::IdentityLog;
+
 namespace {
 std::string WithSourceMessage(std::string const& credSource)
 {
