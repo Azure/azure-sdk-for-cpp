@@ -14,6 +14,7 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/session.hpp"
 #include <functional>
+#include <random>
 
 class TestMessages : public testing::Test {
 protected:
@@ -216,19 +217,21 @@ private:
 
 TEST_F(TestMessages, ReceiverOpenClose)
 {
+  std::random_device dev;
+  uint16_t testPort = dev() % 1000 + 5000;
+
   MessageTests::MessageListenerEvents events;
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-  Connection connection("amqp://localhost:5672", &events, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), &events, connectionOptions);
   connection.SetTrace(true);
   Session session(connection, nullptr);
 
-  Azure::Core::_internal::Amqp::Network::SocketListener listener(5672, &events);
+  Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
 
   std::thread listenerThread([&]() {
     listener.Start();
     auto listeningConnection = events.WaitForConnection(listener);
-    //    auto listeningSession = listeningConnection->WaitForSession();
 
     listener.Stop();
   });
