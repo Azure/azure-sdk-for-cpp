@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         Azure::Core::_internal::Amqp::Models::Messaging::CreateTarget(target));
   }
 
-  Link::~Link()
+  Link::~Link() noexcept
   {
     if (m_link)
     {

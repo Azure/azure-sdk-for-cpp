@@ -110,6 +110,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         TransportOpenResult openResult{TransportOpenResult::Error};
         switch (ioOpenResult)
         {
+          case IO_OPEN_RESULT_INVALID:
+            openResult = TransportOpenResult::Invalid;
+            break;
           case IO_OPEN_OK:
             openResult = TransportOpenResult::Ok;
             break;
@@ -165,7 +168,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       {
         TransportSendResult result{TransportSendResult::Ok};
         switch (sendResult)
-        {case IO_SEND_RESULT_INVALID:
+        {
+          case IO_SEND_RESULT_INVALID:
             result = TransportSendResult::Invalid;
             break;
           case IO_SEND_OK:

@@ -265,7 +265,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
         receiveBytesQueue.CompleteOperation(echoedBytes);
       }
-      void OnIoError()
+      void OnIoError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);

@@ -96,9 +96,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_options{options}, m_source{source}, m_session{session},
-          m_eventHandler(eventHandler), m_connection{&connectionToPoll}, m_connectionCredential{
-                                                                             credential}
+        : m_options{options}, m_source{source}, m_session{session}, m_connection{&connectionToPoll},
+          m_eventHandler(eventHandler), m_connectionCredential{credential}
     {
     }
     MessageReceiverImpl::MessageReceiverImpl(
@@ -108,9 +107,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_options{options}, m_source{source}, m_session{session},
-          m_eventHandler(eventHandler), m_connection{&connectionToPoll}, m_tokenCredential{
-                                                                             credential}
+        : m_options{options}, m_source{source}, m_session{session}, m_connection{&connectionToPoll},
+          m_eventHandler(eventHandler), m_tokenCredential{credential}
     {
     }
     MessageReceiverImpl::MessageReceiverImpl(
@@ -118,8 +116,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_options{options}, m_source{source}, m_session{session},
-          m_eventHandler(eventHandler), m_connection{nullptr}
+        : m_options{options}, m_source{source}, m_session{session}, m_connection{nullptr},
+          m_eventHandler(eventHandler)
     {
     }
 
