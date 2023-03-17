@@ -33,7 +33,7 @@ TEST(Context, BasicBool)
   auto c2 = context.WithValue(key, true);
   bool value{};
   EXPECT_TRUE(c2.TryGetValue<bool>(key, value));
-  EXPECT_TRUE(value == true);
+  EXPECT_TRUE(value);
 
   Context::Key const anotherKey;
   auto c3 = c2.WithValue(anotherKey, std::make_shared<bool>(true));
@@ -56,7 +56,7 @@ TEST(Context, BasicInt)
   auto c2 = context.WithValue(key, 123);
   int value;
   EXPECT_TRUE(c2.TryGetValue<int>(key, value));
-  EXPECT_TRUE(value == 123);
+  EXPECT_EQ(value, 123);
 }
 
 TEST(Context, BasicStdString)
@@ -70,7 +70,7 @@ TEST(Context, BasicStdString)
   auto c2 = context.WithValue(key, s);
   std::string value;
   EXPECT_TRUE(c2.TryGetValue<std::string>(key, value));
-  EXPECT_TRUE(value == s);
+  EXPECT_EQ(value, s);
 }
 
 TEST(Context, BasicChar)
@@ -85,8 +85,8 @@ TEST(Context, BasicChar)
   auto c2 = context.WithValue(key, str);
   const char* value;
   EXPECT_TRUE(c2.TryGetValue<const char*>(key, value));
-  EXPECT_TRUE(value == s);
-  EXPECT_TRUE(value == str);
+  EXPECT_EQ(value, s);
+  EXPECT_EQ(value, str);
 }
 
 TEST(Context, IsCancelled)
@@ -206,13 +206,13 @@ TEST(Context, Chain)
   const char* valueT8;
   EXPECT_TRUE(finalContext.TryGetValue<const char*>(keyFinal, valueT8));
 
-  EXPECT_TRUE(valueT2 == 123);
-  EXPECT_TRUE(valueT3 == 456);
-  EXPECT_TRUE(valueT4 == 789);
-  EXPECT_TRUE(valueT5 == std::string("5"));
-  EXPECT_TRUE(valueT6 == std::string("6"));
-  EXPECT_TRUE(valueT7 == std::string("7"));
-  EXPECT_TRUE(valueT8 == std::string("Final"));
+  EXPECT_EQ(valueT2, 123);
+  EXPECT_EQ(valueT3, 456);
+  EXPECT_EQ(valueT4, 789);
+  EXPECT_EQ(valueT5, std::string("5"));
+  EXPECT_EQ(valueT6, std::string("6"));
+  EXPECT_EQ(valueT7, std::string("7"));
+  EXPECT_EQ(valueT8, std::string("Final"));
 }
 
 TEST(Context, MatchingKeys)
@@ -229,8 +229,8 @@ TEST(Context, MatchingKeys)
   int valueT3;
   EXPECT_TRUE(c3.TryGetValue<int>(key, valueT3));
 
-  EXPECT_TRUE(valueT2 == 123);
-  EXPECT_TRUE(valueT3 == 456);
+  EXPECT_EQ(valueT2, 123);
+  EXPECT_EQ(valueT3, 456);
 }
 
 struct SomeStructForContext final
@@ -492,10 +492,10 @@ TEST(Context, KeyTypePairPrecondition)
 #endif
 #endif
 
-  EXPECT_TRUE(strValue == "previous value");
+  EXPECT_EQ(strValue, "previous value");
 
   EXPECT_TRUE(c2.TryGetValue<int>(key, intValue));
-  EXPECT_TRUE(intValue == 123);
+  EXPECT_EQ(intValue, 123);
 
 #if GTEST_HAS_DEATH_TEST
 // Type-safe assert requires RTTI build
@@ -509,8 +509,8 @@ TEST(Context, KeyTypePairPrecondition)
 #endif
 #endif
 
-  EXPECT_TRUE(intValue == 123);
+  EXPECT_EQ(intValue, 123);
 
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
-  EXPECT_TRUE(strValue == s);
+  EXPECT_EQ(strValue, s);
 }
