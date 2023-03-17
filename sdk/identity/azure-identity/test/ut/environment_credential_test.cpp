@@ -53,14 +53,21 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
 
         auto credential = std::make_unique<EnvironmentCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
-        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
+
+        EXPECT_EQ(log[0].first, Logger::Level::Informational);
         EXPECT_EQ(
             log[0].second,
+            "Identity: EnvironmentCredential gets created with ClientSecretCredential.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
             "Identity: EnvironmentCredential: 'AZURE_TENANT_ID', 'AZURE_CLIENT_ID', "
             "'AZURE_CLIENT_SECRET', and 'AZURE_AUTHORITY_HOST' environment variables are set, so "
             "ClientSecretCredential with corresponding tenantId, clientId, clientSecret, and "
             "authorityHost gets created.");
+
         log.clear();
 
         return credential;
@@ -202,20 +209,26 @@ TEST(EnvironmentCredential, Unavailable)
 
         auto credential = std::make_unique<EnvironmentCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
+
         EXPECT_EQ(log[0].first, Logger::Level::Warning);
         EXPECT_EQ(
             log[0].second,
-            "Identity: EnvironmentCredential was not initialized with underlying credential: Both "
-            "'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID', and at least one of 'AZURE_CLIENT_SECRET', "
-            "'AZURE_CLIENT_CERTIFICATE_PATH' needs to be set. Additionally, "
-            "'AZURE_AUTHORITY_HOST' could be set to override the default authority host."
-            " Currently:\n"
+            "Identity: EnvironmentCredential was not initialized with underlying credential.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: EnvironmentCredential: Both 'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID',"
+            " and at least one of 'AZURE_CLIENT_SECRET', 'AZURE_CLIENT_CERTIFICATE_PATH'"
+            " needs to be set. Additionally, 'AZURE_AUTHORITY_HOST' could be set"
+            " to override the default authority host. Currently:\n"
             " * 'AZURE_TENANT_ID' is NOT set\n"
             " * 'AZURE_CLIENT_ID' is NOT set\n"
             " * 'AZURE_CLIENT_SECRET' is NOT set\n"
             " * 'AZURE_CLIENT_CERTIFICATE_PATH' is NOT set\n"
             " * 'AZURE_AUTHORITY_HOST' is NOT set\n");
+
         log.clear();
 
         return credential;
@@ -265,13 +278,20 @@ TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 
         auto credential = std::make_unique<EnvironmentCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
-        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
+
+        EXPECT_EQ(log[0].first, Logger::Level::Informational);
         EXPECT_EQ(
             log[0].second,
+            "Identity: EnvironmentCredential gets created with ClientSecretCredential.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
             "Identity: EnvironmentCredential: 'AZURE_TENANT_ID', 'AZURE_CLIENT_ID', and "
             "'AZURE_CLIENT_SECRET' environment variables are set, so ClientSecretCredential with "
             "corresponding tenantId, clientId, and clientSecret gets created.");
+
         log.clear();
 
         return credential;
@@ -342,20 +362,26 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
 
         auto credential = std::make_unique<EnvironmentCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
+
         EXPECT_EQ(log[0].first, Logger::Level::Warning);
         EXPECT_EQ(
             log[0].second,
-            "Identity: EnvironmentCredential was not initialized with underlying credential: Both "
-            "'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID', and at least one of 'AZURE_CLIENT_SECRET', "
-            "'AZURE_CLIENT_CERTIFICATE_PATH' needs to be set. Additionally, "
-            "'AZURE_AUTHORITY_HOST' could be set to override the default authority host."
-            " Currently:\n"
+            "Identity: EnvironmentCredential was not initialized with underlying credential.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: EnvironmentCredential: Both 'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID',"
+            " and at least one of 'AZURE_CLIENT_SECRET', 'AZURE_CLIENT_CERTIFICATE_PATH'"
+            " needs to be set. Additionally, 'AZURE_AUTHORITY_HOST' could be set"
+            " to override the default authority host. Currently:\n"
             " * 'AZURE_TENANT_ID' is NOT set\n"
             " * 'AZURE_CLIENT_ID' is set\n"
             " * 'AZURE_CLIENT_SECRET' is set\n"
             " * 'AZURE_CLIENT_CERTIFICATE_PATH' is NOT set\n"
             " * 'AZURE_AUTHORITY_HOST' is set\n");
+
         log.clear();
 
         return credential;
@@ -466,20 +492,26 @@ TEST(EnvironmentCredential, ClientSecretNoClientSecret)
 
         auto credential = std::make_unique<EnvironmentCredential>(options);
 
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
+        EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
+
         EXPECT_EQ(log[0].first, Logger::Level::Warning);
         EXPECT_EQ(
             log[0].second,
-            "Identity: EnvironmentCredential was not initialized with underlying credential: Both "
-            "'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID', and at least one of 'AZURE_CLIENT_SECRET', "
-            "'AZURE_CLIENT_CERTIFICATE_PATH' needs to be set. Additionally, "
-            "'AZURE_AUTHORITY_HOST' could be set to override the default authority host."
-            " Currently:\n"
+            "Identity: EnvironmentCredential was not initialized with underlying credential.");
+
+        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[1].second,
+            "Identity: EnvironmentCredential: Both 'AZURE_TENANT_ID' and 'AZURE_CLIENT_ID',"
+            " and at least one of 'AZURE_CLIENT_SECRET', 'AZURE_CLIENT_CERTIFICATE_PATH'"
+            " needs to be set. Additionally, 'AZURE_AUTHORITY_HOST' could be set"
+            " to override the default authority host. Currently:\n"
             " * 'AZURE_TENANT_ID' is set\n"
             " * 'AZURE_CLIENT_ID' is set\n"
             " * 'AZURE_CLIENT_SECRET' is NOT set\n"
             " * 'AZURE_CLIENT_CERTIFICATE_PATH' is NOT set\n"
             " * 'AZURE_AUTHORITY_HOST' is set\n");
+
         log.clear();
 
         return credential;
