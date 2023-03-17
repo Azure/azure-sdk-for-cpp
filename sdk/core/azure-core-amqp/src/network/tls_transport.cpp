@@ -12,7 +12,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   TlsTransport::TlsTransport(std::string const& host, uint16_t port, TransportEvents* eventHandler)
       : Transport(eventHandler)
   {
-    TLSIO_CONFIG tlsConfig{host.c_str(), port};
+    TLSIO_CONFIG tlsConfig{host.c_str(), port, nullptr};
 
     auto tlsio_interface = platform_get_default_tlsio();
 

@@ -153,7 +153,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     private:
       LINK_INSTANCE_TAG* m_link;
       Session const& m_session;
-      bool m_isListening{false};
       LinkEvents* m_eventHandler{nullptr};
       std::string m_source;
       std::string m_target;

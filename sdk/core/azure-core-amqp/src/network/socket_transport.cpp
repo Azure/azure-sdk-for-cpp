@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       TransportEvents* eventHandler)
       : Transport(eventHandler)
   {
-    SOCKETIO_CONFIG socketConfig{host.c_str(), port};
+    SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
 
     SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
   }

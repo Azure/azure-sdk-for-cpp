@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   } // namespace
 
   SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler)
-      : m_socket{socketlistener_create(port)}, m_eventHandler{eventHandler}
+      : m_eventHandler{eventHandler}, m_socket{socketlistener_create(port)}
   {
     EnsureGlobalStateInitialized();
   }
