@@ -13,8 +13,8 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  AmqpHeaderTransport::AmqpHeaderTransport(XIO_HANDLE parentTransport)
-      : Azure::Core::_internal::Amqp::Network::Transport()
+  AmqpHeaderTransport::AmqpHeaderTransport(XIO_HANDLE parentTransport, TransportEvents*eventHandler)
+      : Azure::Core::_internal::Amqp::Network::Transport(eventHandler)
   {
     HEADER_DETECT_IO_CONFIG detectIoConfig{};
     HEADER_DETECT_ENTRY headerDetectEntries[] = {

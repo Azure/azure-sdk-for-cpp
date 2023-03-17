@@ -120,7 +120,7 @@ private:
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> amqpTransport{
-        std::make_shared<Azure::Core::_internal::Amqp::Network::AmqpHeaderTransport>(xio)};
+        std::make_shared<Azure::Core::_internal::Amqp::Network::AmqpHeaderTransport>(xio, nullptr)};
     Azure::Core::_internal::Amqp::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";

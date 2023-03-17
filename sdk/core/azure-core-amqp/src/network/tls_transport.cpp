@@ -9,7 +9,8 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  TlsTransport::TlsTransport(std::string const& host, uint16_t port) : Transport()
+  TlsTransport::TlsTransport(std::string const& host, uint16_t port, TransportEvents* eventHandler)
+      : Transport(eventHandler)
   {
     TLSIO_CONFIG tlsConfig{host.c_str(), port};
 
@@ -18,6 +19,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     SetInstance(xio_create(tlsio_interface, &tlsConfig));
   }
 
-  TlsTransport::TlsTransport() : Transport() {}
+  TlsTransport::TlsTransport(TransportEvents* eventHandler) : Transport(eventHandler) {}
 
 }}}}} // namespace Azure::Core::_internal::Amqp::Network

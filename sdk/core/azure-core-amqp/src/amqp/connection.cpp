@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/network/private/transport_impl.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include "azure/core/amqp/private/connection_impl.hpp"
@@ -21,6 +22,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       ConnectionOptions const& options)
       : m_impl{std::make_shared<_detail::ConnectionImpl>(transport, eventHandler, options)}
   {
+    m_impl->FinishConstruction();
   }
 
   // Create a connection with a request URI and options.
@@ -30,11 +32,13 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       ConnectionOptions const& options)
       : m_impl{std::make_shared<_detail::ConnectionImpl>(requestUri, eventHandler, options)}
   {
+    m_impl->FinishConstruction();
   }
 
   Connection::Connection(ConnectionEvents* eventHandler, ConnectionOptions const& options)
       : m_impl{std::make_shared<_detail::ConnectionImpl>(eventHandler, options)}
   {
+    m_impl->FinishConstruction();
   }
 
   Connection::~Connection() {}
@@ -93,7 +97,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::shared_ptr<Network::Transport> transport,
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options)
-        : m_eventHandler{eventHandler}
+        : m_eventHandler{eventHandler}, m_options{options}, m_hostName{options.HostName}
     {
       if (options.SaslCredentials)
       {
@@ -101,7 +105,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
       EnsureGlobalStateInitialized();
       m_transport = transport;
-      CreateUnderlyingConnection(options.HostName, options);
     }
 
     // Create a connection with a request URI and options.
@@ -109,7 +112,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& requestUri,
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options)
-        : m_eventHandler{eventHandler}
+        : m_eventHandler{eventHandler}, m_options{options}
     {
       EnsureGlobalStateInitialized();
 
@@ -129,7 +132,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         m_transport = std::make_shared<Azure::Core::_internal::Amqp::Network::TlsTransport>(
             requestUrl.GetHost(), requestUrl.GetPort() ? requestUrl.GetPort() : 5671);
       }
-      CreateUnderlyingConnection(requestUrl.GetHost(), options);
+      m_hostName = requestUrl.GetHost();
     }
 
     ConnectionImpl::ConnectionImpl(ConnectionEvents* eventHandler, ConnectionOptions const& options)
@@ -147,10 +150,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         m_transport = std::make_shared<Azure::Core::_internal::Amqp::Network::TlsTransport>(
             options.HostName, options.Port);
       }
-      CreateUnderlyingConnection(options.HostName, options);
     }
     ConnectionImpl::~ConnectionImpl()
     {
+      // If the connection is going away, we don't want to generate any more events on it.
+      if (m_eventHandler)
+      {
+        m_eventHandler = nullptr;
+      }
       if (m_connection)
       {
         connection_destroy(m_connection);
@@ -158,19 +165,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
     }
 
-    void ConnectionImpl::CreateUnderlyingConnection(
-        std::string const& hostName,
-        ConnectionOptions const& options)
+    void ConnectionImpl::FinishConstruction()
     {
-      std::string containerId{options.ContainerId};
+      std::string containerId{m_options.ContainerId};
       if (containerId.empty())
       {
         containerId = Azure::Core::Uuid::CreateUuid().ToString();
       }
 
       m_connection = connection_create2(
-          *m_transport,
-          hostName.c_str(),
+          *m_transport->GetImpl(),
+          m_hostName.c_str(),
           containerId.c_str(),
           OnNewEndpointFn,
           this,
@@ -178,7 +183,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           this,
           OnIoErrorFn,
           this);
-      SetTrace(options.EnableTrace);
+      SetTrace(m_options.EnableTrace);
       //    SetIdleTimeout(options.IdleTimeout);
 
       //    SetMaxFrameSize(options.MaxFrameSize);

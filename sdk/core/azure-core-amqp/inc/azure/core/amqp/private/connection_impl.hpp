@@ -13,7 +13,7 @@
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
 
-  class ConnectionImpl final : std::enable_shared_from_this<ConnectionImpl> {
+  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
   public:
     ConnectionImpl(
         std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> transport,
@@ -34,6 +34,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     ConnectionImpl& operator=(ConnectionImpl const&) = delete;
     ConnectionImpl(Connection&&) noexcept = delete;
     ConnectionImpl& operator=(ConnectionImpl&&) = delete;
+
+    /**
+     * @brief Complete the construction of the ConnectionImpl object. This is required because the
+     * uAMQP call to connection_create/connection_create2 will call the event handler to indicate
+     * that the connection was created, but std::enable_shared_from_this requires that the
+     * std::shared_ptr containing the Connection be fully created.
+     *
+     * If the call to connection_create/connection_create2 is made from the constructor of the
+     * ConnectionImpl, the shared_ptr will not have been fully constructed, causing a crash.
+     */
+    void FinishConstruction();
 
     operator CONNECTION_HANDLE() const { return m_connection; }
 
@@ -64,11 +75,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     uint16_t GetEndpointIncomingChannel(Endpoint endpoint);
     void DestroyEndpoint(Endpoint endpoint);
-    void EncodeFrame(
-        Endpoint endpoint,
-        Azure::Core::Amqp::Models::Value performative,
-        std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-        Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn onSendComplete);
+    // void EncodeFrame(
+    //     Endpoint endpoint,
+    //     Azure::Core::Amqp::Models::Value performative,
+    //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
+    //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn
+    //     onSendComplete);
 
     void SetTrace(bool enableTrace);
 
@@ -77,6 +89,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     CONNECTION_HANDLE m_connection{};
     std::string m_hostName;
     std::string m_containerId;
+    ConnectionOptions m_options;
     Common::AsyncOperationQueue<std::unique_ptr<Session>> m_newSessionQueue;
     ConnectionEvents* m_eventHandler{};
     CredentialType m_credentialType;
@@ -87,8 +100,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         ConnectionEvents* eventHandler,
         CredentialType credentialType,
         ConnectionOptions const& options);
-
-    void CreateUnderlyingConnection(std::string const& hostName, ConnectionOptions const& options);
 
     static void OnEndpointFrameReceivedFn(
         void* context,

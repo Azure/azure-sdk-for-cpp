@@ -10,10 +10,10 @@ struct XIO_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
 
-  class AmqpHeaderTransport : public Transport {
+  class AmqpHeaderTransport final : public Transport {
 
   public:
-    AmqpHeaderTransport(XIO_INSTANCE_TAG* parentTransport);
+    AmqpHeaderTransport(XIO_INSTANCE_TAG* parentTransport, TransportEvents*eventHandler);
     ~AmqpHeaderTransport() = default;
   };
 

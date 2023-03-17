@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       // Note: We cannot tear down the socket listener at this point because any derived classes
       // have already been torn down. That means that if the work manager thread is still running,
       // we will close the underlying socket handle without warning.
-      if (m_registered || m_started)
+      if (m_started)
       {
         assert("Socket listener destroyed while still started.");
         abort();
@@ -74,17 +74,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
     m_started = true;
 
-    // Don't register the instance until the socketlistener is started - before that, the socket may
-    // not be created.
-    m_registered = true;
   }
 
   void SocketListener::Stop()
   {
-    if (m_registered)
-    {
-      m_registered = false;
-    }
     if (m_started)
     {
       m_started = false;

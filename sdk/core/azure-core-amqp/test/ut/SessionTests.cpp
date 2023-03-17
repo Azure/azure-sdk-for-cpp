@@ -92,13 +92,11 @@ TEST_F(TestSessions, SessionProperties)
 
 TEST_F(TestSessions, SessionBeginEnd)
 {
-  class TestListener : public Network::SocketListener {
+  class TestListenerEvents : public Network::SocketListenerEvents {
   public:
-    TestListener(uint16_t port) : SocketListener(port, nullptr) {}
-
-    std::shared_ptr<Network::Transport> WaitForResult()
+    std::shared_ptr<Network::Transport> WaitForResult(Network::SocketListener const& listener)
     {
-      auto result = m_listenerQueue.WaitForPolledResult(*this);
+      auto result = m_listenerQueue.WaitForPolledResult(listener);
       return std::get<0>(*result);
     }
 
@@ -108,12 +106,13 @@ TEST_F(TestSessions, SessionBeginEnd)
     virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
     {
       // Capture the XIO into a transport so it won't leak.
-      m_listenerQueue.CompleteOperation(std::make_shared<Network::Transport>(xio));
+      m_listenerQueue.CompleteOperation(std::make_shared<Network::Transport>(xio, nullptr));
     }
   };
 
   // Ensure someone is listening on the connection for when we call Session.Begin.
-  TestListener listener(5672);
+  TestListenerEvents events;
+  Network::SocketListener listener(5672, &events);
   listener.Start();
 
   // Create a connection
