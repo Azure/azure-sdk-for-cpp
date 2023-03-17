@@ -13,6 +13,7 @@
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
 #include <functional>
+#include <random>
 
 class TestLinks : public testing::Test {
 protected:
@@ -204,11 +205,14 @@ public:
 TEST_F(TestLinks, LinkAttachDetach)
 {
   LinkSocketListenerEvents events;
+
+  std::random_device dev;
+  uint16_t testPort = dev() % 1000 + 5000;
   // Create a connection
-  Connection connection("amqp://localhost:5672", &events, {});
+  Connection connection("amqp://localhost:" + std::to_string(testPort), &events, {});
   Session session(connection, nullptr);
 
-  Network::SocketListener listener(5672, &events);
+  Network::SocketListener listener(testPort, &events);
   listener.Start();
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
