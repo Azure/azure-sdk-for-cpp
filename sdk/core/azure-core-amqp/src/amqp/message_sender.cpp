@@ -240,6 +240,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         {
           case MESSAGE_SEND_RESULT_INVALID:
             result = MessageSendResult::Invalid;
+            break;
           case MESSAGE_SEND_OK:
             result = MessageSendResult::Ok;
             break;
