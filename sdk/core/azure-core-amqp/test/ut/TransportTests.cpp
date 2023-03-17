@@ -105,7 +105,7 @@ TEST_F(TestSocketTransport, SimpleSend)
         memcpy(val.get(), bytes, size);
         receiveBytesQueue.CompleteOperation(size, std::move(val));
       }
-      void OnIoError()
+      void OnIoError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);

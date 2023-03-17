@@ -183,7 +183,7 @@ private:
       //      Azure::Core::Amqp::_detail::SessionRole role,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value properties) override
+      Azure::Core::Amqp::Models::Value) override
   {
     Azure::Core::_internal::Amqp::MessageReceiverOptions receiverOptions;
     receiverOptions.Name = name;

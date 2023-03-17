@@ -31,7 +31,7 @@ TEST_F(TestValues, SimpleCreate)
   }
   {
     Value value{};
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_TRUE(value.IsNull());
   }
 
   {

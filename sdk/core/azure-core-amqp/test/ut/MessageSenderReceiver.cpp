@@ -137,8 +137,8 @@ private:
       ConnectionState newState,
       ConnectionState oldState) override
   {
-    oldState;
-    newState;
+    (void)oldState;
+    (void)newState;
   }
   virtual bool OnNewEndpoint(
       Azure::Core::_internal::Amqp::Connection const& connection,
@@ -168,7 +168,6 @@ private:
       Azure::Core::_internal::Amqp::Session const& session,
       Azure::Core::_internal::Amqp::LinkEndpoint& newLinkInstance,
       std::string const& name,
-      //      Azure::Core::Amqp::_detail::SessionRole role,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value properties) override
@@ -191,6 +190,7 @@ private:
     GTEST_LOG_(INFO) << "Opening the message receiver.";
     receiver->Open();
     m_messageReceiverQueue.CompleteOperation(std::move(receiver));
+    (void)properties;
     return true;
   }
   virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
@@ -207,9 +207,9 @@ private:
       MessageReceiverState oldState) override
   {
     GTEST_LOG_(INFO) << "OnMessageReceiverStateChanged";
-    receiver;
-    newState;
-    oldState;
+    (void)receiver;
+    (void)newState;
+    (void)oldState;
   }
 };
 } // namespace MessageTests
