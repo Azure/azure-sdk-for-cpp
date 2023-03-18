@@ -275,7 +275,7 @@ TEST_F(TestMessages, SenderSendAsync)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   //  connectionOptions.EnableTrace = true;
-  Connection connection("amqp://localhost:"+std::to_string(testPort), nullptr, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
 
   std::thread listenerThread([&]() {
@@ -330,7 +330,7 @@ TEST_F(TestMessages, SenderSendSync)
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection("amqp://localhost:"+std::to_string(testPort), nullptr, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
 
   std::thread listenerThread([&]() {
