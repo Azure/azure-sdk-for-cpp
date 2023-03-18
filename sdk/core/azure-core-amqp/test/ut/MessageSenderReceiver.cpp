@@ -269,16 +269,18 @@ TEST_F(TestMessages, SenderOpenClose)
 
 TEST_F(TestMessages, SenderSendAsync)
 {
+  std::random_device dev;
+  uint16_t testPort = dev() % 1000 + 5000;
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   //  connectionOptions.EnableTrace = true;
-  Connection connection("amqp://localhost:5675", nullptr, connectionOptions);
+  Connection connection("amqp://localhost:"+std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
 
   std::thread listenerThread([&]() {
     MessageTests::MessageListenerEvents events;
-    Azure::Core::_internal::Amqp::Network::SocketListener listener(5675, &events);
+    Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
     listener.Start();
     auto listeningConnection = events.WaitForConnection(listener);
     auto listeningSession = events.WaitForSession();
@@ -323,15 +325,17 @@ TEST_F(TestMessages, SenderSendAsync)
 
 TEST_F(TestMessages, SenderSendSync)
 {
+  std::random_device dev;
+  uint16_t testPort = dev() % 1000 + 5000;
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection("amqp://localhost:5672", nullptr, connectionOptions);
+  Connection connection("amqp://localhost:"+std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
 
   std::thread listenerThread([&]() {
     MessageTests::MessageListenerEvents events;
-    Azure::Core::_internal::Amqp::Network::SocketListener listener(5672, &events);
+    Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
     listener.Start();
     auto listeningConnection = events.WaitForConnection(listener);
     auto listeningSession = events.WaitForSession();
