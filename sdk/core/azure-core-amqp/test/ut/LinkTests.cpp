@@ -217,27 +217,18 @@ TEST_F(TestLinks, LinkAttachDetach)
   Session session(connection, nullptr);
 
   Network::SocketListener listener(testPort, &events);
-  try
+
+  EXPECT_NO_THROW(listener.Start());
   {
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+    link.Attach(nullptr);
 
-    listener.Start();
-    {
-      Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
-      link.Attach(nullptr);
+    Azure::Core::Amqp::Models::Value data;
+    link.Detach(false, {}, {}, data);
 
-      Azure::Core::Amqp::Models::Value data;
-      link.Detach(false, {}, {}, data);
-
-      //    auto listeningConnection = listener.WaitForConnection();
-      //    auto listeningSession = listeningConnection->WaitForSession();
-      //    auto listeningLink = listeningSession->WaitForLink();
-    }
-    listener.Stop();
+    //    auto listeningConnection = listener.WaitForConnection();
+    //    auto listeningSession = listeningConnection->WaitForSession();
+    //    auto listeningLink = listeningSession->WaitForLink();
   }
-  catch (std::exception const& ex)
-  {
-    system("netstat -ap");
-    GTEST_LOG_(ERROR) << "Exception thrown in LinKAttachDetach: " << ex.what();
-
-  }
-  }
+  listener.Stop();
+}

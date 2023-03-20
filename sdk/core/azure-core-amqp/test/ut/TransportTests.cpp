@@ -246,99 +246,88 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     }
   };
 
-  try
-  {
+  TestListenerEvents events;
+  uint16_t testPort = FindAvailableSocket();
 
-    TestListenerEvents events;
-    uint16_t testPort = FindAvailableSocket();
+  GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
+  SocketListener listener(testPort, &events);
+  EXPECT_NO_THROW(listener.Start());
 
-    GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
-    SocketListener listener(testPort, &events);
-    system("netstat -lp");
-    listener.Start();
-
-    class SendingEvents : public TransportEvents {
-      AsyncOperationQueue<TransportOpenResult> openResultQueue;
-      AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
-      AsyncOperationQueue<bool> errorQueue;
-      void OnOpenComplete(TransportOpenResult result) override
-      {
-        GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
-
-        openResultQueue.CompleteOperation(result);
-      }
-      void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
-      {
-        GTEST_LOG_(INFO) << "On bytes received: " << size;
-        std::vector<uint8_t> echoedBytes;
-        for (size_t i = 0; i < size; i += 1)
-        {
-          echoedBytes.push_back(bytes[i]);
-        }
-
-        receiveBytesQueue.CompleteOperation(echoedBytes);
-      }
-      void OnIoError() override
-      {
-        GTEST_LOG_(INFO) << "On I/O Error";
-        errorQueue.CompleteOperation(true);
-      }
-
-    public:
-      TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
-      {
-        auto result = openResultQueue.WaitForPolledResult(context, transport);
-        return std::get<0>(*result);
-      }
-      std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
-      {
-        auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
-        return std::get<0>(*result);
-      }
-    };
-    SendingEvents sendingEvents;
-    SocketTransport sender("localhost", testPort, &sendingEvents);
-
-    EXPECT_TRUE(sender.Open());
-
-    // Note: Keep this string under 64 bytes in length because the default socket I/O buffer size
-    // is 64 bytes and that helps ensure that this will be handled in a single OnReceiveBytes
-    // call.
-    unsigned char val[] = R"(GET / HTTP/1.1
-Host: www.microsoft.com)";
-
-    // Synchronously send the data to the listener.
+  class SendingEvents : public TransportEvents {
+    AsyncOperationQueue<TransportOpenResult> openResultQueue;
+    AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
+    AsyncOperationQueue<bool> errorQueue;
+    void OnOpenComplete(TransportOpenResult result) override
     {
-      AsyncOperationQueue<TransportSendResult> sendOperation;
+      GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
 
-      sender.Send(val, sizeof(val), [&sendOperation](TransportSendResult result) {
-        GTEST_LOG_(INFO) << "Sender send complete " << StringFromSendResult(result);
-        sendOperation.CompleteOperation(result);
-      });
-      auto sendResult{sendOperation.WaitForPolledResult({}, sender)};
-      EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
+      openResultQueue.CompleteOperation(result);
+    }
+    void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
+    {
+      GTEST_LOG_(INFO) << "On bytes received: " << size;
+      std::vector<uint8_t> echoedBytes;
+      for (size_t i = 0; i < size; i += 1)
+      {
+        echoedBytes.push_back(bytes[i]);
+      }
+
+      receiveBytesQueue.CompleteOperation(echoedBytes);
+    }
+    void OnIoError() override
+    {
+      GTEST_LOG_(INFO) << "On I/O Error";
+      errorQueue.CompleteOperation(true);
     }
 
-    GTEST_LOG_(INFO) << "Wait for listener to receive the bytes we just sent.";
-    auto listenerTransport = events.GetListenerTransport(listener, {});
+  public:
+    TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
+    {
+      auto result = openResultQueue.WaitForPolledResult(context, transport);
+      return std::get<0>(*result);
+    }
+    std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
+    {
+      auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
+      return std::get<0>(*result);
+    }
+  };
+  SendingEvents sendingEvents;
+  SocketTransport sender("localhost", testPort, &sendingEvents);
 
-    GTEST_LOG_(INFO) << "Wait for received event.";
-    events.WaitForReceive(*listenerTransport, {});
+  EXPECT_TRUE(sender.Open());
 
-    GTEST_LOG_(INFO) << "Listener received the bytes we just sent, now wait until the sender "
-                        "received those bytes back.";
+  // Note: Keep this string under 64 bytes in length because the default socket I/O buffer size
+  // is 64 bytes and that helps ensure that this will be handled in a single OnReceiveBytes
+  // call.
+  unsigned char val[] = R"(GET / HTTP/1.1
+Host: www.microsoft.com)";
 
-    auto receivedData = sendingEvents.WaitForReceive(sender, {});
-
-    EXPECT_EQ(sizeof(val), receivedData.size());
-    EXPECT_EQ(0, memcmp(val, receivedData.data(), receivedData.size()));
-    listenerTransport->Close(nullptr);
-    listener.Stop();
-  }
-  catch (std::exception const& ex)
+  // Synchronously send the data to the listener.
   {
+    AsyncOperationQueue<TransportSendResult> sendOperation;
 
-    GTEST_LOG_(ERROR) << "Exception thrown during SimpleListenerExcho" << ex.what();
-    system("netstat -lp");
+    sender.Send(val, sizeof(val), [&sendOperation](TransportSendResult result) {
+      GTEST_LOG_(INFO) << "Sender send complete " << StringFromSendResult(result);
+      sendOperation.CompleteOperation(result);
+    });
+    auto sendResult{sendOperation.WaitForPolledResult({}, sender)};
+    EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
   }
+
+  GTEST_LOG_(INFO) << "Wait for listener to receive the bytes we just sent.";
+  auto listenerTransport = events.GetListenerTransport(listener, {});
+
+  GTEST_LOG_(INFO) << "Wait for received event.";
+  events.WaitForReceive(*listenerTransport, {});
+
+  GTEST_LOG_(INFO) << "Listener received the bytes we just sent, now wait until the sender "
+                      "received those bytes back.";
+
+  auto receivedData = sendingEvents.WaitForReceive(sender, {});
+
+  EXPECT_EQ(sizeof(val), receivedData.size());
+  EXPECT_EQ(0, memcmp(val, receivedData.data(), receivedData.size()));
+  listenerTransport->Close(nullptr);
+  listener.Stop();
 }

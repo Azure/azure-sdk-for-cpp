@@ -313,7 +313,7 @@ TEST_F(TestMessages, SenderSendAsync)
 
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
-      listener.Start();
+      EXPECT_NO_THROW(listener.Start());
 
       running = true;
       threadStarted.notify_one();
@@ -330,7 +330,6 @@ TEST_F(TestMessages, SenderSendAsync)
     catch (std::exception const& ex)
     {
       GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
-      system("netstat -lp");
     }
   });
 
@@ -394,7 +393,7 @@ TEST_F(TestMessages, SenderSendSync)
 
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
-      listener.Start();
+      EXPECT_NO_THROW(listener.Start());
 
       running = true;
       threadStarted.notify_one();
@@ -412,10 +411,11 @@ TEST_F(TestMessages, SenderSendSync)
     catch (std::exception const& ex)
     {
       GTEST_LOG_(ERROR) << std::string("Exception thrown in listener thread. ") + ex.what();
-      system("netstat -lp");
     }
   });
 
+  // Block waiting until the listening thread has called listener.Start() to ensure that we don't
+  // race with the listener startup.
   std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
   threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
 
