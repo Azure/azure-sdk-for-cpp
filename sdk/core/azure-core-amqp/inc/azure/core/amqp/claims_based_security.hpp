@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     Cbs& operator=(Cbs&&) noexcept = delete;
 
     CbsOpenResult Open(Azure::Core::Context = {});
-    void Close(Azure::Core::Context = {});
+    void Close();
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,

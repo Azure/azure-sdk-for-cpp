@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   Cbs::~Cbs() noexcept {}
 
   CbsOpenResult Cbs::Open(Azure::Core::Context context) { return m_impl->Open(context); }
-  void Cbs::Close(Azure::Core::Context context) { m_impl->Close(context); }
+  void Cbs::Close() { m_impl->Close(); }
   std::tuple<CbsOperationResult, uint32_t, std::string> Cbs::PutToken(
       CbsTokenType tokenType,
       std::string const& audience,
@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       //    return CbsOpenResult::Ok;
     }
 
-    void CbsImpl::Close(Azure::Core::Context context)
+    void CbsImpl::Close()
     {
       if (cbs_close(m_cbs))
       {
