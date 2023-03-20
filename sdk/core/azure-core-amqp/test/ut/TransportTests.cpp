@@ -251,7 +251,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
     GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
     SocketListener listener(testPort, &events);
-    system("netstat -ap");
+    system("netstat -lp");
     ASSERT_NO_THROW(listener.Start());
 
     class SendingEvents : public TransportEvents {
