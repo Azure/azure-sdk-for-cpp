@@ -288,6 +288,9 @@ TEST_F(TestMessages, SenderSendAsync)
 {
   std::random_device dev;
   uint16_t testPort = dev() % 1000 + 5000;
+
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
+
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
@@ -325,6 +328,8 @@ TEST_F(TestMessages, SenderSendAsync)
     catch (std::exception const& ex)
     {
       GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
+      system("netstat -lp");
+
     }
   });
 
