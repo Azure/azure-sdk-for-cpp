@@ -18,6 +18,7 @@
 #include <azure/core/platform.hpp>
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
+#include <netinet/in.h> // for sockaddr_in
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
