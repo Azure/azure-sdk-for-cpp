@@ -121,14 +121,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Azure::Core::Amqp::Models::Value deliveryState);
     void SetTrace(bool traceEnabled);
 
-    // template <class... Waiters>
-    // Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
-    //{
-    //   auto result = m_messageQueue.WaitForPolledResult(waiters...);
-    //   return std::move(std::get<0>(*result));
-    // }
-
-    Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Connection& connection);
+    Azure::Core::Amqp::Models::Message WaitForIncomingMessage(
+        Connection& connection,
+        Azure::Core::Context context = {});
 
   private:
     std::shared_ptr<_detail::MessageReceiverImpl> m_impl;

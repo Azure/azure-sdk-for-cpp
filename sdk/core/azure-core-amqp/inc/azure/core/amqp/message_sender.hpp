@@ -101,10 +101,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     void Open();
     void Close();
     std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> Send(
-        Azure::Core::Amqp::Models::Message const& message);
+        Azure::Core::Amqp::Models::Message const& message,
+        Azure::Core::Context context = {});
     void SendAsync(
         Azure::Core::Amqp::Models::Message const& message,
-        MessageSendCompleteCallback onSendComplete);
+        MessageSendCompleteCallback onSendComplete,
+        Azure::Core::Context context = {});
     void SetTrace(bool traceEnabled);
 
   private:

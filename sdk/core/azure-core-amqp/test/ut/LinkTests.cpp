@@ -185,19 +185,21 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
 public:
   LinkSocketListenerEvents() {}
   std::shared_ptr<Connection> WaitForConnection(
-      Azure::Core::_internal::Amqp::Network::SocketListener const& listener)
+      Azure::Core::_internal::Amqp::Network::SocketListener const& listener,
+      Azure::Core::Context context)
   {
-    auto result = m_listeningQueue.WaitForPolledResult(listener);
+    auto result = m_listeningQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<Session> WaitForSession()
+  std::unique_ptr<Session> WaitForSession(Azure::Core::Context context)
   {
-    auto result = m_listeningSessionQueue.WaitForPolledResult(*m_connection);
+    auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<Azure::Core::_internal::Amqp::_detail::Link> WaitForLink()
+  std::unique_ptr<Azure::Core::_internal::Amqp::_detail::Link> WaitForLink(
+      Azure::Core::Context context)
   {
-    auto result = m_receiveLinkQueue.WaitForPolledResult(*m_connection);
+    auto result = m_receiveLinkQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
 };

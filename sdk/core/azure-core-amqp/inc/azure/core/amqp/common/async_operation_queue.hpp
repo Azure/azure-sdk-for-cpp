@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <azure/core/context.hpp>
 #include <condition_variable>
 #include <list>
 #include <mutex>
@@ -32,7 +33,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
 
     template <class... Poller>
-    std::unique_ptr<std::tuple<T...>> WaitForPolledResult(Poller&... pollers)
+    std::unique_ptr<std::tuple<T...>> WaitForPolledResult(
+        Azure::Core::Context context,
+        Poller&... pollers)
     {
       do
       {
@@ -44,6 +47,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
             rv = std::move(m_operationQueue.front());
             m_operationQueue.pop_front();
             return rv;
+          }
+          if (context.IsCancelled())
+          {
+            return nullptr;
           }
         }
         // Note: We need to call Poll() *outside* the lock because the poller is going to call the

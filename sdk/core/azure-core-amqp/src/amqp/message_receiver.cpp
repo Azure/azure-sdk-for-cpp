@@ -81,9 +81,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   void MessageReceiver::Open() { m_impl->Open(); }
   void MessageReceiver::Close() { m_impl->Close(); }
   void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
-  Azure::Core::Amqp::Models::Message MessageReceiver::WaitForIncomingMessage(Connection& connection)
+  Azure::Core::Amqp::Models::Message MessageReceiver::WaitForIncomingMessage(Connection& connection, Azure::Core::Context context)
   {
-    return m_impl->WaitForIncomingMessage(connection);
+    return m_impl->WaitForIncomingMessage(context, connection);
   }
   namespace _detail {
 

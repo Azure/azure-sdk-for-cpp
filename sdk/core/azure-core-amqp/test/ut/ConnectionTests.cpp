@@ -11,6 +11,7 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+#include <azure/core/context.hpp>
 #include <functional>
 
 class TestConnections : public testing::Test {
@@ -92,9 +93,10 @@ TEST_F(TestConnections, ConnectionOpenClose)
   class TestListener : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents {
   public:
     std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> WaitForResult(
-        Azure::Core::_internal::Amqp::Network::SocketListener const& listener)
+        Azure::Core::_internal::Amqp::Network::SocketListener const& listener,
+        Azure::Core::Context context = {})
     {
-      auto result = m_listenerQueue.WaitForPolledResult(listener);
+      auto result = m_listenerQueue.WaitForPolledResult(context, listener);
       return std::get<0>(*result);
     }
 
@@ -149,9 +151,10 @@ class TestSocketListenerEvents : public Azure::Core::_internal::Amqp::SessionEve
                                  public Azure::Core::_internal::Amqp::MessageReceiverEvents {
 public:
   std::unique_ptr<Azure::Core::_internal::Amqp::Connection> WaitForListener(
-      Azure::Core::_internal::Amqp::Network::SocketListener const& listener)
+      Azure::Core::_internal::Amqp::Network::SocketListener const& listener,
+      Azure::Core::Context context = {})
   {
-    auto result = m_listeningQueue.WaitForPolledResult(listener);
+    auto result = m_listeningQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));
   }
 

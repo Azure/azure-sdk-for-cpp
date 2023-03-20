@@ -11,6 +11,7 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+#include <azure/core/context.hpp>
 #include <functional>
 #include <random>
 
@@ -95,9 +96,11 @@ TEST_F(TestSessions, SessionBeginEnd)
 {
   class TestListenerEvents : public Network::SocketListenerEvents {
   public:
-    std::shared_ptr<Network::Transport> WaitForResult(Network::SocketListener const& listener)
+    std::shared_ptr<Network::Transport> WaitForResult(
+        Network::SocketListener const& listener,
+        Azure::Core::Context context = {})
     {
-      auto result = m_listenerQueue.WaitForPolledResult(listener);
+      auto result = m_listenerQueue.WaitForPolledResult(context, listener);
       return std::get<0>(*result);
     }
 

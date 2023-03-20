@@ -97,7 +97,7 @@ target_include_directories(
 add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(amqp azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
+create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
 target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c PUBLIC Azure::azure-core)
 
