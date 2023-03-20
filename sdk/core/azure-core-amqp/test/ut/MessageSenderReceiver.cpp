@@ -234,17 +234,27 @@ TEST_F(TestMessages, ReceiverOpenClose)
 
   Azure::Core::Context context;
 
+  // Ensure that the thread is started before we start using the message sender.
+  std::mutex threadRunningMutex;
+  std::condition_variable threadStarted;
+  bool running = false;
+
   std::thread listenerThread([&]() {
     listener.Start();
+    running = true;
+    threadStarted.notify_one();
+
     auto listeningConnection = events.WaitForConnection(listener, context);
 
     listener.Stop();
   });
 
+  std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
+  threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
   {
     MessageReceiver receiver(session, "MyTarget", {});
 
-    receiver.Open();
+    EXPECT_NO_THROW(receiver.Open());
     receiver.Close();
   }
 
@@ -295,12 +305,14 @@ TEST_F(TestMessages, SenderSendAsync)
   std::thread listenerThread([&]() {
     try
     {
-      running = true;
-      threadStarted.notify_one();
 
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
       listener.Start();
+
+      running = true;
+      threadStarted.notify_one();
+
       auto listeningConnection = events.WaitForConnection(listener, receiveContext);
       auto listeningSession = events.WaitForSession(receiveContext);
       auto messageReceiver = events.WaitForReceiver(receiveContext);
@@ -371,12 +383,14 @@ TEST_F(TestMessages, SenderSendSync)
   std::thread listenerThread([&]() {
     try
     {
-      running = true;
-      threadStarted.notify_one();
 
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
       listener.Start();
+
+      running = true;
+      threadStarted.notify_one();
+
       auto listeningConnection = events.WaitForConnection(listener, receiveContext);
       auto listeningSession = events.WaitForSession(receiveContext);
       auto messageReceiver = events.WaitForReceiver(receiveContext);
