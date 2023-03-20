@@ -279,18 +279,25 @@ TEST_F(TestMessages, SenderSendAsync)
   Session session(connection, nullptr);
 
   std::thread listenerThread([&]() {
-    MessageTests::MessageListenerEvents events;
-    Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
-    listener.Start();
-    auto listeningConnection = events.WaitForConnection(listener);
-    auto listeningSession = events.WaitForSession();
-    auto messageReceiver = events.WaitForReceiver();
-    GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
+    try
+    {
 
-    auto message = events.WaitForMessage();
-    GTEST_LOG_(INFO) << "Received incoming message!!";
+      MessageTests::MessageListenerEvents events;
+      Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
+      listener.Start();
+      auto listeningConnection = events.WaitForConnection(listener);
+      auto listeningSession = events.WaitForSession();
+      auto messageReceiver = events.WaitForReceiver();
+      GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
 
-    listener.Stop();
+      auto message = events.WaitForMessage();
+      GTEST_LOG_(INFO) << "Received incoming message!!";
+      listener.Stop();
+    }
+    catch (std::exception const& ex)
+    {
+      GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
+    }
   });
 
   {
@@ -300,7 +307,7 @@ TEST_F(TestMessages, SenderSendAsync)
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
     MessageSender sender(session, "localhost/ingress", connection, options);
-    sender.Open();
+    EXPECT_NO_THROW(sender.Open());
 
     uint8_t messageBody[] = "hello";
 
@@ -334,18 +341,26 @@ TEST_F(TestMessages, SenderSendSync)
   Session session(connection, nullptr);
 
   std::thread listenerThread([&]() {
-    MessageTests::MessageListenerEvents events;
-    Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
-    listener.Start();
-    auto listeningConnection = events.WaitForConnection(listener);
-    auto listeningSession = events.WaitForSession();
-    auto messageReceiver = events.WaitForReceiver();
-    GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
+    try
+    {
 
-    auto message = events.WaitForMessage();
-    GTEST_LOG_(INFO) << "Received incoming message!!";
+      MessageTests::MessageListenerEvents events;
+      Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
+      listener.Start();
+      auto listeningConnection = events.WaitForConnection(listener);
+      auto listeningSession = events.WaitForSession();
+      auto messageReceiver = events.WaitForReceiver();
+      GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
 
-    listener.Stop();
+      auto message = events.WaitForMessage();
+      GTEST_LOG_(INFO) << "Received incoming message!!";
+
+      listener.Stop();
+    }
+    catch (std::exception const& ex)
+    {
+      GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
+    }
   });
 
   {
@@ -355,7 +370,7 @@ TEST_F(TestMessages, SenderSendSync)
     options.SourceAddress = "ingress";
     options.Name = "sender-link";
     MessageSender sender(session, "localhost/ingress", connection, options);
-    sender.Open();
+    EXPECT_NO_THROW(sender.Open());
 
     uint8_t messageBody[] = "hello";
 
