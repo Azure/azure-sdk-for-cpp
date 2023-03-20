@@ -30,6 +30,7 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
+#include "azure/core/internal/strings.hpp"
 
 // Private include
 #include "curl_connection_pool_private.hpp"
@@ -70,7 +71,6 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
-#include <locale>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -1340,7 +1340,7 @@ void DumpCurlInfoToLog(std::string const& text, uint8_t* ptr, size_t size)
       // Log the contents of the buffer as text, if it's printable, print the character, otherwise
       // print '.'
       auto const ch = static_cast<char>(ptr[i + c]);
-      if (std::isprint(ch, std::locale::classic()))
+      if (Azure::Core::_internal::StringExtensions::IsPrintable(ch))
       {
         ss << ch;
       }

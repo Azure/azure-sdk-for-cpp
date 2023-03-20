@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443) Fixed potentially high CPU usage on Windows.
+
 ### Other Changes
 
 - Improved diagnostics to utilize `Azure::Core::Credentials::TokenCredential::GetCredentialName()`.

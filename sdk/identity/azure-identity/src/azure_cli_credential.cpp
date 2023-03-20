@@ -7,11 +7,11 @@
 
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
 
 #include <cstdio>
-#include <locale>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
@@ -40,6 +40,7 @@ using Azure::Identity::AzureCliCredential;
 using Azure::DateTime;
 using Azure::Core::Context;
 using Azure::Core::_internal::Environment;
+using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
@@ -71,7 +72,7 @@ void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
         break;
 
       default:
-        if (!std::isalnum(c, std::locale::classic()))
+        if (!StringExtensions::IsAlphaNumeric(c))
         {
           throw AuthenticationException(
               IdentityPrefix + GetCredentialName() + ": Unsafe command line input found in "

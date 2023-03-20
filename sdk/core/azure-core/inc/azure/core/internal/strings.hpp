@@ -30,6 +30,22 @@ namespace Azure { namespace Core { namespace _internal {
       return (c < 'A' || c > 'Z') ? c : c + ('a' - 'A');
     }
 
+    static constexpr bool IsDigit(char c) noexcept { return c >= '0' && c <= '9'; }
+
+    static constexpr bool IsHexDigit(char c) noexcept
+    {
+      return IsDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+    }
+
+    static constexpr bool IsAlphaNumeric(char c) noexcept
+    {
+      return IsDigit(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+    }
+
+    static constexpr bool IsSpace(char c) noexcept { return c == ' ' || (c >= '\t' && c <= '\r'); }
+
+    static constexpr bool IsPrintable(char c) noexcept { return c >= ' ' && c <= '~'; }
+
     struct CaseInsensitiveComparator final
     {
       bool operator()(std::string const& lhs, std::string const& rhs) const
