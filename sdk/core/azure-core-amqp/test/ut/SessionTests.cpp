@@ -118,6 +118,7 @@ TEST_F(TestSessions, SessionBeginEnd)
   TestListenerEvents events;
   std::random_device dev;
   uint16_t testPort = dev() % 1000 + 5000;
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
   Network::SocketListener listener(testPort, &events);
   listener.Start();
 

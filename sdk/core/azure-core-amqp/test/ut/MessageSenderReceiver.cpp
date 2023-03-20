@@ -223,6 +223,8 @@ TEST_F(TestMessages, ReceiverOpenClose)
   std::random_device dev;
   uint16_t testPort = dev() % 1000 + 5000;
 
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
+
   MessageTests::MessageListenerEvents events;
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
@@ -329,7 +331,6 @@ TEST_F(TestMessages, SenderSendAsync)
     {
       GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
       system("netstat -lp");
-
     }
   });
 
@@ -373,6 +374,9 @@ TEST_F(TestMessages, SenderSendSync)
   std::random_device dev;
   uint16_t testPort = dev() % 1000 + 5000;
   ConnectionOptions connectionOptions;
+
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
+
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);

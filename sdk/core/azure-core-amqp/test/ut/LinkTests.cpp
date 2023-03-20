@@ -210,6 +210,7 @@ TEST_F(TestLinks, LinkAttachDetach)
 
   std::random_device dev;
   uint16_t testPort = dev() % 1000 + 5000;
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
   Connection connection("amqp://localhost:" + std::to_string(testPort), &events, {});
   Session session(connection, nullptr);
@@ -235,7 +236,7 @@ TEST_F(TestLinks, LinkAttachDetach)
   catch (std::exception const& ex)
   {
     system("netstat -ap");
-    GTEST_LOG_(INFO) << "Exception thrown in LinKAttachDetach: " << ex.what();
+    GTEST_LOG_(ERROR) << "Exception thrown in LinKAttachDetach: " << ex.what();
 
   }
   }
