@@ -151,7 +151,7 @@ private:
   {
     std::cout << "Connection state changed. Was: " << ConnectionStateToString(oldState)
               << " now: " << ConnectionStateToString(newState) << std::endl;
-    connection;
+    (void)connection;
   };
   virtual void OnEndpointFrameReceived(
       Connection const& connection,
@@ -159,8 +159,8 @@ private:
       uint32_t framePayloadSize,
       uint8_t* payloadBytes) override
   {
-    connection;
-    value, framePayloadSize, payloadBytes;
+    (void)connection;
+    (void)value, (void)framePayloadSize, (void)payloadBytes;
   }
   virtual bool OnLinkAttached(
       Session const& sessionForLink,
@@ -168,7 +168,7 @@ private:
       std::string const& name,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value properties) override
+      Azure::Core::Amqp::Models::Value) override
   {
     Azure::Core::_internal::Amqp::Models::MessageSource messageSource(source);
     Azure::Core::_internal::Amqp::Models::MessageTarget messageTarget(target);
@@ -203,7 +203,7 @@ private:
   {
     std::cout << "Message Receiver state changed. Was: " << MessageStateToString(oldState)
               << " now: " << MessageStateToString(newState) << std::endl;
-    receiver;
+    (void)receiver;
   }
   virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
       Azure::Core::Amqp::Models::Message message) override
