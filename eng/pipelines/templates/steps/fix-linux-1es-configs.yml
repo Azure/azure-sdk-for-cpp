@@ -1,0 +1,13 @@
+steps:
+  - pwsh: |
+      if ((lsb_release --release --short) -eq "22.04") {
+        Write-Host "Release is 22.04, modifying apt configuration"
+
+        Write-Host "sudo rm -f /etc/apt/sources.list.d/azure.list"
+        # Use -f to suppress error if file is not present
+        sudo rm -f /etc/apt/sources.list.d/azure.list
+      } else { 
+        Write-Host "Release does not need modification" 
+      }
+    displayName: Modify Linux configurations
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))

@@ -78,8 +78,8 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
-
-  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+          
+  - template: /eng/pipelines/templates/steps/fix-linux-1es-configs.yml
 
   # Add g++5 repo to ubuntu
   - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"

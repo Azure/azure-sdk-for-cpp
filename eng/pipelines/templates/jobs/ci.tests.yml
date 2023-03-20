@@ -91,6 +91,8 @@ jobs:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
           AgentImage: $(OsVmImage)
+          
+      - template: /eng/pipelines/templates/steps/fix-linux-1es-configs.yml
 
       - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
