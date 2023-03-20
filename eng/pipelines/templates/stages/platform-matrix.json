@@ -148,11 +148,6 @@
           "AptDependencies": "g++-5",
           "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 "
         },
-        "gpp-8": {
-          "AptDependencies": "g++-8",
-          "CC": "/usr/bin/gcc-8",
-          "CXX": "/usr/bin/g++-8"
-        },
         "gpp-9": {
           "AptDependencies": "g++-9",
           "CC": "/usr/bin/gcc-9",
@@ -174,6 +169,24 @@
         "included_samples": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
           "PublishMapFiles": "true"
+        }
+      }
+    },
+    {
+      "StaticConfigs": {
+        "Ubuntu20": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
+          "BuildArgs": "-j 10",
+          "RunProxyTests": true
+        }
+      },
+      "BuildSettings": {
+        "gpp-8": {
+          "AptDependencies": "g++-8",
+          "CC": "/usr/bin/gcc-8",
+          "CXX": "/usr/bin/g++-8"
         }
       }
     },
