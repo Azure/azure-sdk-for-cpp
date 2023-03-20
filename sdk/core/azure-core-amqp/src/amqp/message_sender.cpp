@@ -216,10 +216,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       if (messagesender_open(m_messageSender))
       {
-        throw std::runtime_error("Could not open message sender");
+        auto err = errno;
+        throw std::runtime_error(
+            "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
+            + "\".");
       }
     }
-
     void MessageSenderImpl::Close()
     {
       if (messagesender_close(m_messageSender))

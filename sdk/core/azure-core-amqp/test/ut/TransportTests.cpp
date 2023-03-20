@@ -1,13 +1,13 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX - License - Identifier : MIT
 
-#include <gtest/gtest.h>
-#include <utility>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
+#include <gtest/gtest.h>
+#include <random>
+#include <utility>
 
 using namespace Azure::Core::_internal::Amqp::Network;
 using namespace Azure::Core::_internal::Amqp::Common;
@@ -243,7 +243,10 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     };
 
     TestListenerEvents events;
-    SocketListener listener(5672, &events);
+    std::random_device dev;
+    uint16_t testPort = dev() % 1000 + 5000;
+
+    SocketListener listener(testPort, &events);
     listener.Start();
 
     class SendingEvents : public TransportEvents {
@@ -286,7 +289,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       }
     };
     SendingEvents sendingEvents;
-    SocketTransport sender("localhost", 5672, &sendingEvents);
+    SocketTransport sender("localhost", testPort, &sendingEvents);
 
     EXPECT_TRUE(sender.Open());
 
