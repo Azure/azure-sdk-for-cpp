@@ -43,6 +43,56 @@ TEST(String, toUpperC)
   }
 }
 
+TEST(String, isDigit)
+{
+  using Azure::Core::_internal::StringExtensions;
+  for (unsigned i = 0; i <= 255; ++i)
+  {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
+    EXPECT_EQ(StringExtensions::IsDigit(c), std::isdigit(c, std::locale::classic()));
+  }
+}
+
+TEST(String, isHexDigit)
+{
+  using Azure::Core::_internal::StringExtensions;
+  for (unsigned i = 0; i <= 255; ++i)
+  {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
+    EXPECT_EQ(StringExtensions::IsHexDigit(c), std::isxdigit(c, std::locale::classic()));
+  }
+}
+
+TEST(String, isAlphaNumeric)
+{
+  using Azure::Core::_internal::StringExtensions;
+  for (unsigned i = 0; i <= 255; ++i)
+  {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
+    EXPECT_EQ(StringExtensions::IsAlphaNumeric(c), std::isalnum(c, std::locale::classic()));
+  }
+}
+
+TEST(String, isSpace)
+{
+  using Azure::Core::_internal::StringExtensions;
+  for (unsigned i = 0; i <= 255; ++i)
+  {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
+    EXPECT_EQ(StringExtensions::IsSpace(c), std::isspace(c, std::locale::classic()));
+  }
+}
+
+TEST(String, isPrintable)
+{
+  using Azure::Core::_internal::StringExtensions;
+  for (unsigned i = 0; i <= 255; ++i)
+  {
+    auto const c = static_cast<char>(static_cast<unsigned char>(i));
+    EXPECT_EQ(StringExtensions::IsPrintable(c), std::isprint(c, std::locale::classic()));
+  }
+}
+
 TEST(String, toLower)
 {
   using Azure::Core::_internal::StringExtensions;

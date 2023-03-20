@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443) Fixed potentially high CPU usage on Windows.
+
 ### Other Changes
 
 ## 1.5.0-beta.1 (2023-03-07)
