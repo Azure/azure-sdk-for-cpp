@@ -108,11 +108,11 @@ uint16_t FindAvailableSocket()
 {
   std::random_device dev;
 
-  uint16_t testPort = dev() % 1000 + 0x5000;
-
   int count = 0;
   while (count < 20)
   {
+    uint16_t testPort = dev() % 1000 + 0x5000;
+
     GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
 
     auto sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
