@@ -30,10 +30,6 @@
         }
       },
       "BuildConfig": {
-        "x64_gcc5_with_unit_test": {
-          "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON"
-        },
         "x64_with_unit_test": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON",
           "AptDependencies": "gcovr lcov",
