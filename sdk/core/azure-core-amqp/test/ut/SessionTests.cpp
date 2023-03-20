@@ -15,6 +15,7 @@
 #include <functional>
 #include <random>
 
+#include <azure/core/platform.hpp>
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
