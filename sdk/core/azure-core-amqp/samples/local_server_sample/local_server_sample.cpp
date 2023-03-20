@@ -82,30 +82,34 @@ class SampleEvents : public ConnectionEvents,
 public:
   SampleEvents() {}
 
-  std::unique_ptr<Connection> WaitForIncomingConnection(Network::SocketListener& listener)
+  std::unique_ptr<Connection> WaitForIncomingConnection(
+      Network::SocketListener& listener,
+      Azure::Core::Context context = {})
   {
-    auto result = m_connectionQueue.WaitForPolledResult(listener);
+    auto result = m_connectionQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));
   }
 
-  std::unique_ptr<Session> WaitForNewSession()
+  std::unique_ptr<Session> WaitForNewSession(Azure::Core::Context context = {})
   {
-    auto result = m_sessionQueue.WaitForPolledResult(*m_connection);
+    auto result = m_sessionQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
 
-  std::unique_ptr<MessageReceiver> WaitForMessageReceiver()
+  std::unique_ptr<MessageReceiver> WaitForMessageReceiver(Azure::Core::Context context = {})
   {
-    auto result = m_messageReceiverQueue.WaitForPolledResult(*m_connection);
+    auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
 
   // Wait for incoming messages. This method is somewhat more complicated because it
   // needs to wait on multiple waiters (both the connection and the transport).
   template <class... Waiters>
-  Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
+  Azure::Core::Amqp::Models::Message WaitForIncomingMessage(
+      Azure::Core::Context context,
+      Waiters&... waiters)
   {
-    auto result = m_messageQueue.WaitForPolledResult(waiters...);
+    auto result = m_messageQueue.WaitForPolledResult(context, waiters...);
     return std::move(std::get<0>(*result));
   }
 
@@ -229,7 +233,7 @@ int main()
 
   while (true)
   {
-    auto message = sampleEvents.WaitForIncomingMessage(listener, *connection);
+    auto message = sampleEvents.WaitForIncomingMessage({}, listener, *connection);
     std::cout << "Received message." << message << std::endl;
   }
 

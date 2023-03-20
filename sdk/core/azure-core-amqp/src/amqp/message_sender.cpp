@@ -56,15 +56,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   void MessageSender::Open() { m_impl->Open(); }
   void MessageSender::Close() { m_impl->Close(); }
   std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> MessageSender::Send(
-      Azure::Core::Amqp::Models::Message const& message)
+      Azure::Core::Amqp::Models::Message const& message,
+      Azure::Core::Context context)
   {
-    return m_impl->Send(message);
+    return m_impl->Send(message, context);
   }
   void MessageSender::SendAsync(
       Azure::Core::Amqp::Models::Message const& message,
-      MessageSendCompleteCallback onSendComplete)
+      MessageSendCompleteCallback onSendComplete,
+      Azure::Core::Context context)
   {
-    return m_impl->SendAsync(message, onSendComplete);
+    return m_impl->SendAsync(message, onSendComplete, context);
   }
   void MessageSender::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
 
@@ -262,7 +264,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     void MessageSenderImpl::SendAsync(
         Azure::Core::Amqp::Models::Message const& message,
-        MessageSendCompleteCallback onSendComplete)
+        MessageSendCompleteCallback onSendComplete,
+        Azure::Core::Context context)
     {
       auto operation(std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
                          decltype(onSendComplete),
@@ -280,7 +283,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     }
 
     std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> MessageSenderImpl::Send(
-        Azure::Core::Amqp::Models::Message const& message)
+        Azure::Core::Amqp::Models::Message const& message,
+        Azure::Core::Context context)
     {
       Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
           Azure::Core::_internal::Amqp::MessageSendResult,
@@ -292,9 +296,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
               Azure::Core::Amqp::Models::Value deliveryStatus) {
             //          std::cout << "Send Complete!" << std::endl;
             sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-          });
-      //    auto result = sendCompleteQueue.WaitForResult();
-      auto result = sendCompleteQueue.WaitForPolledResult(m_connection);
+          },
+          context);
+      auto result = sendCompleteQueue.WaitForPolledResult(context, m_connection);
       return std::move(*result);
     }
   } // namespace _detail

@@ -81,24 +81,26 @@ public:
   MessageListenerEvents() = default;
 
   std::shared_ptr<Azure::Core::_internal::Amqp::Connection> WaitForConnection(
-      Azure::Core::_internal::Amqp::Network::SocketListener const& listener)
+      Azure::Core::_internal::Amqp::Network::SocketListener const& listener,
+      Azure::Core::Context context)
   {
-    auto result = m_listeningQueue.WaitForPolledResult(listener);
+    auto result = m_listeningQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<Azure::Core::_internal::Amqp::Session> WaitForSession()
+  std::unique_ptr<Azure::Core::_internal::Amqp::Session> WaitForSession(
+      Azure::Core::Context context)
   {
-    auto result = m_listeningSessionQueue.WaitForPolledResult(*m_connectionToPoll);
+    auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connectionToPoll);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<MessageReceiver> WaitForReceiver()
+  std::unique_ptr<MessageReceiver> WaitForReceiver(Azure::Core::Context context)
   {
-    auto result = m_messageReceiverQueue.WaitForPolledResult(*m_connectionToPoll);
+    auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connectionToPoll);
     return std::move(std::get<0>(*result));
   }
-  Azure::Core::Amqp::Models::Message WaitForMessage()
+  Azure::Core::Amqp::Models::Message WaitForMessage(Azure::Core::Context context)
   {
-    auto result = m_messageQueue.WaitForPolledResult(*m_connectionToPoll);
+    auto result = m_messageQueue.WaitForPolledResult(context, *m_connectionToPoll);
     return std::move(std::get<0>(*result));
   }
 
@@ -114,6 +116,7 @@ private:
   Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
       m_messageQueue;
   std::shared_ptr<Connection> m_connectionToPoll;
+
   // Inherited via MessageReceiver
 
   // Inherited via SocketListenerEvents.
@@ -229,9 +232,10 @@ TEST_F(TestMessages, ReceiverOpenClose)
 
   Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
 
+  Azure::Core::Context context;
   std::thread listenerThread([&]() {
     listener.Start();
-    auto listeningConnection = events.WaitForConnection(listener);
+    auto listeningConnection = events.WaitForConnection(listener, context);
 
     listener.Stop();
   });
@@ -242,6 +246,8 @@ TEST_F(TestMessages, ReceiverOpenClose)
     receiver.Open();
     receiver.Close();
   }
+
+  context.Cancel();
 
   listenerThread.join();
 }
@@ -278,6 +284,8 @@ TEST_F(TestMessages, SenderSendAsync)
   Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
 
+  Azure::Core::Context receiveContext;
+
   std::thread listenerThread([&]() {
     try
     {
@@ -285,12 +293,12 @@ TEST_F(TestMessages, SenderSendAsync)
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
       listener.Start();
-      auto listeningConnection = events.WaitForConnection(listener);
-      auto listeningSession = events.WaitForSession();
-      auto messageReceiver = events.WaitForReceiver();
+      auto listeningConnection = events.WaitForConnection(listener, receiveContext);
+      auto listeningSession = events.WaitForSession(receiveContext);
+      auto messageReceiver = events.WaitForReceiver(receiveContext);
       GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
 
-      auto message = events.WaitForMessage();
+      auto message = events.WaitForMessage(receiveContext);
       GTEST_LOG_(INFO) << "Received incoming message!!";
       listener.Stop();
     }
@@ -314,6 +322,7 @@ TEST_F(TestMessages, SenderSendAsync)
     Azure::Core::Amqp::Models::Message message;
     message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
 
+    Azure::Core::Context context;
     Common::AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
         sendCompleteQueue;
     sender.SendAsync(
@@ -322,11 +331,12 @@ TEST_F(TestMessages, SenderSendAsync)
           GTEST_LOG_(INFO) << "Send Complete!";
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         });
-    auto result = sendCompleteQueue.WaitForPolledResult(connection);
+    auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
     EXPECT_EQ(std::get<0>(*result), MessageSendResult::Ok);
 
     sender.Close();
   }
+  receiveContext.Cancel();
   listenerThread.join();
 }
 
@@ -340,6 +350,7 @@ TEST_F(TestMessages, SenderSendSync)
   Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
 
+  Azure::Core::Context receiveContext;
   std::thread listenerThread([&]() {
     try
     {
@@ -347,12 +358,12 @@ TEST_F(TestMessages, SenderSendSync)
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
       listener.Start();
-      auto listeningConnection = events.WaitForConnection(listener);
-      auto listeningSession = events.WaitForSession();
-      auto messageReceiver = events.WaitForReceiver();
+      auto listeningConnection = events.WaitForConnection(listener, receiveContext);
+      auto listeningSession = events.WaitForSession(receiveContext);
+      auto messageReceiver = events.WaitForReceiver(receiveContext);
       GTEST_LOG_(INFO) << "Message receiver opened, waiting for incoming message.";
 
-      auto message = events.WaitForMessage();
+      auto message = events.WaitForMessage(receiveContext);
       GTEST_LOG_(INFO) << "Received incoming message!!";
 
       listener.Stop();
@@ -384,5 +395,6 @@ TEST_F(TestMessages, SenderSendSync)
 
     sender.Close();
   }
+  receiveContext.Cancel();
   listenerThread.join();
 }

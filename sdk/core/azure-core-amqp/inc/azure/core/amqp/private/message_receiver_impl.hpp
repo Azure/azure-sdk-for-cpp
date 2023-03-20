@@ -60,9 +60,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     //    Models::Message WaitForIncomingMessage();
     template <class... Waiters>
-    Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Waiters&... waiters)
+    Azure::Core::Amqp::Models::Message WaitForIncomingMessage(Azure::Core::Context context, Waiters&... waiters)
     {
-      auto result = m_messageQueue.WaitForPolledResult(waiters...);
+      auto result = m_messageQueue.WaitForPolledResult(context, waiters...);
       return std::move(std::get<0>(*result));
     }
 

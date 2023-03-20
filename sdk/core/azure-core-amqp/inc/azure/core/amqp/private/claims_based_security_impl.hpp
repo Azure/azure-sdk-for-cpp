@@ -20,16 +20,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     CbsImpl(CbsImpl&&) noexcept = delete;
     CbsImpl& operator=(CbsImpl&&) noexcept = delete;
 
-    CbsOpenResult Open();
-    void Close();
+    CbsOpenResult Open(Azure::Core::Context context);
+    void Close(Azure::Core::Context context);
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,
-        std::string const& token);
+        std::string const& token,
+        Azure::Core::Context context);
     std::tuple<CbsOperationResult, uint32_t, std::string> DeleteToken(
         CbsTokenType type,
         std::string const& audience,
-        std::string const& token);
+        std::string const& token,
+        Azure::Core::Context context);
     void SetTrace(bool traceEnabled);
 
   private:

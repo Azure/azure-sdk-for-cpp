@@ -114,16 +114,17 @@ TEST_F(TestSocketTransport, SimpleSend)
       }
 
     public:
-      TransportOpenResult WaitForOpen(Transport const& transport)
+      TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
       {
-        auto result = openResultQueue.WaitForPolledResult(transport);
+        auto result = openResultQueue.WaitForPolledResult(context, transport);
         return std::get<0>(*result);
       }
-      std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(Transport const& transport)
+      std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
+          Transport const& transport,
+          Azure::Core::Context context)
       {
-        auto result = receiveBytesQueue.WaitForPolledResult(transport);
-        return std::make_tuple(
-            std::get<0>(*result), std::unique_ptr<uint8_t>(std::get<1>(*result).release()));
+        auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
+        return std::make_tuple(std::get<0>(*result), std::move(std::get<1>(*result)));
       }
     };
     TestTransportEvents events;
@@ -131,7 +132,7 @@ TEST_F(TestSocketTransport, SimpleSend)
 
     EXPECT_TRUE(transport.Open());
 
-    auto openResult = events.WaitForOpen(transport);
+    auto openResult = events.WaitForOpen(transport, {});
     EXPECT_EQ(openResult, TransportOpenResult::Ok);
 
     unsigned char val[] = R"(GET / HTTP/1.1
@@ -150,19 +151,19 @@ Accept: */*
     }));
     GTEST_LOG_(INFO) << "Wait for send" << std::endl;
 
-    auto sendResult{sendOperation.WaitForPolledResult(transport)};
+    auto sendResult{sendOperation.WaitForPolledResult({}, transport)};
     EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
 
     // Wait until we receive data from the www.microsoft.com server.
     GTEST_LOG_(INFO) << "Wait for data from server." << std::endl;
-    auto receiveResult = events.WaitForReceive(transport);
+    auto receiveResult = events.WaitForReceive(transport, {});
 
     GTEST_LOG_(INFO) << "Received data from microsoft.com server: " << std::get<0>(receiveResult)
                      << std::endl;
 
     AsyncOperationQueue<bool> closeResult;
     transport.Close([&closeResult] { closeResult.CompleteOperation(true); });
-    auto closeComplete = closeResult.WaitForPolledResult(transport);
+    auto closeComplete = closeResult.WaitForPolledResult({}, transport);
     EXPECT_EQ(true, std::get<0>(*closeComplete));
   }
 }
@@ -185,19 +186,21 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     public:
       TestListenerEvents() {}
 
-      std::unique_ptr<Transport> GetListenerTransport(SocketListener const& listener)
+      std::unique_ptr<Transport> GetListenerTransport(
+          SocketListener const& listener,
+          Azure::Core::Context context)
       {
-        auto result = m_listenerTransportQueue.WaitForPolledResult(listener);
+        auto result = m_listenerTransportQueue.WaitForPolledResult(context, listener);
         return std::move(std::get<0>(*result));
       }
-      TransportOpenResult WaitForOpen(SocketListener const& listener)
+      TransportOpenResult WaitForOpen(SocketListener const& listener, Azure::Core::Context context)
       {
-        auto result = openResultQueue.WaitForPolledResult(listener);
+        auto result = openResultQueue.WaitForPolledResult(context, listener);
         return std::get<0>(*result);
       }
-      std::vector<uint8_t> WaitForReceive(Transport const& transport)
+      std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
       {
-        auto result = receiveBytesQueue.WaitForPolledResult(transport);
+        auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
         return std::get<0>(*result);
       }
 
@@ -277,14 +280,14 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       }
 
     public:
-      TransportOpenResult WaitForOpen(Transport const& transport)
+      TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
       {
-        auto result = openResultQueue.WaitForPolledResult(transport);
+        auto result = openResultQueue.WaitForPolledResult(context, transport);
         return std::get<0>(*result);
       }
-      std::vector<uint8_t> WaitForReceive(Transport const& transport)
+      std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
       {
-        auto result = receiveBytesQueue.WaitForPolledResult(transport);
+        auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
         return std::get<0>(*result);
       }
     };
@@ -307,20 +310,20 @@ Host: www.microsoft.com)";
         GTEST_LOG_(INFO) << "Sender send complete " << StringFromSendResult(result);
         sendOperation.CompleteOperation(result);
       });
-      auto sendResult{sendOperation.WaitForPolledResult(sender)};
+      auto sendResult{sendOperation.WaitForPolledResult({}, sender)};
       EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
     }
 
     GTEST_LOG_(INFO) << "Wait for listener to receive the bytes we just sent.";
-    auto listenerTransport = events.GetListenerTransport(listener);
+    auto listenerTransport = events.GetListenerTransport(listener, {});
 
     GTEST_LOG_(INFO) << "Wait for received event.";
-    events.WaitForReceive(*listenerTransport);
+    events.WaitForReceive(*listenerTransport, {});
 
     GTEST_LOG_(INFO) << "Listener received the bytes we just sent, now wait until the sender "
                         "received those bytes back.";
 
-    auto receivedData = sendingEvents.WaitForReceive(sender);
+    auto receivedData = sendingEvents.WaitForReceive(sender, {});
 
     EXPECT_EQ(sizeof(val), receivedData.size());
     EXPECT_EQ(0, memcmp(val, receivedData.data(), receivedData.size()));

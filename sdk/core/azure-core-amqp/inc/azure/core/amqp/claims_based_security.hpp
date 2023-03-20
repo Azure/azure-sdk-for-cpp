@@ -3,9 +3,8 @@
 
 #pragma once
 
-#include "azure/core/amqp/cancellable.hpp"
-#include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/session.hpp"
+#include <azure/core/context.hpp>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   namespace _detail {
@@ -48,16 +47,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     Cbs(Cbs&&) noexcept = delete;
     Cbs& operator=(Cbs&&) noexcept = delete;
 
-    CbsOpenResult Open();
-    void Close();
+    CbsOpenResult Open(Azure::Core::Context = {});
+    void Close(Azure::Core::Context = {});
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,
-        std::string const& token);
+        std::string const& token,
+        Azure::Core::Context = {});
     std::tuple<CbsOperationResult, uint32_t, std::string> DeleteToken(
         CbsTokenType type,
         std::string const& audience,
-        std::string const& token);
+        std::string const& token,
+        Azure::Core::Context = {});
     void SetTrace(bool traceEnabled);
 
   private:

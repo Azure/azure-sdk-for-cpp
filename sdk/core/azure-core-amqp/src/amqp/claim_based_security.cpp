@@ -15,15 +15,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   Cbs::~Cbs() noexcept {}
 
-  CbsOpenResult Cbs::Open() { return m_impl->Open(); }
-  void Cbs::Close() { m_impl->Close(); }
+  CbsOpenResult Cbs::Open(Azure::Core::Context context) { return m_impl->Open(context); }
+  void Cbs::Close(Azure::Core::Context context) { m_impl->Close(context); }
   std::tuple<CbsOperationResult, uint32_t, std::string> Cbs::PutToken(
       CbsTokenType tokenType,
       std::string const& audience,
-      std::string const& token)
+      std::string const& token,
+      Azure::Core::Context context)
 
   {
-    return m_impl->PutToken(tokenType, audience, token);
+    return m_impl->PutToken(tokenType, audience, token, context);
   }
 
   namespace _detail {
@@ -127,18 +128,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           statusDescription ? statusDescription : std::string());
     }
 
-    CbsOpenResult CbsImpl::Open()
+    CbsOpenResult CbsImpl::Open(Azure::Core::Context context)
     {
       if (cbs_open_async(m_cbs, CbsImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
       {
         throw std::runtime_error("Could not open cbs");
       }
-      auto result = m_openResultQueue.WaitForPolledResult(m_connectionToPoll);
+      auto result = m_openResultQueue.WaitForPolledResult(context, m_connectionToPoll);
       return std::get<0>(*result);
       //    return CbsOpenResult::Ok;
     }
 
-    void CbsImpl::Close()
+    void CbsImpl::Close(Azure::Core::Context context)
     {
       if (cbs_close(m_cbs))
       {
@@ -149,7 +150,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::tuple<CbsOperationResult, uint32_t, std::string> CbsImpl::PutToken(
         CbsTokenType tokenType,
         std::string const& audience,
-        std::string const& token)
+        std::string const& token,
+        Azure::Core::Context context)
     {
       if (cbs_put_token_async(
               m_cbs,
@@ -162,7 +164,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         throw std::runtime_error("Could not put CBS token.");
       }
-      auto result = m_operationResultQueue.WaitForPolledResult(m_connectionToPoll);
+      auto result = m_operationResultQueue.WaitForPolledResult(context, m_connectionToPoll);
 
       // Throw an error if we failed to authenticate with the server.
       if (std::get<0>(*result) != CbsOperationResult::Ok)
