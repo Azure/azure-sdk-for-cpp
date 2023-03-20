@@ -9,6 +9,8 @@
 #include <random>
 #include <utility>
 
+extern uint16_t FindAvailableSocket();
+
 using namespace Azure::Core::_internal::Amqp::Network;
 using namespace Azure::Core::_internal::Amqp::Common;
 
@@ -181,75 +183,78 @@ TEST_F(TestSocketTransport, SimpleListener)
 
 TEST_F(TestSocketTransport, SimpleListenerEcho)
 {
+
+  class TestListenerEvents : public SocketListenerEvents, public TransportEvents {
+  public:
+    TestListenerEvents() {}
+
+    std::unique_ptr<Transport> GetListenerTransport(
+        SocketListener const& listener,
+        Azure::Core::Context context)
+    {
+      auto result = m_listenerTransportQueue.WaitForPolledResult(context, listener);
+      return std::move(std::get<0>(*result));
+    }
+    TransportOpenResult WaitForOpen(SocketListener const& listener, Azure::Core::Context context)
+    {
+      auto result = openResultQueue.WaitForPolledResult(context, listener);
+      return std::get<0>(*result);
+    }
+    std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
+    {
+      auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
+      return std::get<0>(*result);
+    }
+
+  private:
+    AsyncOperationQueue<std::unique_ptr<Transport>> m_listenerTransportQueue;
+    AsyncOperationQueue<TransportOpenResult> openResultQueue;
+    AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
+    AsyncOperationQueue<bool> errorQueue;
+    virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport) override
+    {
+      GTEST_LOG_(INFO) << "Listener started, new connection.";
+      auto listenerTransport = std::make_unique<Transport>(newTransport, this);
+      listenerTransport->Open();
+      m_listenerTransportQueue.CompleteOperation(std::move(listenerTransport));
+    }
+    void OnOpenComplete(TransportOpenResult result) override
+    {
+      GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
+      openResultQueue.CompleteOperation(result);
+    }
+    void OnBytesReceived(Transport const& transport, uint8_t const* bytes, size_t size) override
+    {
+      GTEST_LOG_(INFO) << "On Listener bytes received: " << size;
+      std::vector<uint8_t> echoedBytes;
+      for (size_t i = 0; i < size; i += 1)
+      {
+        echoedBytes.push_back(bytes[i]);
+      }
+
+      receiveBytesQueue.CompleteOperation(echoedBytes);
+
+      // Echo back the data received.
+      transport.Send(const_cast<uint8_t*>(bytes), size, [](TransportSendResult sendResult) {
+        GTEST_LOG_(INFO) << "OnListener Send Bytes Complete..." << StringFromSendResult(sendResult);
+      });
+    }
+    void OnIoError() override
+    {
+      GTEST_LOG_(INFO) << "On I/O Error";
+      errorQueue.CompleteOperation(true);
+    }
+  };
+
+  try
   {
-    class TestListenerEvents : public SocketListenerEvents, public TransportEvents {
-    public:
-      TestListenerEvents() {}
-
-      std::unique_ptr<Transport> GetListenerTransport(
-          SocketListener const& listener,
-          Azure::Core::Context context)
-      {
-        auto result = m_listenerTransportQueue.WaitForPolledResult(context, listener);
-        return std::move(std::get<0>(*result));
-      }
-      TransportOpenResult WaitForOpen(SocketListener const& listener, Azure::Core::Context context)
-      {
-        auto result = openResultQueue.WaitForPolledResult(context, listener);
-        return std::get<0>(*result);
-      }
-      std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
-      {
-        auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
-        return std::get<0>(*result);
-      }
-
-    private:
-      AsyncOperationQueue<std::unique_ptr<Transport>> m_listenerTransportQueue;
-      AsyncOperationQueue<TransportOpenResult> openResultQueue;
-      AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
-      AsyncOperationQueue<bool> errorQueue;
-      virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport) override
-      {
-        GTEST_LOG_(INFO) << "Listener started, new connection.";
-        auto listenerTransport = std::make_unique<Transport>(newTransport, this);
-        listenerTransport->Open();
-        m_listenerTransportQueue.CompleteOperation(std::move(listenerTransport));
-      }
-      void OnOpenComplete(TransportOpenResult result) override
-      {
-        GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
-        openResultQueue.CompleteOperation(result);
-      }
-      void OnBytesReceived(Transport const& transport, uint8_t const* bytes, size_t size) override
-      {
-        GTEST_LOG_(INFO) << "On Listener bytes received: " << size;
-        std::vector<uint8_t> echoedBytes;
-        for (size_t i = 0; i < size; i += 1)
-        {
-          echoedBytes.push_back(bytes[i]);
-        }
-
-        receiveBytesQueue.CompleteOperation(echoedBytes);
-
-        // Echo back the data received.
-        transport.Send(const_cast<uint8_t*>(bytes), size, [](TransportSendResult sendResult) {
-          GTEST_LOG_(INFO) << "OnListener Send Bytes Complete..."
-                           << StringFromSendResult(sendResult);
-        });
-      }
-      void OnIoError() override
-      {
-        GTEST_LOG_(INFO) << "On I/O Error";
-        errorQueue.CompleteOperation(true);
-      }
-    };
 
     TestListenerEvents events;
-    std::random_device dev;
-    uint16_t testPort = dev() % 1000 + 5000;
+    uint16_t testPort = FindAvailableSocket();
 
+    GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
     SocketListener listener(testPort, &events);
+    system("netstat -lp");
     listener.Start();
 
     class SendingEvents : public TransportEvents {
@@ -329,5 +334,11 @@ Host: www.microsoft.com)";
     EXPECT_EQ(0, memcmp(val, receivedData.data(), receivedData.size()));
     listenerTransport->Close(nullptr);
     listener.Stop();
+  }
+  catch (std::exception const& ex)
+  {
+
+    GTEST_LOG_(ERROR) << "Exception thrown during SimpleListenerExcho" << ex.what();
+    system("netstat -lp");
   }
 }

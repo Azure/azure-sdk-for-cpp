@@ -13,6 +13,9 @@
 #include "azure/core/amqp/session.hpp"
 #include <azure/core/context.hpp>
 #include <functional>
+#include <random>
+
+extern uint16_t FindAvailableSocket();
 
 class TestConnections : public testing::Test {
 protected:
@@ -113,35 +116,50 @@ TEST_F(TestConnections, ConnectionOpenClose)
     }
   };
 
+  try
   {
-    // Ensure someone is listening on the connection for when we call connection.Open.
-    TestListener listenerEvents;
-    Azure::Core::_internal::Amqp::Network::SocketListener listener(5672, &listenerEvents);
-    listener.Start();
+    {
+      // Ensure someone is listening on the connection for when we call connection.Open.
 
-    // Create a connection
-    Azure::Core::_internal::Amqp::Connection connection("amqp://localhost:5672", nullptr, {});
+      uint16_t testPort = FindAvailableSocket();
 
-    // Open the connection
-    connection.Open();
+      GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
 
-    // Ensure that we got an OnComplete callback.
-    auto transport = listenerEvents.WaitForResult(listener);
+      TestListener listenerEvents;
+      Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &listenerEvents);
+      listener.Start();
 
-    // Now we can close the connection.
-    connection.Close("xxx", "yyy", {});
-    listener.Stop();
+      // Create a connection
+      Azure::Core::_internal::Amqp::Connection connection(
+          "amqp://localhost:" + std::to_string(testPort), nullptr, {});
+
+      // Open the connection
+      connection.Open();
+
+      // Ensure that we got an OnComplete callback.
+      auto transport = listenerEvents.WaitForResult(listener);
+
+      // Now we can close the connection.
+      connection.Close("xxx", "yyy", {});
+      listener.Stop();
+    }
+
+    {
+      Azure::Core::_internal::Amqp::ConnectionOptions options;
+      options.HostName = "localhost";
+      options.Port = 5671;
+      //    std::shared_ptr<Azure::Core::_internal::Amqp::Network::SocketTransport> sockets
+      //        =
+      //        std::make_shared<Azure::Core::_internal::Amqp::Network::SocketTransport>("localhost",
+      //        5671);
+      Azure::Core::_internal::Amqp::Connection connection(
+          "amqp://localhost:5671", nullptr, options);
+    }
   }
-
+  catch (std::exception const& ex)
   {
-    Azure::Core::_internal::Amqp::ConnectionOptions options;
-    options.HostName = "localhost";
-    options.Port = 5671;
-    //    std::shared_ptr<Azure::Core::_internal::Amqp::Network::SocketTransport> sockets
-    //        =
-    //        std::make_shared<Azure::Core::_internal::Amqp::Network::SocketTransport>("localhost",
-    //        5671);
-    Azure::Core::_internal::Amqp::Connection connection("amqp://localhost:5671", nullptr, options);
+    GTEST_LOG_(ERROR) << "Exception thrown in ConnectionOpenClose: " << ex.what();
+    system("netstat -lp");
   }
 }
 

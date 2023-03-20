@@ -15,6 +15,8 @@
 #include <functional>
 #include <random>
 
+extern uint16_t FindAvailableSocket();
+
 class TestLinks : public testing::Test {
 protected:
   void SetUp() override {}
@@ -208,24 +210,34 @@ TEST_F(TestLinks, LinkAttachDetach)
 {
   LinkSocketListenerEvents events;
 
-  std::random_device dev;
-  uint16_t testPort = dev() % 1000 + 5000;
+  uint16_t testPort = FindAvailableSocket();
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
   Connection connection("amqp://localhost:" + std::to_string(testPort), &events, {});
   Session session(connection, nullptr);
 
   Network::SocketListener listener(testPort, &events);
-  listener.Start();
+  try
   {
-    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
-    link.Attach(nullptr);
 
-    Azure::Core::Amqp::Models::Value data;
-    link.Detach(false, {}, {}, data);
+    listener.Start();
+    {
+      Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+      link.Attach(nullptr);
 
-    //    auto listeningConnection = listener.WaitForConnection();
-    //    auto listeningSession = listeningConnection->WaitForSession();
-    //    auto listeningLink = listeningSession->WaitForLink();
+      Azure::Core::Amqp::Models::Value data;
+      link.Detach(false, {}, {}, data);
+
+      //    auto listeningConnection = listener.WaitForConnection();
+      //    auto listeningSession = listeningConnection->WaitForSession();
+      //    auto listeningLink = listeningSession->WaitForLink();
+    }
+    listener.Stop();
   }
-  listener.Stop();
-}
+  catch (std::exception const& ex)
+  {
+    system("netstat -ap");
+    GTEST_LOG_(ERROR) << "Exception thrown in LinKAttachDetach: " << ex.what();
+
+  }
+  }
