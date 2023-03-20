@@ -306,7 +306,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       if (messagereceiver_open(m_messageReceiver, MessageReceiverImpl::OnMessageReceivedFn, this))
       {
-        throw std::runtime_error("Could not open message receiver");
+        auto err = errno;
+        throw std::runtime_error(
+            "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + strerror(err)
+            + "\".");
       }
     }
 
