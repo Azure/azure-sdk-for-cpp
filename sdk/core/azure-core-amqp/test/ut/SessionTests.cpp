@@ -111,7 +111,7 @@ uint16_t FindAvailableSocket()
   int count = 0;
   while (count < 20)
   {
-    uint16_t testPort = dev() % 1000 + 0x5000;
+    uint16_t testPort = dev() % 1000 + 5000;
 
     GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
 
