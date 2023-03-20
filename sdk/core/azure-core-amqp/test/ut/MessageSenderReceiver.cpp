@@ -287,9 +287,16 @@ TEST_F(TestMessages, SenderSendAsync)
 
   Azure::Core::Context receiveContext;
 
+  // Ensure that the thread is started before we start using the message sender.
+  std::mutex threadRunningMutex;
+  std::condition_variable threadStarted;
+  bool running = false;
+
   std::thread listenerThread([&]() {
     try
     {
+      running = true;
+      threadStarted.notify_one();
 
       MessageTests::MessageListenerEvents events;
       Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
@@ -308,6 +315,9 @@ TEST_F(TestMessages, SenderSendAsync)
       GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
     }
   });
+
+  std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
+  threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
 
   {
     MessageSenderOptions options;
