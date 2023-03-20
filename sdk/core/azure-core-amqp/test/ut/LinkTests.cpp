@@ -15,6 +15,8 @@
 #include <functional>
 #include <random>
 
+extern uint16_t FindAvailableSocket();
+
 class TestLinks : public testing::Test {
 protected:
   void SetUp() override {}
@@ -208,8 +210,7 @@ TEST_F(TestLinks, LinkAttachDetach)
 {
   LinkSocketListenerEvents events;
 
-  std::random_device dev;
-  uint16_t testPort = dev() % 1000 + 5000;
+  uint16_t testPort = FindAvailableSocket();
   GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
   Connection connection("amqp://localhost:" + std::to_string(testPort), &events, {});

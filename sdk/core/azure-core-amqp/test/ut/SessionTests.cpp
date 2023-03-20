@@ -15,6 +15,16 @@
 #include <functional>
 #include <random>
 
+#if defined(AZ_PLATFORM_POSIX)
+#include <poll.h> // for poll()
+#include <sys/socket.h> // for socket shutdown
+#elif defined(AZ_PLATFORM_WINDOWS)
+#include <winsock2.h> // for WSAPoll();
+#ifdef max
+#undef max
+#endif
+#endif // AZ_PLATFORM_POSIX/AZ_PLATFORM_WINDOWS
+
 class TestSessions : public testing::Test {
 protected:
   void SetUp() override {}
@@ -92,6 +102,35 @@ TEST_F(TestSessions, SessionProperties)
   }
 }
 
+uint16_t FindAvailableSocket()
+{
+  std::random_device dev;
+
+  uint16_t testPort = dev() % 1000 + 0x5000;
+
+  int count = 0;
+  while (count < 20)
+  {
+    GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
+
+    auto sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(testPort);
+
+    if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == 0)
+    {
+      // We were able to bind to the port, so it's available.
+      closesocket(sock);
+      return testPort;
+    }
+    count += 1;
+  }
+  throw std::runtime_error("Could not find available test port.");
+}
+
 TEST_F(TestSessions, SessionBeginEnd)
 {
   class TestListenerEvents : public Network::SocketListenerEvents {
@@ -116,9 +155,7 @@ TEST_F(TestSessions, SessionBeginEnd)
 
   // Ensure someone is listening on the connection for when we call Session.Begin.
   TestListenerEvents events;
-  std::random_device dev;
-  uint16_t testPort = dev() % 1000 + 5000;
-  GTEST_LOG_(INFO) << "Test port: " << testPort;
+  uint16_t testPort = FindAvailableSocket();
   Network::SocketListener listener(testPort, &events);
   listener.Start();
 

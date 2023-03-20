@@ -15,6 +15,8 @@
 #include <functional>
 #include <random>
 
+extern uint16_t FindAvailableSocket();
+
 class TestConnections : public testing::Test {
 protected:
   void SetUp() override {}
@@ -119,8 +121,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
     {
       // Ensure someone is listening on the connection for when we call connection.Open.
 
-      std::random_device dev;
-      uint16_t testPort = dev() % 1000 + 5000;
+      uint16_t testPort = FindAvailableSocket();
 
       GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
 

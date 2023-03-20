@@ -16,6 +16,8 @@
 #include <functional>
 #include <random>
 
+extern uint16_t FindAvailableSocket();
+
 class TestMessages : public testing::Test {
 protected:
   void SetUp() override {}
@@ -220,8 +222,7 @@ private:
 
 TEST_F(TestMessages, ReceiverOpenClose)
 {
-  std::random_device dev;
-  uint16_t testPort = dev() % 1000 + 5000;
+  uint16_t testPort = FindAvailableSocket();
 
   GTEST_LOG_(INFO) << "Test port: " << testPort;
 
@@ -288,8 +289,7 @@ TEST_F(TestMessages, SenderOpenClose)
 
 TEST_F(TestMessages, SenderSendAsync)
 {
-  std::random_device dev;
-  uint16_t testPort = dev() % 1000 + 5000;
+  uint16_t testPort = FindAvailableSocket();
 
   GTEST_LOG_(INFO) << "Test port: " << testPort;
 
@@ -371,10 +371,9 @@ TEST_F(TestMessages, SenderSendAsync)
 
 TEST_F(TestMessages, SenderSendSync)
 {
-  std::random_device dev;
-  uint16_t testPort = dev() % 1000 + 5000;
   ConnectionOptions connectionOptions;
 
+  uint16_t testPort = FindAvailableSocket();
   GTEST_LOG_(INFO) << "Test port: " << testPort;
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
@@ -412,7 +411,7 @@ TEST_F(TestMessages, SenderSendSync)
     }
     catch (std::exception const& ex)
     {
-      GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
+      GTEST_LOG_(ERROR) << std::string("Exception thrown in listener thread. ") + ex.what();
       system("netstat -lp");
     }
   });
