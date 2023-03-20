@@ -128,7 +128,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
 
     // Create a connection
     Azure::Core::_internal::Amqp::Connection connection(
-        "amqp://localhost:" + testPort, nullptr, {});
+        "amqp://localhost:" + std::to_string(testPort), nullptr, {});
 
     // Open the connection
     connection.Open();
