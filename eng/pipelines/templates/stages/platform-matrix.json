@@ -144,10 +144,6 @@
         }
       },
       "BuildSettings": {
-        "gpp-5": {
-          "AptDependencies": "g++-5",
-          "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 "
-        },
         "gpp-9": {
           "AptDependencies": "g++-9",
           "CC": "/usr/bin/gcc-9",
