@@ -249,8 +249,10 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     std::random_device dev;
     uint16_t testPort = dev() % 1000 + 5000;
 
+    GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
     SocketListener listener(testPort, &events);
-    listener.Start();
+    system("netstat -ap");
+    ASSERT_NO_THROW(listener.Start());
 
     class SendingEvents : public TransportEvents {
       AsyncOperationQueue<TransportOpenResult> openResultQueue;
