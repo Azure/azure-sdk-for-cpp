@@ -280,6 +280,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         throw std::runtime_error("Could not send message");
       }
+      (void)context;
     }
 
     std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> MessageSenderImpl::Send(
