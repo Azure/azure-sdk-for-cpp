@@ -404,13 +404,6 @@ namespace Azure { namespace Storage { namespace _internal {
     std::call_once(flag, [] { xmlCleanupParser(); });
   }
 
-  XmlReader::XmlReader(XmlReader&& other) noexcept { *this = std::move(other); }
-  XmlReader& XmlReader::operator=(XmlReader&& other) noexcept
-  {
-    m_context = std::move(other.m_context);
-    return *this;
-  }
-
   using ReaderPtr = std::unique_ptr<xmlTextReader, decltype(&xmlFreeTextReader)>;
   struct XmlReader::XmlReaderContext
   {
@@ -421,6 +414,13 @@ namespace Azure { namespace Storage { namespace _internal {
     bool readingAttributes = false;
     bool readingEmptyTag = false;
   };
+
+  XmlReader::XmlReader(XmlReader&& other) noexcept { *this = std::move(other); }
+  XmlReader& XmlReader::operator=(XmlReader&& other) noexcept
+  {
+    m_context = std::move(other.m_context);
+    return *this;
+  }
 
   XmlReader::XmlReader(const char* data, size_t length)
   {
