@@ -17,8 +17,8 @@
 
 #include <azure/core/platform.hpp>
 #if defined(AZ_PLATFORM_POSIX)
-#include <poll.h> // for poll()
 #include <netinet/in.h> // for sockaddr_in
+#include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
@@ -125,7 +125,11 @@ uint16_t FindAvailableSocket()
     if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == 0)
     {
       // We were able to bind to the port, so it's available.
+#if defined(AZ_PLATFORM_WINDOWS)
       closesocket(sock);
+#else
+      close(sock);
+#endif
       return testPort;
     }
     count += 1;
