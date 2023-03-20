@@ -413,6 +413,7 @@ TEST_F(TestMessages, SenderSendSync)
     catch (std::exception const& ex)
     {
       GTEST_LOG_(INFO) << std::string("Exception thrown in listener thread. ") + ex.what();
+      system("netstat -lp");
     }
   });
 
