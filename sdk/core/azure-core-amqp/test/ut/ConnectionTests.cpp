@@ -13,6 +13,7 @@
 #include "azure/core/amqp/session.hpp"
 #include <azure/core/context.hpp>
 #include <functional>
+#include <random>
 
 class TestConnections : public testing::Test {
 protected:
@@ -115,12 +116,19 @@ TEST_F(TestConnections, ConnectionOpenClose)
 
   {
     // Ensure someone is listening on the connection for when we call connection.Open.
+
+    std::random_device dev;
+    uint16_t testPort = dev() % 1000 + 5000;
+
+    GTEST_LOG_(INFO) << "Test listener using port: " << testPort;
+
     TestListener listenerEvents;
-    Azure::Core::_internal::Amqp::Network::SocketListener listener(5672, &listenerEvents);
+    Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &listenerEvents);
     listener.Start();
 
     // Create a connection
-    Azure::Core::_internal::Amqp::Connection connection("amqp://localhost:5672", nullptr, {});
+    Azure::Core::_internal::Amqp::Connection connection(
+        "amqp://localhost:" + testPort, nullptr, {});
 
     // Open the connection
     connection.Open();
