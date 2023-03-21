@@ -116,21 +116,42 @@ uint16_t FindAvailableSocket()
     GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
 
     auto sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-    sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(testPort);
-
-    if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == 0)
+    if (sock != INVALID_SOCKET)
     {
+      sockaddr_in addr;
+      addr.sin_family = AF_INET;
+      addr.sin_addr.s_addr = INADDR_ANY;
+      addr.sin_port = htons(testPort);
+
+      auto bindResult = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
       // We were able to bind to the port, so it's available.
 #if defined(AZ_PLATFORM_WINDOWS)
       closesocket(sock);
 #else
       close(sock);
 #endif
-      return testPort;
+      if (bindResult != SOCKET_ERROR)
+      {
+        return testPort;
+      }
+      else
+      {
+#if defined(AZ_PLATFORM_WINDOWS)
+        auto err = WSAGetLastError();
+#else
+        auto err = errno;
+#endif
+        GTEST_LOG_(INFO) << "Error " << std::to_string(err) << " binding to socket.";
+      }
+    }
+    else
+    {
+#if defined(AZ_PLATFORM_WINDOWS)
+      auto err = WSAGetLastError();
+#else
+      auto err = errno;
+#endif
+      GTEST_LOG_(INFO) << "Error " << std::to_string(err) << " opening port.";
     }
     count += 1;
   }
