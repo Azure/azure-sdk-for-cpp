@@ -68,7 +68,7 @@ TEST_P(KeyVaultKeyClientWithParam, RemoteWrap)
     auto wrapResult = cryptoClient->WrapKey(KeyWrapAlgorithm::RsaOaep256, plaintext).Value;
     EXPECT_EQ(wrapResult.Algorithm.ToString(), KeyWrapAlgorithm::RsaOaep256.ToString());
     EXPECT_EQ(wrapResult.KeyId, rsaKey.Id());
-    EXPECT_GT(wrapResult.EncryptedKey.size(), (uint8_t)0);
+    EXPECT_GT(wrapResult.EncryptedKey.size(), 0u);
 
     auto unwrapResult
         = cryptoClient->UnwrapKey(wrapResult.Algorithm, wrapResult.EncryptedKey).Value;
