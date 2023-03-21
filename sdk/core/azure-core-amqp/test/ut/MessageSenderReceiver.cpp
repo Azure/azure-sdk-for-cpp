@@ -87,23 +87,39 @@ public:
       Azure::Core::Context context)
   {
     auto result = m_listeningQueue.WaitForPolledResult(context, listener);
-    return std::move(std::get<0>(*result));
+    if (result)
+    {
+      return std::move(std::get<0>(*result));
+    }
+    return nullptr;
   }
   std::unique_ptr<Azure::Core::_internal::Amqp::Session> WaitForSession(
       Azure::Core::Context context)
   {
     auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connectionToPoll);
-    return std::move(std::get<0>(*result));
+    if (result)
+    {
+      return std::move(std::get<0>(*result));
+    }
+    return nullptr;
   }
   std::unique_ptr<MessageReceiver> WaitForReceiver(Azure::Core::Context context)
   {
     auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connectionToPoll);
-    return std::move(std::get<0>(*result));
+    if (result)
+    {
+      return std::move(std::get<0>(*result));
+    }
+    return nullptr;
   }
   Azure::Core::Amqp::Models::Message WaitForMessage(Azure::Core::Context context)
   {
     auto result = m_messageQueue.WaitForPolledResult(context, *m_connectionToPoll);
-    return std::move(std::get<0>(*result));
+    if (result)
+    {
+      return std::move(std::get<0>(*result));
+    }
+    return nullptr;
   }
 
 private:
@@ -268,14 +284,17 @@ TEST_F(TestMessages, ReceiverOpenClose)
 
 TEST_F(TestMessages, SenderOpenClose)
 {
+  uint16_t testPort = FindAvailableSocket();
+  GTEST_LOG_(INFO) << "Test port: " << testPort;
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-  Connection connection("amqp://localhost:5674", nullptr, connectionOptions);
+
+  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
   Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
 
-  Azure::Core::_internal::Amqp::Network::SocketListener listener(5674, nullptr);
-  listener.Start();
+  Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, nullptr);
+  EXPECT_NO_THROW(listener.Start());
   {
     MessageSenderOptions options;
     options.SourceAddress = "MySource";
