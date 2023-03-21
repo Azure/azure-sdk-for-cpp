@@ -232,7 +232,7 @@ private:
   virtual void OnIoError(Azure::Core::_internal::Amqp::Connection const&) override {}
   virtual void OnEndpointFrameReceived(
       Azure::Core::_internal::Amqp::Connection const& connection,
-      Azure::Core::Amqp::Models::Value value,
+      Azure::Core::Amqp::Models::Value const& value,
       uint32_t framePayloadSize,
       uint8_t* payloadBytes) override
   {

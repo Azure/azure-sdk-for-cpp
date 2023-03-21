@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   class MessageSender {
   public:
     using MessageSendCompleteCallback = std::function<
-        void(MessageSendResult sendResult, Azure::Core::Amqp::Models::Value deliveryState)>;
+        void(MessageSendResult sendResult, Azure::Core::Amqp::Models::Value const& deliveryState)>;
 
     MessageSender(
         Session const& session,

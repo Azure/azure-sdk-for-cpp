@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
     virtual void OnEndpointFrameReceived(
         Connection const& connection,
-        Azure::Core::Amqp::Models::Value value,
+        Azure::Core::Amqp::Models::Value const& value,
         uint32_t framePayloadSize,
         uint8_t* payloadBytes)
         = 0;
@@ -111,9 +111,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& requestUri,
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options);
+
     Connection(ConnectionEvents* eventHandler, ConnectionOptions const& options);
 
-    virtual ~Connection();
+    ~Connection();
 
     // Because m_connection has a pointer back to the Connection object, we cannot move or delete
     // Connection objects.
