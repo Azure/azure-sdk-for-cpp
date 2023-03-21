@@ -111,7 +111,7 @@ CryptographyClient::CryptographyClient(
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
-      "KeyVault",
+      KeyVaultServicePackageName,
       PackageVersion::ToString(),
       std::move(perRetrypolicies),
       std::move(perCallpolicies));
