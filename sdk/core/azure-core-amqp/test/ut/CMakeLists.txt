@@ -17,14 +17,14 @@ include(GoogleTest)
 add_executable(azure-core-amqp-tests
     "amqp_value_tests.cpp"
     "amqp_header_tests.cpp"
-    "amqp_properties_test.cpp"
+    "amqp_properties_tests.cpp"
     "amqp_message_tests.cpp"
-    "ConnectionTests.cpp"
-    "TransportTests.cpp" 
-    "SessionTests.cpp"
-    "LinkTests.cpp" 
-    "MessageSenderReceiver.cpp"
-    "ConnectionStringTests.cpp"
+    "connection_tests.cpp"
+    "transport_tests.cpp" 
+    "session_tests.cpp"
+    "link_tests.cpp" 
+    "message_sender_receiver.cpp"
+    "connection_string_tests.cpp"
  claim_based_security_tests.cpp)
 add_dependencies(azure-core-amqp-tests azure-core-amqp)
 
