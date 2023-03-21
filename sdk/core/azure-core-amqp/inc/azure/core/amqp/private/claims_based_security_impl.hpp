@@ -1,5 +1,5 @@
-// Copyright(c) Microsoft Corporation.All rights reserved.
-// SPDX - License - Identifier : MIT
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-Licence-Identifier: MIT
 
 #pragma once
 #include "azure/core/amqp/claims_based_security.hpp"
