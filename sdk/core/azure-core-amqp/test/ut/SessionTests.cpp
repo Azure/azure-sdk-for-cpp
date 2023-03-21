@@ -116,7 +116,7 @@ uint16_t FindAvailableSocket()
     GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
 
     auto sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock != INVALID_SOCKET)
+    if (sock != -1)
     {
       sockaddr_in addr;
       addr.sin_family = AF_INET;
@@ -130,7 +130,7 @@ uint16_t FindAvailableSocket()
 #else
       close(sock);
 #endif
-      if (bindResult != SOCKET_ERROR)
+      if (bindResult != -1)
       {
         return testPort;
       }
