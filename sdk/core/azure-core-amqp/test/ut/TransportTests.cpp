@@ -61,6 +61,87 @@ TEST_F(TestTlsTransport, SimpleCreate)
   }
 }
 
+TEST_F(TestTlsTransport, SimpleSend)
+{
+  {
+    class TestTransportEvents : public TransportEvents {
+      AsyncOperationQueue<TransportOpenResult> openResultQueue;
+      AsyncOperationQueue<size_t, std::unique_ptr<uint8_t>> receiveBytesQueue;
+      AsyncOperationQueue<bool> errorQueue;
+      void OnOpenComplete(TransportOpenResult result) override
+      {
+        GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
+
+        openResultQueue.CompleteOperation(result);
+      }
+      void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
+      {
+        GTEST_LOG_(INFO) << "On bytes received: " << size;
+        std::unique_ptr<uint8_t> val(new uint8_t[size]);
+        memcpy(val.get(), bytes, size);
+        receiveBytesQueue.CompleteOperation(size, std::move(val));
+      }
+      void OnIoError() override
+      {
+        GTEST_LOG_(INFO) << "On I/O Error";
+        errorQueue.CompleteOperation(true);
+      }
+
+    public:
+      TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
+      {
+        auto result = openResultQueue.WaitForPolledResult(context, transport);
+        return std::get<0>(*result);
+      }
+      std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
+          Transport const& transport,
+          Azure::Core::Context context)
+      {
+        auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
+        return std::make_tuple(std::get<0>(*result), std::move(std::get<1>(*result)));
+      }
+    };
+    TestTransportEvents events;
+    TlsTransport transport("www.microsoft.com", 443, &events);
+
+    EXPECT_TRUE(transport.Open());
+
+    auto openResult = events.WaitForOpen(transport, {});
+    EXPECT_EQ(openResult, TransportOpenResult::Ok);
+
+    unsigned char val[] = R"(GET / HTTP/1.1
+Host: www.microsoft.com
+User-Agent: AMQP Tests 0.0.1
+Accept: */*
+
+)";
+
+    GTEST_LOG_(INFO) << "Before send" << std::endl;
+
+    AsyncOperationQueue<TransportSendResult> sendOperation;
+    EXPECT_TRUE(transport.Send(val, sizeof(val), [&sendOperation](TransportSendResult result) {
+      std::cout << "Send complete" << StringFromSendResult(result);
+      sendOperation.CompleteOperation(result);
+    }));
+    GTEST_LOG_(INFO) << "Wait for send" << std::endl;
+
+    auto sendResult{sendOperation.WaitForPolledResult({}, transport)};
+    EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
+
+    // Wait until we receive data from the www.microsoft.com server.
+    GTEST_LOG_(INFO) << "Wait for data from server." << std::endl;
+    auto receiveResult = events.WaitForReceive(transport, {});
+
+    GTEST_LOG_(INFO) << "Received data from microsoft.com server: " << std::get<0>(receiveResult)
+                     << std::endl;
+
+    AsyncOperationQueue<bool> closeResult;
+    transport.Close([&closeResult] { closeResult.CompleteOperation(true); });
+    auto closeComplete = closeResult.WaitForPolledResult({}, transport);
+    EXPECT_EQ(true, std::get<0>(*closeComplete));
+  }
+}
+
 class TestSocketTransport : public testing::Test {
 protected:
   void SetUp() override {}

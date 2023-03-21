@@ -133,7 +133,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           Azure::Core::Amqp::Models::Value& info);
 
     private:
-      std::shared_ptr<LinkImpl> m_impl;
+      std::shared_ptr<_detail::LinkImpl> m_impl;
     };
   } // namespace _detail
 }}}} // namespace Azure::Core::_internal::Amqp

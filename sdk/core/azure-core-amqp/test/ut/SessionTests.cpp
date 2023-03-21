@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include "azure/core/amqp/common/async_operation_queue.hpp"
+#include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
@@ -106,14 +107,18 @@ TEST_F(TestSessions, SessionProperties)
 
 uint16_t FindAvailableSocket()
 {
-  std::random_device dev;
-#if defined(AZ_PLATFORM_WINDOWS)
-  WSADATA wsaData;
-  if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+  // Ensure that the global state for the AMQP stack is initialized. Normally this is done by the
+  // network facing objects, but this is called before those objects are initialized.
+  //
+  // This may hide bugs in some of the global objects, but it is needed to ensure that the port we
+  // choose for the tests is available.
   {
-    throw std::runtime_error("Could not initialize winsock");
+    auto instance
+        = Azure::Core::_internal::Amqp::Common::_detail::GlobalState::GlobalStateInstance();
+    (void)instance;
   }
-#endif
+
+  std::random_device dev;
   int count = 0;
   while (count < 20)
   {

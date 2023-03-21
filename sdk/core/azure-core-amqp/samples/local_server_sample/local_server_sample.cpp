@@ -157,9 +157,10 @@ private:
               << " now: " << ConnectionStateToString(newState) << std::endl;
     (void)connection;
   };
+
   virtual void OnEndpointFrameReceived(
       Connection const& connection,
-      Azure::Core::Amqp::Models::Value value,
+      Azure::Core::Amqp::Models::Value const&value,
       uint32_t framePayloadSize,
       uint8_t* payloadBytes) override
   {
