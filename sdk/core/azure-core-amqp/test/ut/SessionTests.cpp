@@ -134,6 +134,7 @@ uint16_t FindAvailableSocket()
     }
     count += 1;
   }
+  system("netstat -a");
   throw std::runtime_error("Could not find available test port.");
 }
 
