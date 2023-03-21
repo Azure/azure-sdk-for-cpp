@@ -107,7 +107,13 @@ TEST_F(TestSessions, SessionProperties)
 uint16_t FindAvailableSocket()
 {
   std::random_device dev;
-
+#if defined(AZ_PLATFORM_WINDOWS)
+  WSADATA wsaData;
+  if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+  {
+    throw std::runtime_error("Could not initialize winsock");
+  }
+#endif
   int count = 0;
   while (count < 20)
   {
@@ -155,7 +161,6 @@ uint16_t FindAvailableSocket()
     }
     count += 1;
   }
-  system("netstat -a");
   throw std::runtime_error("Could not find available test port.");
 }
 
