@@ -10,4 +10,4 @@ steps:
         Write-Host "Release does not need modification" 
       }
     displayName: Modify Linux configurations
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
