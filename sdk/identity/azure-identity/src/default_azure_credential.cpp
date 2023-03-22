@@ -6,20 +6,16 @@
 #include "azure/identity/azure_cli_credential.hpp"
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
-#include "private/chained_token_credential_impl.hpp"
 
-#include "azure/core/internal/diagnostics/log.hpp"
+#include "private/chained_token_credential_impl.hpp"
+#include "private/identity_log.hpp"
 
 using namespace Azure::Identity;
 using namespace Azure::Core::Credentials;
 
 using Azure::Core::Context;
 using Azure::Core::Diagnostics::Logger;
-using Azure::Core::Diagnostics::_internal::Log;
-
-namespace {
-constexpr auto IdentityPrefix = "Identity: ";
-} // namespace
+using Azure::Identity::_detail::IdentityLog;
 
 DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
@@ -27,9 +23,9 @@ DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& opt
   // Initializing m_credential below and not in the member initializer list to have a specific order
   // of log messages.
 
-  Log::Write(
-      Logger::Level::Verbose,
-      std::string(IdentityPrefix) + "Creating " + GetCredentialName()
+  IdentityLog::Write(
+      IdentityLog::Level::Verbose,
+      "Creating " + GetCredentialName()
           + " which combines mutiple parameterless credentials into a single one.\n"
           + GetCredentialName()
           + " is only recommended for the early stages of development, "

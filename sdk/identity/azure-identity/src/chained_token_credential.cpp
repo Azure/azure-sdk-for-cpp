@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/identity/chained_token_credential.hpp"
-#include "azure/core/internal/diagnostics/log.hpp"
+
 #include "private/chained_token_credential_impl.hpp"
+#include "private/identity_log.hpp"
+
+#include "azure/core/internal/diagnostics/log.hpp"
 
 #include <utility>
 
@@ -11,8 +14,7 @@ using namespace Azure::Identity;
 using namespace Azure::Identity::_detail;
 using namespace Azure::Core::Credentials;
 using Azure::Core::Context;
-using Azure::Core::Diagnostics::Logger;
-using Azure::Core::Diagnostics::_internal::Log;
+using Azure::Identity::_detail::IdentityLog;
 
 ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
     : TokenCredential("ChainedTokenCredential"),
@@ -29,17 +31,15 @@ AccessToken ChainedTokenCredential::GetToken(
   return m_impl->GetToken(GetCredentialName(), tokenRequestContext, context);
 }
 
-namespace {
-constexpr auto IdentityPrefix = "Identity: ";
-} // namespace
-
 ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
     std::string const& credentialName,
     ChainedTokenCredential::Sources&& sources)
     : m_sources(std::move(sources))
 {
-  auto const logLevel = m_sources.empty() ? Logger::Level::Warning : Logger::Level::Informational;
-  if (Log::ShouldWrite(logLevel))
+  auto const logLevel
+      = m_sources.empty() ? IdentityLog::Level::Warning : IdentityLog::Level::Informational;
+
+  if (IdentityLog::ShouldWrite(logLevel))
   {
     std::string credSourceDetails = " with EMPTY chain of credentials.";
     if (!m_sources.empty())
@@ -60,7 +60,7 @@ ChainedTokenCredentialImpl::ChainedTokenCredentialImpl(
       credSourceDetails += '.';
     }
 
-    Log::Write(logLevel, IdentityPrefix + credentialName + ": Created" + credSourceDetails);
+    IdentityLog::Write(logLevel, credentialName + ": Created" + credSourceDetails);
   }
 }
 
@@ -75,25 +75,24 @@ AccessToken ChainedTokenCredentialImpl::GetToken(
     {
       auto token = source->GetToken(tokenRequestContext, context);
 
-      Log::Write(
-          Logger::Level::Informational,
-          IdentityPrefix + credentialName + ": Successfully got token from "
-              + source->GetCredentialName() + '.');
+      IdentityLog::Write(
+          IdentityLog::Level::Informational,
+          credentialName + ": Successfully got token from " + source->GetCredentialName() + '.');
 
       return token;
     }
     catch (AuthenticationException const& e)
     {
-      Log::Write(
-          Logger::Level::Verbose,
-          IdentityPrefix + credentialName + ": Failed to get token from "
-              + source->GetCredentialName() + ": " + e.what());
+      IdentityLog::Write(
+          IdentityLog::Level::Verbose,
+          credentialName + ": Failed to get token from " + source->GetCredentialName() + ": "
+              + e.what());
     }
   }
 
-  Log::Write(
-      Logger::Level::Warning,
-      IdentityPrefix + credentialName
+  IdentityLog::Write(
+      IdentityLog::Level::Warning,
+      credentialName
           + (m_sources.empty()
                  ? ": Authentication did not succeed: List of sources is empty."
                  : ": Didn't succeed to get a token from any credential in the chain."));

@@ -3,9 +3,9 @@
 
 #include "azure/identity/azure_cli_credential.hpp"
 
+#include "private/identity_log.hpp"
 #include "private/token_credential_impl.hpp"
 
-#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/internal/unique_handle.hpp>
@@ -45,15 +45,10 @@ using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
-using Azure::Core::Diagnostics::Logger;
-using Azure::Core::Diagnostics::_internal::Log;
 using Azure::Identity::AzureCliCredentialOptions;
+using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
-
-namespace {
-constexpr auto IdentityPrefix = "Identity: ";
-}
 
 void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     std::string const& input,
@@ -75,8 +70,8 @@ void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
         if (!StringExtensions::IsAlphaNumeric(c))
         {
           throw AuthenticationException(
-              IdentityPrefix + GetCredentialName() + ": Unsafe command line input found in "
-              + description + ": " + input);
+              GetCredentialName() + ": Unsafe command line input found in " + description + ": "
+              + input);
         }
     }
   }
@@ -92,9 +87,9 @@ AzureCliCredential::AzureCliCredential(
 
   ThrowIfNotSafeCmdLineInput(m_tenantId, "TenantID");
 
-  Log::Write(
-      Logger::Level::Informational,
-      IdentityPrefix + GetCredentialName()
+  IdentityLog::Write(
+      IdentityLog::Level::Informational,
+      GetCredentialName()
           + " created.\n"
             "Successful creation does not guarantee further successful token retrieval.");
 }
@@ -162,10 +157,8 @@ AccessToken AzureCliCredential::GetToken(
     }
     catch (std::exception const& e)
     {
-      auto const errorMsg
-          = IdentityPrefix + GetCredentialName() + " didn't get the token: \"" + e.what() + '\"';
-
-      Log::Write(Logger::Level::Warning, errorMsg);
+      auto const errorMsg = GetCredentialName() + " didn't get the token: \"" + e.what() + '\"';
+      IdentityLog::Write(IdentityLog::Level::Warning, errorMsg);
       throw AuthenticationException(errorMsg);
     }
   });
