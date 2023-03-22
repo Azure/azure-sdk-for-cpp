@@ -13,7 +13,7 @@
 
 #include <azure_uamqp_c/amqp_definitions_target.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}
 
@@ -226,4 +226,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

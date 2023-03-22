@@ -4,7 +4,7 @@
 #pragma once
 
 #include "amqp_value.hpp"
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   struct Messaging
   {
     static Azure::Core::Amqp::Models::Value CreateSource(std::string const& address);
@@ -23,4 +23,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         Azure::Core::Amqp::Models::Value annotations);
   };
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

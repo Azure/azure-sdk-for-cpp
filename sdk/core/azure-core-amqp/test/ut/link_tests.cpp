@@ -107,12 +107,14 @@ TEST_F(TestLinks, LinkProperties)
 class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents,
                                  public Azure::Core::_internal::Amqp::ConnectionEvents,
                                  public Azure::Core::_internal::Amqp::SessionEvents {
-  Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
       std::shared_ptr<Azure::Core::_internal::Amqp::Connection>>
       m_listeningQueue;
-  Common::AsyncOperationQueue<std::unique_ptr<Azure::Core::_internal::Amqp::Session>>
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+      std::unique_ptr<Azure::Core::_internal::Amqp::Session>>
       m_listeningSessionQueue;
-  Common::AsyncOperationQueue<std::unique_ptr<Link>> m_receiveLinkQueue;
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Link>>
+      m_receiveLinkQueue;
   std::shared_ptr<Azure::Core::_internal::Amqp::Connection> m_connection;
 
   virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override

@@ -74,8 +74,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     MESSAGE_SENDER_HANDLE m_messageSender{};
     std::unique_ptr<_detail::Link> m_link;
 
-    Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;
-    Common::AsyncOperationQueue<MessageSenderState, MessageSenderState> m_stateChangeQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
+        m_messageQueue;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<MessageSenderState, MessageSenderState>
+            m_stateChangeQueue;
 
     Connection const& m_connection;
     Session const& m_session;

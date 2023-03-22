@@ -267,7 +267,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         MessageSendCompleteCallback onSendComplete,
         Azure::Core::Context context)
     {
-      auto operation(std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
+      auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
                          decltype(onSendComplete),
                          RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
       auto result = messagesender_send_async(
@@ -287,7 +287,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Azure::Core::Amqp::Models::Message const& message,
         Azure::Core::Context context)
     {
-      Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
           Azure::Core::_internal::Amqp::MessageSendResult,
           Azure::Core::Amqp::Models::Value>
           sendCompleteQueue;

@@ -8,7 +8,7 @@
 #include "amqp_value.hpp"
 
 struct TARGET_INSTANCE_TAG;
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   // enum class MessageBodyType
   //{
@@ -77,4 +77,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     TARGET_INSTANCE_TAG* m_target;
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

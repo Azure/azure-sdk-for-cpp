@@ -11,8 +11,9 @@
 struct TRANSFER_INSTANCE_TAG;
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   enum class ReceiverSettleMode;
+}}}} // namespace Azure::Core::_internal::Amqp
 
-  namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
     class TransferInstance {
       TRANSFER_INSTANCE_TAG* m_instance;
@@ -47,8 +48,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       bool GetMore() const;
       void SetMore(bool isMore);
 
-      ReceiverSettleMode GetReceiverSettleMode() const;
-      void SetReceiverSettleMode(ReceiverSettleMode settleMode);
+      Azure::Core::_internal::Amqp::ReceiverSettleMode GetReceiverSettleMode() const;
+      void SetReceiverSettleMode(Azure::Core::_internal::Amqp::ReceiverSettleMode settleMode);
 
       Azure::Core::Amqp::Models::Value GetState() const;
       void SetState(Azure::Core::Amqp::Models::Value const&);
@@ -71,5 +72,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     MOCKABLE_FUNCTION(, int, amqpvalue_get_transfer, AMQP_VALUE, value, TRANSFER_HANDLE*, TRANSFER_handle);
     MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_transfer, TRANSFER_HANDLE, transfer);
 #endif
-  } // namespace Models
-}}}} // namespace Azure::Core::_internal::Amqp
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

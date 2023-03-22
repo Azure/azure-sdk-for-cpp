@@ -166,7 +166,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Azure::Core::Amqp::Models::Message message)
     {
       m_messageQueue.CompleteOperation(message);
-      return Azure::Core::_internal::Amqp::Models::Messaging::DeliveryAccepted();
+      return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
     }
 
     MessageReceiverImpl::~MessageReceiverImpl() noexcept

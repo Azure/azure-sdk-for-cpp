@@ -79,8 +79,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<Cbs> m_claimsBasedSecurity;
 
-    Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;
-    Common::AsyncOperationQueue<MessageReceiverState, MessageReceiverState> m_stateChangeQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
+        m_messageQueue;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<MessageReceiverState, MessageReceiverState>
+            m_stateChangeQueue;
 
     MessageReceiverEvents* m_eventHandler{};
 

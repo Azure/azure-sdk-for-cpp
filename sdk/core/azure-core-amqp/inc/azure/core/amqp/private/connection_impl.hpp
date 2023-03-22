@@ -90,7 +90,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     std::string m_hostName;
     std::string m_containerId;
     ConnectionOptions m_options;
-    Common::AsyncOperationQueue<std::unique_ptr<Session>> m_newSessionQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Session>>
+        m_newSessionQueue;
     ConnectionEvents* m_eventHandler{};
     CredentialType m_credentialType;
     std::shared_ptr<ConnectionStringCredential> m_credential{};

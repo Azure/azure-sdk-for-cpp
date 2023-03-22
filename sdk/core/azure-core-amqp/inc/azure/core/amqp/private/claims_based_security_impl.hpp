@@ -37,8 +37,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     CBS_HANDLE m_cbs;
 
-    Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
-    Azure::Core::_internal::Amqp::Common::
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
+    Azure::Core::Amqp::Common::_internal::
         AsyncOperationQueue<CbsOperationResult, uint32_t, std::string>
             m_operationResultQueue;
     static void OnCbsOpenCompleteFn(void* context, CBS_OPEN_COMPLETE_RESULT openResult);

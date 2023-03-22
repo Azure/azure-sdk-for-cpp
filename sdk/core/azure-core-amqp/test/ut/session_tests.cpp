@@ -114,7 +114,7 @@ uint16_t FindAvailableSocket()
   // choose for the tests is available.
   {
     auto instance
-        = Azure::Core::_internal::Amqp::Common::_detail::GlobalState::GlobalStateInstance();
+        = Azure::Core::Amqp::Common::_detail::GlobalState::GlobalStateInstance();
     (void)instance;
   }
 
@@ -182,7 +182,8 @@ TEST_F(TestSessions, SessionBeginEnd)
     }
 
   private:
-    Common::AsyncOperationQueue<std::shared_ptr<Network::Transport>> m_listenerQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::shared_ptr<Network::Transport>>
+        m_listenerQueue;
 
     virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
     {
