@@ -23,10 +23,10 @@
 ###########
 
 # PRLabel: %Attestation
-/sdk/attestation/        @LarryOsterman @gkostal @anilba06 @kroshkina-ms @ahmadmsft @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
+/sdk/attestation/        @LarryOsterman @gkostal @anilba06 @ahmadmsft @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
 
 # PRLabel: %KeyVault
-/sdk/keyvault/           @vhvb1989 @gearama @antkmsft @rickwinter
+/sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
 # PRLabel: %Storage
 /sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @vhvb1989 @gearama @LarryOsterman @microzchang
