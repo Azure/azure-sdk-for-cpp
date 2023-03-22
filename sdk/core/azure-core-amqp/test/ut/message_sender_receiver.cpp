@@ -123,15 +123,15 @@ public:
   }
 
 private:
-  Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
       std::shared_ptr<Azure::Core::_internal::Amqp::Connection>>
       m_listeningQueue;
-  Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
       std::unique_ptr<Azure::Core::_internal::Amqp::Session>>
       m_listeningSessionQueue;
-  Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<std::unique_ptr<MessageReceiver>>
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>>
       m_messageReceiverQueue;
-  Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
       m_messageQueue;
   std::shared_ptr<Connection> m_connectionToPoll;
 
@@ -196,8 +196,8 @@ private:
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     MessageReceiverOptions receiverOptions;
-    Azure::Core::_internal::Amqp::Models::MessageTarget messageTarget(target);
-    Azure::Core::_internal::Amqp::Models::MessageSource messageSource(source);
+    Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);
+    Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
     receiverOptions.TargetName = static_cast<std::string>(messageTarget.GetAddress());
     receiverOptions.Name = name;
     receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
@@ -221,7 +221,7 @@ private:
     GTEST_LOG_(INFO) << "Message received";
     m_messageQueue.CompleteOperation(std::move(message));
 
-    return Azure::Core::_internal::Amqp::Models::Messaging::DeliveryAccepted();
+    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
   void OnMessageReceiverStateChanged(
       MessageReceiver const& receiver,
@@ -370,8 +370,9 @@ TEST_F(TestMessages, SenderSendAsync)
     message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
 
     Azure::Core::Context context;
-    Common::AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
-        sendCompleteQueue;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
+            sendCompleteQueue;
     sender.SendAsync(
         message,
         [&](MessageSendResult sendResult, Azure::Core::Amqp::Models::Value deliveryStatus) {
@@ -452,8 +453,9 @@ TEST_F(TestMessages, SenderSendSync)
     Azure::Core::Amqp::Models::Message message;
     message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
 
-    Common::AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
-        sendCompleteQueue;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
+            sendCompleteQueue;
     auto result = sender.Send(message);
     EXPECT_EQ(std::get<0>(result), MessageSendResult::Ok);
 

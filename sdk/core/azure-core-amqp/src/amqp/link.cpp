@@ -92,8 +92,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         *session.GetImpl(),
         name.c_str(),
         role == SessionRole::Sender ? role_sender : role_receiver,
-        Azure::Core::_internal::Amqp::Models::Messaging::CreateSource(source),
-        Azure::Core::_internal::Amqp::Models::Messaging::CreateTarget(target));
+        Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
+        Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
   }
 
   LinkImpl::LinkImpl(
@@ -110,8 +110,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         linkEndpoint.Release(),
         name.c_str(),
         role == SessionRole::Sender ? role_sender : role_receiver,
-        Azure::Core::_internal::Amqp::Models::Messaging::CreateSource(source),
-        Azure::Core::_internal::Amqp::Models::Messaging::CreateTarget(target));
+        Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
+        Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
   }
 
   LinkImpl::~LinkImpl() noexcept
@@ -321,7 +321,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_eventHandler)
     {
-      Models::TransferInstance transferInstance(transfer);
+      Azure::Core::Amqp::Models::_internal::TransferInstance transferInstance(transfer);
       return link->m_eventHandler->OnTransferReceived(
           link->shared_from_this(), transferInstance, payloadSize, payloadBytes);
     }

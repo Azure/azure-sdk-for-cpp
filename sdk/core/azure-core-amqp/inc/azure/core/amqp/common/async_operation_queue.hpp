@@ -9,7 +9,7 @@
 #include <mutex>
 #include <tuple>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Common {
+namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _internal {
 
   /** An AsyncOperationQueue represents a queue of "results" for an async operation.
    *
@@ -81,4 +81,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       Poll(rest...);
     }
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::Common
+}}}}} // namespace Azure::Core::Amqp::Common::_internal

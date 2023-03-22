@@ -15,8 +15,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     {
       // Force the global instance to exist. This is required to ensure that uAMQP and
       // azure-c-shared-utility is
-      auto globalInstance
-          = Azure::Core::_internal::Amqp::Common::_detail::GlobalState::GlobalStateInstance();
+      auto globalInstance = Azure::Core::Amqp::Common::_detail::GlobalState::GlobalStateInstance();
       (void)globalInstance;
     }
   } // namespace
@@ -85,7 +84,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         throw std::logic_error("Cannot close an unopened transport.");
       }
       auto closeOperation
-          = std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
+          = std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
               decltype(onCloseComplete),
               CloseCallbackWrapper<decltype(onCloseComplete)>>>(onCloseComplete);
       if (m_xioInstance)
@@ -191,7 +190,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         size_t size,
         TransportSendCompleteFn sendComplete) const
     {
-      auto operation{std::make_unique<Azure::Core::_internal::Amqp::Common::CompletionOperation<
+      auto operation{std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
           decltype(sendComplete),
           SendCallbackRewriter<decltype(sendComplete)>>>(sendComplete)};
       if (xio_send(

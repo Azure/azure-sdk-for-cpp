@@ -8,17 +8,24 @@
 
 #include <azure_c_shared_utility/platform.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Common {
-  namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
-    GlobalState::GlobalState()
+  GlobalState::GlobalState()
+  {
+    if (platform_init())
     {
-      if (platform_init())
-      {
-        throw std::runtime_error("Could not initialize platform.");
-      }
+      throw std::runtime_error("Could not initialize platform.");
     }
+  }
 
-    GlobalState::~GlobalState() { platform_deinit(); }
+  GlobalState::~GlobalState() { platform_deinit(); }
 
-}}}}}} // namespace Azure::Core::_internal::Amqp::Common::_detail
+  static uint8_t stateBuffer[sizeof(GlobalState)];
+  GlobalState* GlobalState::GlobalStateInstance()
+  {
+    static auto globalState = new (stateBuffer) GlobalState();
+    return globalState;
+  };
+
+
+}}}}} // namespace Azure::Core::Amqp::Common::_detail

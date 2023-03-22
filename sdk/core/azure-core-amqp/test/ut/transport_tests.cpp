@@ -12,7 +12,7 @@
 extern uint16_t FindAvailableSocket();
 
 using namespace Azure::Core::_internal::Amqp::Network;
-using namespace Azure::Core::_internal::Amqp::Common;
+using namespace Azure::Core::Amqp::Common::_internal;
 
 class TestTlsTransport : public testing::Test {
 protected:

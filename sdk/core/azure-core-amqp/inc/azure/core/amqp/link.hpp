@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       virtual void OnLinkStateChanged(Link const&, LinkState newState, LinkState oldState) = 0;
       virtual Azure::Core::Amqp::Models::Value OnTransferReceived(
           Link const&,
-          Models::TransferInstance& transfer,
+          Azure::Core::Amqp::Models::_internal::TransferInstance& transfer,
           uint32_t payloadSize,
           const uint8_t* payloadBytes)
           = 0;

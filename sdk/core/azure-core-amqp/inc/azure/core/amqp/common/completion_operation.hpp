@@ -8,7 +8,7 @@
 #include <mutex>
 #include <tuple>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Common {
+namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _internal {
 
   /** Abstracts an operation sent to azure-c-shared-utility/azure-uamqp.
    */
@@ -35,4 +35,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       }
     }
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::Common
+}}}}} // namespace Azure::Core::Amqp::Common::_internal

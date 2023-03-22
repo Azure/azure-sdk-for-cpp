@@ -154,8 +154,8 @@ class CbsServerMock : public Azure::Core::_internal::Amqp::Network::SocketListen
       Azure::Core::Amqp::Models::Value) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
-    Azure::Core::_internal::Amqp::Models::MessageSource msgSource(source);
-    Azure::Core::_internal::Amqp::Models::MessageTarget msgTarget(target);
+    Azure::Core::Amqp::Models::_internal::MessageSource msgSource(source);
+    Azure::Core::Amqp::Models::_internal::MessageTarget msgTarget(target);
 
     MessageReceiverOptions receiverOptions;
     receiverOptions.EnableTrace = true;
@@ -190,7 +190,7 @@ class CbsServerMock : public Azure::Core::_internal::Amqp::Network::SocketListen
   {
     GTEST_LOG_(INFO) << "Received a message " << message;
     // Assume we're going to accept the message delivery.
-    return Azure::Core::_internal::Amqp::Models::Messaging::DeliveryAccepted();
+    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
 
 public:

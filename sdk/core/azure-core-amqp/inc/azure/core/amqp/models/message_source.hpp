@@ -8,7 +8,7 @@
 #include "amqp_value.hpp"
 
 struct SOURCE_INSTANCE_TAG;
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   class MessageSource {
   public:
@@ -65,4 +65,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     SOURCE_INSTANCE_TAG* m_source;
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

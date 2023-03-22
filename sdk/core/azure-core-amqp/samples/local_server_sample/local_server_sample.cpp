@@ -13,6 +13,7 @@
 #include <string>
 
 using namespace Azure::Core::_internal::Amqp;
+using namespace Azure::Core::Amqp;
 
 // Convert a ConnectionState enum to a string for diagnostic purposes.
 const char* ConnectionStateToString(ConnectionState const state)
@@ -115,10 +116,10 @@ public:
 
 private:
   Connection* m_connection{};
-  Common::AsyncOperationQueue<std::unique_ptr<Connection>> m_connectionQueue;
-  Common::AsyncOperationQueue<std::unique_ptr<Session>> m_sessionQueue;
-  Common::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
-  Common::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;
+  Common::_internal::AsyncOperationQueue<std::unique_ptr<Connection>> m_connectionQueue;
+  Common::_internal::AsyncOperationQueue<std::unique_ptr<Session>> m_sessionQueue;
+  Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
+  Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;
 
   virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
   {
@@ -160,7 +161,7 @@ private:
 
   virtual void OnEndpointFrameReceived(
       Connection const& connection,
-      Azure::Core::Amqp::Models::Value const&value,
+      Azure::Core::Amqp::Models::Value const& value,
       uint32_t framePayloadSize,
       uint8_t* payloadBytes) override
   {
@@ -175,8 +176,8 @@ private:
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override
   {
-    Azure::Core::_internal::Amqp::Models::MessageSource messageSource(source);
-    Azure::Core::_internal::Amqp::Models::MessageTarget messageTarget(target);
+    Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
+    Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);
 
     MessageReceiverOptions options;
     options.SettleMode = ReceiverSettleMode::First;
@@ -214,7 +215,7 @@ private:
       Azure::Core::Amqp::Models::Message message) override
   {
     m_messageQueue.CompleteOperation(message);
-    return Azure::Core::_internal::Amqp::Models::Messaging::DeliveryAccepted();
+    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
 };
 

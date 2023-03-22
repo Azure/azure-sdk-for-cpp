@@ -13,7 +13,7 @@
 
 #include <azure_uamqp_c/amqp_definitions_source.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   MessageSource::MessageSource(SOURCE_HANDLE handle) : m_source{handle} {}
 
@@ -294,4 +294,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

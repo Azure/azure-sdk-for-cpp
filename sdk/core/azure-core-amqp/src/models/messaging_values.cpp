@@ -6,7 +6,7 @@
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/messaging.h>
 /* Common Message values */
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   Azure::Core::Amqp::Models::Value Messaging::DeliveryAccepted()
   {
     return messaging_delivery_accepted();
@@ -24,4 +24,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     return messaging_create_target(address.c_str());
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

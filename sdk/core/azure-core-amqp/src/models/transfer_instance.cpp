@@ -16,7 +16,7 @@
 #include <chrono>
 #include <iostream>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Models {
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   TransferInstance::~TransferInstance() { transfer_destroy(m_instance); }
 
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  ReceiverSettleMode TransferInstance::GetReceiverSettleMode() const
+  Azure::Core::_internal::Amqp::ReceiverSettleMode TransferInstance::GetReceiverSettleMode() const
   {
     receiver_settle_mode receiverMode;
     if (transfer_get_rcv_settle_mode(m_instance, &receiverMode))
@@ -171,22 +171,23 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     switch (receiverMode)
     {
       case receiver_settle_mode_first:
-        return ReceiverSettleMode::First;
+        return Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
       case receiver_settle_mode_second:
-        return ReceiverSettleMode::Second;
+        return Azure::Core::_internal::Amqp::ReceiverSettleMode::Second;
       default:
         throw std::logic_error("Unknown settle mode.");
     }
   }
-  void TransferInstance::SetReceiverSettleMode(ReceiverSettleMode settleMode)
+  void TransferInstance::SetReceiverSettleMode(
+      Azure::Core::_internal::Amqp::ReceiverSettleMode settleMode)
   {
     receiver_settle_mode receiverMode;
     switch (settleMode)
     {
-      case ReceiverSettleMode::First:
+      case Azure::Core::_internal::Amqp::ReceiverSettleMode::First:
         receiverMode = receiver_settle_mode_first;
         break;
-      case ReceiverSettleMode::Second:
+      case Azure::Core::_internal::Amqp::ReceiverSettleMode::Second:
         receiverMode = receiver_settle_mode_second;
         break;
       default:
@@ -247,4 +248,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
        << "state=" << instance.GetState() << "}";
     return os;
   }
-}}}}} // namespace Azure::Core::_internal::Amqp::Models
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

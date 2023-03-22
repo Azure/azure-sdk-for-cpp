@@ -104,7 +104,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
     }
 
   private:
-    Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport>>
         m_listenerQueue;
 
@@ -171,7 +171,7 @@ private:
   std::unique_ptr<Azure::Core::_internal::Amqp::MessageReceiver> m_messageReceiver;
   //  std::unique_ptr<Azure::Core::Amqp::Link> m_link;
 
-  Azure::Core::_internal::Amqp::Common::AsyncOperationQueue<
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
       std::unique_ptr<Azure::Core::_internal::Amqp::Connection>>
       m_listeningQueue;
   virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
@@ -244,7 +244,7 @@ private:
   {
     GTEST_LOG_(INFO) << "Message received";
 
-    return Azure::Core::_internal::Amqp::Models::Messaging::DeliveryAccepted();
+    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
   virtual void OnMessageReceiverStateChanged(
       Azure::Core::_internal::Amqp::MessageReceiver const& receiver,
