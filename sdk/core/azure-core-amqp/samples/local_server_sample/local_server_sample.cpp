@@ -172,7 +172,7 @@ private:
       Session const& sessionForLink,
       LinkEndpoint& newLink,
       std::string const& name,
-      Azure::Core::_internal::Amqp::SessionRole ,
+      Azure::Core::_internal::Amqp::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override

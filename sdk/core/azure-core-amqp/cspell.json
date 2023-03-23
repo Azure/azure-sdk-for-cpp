@@ -10,10 +10,12 @@
     "**/test/ut/recordings/*.json"
   ],
   "words": [
+    "blang",
     "dowork",
     "SASLCLIENTIO",
     "socketio",
     "tlsio",
-    "umock"
+    "umock",
+    "yoiks"
   ]
 }
