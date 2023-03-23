@@ -9,6 +9,8 @@
 #include <limits>
 #include <string>
 
+// Note: The connection string provided must either have an "EntityPath" entry or the constructor
+// for the SasConnectionStringCredential has to have an entity path provided.
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()
@@ -19,6 +21,7 @@ int main()
   Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
+  connectOptions.HostName = credential->GetHostName();
   Azure::Core::_internal::Amqp::Connection connection(nullptr, connectOptions);
 
   Azure::Core::_internal::Amqp::Session session(connection, nullptr);
@@ -39,6 +42,7 @@ int main()
 
   Azure::Core::_internal::Amqp::MessageSender sender(
       session,
+      credential,
       "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath(),
       connection,
       senderOptions,

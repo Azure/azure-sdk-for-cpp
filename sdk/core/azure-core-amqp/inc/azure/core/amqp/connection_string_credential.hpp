@@ -45,17 +45,29 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::string m_endpoint;
     std::string m_sharedAccessKeyName;
     std::string m_sharedAccessKey;
-    std::string m_entityPath;
     std::string m_uri;
     std::string m_hostName;
     uint16_t m_port;
+
+  protected:
+    std::string m_entityPath;
   };
 
   class ServiceBusSasConnectionStringCredential final : public ConnectionStringCredential {
   public:
-    ServiceBusSasConnectionStringCredential(const std::string& connectionString)
+    ServiceBusSasConnectionStringCredential(
+        const std::string& connectionString,
+        const std::string& entityPath = {})
         : ConnectionStringCredential(connectionString)
     {
+      if (m_entityPath.empty())
+      {
+        m_entityPath = entityPath;
+      }
+      else if (!entityPath.empty() && m_entityPath != entityPath)
+      {
+        throw std::invalid_argument("Unable to determine entityPath.");
+      }
     }
 
     ~ServiceBusSasConnectionStringCredential() override = default;

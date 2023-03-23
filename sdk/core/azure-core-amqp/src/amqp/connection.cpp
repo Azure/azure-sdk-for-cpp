@@ -136,7 +136,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     }
 
     ConnectionImpl::ConnectionImpl(ConnectionEvents* eventHandler, ConnectionOptions const& options)
-        : m_options{options}, m_eventHandler{eventHandler}
+        : m_hostName{options.HostName}, m_options{options}, m_eventHandler{eventHandler}
     {
       EnsureGlobalStateInitialized();
 
