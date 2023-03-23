@@ -10,6 +10,7 @@
 #include "link.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
+#include <azure/core/nullable.hpp>
 #include <tuple>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
@@ -42,14 +43,25 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     Mixed
   };
 
+  class MessageSender;
+  struct MessageSenderEvents
+  {
+    virtual void OnMessageSenderStateChanged(
+        MessageSender const& sender,
+        MessageSenderState newState,
+        MessageSenderState oldState)
+        = 0;
+  };
+
   struct MessageSenderOptions
   {
     std::string Name;
     SenderSettleMode SettleMode{};
     std::string SourceAddress;
     std::vector<std::string> AuthenticationScopes;
-    uint32_t MaxMessageSize{};
+    Azure::Nullable<uint64_t> MaxMessageSize;
     bool EnableTrace{false};
+    Azure::Nullable<uint32_t> InitialDeliveryCount;
 
     // Copied from Go, not sure if they're needed.
     std::vector<std::string> Capabilities;
@@ -78,21 +90,37 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Session const& session,
         std::string const& target,
         Connection const& connectionToPoll,
-        MessageSenderOptions const& options);
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events);
+
+    /** @brief Specialization of MessageSender class intended for use in a Message receiving
+     * handler.
+     */
+    MessageSender(
+        Session const& session,
+        LinkEndpoint& newLinkEndpoint,
+        std::string const& target,
+        Connection const& connectionToPoll,
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events);
     MessageSender(
         Session const& session,
         std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
         std::string const& target,
         Connection const& connectionToPoll,
-        MessageSenderOptions const& options);
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events);
     MessageSender(
         Session const& session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         std::string const& target,
         Connection const& connectionToPoll,
-        MessageSenderOptions const& options);
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events);
+    MessageSender(std::shared_ptr<_detail::MessageSenderImpl> sender) : m_impl{sender} {}
     virtual ~MessageSender() noexcept;
 
+    MessageSender() = default;
     MessageSender(MessageSender const&) = default;
     MessageSender& operator=(MessageSender const&) = default;
     MessageSender(MessageSender&&) noexcept = default;

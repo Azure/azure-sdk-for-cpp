@@ -41,7 +41,8 @@ int main()
       session,
       "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath(),
       connection,
-      senderOptions);
+      senderOptions,
+      nullptr);
 
   // Open the connection to the remote.
   sender.Open();

@@ -10,9 +10,8 @@
 
 struct ASYNC_OPERATION_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-
-  class Cancellable {
+namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+  class Cancellable final {
   public:
     Cancellable(ASYNC_OPERATION_INSTANCE_TAG* asyncOperation) : m_operation{asyncOperation} {}
     ~Cancellable();
@@ -35,4 +34,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   private:
     ASYNC_OPERATION_INSTANCE_TAG* m_operation;
   };
-}}}} // namespace Azure::Core::_internal::Amqp
+}}}} // namespace Azure::Core::Amqp::_internal

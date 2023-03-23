@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
-  GlobalState::GlobalState()
+  GlobalStateHolder::GlobalStateHolder()
   {
     if (platform_init())
     {
@@ -18,14 +18,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     }
   }
 
-  GlobalState::~GlobalState() { platform_deinit(); }
+  GlobalStateHolder::~GlobalStateHolder() { platform_deinit(); }
 
-  static uint8_t stateBuffer[sizeof(GlobalState)];
-  GlobalState* GlobalState::GlobalStateInstance()
+  GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()
   {
-    static auto globalState = new (stateBuffer) GlobalState();
-    return globalState;
+    static GlobalStateHolder globalState;
+    return &globalState;
   };
-
 
 }}}}} // namespace Azure::Core::Amqp::Common::_detail

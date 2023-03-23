@@ -21,11 +21,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    *
    */
 
-  class GlobalState {
-  public:
-    GlobalState();
-    ~GlobalState();
+  class GlobalStateHolder {
+    GlobalStateHolder();
+    ~GlobalStateHolder();
 
-    static GlobalState* GlobalStateInstance();
+  public:
+    static GlobalStateHolder* GlobalStateInstance();
   };
 }}}}} // namespace Azure::Core::Amqp::Common::_detail

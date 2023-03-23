@@ -172,6 +172,7 @@ private:
       Session const& sessionForLink,
       LinkEndpoint& newLink,
       std::string const& name,
+      Azure::Core::_internal::Amqp::SessionRole ,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override
@@ -183,7 +184,7 @@ private:
     options.SettleMode = ReceiverSettleMode::First;
     options.EnableTrace = true;
     options.Name = name;
-    options.TargetName = static_cast<std::string>(messageTarget.GetAddress());
+    options.TargetAddress = static_cast<std::string>(messageTarget.GetAddress());
     auto newMessageReceiver = std::make_unique<MessageReceiver>(
         sessionForLink,
         newLink,

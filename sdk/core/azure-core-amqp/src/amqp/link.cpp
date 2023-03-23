@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   Link::Link(
       Session const& session,
       std::string const& name,
-      SessionRole role,
+      Azure::Core::_internal::Amqp::SessionRole role,
       std::string const& source,
       std::string const& target)
       : m_impl{std::make_shared<LinkImpl>(session, name, role, source, target)}

@@ -24,6 +24,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     UnsettledState
   };
 
+  enum class SessionRole
+  {
+    Sender,
+    Receiver
+  };
+
   namespace _detail {
     class LinkImpl;
 
@@ -49,12 +55,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       NotDelivered,
       Timeout,
       Cancelled,
-    };
-
-    enum class SessionRole
-    {
-      Sender,
-      Receiver
     };
 
     class Error;

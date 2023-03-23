@@ -55,11 +55,11 @@ TEST_F(TestMessages, SimpleSender)
   //  Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
 
   {
-    MessageSender sender(session, "MySource", connection, {});
+    MessageSender sender(session, "MySource", connection, {}, nullptr);
   }
   {
-    MessageSender sender1(session, "MySource", connection, {});
-    MessageSender sender2(session, "MySource", connection, {});
+    MessageSender sender1(session, "MySource", connection, {}, nullptr);
+    MessageSender sender2(session, "MySource", connection, {}, nullptr);
   }
 }
 
@@ -190,6 +190,7 @@ private:
       Azure::Core::_internal::Amqp::Session const& session,
       Azure::Core::_internal::Amqp::LinkEndpoint& newLinkInstance,
       std::string const& name,
+      Azure::Core::_internal::Amqp::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value properties) override
@@ -198,7 +199,7 @@ private:
     MessageReceiverOptions receiverOptions;
     Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);
     Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
-    receiverOptions.TargetName = static_cast<std::string>(messageTarget.GetAddress());
+    receiverOptions.TargetAddress = static_cast<std::string>(messageTarget.GetAddress());
     receiverOptions.Name = name;
     receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
     receiverOptions.DynamicAddress = messageSource.GetDynamic();
@@ -299,7 +300,7 @@ TEST_F(TestMessages, SenderOpenClose)
     MessageSenderOptions options;
     options.SourceAddress = "MySource";
 
-    MessageSender sender(session, "MyTarget", connection, options);
+    MessageSender sender(session, "MyTarget", connection, options, nullptr);
     sender.Open();
     sender.Close();
   }
@@ -361,7 +362,7 @@ TEST_F(TestMessages, SenderSendAsync)
     options.SourceAddress = "ingress";
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
-    MessageSender sender(session, "localhost/ingress", connection, options);
+    MessageSender sender(session, "localhost/ingress", connection, options, nullptr);
     EXPECT_NO_THROW(sender.Open());
 
     uint8_t messageBody[] = "hello";
@@ -445,7 +446,7 @@ TEST_F(TestMessages, SenderSendSync)
     options.MaxMessageSize = 65536;
     options.SourceAddress = "ingress";
     options.Name = "sender-link";
-    MessageSender sender(session, "localhost/ingress", connection, options);
+    MessageSender sender(session, "localhost/ingress", connection, options, nullptr);
     EXPECT_NO_THROW(sender.Open());
 
     uint8_t messageBody[] = "hello";

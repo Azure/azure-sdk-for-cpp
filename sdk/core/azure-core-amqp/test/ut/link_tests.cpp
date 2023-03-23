@@ -36,13 +36,13 @@ TEST_F(TestLinks, SimpleLink)
   Session session(connection, nullptr);
 
   {
-    Link link(session, "MySession", _detail::SessionRole::Sender, "MySource", "MyTarget");
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
   }
 
   {
     // Create two sessions
-    Link link1(session, "MySession", _detail::SessionRole::Sender, "Source1", "Target1");
-    Link link2(session, "MySession", _detail::SessionRole::Sender, "Source2", "Target2");
+    Link link1(session, "MySession", SessionRole::Sender, "Source1", "Target1");
+    Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
   }
 
 #if 0
@@ -72,7 +72,7 @@ TEST_F(TestLinks, LinkProperties)
   Session session(connection, nullptr);
 
   {
-    Link link(session, "MySession", _detail::SessionRole::Sender, "MySource", "MyTarget");
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
 
     EXPECT_EQ("MySession", link.GetName());
     EXPECT_EQ(0, link.GetInitialDeliveryCount());
@@ -84,7 +84,7 @@ TEST_F(TestLinks, LinkProperties)
   }
 
   {
-    Link link(session, "MySession", _detail::SessionRole::Sender, "MySource", "MyTarget");
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
 
     link.SetInitialDeliveryCount(32767);
     EXPECT_EQ(32767, link.GetInitialDeliveryCount());
@@ -160,7 +160,7 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
       Azure::Core::_internal::Amqp::Session const& session,
       Azure::Core::_internal::Amqp::LinkEndpoint& newLinkInstance,
       std::string const& name,
-      //      Azure::Core::_internal::Amqp::SessionRole role,
+      Azure::Core::_internal::Amqp::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override
@@ -170,7 +170,7 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
         session,
         newLinkInstance,
         name,
-        Azure::Core::_internal::Amqp::_detail::SessionRole::Receiver,
+        Azure::Core::_internal::Amqp::SessionRole::Receiver,
         static_cast<std::string>(source),
         static_cast<std::string>(target));
     //    newLink->SetReceiverSettleMode(Azure::Core::Amqp::ReceiverSettleMode::First);

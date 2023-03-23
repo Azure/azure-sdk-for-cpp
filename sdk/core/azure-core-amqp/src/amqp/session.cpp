@@ -5,6 +5,7 @@
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/private/connection_impl.hpp"
 #include "azure/core/amqp/private/session_impl.hpp"
+#include "azure/core/amqp/link.hpp"
 
 #include <azure_uamqp_c/session.h>
 
@@ -210,7 +211,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
             session->shared_from_this(),
             linkEndpoint,
             name,
-            //          role ? _detail::SessionRole::Receiver : _detail::SessionRole::Sender,
+            role==role_receiver ? Azure::Core::_internal::Amqp::SessionRole::Receiver
+                 : Azure::Core::_internal::Amqp::SessionRole::Sender,
             source,
             target,
             properties);

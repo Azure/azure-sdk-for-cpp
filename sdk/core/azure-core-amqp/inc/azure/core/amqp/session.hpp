@@ -30,8 +30,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   class Disposition;
   class Detach;
   class Transfer;
+  enum class SessionRole;
   namespace _detail {
-    enum class SessionRole;
     class SessionImpl;
   } // namespace _detail
 
@@ -126,6 +126,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Session const& session,
         LinkEndpoint& newLink,
         std::string const& name,
+        Azure::Core::_internal::Amqp::SessionRole role,
         Azure::Core::Amqp::Models::Value source,
         Azure::Core::Amqp::Models::Value target,
         Azure::Core::Amqp::Models::Value properties)

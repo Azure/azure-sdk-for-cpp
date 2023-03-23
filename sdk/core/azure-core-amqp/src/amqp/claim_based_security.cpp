@@ -8,16 +8,19 @@
 #include <iostream>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-  Cbs::Cbs(Session const& session, Connection const& connection)
+  ClaimBasedSecurity::ClaimBasedSecurity(Session const& session, Connection const& connection)
       : m_impl{std::make_shared<_detail::CbsImpl>(session, connection)}
   {
   }
 
-  Cbs::~Cbs() noexcept {}
+  ClaimBasedSecurity::~ClaimBasedSecurity() noexcept {}
 
-  CbsOpenResult Cbs::Open(Azure::Core::Context context) { return m_impl->Open(context); }
-  void Cbs::Close() { m_impl->Close(); }
-  std::tuple<CbsOperationResult, uint32_t, std::string> Cbs::PutToken(
+  CbsOpenResult ClaimBasedSecurity::Open(Azure::Core::Context context)
+  {
+    return m_impl->Open(context);
+  }
+  void ClaimBasedSecurity::Close() { m_impl->Close(); }
+  std::tuple<CbsOperationResult, uint32_t, std::string> ClaimBasedSecurity::PutToken(
       CbsTokenType tokenType,
       std::string const& audience,
       std::string const& token,
@@ -26,6 +29,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
     return m_impl->PutToken(tokenType, audience, token, context);
   }
+
+  void ClaimBasedSecurity::SetTrace(bool traceOn) { m_impl->SetTrace(traceOn); }
 
   namespace _detail {
 
@@ -88,7 +93,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     void CbsImpl::OnCbsOpenCompleteFn(void* context, CBS_OPEN_COMPLETE_RESULT openCompleteResult)
     {
       auto cbs = static_cast<CbsImpl*>(const_cast<void*>(context));
-      std::cout << "CBS Instance open." << std::endl;
       cbs->m_openResultQueue.CompleteOperation(CbsOpenResultStateFromLowLevel(openCompleteResult));
     }
 
@@ -132,11 +136,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (cbs_open_async(m_cbs, CbsImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
       {
-        throw std::runtime_error("Could not open cbs");
+        return CbsOpenResult::Error;
       }
       auto result = m_openResultQueue.WaitForPolledResult(context, m_connectionToPoll);
       return std::get<0>(*result);
-      //    return CbsOpenResult::Ok;
     }
 
     void CbsImpl::Close()
@@ -146,6 +149,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         throw std::runtime_error("Could not close cbs");
       }
     }
+
+    void CbsImpl::SetTrace(bool traceOn) { cbs_set_trace(m_cbs, traceOn); }
 
     std::tuple<CbsOperationResult, uint32_t, std::string> CbsImpl::PutToken(
         CbsTokenType tokenType,

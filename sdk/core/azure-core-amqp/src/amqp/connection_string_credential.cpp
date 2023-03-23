@@ -51,22 +51,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   std::shared_ptr<Network::Transport> SaslPlainConnectionStringCredential::GetTransport() const
   {
-    // The endpoint is formatted as a URL, extract the host and port from the endpoint and use them
-    // when constructing the SaslPlain transport.
-    Azure::Core::Url endpointUrl{GetEndpoint()};
-
     return std::make_shared<Network::SaslTransport>(
         GetSharedAccessKeyName(), GetSharedAccessKey(), GetHostName(), GetPort());
   }
 
   std::shared_ptr<Network::Transport> ServiceBusSasConnectionStringCredential::GetTransport() const
   {
-    // The endpoint is formatted as a URL, extract the host and port from the endpoint and use them
-    // when constructing the SaslAnonymous transport.
-    Azure::Core::Url endpointUrl{GetEndpoint()};
-    return std::make_shared<Network::SaslTransport>(
-        endpointUrl.GetHost(),
-        endpointUrl.GetPort() != 0 ? endpointUrl.GetPort() : static_cast<uint16_t>(5671));
+    // Construct a SASL Anonymous transport
+    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
   }
   //
   // A ServiceBus connection string has the following format:

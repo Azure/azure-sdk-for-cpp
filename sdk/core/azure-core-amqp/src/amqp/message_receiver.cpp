@@ -4,6 +4,7 @@
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/link.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "azure/core/amqp/private/message_receiver_impl.hpp"
@@ -133,16 +134,47 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         MessageReceiverEvents* eventHandler)
         : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
     {
-      m_link = std::make_unique<_detail::Link>(
-          session,
-          linkEndpoint,
-          options.Name,
-          _detail::SessionRole::Sender, // This is the role of the link, not the endpoint.
-          source,
-          options.TargetName);
+      CreateLink(linkEndpoint);
 
       m_messageReceiver = messagereceiver_create(
           m_link->Get(), MessageReceiverImpl::OnMessageReceiverStateChangedFn, this);
+    }
+
+    void MessageReceiverImpl::CreateLink(LinkEndpoint& endpoint)
+    {
+      // The endpoint version of CreateLink is creating a message receiver for a sender, not for a
+      // receiver.
+      m_link = std::make_unique<_detail::Link>(
+          m_session,
+          endpoint,
+          m_options.Name,
+          SessionRole::Sender, // This is the role of the link, not the endpoint.
+          m_source,
+          m_options.TargetAddress);
+      PopulateLinkProperties();
+    }
+
+    void MessageReceiverImpl::CreateLink()
+    {
+      m_link = std::make_unique<_detail::Link>(
+          m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.TargetAddress);
+      PopulateLinkProperties();
+    }
+
+    void MessageReceiverImpl::PopulateLinkProperties()
+    {
+      if (m_options.InitialDeliveryCount.HasValue())
+      {
+        m_link->SetInitialDeliveryCount(m_options.InitialDeliveryCount.Value());
+      }
+      if (m_options.MaxMessageSize.HasValue())
+      {
+        m_link->SetMaxMessageSize(m_options.MaxMessageSize.Value());
+      }
+      else
+      {
+        m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
+      }
     }
 
     AMQP_VALUE MessageReceiverImpl::OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message)
@@ -233,23 +265,15 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::cout << "Message receiver changed state. New: "
                   << MESSAGE_RECEIVER_STATEStrings[newState]
                   << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
-        receiver->OnStateChanged(
-            MessageReceiverStateFromLowLevel(newState), MessageReceiverStateFromLowLevel(oldState));
       }
     }
 
-    void MessageReceiverImpl::OnStateChanged(
-        MessageReceiverState newState,
-        MessageReceiverState oldState)
-    {
-      m_stateChangeQueue.CompleteOperation(newState, oldState);
-    }
     void MessageReceiverImpl::Authenticate(
         CredentialType type,
         std::string const& audience,
         std::string const& token)
     {
-      m_claimsBasedSecurity = std::make_unique<Cbs>(m_session, *m_connection);
+      m_claimsBasedSecurity = std::make_unique<ClaimBasedSecurity>(m_session, *m_connection);
       if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
       {
         auto result = m_claimsBasedSecurity->PutToken(
@@ -293,12 +317,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       // We cannot do this before authenticating the client.
       if (!m_link)
       {
-        m_link = std::make_unique<_detail::Link>(
-            m_session,
-            m_options.Name,
-            _detail::SessionRole::Receiver,
-            m_source,
-            m_options.TargetName);
+        CreateLink();
       }
       if (m_messageReceiver == nullptr)
       {

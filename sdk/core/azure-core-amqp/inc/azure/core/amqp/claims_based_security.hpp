@@ -34,18 +34,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     Jwt
   };
 
-  class Cbs {
-
+  class ClaimBasedSecurity final {
   public:
-    Cbs(Azure::Core::_internal::Amqp::Session const& session,
+    ClaimBasedSecurity(
+        Azure::Core::_internal::Amqp::Session const& session,
         Azure::Core::_internal::Amqp::Connection const& connectionToPoll);
-    virtual ~Cbs() noexcept;
+    virtual ~ClaimBasedSecurity() noexcept;
 
-    // Disable copy and move because the underlying m_cbs takes a reference to this object.
-    Cbs(Cbs const&) = delete;
-    Cbs& operator=(Cbs const&) = delete;
-    Cbs(Cbs&&) noexcept = delete;
-    Cbs& operator=(Cbs&&) noexcept = delete;
+    ClaimBasedSecurity(ClaimBasedSecurity const&) = default;
+    ClaimBasedSecurity& operator=(ClaimBasedSecurity const&) = default;
+    ClaimBasedSecurity(ClaimBasedSecurity&&) noexcept = default;
+    ClaimBasedSecurity& operator=(ClaimBasedSecurity&&) noexcept = default;
 
     CbsOpenResult Open(Azure::Core::Context = {});
     void Close();
