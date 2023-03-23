@@ -11,6 +11,7 @@
 #include "models/amqp_value.hpp"
 #include "session.hpp"
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/nullable.hpp>
 #include <vector>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
@@ -41,8 +42,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::string Name;
     std::vector<std::string> AuthenticationScopes;
     ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
-    std::string TargetName;
+    std::string TargetAddress;
     bool EnableTrace{false};
+    Azure::Nullable<uint32_t> InitialDeliveryCount;
+    Azure::Nullable<uint64_t> MaxMessageSize;
 
     bool Batching{false};
     std::chrono::seconds BatchMaxAge{std::chrono::seconds(5)};
@@ -55,7 +58,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
     // LinkFilter
     bool ManualCredits{};
-    uint64_t MaxMessageSize{0};
     Azure::Core::Amqp::Models::Value Properties;
 
     std::vector<std::string> SenderCapabilities;
@@ -103,6 +105,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         MessageReceiverOptions const& options,
         MessageReceiverEvents* receiverEvents = nullptr);
 
+    MessageReceiver() = default;
     MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}
     ~MessageReceiver() noexcept;
 

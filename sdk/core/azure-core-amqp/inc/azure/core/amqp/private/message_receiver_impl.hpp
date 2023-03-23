@@ -65,7 +65,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         Waiters&... waiters)
     {
       auto result = m_messageQueue.WaitForPolledResult(context, waiters...);
-      return std::move(std::get<0>(*result));
+      if (result)
+      {
+        return std::move(std::get<0>(*result));
+      }
+      return nullptr;
     }
 
   private:
@@ -77,13 +81,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     Connection const* m_connection;
     std::shared_ptr<ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<Cbs> m_claimsBasedSecurity;
+    std::unique_ptr<ClaimBasedSecurity> m_claimsBasedSecurity;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
         m_messageQueue;
-    Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<MessageReceiverState, MessageReceiverState>
-            m_stateChangeQueue;
 
     MessageReceiverEvents* m_eventHandler{};
 
@@ -97,7 +98,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         MESSAGE_RECEIVER_STATE newState,
         MESSAGE_RECEIVER_STATE oldState);
 
-    virtual void OnStateChanged(MessageReceiverState newState, MessageReceiverState oldState);
+    void CreateLink();
+    void CreateLink(LinkEndpoint& endpoint);
+    void PopulateLinkProperties();
 
     void Authenticate(CredentialType type, std::string const& audience, std::string const& token);
   };

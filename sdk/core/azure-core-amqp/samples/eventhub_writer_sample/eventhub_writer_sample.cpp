@@ -45,7 +45,8 @@ int main()
       "amqps://" + connectOptions.SaslCredentials->GetHostName() + "/"
           + connectOptions.SaslCredentials->GetEntityPath(),
       connection,
-      senderOptions);
+      senderOptions,
+      nullptr);
 
   // Open the connection to the remote.
   sender.Open();

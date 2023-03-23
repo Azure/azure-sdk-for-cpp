@@ -18,8 +18,25 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       Session const& session,
       std::string const& target,
       Connection const& connection,
-      MessageSenderOptions const& options)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(session, target, connection, options)}
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events)
+      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
+          session,
+          target,
+          connection,
+          options,
+          events)}
+  {
+  }
+  MessageSender::MessageSender(
+      Session const& session,
+      LinkEndpoint& endpoint,
+      std::string const& target,
+      Connection const& connection,
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events)
+      : m_impl{std::make_shared<
+          _detail::MessageSenderImpl>(session, endpoint, target, connection, options, events)}
   {
   }
 
@@ -28,13 +45,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
       std::string const& target,
       Connection const& connection,
-      MessageSenderOptions const& options)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          session,
-          credential,
-          target,
-          connection,
-          options)}
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events)
+      : m_impl{std::make_shared<
+          _detail::MessageSenderImpl>(session, credential, target, connection, options, events)}
   {
   }
 
@@ -43,13 +57,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       std::string const& target,
       Connection const& connection,
-      MessageSenderOptions const& options)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          session,
-          credential,
-          target,
-          connection,
-          options)}
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events)
+      : m_impl{std::make_shared<
+          _detail::MessageSenderImpl>(session, credential, target, connection, options, events)}
   {
   }
 
@@ -78,9 +89,28 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         Session const& session,
         std::string const& target,
         Connection const& connection,
-        MessageSenderOptions const& options)
-        : m_connection{connection}, m_session{session}, m_target{target}, m_options{options}
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events)
+        : m_events{events},
+          m_connection{connection}, m_session{session}, m_target{target}, m_options{options}
     {
+    }
+
+    MessageSenderImpl::MessageSenderImpl(
+        Session const& session,
+        LinkEndpoint& endpoint,
+        std::string const& target,
+        Connection const& connection,
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events)
+        : m_events{events},
+          m_connection{connection}, m_session{session}, m_target{target}, m_options{options}
+    {
+      CreateLink(endpoint);
+      m_messageSender = messagesender_create(
+          m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);
+
+      SetTrace(options.EnableTrace);
     }
 
     MessageSenderImpl::MessageSenderImpl(
@@ -88,8 +118,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
         std::string const& target,
         Connection const& connection,
-        MessageSenderOptions const& options)
-        : m_connection{connection}, m_session{session},
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events)
+        : m_events{events}, m_connection{connection}, m_session{session},
           m_connectionCredential{credential}, m_target{target}, m_options{options}
 
     {
@@ -100,8 +131,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         std::string const& target,
         Connection const& connection,
-        MessageSenderOptions const& options)
-        : m_connection{connection}, m_session{session},
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events)
+        : m_events{events}, m_connection{connection}, m_session{session},
           m_tokenCredential{credential}, m_target{target}, m_options{options}
     {
     }
@@ -113,6 +145,47 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         messagesender_destroy(m_messageSender);
         m_messageSender = nullptr;
       }
+    }
+
+    void MessageSenderImpl::CreateLink(LinkEndpoint& endpoint)
+    {
+      m_link = std::make_unique<_detail::Link>(
+          m_session,
+          endpoint,
+          m_options.Name,
+          SessionRole::Receiver, // This is the role of the link, not the endpoint.
+          m_options.SourceAddress,
+          m_target);
+      PopulateLinkProperties();
+    }
+    void MessageSenderImpl::CreateLink()
+    {
+      m_link = std::make_unique<_detail::Link>(
+          m_session,
+          m_options.Name,
+          SessionRole::Sender, // This is the role of the link, not the endpoint.
+          m_options.SourceAddress,
+          m_target);
+      PopulateLinkProperties();
+    }
+
+    /* Populate link properties from options. */
+    void MessageSenderImpl::PopulateLinkProperties()
+    {
+      // Populate link options from options.
+      if (m_options.InitialDeliveryCount.HasValue())
+      {
+        m_link->SetInitialDeliveryCount(m_options.InitialDeliveryCount.Value());
+      }
+      if (m_options.MaxMessageSize.HasValue())
+      {
+        m_link->SetMaxMessageSize(m_options.MaxMessageSize.Value());
+      }
+      else
+      {
+        m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
+      }
+      m_link->SetSenderSettleMode(m_options.SettleMode);
     }
 
     void MessageSenderImpl::SetTrace(bool traceEnabled)
@@ -146,14 +219,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         MESSAGE_SENDER_STATE newState,
         MESSAGE_SENDER_STATE oldState)
     {
-      auto receiver = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
-      receiver->OnStateChanged(
-          MessageSenderStateFromLowLevel(newState), MessageSenderStateFromLowLevel(oldState));
-    }
-
-    void MessageSenderImpl::OnStateChanged(MessageSenderState newState, MessageSenderState oldState)
-    {
-      m_stateChangeQueue.CompleteOperation(newState, oldState);
+      auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
+      if (sender->m_events)
+      {
+        sender->m_events->OnMessageSenderStateChanged(
+            sender->shared_from_this(),
+            MessageSenderStateFromLowLevel(newState),
+            MessageSenderStateFromLowLevel(oldState));
+      }
     }
 
     void MessageSenderImpl::Authenticate(
@@ -161,7 +234,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& audience,
         std::string const& token)
     {
-      m_claimsBasedSecurity = std::make_unique<Cbs>(m_session, m_connection);
+      m_claimsBasedSecurity = std::make_unique<ClaimBasedSecurity>(m_session, m_connection);
       if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
       {
         auto result = m_claimsBasedSecurity->PutToken(
@@ -202,20 +275,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
             m_tokenCredential->GetToken(requestContext, context).Token);
       }
 
-      // We cannot create the link until after we've authenticated the connection because the
-      // OnNewLink notification will call into unattached links.
-      m_link = std::make_unique<_detail::Link>(
-          m_session,
-          m_options.Name,
-          _detail::SessionRole::Sender,
-          m_options.SourceAddress,
-          m_target);
-      m_link->SetMaxMessageSize(m_options.MaxMessageSize);
-      m_link->SetSenderSettleMode(m_options.SettleMode);
+      if (m_link == nullptr)
+      {
+        CreateLink();
+      }
 
-      m_messageSender = messagesender_create(
-          m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);
-
+      if (m_messageSender == nullptr)
+      {
+        m_messageSender = messagesender_create(
+            m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);
+      }
       if (messagesender_open(m_messageSender))
       {
         auto err = errno;
@@ -264,7 +333,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     void MessageSenderImpl::SendAsync(
         Azure::Core::Amqp::Models::Message const& message,
-        MessageSendCompleteCallback onSendComplete,
+        Azure::Core::_internal::Amqp::MessageSender::MessageSendCompleteCallback onSendComplete,
         Azure::Core::Context context)
     {
       auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<

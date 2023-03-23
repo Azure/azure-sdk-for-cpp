@@ -13,8 +13,8 @@
 #include <limits>
 #include <string>
 
-#define EH_HOST "<<<Replace with the eventhubs host name>>>"
-#define EH_ENTITY "<<<Replace with the eventhub name>>>"
+#define EH_HOST "larryotest.servicebus.windows.net"
+#define EH_ENTITY "testhub"
 
 #define EH_AUTHENTICATION_SCOPE "https://eventhubs.azure.net/.default"
 
@@ -53,7 +53,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
   Azure::Core::_internal::Amqp::MessageSender sender(
-      session, credential, EH_ENTITY_URL, connection, senderOptions);
+      session, credential, EH_ENTITY_URL, connection, senderOptions, nullptr);
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
   sender.Open();

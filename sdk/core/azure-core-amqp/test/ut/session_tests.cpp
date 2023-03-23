@@ -114,7 +114,7 @@ uint16_t FindAvailableSocket()
   // choose for the tests is available.
   {
     auto instance
-        = Azure::Core::Amqp::Common::_detail::GlobalState::GlobalStateInstance();
+        = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
     (void)instance;
   }
 

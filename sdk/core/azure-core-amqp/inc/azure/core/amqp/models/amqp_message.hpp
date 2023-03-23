@@ -34,6 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Message(MESSAGE_INSTANCE_TAG* message);
 
     operator MESSAGE_INSTANCE_TAG*() const { return m_message; }
+    operator bool() const { return m_message != nullptr; }
 
     void SetHeader(Header const& header);
     Header GetHeader() const;

@@ -51,14 +51,14 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     uint16_t m_port;
   };
 
-  class ServiceBusSasConnectionStringCredential : public ConnectionStringCredential {
+  class ServiceBusSasConnectionStringCredential final : public ConnectionStringCredential {
   public:
     ServiceBusSasConnectionStringCredential(const std::string& connectionString)
         : ConnectionStringCredential(connectionString)
     {
     }
 
-    ~ServiceBusSasConnectionStringCredential() = default;
+    ~ServiceBusSasConnectionStringCredential() override = default;
     CredentialType GetCredentialType() const override { return CredentialType::ServiceBusSas; }
     std::string GenerateSasToken(std::chrono::system_clock::time_point const& expiresOn) const;
     std::string GetAudience();
@@ -67,7 +67,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     virtual std::shared_ptr<Network::Transport> GetTransport() const override;
   };
 
-  class SaslPlainConnectionStringCredential : public ConnectionStringCredential {
+  class SaslPlainConnectionStringCredential final : public ConnectionStringCredential {
   public:
     SaslPlainConnectionStringCredential(const std::string& connectionString);
 

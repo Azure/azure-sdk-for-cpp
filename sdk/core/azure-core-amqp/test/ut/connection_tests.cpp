@@ -192,14 +192,14 @@ private:
       Azure::Core::_internal::Amqp::Session const& session,
       Azure::Core::_internal::Amqp::LinkEndpoint& newLinkInstance,
       std::string const& name,
-      //      Azure::Core::Amqp::_detail::SessionRole role,
+      Azure::Core::_internal::Amqp::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override
   {
     Azure::Core::_internal::Amqp::MessageReceiverOptions receiverOptions;
     receiverOptions.Name = name;
-    receiverOptions.TargetName = static_cast<std::string>(target);
+    receiverOptions.TargetAddress = static_cast<std::string>(target);
     receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
 
     m_messageReceiver = std::make_unique<Azure::Core::_internal::Amqp::MessageReceiver>(

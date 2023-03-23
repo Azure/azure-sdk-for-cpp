@@ -28,10 +28,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Message::Message(Message const& that) { m_message = message_clone(that.m_message); }
+  Message::Message(Message const& that)
+  {
+    if (that.m_message)
+    {
+      m_message = message_clone(that.m_message);
+    }
+  }
+
   Message& Message::operator=(Message const& that)
   {
-    m_message = message_clone(that.m_message);
+    if (that.m_message)
+    {
+      m_message = message_clone(that.m_message);
+    }
     return *this;
   }
 
