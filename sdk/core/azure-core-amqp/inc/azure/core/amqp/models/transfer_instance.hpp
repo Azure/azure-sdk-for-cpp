@@ -15,56 +15,56 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-    class TransferInstance {
-      TRANSFER_INSTANCE_TAG* m_instance;
+  class TransferInstance {
+    TRANSFER_INSTANCE_TAG* m_instance;
 
-    public:
-      // uAMQP integration functions.
-      TransferInstance(TRANSFER_INSTANCE_TAG* instance) : m_instance(instance) {}
-      operator TRANSFER_INSTANCE_TAG*() const { return m_instance; }
+  public:
+    // uAMQP integration functions.
+    TransferInstance(TRANSFER_INSTANCE_TAG* instance) : m_instance(instance) {}
+    operator TRANSFER_INSTANCE_TAG*() const { return m_instance; }
 
-    public:
-      TransferInstance();
-      operator bool() const { return m_instance != nullptr; }
+  public:
+    TransferInstance();
+    operator bool() const { return m_instance != nullptr; }
 
-      virtual ~TransferInstance();
+    virtual ~TransferInstance();
 
-      //    bool IsTransferTypeByDescriptor(Value const& value);
-      uint32_t GetHandle() const;
-      void SetHandle(uint32_t handle);
+    //    bool IsTransferTypeByDescriptor(Value const& value);
+    uint32_t GetHandle() const;
+    void SetHandle(uint32_t handle);
 
-      uint32_t GetDeliveryId() const;
-      void SetDeliveryId(uint32_t value);
+    uint32_t GetDeliveryId() const;
+    void SetDeliveryId(uint32_t value);
 
-      Azure::Core::Amqp::Models::BinaryData GetDeliveryTag() const;
-      void SetDeliveryTag(Azure::Core::Amqp::Models::BinaryData value);
+    Azure::Core::Amqp::Models::BinaryData GetDeliveryTag() const;
+    void SetDeliveryTag(Azure::Core::Amqp::Models::BinaryData value);
 
-      uint32_t GetMessageFormat() const;
-      void SetMessageFormat(uint32_t format);
+    uint32_t GetMessageFormat() const;
+    void SetMessageFormat(uint32_t format);
 
-      bool GetSettled() const;
-      void SetSettled(bool isSettled);
+    bool GetSettled() const;
+    void SetSettled(bool isSettled);
 
-      bool GetMore() const;
-      void SetMore(bool isMore);
+    bool GetMore() const;
+    void SetMore(bool isMore);
 
-      Azure::Core::_internal::Amqp::ReceiverSettleMode GetReceiverSettleMode() const;
-      void SetReceiverSettleMode(Azure::Core::_internal::Amqp::ReceiverSettleMode settleMode);
+    Azure::Core::_internal::Amqp::ReceiverSettleMode GetReceiverSettleMode() const;
+    void SetReceiverSettleMode(Azure::Core::_internal::Amqp::ReceiverSettleMode settleMode);
 
-      Azure::Core::Amqp::Models::Value GetState() const;
-      void SetState(Azure::Core::Amqp::Models::Value const&);
+    Azure::Core::Amqp::Models::Value GetState() const;
+    void SetState(Azure::Core::Amqp::Models::Value const&);
 
-      bool GetResume() const;
-      void SetResume(bool isResume);
+    bool GetResume() const;
+    void SetResume(bool isResume);
 
-      bool GetAborted() const;
-      void SetAborted(bool isAborted);
+    bool GetAborted() const;
+    void SetAborted(bool isAborted);
 
-      bool GetBatchable() const;
-      void SetBatchable(bool isBatchable);
+    bool GetBatchable() const;
+    void SetBatchable(bool isBatchable);
 
-      friend std::ostream& operator<<(std::ostream&, TransferInstance const&);
-    };
+    friend std::ostream& operator<<(std::ostream&, TransferInstance const&);
+  };
 #if 0
     MOCKABLE_FUNCTION(, TRANSFER_HANDLE, transfer_create , handle, handle_value);
     MOCKABLE_FUNCTION(, TRANSFER_HANDLE, transfer_clone, TRANSFER_HANDLE, value);
