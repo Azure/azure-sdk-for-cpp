@@ -140,6 +140,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     MessageSenderImpl::~MessageSenderImpl() noexcept
     {
+      // Clear the event callback before calling messagesender_destroy to short-circuit any
+      // events firing after the object is destroyed.
+      if (m_events)
+      {
+        m_events = nullptr;
+      }
       if (m_messageSender)
       {
         messagesender_destroy(m_messageSender);

@@ -348,7 +348,8 @@ TEST_F(TestCbs, CbsOpen)
       {
         GTEST_LOG_(INFO) << "Received message: " << message;
       }
-
+      mockServer.GetMessageSender().Close();
+      mockServer.GetMessageReceiver().Close();
       listener.Stop();
     });
 
