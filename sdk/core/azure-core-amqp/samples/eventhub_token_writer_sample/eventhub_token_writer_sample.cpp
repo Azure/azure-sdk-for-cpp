@@ -13,8 +13,8 @@
 #include <limits>
 #include <string>
 
-#define EH_HOST "eh-larryoeventhub.servicebus.windows.net"
-#define EH_ENTITY ""
+#define EH_HOST "<<<Replace with the eventhubs host name>>>"
+#define EH_ENTITY "<<<Replace with the eventhub name>>>"
 
 #define EH_AUTHENTICATION_SCOPE "https://eventhubs.azure.net/.default"
 
