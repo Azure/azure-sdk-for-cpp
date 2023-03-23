@@ -52,7 +52,7 @@ const char* ConnectionStateToString(ConnectionState state)
     case ConnectionState::Start:
       return "Start";
     case ConnectionState::HeaderReceived:
-      return "HeaderReceivd";
+      return "HeaderReceived";
     case ConnectionState::HeaderSent:
       return "HeaderSent";
     case ConnectionState::HeaderExchanged:
@@ -105,7 +105,7 @@ const char* ReceiverStateToString(MessageReceiverState state)
 
 const char* SenderStateToString(MessageSenderState state)
 {
-  // Return the string-ized version of the values in the MessageSenderState enumeration
+  // Return the stringized version of the values in the MessageSenderState enumeration
   switch (state)
   {
     case MessageSenderState::Invalid:

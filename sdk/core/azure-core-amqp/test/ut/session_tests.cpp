@@ -113,8 +113,7 @@ uint16_t FindAvailableSocket()
   // This may hide bugs in some of the global objects, but it is needed to ensure that the port we
   // choose for the tests is available.
   {
-    auto instance
-        = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+    auto instance = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
     (void)instance;
   }
 
