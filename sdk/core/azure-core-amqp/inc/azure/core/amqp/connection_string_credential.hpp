@@ -25,13 +25,19 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   class ConnectionStringCredential {
   public:
-    ConnectionStringCredential(const std::string& connectionString)
+    ConnectionStringCredential(const std::string& connectionString, CredentialType credentialType)
+        : m_credentialType{credentialType}
     {
       ParseConnectionString(connectionString);
     }
     virtual ~ConnectionStringCredential() = default;
+
+    // Prevent tearing of the ConnectionStringCredential.
+    ConnectionStringCredential(ConnectionStringCredential const&) = delete;
+    ConnectionStringCredential& operator=(ConnectionStringCredential const&) = delete;
+
     virtual std::shared_ptr<Network::Transport> GetTransport() const = 0;
-    virtual CredentialType GetCredentialType() const = 0;
+    CredentialType GetCredentialType() const { return m_credentialType; }
     std::string const& GetUri() const;
     std::string const& GetEndpoint() const { return m_endpoint; }
     std::string const& GetSharedAccessKeyName() const { return m_sharedAccessKeyName; }
@@ -42,6 +48,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   private:
     void ParseConnectionString(const std::string& connectionString);
+    const CredentialType m_credentialType;
     std::string m_endpoint;
     std::string m_sharedAccessKeyName;
     std::string m_sharedAccessKey;
@@ -58,7 +65,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     ServiceBusSasConnectionStringCredential(
         const std::string& connectionString,
         const std::string& entityPath = {})
-        : ConnectionStringCredential(connectionString)
+        : ConnectionStringCredential(connectionString, CredentialType::ServiceBusSas)
     {
       if (m_entityPath.empty())
       {
@@ -71,7 +78,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     }
 
     ~ServiceBusSasConnectionStringCredential() override = default;
-    CredentialType GetCredentialType() const override { return CredentialType::ServiceBusSas; }
     std::string GenerateSasToken(std::chrono::system_clock::time_point const& expiresOn) const;
     std::string GetAudience();
 
@@ -84,7 +90,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     SaslPlainConnectionStringCredential(const std::string& connectionString);
 
     std::shared_ptr<Network::Transport> GetTransport() const override;
-    CredentialType GetCredentialType() const override { return CredentialType::SaslPlain; }
 
   private:
   };

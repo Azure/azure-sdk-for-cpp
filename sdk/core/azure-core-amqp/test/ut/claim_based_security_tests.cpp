@@ -81,7 +81,7 @@ const char* ConnectionStateToString(ConnectionState state)
       return "Error";
   }
   throw std::runtime_error("Unknown connection state");
-};
+}
 
 const char* ReceiverStateToString(MessageReceiverState state)
 {
