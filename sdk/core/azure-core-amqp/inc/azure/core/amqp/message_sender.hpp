@@ -126,6 +126,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     MessageSender(MessageSender&&) noexcept = default;
     MessageSender& operator=(MessageSender&&) noexcept = default;
 
+    operator bool() const;
+
     void Open();
     void Close();
     std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> Send(

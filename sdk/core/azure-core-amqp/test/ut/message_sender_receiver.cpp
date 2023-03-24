@@ -304,6 +304,7 @@ TEST_F(TestMessages, SenderOpenClose)
     sender.Open();
     sender.Close();
   }
+  connection.Close("Test complete", "", Models::Value());
   listener.Stop();
 }
 
@@ -387,6 +388,7 @@ TEST_F(TestMessages, SenderSendAsync)
   }
   receiveContext.Cancel();
   listenerThread.join();
+  connection.Close("", "", Models::Value());
 }
 
 TEST_F(TestMessages, SenderSendSync)

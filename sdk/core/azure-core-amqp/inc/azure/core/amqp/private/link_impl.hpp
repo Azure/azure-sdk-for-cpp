@@ -37,13 +37,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     LinkImpl(LinkImpl&&) noexcept = delete;
     LinkImpl& operator=(LinkImpl&&) noexcept = delete;
 
-    LINK_HANDLE Release()
-    {
-      auto rv = m_link;
-      m_link = nullptr;
-      return rv;
-    }
-    LINK_HANDLE Get() const { return m_link; }
+    operator LINK_HANDLE() const { return m_link; }
 
     void SetSenderSettleMode(SenderSettleMode senderSettleMode);
     SenderSettleMode GetSenderSettleMode() const;

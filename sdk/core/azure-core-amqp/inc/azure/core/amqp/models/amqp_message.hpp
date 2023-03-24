@@ -55,13 +55,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Properties GetProperties() const;
 
     void SetApplicationProperties(Value const& value);
-    Value GetApplicationProperties() const;
+    Value const GetApplicationProperties() const; 
 
     MessageBodyType GetBodyType() const;
 
     void AddBodyAmqpSequence(Value const& value);
-    size_t GetBodyAmqpSequenceCount();
-    Value GetBodyAmqpSequence(uint32_t index);
+    size_t GetBodyAmqpSequenceCount() const;
+    Value GetBodyAmqpSequence(uint32_t index) const;
 
     void AddBodyAmqpData(BinaryData binaryData);
 

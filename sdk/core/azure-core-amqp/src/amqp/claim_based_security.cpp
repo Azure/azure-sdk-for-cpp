@@ -20,6 +20,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     return m_impl->Open(context);
   }
   void ClaimBasedSecurity::Close() { m_impl->Close(); }
+
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimBasedSecurity::PutToken(
       CbsTokenType tokenType,
       std::string const& audience,
@@ -79,8 +80,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           return CbsOperationResult::Ok;
         case CBS_OPERATION_RESULT_OPERATION_FAILED:
           return CbsOperationResult::Failed;
-        default:
-          throw std::logic_error("Unknown CBS Operation result.");
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown CBS Operation result."); // LCOV_EXCL_LINE
       }
     }
 
@@ -110,8 +111,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           return "CbsOperationResult::Ok";
         case CBS_OPERATION_RESULT_OPERATION_FAILED:
           return "CbsOperationResult::Failed";
-        default:
-          throw std::logic_error("Unknown CBS Operation result.");
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown CBS Operation result."); // LCOV_EXCL_LINE
       }
     }
 

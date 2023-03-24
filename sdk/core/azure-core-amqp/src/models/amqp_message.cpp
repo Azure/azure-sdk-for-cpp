@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Message::Message(Message const& that)
+  Message::Message(Message const& that) : m_message{nullptr}
   {
     if (that.m_message)
     {
@@ -162,7 +162,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set application properties.");
     }
   }
-  Value Message::GetApplicationProperties() const
+  Value const Message::GetApplicationProperties() const
   {
     AMQP_VALUE properties;
     if (message_get_application_properties(m_message, &properties))
@@ -194,7 +194,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return MessageBodyType::None;
   }
-  size_t Message::GetBodyAmqpSequenceCount()
+  size_t Message::GetBodyAmqpSequenceCount() const
   {
     size_t count;
     if (message_get_body_amqp_sequence_count(m_message, &count))
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return count;
   }
-  Value Message::GetBodyAmqpSequence(uint32_t index)
+  Value Message::GetBodyAmqpSequence(uint32_t index) const
   {
     AMQP_VALUE value;
     if (message_get_body_amqp_sequence_in_place(m_message, index, &value))
@@ -220,6 +220,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not Add Body Sequence.");
     }
   }
+
+  Value Message::GetBodyAmqpValue() const
+  {
+    AMQP_VALUE value;
+    if (message_get_body_amqp_value_in_place(m_message, &value))
+    {
+      throw std::runtime_error("Could not get BodySequence.");
+    }
+    return amqpvalue_clone(value);
+  }
+
 
   void Message::AddBodyAmqpData(BinaryData binaryData)
   {
@@ -268,18 +279,46 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       os << "Properties: " << message.GetProperties();
     }
-    if (message.GetBodyAmqpDataCount() != 0)
+    switch (message.GetBodyType())
     {
-      os << "AMQP Data: [";
-      for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
-      {
-        auto data = message.GetBodyAmqpData(i);
-        os << "Data: " << data.length << " bytes: " << data;
-        if (i < message.GetBodyAmqpDataCount() - 1)
+      case MessageBodyType::Invalid:
+        os << "Invalid";
+        break;
+      case MessageBodyType::None:
+        os << "None";
+        break;
+      case MessageBodyType::Data:
+        os << "AMQP Data: [";
+        if (message.GetBodyAmqpDataCount() != 0)
         {
-          os << ", ";
+          for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
+          {
+            auto data = message.GetBodyAmqpData(i);
+            os << "Data: " << data.length << " bytes: " << data;
+            if (i < message.GetBodyAmqpDataCount() - 1)
+            {
+              os << ", ";
+            }
+          }
         }
-      }
+        os << "]";
+        break;
+      case MessageBodyType::Sequence:
+        os << "AMQP Sequence: [";
+        for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
+        {
+          auto data = message.GetBodyAmqpData(i);
+          os << "Data: " << data.length << " bytes: " << data;
+          if (i < message.GetBodyAmqpDataCount() - 1)
+          {
+            os << ", ";
+          }
+        }
+        os << "]";
+        break;
+      case MessageBodyType::Value:
+        os << "Value: " << message.GetBodyAmqpValue();
+        break;
     }
     os << "]";
 

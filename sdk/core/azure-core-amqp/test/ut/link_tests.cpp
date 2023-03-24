@@ -102,6 +102,22 @@ TEST_F(TestLinks, LinkProperties)
 
     link.SetAttachProperties("Attach Properties");
   }
+
+  {
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+    Link link2(link);
+
+    Link link3(link.GetImpl());
+
+    EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
+    EXPECT_EQ(link.GetInitialDeliveryCount(), link3.GetInitialDeliveryCount());
+
+    // If I set the initial delivery count on one link, it should affect all the copies of that
+    // link.
+    link.SetInitialDeliveryCount(32767);
+    EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
+    EXPECT_EQ(link.GetInitialDeliveryCount(), link3.GetInitialDeliveryCount());
+  }
 }
 
 class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents,
@@ -232,5 +248,6 @@ TEST_F(TestLinks, LinkAttachDetach)
     //    auto listeningSession = listeningConnection->WaitForSession();
     //    auto listeningLink = listeningSession->WaitForLink();
   }
+  connection.Close("Test complete", "Completed", Models::Value());
   listener.Stop();
 }

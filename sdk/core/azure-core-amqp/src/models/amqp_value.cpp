@@ -548,6 +548,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     // the value of descriptor and value so they don't get accidentally freed.
     return amqpvalue_create_described(amqpvalue_clone(descriptor), amqpvalue_clone(value));
   }
+
+  Value Value::GetDescriptor() const { return amqpvalue_get_inplace_descriptor(m_value); }
+
+  Value Value::GetDescribedValue() const { return amqpvalue_get_inplace_described_value(m_value); }
+
   Value Value::CreateCompositeWithDescriptor(uint64_t descriptor)
   {
     return amqpvalue_create_composite_with_ulong_descriptor(descriptor);
