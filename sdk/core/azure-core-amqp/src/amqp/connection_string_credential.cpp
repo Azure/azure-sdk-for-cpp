@@ -44,7 +44,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   SaslPlainConnectionStringCredential::SaslPlainConnectionStringCredential(
       const std::string& connectionString)
-      : ConnectionStringCredential(connectionString)
+      : ConnectionStringCredential(connectionString, CredentialType::SaslPlain)
   {
     Azure::Core::Url endpointUrl{GetEndpoint()};
   }
