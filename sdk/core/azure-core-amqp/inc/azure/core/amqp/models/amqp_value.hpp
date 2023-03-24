@@ -187,6 +187,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     static Value CreateDescribed(Value descriptor, Value value);
     static Value CreateCompositeWithDescriptor(uint64_t descriptor);
 
+    // Descriptors
+    Value GetDescriptor() const;
+    Value GetDescribedValue() const;
+
+
     // Headers.
     bool IsHeaderTypeByDescriptor() const;
     Header GetHeaderFromValue() const;

@@ -27,7 +27,7 @@ TEST_F(TestProperties, SimpleCreate)
     EXPECT_ANY_THROW(
         properties.GetContentEncoding()); // Cannot get content encoding before it has been set.
     EXPECT_ANY_THROW(properties.GetContentType());
-    EXPECT_ANY_THROW(properties.GetCorrelationId());
+    EXPECT_EQ(AmqpValueType::Null, properties.GetCorrelationId().GetType());
     EXPECT_ANY_THROW(properties.GetCreationTime());
     EXPECT_ANY_THROW(properties.GetGroupId());
     EXPECT_ANY_THROW(properties.GetGroupSequence());

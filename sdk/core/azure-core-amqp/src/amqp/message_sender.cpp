@@ -64,6 +64,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
   }
 
+  MessageSender::operator bool() const { return m_impl.operator bool(); }
+
   void MessageSender::Open() { m_impl->Open(); }
   void MessageSender::Close() { m_impl->Close(); }
   std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> MessageSender::Send(
@@ -107,8 +109,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           m_connection{connection}, m_session{session}, m_target{target}, m_options{options}
     {
       CreateLink(endpoint);
-      m_messageSender = messagesender_create(
-          m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);
+      m_messageSender
+          = messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this);
 
       SetTrace(options.EnableTrace);
     }
@@ -288,8 +290,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       if (m_messageSender == nullptr)
       {
-        m_messageSender = messagesender_create(
-            m_link->Get(), MessageSenderImpl::OnMessageSenderStateChangedFn, this);
+        m_messageSender
+            = messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this);
       }
       if (messagesender_open(m_messageSender))
       {
@@ -375,7 +377,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           },
           context);
       auto result = sendCompleteQueue.WaitForPolledResult(context, m_connection);
-      return std::move(*result);
+      if (result)
+      {
+        return std::move(*result);
+      }
+      throw std::runtime_error("Error sending message");
     }
   } // namespace _detail
 }}}} // namespace Azure::Core::_internal::Amqp

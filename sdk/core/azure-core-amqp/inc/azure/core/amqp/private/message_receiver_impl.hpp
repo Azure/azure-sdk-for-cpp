@@ -45,8 +45,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     MessageReceiverImpl(MessageReceiverImpl const&) = delete;
     MessageReceiverImpl& operator=(MessageReceiverImpl const&) = delete;
-    MessageReceiverImpl(MessageReceiverImpl&&) noexcept;
-    MessageReceiverImpl& operator=(MessageReceiverImpl&&) noexcept;
+    MessageReceiverImpl(MessageReceiverImpl&&) = delete;
+    MessageReceiverImpl& operator=(MessageReceiverImpl&&) = delete;
+
+    operator bool() const { return (m_messageReceiver != nullptr); }
 
     void Open();
     void Close();

@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AMQP_VALUE value;
     if (properties_get_correlation_id(m_properties, &value))
     {
-      throw std::runtime_error("Could not set correlation id");
+      return Value();
     }
     // properties_get_correlation_id returns an in-place value.
     return amqpvalue_clone(value);
@@ -286,18 +286,119 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream& os, Properties const& properties)
   {
     os << "Properties {";
-    os << "MessageId: " << properties.GetMessageId() << ", ";
-    os << "UserId: " << properties.GetUserId() << ", ";
-    os << "To: " << properties.GetTo() << ", ";
-    os << "Subject: " << properties.GetSubject() << ", ";
-    os << "ReplyTo: " << properties.GetReplyTo() << ", ";
-    os << "ContentType: " << properties.GetContentType() << ", ";
-    os << "ContentEncoding: " << properties.GetContentEncoding() << ", ";
-    os << "AbsoluteExpiryTime: " << timeToString(properties.GetAbsoluteExpiryTime()) << ", ";
-    os << "CreationTime: " << timeToString(properties.GetCreationTime()) << ", ";
-    os << "GroupId: " << properties.GetGroupId() << ", ";
-    os << "GroupSequence: " << properties.GetGroupSequence() << ", ";
-    os << "ReplyToGroupId: " << properties.GetReplyToGroupId() << ", ";
+    os << "MessageId: " << properties.GetMessageId();
+    {
+      amqp_binary binary;
+      if (!properties_get_user_id(properties.m_properties, &binary))
+      {
+        os << ", "
+           << "UserId: "
+           << std::string(
+                  static_cast<const char*>(binary.bytes),
+                  static_cast<const char*>(binary.bytes) + binary.length);
+      }
+    }
+    {
+      AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_to(properties.m_properties, &value))
+      {
+        os << ", "
+           << "UserId: " << Value(value);
+      }
+    }
+
+    {
+      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_subject(properties.m_properties, &value))
+      {
+        os << ", "
+           << "Subject: " << value;
+      }
+    }
+
+    {
+      AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_reply_to(properties.m_properties, &value))
+      {
+        os << ", "
+           << "ReplyTo: " << Value(value);
+      }
+    }
+    {
+      AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_correlation_id(properties.m_properties, &value))
+      {
+        os << ", "
+           << "CorrelationId: " << Value(value);
+      }
+    }
+
+    {
+      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_content_type(properties.m_properties, &value))
+      {
+        os << ", "
+           << "ContentType: " << value;
+      }
+    }
+
+    {
+      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_content_encoding(properties.m_properties, &value))
+      {
+        os << ", "
+           << "ContentEncoding: " << value;
+      }
+    }
+
+    {
+      timestamp expiryTime;
+      if (!properties_get_absolute_expiry_time(properties.m_properties, &expiryTime))
+      {
+        std::chrono::milliseconds ms{expiryTime};
+
+        os << ", "
+           << "AbsoluteExpiryTime: "
+           << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
+      }
+    }
+
+    {
+      timestamp creationTime;
+      if (!properties_get_creation_time(properties.m_properties, &creationTime))
+      {
+        std::chrono::milliseconds ms{creationTime};
+        os << ", "
+           << "CreationTime: " << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
+      }
+    }
+
+    {
+      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_group_id(properties.m_properties, &value))
+      {
+        os << ", "
+           << "GroupId: " << value;
+      }
+    }
+
+    {
+      uint32_t sequence;
+      if (!properties_get_group_sequence(properties.m_properties, &sequence))
+      {
+        os << ", "
+           << "GroupSequence: " << sequence;
+      }
+    }
+
+    {
+      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      if (!properties_get_reply_to_group_id(properties.m_properties, &value))
+      {
+        os << ", "
+           << "ReplyToGroupId: " << value;
+      }
+    }
     os << "}";
     return os;
   }

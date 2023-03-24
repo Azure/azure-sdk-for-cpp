@@ -92,13 +92,13 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
       ~Link() noexcept;
 
-      Link(Link const&) = delete;
-      Link& operator=(Link const&) = delete;
-      Link(Link&&) noexcept = delete;
-      Link& operator=(Link&&) noexcept = delete;
+      Link(Link const&) = default;
+      Link& operator=(Link const&) = default;
+      Link(Link&&) noexcept = default;
+      Link& operator=(Link&&) noexcept = default;
 
-      LINK_INSTANCE_TAG* Release();
-      LINK_INSTANCE_TAG* Get();
+      operator LINK_INSTANCE_TAG*() const;
+      std::shared_ptr<_detail::LinkImpl> GetImpl() const { return m_impl; }
 
       void SetSenderSettleMode(SenderSettleMode senderSettleMode);
       SenderSettleMode GetSenderSettleMode() const;

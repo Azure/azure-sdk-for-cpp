@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#if 0
 struct ASYNC_OPERATION_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -35,3 +35,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     ASYNC_OPERATION_INSTANCE_TAG* m_operation;
   };
 }}}} // namespace Azure::Core::Amqp::_internal
+#endif

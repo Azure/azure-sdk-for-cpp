@@ -79,6 +79,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   MessageReceiver::~MessageReceiver() noexcept {}
 
+  MessageReceiver::operator bool() const { return m_impl.operator bool(); }
+
   void MessageReceiver::Open() { m_impl->Open(); }
   void MessageReceiver::Close() { m_impl->Close(); }
   void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
@@ -137,7 +139,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       CreateLink(linkEndpoint);
 
       m_messageReceiver = messagereceiver_create(
-          m_link->Get(), MessageReceiverImpl::OnMessageReceiverStateChangedFn, this);
+          *m_link, MessageReceiverImpl::OnMessageReceiverStateChangedFn, this);
     }
 
     void MessageReceiverImpl::CreateLink(LinkEndpoint& endpoint)
@@ -322,7 +324,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       if (m_messageReceiver == nullptr)
       {
         m_messageReceiver = messagereceiver_create(
-            m_link->Get(), MessageReceiverImpl::OnMessageReceiverStateChangedFn, this);
+            *m_link, MessageReceiverImpl::OnMessageReceiverStateChangedFn, this);
       }
 
       if (messagereceiver_open(m_messageReceiver, MessageReceiverImpl::OnMessageReceivedFn, this))

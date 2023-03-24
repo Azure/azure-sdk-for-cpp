@@ -5,7 +5,7 @@
 #include <memory>
 
 #include <azure_uamqp_c/async_operation.h>
-
+#if 0
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Cancellable::~Cancellable()
   {
@@ -25,3 +25,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
 }}}} // namespace Azure::Core::Amqp::_internal
+#endif

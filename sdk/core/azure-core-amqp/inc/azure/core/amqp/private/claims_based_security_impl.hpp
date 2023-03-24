@@ -27,11 +27,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         std::string const& audience,
         std::string const& token,
         Azure::Core::Context context);
-    std::tuple<CbsOperationResult, uint32_t, std::string> DeleteToken(
-        CbsTokenType type,
-        std::string const& audience,
-        std::string const& token,
-        Azure::Core::Context context);
     void SetTrace(bool traceEnabled);
 
   private:

@@ -38,8 +38,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   Link::~Link() noexcept {}
 
-  LINK_HANDLE Link::Get() { return m_impl->Get(); }
-  LINK_HANDLE Link::Release() { return m_impl->Release(); }
+  Link::operator LINK_HANDLE() const { return m_impl->operator LINK_HANDLE(); }
   std::string const& Link::GetSource() const { return m_impl->GetSource(); }
   std::string const& Link::GetTarget() const { return m_impl->GetTarget(); }
   SenderSettleMode Link::GetSenderSettleMode() const { return m_impl->GetSenderSettleMode(); }
