@@ -4,7 +4,6 @@
 #pragma once
 
 #include "azure/core/amqp/models/amqp_value.hpp"
-#include "azure/core/amqp/models/transfer_instance.hpp"
 #include <azure_uamqp_c/link.h>
 #include <chrono>
 #include <memory>
@@ -65,7 +64,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     Session const& GetSession() const { return m_session; }
 
-    void Attach(LinkEvents* eventHandler);
+    void Attach();
 
     void Detach(
         bool close,
@@ -76,17 +75,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     LINK_HANDLE m_link;
     Session const& m_session;
-    LinkEvents* m_eventHandler{nullptr};
     std::string m_source;
     std::string m_target;
-
-    static AMQP_VALUE_DATA_TAG* OnTransferReceivedFn(
-        void* context,
-        TRANSFER_HANDLE transfer,
-        uint32_t payload_size,
-        const uint8_t* payload_bytes);
-    static void OnLinkStateChangedFn(void* context, LINK_STATE newState, LINK_STATE oldState);
-    static void OnLinkFlowOnFn(void* context);
 
 #if 0
 MOCKABLE_FUNCTION(, int, link_send_disposition, LINK_HANDLE, link, delivery_number, message_number, AMQP_VALUE, delivery_state);

@@ -13,7 +13,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   class SocketTransport final : public Azure::Core::_internal::Amqp::Network::Transport {
 
   public:
-    SocketTransport();
     SocketTransport(
         std::string const& hostName,
         uint16_t hostPort,

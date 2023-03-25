@@ -4,7 +4,6 @@
 #pragma once
 
 #include "models/amqp_value.hpp"
-#include "models/transfer_instance.hpp"
 
 #include <chrono>
 #include <memory>
@@ -60,18 +59,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     class Error;
     class Link;
 
-    struct LinkEvents
-    {
-      virtual void OnLinkStateChanged(Link const&, LinkState newState, LinkState oldState) = 0;
-      virtual Azure::Core::Amqp::Models::Value OnTransferReceived(
-          Link const&,
-          Azure::Core::Amqp::Models::_internal::TransferInstance& transfer,
-          uint32_t payloadSize,
-          const uint8_t* payloadBytes)
-          = 0;
-      virtual void OnLinkFlowOn(Link const&) = 0;
-    };
-
     class Link final {
     public:
       using OnLinkDetachReceived = std::function<void(Error& error)>;
@@ -124,7 +111,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       uint32_t GetReceivedMessageId() const;
 
-      void Attach(LinkEvents* eventHandler);
+      void Attach();
 
       void Detach(
           bool close,
