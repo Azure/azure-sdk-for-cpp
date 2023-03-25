@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     Session const& m_session;
     std::shared_ptr<ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<ClaimBasedSecurity> m_claimsBasedSecurity;
+    std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
     std::string m_target;
     MessageSenderOptions m_options;
   };

@@ -8,20 +8,20 @@
 #include <iostream>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-  ClaimBasedSecurity::ClaimBasedSecurity(Session const& session, Connection const& connection)
-      : m_impl{std::make_shared<_detail::CbsImpl>(session, connection)}
+  ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session, Connection const& connection)
+      : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(session, connection)}
   {
   }
 
-  ClaimBasedSecurity::~ClaimBasedSecurity() noexcept {}
+  ClaimsBasedSecurity::~ClaimsBasedSecurity() noexcept {}
 
-  CbsOpenResult ClaimBasedSecurity::Open(Azure::Core::Context context)
+  CbsOpenResult ClaimsBasedSecurity::Open(Azure::Core::Context context)
   {
     return m_impl->Open(context);
   }
-  void ClaimBasedSecurity::Close() { m_impl->Close(); }
+  void ClaimsBasedSecurity::Close() { m_impl->Close(); }
 
-  std::tuple<CbsOperationResult, uint32_t, std::string> ClaimBasedSecurity::PutToken(
+  std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurity::PutToken(
       CbsTokenType tokenType,
       std::string const& audience,
       std::string const& token,
@@ -31,18 +31,20 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     return m_impl->PutToken(tokenType, audience, token, context);
   }
 
-  void ClaimBasedSecurity::SetTrace(bool traceOn) { m_impl->SetTrace(traceOn); }
+  void ClaimsBasedSecurity::SetTrace(bool traceOn) { m_impl->SetTrace(traceOn); }
 
   namespace _detail {
 
-    CbsImpl::CbsImpl(Session const& session, Connection const& connection)
+    ClaimsBasedSecurityImpl::ClaimsBasedSecurityImpl(
+        Session const& session,
+        Connection const& connection)
         : m_connectionToPoll(connection)
     {
       m_cbs = cbs_create(*(session.GetImpl()));
       cbs_set_trace(m_cbs, true);
     }
 
-    CbsImpl::~CbsImpl() noexcept
+    ClaimsBasedSecurityImpl::~ClaimsBasedSecurityImpl() noexcept
     {
       if (m_cbs)
       {
@@ -85,15 +87,17 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
     }
 
-    void CbsImpl::OnCbsErrorFn(void* context)
+    void ClaimsBasedSecurityImpl::OnCbsErrorFn(void* context)
     {
-      auto cbs = static_cast<CbsImpl*>(const_cast<void*>(context));
+      auto cbs = static_cast<ClaimsBasedSecurityImpl*>(const_cast<void*>(context));
       (void)cbs;
     }
 
-    void CbsImpl::OnCbsOpenCompleteFn(void* context, CBS_OPEN_COMPLETE_RESULT openCompleteResult)
+    void ClaimsBasedSecurityImpl::OnCbsOpenCompleteFn(
+        void* context,
+        CBS_OPEN_COMPLETE_RESULT openCompleteResult)
     {
-      auto cbs = static_cast<CbsImpl*>(const_cast<void*>(context));
+      auto cbs = static_cast<ClaimsBasedSecurityImpl*>(const_cast<void*>(context));
       cbs->m_openResultQueue.CompleteOperation(CbsOpenResultStateFromLowLevel(openCompleteResult));
     }
 
@@ -116,13 +120,13 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
     }
 
-    void CbsImpl::OnCbsOperationCompleteFn(
+    void ClaimsBasedSecurityImpl::OnCbsOperationCompleteFn(
         void* context,
         CBS_OPERATION_RESULT operationCompleteResult,
         uint32_t statusCode,
         const char* statusDescription)
     {
-      auto cbs = static_cast<CbsImpl*>(const_cast<void*>(context));
+      auto cbs = static_cast<ClaimsBasedSecurityImpl*>(const_cast<void*>(context));
       std::cout << "OnCbsOperationComplete: "
                 << OperationResultStringFromLowLevel(operationCompleteResult)
                 << " StatusCode: " << statusCode << " StatusDescription: "
@@ -133,9 +137,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           statusDescription ? statusDescription : std::string());
     }
 
-    CbsOpenResult CbsImpl::Open(Azure::Core::Context context)
+    CbsOpenResult ClaimsBasedSecurityImpl::Open(Azure::Core::Context context)
     {
-      if (cbs_open_async(m_cbs, CbsImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
+      if (cbs_open_async(
+              m_cbs, ClaimsBasedSecurityImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
       {
         return CbsOpenResult::Error;
       }
@@ -143,7 +148,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       return std::get<0>(*result);
     }
 
-    void CbsImpl::Close()
+    void ClaimsBasedSecurityImpl::Close()
     {
       if (cbs_close(m_cbs))
       {
@@ -151,9 +156,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
     }
 
-    void CbsImpl::SetTrace(bool traceOn) { cbs_set_trace(m_cbs, traceOn); }
+    void ClaimsBasedSecurityImpl::SetTrace(bool traceOn) { cbs_set_trace(m_cbs, traceOn); }
 
-    std::tuple<CbsOperationResult, uint32_t, std::string> CbsImpl::PutToken(
+    std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurityImpl::PutToken(
         CbsTokenType tokenType,
         std::string const& audience,
         std::string const& token,

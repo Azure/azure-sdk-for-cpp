@@ -191,7 +191,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Value GetDescriptor() const;
     Value GetDescribedValue() const;
 
-
     // Headers.
     bool IsHeaderTypeByDescriptor() const;
     Header GetHeaderFromValue() const;

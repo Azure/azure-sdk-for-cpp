@@ -35,13 +35,13 @@ TEST_F(TestCbs, SimpleCbs)
   Session session(connection, nullptr);
 
   {
-    ClaimBasedSecurity cbs(session, connection);
+    ClaimsBasedSecurity cbs(session, connection);
   }
 
   {
     // Create two cbs objects
-    ClaimBasedSecurity cbs1(session, connection);
-    ClaimBasedSecurity cbs2(session, connection);
+    ClaimsBasedSecurity cbs1(session, connection);
+    ClaimsBasedSecurity cbs2(session, connection);
   }
 }
 
@@ -184,7 +184,7 @@ public:
     bool running = false;
 
     Azure::Core::Context listenerContext;
-    m_serverThread = std::thread([this, &threadRunningMutex, &threadStarted, &running]() {
+    m_serverThread = std::thread([this, &threadStarted, &running]() {
       Azure::Core::_internal::Amqp::Network::SocketListener listener(GetPort(), this);
       GTEST_LOG_(INFO) << "Start test listener on port " << GetPort();
       listener.Start();
@@ -236,13 +236,6 @@ public:
               EXPECT_EQ(name.GetType(), Models::AmqpValueType::String);
               // The body of a put-token operation MUST be an AMQP Value.
               EXPECT_EQ(message.GetBodyType(), Models::MessageBodyType::Value);
-
-              //              auto audience = value.GetMapValue("audience");
-              //              EXPECT_EQ(audience.GetType(), Models::AmqpValueType::String);
-              //              auto token = value.GetMapValue("token");
-              //              EXPECT_EQ(token.GetType(), Models::AmqpValueType::String);
-              //              auto expiry = value.GetMapValue("expiry");
-              //              EXPECT_EQ(expiry.GetType(), Models::AmqpValueType::String);
 
               // Respond to the operation.
               Models::Message response;
@@ -494,7 +487,7 @@ TEST_F(TestCbs, CbsOpen)
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), nullptr, {});
     Session session(connection, nullptr);
     {
-      ClaimBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session, connection);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
 
       EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
@@ -509,7 +502,7 @@ TEST_F(TestCbs, CbsOpen)
     mockServer.StartListening();
 
     {
-      ClaimBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session, connection);
       cbs.SetTrace(true);
       EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
       GTEST_LOG_(INFO) << "Open Completed.";
@@ -531,7 +524,7 @@ TEST_F(TestCbs, CbsOpenAndPut)
     mockServer.StartListening();
 
     {
-      ClaimBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session, connection);
       cbs.SetTrace(true);
 
       EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
