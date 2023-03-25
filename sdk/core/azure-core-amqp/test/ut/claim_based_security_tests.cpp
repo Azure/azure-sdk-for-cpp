@@ -124,10 +124,6 @@ const char* SenderStateToString(MessageSenderState state)
   throw std::runtime_error("Unknown sender state");
 }
 
-// AMQP ApplicationProperties descriptor from AMQP:
-// http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties
-constexpr uint32_t AmqpApplicationPropertiesDescriptor = 116;
-
 class CbsServerMock : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents,
                       public Azure::Core::_internal::Amqp::ConnectionEvents,
                       public Azure::Core::_internal::Amqp::SessionEvents,
