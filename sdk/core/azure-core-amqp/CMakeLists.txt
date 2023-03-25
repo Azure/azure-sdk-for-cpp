@@ -54,7 +54,6 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/models/message_source.hpp
     inc/azure/core/amqp/models/message_target.hpp
     inc/azure/core/amqp/models/messaging_values.hpp
-    inc/azure/core/amqp/models/transfer_instance.hpp
     inc/azure/core/amqp/session.hpp
 )
 
@@ -75,7 +74,6 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/models/message_source.cpp
 	src/models/message_target.cpp
 	src/models/messaging_values.cpp
-	src/models/transfer_instance.cpp
 	src/network/amqp_header_transport.cpp
 	src/network/sasl_transport.cpp
 	src/network/socket_listener.cpp

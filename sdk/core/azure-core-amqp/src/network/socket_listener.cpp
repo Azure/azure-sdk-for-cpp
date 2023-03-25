@@ -35,15 +35,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   {
     if (m_socket)
     {
-      // Note: We cannot tear down the socket listener at this point because any derived classes
-      // have already been torn down. That means that if the work manager thread is still running,
-      // we will close the underlying socket handle without warning.
-      if (m_started)
-      {
-        assert("Socket listener destroyed while still started.");
-        abort();
-      }
-
       socketlistener_destroy(m_socket);
       m_socket = nullptr;
     }

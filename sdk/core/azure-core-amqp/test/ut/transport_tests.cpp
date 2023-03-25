@@ -168,6 +168,21 @@ TEST_F(TestSocketTransport, SimpleOpen)
     EXPECT_TRUE(transport.Open());
     EXPECT_TRUE(transport.Close([]() {}));
   }
+
+  {
+    SocketTransport transport("www.microsoft.com", 80);
+    EXPECT_TRUE(transport.Open());
+    transport.Close(nullptr);
+  }
+  {
+    SocketTransport transport("www.microsoft.com", 80);
+    EXPECT_ANY_THROW(transport.Close(nullptr));
+  }
+  {
+    SocketTransport transport("www.microsoft.com", 80);
+    transport.Open();
+    EXPECT_ANY_THROW(transport.Open());
+  }
 }
 
 TEST_F(TestSocketTransport, SimpleSend)
@@ -259,6 +274,22 @@ TEST_F(TestSocketTransport, SimpleListener)
     listener.Start();
 
     listener.Stop();
+  }
+
+  {
+    SocketListener listener(8008, nullptr);
+
+    listener.Start();
+    EXPECT_ANY_THROW(listener.Start());
+  }
+
+  {
+    SocketListener listener1(8008, nullptr);
+
+    listener1.Start();
+
+    SocketListener listener2(8008, nullptr);
+    EXPECT_ANY_THROW(listener2.Start());
   }
 }
 

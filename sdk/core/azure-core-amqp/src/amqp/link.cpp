@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   uint32_t Link::GetReceivedMessageId() const { return m_impl->GetReceivedMessageId(); }
 
-  void Link::Attach(LinkEvents* eventHandler) { return m_impl->Attach(eventHandler); }
+  void Link::Attach() { return m_impl->Attach(); }
 
   void Link::Detach(
       bool close,
@@ -282,14 +282,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  void LinkImpl::Attach(LinkEvents* eventHandler)
+  void LinkImpl::Attach()
   {
-    if (link_attach(
-            m_link,
-            (eventHandler ? OnTransferReceivedFn : nullptr),
-            (eventHandler ? OnLinkStateChangedFn : nullptr),
-            (eventHandler ? OnLinkFlowOnFn : nullptr),
-            this))
+    if (link_attach(m_link, nullptr, nullptr, nullptr, this))
     {
       throw std::runtime_error("Could not set attach properties.");
     }
@@ -308,67 +303,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
             info))
     {
       throw std::runtime_error("Could not set attach properties.");
-    }
-  }
-
-  AMQP_VALUE LinkImpl::OnTransferReceivedFn(
-      void* context,
-      TRANSFER_HANDLE transfer,
-      uint32_t payloadSize,
-      const uint8_t* payloadBytes)
-  {
-    LinkImpl* link = static_cast<LinkImpl*>(context);
-    if (link->m_eventHandler)
-    {
-      Azure::Core::Amqp::Models::_internal::TransferInstance transferInstance(transfer);
-      return link->m_eventHandler->OnTransferReceived(
-          link->shared_from_this(), transferInstance, payloadSize, payloadBytes);
-    }
-    return {};
-  }
-
-  inline LinkState LinkStateFromLINK_STATE(LINK_STATE state)
-  {
-    switch (state)
-    {
-      case LINK_STATE_ATTACHED:
-        return LinkState::Attached;
-      case LINK_STATE_DETACHED:
-        return LinkState::Detached;
-      case LINK_STATE_ERROR:
-        return LinkState::Error;
-      case LINK_STATE_HALF_ATTACHED_ATTACH_RECEIVED:
-        return LinkState::HalfAttachAttachReceived;
-      case LINK_STATE_HALF_ATTACHED_ATTACH_SENT:
-        return LinkState::HalfAttachedAttachSent;
-      case LINK_STATE_INVALID:
-        return LinkState::Invalid;
-      default:
-        throw std::logic_error("Unknown link state");
-    }
-  }
-  void LinkImpl::OnLinkStateChangedFn(
-      void* context,
-      LINK_STATE newLinkState,
-      LINK_STATE oldLinkState)
-  {
-    LinkImpl* link = static_cast<LinkImpl*>(context);
-    if (link->m_eventHandler)
-    {
-
-      link->m_eventHandler->OnLinkStateChanged(
-          link->shared_from_this(),
-          LinkStateFromLINK_STATE(newLinkState),
-          LinkStateFromLINK_STATE(oldLinkState));
-    }
-  }
-
-  void LinkImpl::OnLinkFlowOnFn(void* context)
-  {
-    LinkImpl* link = static_cast<LinkImpl*>(context);
-    if (link->m_eventHandler)
-    {
-      link->m_eventHandler->OnLinkFlowOn(link->shared_from_this());
     }
   }
 

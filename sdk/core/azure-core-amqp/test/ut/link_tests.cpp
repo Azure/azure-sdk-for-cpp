@@ -239,7 +239,7 @@ TEST_F(TestLinks, LinkAttachDetach)
   EXPECT_NO_THROW(listener.Start());
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
-    link.Attach(nullptr);
+    link.Attach();
 
     Azure::Core::Amqp::Models::Value data;
     link.Detach(false, {}, {}, data);

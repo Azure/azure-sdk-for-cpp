@@ -21,6 +21,5 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
   }
 
-  SocketTransport::SocketTransport() : Transport(nullptr) {}
 
 }}}}} // namespace Azure::Core::_internal::Amqp::Network
