@@ -242,7 +242,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         std::string const& audience,
         std::string const& token)
     {
-      m_claimsBasedSecurity = std::make_unique<ClaimBasedSecurity>(m_session, m_connection);
+      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session, m_connection);
       if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
       {
         auto result = m_claimsBasedSecurity->PutToken(

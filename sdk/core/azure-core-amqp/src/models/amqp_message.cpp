@@ -231,7 +231,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-
   void Message::AddBodyAmqpData(BinaryData binaryData)
   {
     BINARY_DATA amqpData;

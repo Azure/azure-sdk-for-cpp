@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Properties GetProperties() const;
 
     void SetApplicationProperties(Value const& value);
-    Value const GetApplicationProperties() const; 
+    Value const GetApplicationProperties() const;
 
     MessageBodyType GetBodyType() const;
 

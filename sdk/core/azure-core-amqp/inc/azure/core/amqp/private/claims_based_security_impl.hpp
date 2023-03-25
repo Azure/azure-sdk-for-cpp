@@ -6,19 +6,19 @@
 #include <azure_uamqp_c/cbs.h>
 
 namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
-  class CbsImpl {
+  class ClaimsBasedSecurityImpl {
 
   public:
-    CbsImpl(
+    ClaimsBasedSecurityImpl(
         Azure::Core::_internal::Amqp::Session const& session,
         Azure::Core::_internal::Amqp::Connection const& connectionToPoll);
-    virtual ~CbsImpl() noexcept;
+    virtual ~ClaimsBasedSecurityImpl() noexcept;
 
     // Disable copy and move because the underlying m_cbs takes a reference to this object.
-    CbsImpl(CbsImpl const&) = delete;
-    CbsImpl& operator=(CbsImpl const&) = delete;
-    CbsImpl(CbsImpl&&) noexcept = delete;
-    CbsImpl& operator=(CbsImpl&&) noexcept = delete;
+    ClaimsBasedSecurityImpl(ClaimsBasedSecurityImpl const&) = delete;
+    ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl const&) = delete;
+    ClaimsBasedSecurityImpl(ClaimsBasedSecurityImpl&&) noexcept = delete;
+    ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl&&) noexcept = delete;
 
     CbsOpenResult Open(Azure::Core::Context context);
     void Close();

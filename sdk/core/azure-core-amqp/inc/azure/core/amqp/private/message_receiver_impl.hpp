@@ -83,7 +83,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     Connection const* m_connection;
     std::shared_ptr<ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<ClaimBasedSecurity> m_claimsBasedSecurity;
+    std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
         m_messageQueue;
