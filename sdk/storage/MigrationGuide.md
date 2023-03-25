@@ -81,7 +81,7 @@ cloud_blob_client blob_client(storage_uri(blob_url), storage_credentials(sas_tok
 ```
 
 ```C++
-cloud_blob_client blob_client(storage_uri(blob_url_with_sas);
+cloud_blob_client blob_client(storage_uri(blob_url_with_sas));
 ```
 
 v12
