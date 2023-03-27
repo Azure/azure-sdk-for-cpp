@@ -37,10 +37,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     operator bool() const { return m_message != nullptr; }
 
     void SetHeader(Header const& header);
-    Header GetHeader() const;
+    Header const GetHeader() const;
 
     void SetFooter(Value const& header);
-    Value GetFooter() const;
+    Value const GetFooter() const;
 
     void SetDeliveryAnnotations(Value const& annotations);
     Value const GetDeliveryAnnotations() const;

@@ -59,6 +59,15 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
           std::chrono::system_clock::now() + std::chrono::seconds(60));
     }
   }
+  EXPECT_NO_THROW([]() {
+    Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+        "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Bar", "entityPath");
+  }());
+  EXPECT_NO_THROW([]() {
+    Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+        "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Foo;EntityPath=otherPath",
+        "otherPath");
+  }());
 }
 
 TEST_F(ConnectionStringTest, SaslPlainConnectionBad)
@@ -69,6 +78,10 @@ TEST_F(ConnectionStringTest, SaslPlainConnectionBad)
     EXPECT_ANY_THROW([]() {
       Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential yy(
           "Foo=Bar;Boo=Eek;Yoiks=Blang!");
+    }());
+    EXPECT_ANY_THROW([]() {
+      Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential zz(
+          "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
     }());
     EXPECT_ANY_THROW([]() {
       Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential zz(
@@ -86,8 +99,13 @@ TEST_F(ConnectionStringTest, ServiceBusSasBad)
           "Foo=Bar;Boo=Eek;Yoiks=Blang!");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential zz(
+      Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
+    }());
+    EXPECT_ANY_THROW([]() {
+      Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+          "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Foo;EntityPath=otherPath",
+          "entityPath");
     }());
   }
 }
