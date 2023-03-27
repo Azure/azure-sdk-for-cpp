@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set message header");
     }
   }
-  Header Message::GetHeader() const
+  Header const Message::GetHeader() const
   {
     HEADER_HANDLE header;
     if (message_get_header(m_message, &header))
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Message::GetFooter() const
+  Value const Message::GetFooter() const
   {
     annotations footer;
     if (message_get_footer(m_message, &footer))
