@@ -156,16 +156,16 @@ public:
     auto result = m_messageSenderQueue.WaitForPolledResult(context, *m_connection);
     return result != nullptr;
   }
-  Models::Message WaitForMessage(Azure::Core::Context context = {})
+  std::unique_ptr<Models::Message> WaitForMessage(Azure::Core::Context context = {})
   {
     auto result = m_messageQueue.WaitForPolledResult(context, *m_connection);
     if (result)
     {
-      return std::get<0>(*result);
+      return std::move(std::get<0>(*result));
     }
     else
     {
-      return Models::Message();
+      return nullptr;
     }
   }
 
@@ -213,8 +213,8 @@ public:
         }
         else
         {
-          GTEST_LOG_(INFO) << "Received message: " << message;
-          auto applicationProperties = message.GetApplicationProperties();
+          GTEST_LOG_(INFO) << "Received message: " << *message;
+          auto applicationProperties = message->GetApplicationProperties();
           if (applicationProperties.GetType() == Models::AmqpValueType::Described)
           {
             auto descriptor = applicationProperties.GetDescriptor();
@@ -231,7 +231,7 @@ public:
               EXPECT_EQ(type.GetType(), Models::AmqpValueType::String);
               EXPECT_EQ(name.GetType(), Models::AmqpValueType::String);
               // The body of a put-token operation MUST be an AMQP Value.
-              EXPECT_EQ(message.GetBodyType(), Models::MessageBodyType::Value);
+              EXPECT_EQ(message->GetBodyType(), Models::MessageBodyType::Value);
 
               // Respond to the operation.
               Models::Message response;
@@ -240,10 +240,10 @@ public:
               // Management specification section 3.2: The correlation-id of the response message
               // MUST be the correlation-id from the request message (if present), else the
               // message-id from the request message.
-              auto requestCorrelationId = message.GetProperties().GetCorrelationId();
+              auto requestCorrelationId = message->GetProperties().GetCorrelationId();
               if (requestCorrelationId.IsNull())
               {
-                requestCorrelationId = message.GetProperties().GetMessageId();
+                requestCorrelationId = message->GetProperties().GetMessageId();
               }
               responseProperties.SetCorrelationId(requestCorrelationId);
               response.SetProperties(responseProperties);
@@ -274,10 +274,10 @@ public:
               // Management specification section 3.2: The correlation-id of the response message
               // MUST be the correlation-id from the request message (if present), else the
               // message-id from the request message.
-              auto requestCorrelationId = message.GetProperties().GetCorrelationId();
+              auto requestCorrelationId = message->GetProperties().GetCorrelationId();
               if (requestCorrelationId.IsNull())
               {
-                requestCorrelationId = message.GetProperties().GetMessageId();
+                requestCorrelationId = message->GetProperties().GetMessageId();
               }
               responseProperties.SetCorrelationId(requestCorrelationId);
               response.SetProperties(responseProperties);
@@ -352,7 +352,8 @@ private:
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_messageReceiverQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_messageSenderQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_connectionQueue;
-  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::Message> m_messageQueue;
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Models::Message>>
+      m_messageQueue;
   std::unique_ptr<Azure::Core::_internal::Amqp::MessageReceiver> m_messageReceiver;
   std::unique_ptr<Azure::Core::_internal::Amqp::MessageSender> m_messageSender;
   std::thread m_serverThread;
@@ -460,7 +461,7 @@ private:
       Azure::Core::Amqp::Models::Message message) override
   {
     GTEST_LOG_(INFO) << "Received a message " << message;
-    m_messageQueue.CompleteOperation(message);
+    m_messageQueue.CompleteOperation(std::make_unique<Models::Message>(message));
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
 

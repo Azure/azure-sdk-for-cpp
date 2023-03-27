@@ -43,16 +43,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Value GetFooter() const;
 
     void SetDeliveryAnnotations(Value const& annotations);
-    Value GetDeliveryAnnotations() const;
+    Value const GetDeliveryAnnotations() const;
 
     void SetFormat(uint32_t messageFormat);
     uint32_t GetFormat() const;
 
     void SetMessageAnnotations(Value const& annotations);
-    Value GetMessageAnnotations() const;
+    Value const GetMessageAnnotations() const;
 
     void SetProperties(Properties const& properties);
-    Properties GetProperties() const;
+    Properties const GetProperties() const;
 
     void SetApplicationProperties(Value const& value);
     Value const GetApplicationProperties() const;
@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     void AddBodyAmqpSequence(Value const& value);
     size_t GetBodyAmqpSequenceCount() const;
-    Value GetBodyAmqpSequence(uint32_t index) const;
+    Value const GetBodyAmqpSequence(uint32_t index) const;
 
     void AddBodyAmqpData(BinaryData binaryData);
 
