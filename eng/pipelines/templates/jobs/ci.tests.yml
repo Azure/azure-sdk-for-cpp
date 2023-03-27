@@ -172,6 +172,11 @@ jobs:
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - publish: build/
+        artifact: build
+        condition: failed()
+        displayName: Upload build folder on failed build
+
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
