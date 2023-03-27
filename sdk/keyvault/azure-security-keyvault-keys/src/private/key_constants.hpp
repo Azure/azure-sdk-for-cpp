@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
   constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
-  
+
   /***************** KeyVault Key *****************/
   constexpr static const char KeyPropertyName[] = "key";
 
