@@ -1737,23 +1737,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (int c : {1, 2, 4})
     {
-      std::vector<std::future<void>> futures;
-      // random range
       for (int i = 0; i < 16; ++i)
       {
+        // random range
         int64_t fileSize = RandomInt(1, 1_MB);
-        futures.emplace_back(
-            std::async(std::launch::async, testUploadFromBuffer, c, fileSize, 4_KB, 47_KB));
-        futures.emplace_back(
-            std::async(std::launch::async, testUploadFromFile, c, fileSize, 2_KB, 185_KB));
-        futures.emplace_back(
-            std::async(std::launch::async, testUploadFromBuffer, c, fileSize, 0, 117_KB));
-        futures.emplace_back(
-            std::async(std::launch::async, testUploadFromFile, c, fileSize, 0, 259_KB));
-      }
-      for (auto& f : futures)
-      {
-        f.get();
+        testUploadFromBuffer(c, fileSize, 4_KB, 47_KB);
+        testUploadFromFile(c, fileSize, 2_KB, 185_KB);
+        testUploadFromBuffer(c, fileSize, 0, 117_KB);
+        testUploadFromFile(c, fileSize, 0, 259_KB);
       }
     }
   }
