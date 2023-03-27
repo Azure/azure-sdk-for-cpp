@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set delivery annotations");
     }
   }
-  Value Message::GetDeliveryAnnotations() const
+  Value const Message::GetDeliveryAnnotations() const
   {
     annotations value;
     if (message_get_delivery_annotations(m_message, &value))
@@ -129,7 +129,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set message format");
     }
   }
-  Value Message::GetMessageAnnotations() const
+  Value const Message::GetMessageAnnotations() const
   {
     message_annotations annotations;
     if (message_get_message_annotations(m_message, &annotations))
@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not get message annotations");
     }
   }
-  Properties Message::GetProperties() const
+  Properties const Message::GetProperties() const
   {
     PROPERTIES_HANDLE properties;
     if (message_get_properties(m_message, &properties))
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return count;
   }
-  Value Message::GetBodyAmqpSequence(uint32_t index) const
+  Value const Message::GetBodyAmqpSequence(uint32_t index) const
   {
     AMQP_VALUE value;
     if (message_get_body_amqp_sequence_in_place(m_message, index, &value))
@@ -270,6 +270,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   std::ostream& operator<<(std::ostream& os, Message const& message)
   {
+    os << "Message: " << std::endl;
     if (message.GetHeader())
     {
       os << "Header " << message.GetHeader() << std::endl;
@@ -278,6 +279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       os << "Properties: " << message.GetProperties();
     }
+    os << "Body: [" << std::endl;
     switch (message.GetBodyType())
     {
       case MessageBodyType::Invalid:
