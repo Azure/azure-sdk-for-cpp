@@ -10,6 +10,7 @@
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
 #include <azure_uamqp_c/amqpvalue.h>
+#include <iostream>
 
 #include <azure_uamqp_c/amqp_definitions_target.h>
 
@@ -224,6 +225,65 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not set outcomes.");
     }
+  }
+  extern const char* StringFromTerminusDurability(TerminusDurability);
+  extern const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy);
+
+  std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
+  {
+    os << "Target{ " << std::endl;
+    {
+      AMQP_VALUE value;
+      if (!target_get_address(target, &value))
+      {
+        os << "Address: " << target.GetAddress() << std::endl;
+      }
+    }
+    {
+      uint32_t value;
+      if (!target_get_durable(target, &value))
+      {
+        os << ", Durable: " << StringFromTerminusDurability(target.GetTerminusDurability());
+      }
+    }
+    {
+      terminus_expiry_policy policy;
+      if (!target_get_expiry_policy(target, &policy))
+      {
+        os << ", Expiry Policy: " << StringFromTerminusExpiryPolicy(target.GetExpiryPolicy());
+      }
+    }
+    {
+      seconds timeout;
+      if (!target_get_timeout(target, &timeout))
+      {
+        os << ", Timeout: " << target.GetTimeout().time_since_epoch().count();
+      }
+    }
+    {
+      bool dynamic;
+      if (!target_get_dynamic(target, &dynamic))
+      {
+        os << ", Dynamic: " << std::boolalpha << dynamic;
+      }
+    }
+    {
+      AMQP_VALUE dynamicProperties;
+      if (!target_get_dynamic_node_properties(target, &dynamicProperties))
+      {
+        os << ", Dynamic Node Properties: " << target.GetDynamicNodeProperties();
+      }
+    }
+    {
+      AMQP_VALUE capabilities;
+      if (!target_get_capabilities(target, &capabilities))
+      {
+        os << ", Capabilities: " << target.GetCapabilities();
+      }
+    }
+
+    os << "}";
+    return os;
   }
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

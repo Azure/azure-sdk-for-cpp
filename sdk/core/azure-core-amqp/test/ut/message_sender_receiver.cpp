@@ -13,8 +13,11 @@
 #include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "mock_amqp_server.hpp"
 #include <functional>
 #include <random>
+
+#include "mock_amqp_server.hpp"
 
 extern uint16_t FindAvailableSocket();
 
@@ -74,6 +77,7 @@ TEST_F(TestMessages, ReceiverProperties)
 }
 
 namespace MessageTests {
+#if 1
 
 class MessageListenerEvents : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents,
                               public Azure::Core::_internal::Amqp::ConnectionEvents,
@@ -236,6 +240,7 @@ private:
   }
 };
 } // namespace MessageTests
+#endif
 
 TEST_F(TestMessages, ReceiverOpenClose)
 {
@@ -466,4 +471,110 @@ TEST_F(TestMessages, SenderSendSync)
   }
   receiveContext.Cancel();
   listenerThread.join();
+}
+
+TEST_F(TestMessages, AuthenticatedSender)
+{
+  MessageTests::AmqpServerMock server;
+
+  auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+      "Endpoint=amqp://localhost:" + std::to_string(server.GetPort())
+      + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+
+  ConnectionOptions connectionOptions;
+
+  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.ContainerId = "some";
+  connectionOptions.HostName = sasCredential->GetHostName();
+  connectionOptions.Port = sasCredential->GetPort();
+  Connection connection(sasCredential->GetTransport(), nullptr, connectionOptions);
+  Session session(connection, nullptr);
+
+  server.StartListening();
+
+  MessageSenderOptions senderOptions;
+  senderOptions.Name = "sender-link";
+  senderOptions.SourceAddress = "ingress";
+  senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
+  senderOptions.MaxMessageSize = 65536;
+  senderOptions.Name = "sender-link";
+  MessageSender sender(
+      session,
+      sasCredential,
+      sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
+      connection,
+      senderOptions,
+      nullptr);
+
+  sender.Open();
+  uint8_t messageBody[] = "hello";
+
+  Azure::Core::Amqp::Models::Message message;
+  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  sender.Send(message);
+
+  sender.Close();
+  server.StopListening();
+}
+
+TEST_F(TestMessages, AuthenticatedReceiver)
+{
+  class ReceiverMock : public MessageTests::AmqpServerMock {
+  public:
+    void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
+
+  private:
+    mutable bool m_shouldSendMessage{false};
+
+    void Poll() const override
+    {
+      if (m_shouldSendMessage)
+      {
+        Azure::Core::Amqp::Models::Message sendMessage;
+        sendMessage.SetBodyAmqpValue("This is a message body.");
+        m_messageSender->Send(sendMessage);
+        m_shouldSendMessage = false;
+      }
+    }
+  };
+
+  ReceiverMock server;
+
+  auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+      "Endpoint=amqp://localhost:" + std::to_string(server.GetPort())
+      + ";SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+
+  ConnectionOptions connectionOptions;
+
+  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.ContainerId = "some";
+  connectionOptions.HostName = sasCredential->GetHostName();
+  connectionOptions.Port = sasCredential->GetPort();
+  Connection connection(sasCredential->GetTransport(), nullptr, connectionOptions);
+  Session session(connection, nullptr);
+
+  server.StartListening();
+
+  MessageReceiverOptions receiverOptions;
+  receiverOptions.Name = "receiver-link";
+  receiverOptions.TargetAddress = "egress";
+  receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+  receiverOptions.MaxMessageSize = 65536;
+  receiverOptions.Name = "receiver-link";
+  MessageReceiver receiver(
+      session,
+      connection,
+      sasCredential,
+      sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
+      receiverOptions,
+      nullptr);
+
+  receiver.Open();
+
+  // Send a message.
+  server.ShouldSendMessage(true);
+  auto message = receiver.WaitForIncomingMessage(connection);
+
+  receiver.Close();
+  server.StopListening();
 }

@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/network/socket_transport.hpp"
 
 #include <algorithm>
 #include <azure/core/base64.hpp>
@@ -57,8 +58,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   std::shared_ptr<Network::Transport> ServiceBusSasConnectionStringCredential::GetTransport() const
   {
-    // Construct a SASL Anonymous transport
-    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
+    //    // Construct a SASL Anonymous transport
+    //    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
+    return std::make_shared<Network::SocketTransport>(GetHostName(), GetPort());
   }
   //
   // A ServiceBus connection string has the following format:

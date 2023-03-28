@@ -10,6 +10,7 @@
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
 #include <azure_uamqp_c/amqpvalue.h>
+#include <iostream>
 
 #include <azure_uamqp_c/amqp_definitions_source.h>
 
@@ -292,6 +293,119 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not set outcomes.");
     }
+  }
+
+  const char* StringFromTerminusDurability(TerminusDurability durability)
+  {
+    switch (durability)
+    {
+      case TerminusDurability::None:
+        return "None";
+      case TerminusDurability::Configuration:
+        return "Configuration";
+      case TerminusDurability::UnsettledState:
+        return "Unsettled State";
+    }
+    throw std::runtime_error("Unknown terminus durability");
+  }
+
+  const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy policy)
+  {
+    switch (policy)
+    {
+      case TerminusExpiryPolicy::LinkDetach:
+        return "LinkDetach";
+      case TerminusExpiryPolicy::SessionEnd:
+        return "Session End";
+      case TerminusExpiryPolicy::ConnectionClose:
+        return "Connection Close";
+      case TerminusExpiryPolicy::Never:
+        return "Never";
+    }
+    throw std::runtime_error("Unknown terminus expiry policy");
+  }
+
+  std::ostream& operator<<(std::ostream& os, MessageSource const& source)
+  {
+    os << "Source{ " << std::endl;
+    {
+      AMQP_VALUE value;
+      if (!source_get_address(source, &value))
+      {
+        os << "Address: " << source.GetAddress() << std::endl;
+      }
+    }
+    {
+      uint32_t value;
+      if (!source_get_durable(source, &value))
+      {
+        os << ", Durable: " << StringFromTerminusDurability(source.GetTerminusDurability());
+      }
+    }
+    {
+      terminus_expiry_policy policy;
+      if (!source_get_expiry_policy(source, &policy))
+      {
+        os << ", Expiry Policy: " << StringFromTerminusExpiryPolicy(source.GetExpiryPolicy());
+      }
+    }
+    {
+      seconds timeout;
+      if (!source_get_timeout(source, &timeout))
+      {
+        os << ", Timeout: " << source.GetTimeout().time_since_epoch().count();
+      }
+    }
+    {
+      bool dynamic;
+      if (!source_get_dynamic(source, &dynamic))
+      {
+        os << ", Dynamic: " << std::boolalpha << dynamic;
+      }
+    }
+    {
+      AMQP_VALUE dynamicProperties;
+      if (!source_get_dynamic_node_properties(source, &dynamicProperties))
+      {
+        os << ", Dynamic Node Properties: " << source.GetDynamicNodeProperties();
+      }
+    }
+    {
+      AMQP_VALUE capabilities;
+      if (!source_get_capabilities(source, &capabilities))
+      {
+        os << ", Capabilities: " << source.GetCapabilities();
+      }
+    }
+    {
+      const char* distributionMode;
+      if (!source_get_distribution_mode(source, &distributionMode))
+        os << ", Distribution Mode: " << distributionMode;
+    }
+
+    {
+      AMQP_VALUE filter;
+      if (!source_get_filter(source, &filter))
+      {
+        os << ", Filter: " << source.GetFilter();
+      }
+    }
+    {
+      AMQP_VALUE outcome;
+      if (!source_get_default_outcome(source, &outcome))
+      {
+        os << ", Default Outcome: " << source.GetDefaultOutcome();
+      }
+    }
+    {
+      AMQP_VALUE outcome;
+      if (!source_get_outcomes(source, &outcome))
+      {
+        os << ", Outcome: " << source.GetOutcomes();
+      }
+    }
+    os << "}";
+    return os;
   }
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

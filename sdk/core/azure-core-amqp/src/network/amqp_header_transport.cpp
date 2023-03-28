@@ -21,8 +21,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   {
     HEADER_DETECT_IO_CONFIG detectIoConfig{};
     HEADER_DETECT_ENTRY headerDetectEntries[] = {
-        {header_detect_io_get_amqp_header(), nullptr} //,
-        //           {header_detect_io_get_sasl_amqp_header(), nullptr}
+        //        {header_detect_io_get_sasl_amqp_header(), nullptr},
+        {header_detect_io_get_amqp_header(), nullptr},
     };
     detectIoConfig.underlying_io = parentTransport;
     detectIoConfig.header_detect_entry_count = std::extent<decltype(headerDetectEntries)>::value;
