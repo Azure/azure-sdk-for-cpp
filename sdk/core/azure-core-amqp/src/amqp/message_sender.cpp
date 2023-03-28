@@ -148,6 +148,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         m_events = nullptr;
       }
+      if (m_claimsBasedSecurity)
+      {
+        m_claimsBasedSecurity->Close();
+      }
       if (m_messageSender)
       {
         messagesender_destroy(m_messageSender);
@@ -252,7 +256,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
       else
       {
-        throw std::runtime_error("Could not open Claims Based Security.");
+        throw std::runtime_error("Could not put Claims Based Security token.");
       }
     }
 

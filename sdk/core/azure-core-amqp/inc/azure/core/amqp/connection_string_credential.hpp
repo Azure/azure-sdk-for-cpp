@@ -38,7 +38,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
     virtual std::shared_ptr<Network::Transport> GetTransport() const = 0;
     CredentialType GetCredentialType() const { return m_credentialType; }
-    std::string const& GetUri() const;
     std::string const& GetEndpoint() const { return m_endpoint; }
     std::string const& GetSharedAccessKeyName() const { return m_sharedAccessKeyName; }
     std::string const& GetSharedAccessKey() const { return m_sharedAccessKey; }

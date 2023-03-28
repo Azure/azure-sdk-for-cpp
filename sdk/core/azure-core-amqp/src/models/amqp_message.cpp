@@ -268,6 +268,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set body AMQP value");
     }
   }
+
   std::ostream& operator<<(std::ostream& os, Message const& message)
   {
     os << "Message: " << std::endl;

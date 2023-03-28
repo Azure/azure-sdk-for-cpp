@@ -90,6 +90,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
     return m_impl->WaitForIncomingMessage(context, connection);
   }
+
   namespace _detail {
 
     /** Configure the MessageReceiver for receiving messages from a service instance.
@@ -210,6 +211,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       if (m_eventHandler)
       {
         m_eventHandler = nullptr;
+      }
+      if (m_claimsBasedSecurity)
+      {
+        m_claimsBasedSecurity->Close();
       }
       if (m_messageReceiver)
       {
