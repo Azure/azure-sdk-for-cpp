@@ -532,8 +532,11 @@ TEST_F(TestMessages, AuthenticatedReceiver)
       {
         Azure::Core::Amqp::Models::Message sendMessage;
         sendMessage.SetBodyAmqpValue("This is a message body.");
-        m_messageSender->Send(sendMessage);
-        m_shouldSendMessage = false;
+        if (m_messageSender)
+        {
+          m_messageSender->Send(sendMessage);
+          m_shouldSendMessage = false;
+        }
       }
     }
   };
