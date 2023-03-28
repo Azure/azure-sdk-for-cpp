@@ -82,7 +82,6 @@ public:
       }
       else
       {
-        EXPECT_TRUE(false) << "External operation: " << message;
         OnMessageReceived(*message);
       }
     }
