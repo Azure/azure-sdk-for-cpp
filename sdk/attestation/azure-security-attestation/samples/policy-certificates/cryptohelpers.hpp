@@ -18,7 +18,7 @@
 #include <utility>
 #include <vector>
 /**
- * @brief The Cryptography class provides a set of basic cryptographic primatives required
+ * @brief THe Cryptography class provides a set of basic cryptographic primatives required
  * by the attestation samples.
  */
 

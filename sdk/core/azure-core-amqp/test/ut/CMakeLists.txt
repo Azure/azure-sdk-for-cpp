@@ -26,7 +26,7 @@ add_executable(azure-core-amqp-tests
     "link_tests.cpp" 
     "message_sender_receiver.cpp"
     "connection_string_tests.cpp"
- claim_based_security_tests.cpp)
+ claim_based_security_tests.cpp "message_source_target.cpp")
 add_dependencies(azure-core-amqp-tests azure-core-amqp)
 
 target_include_directories(azure-core-amqp-tests PRIVATE ${azure-core-amqp_SOURCE_DIR})

@@ -73,8 +73,8 @@ TEST_F(TestProperties, SetCorrelationId)
 {
   Properties properties;
   std::string correlationId = "1234";
-  properties.SetCorrelationId(correlationId);
-  EXPECT_EQ(properties.GetCorrelationId(), correlationId);
+  properties.SetCorrelationId(Value{correlationId});
+  EXPECT_EQ(properties.GetCorrelationId(), Value{correlationId});
 }
 
 TEST_F(TestProperties, SetCreationTime)
@@ -110,16 +110,16 @@ TEST_F(TestProperties, SetMessageId)
 {
   Properties properties;
   std::string messageId = "1234";
-  properties.SetMessageId(messageId);
-  EXPECT_EQ(properties.GetMessageId(), messageId);
+  properties.SetMessageId(Value{messageId});
+  EXPECT_EQ(properties.GetMessageId(), Value{messageId});
 }
 
 TEST_F(TestProperties, SetReplyTo)
 {
   Properties properties;
   std::string replyTo = "1234";
-  properties.SetReplyTo(replyTo);
-  EXPECT_EQ(properties.GetReplyTo(), replyTo);
+  properties.SetReplyTo(Value{replyTo});
+  EXPECT_EQ(properties.GetReplyTo(), Value{replyTo});
 }
 
 TEST_F(TestProperties, SetReplyToGroupId)
@@ -134,8 +134,8 @@ TEST_F(TestProperties, SetTo)
 {
   Properties properties;
   std::string to = "1234";
-  properties.SetTo(to);
-  EXPECT_EQ(properties.GetTo(), to);
+  properties.SetTo(Value{to});
+  EXPECT_EQ(properties.GetTo(), Value{to});
 }
 
 TEST_F(TestProperties, SetUserId)

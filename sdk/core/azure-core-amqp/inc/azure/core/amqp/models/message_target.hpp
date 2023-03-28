@@ -10,30 +10,6 @@
 struct TARGET_INSTANCE_TAG;
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  // enum class MessageBodyType
-  //{
-  //   None,
-  //   Data,
-  //   Sequence,
-  //   Value,
-  // };
-
-  // enum class TerminusDurability : uint32_t
-  //{
-  //   None = 0,
-  //   Configuration = 1,
-  //   UnsettledState = 2
-  // };
-
-  //// Note: Should be an extendable Enumeration.
-  // enum class TerminusExpiryPolicy
-  //{
-  //   LinkDetach,
-  //   SessionEnd,
-  //   ConnectionClose,
-  //   Never
-  // };
-
   class MessageTarget {
   public:
     MessageTarget();
@@ -45,11 +21,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessageTarget& operator=(MessageTarget&&) noexcept;
 
     MessageTarget(TARGET_INSTANCE_TAG* message);
-    // Create a described source from an AMQP Value - used in the OnLinkAttached.
+    MessageTarget(std::string const& value);
+    MessageTarget(char const* value);
+
     MessageTarget(Azure::Core::Amqp::Models::Value const& value);
+    operator const Azure::Core::Amqp::Models::Value() const;
 
     operator TARGET_INSTANCE_TAG*() const { return m_target; }
-    operator Azure::Core::Amqp::Models::Value() const;
 
     Azure::Core::Amqp::Models::Value GetAddress() const;
     void SetAddress(Azure::Core::Amqp::Models::Value const& address);

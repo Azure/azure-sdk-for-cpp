@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     Value(Uuid value);
     Value(BinaryData value);
-    Value(std::string value);
+    explicit Value(std::string value);
     Value(const char* value);
 
     Value();
@@ -107,7 +107,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Value(AMQP_VALUE_DATA_TAG* value);
 
     Value& operator=(Value const& that);
-    Value& operator=(Value const& that) const;
     Value& operator=(Value&& that) throw();
 
     bool IsNull() const;

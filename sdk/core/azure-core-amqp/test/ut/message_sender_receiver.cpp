@@ -277,7 +277,23 @@ TEST_F(TestMessages, ReceiverOpenClose)
   std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
   threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
   {
-    MessageReceiver receiver(session, "MyTarget", {});
+    class ReceiverEvents : public MessageReceiverEvents {
+      virtual void OnMessageReceiverStateChanged(
+          MessageReceiver const& receiver,
+          MessageReceiverState newState,
+          MessageReceiverState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageReceiverEvents::OnMessageReceiverSTateChanged.";
+        (void)receiver;
+        (void)newState;
+        (void)oldState;
+      }
+
+      Models::Value OnMessageReceived(Models::Message) override { return Models::Value(); }
+    };
+
+    ReceiverEvents receiverEvents;
+    MessageReceiver receiver(session, "MyTarget", {}, &receiverEvents);
 
     EXPECT_NO_THROW(receiver.Open());
     receiver.Close();
@@ -363,12 +379,26 @@ TEST_F(TestMessages, SenderSendAsync)
   threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
 
   {
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderSTateChanged.";
+        (void)sender;
+        (void)newState;
+        (void)oldState;
+      }
+    };
+
+    SenderEvents senderEvents;
     MessageSenderOptions options;
     options.Name = "sender-link";
     options.SourceAddress = "ingress";
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
-    MessageSender sender(session, "localhost/ingress", connection, options, nullptr);
+    MessageSender sender(session, "localhost/ingress", connection, options, &senderEvents);
     EXPECT_NO_THROW(sender.Open());
 
     uint8_t messageBody[] = "hello";
@@ -517,6 +547,62 @@ TEST_F(TestMessages, AuthenticatedSender)
   server.StopListening();
 }
 
+TEST_F(TestMessages, AuthenticatedSenderAzureToken)
+{
+  class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
+    Azure::Core::Credentials::AccessToken GetToken(
+        const Azure::Core::Credentials::TokenRequestContext& requestContext,
+        const Azure::Core::Context& context) const override
+    {
+      Azure::Core::Credentials::AccessToken rv;
+      rv.Token = "ThisIsAJwt.WithABogusBody.AndSignature";
+      rv.ExpiresOn = std::chrono::system_clock::now();
+      (void)requestContext;
+      (void)context;
+      return rv;
+    }
+
+  public:
+    AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
+  };
+
+  MessageTests::AmqpServerMock server;
+
+  auto tokenCredential = std::make_shared<AzureTokenCredential>();
+  std::string hostName = "localhost";
+  std::string entityPath = "testLocation";
+  uint16_t port = server.GetPort();
+  std::string endpoint = "amqp://" + hostName + ":" + std::to_string(port) + "/" + entityPath;
+
+  ConnectionOptions connectionOptions;
+
+  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.ContainerId = "some";
+  connectionOptions.HostName = hostName;
+  connectionOptions.Port = port;
+  Connection connection(endpoint, nullptr, connectionOptions);
+  Session session(connection, nullptr);
+
+  server.StartListening();
+  MessageSenderOptions senderOptions;
+  senderOptions.Name = "sender-link";
+  senderOptions.SourceAddress = "ingress";
+  senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
+  senderOptions.MaxMessageSize = 65536;
+  senderOptions.Name = "sender-link";
+  MessageSender sender(session, tokenCredential, endpoint, connection, senderOptions, nullptr);
+  EXPECT_TRUE(sender);
+  sender.Open();
+  uint8_t messageBody[] = "hello";
+
+  Azure::Core::Amqp::Models::Message message;
+  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  sender.Send(message);
+
+  sender.Close();
+  server.StopListening();
+}
+
 TEST_F(TestMessages, AuthenticatedReceiver)
 {
   class ReceiverMock : public MessageTests::AmqpServerMock {
@@ -532,8 +618,11 @@ TEST_F(TestMessages, AuthenticatedReceiver)
       {
         Azure::Core::Amqp::Models::Message sendMessage;
         sendMessage.SetBodyAmqpValue("This is a message body.");
-        m_messageSender->Send(sendMessage);
-        m_shouldSendMessage = false;
+        if (m_messageSender)
+        {
+          m_messageSender->Send(sendMessage);
+          m_shouldSendMessage = false;
+        }
       }
     }
   };
@@ -568,13 +657,113 @@ TEST_F(TestMessages, AuthenticatedReceiver)
       sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
       receiverOptions,
       nullptr);
+  EXPECT_TRUE(receiver);
 
   receiver.Open();
 
   // Send a message.
-  server.ShouldSendMessage(true);
-  auto message = receiver.WaitForIncomingMessage(connection);
+  {
+    server.ShouldSendMessage(true);
+    auto message = receiver.WaitForIncomingMessage(connection);
+    EXPECT_TRUE(message);
+    EXPECT_EQ(static_cast<std::string>(message.GetBodyAmqpValue()), "This is a message body.");
+  }
 
+  {
+    Azure::Core::Context receiveContext;
+    receiveContext.Cancel();
+    auto message = receiver.WaitForIncomingMessage(connection, receiveContext);
+    EXPECT_FALSE(message);
+  }
+  receiver.Close();
+  server.StopListening();
+}
+
+TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
+{
+  class ReceiverMock : public MessageTests::AmqpServerMock {
+  public:
+    void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
+
+  private:
+    mutable bool m_shouldSendMessage{false};
+
+    void Poll() const override
+    {
+      if (m_shouldSendMessage)
+      {
+        Azure::Core::Amqp::Models::Message sendMessage;
+        sendMessage.SetBodyAmqpValue("This is a message body.");
+        if (m_messageSender)
+        {
+          m_messageSender->Send(sendMessage);
+          m_shouldSendMessage = false;
+        }
+      }
+    }
+  };
+
+  class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
+    Azure::Core::Credentials::AccessToken GetToken(
+        const Azure::Core::Credentials::TokenRequestContext& requestContext,
+        const Azure::Core::Context& context) const override
+    {
+      Azure::Core::Credentials::AccessToken rv;
+      rv.Token = "ThisIsAJwt.WithABogusBody.AndSignature";
+      rv.ExpiresOn = std::chrono::system_clock::now();
+      (void)requestContext;
+      (void)context;
+      return rv;
+    }
+
+  public:
+    AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
+  };
+
+  ReceiverMock server;
+
+  auto tokenCredential = std::make_shared<AzureTokenCredential>();
+  std::string hostName = "localhost";
+  std::string entityPath = "testLocation";
+  uint16_t port = server.GetPort();
+  std::string endpoint = "amqp://" + hostName + ":" + std::to_string(port) + "/" + entityPath;
+
+  ConnectionOptions connectionOptions;
+
+  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.ContainerId = "some";
+  connectionOptions.HostName = hostName;
+  connectionOptions.Port = port;
+  Connection connection(endpoint, nullptr, connectionOptions);
+  Session session(connection, nullptr);
+
+  server.StartListening();
+
+  MessageReceiverOptions receiverOptions;
+  receiverOptions.Name = "receiver-link";
+  receiverOptions.TargetAddress = "egress";
+  receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+  receiverOptions.MaxMessageSize = 65536;
+  receiverOptions.Name = "receiver-link";
+  MessageReceiver receiver(
+      session, connection, tokenCredential, endpoint, receiverOptions, nullptr);
+
+  receiver.Open();
+
+  // Send a message.
+  {
+    server.ShouldSendMessage(true);
+    auto message = receiver.WaitForIncomingMessage(connection);
+    EXPECT_TRUE(message);
+    EXPECT_EQ(static_cast<std::string>(message.GetBodyAmqpValue()), "This is a message body.");
+  }
+
+  {
+    Azure::Core::Context receiveContext;
+    receiveContext.Cancel();
+    auto message = receiver.WaitForIncomingMessage(connection, receiveContext);
+    EXPECT_FALSE(message);
+  }
   receiver.Close();
   server.StopListening();
 }
