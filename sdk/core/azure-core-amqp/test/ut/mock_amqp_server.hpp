@@ -61,8 +61,10 @@ public:
    *  @param message The message received.
    *  @return The value to send back to the sender.
    */
-  virtual Azure::Core::Amqp::Models::Value MessageReceived(Azure::Core::Amqp::Models::Message)
+  virtual Azure::Core::Amqp::Models::Value MessageReceived(
+      Azure::Core::Amqp::Models::Message message)
   {
+    (void)message;
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   };
   virtual void MessageLoop()
