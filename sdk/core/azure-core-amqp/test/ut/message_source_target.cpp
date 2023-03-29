@@ -128,7 +128,8 @@ TEST_F(TestSourceTarget, TargetProperties)
 TEST_F(TestSourceTarget, TargetThroughValue)
 {
   MessageTarget target("address1");
-  Value value(static_cast<const Value>(target));
+  const Value v = target;
+  Value value(v);
 
   MessageTarget target2(value);
   EXPECT_EQ(target.GetAddress(), target2.GetAddress());
