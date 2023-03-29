@@ -30,6 +30,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
+  MessageTarget::MessageTarget(std::string const& address)
+  {
+    m_target = target_create();
+    if (m_target == nullptr)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+    if (target_set_address(m_target, amqpvalue_create_string(address.c_str())))
+    {
+      throw std::runtime_error("Could not set address.");
+    }
+  }
+
+  MessageTarget::MessageTarget() : m_target{target_create()} {}
+
   MessageTarget::~MessageTarget()
   {
     if (m_target != nullptr)

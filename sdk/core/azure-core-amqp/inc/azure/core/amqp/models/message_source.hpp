@@ -24,6 +24,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
     MessageSource(Azure::Core::Amqp::Models::Value const& value);
 
+    // Create a described source from an AMQP Value - used in the OnLinkAttached.
+    MessageSource(std::string const& value);
+
     operator SOURCE_INSTANCE_TAG*() const { return m_source; }
     operator Azure::Core::Amqp::Models::Value() const;
 

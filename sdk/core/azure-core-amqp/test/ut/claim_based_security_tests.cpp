@@ -109,3 +109,32 @@ TEST_F(TestCbs, CbsOpenAndPut)
     mockServer.StopListening();
   }
 }
+
+TEST_F(TestCbs, CbsOpenAndPutError)
+{
+  {
+    MessageTests::AmqpServerMock mockServer;
+
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), nullptr, {});
+    Session session(connection, nullptr);
+
+    mockServer.StartListening();
+
+    {
+      ClaimsBasedSecurity cbs(session, connection);
+      cbs.SetTrace(true);
+
+      EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
+      GTEST_LOG_(INFO) << "Open Completed.";
+
+      mockServer.ForceCbsError(true);
+      EXPECT_ANY_THROW(
+          auto putResult = cbs.PutToken(
+              Azure::Core::_internal::Amqp::CbsTokenType::Sas, "of one", "stringizedToken"););
+
+      cbs.Close();
+    }
+
+    mockServer.StopListening();
+  }
+}

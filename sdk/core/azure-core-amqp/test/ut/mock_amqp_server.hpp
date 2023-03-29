@@ -170,6 +170,8 @@ public:
     }
   }
 
+  void ForceCbsError(bool forceError) { m_forceCbsError = forceError; }
+
 private:
   std::shared_ptr<Azure::Core::_internal::Amqp::Connection> m_connection;
   std::shared_ptr<Azure::Core::_internal::Amqp::Session> m_session;
@@ -188,6 +190,7 @@ private:
 
   std::thread m_serverThread;
   uint16_t m_testPort;
+  bool m_forceCbsError{false};
 
 protected:
   std::unique_ptr<Azure::Core::_internal::Amqp::MessageSender> m_messageSender;
@@ -259,8 +262,16 @@ protected:
       // Populate the response application properties.
 
       auto propertyMap = Azure::Core::Amqp::Models::Value::CreateMap();
-      propertyMap.SetMapValue("status-code", 200);
-      propertyMap.SetMapValue("status-description", "OK-put");
+      if (m_forceCbsError)
+      {
+        propertyMap.SetMapValue("status-code", 500);
+        propertyMap.SetMapValue("status-description", "Internal Server Error");
+      }
+      else
+      {
+        propertyMap.SetMapValue("status-code", 200);
+        propertyMap.SetMapValue("status-description", "OK-put");
+      }
 
       // Create a descriptor to hold the property map and set it as the response's
       // application properties.

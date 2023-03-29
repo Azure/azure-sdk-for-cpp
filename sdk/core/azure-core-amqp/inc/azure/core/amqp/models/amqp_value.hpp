@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     Value(Uuid value);
     Value(BinaryData value);
-    Value(std::string value);
+    explicit Value(std::string value);
     Value(const char* value);
 
     Value();

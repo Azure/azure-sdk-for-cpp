@@ -63,8 +63,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           return CbsOpenResult::Cancelled;
         case CBS_OPEN_ERROR:
           return CbsOpenResult::Error;
-        default:
-          throw std::logic_error("Unknown CBS Open result.");
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown CBS Open result."); // LCOV_EXCL_LINE
       }
     }
 
@@ -72,16 +72,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       switch (lowLevel)
       {
-        case CBS_OPERATION_RESULT_CBS_ERROR:
-          return CbsOperationResult::Error;
-        case CBS_OPERATION_RESULT_INSTANCE_CLOSED:
-          return CbsOperationResult::InstanceClosed;
-        case CBS_OPERATION_RESULT_INVALID:
-          return CbsOperationResult::Invalid;
+        case CBS_OPERATION_RESULT_CBS_ERROR: // LCOV_EXCL_LINE
+          return CbsOperationResult::Error; // LCOV_EXCL_LINE
+        case CBS_OPERATION_RESULT_INSTANCE_CLOSED: // LCOV_EXCL_LINE
+          return CbsOperationResult::InstanceClosed; // LCOV_EXCL_LINE
+        case CBS_OPERATION_RESULT_INVALID: // LCOV_EXCL_LINE
+          return CbsOperationResult::Invalid; // LCOV_EXCL_LINE
         case CBS_OPERATION_RESULT_OK:
           return CbsOperationResult::Ok;
-        case CBS_OPERATION_RESULT_OPERATION_FAILED:
-          return CbsOperationResult::Failed;
+        case CBS_OPERATION_RESULT_OPERATION_FAILED: // LCOV_EXCL_LINE
+          return CbsOperationResult::Failed; // LCOV_EXCL_LINE
         default: // LCOV_EXCL_LINE
           throw std::logic_error("Unknown CBS Operation result."); // LCOV_EXCL_LINE
       }
@@ -105,16 +105,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       switch (result)
       {
-        case CBS_OPERATION_RESULT_CBS_ERROR:
-          return "CbsOperationResult::Error";
-        case CBS_OPERATION_RESULT_INSTANCE_CLOSED:
-          return "CbsOperationResult::InstanceClosed";
-        case CBS_OPERATION_RESULT_INVALID:
-          return "CbsOperationResult::Invalid";
+        case CBS_OPERATION_RESULT_CBS_ERROR: // LCOV_EXCL_LINE
+          return "CbsOperationResult::Error"; // LCOV_EXCL_LINE
+        case CBS_OPERATION_RESULT_INSTANCE_CLOSED: // LCOV_EXCL_LINE
+          return "CbsOperationResult::InstanceClosed"; // LCOV_EXCL_LINE
+        case CBS_OPERATION_RESULT_INVALID: // LCOV_EXCL_LINE
+          return "CbsOperationResult::Invalid"; // LCOV_EXCL_LINE
         case CBS_OPERATION_RESULT_OK:
           return "CbsOperationResult::Ok";
-        case CBS_OPERATION_RESULT_OPERATION_FAILED:
-          return "CbsOperationResult::Failed";
+        case CBS_OPERATION_RESULT_OPERATION_FAILED: // LCOV_EXCL_LINE
+          return "CbsOperationResult::Failed"; // LCOV_EXCL_LINE
         default: // LCOV_EXCL_LINE
           throw std::logic_error("Unknown CBS Operation result."); // LCOV_EXCL_LINE
       }

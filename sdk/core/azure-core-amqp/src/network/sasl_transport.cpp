@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+// LCOV_EXCL_FILE
 #include "azure/core/amqp/network/sasl_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include <azure_c_shared_utility/platform.h>

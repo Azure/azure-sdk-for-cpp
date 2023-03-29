@@ -575,9 +575,19 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   receiver.Open();
 
   // Send a message.
-  server.ShouldSendMessage(true);
-  auto message = receiver.WaitForIncomingMessage(connection);
+  {
+    server.ShouldSendMessage(true);
+    auto message = receiver.WaitForIncomingMessage(connection);
+    EXPECT_TRUE(message);
+    EXPECT_EQ(static_cast<std::string>(message.GetBodyAmqpValue()), "This is a message body.");
+  }
 
+  {
+    Azure::Core::Context receiveContext;
+    receiveContext.Cancel();
+    auto message = receiver.WaitForIncomingMessage(connection, receiveContext);
+    EXPECT_FALSE(message);
+  }
   receiver.Close();
   server.StopListening();
 }
