@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AMQP_VALUE value;
     if (properties_get_message_id(m_properties, &value))
     {
-      throw std::runtime_error("Could not set message id");
+      throw std::runtime_error("Could not get message id");
     }
     return amqpvalue_clone(value);
   }
@@ -289,13 +289,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream& os, Properties const& properties)
   {
     os << "Properties {";
-    os << "MessageId: " << properties.GetMessageId();
+    {
+      AMQP_VALUE messageId;
+      if (!properties_get_message_id(properties, &messageId))
+      {
+        os << "MessageId: " << properties.GetMessageId();
+      }
+      else
+      {
+        os << "MessageId: <null>";
+      }
+    }
     {
       amqp_binary binary;
       if (!properties_get_user_id(properties.m_properties, &binary))
       {
-        os << ", "
-           << "UserId: "
+        os << ", UserId: "
            << std::string(
                   static_cast<const char*>(binary.bytes),
                   static_cast<const char*>(binary.bytes) + binary.length);
@@ -305,8 +314,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_to(properties.m_properties, &value))
       {
-        os << ", "
-           << "UserId: " << Value(value);
+        os << ", UserId: " << Value(value);
       }
     }
 
@@ -314,8 +322,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       const char* value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_subject(properties.m_properties, &value))
       {
-        os << ", "
-           << "Subject: " << value;
+        os << ", Subject: " << value;
       }
     }
 
@@ -323,16 +330,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_reply_to(properties.m_properties, &value))
       {
-        os << ", "
-           << "ReplyTo: " << Value(value);
+        os << ", ReplyTo: " << Value(value);
       }
     }
     {
       AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_correlation_id(properties.m_properties, &value))
       {
-        os << ", "
-           << "CorrelationId: " << Value(value);
+        os << ", CorrelationId: " << Value(value);
       }
     }
 
@@ -340,8 +345,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       const char* value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_content_type(properties.m_properties, &value))
       {
-        os << ", "
-           << "ContentType: " << value;
+        os << ", ContentType: " << value;
       }
     }
 
@@ -349,8 +353,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       const char* value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_content_encoding(properties.m_properties, &value))
       {
-        os << ", "
-           << "ContentEncoding: " << value;
+        os << ", ContentEncoding: " << value;
       }
     }
 
@@ -360,8 +363,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         std::chrono::milliseconds ms{expiryTime};
 
-        os << ", "
-           << "AbsoluteExpiryTime: "
+        os << ", AbsoluteExpiryTime: "
            << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
       }
     }
@@ -371,8 +373,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       if (!properties_get_creation_time(properties.m_properties, &creationTime))
       {
         std::chrono::milliseconds ms{creationTime};
-        os << ", "
-           << "CreationTime: " << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
+        os << ", CreationTime: " << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
       }
     }
 
@@ -380,8 +381,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       const char* value; // Value is returned in-place, so doesn't need to be freed.
       if (!properties_get_group_id(properties.m_properties, &value))
       {
-        os << ", "
-           << "GroupId: " << value;
+        os << ", GroupId: " << value;
       }
     }
 

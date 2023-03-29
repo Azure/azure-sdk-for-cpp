@@ -189,10 +189,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         return MessageBodyType::Sequence;
       case MESSAGE_BODY_TYPE_VALUE:
         return MessageBodyType::Value;
-      case MESSAGE_BODY_TYPE_INVALID:
-        return MessageBodyType::Invalid;
+      case MESSAGE_BODY_TYPE_INVALID: // LCOV_EXCL_LINE
+        return MessageBodyType::Invalid; // LCOV_EXCL_LINE
     }
-    return MessageBodyType::None;
+    return MessageBodyType::None; // LCOV_EXCL_LINE
   }
   size_t Message::GetBodyAmqpSequenceCount() const
   {
@@ -217,7 +217,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_add_body_amqp_sequence(m_message, value))
     {
-      throw std::runtime_error("Could not Add Body Sequence.");
+      throw std::runtime_error("Could not Add Body Sequence."); // LCOV_EXCL_LINE
     }
   }
 
@@ -226,7 +226,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AMQP_VALUE value;
     if (message_get_body_amqp_value_in_place(m_message, &value))
     {
-      throw std::runtime_error("Could not get BodySequence.");
+      throw std::runtime_error("Could not get Body Value."); // LCOV_EXCL_LINE
     }
     return amqpvalue_clone(value);
   }
@@ -238,7 +238,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     amqpData.length = binaryData.length;
     if (message_add_body_amqp_data(m_message, amqpData))
     {
-      throw std::runtime_error("Could not Add Body Data.");
+      throw std::runtime_error("Could not Add Body Data."); // LCOV_EXCL_LINE
     }
   }
 
@@ -307,11 +307,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         break;
       case MessageBodyType::Sequence:
         os << "AMQP Sequence: [";
-        for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
+        for (size_t i = 0; i < message.GetBodyAmqpSequenceCount(); i += 1)
         {
-          auto data = message.GetBodyAmqpData(i);
-          os << "Data: " << data.length << " bytes: " << data;
-          if (i < message.GetBodyAmqpDataCount() - 1)
+          auto data = message.GetBodyAmqpSequence(static_cast<uint32_t>(i));
+          os << data;
+          if (i < message.GetBodyAmqpSequenceCount() - 1)
           {
             os << ", ";
           }

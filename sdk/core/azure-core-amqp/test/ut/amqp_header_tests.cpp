@@ -43,6 +43,8 @@ TEST_F(TestHeaders, TestDeliveryCount)
   EXPECT_EQ(0, header.GetDeliveryCount());
   header.SetDeliveryCount(1);
   EXPECT_EQ(1, header.GetDeliveryCount());
+
+  GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestPriority)
@@ -51,6 +53,7 @@ TEST_F(TestHeaders, TestPriority)
   EXPECT_EQ(4, header.Priority());
   header.SetPriority(1);
   EXPECT_EQ(1, header.Priority());
+  GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestDurable)
@@ -59,6 +62,7 @@ TEST_F(TestHeaders, TestDurable)
   EXPECT_EQ(false, header.IsDurable());
   header.IsDurable(true);
   EXPECT_EQ(true, header.IsDurable());
+  GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestFirstAcquirer)
@@ -67,4 +71,5 @@ TEST_F(TestHeaders, TestFirstAcquirer)
   EXPECT_EQ(false, header.IsFirstAcquirer());
   header.SetFirstAcquirer(true);
   EXPECT_EQ(true, header.IsFirstAcquirer());
+  GTEST_LOG_(INFO) << header;
 }

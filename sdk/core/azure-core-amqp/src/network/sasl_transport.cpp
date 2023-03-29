@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-// LCOV_EXCL_FILE
+// LCOV_EXCL_START
 #include "azure/core/amqp/network/sasl_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include <azure_c_shared_utility/platform.h>
@@ -77,3 +77,5 @@ Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
   saslConfig.sasl_mechanism = saslMechanism;
   SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
 }
+// LCOV_EXCL_END
+

@@ -96,12 +96,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   std::ostream& operator<<(std::ostream& os, Header const& header)
   {
-    os << "Header{"
-       << "durable=" << header.IsDurable() << ", "
-       << "priority=" << header.Priority() << ", "
-       << "ttl=" << header.GetTimeToLive().count() << " milliseconds, "
-       << "firstAcquirer=" << header.IsFirstAcquirer() << ", "
-       << "deliveryCount=" << header.GetDeliveryCount() << "}";
+    os << "Header{";
+    os << "durable=" << header.IsDurable();
+    {
+      uint8_t priority;
+      if (!header_get_priority(header, &priority))
+      {
+        os << ", priority=" << header.Priority();
+      }
+    }
+    {
+      milliseconds ttl;
+      if (!header_get_ttl(header, &ttl))
+      {
+        os << ", ttl=" << header.GetTimeToLive().count() << " milliseconds";
+      }
+    }
+    os << ", firstAcquirer=" << header.IsFirstAcquirer();
+    os << ", deliveryCount=" << header.GetDeliveryCount();
+    os << "}";
     return os;
   }
 }}}} // namespace Azure::Core::Amqp::Models

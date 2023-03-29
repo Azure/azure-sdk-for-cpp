@@ -20,6 +20,12 @@ TEST_F(TestMessage, SimpleCreate)
   }
 
   {
+    Message message1;
+    Message message2(std::move(message1));
+    Message message3(message2);
+  }
+
+  {
     Message message;
 
     EXPECT_EQ(
@@ -53,6 +59,8 @@ TEST_F(TestMessage, TestApplicationProperties)
   auto newProperties{propertiesAsValue.GetPropertiesFromValue()};
 
   EXPECT_EQ(newProperties.GetSubject(), properties.GetSubject());
+
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestBodyAmqpValue) {}
@@ -62,6 +70,15 @@ TEST_F(TestMessage, TestDeliveryAnnotations)
   Message message;
   message.SetDeliveryAnnotations("12345");
   EXPECT_EQ(message.GetDeliveryAnnotations(), "12345");
+  GTEST_LOG_(INFO) << message;
+}
+
+TEST_F(TestMessage, TestAnnotations)
+{
+  Message message;
+  message.SetMessageAnnotations("12345");
+  EXPECT_EQ(message.GetMessageAnnotations(), "12345");
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestFooter)
@@ -69,6 +86,7 @@ TEST_F(TestMessage, TestFooter)
   Message message;
   message.SetFooter(32.7);
   EXPECT_EQ(static_cast<double>(message.GetFooter()), 32.7);
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestHeader)
@@ -76,6 +94,7 @@ TEST_F(TestMessage, TestHeader)
   Message message;
   message.SetHeader(Header());
   EXPECT_EQ(message.GetHeader().GetDeliveryCount(), 0);
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestMessageAnnotations)
@@ -83,6 +102,7 @@ TEST_F(TestMessage, TestMessageAnnotations)
   Message message;
   message.SetMessageAnnotations("12345");
   EXPECT_EQ(message.GetMessageAnnotations(), "12345");
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestProperties)
@@ -94,6 +114,7 @@ TEST_F(TestMessage, TestProperties)
 
   auto newProperties{message.GetProperties()};
   EXPECT_EQ(newProperties.GetSubject(), properties.GetSubject());
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestFormat)
@@ -101,6 +122,7 @@ TEST_F(TestMessage, TestFormat)
   Message message;
   message.SetFormat(12345);
   EXPECT_EQ(message.GetFormat(), 12345);
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestBodyAmqpSequence)
@@ -117,6 +139,7 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
   EXPECT_EQ(95, static_cast<uint32_t>(message.GetBodyAmqpSequence(1)));
 
   EXPECT_EQ(message.GetBodyType(), MessageBodyType::Sequence);
+  GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestBodyAmqpData)
@@ -131,4 +154,5 @@ TEST_F(TestMessage, TestBodyAmqpData)
   EXPECT_EQ(memcmp(body.bytes, testBody, sizeof(testBody)), 0);
 
   EXPECT_EQ(message.GetBodyType(), MessageBodyType::Data);
+  GTEST_LOG_(INFO) << message;
 }

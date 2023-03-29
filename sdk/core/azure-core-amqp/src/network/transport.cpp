@@ -110,18 +110,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         TransportOpenResult openResult{TransportOpenResult::Error};
         switch (ioOpenResult)
         {
-          case IO_OPEN_RESULT_INVALID:
-            openResult = TransportOpenResult::Invalid;
+          case IO_OPEN_RESULT_INVALID: // LCOV_EXCL_LINE
+            openResult = TransportOpenResult::Invalid; // LCOV_EXCL_LINE
             break;
           case IO_OPEN_OK:
             openResult = TransportOpenResult::Ok;
             break;
-          case IO_OPEN_CANCELLED:
-            openResult = TransportOpenResult::Cancelled;
-            break;
-          case IO_OPEN_ERROR:
-            openResult = TransportOpenResult::Error;
-            break;
+          case IO_OPEN_CANCELLED: // LCOV_EXCL_LINE
+            openResult = TransportOpenResult::Cancelled; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case IO_OPEN_ERROR: // LCOV_EXCL_LINE
+            openResult = TransportOpenResult::Error; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
         }
         transport->m_eventHandler->OnOpenComplete(openResult);
       }
@@ -136,6 +136,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       }
     }
 
+    // LCOV_EXCL_START
     void TransportImpl::OnIoErrorFn(void* context)
     {
       TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
@@ -145,6 +146,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         transport->m_eventHandler->OnIoError();
       }
     }
+    // LCOV_EXCL_STOP
 
     bool TransportImpl::Open()
     {
@@ -169,18 +171,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         TransportSendResult result{TransportSendResult::Ok};
         switch (sendResult)
         {
-          case IO_SEND_RESULT_INVALID:
-            result = TransportSendResult::Invalid;
+          case IO_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
+            result = TransportSendResult::Invalid; // LCOV_EXCL_LINE
             break;
           case IO_SEND_OK:
             result = TransportSendResult::Ok;
             break;
-          case IO_SEND_CANCELLED:
-            result = TransportSendResult::Cancelled;
-            break;
-          case IO_SEND_ERROR:
-            result = TransportSendResult::Error;
-            break;
+          case IO_SEND_CANCELLED: // LCOV_EXCL_LINE
+            result = TransportSendResult::Cancelled; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case IO_SEND_ERROR: // LCOV_EXCL_LINE
+            result = TransportSendResult::Error; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
         }
         onComplete(result);
       }

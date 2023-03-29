@@ -463,8 +463,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     switch (amqpvalue_get_type(m_value))
     {
-      case AMQP_TYPE_INVALID:
-        return AmqpValueType::Invalid;
+      case AMQP_TYPE_INVALID: // LCOV_EXCL_LINE
+        return AmqpValueType::Invalid; // LCOV_EXCL_LINE
       case AMQP_TYPE_NULL:
         return AmqpValueType::Null;
       case AMQP_TYPE_BOOL:
