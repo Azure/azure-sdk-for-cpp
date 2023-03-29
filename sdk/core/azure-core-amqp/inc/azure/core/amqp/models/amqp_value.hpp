@@ -107,7 +107,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Value(AMQP_VALUE_DATA_TAG* value);
 
     Value& operator=(Value const& that);
-    Value& operator=(Value const& that) const;
     Value& operator=(Value&& that) throw();
 
     bool IsNull() const;

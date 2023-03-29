@@ -42,6 +42,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not set address.");
     }
   }
+  MessageTarget::MessageTarget(char const* address)
+  {
+    m_target = target_create();
+    if (m_target == nullptr)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+    if (target_set_address(m_target, amqpvalue_create_string(address)))
+    {
+      throw std::runtime_error("Could not set address.");
+    }
+  }
 
   MessageTarget::MessageTarget() : m_target{target_create()} {}
 
@@ -55,7 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   // Convert the MessageSource into a Value.
-  MessageTarget::operator Azure::Core::Amqp::Models::Value() const
+  MessageTarget::operator const Azure::Core::Amqp::Models::Value() const
   {
     return amqpvalue_create_target(m_target);
   }
@@ -246,12 +258,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
   {
-    os << "Target{ " << std::endl;
+    os << "Target{ ";
     {
       AMQP_VALUE value;
       if (!target_get_address(target, &value))
       {
-        os << "Address: " << target.GetAddress() << std::endl;
+        os << "Address: " << target.GetAddress();
       }
     }
     {
