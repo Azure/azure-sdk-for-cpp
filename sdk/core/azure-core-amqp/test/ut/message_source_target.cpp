@@ -125,7 +125,6 @@ TEST_F(TestSourceTarget, TargetProperties)
   }
 }
 
-
 TEST_F(TestSourceTarget, TargetThroughValue)
 {
   MessageTarget target("address1");
@@ -227,7 +226,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSource source("address1");
-    Value value(source);
+    Value value(static_cast<const Value>(source));
 
     MessageSource source2(value);
     EXPECT_EQ(source.GetAddress(), source2.GetAddress());
