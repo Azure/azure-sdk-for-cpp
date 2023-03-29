@@ -227,7 +227,8 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSource source("address1");
-    Value value(static_cast<const Value>(source));
+    const Value v = source;
+    Value value(v);
 
     MessageSource source2(value);
     EXPECT_EQ(source.GetAddress(), source2.GetAddress());
