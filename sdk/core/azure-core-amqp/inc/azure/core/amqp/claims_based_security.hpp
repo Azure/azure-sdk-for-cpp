@@ -6,10 +6,8 @@
 #include "azure/core/amqp/session.hpp"
 #include <azure/core/context.hpp>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-  namespace _detail {
-    class ClaimsBasedSecurityImpl;
-  }
+namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+  class ClaimsBasedSecurityImpl;
 
   enum class CbsOperationResult
   {
@@ -76,6 +74,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     void SetTrace(bool traceEnabled);
 
   private:
-    std::shared_ptr<_detail::ClaimsBasedSecurityImpl> m_impl;
+    std::shared_ptr<ClaimsBasedSecurityImpl> m_impl;
   };
-}}}} // namespace Azure::Core::_internal::Amqp
+}}}}} // namespace Azure::Core::_internal::Amqp::_detail
