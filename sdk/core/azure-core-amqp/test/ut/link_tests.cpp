@@ -104,7 +104,6 @@ TEST_F(TestLinks, LinkProperties)
     link.SetSenderSettleMode(SenderSettleMode::Mixed);
     EXPECT_EQ(SenderSettleMode::Mixed, link.GetSenderSettleMode());
 
-
     link.SetMaxLinkCredit(95);
 
     link.SetAttachProperties("Attach Properties");
