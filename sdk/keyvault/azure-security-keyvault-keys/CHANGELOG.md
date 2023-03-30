@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [3366](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
+
 ### Other Changes
 
 ## 4.3.0 (2022-10-11)
