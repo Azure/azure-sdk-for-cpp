@@ -47,6 +47,17 @@ TEST_F(TestMessages, SimpleReceiver)
     MessageReceiver receiver2(session, "MySource", {}, nullptr);
   }
 }
+TEST_F(TestMessages, ReceiverProperties)
+{ // Create a connection
+  Connection connection("amqp://localhost:5672", nullptr, {});
+  Session session(connection, nullptr);
+
+  {
+    MessageReceiver receiver(session, "MyTarget", {});
+    EXPECT_ANY_THROW(receiver.GetLinkName());
+    receiver.SetTrace(true);
+  }
+}
 
 TEST_F(TestMessages, SimpleSender)
 {
@@ -65,14 +76,14 @@ TEST_F(TestMessages, SimpleSender)
     MessageSender sender2(session, "MySource", connection, {}, nullptr);
   }
 }
-
-TEST_F(TestMessages, ReceiverProperties)
+TEST_F(TestMessages, SenderProperties)
 { // Create a connection
   Connection connection("amqp://localhost:5672", nullptr, {});
   Session session(connection, nullptr);
 
   {
-    MessageReceiver receiver(session, "MyTarget", {});
+    MessageSender sender(session, "MySource", connection, {}, nullptr);
+    sender.SetTrace(true);
   }
 }
 
@@ -293,9 +304,13 @@ TEST_F(TestMessages, ReceiverOpenClose)
     };
 
     ReceiverEvents receiverEvents;
-    MessageReceiver receiver(session, "MyTarget", {}, &receiverEvents);
+    MessageReceiverOptions options;
+    options.Name = "Test Receiver";
+    MessageReceiver receiver(session, "MyTarget", options, &receiverEvents);
 
     EXPECT_NO_THROW(receiver.Open());
+    EXPECT_EQ("Test Receiver", receiver.GetLinkName());
+
     receiver.Close();
   }
 

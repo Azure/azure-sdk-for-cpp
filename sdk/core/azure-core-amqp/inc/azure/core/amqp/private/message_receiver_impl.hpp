@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     void Open();
     void Close();
-    std::string GetLinkName();
+    std::string GetLinkName() const;
     uint32_t GetReceivedMessageId();
     void SendMessageDisposition(
         const char* linkName,

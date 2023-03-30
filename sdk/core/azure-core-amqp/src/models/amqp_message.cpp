@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_header(m_message, header))
     {
-      throw std::runtime_error("Could not set message header");
+      throw std::runtime_error("Could not set message header"); // LCOV_EXCL_LINE
     }
   }
   Header const Message::GetHeader() const
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     HEADER_HANDLE header;
     if (message_get_header(m_message, &header))
     {
-      throw std::runtime_error("Could not set message header");
+      throw std::runtime_error("Could not set message header"); // LCOV_EXCL_LINE
     }
     return header;
   }
@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_footer(m_message, header))
     {
-      throw std::runtime_error("Could not set footer");
+      throw std::runtime_error("Could not set footer"); // LCOV_EXCL_LINE
     }
   }
 
@@ -85,7 +85,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     annotations footer;
     if (message_get_footer(m_message, &footer))
     {
-      throw std::runtime_error("Could not get footer");
+      throw std::runtime_error("Could not get footer"); // LCOV_EXCL_LINE
     }
     return footer;
   }
@@ -94,7 +94,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_delivery_annotations(m_message, annotations))
     {
-      throw std::runtime_error("Could not set delivery annotations");
+      throw std::runtime_error("Could not set delivery annotations"); // LCOV_EXCL_LINE
     }
   }
   Value const Message::GetDeliveryAnnotations() const
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     annotations value;
     if (message_get_delivery_annotations(m_message, &value))
     {
-      throw std::runtime_error("Could not get annotations");
+      throw std::runtime_error("Could not get delivery annotations"); // LCOV_EXCL_LINE
     }
     return value;
   }
@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_message_format(m_message, messageFormat))
     {
-      throw std::runtime_error("Could not set message format");
+      throw std::runtime_error("Could not set message format"); // LCOV_EXCL_LINE
     }
   }
   uint32_t Message::GetFormat() const
@@ -118,7 +118,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     uint32_t format;
     if (message_get_message_format(m_message, &format))
     {
-      throw std::runtime_error("Could not get message format");
+      throw std::runtime_error("Could not get message format"); // LCOV_EXCL_LINE
     }
     return format;
   }
@@ -126,7 +126,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_message_annotations(m_message, annotations))
     {
-      throw std::runtime_error("Could not set message format");
+      throw std::runtime_error("Could not set message annotations"); // LCOV_EXCL_LINE
     }
   }
   Value const Message::GetMessageAnnotations() const
@@ -134,7 +134,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     message_annotations annotations;
     if (message_get_message_annotations(m_message, &annotations))
     {
-      throw std::runtime_error("Could not get message annotations");
+      throw std::runtime_error("Could not get message annotations"); // LCOV_EXCL_LINE
     }
 
     return annotations;
@@ -143,7 +143,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_properties(m_message, properties))
     {
-      throw std::runtime_error("Could not get message annotations");
+      throw std::runtime_error("Could not set properties"); // LCOV_EXCL_LINE
     }
   }
   Properties const Message::GetProperties() const
@@ -151,7 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     PROPERTIES_HANDLE properties;
     if (message_get_properties(m_message, &properties))
     {
-      throw std::runtime_error("Could not get message annotations");
+      throw std::runtime_error("Could not get properties"); // LCOV_EXCL_LINE
     }
     return properties;
   }
@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message_set_body_amqp_value(m_message, value))
     {
-      throw std::runtime_error("Could not set body AMQP value");
+      throw std::runtime_error("Could not set body AMQP value"); // LCOV_EXCL_LINE
     }
   }
 
@@ -283,9 +283,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     os << "Body: [" << std::endl;
     switch (message.GetBodyType())
     {
-      case MessageBodyType::Invalid:
-        os << "Invalid";
-        break;
+      case MessageBodyType::Invalid: // LCOV_EXCL_LINE
+        os << "Invalid"; // LCOV_EXCL_LINE
+        break; // LCOV_EXCL_LINE
       case MessageBodyType::None:
         os << "None";
         break;
