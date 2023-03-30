@@ -14,7 +14,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
   {
     if (platform_init())
     {
-      throw std::runtime_error("Could not initialize platform.");
+      throw std::runtime_error("Could not initialize platform."); // LCOV_EXCL_LINE
     }
   }
 
