@@ -11,6 +11,7 @@
 #include "azure/core/platform.hpp"
 
 #include <cstring>
+#include <cstdint>
 #include <string>
 
 namespace Azure { namespace Core {
