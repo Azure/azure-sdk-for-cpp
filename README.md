@@ -86,7 +86,6 @@ target_link_libraries(quick-sample PRIVATE Azure::azure-identity Azure::azure-st
 
 > See the list of available SDK clients for C++ [here](https://azure.github.io/azure-sdk/releases/latest/cpp.html)
 
-
 ##### 5. Generate project and compile
 
 At this point, you can press F7 on Visual Studio or VSCode to generate and build the project. Or you can also run the following commands from a command line:
@@ -107,7 +106,7 @@ For this scenario, CMake will fetch the Azure SDK source code and make it part o
 
 Follow the step 1 from above to create a CMake project first.
 
-###### 2. Define CMake fetch content
+##### 2. Define CMake fetch content
 
 Add the following code to your root `CMakeLists.txt` file:
 
@@ -311,16 +310,16 @@ For a complete list of available packages, please see the [latest available pack
 
 The following SDK library releases are available on [vcpkg](https://github.com/microsoft/vcpkg):
 
-* `azure-core-cpp`
-* `azure-identity-cpp`
-* `azure-security-attestation-cpp`
-* `azure-security-keyvault-certificates-cpp`
-* `azure-security-keyvault-keys-cpp`
-* `azure-security-keyvault-secrets-cpp`
-* `azure-storage-blobs-cpp`
-* `azure-storage-files-datalake-cpp`
-* `azure-storage-files-shares-cpp`
-* `azure-storage-queues-cpp`
+- `azure-core-cpp`
+- `azure-identity-cpp`[](https://github.com/DavidAnson/markdownlint/blob/v0.27.0/doc/md004.md)
+- `azure-security-attestation-cpp`
+- `azure-security-keyvault-certificates-cpp`
+- `azure-security-keyvault-keys-cpp`
+- `azure-security-keyvault-secrets-cpp`
+- `azure-storage-blobs-cpp`
+- `azure-storage-files-datalake-cpp`
+- `azure-storage-files-shares-cpp`
+- `azure-storage-queues-cpp`
 
 > NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://github.com/microsoft/vcpkg-docs/blob/main/vcpkg/users/triplets.md) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 
@@ -330,7 +329,7 @@ Several packages within the Azure SDK for C++ use the OpenSSL library. By defaul
 
 ### Using a specific version of OpenSSL
 
-If you need to use a specific version of OpenSSL, you can use the vcpkg custom ports feature to specify the version of OpenSSL to use. 
+If you need to use a specific version of OpenSSL, you can use the vcpkg custom ports feature to specify the version of OpenSSL to use.
 For example, if you want to use OpenSSL 1.1.1, you should create a folder named `vcpkg-custom-ports` next to to your vcpkg.json file.
 
 Navigate to your clone of the vcpkg vcpkg repo and execute "git checkout 3b3bd424827a1f7f4813216f6b32b6c61e386b2e" - this will reset your repo to the last version of OpenSSL 1.1.1
@@ -357,8 +356,7 @@ If you are building using CMAKE, you can instruct CMAKE to apply the overlay por
 vcpkg -DVCPKG_MANIFEST_MODE=ON -DVCPKG_OVERLAY_PORTS=<path to the vcpkg-custom-ports above> -DVCPKG_MANIFEST_DIR=<path to the directory containing the vcpkg.json file>
 ```
 
-In addition, if you need to consume OpenSSL from a dynamic linked library/shared object, you can set the VCPKG triplet to reflect that you want to build the library with dynamic 
-entries.Set the VCPKG_you can set the environment variable to `x64-windows-static` or `x64-windows-dynamic` depending on whether you want to use the static or dynamic version of OpenSSL. 
+In addition, if you need to consume OpenSSL from a dynamic linked library/shared object, you can set the VCPKG triplet to reflect that you want to build the library with dynamic entries. Set the VCPKG_you can set the environment variable to `x64-windows-static` or `x64-windows-dynamic` depending on whether you want to use the static or dynamic version of OpenSSL.
 Similarly you can use the x64-linux-dynamic and x64-linux-static triplet to specify consumption of libraries as a shared object or dynamic.
 
 ### Using the system package manager to install OpenSSL
