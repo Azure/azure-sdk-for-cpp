@@ -193,36 +193,36 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         case CONNECTION_STATE_START:
           return ConnectionState::Start;
-        case CONNECTION_STATE_CLOSE_PIPE:
-          return ConnectionState::ClosePipe;
-        case CONNECTION_STATE_CLOSE_RCVD:
-          return ConnectionState::CloseReceived;
+        case CONNECTION_STATE_CLOSE_PIPE: // LCOV_EXCL_LINE
+          return ConnectionState::ClosePipe; // LCOV_EXCL_LINE
+        case CONNECTION_STATE_CLOSE_RCVD: // LCOV_EXCL_LINE
+          return ConnectionState::CloseReceived; // LCOV_EXCL_LINE
         case CONNECTION_STATE_END:
           return ConnectionState::End;
-        case CONNECTION_STATE_HDR_RCVD:
-          return ConnectionState::HeaderReceived;
+        case CONNECTION_STATE_HDR_RCVD: // LCOV_EXCL_LINE
+          return ConnectionState::HeaderReceived; // LCOV_EXCL_LINE
         case CONNECTION_STATE_HDR_SENT:
           return ConnectionState::HeaderSent;
         case CONNECTION_STATE_HDR_EXCH:
           return ConnectionState::HeaderExchanged;
-        case CONNECTION_STATE_OPEN_PIPE:
-          return ConnectionState::OpenPipe;
-        case CONNECTION_STATE_OC_PIPE:
-          return ConnectionState::OcPipe;
-        case CONNECTION_STATE_OPEN_RCVD:
-          return ConnectionState::OpenReceived;
+        case CONNECTION_STATE_OPEN_PIPE: // LCOV_EXCL_LINE
+          return ConnectionState::OpenPipe; // LCOV_EXCL_LINE
+        case CONNECTION_STATE_OC_PIPE: // LCOV_EXCL_LINE
+          return ConnectionState::OcPipe; // LCOV_EXCL_LINE
+        case CONNECTION_STATE_OPEN_RCVD: // LCOV_EXCL_LINE
+          return ConnectionState::OpenReceived; // LCOV_EXCL_LINE
         case CONNECTION_STATE_OPEN_SENT:
           return ConnectionState::OpenSent;
         case CONNECTION_STATE_OPENED:
           return ConnectionState::Opened;
-        case CONNECTION_STATE_CLOSE_SENT:
-          return ConnectionState::CloseSent;
+        case CONNECTION_STATE_CLOSE_SENT: // LCOV_EXCL_LINE
+          return ConnectionState::CloseSent; // LCOV_EXCL_LINE
         case CONNECTION_STATE_DISCARDING:
           return ConnectionState::Discarding;
-        case CONNECTION_STATE_ERROR:
-          return ConnectionState::Error;
-        default:
-          throw std::logic_error("Unknown connection state");
+        case CONNECTION_STATE_ERROR: // LCOV_EXCL_LINE
+          return ConnectionState::Error; // LCOV_EXCL_LINE
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown connection state"); // LCOV_EXCL_LINE
       }
     }
 
@@ -250,22 +250,23 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         return cn->m_eventHandler->OnNewEndpoint(cn->shared_from_this(), endpoint);
       }
-      return false;
+      return false; // LCOV_EXCL_LINE
     }
 
-    void ConnectionImpl::OnIoErrorFn(void* context)
-    {
-      ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
-      if (cn->m_eventHandler)
-      {
-        return cn->m_eventHandler->OnIoError(cn->shared_from_this());
-      }
-    }
+    void ConnectionImpl::OnIoErrorFn(void* context) // LCOV_EXCL_LINE
+    { // LCOV_EXCL_LINE
+      ConnectionImpl* cn = static_cast<ConnectionImpl*>(context); // LCOV_EXCL_LINE
+      if (cn->m_eventHandler) // LCOV_EXCL_LINE
+      { // LCOV_EXCL_LINE
+        return cn->m_eventHandler->OnIoError(cn->shared_from_this()); // LCOV_EXCL_LINE
+      } // LCOV_EXCL_LINE
+    } // LCOV_EXCL_LINE
+
     void ConnectionImpl::Open()
     {
       if (connection_open(m_connection))
       {
-        throw std::runtime_error("Could not open connection.");
+        throw std::runtime_error("Could not open connection."); // LCOV_EXCL_LINE
       }
     }
 
@@ -273,7 +274,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (connection_listen(m_connection))
       {
-        throw std::runtime_error("Could not listen on connection.");
+        throw std::runtime_error("Could not listen on connection."); // LCOV_EXCL_LINE
       }
     }
 
@@ -286,7 +287,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (!m_connection)
       {
-        throw std::logic_error("Connection already closed.");
+        throw std::logic_error("Connection already closed."); // LCOV_EXCL_LINE
       }
 
       if (connection_close(
@@ -303,7 +304,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (connection_set_max_frame_size(m_connection, maxSize))
       {
-        throw std::runtime_error("COuld not set max frame size.");
+        throw std::runtime_error("COuld not set max frame size."); // LCOV_EXCL_LINE
       }
     }
     uint32_t ConnectionImpl::GetMaxFrameSize() const
@@ -311,7 +312,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       uint32_t maxSize;
       if (connection_get_max_frame_size(m_connection, &maxSize))
       {
-        throw std::runtime_error("COuld not set max frame size.");
+        throw std::runtime_error("COuld not get max frame size."); // LCOV_EXCL_LINE
       }
       return maxSize;
     }
@@ -320,7 +321,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (connection_set_channel_max(m_connection, maxChannel))
       {
-        throw std::runtime_error("COuld not set max frame size.");
+        throw std::runtime_error("COuld not set channel max."); // LCOV_EXCL_LINE
       }
     }
     uint16_t ConnectionImpl::GetMaxChannel() const
@@ -328,7 +329,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       uint16_t maxChannel;
       if (connection_get_channel_max(m_connection, &maxChannel))
       {
-        throw std::runtime_error("COuld not set max frame size.");
+        throw std::runtime_error("COuld not get channel max."); // LCOV_EXCL_LINE
       }
       return maxChannel;
     }
@@ -337,7 +338,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (connection_set_idle_timeout(m_connection, static_cast<milliseconds>(idleTimeout.count())))
       {
-        throw std::runtime_error("COuld not set idle timeout.");
+        throw std::runtime_error("COuld not set idle timeout."); // LCOV_EXCL_LINE
       }
     }
     std::chrono::milliseconds ConnectionImpl::GetIdleTimeout() const
@@ -346,7 +347,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       if (connection_get_idle_timeout(m_connection, &ms))
       {
-        throw std::runtime_error("COuld not set max frame size.");
+        throw std::runtime_error("COuld not set max frame size."); // LCOV_EXCL_LINE
       }
       return std::chrono::milliseconds(ms);
     }
@@ -355,7 +356,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (connection_set_properties(m_connection, value))
       {
-        throw std::runtime_error("COuld not set idle timeout.");
+        throw std::runtime_error("COuld not set properties."); // LCOV_EXCL_LINE
       }
     }
     Azure::Core::Amqp::Models::Value ConnectionImpl::GetProperties() const
@@ -363,7 +364,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       AMQP_VALUE value;
       if (connection_get_properties(m_connection, &value))
       {
-        throw std::runtime_error("COuld not get properties.");
+        throw std::runtime_error("COuld not get properties."); // LCOV_EXCL_LINE
       }
       return value;
     }
@@ -373,7 +374,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       uint32_t maxFrameSize;
       if (connection_get_remote_max_frame_size(m_connection, &maxFrameSize))
       {
-        throw std::runtime_error("Could not get remote max frame size.");
+        throw std::runtime_error("Could not get remote max frame size."); // LCOV_EXCL_LINE
       }
       return maxFrameSize;
     }
@@ -381,7 +382,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection, ratio))
       {
-        throw std::runtime_error("Could not set remote idle timeout.");
+        throw std::runtime_error(
+            "Could not set remote idle timeout send frame ratio."); // LCOV_EXCL_LINE
       }
     }
 

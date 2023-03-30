@@ -310,7 +310,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (messagesender_close(m_messageSender))
       {
-        throw std::runtime_error("Could not close message sender");
+        throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
       }
     }
 

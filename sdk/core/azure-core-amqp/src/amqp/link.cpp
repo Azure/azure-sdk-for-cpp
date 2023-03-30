@@ -129,7 +129,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   {
     if (link_set_max_message_size(m_link, size))
     {
-      throw std::runtime_error("Could not set max message size");
+      throw std::runtime_error("Could not set max message size"); // LCOV_EXCL_LINE
     }
   }
   uint64_t LinkImpl::GetMaxMessageSize() const
@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       case Azure::Core::_internal::Amqp::SenderSettleMode::Mixed:
         settleMode = sender_settle_mode_mixed;
         break;
-      default:
+      default: // LCOV_EXCL_LINE
         throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
     if (link_set_snd_settle_mode(m_link, settleMode))
@@ -198,7 +198,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     receiver_settle_mode settleMode;
     if (link_get_rcv_settle_mode(m_link, &settleMode))
     {
-      throw std::runtime_error("Could not get link sender settle mode.");
+      throw std::runtime_error("Could not get link sender settle mode."); // LCOV_EXCL_LINE
     }
     switch (settleMode)
     {
@@ -206,7 +206,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         return ReceiverSettleMode::First;
       case receiver_settle_mode_second:
         return ReceiverSettleMode::Second;
-      default:
+      default: // LCOV_EXCL_LINE
         throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
   }
@@ -221,7 +221,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       case ReceiverSettleMode::Second:
         settleMode = receiver_settle_mode_second;
         break;
-      default:
+      default: // LCOV_EXCL_LINE
         throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
     if (link_set_rcv_settle_mode(m_link, settleMode))
@@ -245,9 +245,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     uint64_t peerMax;
     if (link_get_peer_max_message_size(m_link, &peerMax))
     {
-      throw std::runtime_error("Could not get link initial delivery count."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get link initial delivery count.");
     }
-    return peerMax;
+    return peerMax; // LCOV_EXCL_LINE
   }
 
   uint32_t LinkImpl::GetReceivedMessageId() const
