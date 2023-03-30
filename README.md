@@ -247,7 +247,7 @@ Many client library operations **return** the templated `Azure::Core::Response<T
 
 Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
 
-You can intermittently poll whether the operation has finished by using the `Poll()` method inside a loop on the returned `Operation<T>` and track progress of the operation using `Value()`, while the operation is not done (using `IsDone()`). Your per-polling custom logic can go in that loop, such as logging progress.Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
+You can intermittently poll whether the operation has finished by using the `Poll()` method inside a loop on the returned `Operation<T>` and track progress of the operation using `Value()`, while the operation is not done (using `IsDone()`). Your per-polling custom logic can go in that loop, such as logging progress. Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
 
 ```C++
   std::string sourceUri = "<a uri to the source blob to copy>";
