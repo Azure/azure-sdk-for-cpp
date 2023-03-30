@@ -584,7 +584,7 @@ DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
     {
       // Shortest possible string: "00010101"
       // "Longest" possible string: "9999-12-31T23:59:60.1234567*+99:59"
-      // * - any fractional second digits after 7th are ignored.
+      // * - any fractional second digits after the 7th are ignored.
       IncreaseAndCheckMinLength(&minDateTimeLength, DateTimeLength, 8);
 
       {
