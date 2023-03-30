@@ -311,7 +311,7 @@ For a complete list of available packages, please see the [latest available pack
 The following SDK library releases are available on [vcpkg](https://github.com/microsoft/vcpkg):
 
 - `azure-core-cpp`
-- `azure-identity-cpp`[](https://github.com/DavidAnson/markdownlint/blob/v0.27.0/doc/md004.md)
+- `azure-identity-cpp`
 - `azure-security-attestation-cpp`
 - `azure-security-keyvault-certificates-cpp`
 - `azure-security-keyvault-keys-cpp`
