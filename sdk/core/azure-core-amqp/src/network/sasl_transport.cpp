@@ -11,7 +11,7 @@
 #include <azure_uamqp_c/sasl_plain.h>
 #include <azure_uamqp_c/saslclientio.h>
 
-Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
+Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
     std::string const& saslKeyName,
     std::string const& saslKey,
     std::string const& hostName,
@@ -47,7 +47,7 @@ Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
   SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
 }
 
-Azure::Core::_internal::Amqp::Network::SaslTransport::SaslTransport(
+Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
     std::string const& hostName,
     uint16_t hostPort,
     TransportEvents* eventHandler)

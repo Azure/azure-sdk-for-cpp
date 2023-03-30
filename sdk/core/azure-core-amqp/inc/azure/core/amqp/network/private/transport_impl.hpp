@@ -9,7 +9,7 @@
 
 #include <azure_c_shared_utility/xio.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   namespace _detail {
 
@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     private:
       XIO_HANDLE m_xioInstance{};
-      Azure::Core::_internal::Amqp::Network::TransportEvents* m_eventHandler;
+      TransportEvents* m_eventHandler;
       bool m_isOpen{false};
 
       static void OnOpenCompleteFn(void* context, IO_OPEN_RESULT_TAG openResult);
@@ -32,11 +32,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       static void OnIoErrorFn(void* context);
 
     public:
-      TransportImpl(
-          XIO_INSTANCE_TAG* instance,
-          Azure::Core::_internal::Amqp::Network::TransportEvents* eventHandler);
+      TransportImpl(XIO_INSTANCE_TAG* instance, TransportEvents* eventHandler);
       TransportImpl(Transport&& instance) = delete;
-      TransportImpl(Azure::Core::_internal::Amqp::Network::TransportEvents* eventHandler);
+      TransportImpl(TransportEvents* eventHandler);
 
       virtual ~TransportImpl();
       virtual bool Open();
@@ -46,4 +44,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       operator XIO_HANDLE() { return m_xioInstance; }
       void SetInstance(XIO_INSTANCE_TAG* instance);
     };
-}}}}}} // namespace Azure::Core::_internal::Amqp::Network::_detail
+}}}}}} // namespace Azure::Core::Amqp::Network::_internal::_detail

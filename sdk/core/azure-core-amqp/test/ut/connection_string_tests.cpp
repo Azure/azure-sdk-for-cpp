@@ -22,7 +22,7 @@ TEST_F(ConnectionStringTest, SaslPlainConnectionGood)
         = "Endpoint=sb://{NAMESPACE}.servicebus.windows.net/"
           "{EVENT_HUB_NAME};EntityPath={EVENT_HUB_NAME};SharedAccessKeyName={ACCESS_KEY_NAME};"
           "SharedAccessKey={ACCESS_KEY}";
-    Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential credential(connectionString);
+    Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential credential(connectionString);
     EXPECT_EQ("sb://{NAMESPACE}.servicebus.windows.net/{EVENT_HUB_NAME}", credential.GetEndpoint());
     EXPECT_EQ("{EVENT_HUB_NAME}", credential.GetEntityPath());
     EXPECT_EQ("{ACCESS_KEY_NAME}", credential.GetSharedAccessKeyName());
@@ -30,7 +30,7 @@ TEST_F(ConnectionStringTest, SaslPlainConnectionGood)
     {
       auto xport = credential.GetTransport();
       EXPECT_EQ(
-          credential.GetCredentialType(), Azure::Core::_internal::Amqp::CredentialType::SaslPlain);
+          credential.GetCredentialType(), Azure::Core::Amqp::_internal::CredentialType::SaslPlain);
     }
   }
 }
@@ -42,7 +42,7 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
         = "Endpoint=sb://{NAMESPACE}.servicebus.windows.net/"
           "{EVENT_HUB_NAME};EntityPath={EVENT_HUB_NAME};SharedAccessKeyName={ACCESS_KEY_NAME}=;"
           "SharedAccessKey={ACCESS_KEY}=";
-    Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential credential(
+    Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
         connectionString);
     EXPECT_EQ("sb://{NAMESPACE}.servicebus.windows.net/{EVENT_HUB_NAME}", credential.GetEndpoint());
     EXPECT_EQ("{EVENT_HUB_NAME}", credential.GetEntityPath());
@@ -52,7 +52,7 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
       auto xport = credential.GetTransport();
       EXPECT_EQ(
           credential.GetCredentialType(),
-          Azure::Core::_internal::Amqp::CredentialType::ServiceBusSas);
+          Azure::Core::Amqp::_internal::CredentialType::ServiceBusSas);
 
       // Generate a SAS token which expires in 60 seconds.
       auto token = credential.GenerateSasToken(
@@ -60,11 +60,11 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
     }
   }
   EXPECT_NO_THROW([]() {
-    Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+    Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential zz(
         "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Bar", "entityPath");
   }());
   EXPECT_NO_THROW([]() {
-    Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+    Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential zz(
         "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Foo;EntityPath=otherPath",
         "otherPath");
   }());
@@ -74,17 +74,17 @@ TEST_F(ConnectionStringTest, SaslPlainConnectionBad)
 {
   {
     EXPECT_ANY_THROW(
-        []() { Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential xx(""); }());
+        []() { Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential xx(""); }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential yy(
+      Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential yy(
           "Foo=Bar;Boo=Eek;Yoiks=Blang!");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential zz(
+      Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential zz(
+      Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
     }());
   }
@@ -93,17 +93,17 @@ TEST_F(ConnectionStringTest, ServiceBusSasBad)
 {
   {
     EXPECT_ANY_THROW(
-        []() { Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential xx(""); }());
+        []() { Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential xx(""); }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential yy(
+      Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential yy(
           "Foo=Bar;Boo=Eek;Yoiks=Blang!");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+      Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential zz(
+      Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Foo;EntityPath=otherPath",
           "entityPath");
     }());

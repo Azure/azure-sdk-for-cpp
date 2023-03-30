@@ -25,14 +25,14 @@ protected:
 };
 
 using namespace Azure::Core::Amqp;
-using namespace Azure::Core::_internal::Amqp;
-using namespace Azure::Core::_internal::Amqp::_detail;
+using namespace Azure::Core::Amqp::_internal;
+using namespace Azure::Core::Amqp::_detail;
 
 TEST_F(TestCbs, SimpleCbs)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   // Create a session
   Session session(connection, nullptr);
 
@@ -52,7 +52,7 @@ TEST_F(TestCbs, CbsOpen)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), nullptr, {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection, nullptr);
     {
       ClaimsBasedSecurity cbs(session, connection);
@@ -64,7 +64,7 @@ TEST_F(TestCbs, CbsOpen)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), nullptr, {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection, nullptr);
 
     mockServer.StartListening();
@@ -86,7 +86,7 @@ TEST_F(TestCbs, CbsOpenAndPut)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), nullptr, {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection, nullptr);
 
     mockServer.StartListening();
@@ -99,7 +99,7 @@ TEST_F(TestCbs, CbsOpenAndPut)
       GTEST_LOG_(INFO) << "Open Completed.";
 
       auto putResult = cbs.PutToken(
-          Azure::Core::_internal::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken");
+          Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken");
       EXPECT_EQ(CbsOperationResult::Ok, std::get<0>(putResult));
       EXPECT_EQ("OK-put", std::get<2>(putResult));
 
@@ -115,7 +115,7 @@ TEST_F(TestCbs, CbsOpenAndPutError)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), nullptr, {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection, nullptr);
 
     mockServer.StartListening();
@@ -128,10 +128,9 @@ TEST_F(TestCbs, CbsOpenAndPutError)
       GTEST_LOG_(INFO) << "Open Completed.";
 
       mockServer.ForceCbsError(true);
-      EXPECT_ANY_THROW(auto putResult = cbs.PutToken(
-                           Azure::Core::_internal::Amqp::_detail::CbsTokenType::Sas,
-                           "of one",
-                           "stringizedToken"););
+      EXPECT_ANY_THROW(
+          auto putResult = cbs.PutToken(
+              Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken"););
 
       cbs.Close();
     }

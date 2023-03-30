@@ -15,82 +15,85 @@
 #include <iostream>
 #include <memory>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-  /** Configure the MessageReceiver for receiving messages from a service instance.
-   */
-  MessageReceiver::MessageReceiver(
-      Session& session,
-      Connection const& connectionToPoll,
-      std::shared_ptr<ConnectionStringCredential> credential,
-      std::string const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          session,
-          connectionToPoll,
-          credential,
-          source,
-          options,
-          eventHandler)}
-  {
-  }
-  MessageReceiver::MessageReceiver(
-      Session& session,
-      Connection const& connectionToPoll,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      std::string const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          session,
-          connectionToPoll,
-          credential,
-          source,
-          options,
-          eventHandler)}
-  {
-  }
-  MessageReceiver::MessageReceiver(
-      Session& session,
-      std::string const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{
-          std::make_shared<_detail::MessageReceiverImpl>(session, source, options, eventHandler)}
-  {
-  }
+namespace Azure { namespace Core { namespace Amqp {
+  using namespace Azure::Core::Amqp::_internal;
+  namespace _internal {
+    /** Configure the MessageReceiver for receiving messages from a service instance.
+     */
+    MessageReceiver::MessageReceiver(
+        Session& session,
+        Connection const& connectionToPoll,
+        std::shared_ptr<ConnectionStringCredential> credential,
+        std::string const& source,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* eventHandler)
+        : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
+            session,
+            connectionToPoll,
+            credential,
+            source,
+            options,
+            eventHandler)}
+    {
+    }
+    MessageReceiver::MessageReceiver(
+        Session& session,
+        Connection const& connectionToPoll,
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+        std::string const& source,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* eventHandler)
+        : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
+            session,
+            connectionToPoll,
+            credential,
+            source,
+            options,
+            eventHandler)}
+    {
+    }
+    MessageReceiver::MessageReceiver(
+        Session& session,
+        std::string const& source,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* eventHandler)
+        : m_impl{
+            std::make_shared<_detail::MessageReceiverImpl>(session, source, options, eventHandler)}
+    {
+    }
 
-  /** Configure the MessageReceiver for receiving messages from a network listener.
-   */
-  MessageReceiver::MessageReceiver(
-      Session const& session,
-      LinkEndpoint& linkEndpoint,
-      std::string const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          session,
-          linkEndpoint,
-          source,
-          options,
-          eventHandler)}
-  {
-  }
+    /** Configure the MessageReceiver for receiving messages from a network listener.
+     */
+    MessageReceiver::MessageReceiver(
+        Session const& session,
+        LinkEndpoint& linkEndpoint,
+        std::string const& source,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* eventHandler)
+        : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
+            session,
+            linkEndpoint,
+            source,
+            options,
+            eventHandler)}
+    {
+    }
 
-  MessageReceiver::~MessageReceiver() noexcept {}
+    MessageReceiver::~MessageReceiver() noexcept {}
 
-  MessageReceiver::operator bool() const { return m_impl.operator bool(); }
+    MessageReceiver::operator bool() const { return m_impl.operator bool(); }
 
-  void MessageReceiver::Open() { m_impl->Open(); }
-  void MessageReceiver::Close() { m_impl->Close(); }
-  void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
-  Azure::Core::Amqp::Models::Message MessageReceiver::WaitForIncomingMessage(
-      Connection& connection,
-      Azure::Core::Context context)
-  {
-    return m_impl->WaitForIncomingMessage(context, connection);
-  }
-  std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
+    void MessageReceiver::Open() { m_impl->Open(); }
+    void MessageReceiver::Close() { m_impl->Close(); }
+    void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
+    Azure::Core::Amqp::Models::Message MessageReceiver::WaitForIncomingMessage(
+        Connection& connection,
+        Azure::Core::Context context)
+    {
+      return m_impl->WaitForIncomingMessage(context, connection);
+    }
+    std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
+  } // namespace _internal
   namespace _detail {
 
     /** Configure the MessageReceiver for receiving messages from a service instance.
@@ -300,7 +303,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       if (m_connectionCredential)
       {
         auto sasCredential{std::static_pointer_cast<
-            Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
+            Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
             m_connectionCredential)};
         Authenticate(
             CredentialType::ServiceBusSas,
@@ -366,4 +369,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       messagereceiver_set_trace(m_messageReceiver, traceEnabled);
     }
   } // namespace _detail
-}}}} // namespace Azure::Core::_internal::Amqp
+}}} // namespace Azure::Core::Amqp

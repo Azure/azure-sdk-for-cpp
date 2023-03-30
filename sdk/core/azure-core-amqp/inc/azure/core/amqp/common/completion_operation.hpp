@@ -5,6 +5,7 @@
 
 #include <condition_variable>
 #include <list>
+#include <memory>
 #include <mutex>
 #include <tuple>
 
@@ -12,26 +13,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   /** Abstracts an operation sent to azure-c-shared-utility/azure-uamqp.
    */
-  template <typename CompleteFn, typename WrapperClass> struct CompletionOperation
+  template <typename CompleteFn, typename ArgumentRewriter> struct CompletionOperation
   {
     CompleteFn m_onOperationComplete;
 
-    CompletionOperation(CompleteFn onOperationComplete) : m_onOperationComplete{onOperationComplete}
+    CompletionOperation(CompleteFn const& onOperationComplete)
+        : m_onOperationComplete{onOperationComplete}
     {
     }
 
-    template <typename... Args2> static void OnOperationFn(void* context, Args2... args)
+    template <typename... T> static void OnOperationFn(void* context, T... args)
     {
-      auto operation = reinterpret_cast<CompletionOperation*>(context);
+      // Capture the operation into a unique pointer so it will be freed even if the OnOperation
+      // call throws.
+      std::unique_ptr<CompletionOperation> operation;
+      operation.reset(reinterpret_cast<CompletionOperation*>(context));
       operation->OnOperation(args...);
-      delete operation;
     }
 
-    template <typename... Args3> void OnOperation(Args3... args)
+    template <typename... T> void OnOperation(T... args)
     {
       if (m_onOperationComplete)
       {
-        WrapperClass::OnOperation(m_onOperationComplete, args...);
+        ArgumentRewriter::OnOperation(m_onOperationComplete, args...);
       }
     }
   };

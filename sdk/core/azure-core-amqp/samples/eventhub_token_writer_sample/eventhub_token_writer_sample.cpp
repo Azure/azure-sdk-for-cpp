@@ -23,13 +23,13 @@
 int main()
 {
 
-  Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
+  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
   connectOptions.HostName = EH_HOST;
-  Azure::Core::_internal::Amqp::Connection connection(EH_ENTITY_URL, nullptr, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(EH_ENTITY_URL, connectOptions);
 
-  Azure::Core::_internal::Amqp::Session session(connection, nullptr);
+  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
@@ -45,14 +45,14 @@ int main()
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_ID"),
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_SECRET"))};
 
-  Azure::Core::_internal::Amqp::MessageSenderOptions senderOptions;
+  Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   senderOptions.SourceAddress = "ingress";
   senderOptions.Name = "sender-link";
-  senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
+  senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
-  Azure::Core::_internal::Amqp::MessageSender sender(
+  Azure::Core::Amqp::_internal::MessageSender sender(
       session, credential, EH_ENTITY_URL, connection, senderOptions, nullptr);
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.

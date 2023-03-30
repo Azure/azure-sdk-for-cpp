@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-using namespace Azure::Core::_internal::Amqp;
+using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
 
 // Convert a ConnectionState enum to a string for diagnostic purposes.
@@ -79,12 +79,12 @@ const char* MessageStateToString(MessageReceiverState const state)
 class SampleEvents : public ConnectionEvents,
                      public SessionEvents,
                      public MessageReceiverEvents,
-                     public Network::SocketListenerEvents {
+                     public Network::_internal::SocketListenerEvents {
 public:
   SampleEvents() {}
 
   std::unique_ptr<Connection> WaitForIncomingConnection(
-      Network::SocketListener& listener,
+      Network::_internal::SocketListener& listener,
       Azure::Core::Context context = {})
   {
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
@@ -127,13 +127,13 @@ private:
 
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
-    std::shared_ptr<Network::Transport> amqpTransport{
-        std::make_shared<Network::AmqpHeaderTransport>(xio, nullptr)};
+    std::shared_ptr<Network::_internal::Transport> amqpTransport{
+        std::make_shared<Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
     ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";
     options.HostName = "localhost";
-    auto newConnection{std::make_unique<Connection>(amqpTransport, this, options)};
+    auto newConnection{std::make_unique<Connection>(amqpTransport, options, this)};
     m_connection = newConnection.get();
     m_connectionQueue.CompleteOperation(std::move(newConnection));
   }
@@ -172,7 +172,7 @@ private:
       Session const& sessionForLink,
       LinkEndpoint& newLink,
       std::string const& name,
-      Azure::Core::_internal::Amqp::SessionRole,
+      Azure::Core::Amqp::_internal::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override
@@ -223,7 +223,7 @@ private:
 int main()
 {
   SampleEvents sampleEvents;
-  Network::SocketListener listener(5672, &sampleEvents);
+  Network::_internal::SocketListener listener(5672, &sampleEvents);
 
   listener.Start();
   auto connection = sampleEvents.WaitForIncomingConnection(listener);

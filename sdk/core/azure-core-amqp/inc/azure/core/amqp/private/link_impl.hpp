@@ -10,23 +10,23 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class LinkImpl final : public std::enable_shared_from_this<LinkImpl> {
   public:
-    using OnLinkDetachReceived = std::function<void(Error& error)>;
+    using OnLinkDetachReceived = std::function<void(_internal::Error& error)>;
 
     LinkImpl(
-        Session const& session,
+        _internal::Session const& session,
         std::string const& name,
-        SessionRole role,
+        _internal::SessionRole role,
         std::string const& source,
         std::string const& target);
     LinkImpl(
-        Session const& session,
-        LinkEndpoint& linkEndpoint,
+        _internal::Session const& session,
+        _internal::LinkEndpoint& linkEndpoint,
         std::string const& name,
-        SessionRole role,
+        _internal::SessionRole role,
         std::string const& source,
         std::string const& target);
     ~LinkImpl() noexcept;
@@ -38,11 +38,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     operator LINK_HANDLE() const { return m_link; }
 
-    void SetSenderSettleMode(SenderSettleMode senderSettleMode);
-    SenderSettleMode GetSenderSettleMode() const;
+    void SetSenderSettleMode(_internal::SenderSettleMode senderSettleMode);
+    _internal::SenderSettleMode GetSenderSettleMode() const;
 
-    void SetReceiverSettleMode(ReceiverSettleMode receiverSettleMode);
-    ReceiverSettleMode GetReceiverSettleMode() const;
+    void SetReceiverSettleMode(_internal::ReceiverSettleMode receiverSettleMode);
+    _internal::ReceiverSettleMode GetReceiverSettleMode() const;
 
     void SetInitialDeliveryCount(uint32_t initialDeliveryCount);
     uint32_t GetInitialDeliveryCount() const;
@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     uint32_t GetReceivedMessageId() const;
 
-    Session const& GetSession() const { return m_session; }
+    _internal::Session const& GetSession() const { return m_session; }
 
     void Attach();
 
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   private:
     LINK_HANDLE m_link;
-    Session const& m_session;
+    _internal::Session const& m_session;
     std::string m_source;
     std::string m_target;
 
@@ -86,4 +86,4 @@ MOCKABLE_FUNCTION(, void, link_unsubscribe_on_link_detach_received, ON_LINK_DETA
 
 #endif
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

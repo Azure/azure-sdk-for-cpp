@@ -9,89 +9,55 @@
 
 #include <azure_uamqp_c/session.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-  Endpoint::~Endpoint()
-  {
-    if (m_endpoint)
+namespace Azure { namespace Core { namespace Amqp {
+  namespace _internal {
+    Endpoint::~Endpoint()
     {
-      connection_destroy_endpoint(m_endpoint);
+      if (m_endpoint)
+      {
+        connection_destroy_endpoint(m_endpoint);
+      }
     }
-  }
 
-  Session::Session(
-      Connection const& parentConnection,
-      Endpoint& newEndpoint,
-      SessionEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::SessionImpl>(parentConnection, newEndpoint, eventHandler)}
-  {
-  }
+    Session::Session(
+        Connection const& parentConnection,
+        Endpoint& newEndpoint,
+        SessionEvents* eventHandler)
+        : m_impl{std::make_shared<Azure::Core::Amqp::_detail::SessionImpl>(
+            parentConnection,
+            newEndpoint,
+            eventHandler)}
+    {
+    }
 
-  Session::Session(Connection const& parentConnection, SessionEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::SessionImpl>(parentConnection, eventHandler)}
-  {
-  }
+    Session::Session(Connection const& parentConnection, SessionEvents* eventHandler)
+        : m_impl{std::make_shared<Azure::Core::Amqp::_detail::SessionImpl>(
+            parentConnection,
+            eventHandler)}
+    {
+    }
 
-  Session::~Session() noexcept {}
+    Session::~Session() noexcept {}
 
-  void Session::SetIncomingWindow(uint32_t incomingWindow)
-  {
-    m_impl->SetIncomingWindow(incomingWindow);
-  }
-  uint32_t Session::GetIncomingWindow() const { return m_impl->GetIncomingWindow(); }
-  void Session::SetOutgoingWindow(uint32_t outgoingWindow)
-  {
-    m_impl->SetOutgoingWindow(outgoingWindow);
-  }
-  uint32_t Session::GetOutgoingWindow() const { return m_impl->GetOutgoingWindow(); }
-  void Session::SetHandleMax(uint32_t handleMax) { m_impl->SetHandleMax(handleMax); }
-  uint32_t Session::GetHandleMax() const { return m_impl->GetHandleMax(); }
+    void Session::SetIncomingWindow(uint32_t incomingWindow)
+    {
+      m_impl->SetIncomingWindow(incomingWindow);
+    }
+    uint32_t Session::GetIncomingWindow() const { return m_impl->GetIncomingWindow(); }
+    void Session::SetOutgoingWindow(uint32_t outgoingWindow)
+    {
+      m_impl->SetOutgoingWindow(outgoingWindow);
+    }
+    uint32_t Session::GetOutgoingWindow() const { return m_impl->GetOutgoingWindow(); }
+    void Session::SetHandleMax(uint32_t handleMax) { m_impl->SetHandleMax(handleMax); }
+    uint32_t Session::GetHandleMax() const { return m_impl->GetHandleMax(); }
 
-  void Session::Begin() { m_impl->Begin(); }
-  void Session::End(std::string const& condition_value, std::string const& description)
-  {
-    m_impl->End(condition_value, description);
-  }
-  // Endpoint Session::CreateLinkEndpoint(std::string const& name)
-  //{
-  //   return m_impl->CreateLinkEndpoint(name);
-  // };
-  // void Session::DestroyLinkEndpoint(Endpoint& endpoint)
-  //{
-  //   return m_impl->DestroyLinkEndpoint(endpoint);
-  // }
-  // void Session::SetLinkEndpointCallback(
-  //     Endpoint& endpoint,
-  //     OnEndpointFrameReceivedCallback callback)
-  //{
-  //   m_impl->SetLinkEndpointCallback(endpoint, callback);
-  // }
-  // void Session::StartLinkEndpoint(Endpoint& endpoint, OnEndpointFrameReceivedCallback callback)
-  //{
-  //   m_impl->StartLinkEndpoint(endpoint, callback);
-  // }
-  // void Session::SendFlow(Endpoint& endpoint, Flow& flow) { m_impl->SendFlow(endpoint, flow); }
-
-  // void Session::SendAttach(Endpoint& endpoint, Attach& attach)
-  //{
-  //   m_impl->SendAttach(endpoint, attach);
-  // }
-  // void Session::SendDisposition(Endpoint& endpoint, Disposition& disposition)
-  //{
-  //   m_impl->SendDisposition(endpoint, disposition);
-  // }
-  // void Session::SendDetach(Endpoint& endpoint, Detach& detach)
-  //{
-  //   m_impl->SendDetach(endpoint, detach);
-  // }
-  // SessionSendTransferResult Session::SendTransfer(
-  //     Endpoint& endpoint,
-  //     Transfer& transfer,
-  //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-  //     uint32_t* deliveryNumber,
-  //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete)
-  //{
-  //   return m_impl->SendTransfer(endpoint, transfer, payloads, deliveryNumber, sendComplete);
-  // }
+    void Session::Begin() { m_impl->Begin(); }
+    void Session::End(std::string const& condition_value, std::string const& description)
+    {
+      m_impl->End(condition_value, description);
+    }
+  } // namespace _internal
 
   namespace _detail {
 
@@ -107,16 +73,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     }
 
     SessionImpl::SessionImpl(
-        Connection const& connection,
-        Endpoint& endpoint,
-        SessionEvents* eventHandler)
+        _internal::Connection const& connection,
+        _internal::Endpoint& endpoint,
+        _internal::SessionEvents* eventHandler)
         : m_connectionToPoll(connection), m_eventHandler{eventHandler}
     {
       m_session = session_create_from_endpoint(
           *connection.GetImpl(), endpoint.Release(), SessionImpl::OnLinkAttachedFn, this);
     }
 
-    SessionImpl::SessionImpl(Connection const& connection, SessionEvents* eventHandler)
+    SessionImpl::SessionImpl(
+        _internal::Connection const& connection,
+        _internal::SessionEvents* eventHandler)
         : m_connectionToPoll(connection), m_eventHandler{eventHandler}
     {
       m_session = session_create(*connection.GetImpl(), SessionImpl::OnLinkAttachedFn, this);
@@ -204,15 +172,15 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         AMQP_VALUE_DATA_TAG* properties)
     {
       SessionImpl* session = static_cast<SessionImpl*>(context);
-      LinkEndpoint linkEndpoint(newLinkEndpoint);
+      _internal::LinkEndpoint linkEndpoint(newLinkEndpoint);
       if (session->m_eventHandler)
       {
         return session->m_eventHandler->OnLinkAttached(
             session->shared_from_this(),
             linkEndpoint,
             name,
-            role == role_receiver ? Azure::Core::_internal::Amqp::SessionRole::Receiver
-                                  : Azure::Core::_internal::Amqp::SessionRole::Sender,
+            role == role_receiver ? Azure::Core::Amqp::_internal::SessionRole::Receiver
+                                  : Azure::Core::Amqp::_internal::SessionRole::Sender,
             source,
             target,
             properties);
@@ -226,4 +194,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       static_cast<void>(role);
     }
   } // namespace _detail
-}}}} // namespace Azure::Core::_internal::Amqp
+}}} // namespace Azure::Core::Amqp

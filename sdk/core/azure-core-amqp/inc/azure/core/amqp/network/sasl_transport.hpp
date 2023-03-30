@@ -6,9 +6,9 @@
 #include "transport.hpp"
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  class SaslTransport final : public Azure::Core::_internal::Amqp::Network::Transport {
+  class SaslTransport final : public Transport {
 
   public:
     // Configure the transport using SASL plain.
@@ -26,4 +26,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     ~SaslTransport() = default;
   };
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

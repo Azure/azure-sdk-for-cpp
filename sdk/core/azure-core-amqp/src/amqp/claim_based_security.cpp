@@ -7,7 +7,8 @@
 #include "azure/core/amqp/private/session_impl.hpp"
 #include <iostream>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using namespace Azure::Core::Amqp::_internal;
 
   ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session, Connection const& connection)
       : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(session, connection)}
@@ -186,4 +187,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     return std::move(*result);
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

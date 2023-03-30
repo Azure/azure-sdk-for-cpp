@@ -5,13 +5,13 @@
 #include "azure/core/amqp/claims_based_security.hpp"
 #include <azure_uamqp_c/cbs.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl {
 
   public:
     ClaimsBasedSecurityImpl(
-        Azure::Core::_internal::Amqp::Session const& session,
-        Azure::Core::_internal::Amqp::Connection const& connectionToPoll);
+        Azure::Core::Amqp::_internal::Session const& session,
+        Azure::Core::Amqp::_internal::Connection const& connectionToPoll);
     virtual ~ClaimsBasedSecurityImpl() noexcept;
 
     // Disable copy and move because the underlying m_cbs takes a reference to this object.
@@ -44,6 +44,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         uint32_t statusCode,
         const char* statusDescription);
 
-    Connection const& m_connectionToPoll;
+    _internal::Connection const& m_connectionToPoll;
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

@@ -7,37 +7,37 @@
 #include <azure_uamqp_c/message_sender.h>
 #include <tuple>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class MessageSenderImpl : public std::enable_shared_from_this<MessageSenderImpl> {
   public:
     MessageSenderImpl(
-        Session const& session,
+        _internal::Session const& session,
         std::string const& target,
-        Connection const& connectionToPoll,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
+        _internal::Connection const& connectionToPoll,
+        _internal::MessageSenderOptions const& options,
+        _internal::MessageSenderEvents* events);
     MessageSenderImpl(
-        Session const& session,
-        LinkEndpoint& endpoint,
+        _internal::Session const& session,
+        _internal::LinkEndpoint& endpoint,
         std::string const& target,
-        Connection const& connectionToPoll,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
+        _internal::Connection const& connectionToPoll,
+        _internal::MessageSenderOptions const& options,
+        _internal::MessageSenderEvents* events);
     MessageSenderImpl(
-        Session const& session,
-        std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
+        _internal::Session const& session,
+        std::shared_ptr<_internal::ServiceBusSasConnectionStringCredential> credential,
         std::string const& target,
-        Connection const& connectionToPoll,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
+        _internal::Connection const& connectionToPoll,
+        _internal::MessageSenderOptions const& options,
+        _internal::MessageSenderEvents* events);
     MessageSenderImpl(
-        Session const& session,
+        _internal::Session const& session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         std::string const& target,
-        Connection const& connectionToPoll,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
+        _internal::Connection const& connectionToPoll,
+        _internal::MessageSenderOptions const& options,
+        _internal::MessageSenderEvents* events);
     virtual ~MessageSenderImpl() noexcept;
 
     MessageSenderImpl(MessageSenderImpl const&) = delete;
@@ -49,12 +49,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     void Open();
     void Close();
-    std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> Send(
+    std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::Value> Send(
         Azure::Core::Amqp::Models::Message const& message,
         Azure::Core::Context context);
     void SendAsync(
         Azure::Core::Amqp::Models::Message const& message,
-        Azure::Core::_internal::Amqp::MessageSender::MessageSendCompleteCallback onSendComplete,
+        Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Azure::Core::Context context);
     void SetTrace(bool traceEnabled);
 
@@ -64,24 +64,27 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         MESSAGE_SENDER_STATE newState,
         MESSAGE_SENDER_STATE oldState);
 
-    void Authenticate(CredentialType type, std::string const& audience, std::string const& token);
+    void Authenticate(
+        _internal::CredentialType type,
+        std::string const& audience,
+        std::string const& token);
     void CreateLink();
-    void CreateLink(LinkEndpoint& endpoint);
+    void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
 
     MESSAGE_SENDER_HANDLE m_messageSender{};
     std::unique_ptr<_detail::Link> m_link;
-    MessageSenderEvents* m_events;
+    _internal::MessageSenderEvents* m_events;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
         m_messageQueue;
 
-    Connection const& m_connection;
-    Session const& m_session;
-    std::shared_ptr<ConnectionStringCredential> m_connectionCredential;
+    _internal::Connection const& m_connection;
+    _internal::Session const& m_session;
+    std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
     std::string m_target;
-    MessageSenderOptions m_options;
+    _internal::MessageSenderOptions m_options;
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

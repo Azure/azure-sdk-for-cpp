@@ -10,24 +10,26 @@
 #include <string>
 #include <vector>
 struct LINK_INSTANCE_TAG;
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
-  class Session;
-  struct LinkEndpoint;
-  enum class SenderSettleMode;
-  enum class ReceiverSettleMode;
+namespace Azure { namespace Core { namespace Amqp {
+  namespace _internal {
+    class Session;
+    struct LinkEndpoint;
+    enum class SenderSettleMode;
+    enum class ReceiverSettleMode;
 
-  enum class LinkDurability
-  {
-    None,
-    Configuration,
-    UnsettledState
-  };
+    enum class LinkDurability
+    {
+      None,
+      Configuration,
+      UnsettledState
+    };
 
-  enum class SessionRole
-  {
-    Sender,
-    Receiver
-  };
+    enum class SessionRole
+    {
+      Sender,
+      Receiver
+    };
+  } // namespace _internal
 
   namespace _detail {
     class LinkImpl;
@@ -64,16 +66,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       using OnLinkDetachReceived = std::function<void(Error& error)>;
 
       Link(
-          Session const& session,
+          _internal::Session const& session,
           std::string const& name,
-          SessionRole role,
+          _internal::SessionRole role,
           std::string const& source,
           std::string const& target);
       Link(
-          Session const& session,
-          LinkEndpoint& linkEndpoint,
+          _internal::Session const& session,
+          _internal::LinkEndpoint& linkEndpoint,
           std::string const& name,
-          SessionRole role,
+          _internal::SessionRole role,
           std::string const& source,
           std::string const& target);
       Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
@@ -87,11 +89,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       operator LINK_INSTANCE_TAG*() const;
       std::shared_ptr<_detail::LinkImpl> GetImpl() const { return m_impl; }
 
-      void SetSenderSettleMode(SenderSettleMode senderSettleMode);
-      SenderSettleMode GetSenderSettleMode() const;
+      void SetSenderSettleMode(_internal::SenderSettleMode senderSettleMode);
+      _internal::SenderSettleMode GetSenderSettleMode() const;
 
-      void SetReceiverSettleMode(ReceiverSettleMode receiverSettleMode);
-      ReceiverSettleMode GetReceiverSettleMode() const;
+      void SetReceiverSettleMode(_internal::ReceiverSettleMode receiverSettleMode);
+      _internal::ReceiverSettleMode GetReceiverSettleMode() const;
 
       void SetInitialDeliveryCount(uint32_t initialDeliveryCount);
       uint32_t GetInitialDeliveryCount() const;
@@ -120,7 +122,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           Azure::Core::Amqp::Models::Value& info);
 
     private:
-      std::shared_ptr<_detail::LinkImpl> m_impl;
+      std::shared_ptr<Azure::Core::Amqp::_detail::LinkImpl> m_impl;
     };
   } // namespace _detail
-}}}} // namespace Azure::Core::_internal::Amqp
+}}} // namespace Azure::Core::Amqp

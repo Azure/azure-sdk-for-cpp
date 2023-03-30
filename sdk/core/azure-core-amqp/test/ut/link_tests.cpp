@@ -24,14 +24,14 @@ protected:
 };
 
 using namespace Azure::Core::Amqp;
-using namespace Azure::Core::_internal::Amqp;
-using namespace Azure::Core::_internal::Amqp::_detail;
+using namespace Azure::Core::Amqp::_internal;
+using namespace Azure::Core::Amqp::_detail;
 
 TEST_F(TestLinks, SimpleLink)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   // Create a session
   Session session(connection, nullptr);
 
@@ -68,7 +68,7 @@ TEST_F(TestLinks, SimpleLink)
 
 TEST_F(TestLinks, LinkProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   Session session(connection, nullptr);
 
   {
@@ -129,36 +129,36 @@ TEST_F(TestLinks, LinkProperties)
   }
 }
 
-class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents,
-                                 public Azure::Core::_internal::Amqp::ConnectionEvents,
-                                 public Azure::Core::_internal::Amqp::SessionEvents {
+class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
+                                 public Azure::Core::Amqp::_internal::ConnectionEvents,
+                                 public Azure::Core::Amqp::_internal::SessionEvents {
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-      std::shared_ptr<Azure::Core::_internal::Amqp::Connection>>
+      std::shared_ptr<Azure::Core::Amqp::_internal::Connection>>
       m_listeningQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-      std::unique_ptr<Azure::Core::_internal::Amqp::Session>>
+      std::unique_ptr<Azure::Core::Amqp::_internal::Session>>
       m_listeningSessionQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Link>>
       m_receiveLinkQueue;
-  std::shared_ptr<Azure::Core::_internal::Amqp::Connection> m_connection;
+  std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
 
   virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> amqpTransport{
-        std::make_shared<Azure::Core::_internal::Amqp::Network::AmqpHeaderTransport>(xio, nullptr)};
-    Azure::Core::_internal::Amqp::ConnectionOptions options;
+    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;
     options.Transport = amqpTransport;
     m_connection
-        = std::make_shared<Azure::Core::_internal::Amqp::Connection>(amqpTransport, this, options);
+        = std::make_shared<Azure::Core::Amqp::_internal::Connection>(amqpTransport, options, this);
     m_connection->Listen();
     m_listeningQueue.CompleteOperation(m_connection);
   }
 
   virtual void OnConnectionStateChanged(
-      Azure::Core::_internal::Amqp::Connection const&,
+      Azure::Core::Amqp::_internal::Connection const&,
       ConnectionState newState,
       ConnectionState oldState) override
   {
@@ -166,12 +166,12 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
     (void)newState;
   }
   virtual bool OnNewEndpoint(
-      Azure::Core::_internal::Amqp::Connection const& connection,
-      Azure::Core::_internal::Amqp::Endpoint& endpoint) override
+      Azure::Core::Amqp::_internal::Connection const& connection,
+      Azure::Core::Amqp::_internal::Endpoint& endpoint) override
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
     auto listeningSession
-        = std::make_unique<Azure::Core::_internal::Amqp::Session>(connection, endpoint, this);
+        = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, this);
     listeningSession->SetIncomingWindow(10000);
     listeningSession->Begin();
 
@@ -179,23 +179,23 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
 
     return true;
   }
-  virtual void OnIoError(Azure::Core::_internal::Amqp::Connection const&) override {}
+  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
   // Inherited via Session
   virtual bool OnLinkAttached(
-      Azure::Core::_internal::Amqp::Session const& session,
-      Azure::Core::_internal::Amqp::LinkEndpoint& newLinkInstance,
+      Azure::Core::Amqp::_internal::Session const& session,
+      Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
-      Azure::Core::_internal::Amqp::SessionRole,
+      Azure::Core::Amqp::_internal::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
-    auto newLink = std::make_unique<Azure::Core::_internal::Amqp::_detail::Link>(
+    auto newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
         session,
         newLinkInstance,
         name,
-        Azure::Core::_internal::Amqp::SessionRole::Receiver,
+        Azure::Core::Amqp::_internal::SessionRole::Receiver,
         static_cast<std::string>(source),
         static_cast<std::string>(target));
     //    newLink->SetReceiverSettleMode(Azure::Core::Amqp::ReceiverSettleMode::First);
@@ -214,7 +214,7 @@ class LinkSocketListenerEvents : public Azure::Core::_internal::Amqp::Network::S
 public:
   LinkSocketListenerEvents() {}
   std::shared_ptr<Connection> WaitForConnection(
-      Azure::Core::_internal::Amqp::Network::SocketListener const& listener,
+      Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
       Azure::Core::Context context)
   {
     auto result = m_listeningQueue.WaitForPolledResult(context, listener);
@@ -225,8 +225,7 @@ public:
     auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<Azure::Core::_internal::Amqp::_detail::Link> WaitForLink(
-      Azure::Core::Context context)
+  std::unique_ptr<Azure::Core::Amqp::_detail::Link> WaitForLink(Azure::Core::Context context)
   {
     auto result = m_receiveLinkQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
@@ -240,10 +239,10 @@ TEST_F(TestLinks, LinkAttachDetach)
   uint16_t testPort = FindAvailableSocket();
   GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
-  Connection connection("amqp://localhost:" + std::to_string(testPort), &events, {});
+  Connection connection("amqp://localhost:" + std::to_string(testPort), {}, &events);
   Session session(connection, nullptr);
 
-  Network::SocketListener listener(testPort, &events);
+  Network::_internal::SocketListener listener(testPort, &events);
 
   EXPECT_NO_THROW(listener.Start());
   {

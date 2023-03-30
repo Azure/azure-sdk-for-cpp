@@ -18,7 +18,7 @@
 #include <azure_c_shared_utility/strings.h>
 #include <azure_c_shared_utility/urlencode.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
+namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   // Split a source string into separate substrings via a delimiter.
   std::vector<std::string> SplitString(const std::string& s, char separator)
@@ -50,17 +50,19 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     Azure::Core::Url endpointUrl{GetEndpoint()};
   }
 
-  std::shared_ptr<Network::Transport> SaslPlainConnectionStringCredential::GetTransport() const
+  std::shared_ptr<Network::_internal::Transport> SaslPlainConnectionStringCredential::GetTransport()
+      const
   {
-    return std::make_shared<Network::SaslTransport>(
+    return std::make_shared<Network::_internal::SaslTransport>(
         GetSharedAccessKeyName(), GetSharedAccessKey(), GetHostName(), GetPort());
   }
 
-  std::shared_ptr<Network::Transport> ServiceBusSasConnectionStringCredential::GetTransport() const
+  std::shared_ptr<Network::_internal::Transport>
+  ServiceBusSasConnectionStringCredential::GetTransport() const
   {
     //    // Construct a SASL Anonymous transport
     //    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
-    return std::make_shared<Network::SocketTransport>(GetHostName(), GetPort());
+    return std::make_shared<Network::_internal::SocketTransport>(GetHostName(), GetPort());
   }
   //
   // A ServiceBus connection string has the following format:
@@ -177,4 +179,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     STRING_delete(encodedResourceUri);
     return rv;
   }
-}}}} // namespace Azure::Core::_internal::Amqp
+}}}} // namespace Azure::Core::Amqp::_internal

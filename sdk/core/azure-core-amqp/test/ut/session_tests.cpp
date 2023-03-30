@@ -34,13 +34,14 @@ protected:
   void TearDown() override {}
 };
 
-using namespace Azure::Core::_internal::Amqp;
+using namespace Azure::Core::Amqp::_internal;
+using namespace Azure::Core::Amqp;
 
 TEST_F(TestSessions, SimpleSession)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   {
     // Create a session
     Session session(connection, nullptr);
@@ -77,7 +78,7 @@ TEST_F(TestSessions, SimpleSession)
 
 TEST_F(TestSessions, SessionProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
 
   {
     Session session(connection, nullptr);
@@ -170,10 +171,10 @@ uint16_t FindAvailableSocket()
 
 TEST_F(TestSessions, SessionBeginEnd)
 {
-  class TestListenerEvents : public Network::SocketListenerEvents {
+  class TestListenerEvents : public Network::_internal::SocketListenerEvents {
   public:
-    std::shared_ptr<Network::Transport> WaitForResult(
-        Network::SocketListener const& listener,
+    std::shared_ptr<Network::_internal::Transport> WaitForResult(
+        Network::_internal::SocketListener const& listener,
         Azure::Core::Context context = {})
     {
       auto result = m_listenerQueue.WaitForPolledResult(context, listener);
@@ -181,24 +182,26 @@ TEST_F(TestSessions, SessionBeginEnd)
     }
 
   private:
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::shared_ptr<Network::Transport>>
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+        std::shared_ptr<Network::_internal::Transport>>
         m_listenerQueue;
 
     virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
     {
       // Capture the XIO into a transport so it won't leak.
-      m_listenerQueue.CompleteOperation(std::make_shared<Network::Transport>(xio, nullptr));
+      m_listenerQueue.CompleteOperation(
+          std::make_shared<Network::_internal::Transport>(xio, nullptr));
     }
   };
 
   // Ensure someone is listening on the connection for when we call Session.Begin.
   TestListenerEvents events;
   uint16_t testPort = FindAvailableSocket();
-  Network::SocketListener listener(testPort, &events);
+  Network::_internal::SocketListener listener(testPort, &events);
   listener.Start();
 
   // Create a connection
-  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, {});
+  Connection connection("amqp://localhost:" + std::to_string(testPort), {});
 
   {
     Session session(connection, nullptr);

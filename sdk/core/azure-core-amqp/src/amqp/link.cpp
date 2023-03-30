@@ -13,12 +13,12 @@
 #include <azure_uamqp_c/link.h>
 #include <azure_uamqp_c/session.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   Link::Link(
-      Session const& session,
+      _internal::Session const& session,
       std::string const& name,
-      Azure::Core::_internal::Amqp::SessionRole role,
+      Azure::Core::Amqp::_internal::SessionRole role,
       std::string const& source,
       std::string const& target)
       : m_impl{std::make_shared<LinkImpl>(session, name, role, source, target)}
@@ -26,10 +26,10 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   }
 
   Link::Link(
-      Session const& session,
-      LinkEndpoint& linkEndpoint,
+      _internal::Session const& session,
+      _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
-      SessionRole role,
+      _internal::SessionRole role,
       std::string const& source,
       std::string const& target)
       : m_impl{std::make_shared<LinkImpl>(session, linkEndpoint, name, role, source, target)}
@@ -41,10 +41,22 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   Link::operator LINK_HANDLE() const { return m_impl->operator LINK_HANDLE(); }
   std::string const& Link::GetSource() const { return m_impl->GetSource(); }
   std::string const& Link::GetTarget() const { return m_impl->GetTarget(); }
-  SenderSettleMode Link::GetSenderSettleMode() const { return m_impl->GetSenderSettleMode(); }
-  void Link::SetSenderSettleMode(SenderSettleMode mode) { m_impl->SetSenderSettleMode(mode); }
-  ReceiverSettleMode Link::GetReceiverSettleMode() const { return m_impl->GetReceiverSettleMode(); }
-  void Link::SetReceiverSettleMode(ReceiverSettleMode mode) { m_impl->SetReceiverSettleMode(mode); }
+  _internal::SenderSettleMode Link::GetSenderSettleMode() const
+  {
+    return m_impl->GetSenderSettleMode();
+  }
+  void Link::SetSenderSettleMode(_internal::SenderSettleMode mode)
+  {
+    m_impl->SetSenderSettleMode(mode);
+  }
+  _internal::ReceiverSettleMode Link::GetReceiverSettleMode() const
+  {
+    return m_impl->GetReceiverSettleMode();
+  }
+  void Link::SetReceiverSettleMode(_internal::ReceiverSettleMode mode)
+  {
+    m_impl->SetReceiverSettleMode(mode);
+  }
   void Link::SetInitialDeliveryCount(uint32_t initialDeliveryCount)
   {
     m_impl->SetInitialDeliveryCount(initialDeliveryCount);
@@ -80,9 +92,9 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   /* LINK Implementation */
 
   LinkImpl::LinkImpl(
-      Session const& session,
+      _internal::Session const& session,
       std::string const& name,
-      SessionRole role,
+      _internal::SessionRole role,
       std::string const& source,
       std::string const& target)
       : m_session{session}, m_source(source), m_target(target)
@@ -90,16 +102,16 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     m_link = link_create(
         *session.GetImpl(),
         name.c_str(),
-        role == SessionRole::Sender ? role_sender : role_receiver,
+        role == _internal::SessionRole::Sender ? role_sender : role_receiver,
         Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
         Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
   }
 
   LinkImpl::LinkImpl(
-      Session const& session,
-      LinkEndpoint& linkEndpoint,
+      _internal::Session const& session,
+      _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
-      SessionRole role,
+      _internal::SessionRole role,
       std::string const& source,
       std::string const& target)
       : m_session{session}, m_source(source), m_target(target)
@@ -108,7 +120,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         *session.GetImpl(),
         linkEndpoint.Release(),
         name.c_str(),
-        role == SessionRole::Sender ? role_sender : role_receiver,
+        role == _internal::SessionRole::Sender ? role_sender : role_receiver,
         Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
         Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
   }
@@ -151,7 +163,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
     return name;
   }
-  SenderSettleMode LinkImpl::GetSenderSettleMode() const
+  _internal::SenderSettleMode LinkImpl::GetSenderSettleMode() const
   {
     sender_settle_mode settleMode;
     if (link_get_snd_settle_mode(m_link, &settleMode))
@@ -161,27 +173,27 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     switch (settleMode)
     {
       case sender_settle_mode_mixed:
-        return Azure::Core::_internal::Amqp::SenderSettleMode::Mixed;
+        return Azure::Core::Amqp::_internal::SenderSettleMode::Mixed;
       case sender_settle_mode_settled:
-        return Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
+        return Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
       case sender_settle_mode_unsettled:
-        return Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled;
+        return Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
       default:
         throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
   }
-  void LinkImpl::SetSenderSettleMode(SenderSettleMode mode)
+  void LinkImpl::SetSenderSettleMode(_internal::SenderSettleMode mode)
   {
     sender_settle_mode settleMode;
     switch (mode)
     {
-      case Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled:
+      case Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled:
         settleMode = sender_settle_mode_unsettled;
         break;
-      case Azure::Core::_internal::Amqp::SenderSettleMode::Settled:
+      case Azure::Core::Amqp::_internal::SenderSettleMode::Settled:
         settleMode = sender_settle_mode_settled;
         break;
-      case Azure::Core::_internal::Amqp::SenderSettleMode::Mixed:
+      case Azure::Core::Amqp::_internal::SenderSettleMode::Mixed:
         settleMode = sender_settle_mode_mixed;
         break;
       default: // LCOV_EXCL_LINE
@@ -193,7 +205,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-  ReceiverSettleMode LinkImpl::GetReceiverSettleMode() const
+  _internal::ReceiverSettleMode LinkImpl::GetReceiverSettleMode() const
   {
     receiver_settle_mode settleMode;
     if (link_get_rcv_settle_mode(m_link, &settleMode))
@@ -203,22 +215,22 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     switch (settleMode)
     {
       case receiver_settle_mode_first:
-        return ReceiverSettleMode::First;
+        return _internal::ReceiverSettleMode::First;
       case receiver_settle_mode_second:
-        return ReceiverSettleMode::Second;
+        return _internal::ReceiverSettleMode::Second;
       default: // LCOV_EXCL_LINE
         throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
   }
-  void LinkImpl::SetReceiverSettleMode(ReceiverSettleMode mode)
+  void LinkImpl::SetReceiverSettleMode(_internal::ReceiverSettleMode mode)
   {
     receiver_settle_mode settleMode;
     switch (mode)
     {
-      case ReceiverSettleMode::First:
+      case _internal::ReceiverSettleMode::First:
         settleMode = receiver_settle_mode_first;
         break;
-      case ReceiverSettleMode::Second:
+      case _internal::ReceiverSettleMode::Second:
         settleMode = receiver_settle_mode_second;
         break;
       default: // LCOV_EXCL_LINE
@@ -306,4 +318,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     }
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

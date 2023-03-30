@@ -9,7 +9,7 @@
 #include <azure_c_shared_utility/xio.h>
 #include <cassert>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
   namespace {
     void EnsureGlobalStateInitialized()
     {
@@ -45,8 +45,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
   namespace _detail {
 
-    TransportImpl::TransportImpl(
-        Azure::Core::_internal::Amqp::Network::TransportEvents* eventHandler)
+    TransportImpl::TransportImpl(TransportEvents* eventHandler)
         : m_xioInstance(nullptr), m_eventHandler{eventHandler}
     {
       EnsureGlobalStateInitialized();
@@ -216,4 +215,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       }
     }
   } // namespace _detail
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

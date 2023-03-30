@@ -8,9 +8,9 @@
 
 struct XIO_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  class SocketTransport final : public Azure::Core::_internal::Amqp::Network::Transport {
+  class SocketTransport final : public Transport {
 
   public:
     SocketTransport(
@@ -20,4 +20,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     ~SocketTransport() = default;
   };
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

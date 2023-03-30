@@ -16,7 +16,7 @@ extern "C"
   struct XIO_INSTANCE_TAG;
 }
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
   namespace _detail {
     struct TransportImpl;
   }
@@ -85,4 +85,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     std::shared_ptr<_detail::TransportImpl> m_impl;
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

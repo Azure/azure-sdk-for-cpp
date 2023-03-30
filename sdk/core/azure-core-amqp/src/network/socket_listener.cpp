@@ -12,7 +12,7 @@
 #include <functional>
 #include <stdexcept>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   namespace {
     void EnsureGlobalStateInitialized()
@@ -79,4 +79,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   }
 
   void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

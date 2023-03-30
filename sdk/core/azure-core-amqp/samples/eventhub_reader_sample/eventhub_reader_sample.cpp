@@ -12,27 +12,26 @@
 
 int main()
 {
-  Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
+  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "whatever";
   connectOptions.EnableTrace = false;
   connectOptions.SaslCredentials
-      = std::make_shared<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>(
+      = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
           EH_CONNECTION_STRING);
   std::string hostUrl = "amqps://" + connectOptions.SaslCredentials->GetHostName() + "/"
       + connectOptions.SaslCredentials->GetEntityPath() + "/ConsumerGroups/$Default/Partitions/0";
 
-  Azure::Core::_internal::Amqp::Connection connection(hostUrl, nullptr, connectOptions);
-
-  Azure::Core::_internal::Amqp::Session session(connection, nullptr);
+  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
   session.SetIncomingWindow(100);
 
-  Azure::Core::_internal::Amqp::MessageReceiverOptions receiverOptions;
+  Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
   receiverOptions.TargetAddress = "ingress-rx";
-  receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+  receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::_internal::Amqp::MessageReceiver receiver(session, hostUrl, receiverOptions);
+  Azure::Core::Amqp::_internal::MessageReceiver receiver(session, hostUrl, receiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();

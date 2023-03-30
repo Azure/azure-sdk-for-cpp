@@ -10,21 +10,20 @@
 
 int main()
 {
-  Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
+  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.EnableTrace = false;
   connectOptions.ContainerId = "some";
-  Azure::Core::_internal::Amqp::Connection connection(
-      "amqp://localhost:5672", nullptr, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", connectOptions);
 
-  Azure::Core::_internal::Amqp::Session session(connection, nullptr);
+  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  Azure::Core::_internal::Amqp::MessageSenderOptions senderOptions;
+  Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
   senderOptions.SourceAddress = "ingress";
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-  Azure::Core::_internal::Amqp::MessageSender sender(
+  Azure::Core::Amqp::_internal::MessageSender sender(
       session, "localhost/ingress", connection, senderOptions, nullptr);
 
   // Open the connection to the remote.

@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp {
+namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   //
   // A ServiceBus connection string has the following format:
   // "Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;EntityPath=<entity>"
@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     ConnectionStringCredential(ConnectionStringCredential const&) = delete;
     ConnectionStringCredential& operator=(ConnectionStringCredential const&) = delete;
 
-    virtual std::shared_ptr<Network::Transport> GetTransport() const = 0;
+    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const = 0;
     CredentialType GetCredentialType() const { return m_credentialType; }
     std::string const& GetEndpoint() const { return m_endpoint; }
     std::string const& GetSharedAccessKeyName() const { return m_sharedAccessKeyName; }
@@ -81,15 +81,15 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     std::string GetAudience();
 
     // Return a SASL transport configured for SASL Anonymous.
-    virtual std::shared_ptr<Network::Transport> GetTransport() const override;
+    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const override;
   };
 
   class SaslPlainConnectionStringCredential final : public ConnectionStringCredential {
   public:
     SaslPlainConnectionStringCredential(const std::string& connectionString);
 
-    std::shared_ptr<Network::Transport> GetTransport() const override;
+    std::shared_ptr<Network::_internal::Transport> GetTransport() const override;
 
   private:
   };
-}}}} // namespace Azure::Core::_internal::Amqp
+}}}} // namespace Azure::Core::Amqp::_internal

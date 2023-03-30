@@ -11,19 +11,19 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure_uamqp_c/connection.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
   public:
     ConnectionImpl(
-        std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> transport,
-        ConnectionEvents* eventHandler,
-        ConnectionOptions const& options);
+        std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport,
+        _internal::ConnectionOptions const& options,
+        _internal::ConnectionEvents* eventHandler);
 
     ConnectionImpl(
         std::string const& requestUri,
-        ConnectionEvents* eventHandler,
-        ConnectionOptions const& options);
+        _internal::ConnectionOptions const& options,
+        _internal::ConnectionEvents* eventHandler);
 
     virtual ~ConnectionImpl();
 
@@ -31,7 +31,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     // Connection objects.
     ConnectionImpl(ConnectionImpl const&) = delete;
     ConnectionImpl& operator=(ConnectionImpl const&) = delete;
-    ConnectionImpl(Connection&&) noexcept = delete;
+    ConnectionImpl(ConnectionImpl&&) noexcept = delete;
     ConnectionImpl& operator=(ConnectionImpl&&) = delete;
 
     /**
@@ -69,37 +69,31 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     void SetProperties(Azure::Core::Amqp::Models::Value properties);
     Azure::Core::Amqp::Models::Value GetProperties() const;
     uint64_t HandleDeadlines(); // ???
-    Endpoint CreateEndpoint();
-    void StartEndpoint(Endpoint const& endpoint);
+    _internal::Endpoint CreateEndpoint();
+    void StartEndpoint(_internal::Endpoint const& endpoint);
 
-    uint16_t GetEndpointIncomingChannel(Endpoint endpoint);
-    void DestroyEndpoint(Endpoint endpoint);
-    // void EncodeFrame(
-    //     Endpoint endpoint,
-    //     Azure::Core::Amqp::Models::Value performative,
-    //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-    //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn
-    //     onSendComplete);
+    uint16_t GetEndpointIncomingChannel(_internal::Endpoint endpoint);
+    void DestroyEndpoint(_internal::Endpoint endpoint);
 
     void SetTrace(bool enableTrace);
 
   private:
-    std::shared_ptr<Network::Transport> m_transport;
+    std::shared_ptr<Network::_internal::Transport> m_transport;
     CONNECTION_HANDLE m_connection{};
     std::string m_hostName;
     std::string m_containerId;
-    ConnectionOptions m_options;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<Session>>
+    _internal::ConnectionOptions m_options;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
         m_newSessionQueue;
-    ConnectionEvents* m_eventHandler{};
-    CredentialType m_credentialType;
-    std::shared_ptr<ConnectionStringCredential> m_credential{};
+    _internal::ConnectionEvents* m_eventHandler{};
+    _internal::CredentialType m_credentialType;
+    std::shared_ptr<_internal::ConnectionStringCredential> m_credential{};
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential{};
 
     ConnectionImpl(
-        ConnectionEvents* eventHandler,
-        CredentialType credentialType,
-        ConnectionOptions const& options);
+        _internal::ConnectionEvents* eventHandler,
+        _internal::CredentialType credentialType,
+        _internal::ConnectionOptions const& options);
 
     static void OnEndpointFrameReceivedFn(
         void* context,
@@ -114,4 +108,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     static bool OnNewEndpointFn(void* context, ENDPOINT_HANDLE endpoint);
     static void OnIoErrorFn(void* context);
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

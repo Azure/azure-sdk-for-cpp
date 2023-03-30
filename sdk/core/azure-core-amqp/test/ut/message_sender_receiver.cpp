@@ -27,14 +27,14 @@ protected:
   void TearDown() override {}
 };
 
-using namespace Azure::Core::_internal::Amqp;
+using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
 
 TEST_F(TestMessages, SimpleReceiver)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   // Create a session
   Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
@@ -49,7 +49,7 @@ TEST_F(TestMessages, SimpleReceiver)
 }
 TEST_F(TestMessages, ReceiverProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   Session session(connection, nullptr);
 
   {
@@ -71,7 +71,7 @@ TEST_F(TestMessages, SimpleSender)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   // Create a session
   Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -86,7 +86,7 @@ TEST_F(TestMessages, SimpleSender)
 }
 TEST_F(TestMessages, SenderProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", nullptr, {});
+  Connection connection("amqp://localhost:5672", {});
   Session session(connection, nullptr);
 
   {
@@ -98,15 +98,15 @@ TEST_F(TestMessages, SenderProperties)
 namespace MessageTests {
 #if 1
 
-class MessageListenerEvents : public Azure::Core::_internal::Amqp::Network::SocketListenerEvents,
-                              public Azure::Core::_internal::Amqp::ConnectionEvents,
-                              public Azure::Core::_internal::Amqp::SessionEvents,
-                              public Azure::Core::_internal::Amqp::MessageReceiverEvents {
+class MessageListenerEvents : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
+                              public Azure::Core::Amqp::_internal::ConnectionEvents,
+                              public Azure::Core::Amqp::_internal::SessionEvents,
+                              public Azure::Core::Amqp::_internal::MessageReceiverEvents {
 public:
   MessageListenerEvents() = default;
 
-  std::shared_ptr<Azure::Core::_internal::Amqp::Connection> WaitForConnection(
-      Azure::Core::_internal::Amqp::Network::SocketListener const& listener,
+  std::shared_ptr<Azure::Core::Amqp::_internal::Connection> WaitForConnection(
+      Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
       Azure::Core::Context context)
   {
     auto result = m_listeningQueue.WaitForPolledResult(context, listener);
@@ -116,7 +116,7 @@ public:
     }
     return nullptr;
   }
-  std::unique_ptr<Azure::Core::_internal::Amqp::Session> WaitForSession(
+  std::unique_ptr<Azure::Core::Amqp::_internal::Session> WaitForSession(
       Azure::Core::Context context)
   {
     auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connectionToPoll);
@@ -147,10 +147,10 @@ public:
 
 private:
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-      std::shared_ptr<Azure::Core::_internal::Amqp::Connection>>
+      std::shared_ptr<Azure::Core::Amqp::_internal::Connection>>
       m_listeningQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-      std::unique_ptr<Azure::Core::_internal::Amqp::Session>>
+      std::unique_ptr<Azure::Core::Amqp::_internal::Session>>
       m_listeningSessionQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>>
       m_messageReceiverQueue;
@@ -164,21 +164,21 @@ private:
   virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> amqpTransport{
-        std::make_shared<Azure::Core::_internal::Amqp::Network::AmqpHeaderTransport>(xio, nullptr)};
-    Azure::Core::_internal::Amqp::ConnectionOptions options;
+    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";
     options.EnableTrace = true;
     m_connectionToPoll
-        = std::make_shared<Azure::Core::_internal::Amqp::Connection>(amqpTransport, this, options);
+        = std::make_shared<Azure::Core::Amqp::_internal::Connection>(amqpTransport, options, this);
     m_connectionToPoll->Listen();
     m_listeningQueue.CompleteOperation(m_connectionToPoll);
   }
 
   // Inherited via ConnectionEvents
   virtual void OnConnectionStateChanged(
-      Azure::Core::_internal::Amqp::Connection const&,
+      Azure::Core::Amqp::_internal::Connection const&,
       ConnectionState newState,
       ConnectionState oldState) override
   {
@@ -186,12 +186,12 @@ private:
     (void)newState;
   }
   virtual bool OnNewEndpoint(
-      Azure::Core::_internal::Amqp::Connection const& connection,
+      Azure::Core::Amqp::_internal::Connection const& connection,
       Endpoint& endpoint) override
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
     auto listeningSession
-        = std::make_unique<Azure::Core::_internal::Amqp::Session>(connection, endpoint, this);
+        = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, this);
     listeningSession->SetIncomingWindow(10000);
     listeningSession->Begin();
 
@@ -199,7 +199,7 @@ private:
 
     return true;
   }
-  virtual void OnIoError(Azure::Core::_internal::Amqp::Connection const&) override {}
+  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
   virtual void OnEndpointFrameReceived(
       Connection const&,
       Azure::Core::Amqp::Models::Value const&,
@@ -210,10 +210,10 @@ private:
 
   // Inherited via SessionEvents
   virtual bool OnLinkAttached(
-      Azure::Core::_internal::Amqp::Session const& session,
-      Azure::Core::_internal::Amqp::LinkEndpoint& newLinkInstance,
+      Azure::Core::Amqp::_internal::Session const& session,
+      Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
-      Azure::Core::_internal::Amqp::SessionRole,
+      Azure::Core::Amqp::_internal::SessionRole,
       Azure::Core::Amqp::Models::Value source,
       Azure::Core::Amqp::Models::Value target,
       Azure::Core::Amqp::Models::Value properties) override
@@ -224,7 +224,7 @@ private:
     Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
     receiverOptions.TargetAddress = static_cast<std::string>(messageTarget.GetAddress());
     receiverOptions.Name = name;
-    receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+    receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     receiverOptions.DynamicAddress = messageSource.GetDynamic();
     auto receiver = std::make_unique<MessageReceiver>(
         session,
@@ -270,11 +270,11 @@ TEST_F(TestMessages, ReceiverOpenClose)
   MessageTests::MessageListenerEvents events;
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-  Connection connection("amqp://localhost:" + std::to_string(testPort), &events, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions, &events);
   connection.SetTrace(true);
   Session session(connection, nullptr);
 
-  Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
+  Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
 
   Azure::Core::Context context;
 
@@ -334,11 +334,11 @@ TEST_F(TestMessages, SenderOpenClose)
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
 
-  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions);
   Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
 
-  Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, nullptr);
+  Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, nullptr);
   EXPECT_NO_THROW(listener.Start());
   {
     MessageSenderOptions options;
@@ -362,7 +362,7 @@ TEST_F(TestMessages, SenderSendAsync)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   //  connectionOptions.EnableTrace = true;
-  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions);
   Session session(connection, nullptr);
 
   Azure::Core::Context receiveContext;
@@ -377,7 +377,7 @@ TEST_F(TestMessages, SenderSendAsync)
     {
 
       MessageTests::MessageListenerEvents events;
-      Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
+      Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
       EXPECT_NO_THROW(listener.Start());
 
       running = true;
@@ -458,7 +458,7 @@ TEST_F(TestMessages, SenderSendSync)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection("amqp://localhost:" + std::to_string(testPort), nullptr, connectionOptions);
+  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions);
   Session session(connection, nullptr);
 
   Azure::Core::Context receiveContext;
@@ -473,7 +473,7 @@ TEST_F(TestMessages, SenderSendSync)
     {
 
       MessageTests::MessageListenerEvents events;
-      Azure::Core::_internal::Amqp::Network::SocketListener listener(testPort, &events);
+      Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
       EXPECT_NO_THROW(listener.Start());
 
       running = true;
@@ -540,7 +540,7 @@ TEST_F(TestMessages, AuthenticatedSender)
   connectionOptions.ContainerId = "some";
   connectionOptions.HostName = sasCredential->GetHostName();
   connectionOptions.Port = sasCredential->GetPort();
-  Connection connection(sasCredential->GetTransport(), nullptr, connectionOptions);
+  Connection connection(sasCredential->GetTransport(), connectionOptions);
   Session session(connection, nullptr);
 
   server.StartListening();
@@ -548,7 +548,7 @@ TEST_F(TestMessages, AuthenticatedSender)
   MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
   senderOptions.SourceAddress = "ingress";
-  senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
+  senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
   MessageSender sender(
@@ -603,14 +603,14 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   connectionOptions.ContainerId = "some";
   connectionOptions.HostName = hostName;
   connectionOptions.Port = port;
-  Connection connection(endpoint, nullptr, connectionOptions);
+  Connection connection(endpoint, connectionOptions);
   Session session(connection, nullptr);
 
   server.StartListening();
   MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
   senderOptions.SourceAddress = "ingress";
-  senderOptions.SettleMode = Azure::Core::_internal::Amqp::SenderSettleMode::Settled;
+  senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
   MessageSender sender(session, tokenCredential, endpoint, connection, senderOptions, nullptr);
@@ -662,7 +662,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   connectionOptions.ContainerId = "some";
   connectionOptions.HostName = sasCredential->GetHostName();
   connectionOptions.Port = sasCredential->GetPort();
-  Connection connection(sasCredential->GetTransport(), nullptr, connectionOptions);
+  Connection connection(sasCredential->GetTransport(), connectionOptions);
   Session session(connection, nullptr);
 
   server.StartListening();
@@ -670,7 +670,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
   receiverOptions.TargetAddress = "egress";
-  receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+  receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
   MessageReceiver receiver(
@@ -757,7 +757,7 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   connectionOptions.ContainerId = "some";
   connectionOptions.HostName = hostName;
   connectionOptions.Port = port;
-  Connection connection(endpoint, nullptr, connectionOptions);
+  Connection connection(endpoint, connectionOptions);
   Session session(connection, nullptr);
 
   server.StartListening();
@@ -765,7 +765,7 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
   receiverOptions.TargetAddress = "egress";
-  receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
+  receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
   MessageReceiver receiver(

@@ -11,7 +11,7 @@
 struct SOCKET_LISTENER_INSTANCE_TAG;
 struct IO_INTERFACE_DESCRIPTION_TAG;
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   struct SocketListenerEvents
   {
@@ -41,4 +41,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     SOCKET_LISTENER_INSTANCE_TAG* m_socket;
   };
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

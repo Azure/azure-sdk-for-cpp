@@ -8,7 +8,7 @@
 #include <exception>
 #include <stdexcept>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   SocketTransport::SocketTransport(
       std::string const& host,
@@ -21,4 +21,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

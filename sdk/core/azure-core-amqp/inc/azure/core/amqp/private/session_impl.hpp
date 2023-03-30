@@ -11,7 +11,7 @@
 
 #include <azure_uamqp_c/session.h>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
   public:
@@ -19,10 +19,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         void(AMQP_VALUE_DATA_TAG* performative, uint32_t framePayloadSize, uint8_t* payload)>;
 
     SessionImpl(
-        Connection const& parentConnection,
-        Endpoint& newEndpoint,
-        SessionEvents* eventHandler);
-    SessionImpl(Connection const& parentConnection, SessionEvents* eventHandler);
+        _internal::Connection const& parentConnection,
+        _internal::Endpoint& newEndpoint,
+        _internal::SessionEvents* eventHandler);
+    SessionImpl(
+        _internal::Connection const& parentConnection,
+        _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
 
     SessionImpl(SessionImpl const&) = delete;
@@ -40,27 +42,28 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
 
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
-    Endpoint CreateLinkEndpoint(std::string const& name);
-    void DestroyLinkEndpoint(Endpoint& endpoint);
-    void SetLinkEndpointCallback(Endpoint& endpoint, OnEndpointFrameReceivedCallback callback);
-    void StartLinkEndpoint(Endpoint& endpoint, OnEndpointFrameReceivedCallback callback);
-    void SendFlow(Endpoint& endpoint, Flow& flow);
-    void SendAttach(Endpoint& endpoint, Attach& attach);
-    void SendDisposition(Endpoint& endpoint, Disposition& disposition);
-    void SendDetach(Endpoint& endpoint, Detach& detach);
+    _internal::Endpoint CreateLinkEndpoint(std::string const& name);
+    void DestroyLinkEndpoint(_internal::Endpoint& endpoint);
+    void SetLinkEndpointCallback(
+        _internal::Endpoint& endpoint,
+        OnEndpointFrameReceivedCallback callback);
+    void StartLinkEndpoint(_internal::Endpoint& endpoint, OnEndpointFrameReceivedCallback callback);
+    void SendFlow(_internal::Endpoint& endpoint, _internal::Flow& flow);
+    void SendAttach(_internal::Endpoint& endpoint, _internal::Attach& attach);
+    void SendDisposition(_internal::Endpoint& endpoint, _internal::Disposition& disposition);
+    void SendDetach(_internal::Endpoint& endpoint, _internal::Detach& detach);
     // SessionSendTransferResult SendTransfer(
     //     Endpoint& endpoint,
     //     Transfer& transfer,
     //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
     //     uint32_t* deliveryNumber,
-    //     Azure::Core::_internal::Amqp::Network::Transport::TransportSendCompleteFn sendComplete);
+    //     Azure::Core::Amqp::_internal::Network::Transport::TransportSendCompleteFn sendComplete);
 
   private:
     SessionImpl();
     SESSION_INSTANCE_TAG* m_session;
-    Connection const& m_connectionToPoll;
-    SessionEvents* m_eventHandler{};
-    std::shared_ptr<Cbs> m_claimsBasedSecurity;
+    _internal::Connection const& m_connectionToPoll;
+    _internal::SessionEvents* m_eventHandler{};
 
     //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;
 
@@ -73,4 +76,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         AMQP_VALUE target,
         AMQP_VALUE properties);
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

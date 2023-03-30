@@ -12,12 +12,12 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   AmqpHeaderTransport::AmqpHeaderTransport(
       XIO_HANDLE parentTransport,
       TransportEvents* eventHandler)
-      : Azure::Core::_internal::Amqp::Network::Transport(eventHandler)
+      : Transport(eventHandler)
   {
     HEADER_DETECT_IO_CONFIG detectIoConfig{};
     HEADER_DETECT_ENTRY headerDetectEntries[] = {
@@ -32,4 +32,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     SetInstance(xio);
   }
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

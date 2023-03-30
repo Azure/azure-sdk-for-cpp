@@ -6,7 +6,7 @@
 #include "azure/core/amqp/session.hpp"
 #include <azure/core/context.hpp>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl;
 
   enum class CbsOperationResult
@@ -55,8 +55,8 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
      * the lifetime of the session and connectionToPoll object.
      */
     ClaimsBasedSecurity(
-        Azure::Core::_internal::Amqp::Session const& session,
-        Azure::Core::_internal::Amqp::Connection const& connectionToPoll);
+        Azure::Core::Amqp::_internal::Session const& session,
+        Azure::Core::Amqp::_internal::Connection const& connectionToPoll);
     ~ClaimsBasedSecurity() noexcept;
 
     ClaimsBasedSecurity(ClaimsBasedSecurity const&) = default;
@@ -76,4 +76,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   private:
     std::shared_ptr<ClaimsBasedSecurityImpl> m_impl;
   };
-}}}}} // namespace Azure::Core::_internal::Amqp::_detail
+}}}} // namespace Azure::Core::Amqp::_detail

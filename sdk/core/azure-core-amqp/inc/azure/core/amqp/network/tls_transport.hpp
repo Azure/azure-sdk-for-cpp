@@ -6,7 +6,7 @@
 #include "transport.hpp"
 #include <string>
 
-namespace Azure { namespace Core { namespace _internal { namespace Amqp { namespace Network {
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   class TlsTransport final : public Transport {
 
@@ -19,4 +19,4 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     ~TlsTransport() = default;
   };
 
-}}}}} // namespace Azure::Core::_internal::Amqp::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal
