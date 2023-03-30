@@ -29,7 +29,6 @@ using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 
 namespace {
-constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
 constexpr static const char CreateValue[] = "create";
 } // namespace
 
