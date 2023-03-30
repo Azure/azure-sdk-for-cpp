@@ -550,7 +550,6 @@ TEST_F(TestMessages, AuthenticatedSender)
 TEST_F(TestMessages, AuthenticatedSenderAzureToken)
 {
   class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
-    AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     Azure::Core::Credentials::AccessToken GetToken(
         const Azure::Core::Credentials::TokenRequestContext& requestContext,
         const Azure::Core::Context& context) const override
@@ -562,6 +561,9 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
       (void)context;
       return rv;
     }
+
+  public:
+    AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
   };
 
   MessageTests::AmqpServerMock server;
@@ -702,7 +704,6 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   };
 
   class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
-    AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     Azure::Core::Credentials::AccessToken GetToken(
         const Azure::Core::Credentials::TokenRequestContext& requestContext,
         const Azure::Core::Context& context) const override
@@ -714,6 +715,9 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
       (void)context;
       return rv;
     }
+
+  public:
+    AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
   };
 
   ReceiverMock server;
