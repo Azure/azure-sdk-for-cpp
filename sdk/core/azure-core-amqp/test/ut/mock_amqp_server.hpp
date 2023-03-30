@@ -283,7 +283,14 @@ protected:
         return;
       }
       response.SetBodyAmqpValue(Azure::Core::Amqp::Models::Value());
-      m_cbsMessageSender->Send(response, m_listenerContext);
+      try
+      {
+        m_cbsMessageSender->Send(response, m_listenerContext);
+      }
+      catch (std::exception& ex)
+      {
+        GTEST_LOG_(INFO) << "Exception thrown sending CBS response: " << ex.what();
+      }
     }
     else if (static_cast<std::string>(operation) == "delete-token")
     {

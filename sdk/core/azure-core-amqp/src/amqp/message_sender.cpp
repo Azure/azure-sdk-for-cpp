@@ -211,18 +211,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         case MESSAGE_SENDER_STATE_CLOSING:
           return MessageSenderState::Closing;
-        case MESSAGE_SENDER_STATE_ERROR:
-          return MessageSenderState::Error;
+        case MESSAGE_SENDER_STATE_ERROR: // LCOV_EXCL_LINE
+          return MessageSenderState::Error; // LCOV_EXCL_LINE
         case MESSAGE_SENDER_STATE_IDLE:
           return MessageSenderState::Idle;
-        case MESSAGE_SENDER_STATE_INVALID:
-          return MessageSenderState::Invalid;
+        case MESSAGE_SENDER_STATE_INVALID: // LCOV_EXCL_LINE
+          return MessageSenderState::Invalid; // LCOV_EXCL_LINE
         case MESSAGE_SENDER_STATE_OPEN:
           return MessageSenderState::Open;
         case MESSAGE_SENDER_STATE_OPENING:
           return MessageSenderState::Opening;
-        default:
-          throw std::logic_error("Unknown message receiver state.");
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown message receiver state."); // LCOV_EXCL_LINE
       }
     }
 
@@ -256,7 +256,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
       else
       {
-        throw std::runtime_error("Could not put Claims Based Security token.");
+        throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
       }
     }
 
@@ -299,10 +299,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
       if (messagesender_open(m_messageSender))
       {
-        auto err = errno;
-        throw std::runtime_error(
-            "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
-            + "\".");
+        auto err = errno; // LCOV_EXCL_LINE
+        throw std::runtime_error( // LCOV_EXCL_LINE
+            "Could not open message sender. errno=" + std::to_string(err) + ", \"" // LCOV_EXCL_LINE
+            + strerror(err) // LCOV_EXCL_LINE
+            + "\"."); // LCOV_EXCL_LINE
       }
     }
     void MessageSenderImpl::Close()
@@ -323,21 +324,21 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         MessageSendResult result{MessageSendResult::Ok};
         switch (sendResult)
         {
-          case MESSAGE_SEND_RESULT_INVALID:
-            result = MessageSendResult::Invalid;
-            break;
+          case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
+            result = MessageSendResult::Invalid; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
           case MESSAGE_SEND_OK:
             result = MessageSendResult::Ok;
             break;
-          case MESSAGE_SEND_CANCELLED:
-            result = MessageSendResult::Cancelled;
-            break;
-          case MESSAGE_SEND_ERROR:
-            result = MessageSendResult::Error;
-            break;
-          case MESSAGE_SEND_TIMEOUT:
-            result = MessageSendResult::Timeout;
-            break;
+          case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
+            result = MessageSendResult::Cancelled; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
+            result = MessageSendResult::Error; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
+            result = MessageSendResult::Timeout; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
         }
         onComplete(result, disposition);
       }
@@ -359,7 +360,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
           0 /*timeout*/);
       if (result == nullptr)
       {
-        throw std::runtime_error("Could not send message");
+        throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
       }
       (void)context;
     }
@@ -385,7 +386,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         return std::move(*result);
       }
-      throw std::runtime_error("Error sending message");
+      throw std::runtime_error("Error sending message"); // LCOV_EXCL_LINE
     }
   } // namespace _detail
 }}}} // namespace Azure::Core::_internal::Amqp

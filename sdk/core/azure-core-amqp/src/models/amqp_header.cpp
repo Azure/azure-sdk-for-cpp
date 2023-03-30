@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (!m_header)
     {
-      throw std::runtime_error("Could not create header.");
+      throw std::runtime_error("Could not create header.");  // LCOV_EXCL_LINE
     }
   }
 
@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     bool isDurable;
     if (header_get_durable(m_header, &isDurable))
     {
-      throw std::runtime_error("Could not get durable state from header.");
+      throw std::runtime_error("Could not get durable state from header."); // LCOV_EXCL_LINE
     }
     return isDurable;
   }
@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     uint8_t priority;
     if (header_get_priority(m_header, &priority))
     {
-      throw std::runtime_error("Could not get priority from header.");
+      throw std::runtime_error("Could not get priority from header."); // LCOV_EXCL_LINE
     }
     return priority;
   }
@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (header_set_ttl(m_header, static_cast<milliseconds>(timeToLive.count())))
     {
-      throw std::runtime_error("Could not set header TTL.");
+      throw std::runtime_error("Could not set header TTL."); // LCOV_EXCL_LINE
     }
   }
 
@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     bool firstAcquirer;
     if (header_get_first_acquirer(m_header, &firstAcquirer))
     {
-      throw std::runtime_error("Could not get first acquirer value.");
+      throw std::runtime_error("Could not get first acquirer value."); // LCOV_EXCL_LINE
     }
     return firstAcquirer;
   }
@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     uint32_t count;
     if (header_get_delivery_count(m_header, &count))
     {
-      throw std::runtime_error("Could not get delivery count.");
+      throw std::runtime_error("Could not get delivery count."); // LCOV_EXCL_LINE
     }
     return count;
   }
@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (header_set_delivery_count(m_header, value))
     {
-      throw std::runtime_error("Could not set delivery count.");
+      throw std::runtime_error("Could not set delivery count."); // LCOV_EXCL_LINE
     }
   }
 

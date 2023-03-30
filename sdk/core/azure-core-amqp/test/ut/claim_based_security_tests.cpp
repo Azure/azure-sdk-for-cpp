@@ -128,9 +128,10 @@ TEST_F(TestCbs, CbsOpenAndPutError)
       GTEST_LOG_(INFO) << "Open Completed.";
 
       mockServer.ForceCbsError(true);
-      EXPECT_ANY_THROW(
-          auto putResult = cbs.PutToken(
-              Azure::Core::_internal::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken"););
+      EXPECT_ANY_THROW(auto putResult = cbs.PutToken(
+                           Azure::Core::_internal::Amqp::_detail::CbsTokenType::Sas,
+                           "of one",
+                           "stringizedToken"););
 
       cbs.Close();
     }

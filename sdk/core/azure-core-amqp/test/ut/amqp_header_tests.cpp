@@ -35,6 +35,8 @@ TEST_F(TestHeaders, TestTtl)
   //  EXPECT_EQ(0, header.GetTimeToLive().count());
   header.SetTimeToLive(std::chrono::milliseconds(100));
   EXPECT_EQ(100, header.GetTimeToLive().count());
+
+  GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestDeliveryCount)

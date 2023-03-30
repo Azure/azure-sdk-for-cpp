@@ -23,6 +23,12 @@ TEST_F(TestMessage, SimpleCreate)
     Message message1;
     Message message2(std::move(message1));
     Message message3(message2);
+    Message message4;
+    message4 = message2;
+    GTEST_LOG_(INFO) << message4;
+    Message message5 = std::move(message4);
+    GTEST_LOG_(INFO) << message5;
+    EXPECT_FALSE(message4);
   }
 
   {

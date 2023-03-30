@@ -97,6 +97,10 @@ TEST_F(TestLinks, LinkProperties)
 
     link.SetSenderSettleMode(SenderSettleMode::Settled);
     EXPECT_EQ(SenderSettleMode::Settled, link.GetSenderSettleMode());
+    link.SetSenderSettleMode(SenderSettleMode::Unsettled);
+    EXPECT_EQ(SenderSettleMode::Unsettled, link.GetSenderSettleMode());
+    link.SetSenderSettleMode(SenderSettleMode::Mixed);
+    EXPECT_EQ(SenderSettleMode::Mixed, link.GetSenderSettleMode());
 
     link.SetMaxLinkCredit(95);
 
@@ -117,6 +121,10 @@ TEST_F(TestLinks, LinkProperties)
     link.SetInitialDeliveryCount(32767);
     EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
     EXPECT_EQ(link.GetInitialDeliveryCount(), link3.GetInitialDeliveryCount());
+
+    EXPECT_EQ("MySource", link.GetSource());
+    EXPECT_EQ("MyTarget", link.GetTarget());
+
   }
 }
 

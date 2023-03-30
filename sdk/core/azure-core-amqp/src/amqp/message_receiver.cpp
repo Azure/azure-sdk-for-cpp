@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
   {
     return m_impl->WaitForIncomingMessage(context, connection);
   }
-
+  std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
   namespace _detail {
 
     /** Configure the MessageReceiver for receiving messages from a service instance.
@@ -229,18 +229,18 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       {
         case MESSAGE_RECEIVER_STATE_CLOSING:
           return MessageReceiverState::Closing;
-        case MESSAGE_RECEIVER_STATE_ERROR:
-          return MessageReceiverState::Error;
+        case MESSAGE_RECEIVER_STATE_ERROR: // LCOV_EXCL_LINE
+          return MessageReceiverState::Error; // LCOV_EXCL_LINE
         case MESSAGE_RECEIVER_STATE_IDLE:
           return MessageReceiverState::Idle;
-        case MESSAGE_RECEIVER_STATE_INVALID:
-          return MessageReceiverState::Invalid;
+        case MESSAGE_RECEIVER_STATE_INVALID: // LCOV_EXCL_LINE
+          return MessageReceiverState::Invalid; // LCOV_EXCL_LINE
         case MESSAGE_RECEIVER_STATE_OPEN:
           return MessageReceiverState::Open;
         case MESSAGE_RECEIVER_STATE_OPENING:
           return MessageReceiverState::Opening;
-        default:
-          throw std::logic_error("Unknown message receiver state.");
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown message receiver state."); // LCOV_EXCL_LINE
       }
     }
 
@@ -290,7 +290,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       }
       else
       {
-        throw std::runtime_error("Could not open Claims Based Security.");
+        throw std::runtime_error("Could not open Claims Based Security."); // LCOV_EXCL_LINE
       }
     }
 
@@ -334,10 +334,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
       if (messagereceiver_open(m_messageReceiver, MessageReceiverImpl::OnMessageReceivedFn, this))
       {
-        auto err = errno;
-        throw std::runtime_error(
-            "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + strerror(err)
-            + "\".");
+        auto err = errno; // LCOV_EXCL_LINE
+        throw std::runtime_error( // LCOV_EXCL_LINE
+            "Could not open message receiver. errno=" + std::to_string(err) // LCOV_EXCL_LINE
+            + ", \"" // LCOV_EXCL_LINE
+            + strerror(err) // LCOV_EXCL_LINE
+            + "\"."); // LCOV_EXCL_LINE
       }
     }
 
@@ -345,11 +347,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (messagereceiver_close(m_messageReceiver))
       {
-        throw std::runtime_error("Could not close message receiver");
+        throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
       }
     }
 
-    std::string MessageReceiverImpl::GetLinkName()
+    std::string MessageReceiverImpl::GetLinkName() const
     {
       const char* linkName;
       if (messagereceiver_get_link_name(m_messageReceiver, &linkName))

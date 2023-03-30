@@ -17,6 +17,7 @@ TEST_F(TestProperties, SimpleCreate)
 {
   {
     Properties properties;
+    GTEST_LOG_(INFO) << properties;
   }
 
   {
@@ -51,6 +52,7 @@ TEST_F(TestProperties, SetAbsoluteExpiryTime)
   // Set the test timestamp and verify that the returned value is accurate to milliseconds.
   properties.SetAbsoluteExpiryTime(testTimestamp);
   EXPECT_EQ(properties.GetAbsoluteExpiryTime(), testTimestampToCheck);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetContentEncoding)
@@ -59,6 +61,7 @@ TEST_F(TestProperties, SetContentEncoding)
   std::string contentEncoding = "utf-8";
   properties.SetContentEncoding(contentEncoding);
   EXPECT_EQ(properties.GetContentEncoding(), contentEncoding);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetContentType)
@@ -67,6 +70,7 @@ TEST_F(TestProperties, SetContentType)
   std::string contentType = "text/plain";
   properties.SetContentType(contentType);
   EXPECT_EQ(properties.GetContentType(), contentType);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetCorrelationId)
@@ -75,6 +79,7 @@ TEST_F(TestProperties, SetCorrelationId)
   std::string correlationId = "1234";
   properties.SetCorrelationId(Value{correlationId});
   EXPECT_EQ(properties.GetCorrelationId(), Value{correlationId});
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetCreationTime)
@@ -88,6 +93,8 @@ TEST_F(TestProperties, SetCreationTime)
 
   properties.SetCreationTime(testTimestamp);
   EXPECT_EQ(properties.GetCreationTime(), testTimestampToCheck);
+
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetGroupId)
@@ -96,6 +103,7 @@ TEST_F(TestProperties, SetGroupId)
   std::string groupId = "1234";
   properties.SetGroupId(groupId);
   EXPECT_EQ(properties.GetGroupId(), groupId);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetGroupSequence)
@@ -104,6 +112,7 @@ TEST_F(TestProperties, SetGroupSequence)
   uint32_t groupSequence = 1234;
   properties.SetGroupSequence(groupSequence);
   EXPECT_EQ(properties.GetGroupSequence(), groupSequence);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetMessageId)
@@ -112,6 +121,7 @@ TEST_F(TestProperties, SetMessageId)
   std::string messageId = "1234";
   properties.SetMessageId(Value{messageId});
   EXPECT_EQ(properties.GetMessageId(), Value{messageId});
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetReplyTo)
@@ -120,6 +130,7 @@ TEST_F(TestProperties, SetReplyTo)
   std::string replyTo = "1234";
   properties.SetReplyTo(Value{replyTo});
   EXPECT_EQ(properties.GetReplyTo(), Value{replyTo});
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetReplyToGroupId)
@@ -128,6 +139,7 @@ TEST_F(TestProperties, SetReplyToGroupId)
   std::string replyToGroupId = "1234";
   properties.SetReplyToGroupId(replyToGroupId);
   EXPECT_EQ(properties.GetReplyToGroupId(), replyToGroupId);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetTo)
@@ -136,6 +148,7 @@ TEST_F(TestProperties, SetTo)
   std::string to = "1234";
   properties.SetTo(Value{to});
   EXPECT_EQ(properties.GetTo(), Value{to});
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetUserId)
@@ -144,6 +157,7 @@ TEST_F(TestProperties, SetUserId)
   BinaryData userId = {reinterpret_cast<const uint8_t*>("1234"), 5};
   properties.SetUserId(userId);
   EXPECT_EQ(properties.GetUserId().length, 5);
+  GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetSubject)
@@ -152,4 +166,5 @@ TEST_F(TestProperties, SetSubject)
   std::string subject = "1234";
   properties.SetSubject(subject);
   EXPECT_EQ(properties.GetSubject(), subject);
+  GTEST_LOG_(INFO) << properties;
 }

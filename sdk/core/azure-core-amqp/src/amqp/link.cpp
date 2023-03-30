@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     uint64_t maxMessageSize;
     if (link_get_max_message_size(m_link, &maxMessageSize))
     {
-      throw std::runtime_error("Could not set max message size");
+      throw std::runtime_error("Could not set max message size"); // LCOV_EXCL_LINE
     }
     return maxMessageSize;
   }
@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     const char* name;
     if (link_get_name(m_link, &name))
     {
-      throw std::runtime_error("Could not get link name");
+      throw std::runtime_error("Could not get link name"); // LCOV_EXCL_LINE
     }
     return name;
   }
@@ -156,7 +156,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     sender_settle_mode settleMode;
     if (link_get_snd_settle_mode(m_link, &settleMode))
     {
-      throw std::runtime_error("Could not get link sender settle mode.");
+      throw std::runtime_error("Could not get link sender settle mode."); // LCOV_EXCL_LINE
     }
     switch (settleMode)
     {
@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       case sender_settle_mode_unsettled:
         return Azure::Core::_internal::Amqp::SenderSettleMode::Unsettled;
       default:
-        throw std::logic_error("Unknown settle mode.");
+        throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
   }
   void LinkImpl::SetSenderSettleMode(SenderSettleMode mode)
@@ -185,11 +185,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         settleMode = sender_settle_mode_mixed;
         break;
       default:
-        throw std::logic_error("Unknown settle mode.");
+        throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
     if (link_set_snd_settle_mode(m_link, settleMode))
     {
-      throw std::runtime_error("Could not get link sender settle mode.");
+      throw std::runtime_error("Could not get link sender settle mode."); // LCOV_EXCL_LINE
     }
   }
 
@@ -207,7 +207,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
       case receiver_settle_mode_second:
         return ReceiverSettleMode::Second;
       default:
-        throw std::logic_error("Unknown settle mode.");
+        throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
   }
   void LinkImpl::SetReceiverSettleMode(ReceiverSettleMode mode)
@@ -222,11 +222,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         settleMode = receiver_settle_mode_second;
         break;
       default:
-        throw std::logic_error("Unknown settle mode.");
+        throw std::logic_error("Unknown settle mode."); // LCOV_EXCL_LINE
     }
     if (link_set_rcv_settle_mode(m_link, settleMode))
     {
-      throw std::runtime_error("Could not get link sender settle mode.");
+      throw std::runtime_error("Could not get link sender settle mode."); // LCOV_EXCL_LINE
     }
   }
 
@@ -235,7 +235,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     uint32_t deliveryCount;
     if (link_get_initial_delivery_count(m_link, &deliveryCount))
     {
-      throw std::runtime_error("Could not get link initial delivery count.");
+      throw std::runtime_error("Could not get link initial delivery count."); // LCOV_EXCL_LINE
     }
     return deliveryCount;
   }
@@ -245,7 +245,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     uint64_t peerMax;
     if (link_get_peer_max_message_size(m_link, &peerMax))
     {
-      throw std::runtime_error("Could not get link initial delivery count.");
+      throw std::runtime_error("Could not get link initial delivery count."); // LCOV_EXCL_LINE
     }
     return peerMax;
   }
@@ -255,7 +255,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
     uint32_t messageId;
     if (link_get_received_message_id(m_link, &messageId))
     {
-      throw std::runtime_error("Could not get link received message ID.");
+      throw std::runtime_error("Could not get link received message ID."); // LCOV_EXCL_LINE
     }
     return messageId;
   }
@@ -264,21 +264,21 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   {
     if (link_set_initial_delivery_count(m_link, count))
     {
-      throw std::runtime_error("Could not set initial delivery count.");
+      throw std::runtime_error("Could not set initial delivery count."); // LCOV_EXCL_LINE
     }
   }
   void LinkImpl::SetAttachProperties(Azure::Core::Amqp::Models::Value properties)
   {
     if (link_set_attach_properties(m_link, properties))
     {
-      throw std::runtime_error("Could not set attach properties.");
+      throw std::runtime_error("Could not set attach properties."); // LCOV_EXCL_LINE
     }
   }
   void LinkImpl::SetMaxLinkCredit(uint32_t credit)
   {
     if (link_set_max_link_credit(m_link, credit))
     {
-      throw std::runtime_error("Could not set attach properties.");
+      throw std::runtime_error("Could not set attach properties."); // LCOV_EXCL_LINE
     }
   }
 
@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
   {
     if (link_attach(m_link, nullptr, nullptr, nullptr, this))
     {
-      throw std::runtime_error("Could not set attach properties.");
+      throw std::runtime_error("Could not set attach properties."); // LCOV_EXCL_LINE
     }
   }
   void LinkImpl::Detach(
@@ -302,7 +302,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
             (description.empty() ? nullptr : description.c_str()),
             info))
     {
-      throw std::runtime_error("Could not set attach properties.");
+      throw std::runtime_error("Could not set attach properties."); // LCOV_EXCL_LINE
     }
   }
 
