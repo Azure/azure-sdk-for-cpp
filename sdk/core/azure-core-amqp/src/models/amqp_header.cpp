@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (!m_header)
     {
-      throw std::runtime_error("Could not create header.");  // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not create header."); // LCOV_EXCL_LINE
     }
   }
 

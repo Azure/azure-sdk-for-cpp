@@ -16,11 +16,13 @@ int main()
   auto credential
       = std::make_shared<Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
           EH_CONNECTION_STRING);
+  std::string hostUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
+      + "/ConsumerGroups/$Default/Partitions/0";
   Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "whatever";
   connectOptions.EnableTrace = true;
   connectOptions.HostName = credential->GetHostName();
-  Azure::Core::_internal::Amqp::Connection connection(nullptr, connectOptions);
+  Azure::Core::_internal::Amqp::Connection connection(hostUrl, nullptr, connectOptions);
 
   Azure::Core::_internal::Amqp::Session session(connection, nullptr);
   session.SetIncomingWindow(100);
@@ -33,12 +35,7 @@ int main()
   receiverOptions.EnableTrace = true;
 
   Azure::Core::_internal::Amqp::MessageReceiver receiver(
-      session,
-      connection,
-      credential,
-      "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
-          + "/ConsumerGroups/$Default/Partitions/0",
-      receiverOptions);
+      session, connection, credential, hostUrl, receiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();

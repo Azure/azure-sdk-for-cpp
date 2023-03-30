@@ -35,11 +35,11 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     m_impl->FinishConstruction();
   }
 
-  Connection::Connection(ConnectionEvents* eventHandler, ConnectionOptions const& options)
-      : m_impl{std::make_shared<_detail::ConnectionImpl>(eventHandler, options)}
-  {
-    m_impl->FinishConstruction();
-  }
+  // Connection::Connection(ConnectionEvents* eventHandler, ConnectionOptions const& options)
+  //     : m_impl{std::make_shared<_detail::ConnectionImpl>(eventHandler, options)}
+  //{
+  //   m_impl->FinishConstruction();
+  // }
 
   Connection::~Connection() {}
 
@@ -135,22 +135,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       m_hostName = requestUrl.GetHost();
     }
 
-    ConnectionImpl::ConnectionImpl(ConnectionEvents* eventHandler, ConnectionOptions const& options)
-        : m_hostName{options.HostName}, m_options{options}, m_eventHandler{eventHandler}
-    {
-      EnsureGlobalStateInitialized();
-
-      if (options.SaslCredentials)
-      {
-        m_transport = options.SaslCredentials->GetTransport();
-        m_credential = options.SaslCredentials;
-      }
-      else
-      {
-        m_transport = std::make_shared<Azure::Core::_internal::Amqp::Network::TlsTransport>(
-            options.HostName, options.Port);
-      }
-    }
     ConnectionImpl::~ConnectionImpl()
     {
       // If the connection is going away, we don't want to generate any more events on it.

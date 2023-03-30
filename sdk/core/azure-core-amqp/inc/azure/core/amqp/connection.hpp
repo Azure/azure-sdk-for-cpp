@@ -96,12 +96,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
 
   class Connection final {
   public:
-    //    using OnEndpointFrameReceivedCallback
-    //        = std::function<void(Models::Value, uint32_t framePayloadSize, uint8_t*
-    //        payloadBytes)>;
-    //    using OnConnectionStateChangedCallback
-    //        = std::function<void(ConnectionState newState, ConnectionState previousState)>;
-
     Connection(
         std::shared_ptr<Azure::Core::_internal::Amqp::Network::Transport> transport,
         ConnectionEvents* eventHandler,
@@ -112,16 +106,12 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options);
 
-    Connection(ConnectionEvents* eventHandler, ConnectionOptions const& options);
-
     ~Connection();
 
-    // Because m_connection has a pointer back to the Connection object, we cannot move or delete
-    // Connection objects.
-    Connection(Connection const&) = delete;
-    Connection& operator=(Connection const&) = delete;
-    Connection(Connection&&) noexcept = delete;
-    Connection& operator=(Connection&&) = delete;
+    Connection(Connection const&) = default;
+    Connection& operator=(Connection const&) = default;
+    Connection(Connection&&) noexcept = default;
+    Connection& operator=(Connection&&) = default;
     Connection(std::shared_ptr<_detail::ConnectionImpl> impl) : m_impl{impl} {}
 
     std::shared_ptr<_detail::ConnectionImpl> GetImpl() const { return m_impl; }
