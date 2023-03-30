@@ -126,7 +126,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (session_set_incoming_window(m_session, window))
       {
-        throw std::runtime_error("Could not set incoming window");
+        throw std::runtime_error("Could not set incoming window"); // LCOV_EXCL_LINE
       }
     }
     uint32_t SessionImpl::GetIncomingWindow()
@@ -134,7 +134,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       uint32_t window;
       if (session_get_incoming_window(m_session, &window))
       {
-        throw std::runtime_error("Could not get incoming window");
+        throw std::runtime_error("Could not get incoming window"); // LCOV_EXCL_LINE
       }
       return window;
     }
@@ -143,7 +143,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (session_set_outgoing_window(m_session, window))
       {
-        throw std::runtime_error("Could not set outgoing window");
+        throw std::runtime_error("Could not set outgoing window"); // LCOV_EXCL_LINE
       }
     }
 
@@ -152,7 +152,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       uint32_t window;
       if (session_get_outgoing_window(m_session, &window))
       {
-        throw std::runtime_error("Could not get outgoing window");
+        throw std::runtime_error("Could not get outgoing window"); // LCOV_EXCL_LINE
       }
       return window;
     }
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (session_set_handle_max(m_session, max))
       {
-        throw std::runtime_error("Could not set handle max.");
+        throw std::runtime_error("Could not set handle max."); // LCOV_EXCL_LINE
       }
     }
     uint32_t SessionImpl::GetHandleMax()
@@ -169,7 +169,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
       uint32_t max;
       if (session_get_handle_max(m_session, &max))
       {
-        throw std::runtime_error("Could not get handle max.");
+        throw std::runtime_error("Could not get handle max."); // LCOV_EXCL_LINE
       }
       return max;
     }
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
     {
       if (session_begin(m_session))
       {
-        throw std::runtime_error("Could not begin session");
+        throw std::runtime_error("Could not begin session"); // LCOV_EXCL_LINE
       }
     }
     void SessionImpl::End(const std::string& condition, const std::string& description)
@@ -190,7 +190,7 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp {
               condition.empty() ? nullptr : condition.c_str(),
               description.empty() ? nullptr : description.c_str()))
       {
-        throw std::runtime_error("Could not begin session");
+        throw std::runtime_error("Could not begin session"); // LCOV_EXCL_LINE
       }
     }
 

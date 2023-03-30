@@ -57,6 +57,14 @@ TEST_F(TestMessages, ReceiverProperties)
     EXPECT_ANY_THROW(receiver.GetLinkName());
     receiver.SetTrace(true);
   }
+
+  {
+    auto accepted{Models::_internal::Messaging::DeliveryAccepted()};
+    auto released{Models::_internal::Messaging::DeliveryReleased()};
+    auto rejected{Models::_internal::Messaging::DeliveryRejected("error", "description")};
+    auto modified{Models::_internal::Messaging::DeliveryModified(true, false, "Annotations")};
+    auto received{Models::_internal::Messaging::DeliveryReceived(3,24)};
+  }
 }
 
 TEST_F(TestMessages, SimpleSender)
