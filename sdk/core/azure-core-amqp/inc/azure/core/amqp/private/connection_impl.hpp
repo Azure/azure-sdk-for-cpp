@@ -24,7 +24,6 @@ namespace Azure { namespace Core { namespace _internal { namespace Amqp { namesp
         std::string const& requestUri,
         ConnectionEvents* eventHandler,
         ConnectionOptions const& options);
-    ConnectionImpl(ConnectionEvents* eventHandler, ConnectionOptions const& options);
 
     virtual ~ConnectionImpl();
 

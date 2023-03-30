@@ -18,11 +18,12 @@ int main()
   auto credential{
       std::make_shared<Azure::Core::_internal::Amqp::ServiceBusSasConnectionStringCredential>(
           EH_CONNECTION_STRING)};
+  std::string eventUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath();
   Azure::Core::_internal::Amqp::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
   connectOptions.HostName = credential->GetHostName();
-  Azure::Core::_internal::Amqp::Connection connection(nullptr, connectOptions);
+  Azure::Core::_internal::Amqp::Connection connection(eventUrl, nullptr, connectOptions);
 
   Azure::Core::_internal::Amqp::Session session(connection, nullptr);
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
@@ -41,12 +42,7 @@ int main()
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
   Azure::Core::_internal::Amqp::MessageSender sender(
-      session,
-      credential,
-      "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath(),
-      connection,
-      senderOptions,
-      nullptr);
+      session, credential, eventUrl, connection, senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

@@ -18,7 +18,10 @@ int main()
   connectOptions.SaslCredentials
       = std::make_shared<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>(
           EH_CONNECTION_STRING);
-  Azure::Core::_internal::Amqp::Connection connection(nullptr, connectOptions);
+  std::string hostUrl = "amqps://" + connectOptions.SaslCredentials->GetHostName() + "/"
+      + connectOptions.SaslCredentials->GetEntityPath() + "/ConsumerGroups/$Default/Partitions/0";
+
+  Azure::Core::_internal::Amqp::Connection connection(hostUrl, nullptr, connectOptions);
 
   Azure::Core::_internal::Amqp::Session session(connection, nullptr);
   session.SetIncomingWindow(100);
@@ -29,12 +32,7 @@ int main()
   receiverOptions.SettleMode = Azure::Core::_internal::Amqp::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::_internal::Amqp::MessageReceiver receiver(
-      session,
-      "amqps://" + connectOptions.SaslCredentials->GetHostName() + "/"
-          + connectOptions.SaslCredentials->GetEntityPath()
-          + "/ConsumerGroups/$Default/Partitions/0",
-      receiverOptions);
+  Azure::Core::_internal::Amqp::MessageReceiver receiver(session, hostUrl, receiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();

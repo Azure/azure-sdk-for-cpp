@@ -124,7 +124,6 @@ TEST_F(TestLinks, LinkProperties)
 
     EXPECT_EQ("MySource", link.GetSource());
     EXPECT_EQ("MyTarget", link.GetTarget());
-
   }
 }
 
