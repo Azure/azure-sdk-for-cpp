@@ -63,7 +63,7 @@ TEST_F(TestMessages, ReceiverProperties)
     auto released{Models::_internal::Messaging::DeliveryReleased()};
     auto rejected{Models::_internal::Messaging::DeliveryRejected("error", "description")};
     auto modified{Models::_internal::Messaging::DeliveryModified(true, false, "Annotations")};
-    auto received{Models::_internal::Messaging::DeliveryReceived(3,24)};
+    auto received{Models::_internal::Messaging::DeliveryReceived(3, 24)};
   }
 }
 
