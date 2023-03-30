@@ -25,9 +25,41 @@ protected:
 
 TEST_F(TestConnections, SimpleConnection)
 {
+  {
+    // Create a connection
+    Azure::Core::_internal::Amqp::Connection connection("amqp://localhost:5672", nullptr, {});
 
-  // Create a connection
-  Azure::Core::_internal::Amqp::Connection connection("amqp://localhost:5672", nullptr, {});
+    Azure::Core::_internal::Amqp::ConnectionOptions options;
+    options.SaslCredentials
+        = std::make_shared<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>(
+            "Endpoint=sb://testHost.net/"
+            ";SharedAccessKeyName=SomeName;SharedAccessKey=SomeKey;EntityPath=testhub");
+    EXPECT_ANY_THROW(Azure::Core::_internal::Amqp::Connection connection2(
+        "amqp://localhost:5672", nullptr, options));
+  }
+  {
+    // Create a connection
+    Azure::Core::_internal::Amqp::Connection connection("amqps://localhost:5671", nullptr, {});
+  }
+  {
+    Azure::Core::_internal::Amqp::ConnectionOptions options;
+    auto socketTransport{std::make_shared<Azure::Core::_internal::Amqp::Network::SocketTransport>(
+        "localhost", 5672)};
+
+    Azure::Core::_internal::Amqp::Connection connection(socketTransport, nullptr, options);
+  }
+  {
+    Azure::Core::_internal::Amqp::ConnectionOptions options;
+    auto socketTransport{std::make_shared<Azure::Core::_internal::Amqp::Network::SocketTransport>(
+        "localhost", 5672)};
+    options.SaslCredentials
+        = std::make_shared<Azure::Core::_internal::Amqp::SaslPlainConnectionStringCredential>(
+            "Endpoint=sb://testHost.net/"
+            ";SharedAccessKeyName=SomeName;SharedAccessKey=SomeKey;EntityPath=testhub");
+
+    EXPECT_ANY_THROW(
+        Azure::Core::_internal::Amqp::Connection connection(socketTransport, nullptr, options));
+  }
 
 #if 0
   // Create a session
