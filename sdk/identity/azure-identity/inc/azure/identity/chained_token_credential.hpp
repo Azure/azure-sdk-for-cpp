@@ -15,7 +15,9 @@
 #include <vector>
 
 namespace Azure { namespace Identity {
-  class DefaultAzureCredential;
+  namespace _detail {
+    class ChainedTokenCredentialImpl;
+  }
 
   /**
    * @brief Chained Token Credential provides a token credential implementation which chains
@@ -24,10 +26,6 @@ namespace Azure { namespace Identity {
    *
    */
   class ChainedTokenCredential final : public Core::Credentials::TokenCredential {
-    // Friend declaration is needed for DefaultAzureCredential to access ChainedTokenCredential's
-    // private constructor built to be used specifically by it.
-    friend class DefaultAzureCredential;
-
   public:
     /**
      * @brief A container type to store the ordered chain of credentials.
@@ -62,14 +60,7 @@ namespace Azure { namespace Identity {
         Core::Context const& context) const override;
 
   private:
-    explicit ChainedTokenCredential(
-        Sources sources,
-        std::string const& enclosingCredential,
-        std::vector<std::string> sourcesFriendlyNames);
-
-    Sources m_sources;
-    std::vector<std::string> m_sourcesFriendlyNames;
-    std::string m_logPrefix;
+    std::unique_ptr<_detail::ChainedTokenCredentialImpl> m_impl;
   };
 
 }} // namespace Azure::Identity

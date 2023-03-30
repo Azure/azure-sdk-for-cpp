@@ -30,6 +30,7 @@ namespace Azure { namespace Identity { namespace _detail {
     _detail::TokenCache m_tokenCache;
 
     static Core::Url ParseEndpointUrl(
+        std::string const& credName,
         std::string const& url,
         char const* envVarName,
         std::string const& credSource);
@@ -63,6 +64,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
     template <typename T>
     static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& credName,
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options,
         char const* endpointVarName,
@@ -97,6 +99,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& credName,
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
   };
@@ -123,6 +126,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& credName,
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
   };
@@ -139,6 +143,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& credName,
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
@@ -157,6 +162,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& credName,
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
@@ -175,6 +181,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& credName,
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 

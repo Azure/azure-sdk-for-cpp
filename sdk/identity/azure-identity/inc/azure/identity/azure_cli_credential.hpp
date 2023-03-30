@@ -58,6 +58,8 @@ namespace Azure { namespace Identity {
         DateTime::duration cliProcessTimeout,
         Core::Credentials::TokenCredentialOptions const& options);
 
+    void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& description) const;
+
   public:
     /**
      * @brief Constructs an Azure CLI Credential.

@@ -80,7 +80,8 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& clientCertificatePath,
     std::string const& authorityHost,
     TokenCredentialOptions const& options)
-    : m_clientCredentialCore(tenantId, authorityHost),
+    : TokenCredential("ClientCertificateCredential"),
+      m_clientCredentialCore(tenantId, authorityHost),
       m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),
       m_requestBody(
           std::string(

@@ -60,6 +60,9 @@ namespace Azure { namespace Core { namespace Credentials {
    * @brief A base type of credential that uses Azure::Core::AccessToken to authenticate requests.
    */
   class TokenCredential {
+  private:
+    std::string m_credentialName;
+
   public:
     /**
      * @brief Gets an authentication token.
@@ -76,6 +79,12 @@ namespace Azure { namespace Core { namespace Credentials {
         Context const& context) const = 0;
 
     /**
+     * @brief Gets the name of the credential.
+     *
+     */
+    std::string const& GetCredentialName() const { return m_credentialName; }
+
+    /**
      * @brief Destructs `%TokenCredential`.
      *
      */
@@ -83,10 +92,24 @@ namespace Azure { namespace Core { namespace Credentials {
 
   protected:
     /**
+     * @brief Constructs an instance of `%TokenCredential`.
+     *
+     * @param credentialName Name of the credential for diagnostic messages.
+     */
+    TokenCredential(std::string const& credentialName)
+        : m_credentialName(credentialName.empty() ? "Custom Credential" : credentialName)
+    {
+    }
+
+    /**
      * @brief Constructs a default instance of `%TokenCredential`.
      *
+     * @deprecated Use the constructor with parameter.
      */
-    TokenCredential() {}
+    [[deprecated("Use the constructor with parameter.")]] TokenCredential()
+        : TokenCredential(std::string{})
+    {
+    }
 
   private:
     /**

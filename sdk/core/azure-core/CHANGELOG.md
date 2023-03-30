@@ -6,12 +6,14 @@
 
 - Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.
 - Added `DisableTlsCertificateValidation` in `TransportOptions`.
+- Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed a bug where `Host` request header is not set for non-default port (80, 443).
+- [[#4213]](https://github.com/Azure/azure-sdk-for-cpp/issues/4213) Fixed a bug where `Host` request header is not set for non-default port (80, 443).
+- [[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443) Fixed potentially high CPU usage on Windows.
 
 ### Other Changes
 

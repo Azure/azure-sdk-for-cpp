@@ -16,6 +16,21 @@ using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
+TEST(ManagedIdentityCredential, GetCredentialName)
+{
+  CredentialTestHelper::EnvironmentOverride const env({
+      {"MSI_ENDPOINT", ""},
+      {"MSI_SECRET", ""},
+      {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+      {"IMDS_ENDPOINT", ""},
+      {"IDENTITY_HEADER", "CLIENTSECRET"},
+      {"IDENTITY_SERVER_THUMBPRINT", ""},
+  });
+
+  ManagedIdentityCredential const cred;
+  EXPECT_EQ(cred.GetCredentialName(), "ManagedIdentityCredential");
+}
+
 TEST(ManagedIdentityCredential, AppServiceV2019)
 {
   using Azure::Core::Diagnostics::Logger;

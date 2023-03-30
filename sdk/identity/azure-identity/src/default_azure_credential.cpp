@@ -7,49 +7,43 @@
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/managed_identity_credential.hpp"
 
-#include "azure/core/internal/diagnostics/log.hpp"
+#include "private/chained_token_credential_impl.hpp"
+#include "private/identity_log.hpp"
 
 using namespace Azure::Identity;
 using namespace Azure::Core::Credentials;
 
 using Azure::Core::Context;
 using Azure::Core::Diagnostics::Logger;
-using Azure::Core::Diagnostics::_internal::Log;
-
-namespace {
-std::string const IdentityPrefix = "Identity: ";
-}
+using Azure::Identity::_detail::IdentityLog;
 
 DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& options)
+    : TokenCredential("DefaultAzureCredential")
 {
   // Initializing m_credential below and not in the member initializer list to have a specific order
   // of log messages.
-  auto const logLevel = Logger::Level::Verbose;
-  if (Log::ShouldWrite(logLevel))
-  {
-    Log::Write(
-        logLevel,
-        IdentityPrefix
-            + "Creating DefaultAzureCredential which combines mutiple parameterless credentials "
-              "into a single one (by using ChainedTokenCredential)."
-              "\nDefaultAzureCredential is only recommended for the early stages of development, "
-              "and not for usage in production environment."
-              "\nOnce the developer focuses on the Credentials and Authentication aspects of their "
-              "application, DefaultAzureCredential needs to be replaced with the credential that "
-              "is the better fit for the application.");
-  }
+
+  IdentityLog::Write(
+      IdentityLog::Level::Verbose,
+      "Creating " + GetCredentialName()
+          + " which combines mutiple parameterless credentials into a single one.\n"
+          + GetCredentialName()
+          + " is only recommended for the early stages of development, "
+            "and not for usage in production environment."
+            "\nOnce the developer focuses on the Credentials and Authentication aspects "
+            "of their application, "
+          + GetCredentialName()
+          + " needs to be replaced with the credential that "
+            "is the better fit for the application.");
 
   // Creating credentials in order to ensure the order of log messages.
   auto const envCred = std::make_shared<EnvironmentCredential>(options);
   auto const azCliCred = std::make_shared<AzureCliCredential>(options);
   auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
 
-  // Using the ChainedTokenCredential's private constructor for more detailed log messages.
-  m_credentials.reset(new ChainedTokenCredential(
-      ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred},
-      "DefaultAzureCredential", // extra args for the ChainedTokenCredential's private constructor.
-      std::vector<std::string>{
-          "EnvironmentCredential", "AzureCliCredential", "ManagedIdentityCredential"}));
+  m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
+      GetCredentialName(),
+      ChainedTokenCredential::Sources{envCred, azCliCred, managedIdentityCred});
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;
@@ -60,13 +54,13 @@ AccessToken DefaultAzureCredential::GetToken(
 {
   try
   {
-    return m_credentials->GetToken(tokenRequestContext, context);
+    return m_impl->GetToken(GetCredentialName(), tokenRequestContext, context);
   }
   catch (AuthenticationException const&)
   {
-    throw AuthenticationException("Failed to get token from DefaultAzureCredential."
-                                  "\nSee Azure::Core::Diagnostics::Logger for details "
-                                  "(https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/"
-                                  "identity/azure-identity#troubleshooting).");
+    throw AuthenticationException(
+        "Failed to get token from " + GetCredentialName()
+        + ".\nSee Azure::Core::Diagnostics::Logger for details "
+          "(https://aka.ms/azsdk/cpp/identity/troubleshooting).");
   }
 }

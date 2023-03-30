@@ -31,6 +31,8 @@ namespace Azure { namespace Core { namespace Test {
 
   class TestNonExpiringCredential final : public Core::Credentials::TokenCredential {
   public:
+    TestNonExpiringCredential() : TokenCredential("TestNonExpiringCredential") {}
+
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override
