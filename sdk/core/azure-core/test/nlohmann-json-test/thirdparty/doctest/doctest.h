@@ -4814,7 +4814,6 @@ namespace {
         static void allocateAltStackMem() {
             altStackMem = new char[altStackSize];
         }
-
         static void freeAltStackMem() {
             delete[] altStackMem;
         }
@@ -6825,7 +6824,6 @@ int Context::run() {
 
     auto cleanup_and_return = [&]() {
         FatalConditionHandler::freeAltStackMem();
-
         if(fstr.is_open())
             fstr.close();
 
