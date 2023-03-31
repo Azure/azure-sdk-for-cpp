@@ -161,7 +161,7 @@ private:
 
   virtual void OnEndpointFrameReceived(
       Connection const& connection,
-      Azure::Core::Amqp::Models::Value const& value,
+      Azure::Core::Amqp::Models::AmqpValue const& value,
       uint32_t framePayloadSize,
       uint8_t* payloadBytes) override
   {
@@ -173,9 +173,9 @@ private:
       LinkEndpoint& newLink,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::Value source,
-      Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value) override
+      Azure::Core::Amqp::Models::AmqpValue source,
+      Azure::Core::Amqp::Models::AmqpValue target,
+      Azure::Core::Amqp::Models::AmqpValue) override
   {
     Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
     Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);
@@ -212,7 +212,7 @@ private:
               << " now: " << MessageStateToString(newState) << std::endl;
     (void)receiver;
   }
-  virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
+  virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
       Azure::Core::Amqp::Models::Message message) override
   {
     m_messageQueue.CompleteOperation(message);

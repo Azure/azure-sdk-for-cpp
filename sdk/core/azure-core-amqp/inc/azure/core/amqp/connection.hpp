@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp {
       uint32_t MaxFrameSize{512};
       uint16_t MaxSessions{65535};
 
-      Azure::Core::Amqp::Models::Value Properties;
+      Azure::Core::Amqp::Models::AmqpValue Properties;
 
       std::chrono::seconds Timeout{0};
 
@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Amqp {
     {
       virtual void OnEndpointFrameReceived(
           Connection const& connection,
-          Azure::Core::Amqp::Models::Value const& value,
+          Azure::Core::Amqp::Models::AmqpValue const& value,
           uint32_t framePayloadSize,
           uint8_t* payloadBytes)
           = 0;
@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Amqp {
       void Close(
           std::string const& condition,
           std::string const& description,
-          Azure::Core::Amqp::Models::Value info);
+          Azure::Core::Amqp::Models::AmqpValue info);
 
       void Poll() const;
 
@@ -133,8 +133,8 @@ namespace Azure { namespace Core { namespace Amqp {
       void SetIdleTimeout(std::chrono::milliseconds timeout);
       void SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio);
 
-      void SetProperties(Azure::Core::Amqp::Models::Value properties);
-      Azure::Core::Amqp::Models::Value GetProperties() const;
+      void SetProperties(Azure::Core::Amqp::Models::AmqpValue properties);
+      Azure::Core::Amqp::Models::AmqpValue GetProperties() const;
       uint64_t HandleDeadlines(); // ???
       Endpoint CreateEndpoint();
       void StartEndpoint(Endpoint const& endpoint);

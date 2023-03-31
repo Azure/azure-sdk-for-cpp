@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Amqp {
       MessageReceiverImpl* receiver = static_cast<MessageReceiverImpl*>(const_cast<void*>(context));
 
       Azure::Core::Amqp::Models::Message incomingMessage(message);
-      Azure::Core::Amqp::Models::Value rv;
+      Azure::Core::Amqp::Models::AmqpValue rv;
       if (receiver->m_eventHandler)
       {
         rv = receiver->m_eventHandler->OnMessageReceived(incomingMessage);
@@ -200,7 +200,7 @@ namespace Azure { namespace Core { namespace Amqp {
       return amqpvalue_clone(rv);
     }
 
-    Azure::Core::Amqp::Models::Value MessageReceiverImpl::OnMessageReceived(
+    Azure::Core::Amqp::Models::AmqpValue MessageReceiverImpl::OnMessageReceived(
         Azure::Core::Amqp::Models::Message message)
     {
       m_messageQueue.CompleteOperation(message);

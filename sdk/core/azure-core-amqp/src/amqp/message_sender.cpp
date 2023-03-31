@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     void MessageSender::Open() { m_impl->Open(); }
     void MessageSender::Close() { m_impl->Close(); }
-    std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> MessageSender::Send(
+    std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> MessageSender::Send(
         Azure::Core::Amqp::Models::Message const& message,
         Azure::Core::Context context)
     {
@@ -369,18 +369,18 @@ namespace Azure { namespace Core { namespace Amqp {
       (void)context;
     }
 
-    std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> MessageSenderImpl::Send(
+    std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> MessageSenderImpl::Send(
         Azure::Core::Amqp::Models::Message const& message,
         Azure::Core::Context context)
     {
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
           Azure::Core::Amqp::_internal::MessageSendResult,
-          Azure::Core::Amqp::Models::Value>
+          Azure::Core::Amqp::Models::AmqpValue>
           sendCompleteQueue;
       SendAsync(
           message,
           [&](Azure::Core::Amqp::_internal::MessageSendResult sendResult,
-              Azure::Core::Amqp::Models::Value deliveryStatus) {
+              Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
             //          std::cout << "Send Complete!" << std::endl;
             sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
           },

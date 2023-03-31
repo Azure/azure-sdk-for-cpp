@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Amqp {
       std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
       bool IgnoreDispositionErrors{false};
 
-      Azure::Core::Amqp::Models::Value Properties;
+      Azure::Core::Amqp::Models::AmqpValue Properties;
 
       ReceiverSettleMode RequestedReceiverSettleMode{};
 
@@ -85,7 +85,7 @@ namespace Azure { namespace Core { namespace Amqp {
     public:
       using MessageSendCompleteCallback = std::function<void(
           MessageSendResult sendResult,
-          Azure::Core::Amqp::Models::Value const& deliveryState)>;
+          Azure::Core::Amqp::Models::AmqpValue const& deliveryState)>;
 
       MessageSender(
           Session const& session,
@@ -134,7 +134,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
       void Open();
       void Close();
-      std::tuple<MessageSendResult, Azure::Core::Amqp::Models::Value> Send(
+      std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
           Azure::Core::Amqp::Models::Message const& message,
           Azure::Core::Context context = {});
       void SendAsync(

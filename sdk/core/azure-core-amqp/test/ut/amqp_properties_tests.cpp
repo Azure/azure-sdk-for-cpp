@@ -77,8 +77,8 @@ TEST_F(TestProperties, SetCorrelationId)
 {
   Properties properties;
   std::string correlationId = "1234";
-  properties.SetCorrelationId(Value{correlationId});
-  EXPECT_EQ(properties.GetCorrelationId(), Value{correlationId});
+  properties.SetCorrelationId(AmqpValue{correlationId});
+  EXPECT_EQ(properties.GetCorrelationId(), AmqpValue{correlationId});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -119,8 +119,8 @@ TEST_F(TestProperties, SetMessageId)
 {
   Properties properties;
   std::string messageId = "1234";
-  properties.SetMessageId(Value{messageId});
-  EXPECT_EQ(properties.GetMessageId(), Value{messageId});
+  properties.SetMessageId(AmqpValue{messageId});
+  EXPECT_EQ(properties.GetMessageId(), AmqpValue{messageId});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -128,8 +128,8 @@ TEST_F(TestProperties, SetReplyTo)
 {
   Properties properties;
   std::string replyTo = "1234";
-  properties.SetReplyTo(Value{replyTo});
-  EXPECT_EQ(properties.GetReplyTo(), Value{replyTo});
+  properties.SetReplyTo(AmqpValue{replyTo});
+  EXPECT_EQ(properties.GetReplyTo(), AmqpValue{replyTo});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -146,8 +146,8 @@ TEST_F(TestProperties, SetTo)
 {
   Properties properties;
   std::string to = "1234";
-  properties.SetTo(Value{to});
-  EXPECT_EQ(properties.GetTo(), Value{to});
+  properties.SetTo(AmqpValue{to});
+  EXPECT_EQ(properties.GetTo(), AmqpValue{to});
   GTEST_LOG_(INFO) << properties;
 }
 

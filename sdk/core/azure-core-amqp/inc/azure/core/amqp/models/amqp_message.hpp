@@ -39,37 +39,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     void SetHeader(Header const& header);
     Header const GetHeader() const;
 
-    void SetFooter(Value const& header);
-    Value const GetFooter() const;
+    void SetFooter(AmqpValue const& header);
+    AmqpValue const GetFooter() const;
 
-    void SetDeliveryAnnotations(Value const& annotations);
-    Value const GetDeliveryAnnotations() const;
+    void SetDeliveryAnnotations(AmqpValue const& annotations);
+    AmqpValue const GetDeliveryAnnotations() const;
 
     void SetFormat(uint32_t messageFormat);
     uint32_t GetFormat() const;
 
-    void SetMessageAnnotations(Value const& annotations);
-    Value const GetMessageAnnotations() const;
+    void SetMessageAnnotations(AmqpValue const& annotations);
+    AmqpValue const GetMessageAnnotations() const;
 
     void SetProperties(Properties const& properties);
     Properties const GetProperties() const;
 
-    void SetApplicationProperties(Value const& value);
-    Value const GetApplicationProperties() const;
+    void SetApplicationProperties(AmqpValue const& value);
+    AmqpValue const GetApplicationProperties() const;
 
     MessageBodyType GetBodyType() const;
 
-    void AddBodyAmqpSequence(Value const& value);
+    void AddBodyAmqpSequence(AmqpValue const& value);
     size_t GetBodyAmqpSequenceCount() const;
-    Value const GetBodyAmqpSequence(uint32_t index) const;
+    AmqpValue const GetBodyAmqpSequence(uint32_t index) const;
 
     void AddBodyAmqpData(BinaryData binaryData);
 
     BinaryData GetBodyAmqpData(size_t index) const;
     size_t GetBodyAmqpDataCount() const;
 
-    void SetBodyAmqpValue(Value value);
-    Value GetBodyAmqpValue() const;
+    void SetBodyAmqpValue(AmqpValue value);
+    AmqpValue GetBodyAmqpValue() const;
 
     friend std::ostream& operator<<(std::ostream&, Message const&);
   };

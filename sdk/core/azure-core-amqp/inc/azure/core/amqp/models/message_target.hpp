@@ -24,13 +24,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessageTarget(std::string const& value);
     MessageTarget(char const* value);
 
-    MessageTarget(Azure::Core::Amqp::Models::Value const& value);
-    operator const Azure::Core::Amqp::Models::Value() const;
+    MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
+    operator const Azure::Core::Amqp::Models::AmqpValue() const;
 
     operator TARGET_INSTANCE_TAG*() const { return m_target; }
 
-    Azure::Core::Amqp::Models::Value GetAddress() const;
-    void SetAddress(Azure::Core::Amqp::Models::Value const& address);
+    Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
+    void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
 
     Azure::Core::Amqp::Models::TerminusDurability GetTerminusDurability() const;
     void SetTerminusDurability(Azure::Core::Amqp::Models::TerminusDurability terminusDurability);
@@ -44,11 +44,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     bool GetDynamic() const;
     void SetDynamic(bool dynamic);
 
-    Azure::Core::Amqp::Models::Value GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::Value const& dynamicNodeProperties);
+    Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
+    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
 
-    Azure::Core::Amqp::Models::Value GetCapabilities() const;
-    void SetCapabilities(Azure::Core::Amqp::Models::Value const& capabilities);
+    Azure::Core::Amqp::Models::AmqpValue GetCapabilities() const;
+    void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
 
     friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
 

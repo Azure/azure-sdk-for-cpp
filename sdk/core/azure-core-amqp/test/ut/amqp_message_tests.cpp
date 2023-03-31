@@ -58,7 +58,7 @@ TEST_F(TestMessage, TestApplicationProperties)
   Message message;
   Properties properties;
   properties.SetSubject("Message subject.");
-  message.SetApplicationProperties(Value::CreateProperties(properties));
+  message.SetApplicationProperties(AmqpValue::CreateProperties(properties));
 
   auto propertiesAsValue{message.GetApplicationProperties()};
   //  EXPECT_TRUE(propertiesAsValue.IsPropertiesTypeByDescriptor());
@@ -138,7 +138,7 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
 
   message.AddBodyAmqpSequence("Test");
   message.AddBodyAmqpSequence(static_cast<uint32_t>(95));
-  message.AddBodyAmqpSequence(Value::CreateProperties(Properties()));
+  message.AddBodyAmqpSequence(AmqpValue::CreateProperties(Properties()));
 
   EXPECT_EQ(3, message.GetBodyAmqpSequenceCount());
   EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAmqpSequence(0)));

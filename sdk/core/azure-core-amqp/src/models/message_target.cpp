@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}
 
-  MessageTarget::MessageTarget(Azure::Core::Amqp::Models::Value const& source)
+  MessageTarget::MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& source)
   {
     if (source.IsNull())
     {
@@ -67,12 +67,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   // Convert the MessageSource into a Value.
-  MessageTarget::operator const Azure::Core::Amqp::Models::Value() const
+  MessageTarget::operator const Azure::Core::Amqp::Models::AmqpValue() const
   {
     return amqpvalue_create_target(m_target);
   }
 
-  Azure::Core::Amqp::Models::Value MessageTarget::GetAddress() const
+  Azure::Core::Amqp::Models::AmqpValue MessageTarget::GetAddress() const
   {
     AMQP_VALUE address;
     if (target_get_address(m_target, &address))
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return address;
   }
-  void MessageTarget::SetAddress(Azure::Core::Amqp::Models::Value const& value)
+  void MessageTarget::SetAddress(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
     if (target_set_address(m_target, value))
     {
@@ -221,7 +221,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  Azure::Core::Amqp::Models::Value MessageTarget::GetDynamicNodeProperties() const
+  Azure::Core::Amqp::Models::AmqpValue MessageTarget::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
     if (target_get_dynamic_node_properties(m_target, &value))
@@ -230,7 +230,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  void MessageTarget::SetDynamicNodeProperties(Azure::Core::Amqp::Models::Value const& value)
+  void MessageTarget::SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
     if (target_set_dynamic_node_properties(m_target, value))
     {
@@ -238,7 +238,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  Azure::Core::Amqp::Models::Value MessageTarget::GetCapabilities() const
+  Azure::Core::Amqp::Models::AmqpValue MessageTarget::GetCapabilities() const
   {
     AMQP_VALUE value;
     if (target_get_capabilities(m_target, &value))
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::Value const& value)
+  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
     if (target_set_capabilities(m_target, value))
     {

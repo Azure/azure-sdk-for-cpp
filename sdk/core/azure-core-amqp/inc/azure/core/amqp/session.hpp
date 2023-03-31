@@ -128,9 +128,9 @@ namespace Azure { namespace Core { namespace Amqp {
           LinkEndpoint& newLink,
           std::string const& name,
           SessionRole role,
-          Azure::Core::Amqp::Models::Value source,
-          Azure::Core::Amqp::Models::Value target,
-          Azure::Core::Amqp::Models::Value properties)
+          Azure::Core::Amqp::Models::AmqpValue source,
+          Azure::Core::Amqp::Models::AmqpValue target,
+          Azure::Core::Amqp::Models::AmqpValue properties)
           = 0;
     };
 

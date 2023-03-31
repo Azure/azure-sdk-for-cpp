@@ -16,89 +16,89 @@ protected:
 TEST_F(TestValues, SimpleCreate)
 {
   {
-    Value value;
+    AmqpValue value;
     EXPECT_EQ(AmqpValueType::Null, value.GetType());
   }
   {
-    Value value{true};
+    AmqpValue value{true};
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
     EXPECT_TRUE(value);
   }
   {
-    Value value{false};
+    AmqpValue value{false};
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
     EXPECT_FALSE(value);
   }
   {
-    Value value{};
+    AmqpValue value{};
     EXPECT_TRUE(value.IsNull());
   }
 
   {
-    Value value{static_cast<uint8_t>(255)};
+    AmqpValue value{static_cast<uint8_t>(255)};
     EXPECT_EQ(AmqpValueType::UByte, value.GetType());
     EXPECT_EQ(255, static_cast<uint8_t>(value));
   }
 
   {
-    Value value{'a'};
+    AmqpValue value{'a'};
     EXPECT_EQ(AmqpValueType::Byte, value.GetType());
     EXPECT_EQ('a', static_cast<char>(value));
   }
 
   {
-    Value value{static_cast<uint16_t>(65535)};
+    AmqpValue value{static_cast<uint16_t>(65535)};
     EXPECT_EQ(AmqpValueType::UShort, value.GetType());
     EXPECT_EQ(65535, static_cast<uint16_t>(value));
   }
   {
-    Value value{static_cast<int16_t>(32767)};
+    AmqpValue value{static_cast<int16_t>(32767)};
     EXPECT_EQ(AmqpValueType::Short, value.GetType());
     EXPECT_EQ(32767, static_cast<int16_t>(value));
   }
 
   {
-    Value value(32);
+    AmqpValue value(32);
     EXPECT_EQ(AmqpValueType::Int, value.GetType());
     EXPECT_EQ(32, static_cast<int32_t>(value));
   }
 
   {
-    Value value(static_cast<int64_t>(32ll));
+    AmqpValue value(static_cast<int64_t>(32ll));
     EXPECT_EQ(AmqpValueType::Long, value.GetType());
     EXPECT_EQ(32ll, static_cast<int64_t>(value));
   }
   {
-    Value value(static_cast<uint64_t>(39ull));
+    AmqpValue value(static_cast<uint64_t>(39ull));
     EXPECT_EQ(AmqpValueType::ULong, value.GetType());
     EXPECT_EQ(39ull, static_cast<uint64_t>(value));
   }
 
   {
-    Value value(39.0f);
+    AmqpValue value(39.0f);
     EXPECT_EQ(AmqpValueType::Float, value.GetType());
     EXPECT_EQ(39.0f, static_cast<float>(value));
   }
   {
-    Value value(39.0);
+    AmqpValue value(39.0);
     EXPECT_EQ(AmqpValueType::Double, value.GetType());
     EXPECT_EQ(39.0, static_cast<double>(value));
   }
 
   {
-    Value value(39.0);
+    AmqpValue value(39.0);
     double d{value};
     EXPECT_EQ(39.0, d);
   }
 
   {
-    Value value(std::string("Fred"));
+    AmqpValue value(std::string("Fred"));
     std::string fredP(value);
     EXPECT_EQ(AmqpValueType::String, value.GetType());
     EXPECT_EQ(std::string("Fred"), fredP);
   }
   {
-    Value value("Fred");
+    AmqpValue value("Fred");
     std::string fredP(value);
     EXPECT_EQ(AmqpValueType::String, value.GetType());
     EXPECT_EQ(std::string("Fred"), fredP);
@@ -108,16 +108,16 @@ TEST_F(TestValues, SimpleCreate)
 TEST_F(TestValues, TestList)
 {
   {
-    Value list1{Value::CreateList()};
+    AmqpValue list1{AmqpValue::CreateList()};
     EXPECT_EQ(0, list1.GetListItemCount());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetListItemCount());
   }
   // Put some things in the list.
   {
-    Value list1{Value::CreateList()};
+    AmqpValue list1{AmqpValue::CreateList()};
     list1.SetListItemCount(4);
     EXPECT_EQ(4, list1.GetListItemCount());
 
@@ -134,17 +134,17 @@ TEST_F(TestValues, TestList)
 TEST_F(TestValues, TestMap)
 {
   {
-    Value map1{Value::CreateMap()};
+    AmqpValue map1{AmqpValue::CreateMap()};
     EXPECT_EQ(0, map1.GetMapValueCount());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetMapValueCount());
   }
 
   // Put some things in the map.
   {
-    Value map1{Value::CreateMap()};
+    AmqpValue map1{AmqpValue::CreateMap()};
     map1.SetMapValue("ABC", 5);
     map1.SetMapValue(3, "ABC");
     EXPECT_EQ(2, map1.GetMapValueCount());
@@ -163,17 +163,17 @@ TEST_F(TestValues, TestMap)
 TEST_F(TestValues, TestArray)
 {
   {
-    Value value{Value::CreateArray()};
+    AmqpValue value{AmqpValue::CreateArray()};
     EXPECT_EQ(0, value.GetArrayItemCount());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetArrayItemCount());
   }
 
   // Put some things in the map.
   {
-    Value val{Value::CreateArray()};
+    AmqpValue val{AmqpValue::CreateArray()};
     val.AddArrayItem("3"); // Array values must all have the same type.
     val.AddArrayItem("Foo");
     val.AddArrayItem("George");
@@ -186,11 +186,11 @@ TEST_F(TestValues, TestArray)
 TEST_F(TestValues, TestChar)
 {
   {
-    Value value{Value::CreateChar(37)};
+    AmqpValue value{AmqpValue::CreateChar(37)};
     EXPECT_EQ(37, value.GetChar());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetChar());
   }
 }
@@ -200,11 +200,11 @@ TEST_F(TestValues, TestTimestamp)
   {
     std::chrono::milliseconds timeNow{std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch())};
-    Value value{Value::CreateTimestamp(timeNow)};
+    AmqpValue value{AmqpValue::CreateTimestamp(timeNow)};
     EXPECT_EQ(timeNow, value.GetTimestamp());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetTimestamp());
   }
 }
@@ -212,11 +212,11 @@ TEST_F(TestValues, TestTimestamp)
 TEST_F(TestValues, TestSymbol)
 {
   {
-    Value value{Value::CreateSymbol("timeNow")};
+    AmqpValue value{AmqpValue::CreateSymbol("timeNow")};
     EXPECT_EQ("timeNow", value.GetSymbol());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetSymbol());
   }
 }
@@ -224,18 +224,18 @@ TEST_F(TestValues, TestSymbol)
 TEST_F(TestValues, TestCompositeValue)
 {
   {
-    Value value{Value::CreateComposite("My Composite Type", 5)};
+    AmqpValue value{AmqpValue::CreateComposite("My Composite Type", 5)};
 
     EXPECT_EQ(5, value.GetCompositeItemCount());
   }
   {
-    Value boolValue{false};
+    AmqpValue boolValue{false};
     EXPECT_ANY_THROW(boolValue.GetCompositeItemCount());
   }
 
   // Put some things in the map.
   {
-    Value val{Value::CreateComposite("CompType", 2)};
+    AmqpValue val{AmqpValue::CreateComposite("CompType", 2)};
     val.SetCompositeItem(0, 25);
     val.SetCompositeItem(1, 25.0f);
 
@@ -243,14 +243,14 @@ TEST_F(TestValues, TestCompositeValue)
     EXPECT_EQ(25.0f, static_cast<float>(val.GetCompositeItem(1)));
   }
   {
-    Value val{Value::CreateCompositeWithDescriptor(29)};
+    AmqpValue val{AmqpValue::CreateCompositeWithDescriptor(29)};
   }
 }
 
 TEST_F(TestValues, TestDescribed)
 {
   {
-    Value value{Value::CreateDescribed("My Composite Type", 5)};
+    AmqpValue value{AmqpValue::CreateDescribed("My Composite Type", 5)};
   }
 }
 
@@ -259,7 +259,7 @@ TEST_F(TestValues, ValuesFromHeader)
   Header header;
   header.IsDurable(true);
   header.SetTimeToLive(std::chrono::milliseconds(512));
-  Value headerValue{Value::CreateHeader(header)};
+  AmqpValue headerValue{AmqpValue::CreateHeader(header)};
 
   EXPECT_TRUE(header.IsDurable());
 

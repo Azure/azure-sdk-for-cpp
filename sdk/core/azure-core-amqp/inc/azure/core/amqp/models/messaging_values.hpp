@@ -7,20 +7,20 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   struct Messaging
   {
-    static Azure::Core::Amqp::Models::Value CreateSource(std::string const& address);
-    static Azure::Core::Amqp::Models::Value CreateTarget(std::string const& address);
-    static Azure::Core::Amqp::Models::Value DeliveryReceived(
+    static Azure::Core::Amqp::Models::AmqpValue CreateSource(std::string const& address);
+    static Azure::Core::Amqp::Models::AmqpValue CreateTarget(std::string const& address);
+    static Azure::Core::Amqp::Models::AmqpValue DeliveryReceived(
         uint32_t sectionNumber,
         uint64_t sectionOffset);
-    static Azure::Core::Amqp::Models::Value DeliveryAccepted();
-    static Azure::Core::Amqp::Models::Value DeliveryRejected(
+    static Azure::Core::Amqp::Models::AmqpValue DeliveryAccepted();
+    static Azure::Core::Amqp::Models::AmqpValue DeliveryRejected(
         std::string const& errorCondition,
         std::string const& errorDescription);
-    static Azure::Core::Amqp::Models::Value DeliveryReleased();
-    static Azure::Core::Amqp::Models::Value DeliveryModified(
+    static Azure::Core::Amqp::Models::AmqpValue DeliveryReleased();
+    static Azure::Core::Amqp::Models::AmqpValue DeliveryModified(
         bool deliveryFailed,
         bool undeliverableHere,
-        Azure::Core::Amqp::Models::Value annotations);
+        Azure::Core::Amqp::Models::AmqpValue annotations);
   };
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

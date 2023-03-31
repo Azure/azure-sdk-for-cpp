@@ -202,7 +202,7 @@ private:
   virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
   virtual void OnEndpointFrameReceived(
       Connection const&,
-      Azure::Core::Amqp::Models::Value const&,
+      Azure::Core::Amqp::Models::AmqpValue const&,
       uint32_t,
       uint8_t*) override
   {
@@ -214,9 +214,9 @@ private:
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::Value source,
-      Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value properties) override
+      Azure::Core::Amqp::Models::AmqpValue source,
+      Azure::Core::Amqp::Models::AmqpValue target,
+      Azure::Core::Amqp::Models::AmqpValue properties) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     MessageReceiverOptions receiverOptions;
@@ -239,7 +239,7 @@ private:
     (void)properties;
     return true;
   }
-  virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
+  virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
       Azure::Core::Amqp::Models::Message message) override
   {
     GTEST_LOG_(INFO) << "Message received";
@@ -308,7 +308,7 @@ TEST_F(TestMessages, ReceiverOpenClose)
         (void)oldState;
       }
 
-      Models::Value OnMessageReceived(Models::Message) override { return Models::Value(); }
+      Models::AmqpValue OnMessageReceived(Models::Message) override { return Models::AmqpValue(); }
     };
 
     ReceiverEvents receiverEvents;
@@ -348,7 +348,7 @@ TEST_F(TestMessages, SenderOpenClose)
     sender.Open();
     sender.Close();
   }
-  connection.Close("Test complete", "", Models::Value());
+  connection.Close("Test complete", "", Models::AmqpValue());
   listener.Stop();
 }
 
@@ -431,11 +431,11 @@ TEST_F(TestMessages, SenderSendAsync)
 
     Azure::Core::Context context;
     Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
+        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue>
             sendCompleteQueue;
     sender.SendAsync(
         message,
-        [&](MessageSendResult sendResult, Azure::Core::Amqp::Models::Value deliveryStatus) {
+        [&](MessageSendResult sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
           GTEST_LOG_(INFO) << "Send Complete!";
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         });
@@ -446,7 +446,7 @@ TEST_F(TestMessages, SenderSendAsync)
   }
   receiveContext.Cancel();
   listenerThread.join();
-  connection.Close("", "", Models::Value());
+  connection.Close("", "", Models::AmqpValue());
 }
 
 TEST_F(TestMessages, SenderSendSync)
@@ -515,7 +515,7 @@ TEST_F(TestMessages, SenderSendSync)
     message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
 
     Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::Value>
+        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue>
             sendCompleteQueue;
     auto result = sender.Send(message);
     EXPECT_EQ(std::get<0>(result), MessageSendResult::Ok);

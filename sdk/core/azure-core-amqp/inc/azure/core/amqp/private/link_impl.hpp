@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     uint64_t GetPeerMaxMessageSize() const;
 
-    void SetAttachProperties(Azure::Core::Amqp::Models::Value attachProperties);
+    void SetAttachProperties(Azure::Core::Amqp::Models::AmqpValue attachProperties);
     void SetMaxLinkCredit(uint32_t maxLinkCredit);
 
     std::string GetName() const;
@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         bool close,
         std::string const& errorCondition,
         std::string const& errorDescription,
-        Azure::Core::Amqp::Models::Value& info);
+        Azure::Core::Amqp::Models::AmqpValue& info);
 
   private:
     LINK_HANDLE m_link;

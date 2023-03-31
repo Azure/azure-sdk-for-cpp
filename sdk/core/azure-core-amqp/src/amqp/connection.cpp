@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp {
     void Connection::Close(
         std::string const& condition,
         std::string const& description,
-        Azure::Core::Amqp::Models::Value value)
+        Azure::Core::Amqp::Models::AmqpValue value)
     {
       m_impl->Close(condition, description, value);
     }
@@ -83,11 +83,11 @@ namespace Azure { namespace Core { namespace Amqp {
       return m_impl->SetRemoteIdleTimeoutEmptyFrameSendRatio(idleTimeoutEmptyFrameSendRatio);
     }
 
-    void Connection::SetProperties(Azure::Core::Amqp::Models::Value properties)
+    void Connection::SetProperties(Azure::Core::Amqp::Models::AmqpValue properties)
     {
       m_impl->SetProperties(properties);
     }
-    Azure::Core::Amqp::Models::Value Connection::GetProperties() const
+    Azure::Core::Amqp::Models::AmqpValue Connection::GetProperties() const
     {
       return m_impl->GetProperties();
     }
@@ -296,7 +296,7 @@ namespace Azure { namespace Core { namespace Amqp {
     void ConnectionImpl::Close(
         const std::string& condition,
         const std::string& description,
-        Azure::Core::Amqp::Models::Value info)
+        Azure::Core::Amqp::Models::AmqpValue info)
     {
       if (!m_connection)
       {
@@ -365,14 +365,14 @@ namespace Azure { namespace Core { namespace Amqp {
       return std::chrono::milliseconds(ms);
     }
 
-    void ConnectionImpl::SetProperties(Azure::Core::Amqp::Models::Value value)
+    void ConnectionImpl::SetProperties(Azure::Core::Amqp::Models::AmqpValue value)
     {
       if (connection_set_properties(m_connection, value))
       {
         throw std::runtime_error("COuld not set properties."); // LCOV_EXCL_LINE
       }
     }
-    Azure::Core::Amqp::Models::Value ConnectionImpl::GetProperties() const
+    Azure::Core::Amqp::Models::AmqpValue ConnectionImpl::GetProperties() const
     {
       AMQP_VALUE value;
       if (connection_get_properties(m_connection, &value))

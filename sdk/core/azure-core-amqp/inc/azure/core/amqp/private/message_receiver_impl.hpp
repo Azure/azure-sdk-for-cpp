@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SendMessageDisposition(
         const char* linkName,
         uint32_t messageNumber,
-        Azure::Core::Amqp::Models::Value deliveryState);
+        Azure::Core::Amqp::Models::AmqpValue deliveryState);
     void SetTrace(bool traceEnabled);
 
     //    Models::Message WaitForIncomingMessage();
@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     static AMQP_VALUE OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message);
 
-    virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
+    virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
         Azure::Core::Amqp::Models::Message message);
 
     static void OnMessageReceiverStateChangedFn(

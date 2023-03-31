@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp {
       std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
       // LinkFilter
       bool ManualCredits{};
-      Azure::Core::Amqp::Models::Value Properties;
+      Azure::Core::Amqp::Models::AmqpValue Properties;
 
       std::vector<std::string> SenderCapabilities;
       LinkDurability SenderDurability{};
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp {
           MessageReceiverState newState,
           MessageReceiverState oldState)
           = 0;
-      virtual Azure::Core::Amqp::Models::Value OnMessageReceived(
+      virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
           Azure::Core::Amqp::Models::Message message)
           = 0;
     };
@@ -126,7 +126,7 @@ namespace Azure { namespace Core { namespace Amqp {
       void SendMessageDisposition(
           const char* linkName,
           uint32_t messageNumber,
-          Azure::Core::Amqp::Models::Value deliveryState);
+          Azure::Core::Amqp::Models::AmqpValue deliveryState);
       void SetTrace(bool traceEnabled);
 
       Azure::Core::Amqp::Models::Message WaitForIncomingMessage(

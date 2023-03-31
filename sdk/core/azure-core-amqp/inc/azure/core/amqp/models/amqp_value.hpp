@@ -70,44 +70,42 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Unknown
   };
 
-  class Value {
-    AMQP_VALUE_DATA_TAG* m_value;
-
+  class AmqpValue {
   public:
-    ~Value();
+    ~AmqpValue();
 
-    Value(bool bool_value);
-    Value(unsigned char byte_value);
-    Value(char value);
-    Value(uint16_t value);
-    Value(int16_t value);
-    Value(uint32_t value);
-    Value(int32_t value);
-    Value(uint64_t value);
-    Value(int64_t value);
-    Value(float value);
-    Value(double value);
+    AmqpValue(bool bool_AmqpValue);
+    AmqpValue(unsigned char byte_value);
+    AmqpValue(char value);
+    AmqpValue(uint16_t value);
+    AmqpValue(int16_t value);
+    AmqpValue(uint32_t value);
+    AmqpValue(int32_t value);
+    AmqpValue(uint64_t value);
+    AmqpValue(int64_t value);
+    AmqpValue(float value);
+    AmqpValue(double value);
 
     /* ???? */
-    //    AMQPValue(uint32_t value) : m_value{amqpvalue_create_char(value)} {}
-    //    AMQPValue(timestamp value) : m_value{amqpvalue_create_timestamp(value)} {}
-    //    AMQPValue(std::string const& value) : m_value{amqpvalue_create_symbol(value.c_str())} {}
+    //    AmqpValue(uint32_t value) : m_value{amqpvalue_create_char(value)} {}
+    //    AmqpValue(timestamp value) : m_value{amqpvalue_create_timestamp(value)} {}
+    //    AmqpValue(std::string const& value) : m_value{amqpvalue_create_symbol(value.c_str())} {}
 
-    Value(Uuid value);
-    Value(BinaryData value);
-    explicit Value(std::string value);
-    Value(const char* value);
+    AmqpValue(Uuid value);
+    AmqpValue(BinaryData value);
+    explicit AmqpValue(std::string value);
+    AmqpValue(const char* value);
 
-    Value();
-    Value(Value const& that) throw();
-    Value(Value&& that) throw();
+    AmqpValue();
+    AmqpValue(AmqpValue const& that) throw();
+    AmqpValue(AmqpValue&& that) throw();
 
     // Interoperability functions for uAMQP
     operator AMQP_VALUE_DATA_TAG*() const;
-    Value(AMQP_VALUE_DATA_TAG* value);
+    AmqpValue(AMQP_VALUE_DATA_TAG* value);
 
-    Value& operator=(Value const& that);
-    Value& operator=(Value&& that) throw();
+    AmqpValue& operator=(AmqpValue const& that);
+    AmqpValue& operator=(AmqpValue&& that) throw();
 
     bool IsNull() const;
 
@@ -140,112 +138,77 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     operator Uuid();
     operator Uuid() const;
 
-    bool operator==(Value const& that) const;
+    bool operator==(AmqpValue const& that) const;
     AmqpValueType GetType() const;
 
     // List Operations.
-    static Value CreateList();
+    static AmqpValue CreateList();
     void SetListItemCount(uint32_t count);
     uint32_t GetListItemCount() const;
-    void SetListItem(uint32_t index, Value item);
-    Value GetListItem(size_t index) const;
-    //    AMQPValue GetListItemInPlace(size_t index) const;
+    void SetListItem(uint32_t index, AmqpValue item);
+    AmqpValue GetListItem(size_t index) const;
+    //    AMQPAmqpValue GetListItemInPlace(size_t index) const;
 
     // Map operations.
-    static Value CreateMap();
-    void SetMapValue(Value key, Value value);
-    Value GetMapValue(Value key) const;
-    std::pair<Value, Value> GetMapKeyAndValue(uint32_t index) const;
+    static AmqpValue CreateMap();
+    void SetMapValue(AmqpValue key, AmqpValue value);
+    AmqpValue GetMapValue(AmqpValue key) const;
+    std::pair<AmqpValue, AmqpValue> GetMapKeyAndValue(uint32_t index) const;
     size_t GetMapValueCount() const;
 
     // Array operations - note that all array items must be of the same type.
-    static Value CreateArray();
-    void AddArrayItem(Value itemValue);
-    Value GetArrayItem(uint32_t index) const;
+    static AmqpValue CreateArray();
+    void AddArrayItem(AmqpValue itemAmqpValue);
+    AmqpValue GetArrayItem(uint32_t index) const;
     uint32_t GetArrayItemCount() const;
 
     // Char
-    static Value CreateChar(uint32_t value);
+    static AmqpValue CreateChar(uint32_t value);
     uint32_t GetChar() const;
 
     // Timestamps
-    static Value CreateTimestamp(std::chrono::milliseconds value);
+    static AmqpValue CreateTimestamp(std::chrono::milliseconds value);
     std::chrono::milliseconds GetTimestamp() const;
 
     // Symbols
-    static Value CreateSymbol(std::string const& value);
+    static AmqpValue CreateSymbol(std::string const& value);
     std::string GetSymbol() const;
 
     // Composite values - A composite value is functionally a list with a fixed size.
-    static Value CreateComposite(Value descriptor, uint32_t listSize);
-    void SetCompositeItem(uint32_t index, Value itemValue);
-    Value GetCompositeItem(uint32_t index);
-    //    AMQPValue GetCompositeItemInPlace(size_t index) const;
+    static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
+    void SetCompositeItem(uint32_t index, AmqpValue itemAmqpValue);
+    AmqpValue GetCompositeItem(uint32_t index);
+    //    AMQPAmqpValue GetCompositeItemInPlace(size_t index) const;
     size_t GetCompositeItemCount() const;
 
-    static Value CreateDescribed(Value descriptor, Value value);
-    static Value CreateCompositeWithDescriptor(uint64_t descriptor);
+    static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
+    static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
 
     // Descriptors
-    Value GetDescriptor() const;
-    Value GetDescribedValue() const;
+    AmqpValue GetDescriptor() const;
+    AmqpValue GetDescribedValue() const;
 
     // Headers.
     bool IsHeaderTypeByDescriptor() const;
     Header GetHeaderFromValue() const;
 
-    static Value CreateHeader(Header const& header);
+    static AmqpValue CreateHeader(Header const& header);
 
     // Properties.
     bool IsPropertiesTypeByDescriptor() const;
     Properties GetPropertiesFromValue() const;
 
-    static Value CreateProperties(Properties const& properties);
+    static AmqpValue CreateProperties(Properties const& properties);
 
-    friend std::ostream& operator<<(std::ostream& os, Value const& value);
+    friend std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
+
+  protected:
+    AMQP_VALUE_DATA_TAG* m_value;
   };
 
-#if 0
-  /* type handling */
+  /** @brief An AmqpMap represents an AMQP "map" type. which maps a key to a value.
+   *
+   */
+  class AmqpMap : public AmqpValue {};
 
-  /* encoding */
-  typedef int (*AMQPVALUE_ENCODER_OUTPUT)(void* context, const unsigned char* bytes, size_t length);
-
-  MOCKABLE_FUNCTION(
-      ,
-      int,
-      amqpvalue_encode,
-      AMQP_VALUE,
-      value,
-      AMQPVALUE_ENCODER_OUTPUT,
-      encoder_output,
-      void*,
-      context);
-  MOCKABLE_FUNCTION(, int, amqpvalue_get_encoded_size, AMQP_VALUE, value, size_t*, encoded_size);
-
-  /* decoding */
-  typedef struct AMQPVALUE_DECODER_HANDLE_DATA_TAG* AMQPVALUE_DECODER_HANDLE;
-  typedef void (*ON_VALUE_DECODED)(void* context, AMQP_VALUE decoded_value);
-
-  MOCKABLE_FUNCTION(
-      ,
-      AMQPVALUE_DECODER_HANDLE,
-      amqpvalue_decoder_create,
-      ON_VALUE_DECODED,
-      on_value_decoded,
-      void*,
-      callback_context);
-  MOCKABLE_FUNCTION(, void, amqpvalue_decoder_destroy, AMQPVALUE_DECODER_HANDLE, handle);
-  MOCKABLE_FUNCTION(
-      ,
-      int,
-      amqpvalue_decode_bytes,
-      AMQPVALUE_DECODER_HANDLE,
-      handle,
-      const unsigned char*,
-      buffer,
-      size_t,
-      size);
-
-#endif
 }}}} // namespace Azure::Core::Amqp::Models

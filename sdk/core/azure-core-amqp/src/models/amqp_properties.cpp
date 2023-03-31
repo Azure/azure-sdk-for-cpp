@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Properties::GetMessageId() const
+  AmqpValue Properties::GetMessageId() const
   {
     AMQP_VALUE value;
     if (properties_get_message_id(m_properties, &value))
@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetMessageId(Value const& messageId)
+  void Properties::SetMessageId(AmqpValue const& messageId)
   {
     if (properties_set_message_id(m_properties, messageId))
     {
@@ -48,18 +48,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Properties::GetCorrelationId() const
+  AmqpValue Properties::GetCorrelationId() const
   {
     AMQP_VALUE value;
     if (properties_get_correlation_id(m_properties, &value))
     {
-      return Value();
+      return AmqpValue();
     }
     // properties_get_correlation_id returns an in-place value.
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetCorrelationId(Value const& correlationId)
+  void Properties::SetCorrelationId(AmqpValue const& correlationId)
   {
     if (properties_set_correlation_id(m_properties, correlationId))
     {
@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Properties::GetTo() const
+  AmqpValue Properties::GetTo() const
   {
     AMQP_VALUE value;
     if (properties_get_to(m_properties, &value))
@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetTo(Value replyTo)
+  void Properties::SetTo(AmqpValue replyTo)
   {
     if (properties_set_to(m_properties, replyTo))
     {
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Properties::GetReplyTo() const
+  AmqpValue Properties::GetReplyTo() const
   {
     AMQP_VALUE value;
     if (properties_get_reply_to(m_properties, &value))
@@ -132,7 +132,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetReplyTo(Value replyTo)
+  void Properties::SetReplyTo(AmqpValue replyTo)
   {
     if (properties_set_reply_to(m_properties, replyTo))
     {
@@ -311,15 +311,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
     {
-      AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
+      AMQP_VALUE value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_to(properties.m_properties, &value))
       {
-        os << ", To: " << Value(value);
+        os << ", To: " << AmqpValue(value);
       }
     }
 
     {
-      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_subject(properties.m_properties, &value))
       {
         os << ", Subject: " << value;
@@ -327,22 +327,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     {
-      AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
+      AMQP_VALUE value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_reply_to(properties.m_properties, &value))
       {
-        os << ", ReplyTo: " << Value(value);
+        os << ", ReplyTo: " << AmqpValue(value);
       }
     }
     {
-      AMQP_VALUE value; // Value is returned in-place, so doesn't need to be freed.
+      AMQP_VALUE value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_correlation_id(properties.m_properties, &value))
       {
-        os << ", CorrelationId: " << Value(value);
+        os << ", CorrelationId: " << AmqpValue(value);
       }
     }
 
     {
-      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_content_type(properties.m_properties, &value))
       {
         os << ", ContentType: " << value;
@@ -350,7 +350,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     {
-      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_content_encoding(properties.m_properties, &value))
       {
         os << ", ContentEncoding: " << value;
@@ -378,7 +378,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     {
-      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_group_id(properties.m_properties, &value))
       {
         os << ", GroupId: " << value;
@@ -395,7 +395,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     {
-      const char* value; // Value is returned in-place, so doesn't need to be freed.
+      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
       if (!properties_get_reply_to_group_id(properties.m_properties, &value))
       {
         os << ", "

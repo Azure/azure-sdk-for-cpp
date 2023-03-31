@@ -26,23 +26,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     ~Properties();
 
-    Value GetMessageId() const;
-    void SetMessageId(Value const& messageId);
+    AmqpValue GetMessageId() const;
+    void SetMessageId(AmqpValue const& messageId);
 
-    Value GetCorrelationId() const;
-    void SetCorrelationId(Value const& correlationId);
+    AmqpValue GetCorrelationId() const;
+    void SetCorrelationId(AmqpValue const& correlationId);
 
     BinaryData GetUserId() const;
     void SetUserId(BinaryData const& userId);
 
-    Value GetTo() const;
-    void SetTo(Value replyTo);
+    AmqpValue GetTo() const;
+    void SetTo(AmqpValue replyTo);
 
     std::string GetSubject() const;
     void SetSubject(std::string const& replyTo);
 
-    Value GetReplyTo() const;
-    void SetReplyTo(Value replyTo);
+    AmqpValue GetReplyTo() const;
+    void SetReplyTo(AmqpValue replyTo);
 
     std::string GetContentType() const;
     void SetContentType(std::string const& contentType);
@@ -68,9 +68,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     friend std::ostream& operator<<(std::ostream&, Properties const&);
   };
 
-#if 0
-    
-	// Move to AMQPValue:
-
-#endif
 }}}} // namespace Azure::Core::Amqp::Models

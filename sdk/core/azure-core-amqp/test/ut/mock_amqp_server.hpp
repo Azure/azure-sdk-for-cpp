@@ -61,7 +61,7 @@ public:
    *  @param message The message received.
    *  @return The value to send back to the sender.
    */
-  virtual Azure::Core::Amqp::Models::Value MessageReceived(
+  virtual Azure::Core::Amqp::Models::AmqpValue MessageReceived(
       Azure::Core::Amqp::Models::Message message)
   {
     (void)message;
@@ -241,7 +241,7 @@ protected:
     {
       EXPECT_EQ(type.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
       EXPECT_EQ(name.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
-      // The body of a put-token operation MUST be an AMQP Value.
+      // The body of a put-token operation MUST be an AMQP AmqpValue.
       EXPECT_EQ(message.GetBodyType(), Azure::Core::Amqp::Models::MessageBodyType::Value);
 
       // Respond to the operation.
@@ -261,7 +261,7 @@ protected:
 
       // Populate the response application properties.
 
-      auto propertyMap = Azure::Core::Amqp::Models::Value::CreateMap();
+      auto propertyMap = Azure::Core::Amqp::Models::AmqpValue::CreateMap();
       if (m_forceCbsError)
       {
         propertyMap.SetMapValue("status-code", 500);
@@ -282,7 +282,7 @@ protected:
       {
         return;
       }
-      response.SetBodyAmqpValue(Azure::Core::Amqp::Models::Value());
+      response.SetBodyAmqpValue(Azure::Core::Amqp::Models::AmqpValue());
       try
       {
         m_cbsMessageSender->Send(response, m_listenerContext);
@@ -308,7 +308,7 @@ protected:
       responseProperties.SetCorrelationId(requestCorrelationId);
       response.SetProperties(responseProperties);
 
-      auto propertyMap = Azure::Core::Amqp::Models::Value::CreateMap();
+      auto propertyMap = Azure::Core::Amqp::Models::AmqpValue::CreateMap();
       propertyMap.SetMapValue("status-code", 200);
       propertyMap.SetMapValue("status-description", "OK-delete");
 
@@ -321,7 +321,7 @@ protected:
         return;
       }
 
-      response.SetBodyAmqpValue(Azure::Core::Amqp::Models::Value());
+      response.SetBodyAmqpValue(Azure::Core::Amqp::Models::AmqpValue());
 
       m_cbsMessageSender->Send(response, m_listenerContext);
     }
@@ -368,9 +368,9 @@ protected:
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
-      Azure::Core::Amqp::Models::Value source,
-      Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value) override
+      Azure::Core::Amqp::Models::AmqpValue source,
+      Azure::Core::Amqp::Models::AmqpValue target,
+      Azure::Core::Amqp::Models::AmqpValue) override
   {
     Azure::Core::Amqp::Models::_internal::MessageSource msgSource(source);
     Azure::Core::Amqp::Models::_internal::MessageTarget msgTarget(target);
@@ -430,7 +430,7 @@ protected:
 
   virtual void OnEndpointFrameReceived(
       Azure::Core::Amqp::_internal::Connection const&,
-      Azure::Core::Amqp::Models::Value const&,
+      Azure::Core::Amqp::Models::AmqpValue const&,
       uint32_t,
       uint8_t*) override
   {
@@ -446,7 +446,7 @@ protected:
                      << ReceiverStateToString(oldState)
                      << " New state: " << ReceiverStateToString(newState);
   }
-  Azure::Core::Amqp::Models::Value OnMessageReceived(
+  Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
       Azure::Core::Amqp::Models::Message message) override
   {
     GTEST_LOG_(INFO) << "Received a message " << message;

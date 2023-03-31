@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Close(
         std::string const& condition,
         std::string const& description,
-        Azure::Core::Amqp::Models::Value info);
+        Azure::Core::Amqp::Models::AmqpValue info);
 
     void Poll() const;
 
@@ -66,8 +66,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SetIdleTimeout(std::chrono::milliseconds timeout);
     void SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio);
 
-    void SetProperties(Azure::Core::Amqp::Models::Value properties);
-    Azure::Core::Amqp::Models::Value GetProperties() const;
+    void SetProperties(Azure::Core::Amqp::Models::AmqpValue properties);
+    Azure::Core::Amqp::Models::AmqpValue GetProperties() const;
     uint64_t HandleDeadlines(); // ???
     _internal::Endpoint CreateEndpoint();
     void StartEndpoint(_internal::Endpoint const& endpoint);

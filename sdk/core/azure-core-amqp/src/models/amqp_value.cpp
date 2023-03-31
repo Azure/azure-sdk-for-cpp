@@ -19,45 +19,45 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  Value::~Value()
+  AmqpValue::~AmqpValue()
   {
     if (m_value)
     {
       amqpvalue_destroy(m_value);
     }
   }
-  Value::Value(bool bool_value) : m_value{amqpvalue_create_boolean(bool_value)} {}
-  Value::Value(unsigned char byte_value) : m_value{amqpvalue_create_ubyte(byte_value)} {}
-  Value::Value(char value) : m_value{amqpvalue_create_byte(value)} {}
-  Value::Value(uint16_t value) : m_value{amqpvalue_create_ushort(value)} {}
-  Value::Value(int16_t value) : m_value{amqpvalue_create_short(value)} {}
-  Value::Value(uint32_t value) : m_value{amqpvalue_create_uint(value)} {}
-  Value::Value(int32_t value) : m_value{amqpvalue_create_int(value)} {}
-  Value::Value(uint64_t value) : m_value{amqpvalue_create_ulong(value)} {}
-  Value::Value(int64_t value) : m_value{amqpvalue_create_long(value)} {}
-  Value::Value(float value) : m_value{amqpvalue_create_float(value)} {}
-  Value::Value(double value) : m_value{amqpvalue_create_double(value)} {}
+  AmqpValue::AmqpValue(bool bool_value) : m_value{amqpvalue_create_boolean(bool_value)} {}
+  AmqpValue::AmqpValue(unsigned char byte_value) : m_value{amqpvalue_create_ubyte(byte_value)} {}
+  AmqpValue::AmqpValue(char value) : m_value{amqpvalue_create_byte(value)} {}
+  AmqpValue::AmqpValue(uint16_t value) : m_value{amqpvalue_create_ushort(value)} {}
+  AmqpValue::AmqpValue(int16_t value) : m_value{amqpvalue_create_short(value)} {}
+  AmqpValue::AmqpValue(uint32_t value) : m_value{amqpvalue_create_uint(value)} {}
+  AmqpValue::AmqpValue(int32_t value) : m_value{amqpvalue_create_int(value)} {}
+  AmqpValue::AmqpValue(uint64_t value) : m_value{amqpvalue_create_ulong(value)} {}
+  AmqpValue::AmqpValue(int64_t value) : m_value{amqpvalue_create_long(value)} {}
+  AmqpValue::AmqpValue(float value) : m_value{amqpvalue_create_float(value)} {}
+  AmqpValue::AmqpValue(double value) : m_value{amqpvalue_create_double(value)} {}
 
   /* ???? */
   //    AMQPValue(uint32_t value) : m_value{amqpvalue_create_char(value)} {}
   //    AMQPValue(timestamp value) : m_value{amqpvalue_create_timestamp(value)} {}
   //    AMQPValue(std::string const& value) : m_value{amqpvalue_create_symbol(value.c_str())} {}
 
-  Value::Value(Uuid value) : m_value{amqpvalue_create_uuid(value.data())} {}
-  Value::Value(BinaryData value)
+  AmqpValue::AmqpValue(Uuid value) : m_value{amqpvalue_create_uuid(value.data())} {}
+  AmqpValue::AmqpValue(BinaryData value)
   {
     amqp_binary amqpValue;
     amqpValue.bytes = value.bytes;
     amqpValue.length = static_cast<uint32_t>(value.length);
     m_value = amqpvalue_create_binary(amqpValue);
   }
-  Value::Value(std::string value) : m_value{amqpvalue_create_string(value.c_str())} {}
-  Value::Value(const char* value) : m_value{amqpvalue_create_string(value)} {}
+  AmqpValue::AmqpValue(std::string value) : m_value{amqpvalue_create_string(value.c_str())} {}
+  AmqpValue::AmqpValue(const char* value) : m_value{amqpvalue_create_string(value)} {}
 
-  Value::Value() : m_value{amqpvalue_create_null()} {}
-  Value::Value(Value const& that) throw() : m_value{amqpvalue_clone(that.m_value)} {}
-  Value::Value(Value&& that) throw() : m_value{that.m_value} { that.m_value = nullptr; }
-  Value::Value(AMQP_VALUE_DATA_TAG* value)
+  AmqpValue::AmqpValue() : m_value{amqpvalue_create_null()} {}
+  AmqpValue::AmqpValue(AmqpValue const& that) throw() : m_value{amqpvalue_clone(that.m_value)} {}
+  AmqpValue::AmqpValue(AmqpValue&& that) throw() : m_value{that.m_value} { that.m_value = nullptr; }
+  AmqpValue::AmqpValue(AMQP_VALUE_DATA_TAG* value)
   {
     // We shouldn't take ownership of the incoming value, so instead we clone it.
     // if no value is provided, treat it as null.
@@ -71,21 +71,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value::operator AMQP_VALUE_DATA_TAG*() const { return m_value; }
+  AmqpValue::operator AMQP_VALUE_DATA_TAG*() const { return m_value; }
 
-  Value& Value::operator=(Value const& that)
+  AmqpValue& AmqpValue::operator=(AmqpValue const& that)
   {
     m_value = amqpvalue_clone(that.m_value);
     return *this;
   }
-  Value& Value::operator=(Value&& that) throw()
+  AmqpValue& AmqpValue::operator=(AmqpValue&& that) throw()
   {
     m_value = that.m_value;
     that.m_value = nullptr;
     return *this;
   }
 
-  Value::operator bool() const
+  AmqpValue::operator bool() const
   {
     bool value;
     if (amqpvalue_get_boolean(m_value, &value) != 0)
@@ -94,7 +94,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator bool()
+  AmqpValue::operator bool()
   {
     bool value;
     if (amqpvalue_get_boolean(m_value, &value) != 0)
@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator unsigned char() const
+  AmqpValue::operator unsigned char() const
   {
     unsigned char value;
     if (amqpvalue_get_ubyte(m_value, &value) != 0)
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator unsigned char()
+  AmqpValue::operator unsigned char()
   {
     unsigned char value;
     if (amqpvalue_get_ubyte(m_value, &value) != 0)
@@ -121,7 +121,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator char() const
+  AmqpValue::operator char() const
   {
     char value;
     if (amqpvalue_get_byte(m_value, &value) != 0)
@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator char()
+  AmqpValue::operator char()
   {
     char value;
     if (amqpvalue_get_byte(m_value, &value) != 0)
@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator uint16_t() const
+  AmqpValue::operator uint16_t() const
   {
     uint16_t value;
     if (amqpvalue_get_ushort(m_value, &value) != 0)
@@ -148,7 +148,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator uint16_t()
+  AmqpValue::operator uint16_t()
   {
     uint16_t value;
     if (amqpvalue_get_ushort(m_value, &value) != 0)
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator int16_t() const
+  AmqpValue::operator int16_t() const
   {
     int16_t value;
     if (amqpvalue_get_short(m_value, &value) != 0)
@@ -166,7 +166,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator int16_t()
+  AmqpValue::operator int16_t()
   {
     int16_t value;
     if (amqpvalue_get_short(m_value, &value) != 0)
@@ -175,7 +175,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator uint32_t() const
+  AmqpValue::operator uint32_t() const
   {
     uint32_t value;
     if (amqpvalue_get_uint(m_value, &value) != 0)
@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator uint32_t()
+  AmqpValue::operator uint32_t()
   {
     uint32_t value;
     if (amqpvalue_get_uint(m_value, &value) != 0)
@@ -193,7 +193,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator int32_t() const
+  AmqpValue::operator int32_t() const
   {
     int32_t value;
     if (amqpvalue_get_int(m_value, &value) != 0)
@@ -202,7 +202,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator int32_t()
+  AmqpValue::operator int32_t()
   {
     int32_t value;
     if (amqpvalue_get_int(m_value, &value) != 0)
@@ -211,7 +211,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator uint64_t() const
+  AmqpValue::operator uint64_t() const
   {
     uint64_t value;
     if (amqpvalue_get_ulong(m_value, &value) != 0)
@@ -220,7 +220,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator uint64_t()
+  AmqpValue::operator uint64_t()
   {
     uint64_t value;
     if (amqpvalue_get_ulong(m_value, &value) != 0)
@@ -229,7 +229,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator int64_t() const
+  AmqpValue::operator int64_t() const
   {
     int64_t value;
     if (amqpvalue_get_long(m_value, &value) != 0)
@@ -238,7 +238,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator int64_t()
+  AmqpValue::operator int64_t()
   {
     int64_t value;
     if (amqpvalue_get_long(m_value, &value))
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator float() const
+  AmqpValue::operator float() const
   {
     float value;
     if (amqpvalue_get_float(m_value, &value))
@@ -256,7 +256,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator float()
+  AmqpValue::operator float()
   {
     float value;
     if (amqpvalue_get_float(m_value, &value))
@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator double() const
+  AmqpValue::operator double() const
   {
     double value;
     if (amqpvalue_get_double(m_value, &value))
@@ -274,7 +274,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator double()
+  AmqpValue::operator double()
   {
     double value;
     if (amqpvalue_get_double(m_value, &value))
@@ -283,7 +283,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator BinaryData() const
+  AmqpValue::operator BinaryData() const
   {
     amqp_binary value;
     if (amqpvalue_get_binary(m_value, &value))
@@ -295,7 +295,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     rv.length = value.length;
     return rv;
   }
-  Value::operator BinaryData()
+  AmqpValue::operator BinaryData()
   {
     amqp_binary value;
     if (amqpvalue_get_binary(m_value, &value))
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  Value::operator std::string() const
+  AmqpValue::operator std::string() const
   {
     const char* value;
     if (amqpvalue_get_string(m_value, &value))
@@ -317,7 +317,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-  Value::operator std::string()
+  AmqpValue::operator std::string()
   {
     const char* value;
     if (amqpvalue_get_string(m_value, &value))
@@ -327,20 +327,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  bool Value::operator==(Value const& that) const
+  bool AmqpValue::operator==(AmqpValue const& that) const
   {
     return amqpvalue_are_equal(m_value, that.m_value);
   }
 
-  Value Value::CreateList() { return Value(amqpvalue_create_list()); }
-  void Value::SetListItemCount(uint32_t count)
+  AmqpValue AmqpValue::CreateList() { return AmqpValue(amqpvalue_create_list()); }
+  void AmqpValue::SetListItemCount(uint32_t count)
   {
     if (amqpvalue_set_list_item_count(m_value, count))
     {
       throw std::runtime_error("Could not set List item count");
     }
   }
-  uint32_t Value::GetListItemCount() const
+  uint32_t AmqpValue::GetListItemCount() const
   {
     uint32_t count;
     if (amqpvalue_get_list_item_count(m_value, &count) != 0)
@@ -349,21 +349,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return count;
   }
-  void Value::SetListItem(uint32_t index, Value item)
+  void AmqpValue::SetListItem(uint32_t index, AmqpValue item)
   {
     if (amqpvalue_set_list_item(m_value, index, item))
     {
       throw std::runtime_error("Could not set List item count");
     }
   }
-  Value Value::GetListItem(size_t index) const
+  AmqpValue AmqpValue::GetListItem(size_t index) const
   {
     AMQP_VALUE item = amqpvalue_get_list_item(m_value, index);
     return item;
   }
   //  AMQPValue AMQPValue::GetListItemInPlace(size_t index) const { return AMQPValue(); }
-  Value Value::CreateMap() { return Value(amqpvalue_create_map()); }
-  void Value::SetMapValue(Value key, Value value)
+  AmqpValue AmqpValue::CreateMap() { return AmqpValue(amqpvalue_create_map()); }
+  void AmqpValue::SetMapValue(AmqpValue key, AmqpValue value)
   {
     if (amqpvalue_set_map_value(m_value, key, value))
     {
@@ -371,8 +371,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Value::GetMapValue(Value key) const { return amqpvalue_get_map_value(m_value, key); }
-  std::pair<Value, Value> Value::GetMapKeyAndValue(uint32_t index) const
+  AmqpValue AmqpValue::GetMapValue(AmqpValue key) const { return amqpvalue_get_map_value(m_value, key); }
+  std::pair<AmqpValue, AmqpValue> AmqpValue::GetMapKeyAndValue(uint32_t index) const
   {
     AMQP_VALUE key;
     AMQP_VALUE value;
@@ -380,10 +380,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not set map value.");
     }
-    return std::make_pair(Value{key}, Value{value});
+    return std::make_pair(AmqpValue{key}, AmqpValue{value});
   }
 
-  size_t Value::GetMapValueCount() const
+  size_t AmqpValue::GetMapValueCount() const
   {
     uint32_t count;
     if (amqpvalue_get_map_pair_count(m_value, &count))
@@ -393,9 +393,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return count;
   }
 
-  Value Value::CreateArray() { return Value(amqpvalue_create_array()); }
+  AmqpValue AmqpValue::CreateArray() { return AmqpValue(amqpvalue_create_array()); }
 
-  void Value::AddArrayItem(Value itemValue)
+  void AmqpValue::AddArrayItem(AmqpValue itemValue)
   {
     if (amqpvalue_add_array_item(m_value, itemValue))
     {
@@ -403,12 +403,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Value::GetArrayItem(uint32_t index) const
+  AmqpValue AmqpValue::GetArrayItem(uint32_t index) const
   {
     return amqpvalue_get_array_item(m_value, index);
   }
 
-  uint32_t Value::GetArrayItemCount() const
+  uint32_t AmqpValue::GetArrayItemCount() const
   {
     uint32_t count;
     if (amqpvalue_get_array_item_count(m_value, &count))
@@ -418,9 +418,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return count;
   }
 
-  Value Value::CreateChar(uint32_t value) { return amqpvalue_create_char(value); }
+  AmqpValue AmqpValue::CreateChar(uint32_t value) { return amqpvalue_create_char(value); }
 
-  uint32_t Value::GetChar() const
+  uint32_t AmqpValue::GetChar() const
   {
     uint32_t value;
     if (amqpvalue_get_char(m_value, &value))
@@ -430,12 +430,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  Value Value::CreateTimestamp(std::chrono::milliseconds value)
+  AmqpValue AmqpValue::CreateTimestamp(std::chrono::milliseconds value)
   {
     return amqpvalue_create_timestamp(value.count());
   }
 
-  std::chrono::milliseconds Value::GetTimestamp() const
+  std::chrono::milliseconds AmqpValue::GetTimestamp() const
   {
     int64_t ms;
     if (amqpvalue_get_timestamp(m_value, &ms))
@@ -445,11 +445,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return std::chrono::milliseconds(ms);
   }
 
-  Value Value::CreateSymbol(std::string const& value)
+  AmqpValue AmqpValue::CreateSymbol(std::string const& value)
   {
     return amqpvalue_create_symbol(value.c_str());
   }
-  std::string Value::GetSymbol() const
+  std::string AmqpValue::GetSymbol() const
   {
     const char* symbol;
     if (amqpvalue_get_symbol(m_value, &symbol))
@@ -459,7 +459,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return symbol;
   }
 
-  AmqpValueType Value::GetType() const
+  AmqpValueType AmqpValue::GetType() const
   {
     switch (amqpvalue_get_type(m_value))
     {
@@ -514,26 +514,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case AMQP_TYPE_UNKNOWN:
         return AmqpValueType::Unknown;
     }
-    throw std::runtime_error("Unknown AMQP Value Type");
+    throw std::runtime_error("Unknown AMQP AmqpValue Type");
   }
 
-  Value Value::CreateComposite(Value descriptor, uint32_t listSize)
+  AmqpValue AmqpValue::CreateComposite(AmqpValue descriptor, uint32_t listSize)
   {
     return amqpvalue_create_composite(descriptor, listSize);
   }
-  void Value::SetCompositeItem(uint32_t index, Value itemValue)
+  void AmqpValue::SetCompositeItem(uint32_t index, AmqpValue itemValue)
   {
     if (amqpvalue_set_composite_item(m_value, index, itemValue))
     {
       throw std::runtime_error("Could not set composite item");
     }
   }
-  Value Value::GetCompositeItem(uint32_t index)
+  AmqpValue AmqpValue::GetCompositeItem(uint32_t index)
   {
     return amqpvalue_get_composite_item(m_value, index);
   }
   //  AMQPValue AMQPValue::GetCompositeItemInPlace(size_t index) const { return AMQPValue(); }
-  size_t Value::GetCompositeItemCount() const
+  size_t AmqpValue::GetCompositeItemCount() const
   {
     uint32_t size;
     if (amqpvalue_get_composite_item_count(m_value, &size))
@@ -542,23 +542,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return size;
   }
-  Value Value::CreateDescribed(Value descriptor, Value value)
+  AmqpValue AmqpValue::CreateDescribed(AmqpValue descriptor, AmqpValue value)
   {
     // amqpvalue_create_described takes a reference to the input parameters, we need to stabilize
     // the value of descriptor and value so they don't get accidentally freed.
     return amqpvalue_create_described(amqpvalue_clone(descriptor), amqpvalue_clone(value));
   }
 
-  Value Value::GetDescriptor() const { return amqpvalue_get_inplace_descriptor(m_value); }
+  AmqpValue AmqpValue::GetDescriptor() const { return amqpvalue_get_inplace_descriptor(m_value); }
 
-  Value Value::GetDescribedValue() const { return amqpvalue_get_inplace_described_value(m_value); }
+  AmqpValue AmqpValue::GetDescribedValue() const { return amqpvalue_get_inplace_described_value(m_value); }
 
-  Value Value::CreateCompositeWithDescriptor(uint64_t descriptor)
+  AmqpValue AmqpValue::CreateCompositeWithDescriptor(uint64_t descriptor)
   {
     return amqpvalue_create_composite_with_ulong_descriptor(descriptor);
   }
-  bool Value::IsHeaderTypeByDescriptor() const { return is_header_type_by_descriptor(m_value); }
-  Header Value::GetHeaderFromValue() const
+  bool AmqpValue::IsHeaderTypeByDescriptor() const { return is_header_type_by_descriptor(m_value); }
+  Header AmqpValue::GetHeaderFromValue() const
   {
     HEADER_HANDLE header;
     if (amqpvalue_get_header(m_value, &header))
@@ -567,14 +567,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return header;
   }
-  Value Value::CreateHeader(Header const& header) { return amqpvalue_create_header(header); }
+  AmqpValue AmqpValue::CreateHeader(Header const& header) { return amqpvalue_create_header(header); }
 
-  bool Value::IsPropertiesTypeByDescriptor() const
+  bool AmqpValue::IsPropertiesTypeByDescriptor() const
   {
     return is_properties_type_by_descriptor(m_value);
   }
 
-  Properties Value::GetPropertiesFromValue() const
+  Properties AmqpValue::GetPropertiesFromValue() const
   {
     PROPERTIES_HANDLE properties;
     if (amqpvalue_get_properties(m_value, &properties))
@@ -584,12 +584,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return properties;
   }
 
-  Value Value::CreateProperties(Properties const& properties)
+  AmqpValue AmqpValue::CreateProperties(Properties const& properties)
   {
     return amqpvalue_create_properties(properties);
   }
 
-  std::ostream& operator<<(std::ostream& os, Value const& value)
+  std::ostream& operator<<(std::ostream& os, AmqpValue const& value)
   {
     char* valueAsString = amqpvalue_to_string(value);
     os << valueAsString;
@@ -662,7 +662,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return os;
   }
 
-  bool Value::IsNull() const
+  bool AmqpValue::IsNull() const
   {
     return (m_value == nullptr) || (amqpvalue_get_type(m_value) == AMQP_TYPE_NULL);
   }

@@ -186,9 +186,9 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::Value source,
-      Azure::Core::Amqp::Models::Value target,
-      Azure::Core::Amqp::Models::Value) override
+      Azure::Core::Amqp::Models::AmqpValue source,
+      Azure::Core::Amqp::Models::AmqpValue target,
+      Azure::Core::Amqp::Models::AmqpValue) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     auto newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(
@@ -205,7 +205,7 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
   }
   virtual void OnEndpointFrameReceived(
       Connection const&,
-      Azure::Core::Amqp::Models::Value const&,
+      Azure::Core::Amqp::Models::AmqpValue const&,
       uint32_t,
       uint8_t*) override
   {
@@ -249,13 +249,13 @@ TEST_F(TestLinks, LinkAttachDetach)
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
     link.Attach();
 
-    Azure::Core::Amqp::Models::Value data;
+    Azure::Core::Amqp::Models::AmqpValue data;
     link.Detach(false, {}, {}, data);
 
     //    auto listeningConnection = listener.WaitForConnection();
     //    auto listeningSession = listeningConnection->WaitForSession();
     //    auto listeningLink = listeningSession->WaitForLink();
   }
-  connection.Close("Test complete", "Completed", Models::Value());
+  connection.Close("Test complete", "Completed", Models::AmqpValue());
   listener.Stop();
 }

@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return header;
   }
-  void Message::SetFooter(Value const& header)
+  void Message::SetFooter(AmqpValue const& header)
   {
     if (message_set_footer(m_message, header))
     {
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value const Message::GetFooter() const
+  AmqpValue const Message::GetFooter() const
   {
     annotations footer;
     if (message_get_footer(m_message, &footer))
@@ -90,14 +90,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return footer;
   }
 
-  void Message::SetDeliveryAnnotations(Value const& annotations)
+  void Message::SetDeliveryAnnotations(AmqpValue const& annotations)
   {
     if (message_set_delivery_annotations(m_message, annotations))
     {
       throw std::runtime_error("Could not set delivery annotations"); // LCOV_EXCL_LINE
     }
   }
-  Value const Message::GetDeliveryAnnotations() const
+  AmqpValue const Message::GetDeliveryAnnotations() const
   {
     annotations value;
     if (message_get_delivery_annotations(m_message, &value))
@@ -122,14 +122,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return format;
   }
-  void Message::SetMessageAnnotations(Value const& annotations)
+  void Message::SetMessageAnnotations(AmqpValue const& annotations)
   {
     if (message_set_message_annotations(m_message, annotations))
     {
       throw std::runtime_error("Could not set message annotations"); // LCOV_EXCL_LINE
     }
   }
-  Value const Message::GetMessageAnnotations() const
+  AmqpValue const Message::GetMessageAnnotations() const
   {
     message_annotations annotations;
     if (message_get_message_annotations(m_message, &annotations))
@@ -155,14 +155,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return properties;
   }
-  void Message::SetApplicationProperties(Value const& value)
+  void Message::SetApplicationProperties(AmqpValue const& value)
   {
     if (message_set_application_properties(m_message, value))
     {
       throw std::runtime_error("Could not set application properties.");
     }
   }
-  Value const Message::GetApplicationProperties() const
+  AmqpValue const Message::GetApplicationProperties() const
   {
     AMQP_VALUE properties;
     if (message_get_application_properties(m_message, &properties))
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return count;
   }
-  Value const Message::GetBodyAmqpSequence(uint32_t index) const
+  AmqpValue const Message::GetBodyAmqpSequence(uint32_t index) const
   {
     AMQP_VALUE value;
     if (message_get_body_amqp_sequence_in_place(m_message, index, &value))
@@ -213,7 +213,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Message::AddBodyAmqpSequence(Value const& value)
+  void Message::AddBodyAmqpSequence(AmqpValue const& value)
   {
     if (message_add_body_amqp_sequence(m_message, value))
     {
@@ -221,12 +221,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Value Message::GetBodyAmqpValue() const
+  AmqpValue Message::GetBodyAmqpValue() const
   {
     AMQP_VALUE value;
     if (message_get_body_amqp_value_in_place(m_message, &value))
     {
-      throw std::runtime_error("Could not get Body Value."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not get Body AmqpValue."); // LCOV_EXCL_LINE
     }
     return amqpvalue_clone(value);
   }
@@ -261,7 +261,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return count;
   }
-  void Message::SetBodyAmqpValue(Value value)
+  void Message::SetBodyAmqpValue(AmqpValue value)
   {
     if (message_set_body_amqp_value(m_message, value))
     {
@@ -319,7 +319,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         os << "]";
         break;
       case MessageBodyType::Value:
-        os << "Value: " << message.GetBodyAmqpValue();
+        os << "AmqpValue: " << message.GetBodyAmqpValue();
         break;
     }
     os << "]";

@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Open();
     void Close();
-    std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::Value> Send(
+    std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
         Azure::Core::Amqp::Models::Message const& message,
         Azure::Core::Context context);
     void SendAsync(

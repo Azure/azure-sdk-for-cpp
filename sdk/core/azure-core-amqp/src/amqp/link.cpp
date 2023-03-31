@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   uint64_t Link::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
   uint64_t Link::GetPeerMaxMessageSize() const { return m_impl->GetPeerMaxMessageSize(); }
-  void Link::SetAttachProperties(Azure::Core::Amqp::Models::Value attachProperties)
+  void Link::SetAttachProperties(Azure::Core::Amqp::Models::AmqpValue attachProperties)
   {
     m_impl->SetAttachProperties(attachProperties);
   }
@@ -83,7 +83,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       bool close,
       std::string const& errorCondition,
       std::string const& errorDescription,
-      Azure::Core::Amqp::Models::Value& info)
+      Azure::Core::Amqp::Models::AmqpValue& info)
   {
     return m_impl->Detach(close, errorCondition, errorDescription, info);
   }
@@ -279,7 +279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Could not set initial delivery count."); // LCOV_EXCL_LINE
     }
   }
-  void LinkImpl::SetAttachProperties(Azure::Core::Amqp::Models::Value properties)
+  void LinkImpl::SetAttachProperties(Azure::Core::Amqp::Models::AmqpValue properties)
   {
     if (link_set_attach_properties(m_link, properties))
     {
@@ -305,7 +305,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       bool close,
       std::string const& condition,
       std::string const& description,
-      Azure::Core::Amqp::Models::Value& info)
+      Azure::Core::Amqp::Models::AmqpValue& info)
   {
     if (link_detach(
             m_link,
