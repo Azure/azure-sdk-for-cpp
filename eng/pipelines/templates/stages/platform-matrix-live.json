@@ -21,19 +21,15 @@
     },
     {
       "StaticConfigs": {
-        "Ubu1804": {
+        "Ubu2204": {
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 4",
-          "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-          "OSVmImage": "MMSUbuntu18.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2204-general",
+          "OSVmImage": "MMSUbuntu22.04",
           "RunProxyTests": true
         }
       },
       "BuildConfig": {
-        "x64_gcc5_with_unit_test": {
-          "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON"
-        },
         "x64_with_unit_test": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON",
           "AptDependencies": "gcovr lcov",
