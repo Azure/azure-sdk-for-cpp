@@ -79,7 +79,7 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
           
-  - template: /eng/pipelines/templates/steps/fix-linux-1es-configs.yml
+  - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   # Add g++5 repo to ubuntu
   - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"
