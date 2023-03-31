@@ -195,7 +195,7 @@ stages:
                       - pwsh: |
                           $codeOwnersToNotify = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
                             -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/" `
-                            -CodeOwnerFileLocation "$(Build.SourcesDirectory)/.github/CODEOWNERS"
+                            -CodeownersFileLocation "$(Build.SourcesDirectory)/.github/CODEOWNERS"
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
                           if ($codeOwnersToNotify) {
