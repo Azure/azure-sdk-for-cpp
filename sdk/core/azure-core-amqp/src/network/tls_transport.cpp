@@ -7,7 +7,7 @@
 #include <azure_c_shared_utility/tlsio.h>
 #include <string>
 
-namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal { 
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   TlsTransport::TlsTransport(std::string const& host, uint16_t port, TransportEvents* eventHandler)
       : Transport(eventHandler)
@@ -23,4 +23,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   TlsTransport::TlsTransport(TransportEvents* eventHandler) : Transport(eventHandler) {}
 
-}}}}} // namespace Azure::Core::Amqp::_internal::Network
+}}}}} // namespace Azure::Core::Amqp::Network::_internal

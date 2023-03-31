@@ -118,7 +118,10 @@ namespace Azure { namespace Core { namespace Amqp {
           Connection const& connectionToPoll,
           MessageSenderOptions const& options,
           MessageSenderEvents* events);
-      MessageSender(std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> sender) : m_impl{sender} {}
+      MessageSender(std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> sender)
+          : m_impl{sender}
+      {
+      }
       virtual ~MessageSender() noexcept;
 
       MessageSender() = default;

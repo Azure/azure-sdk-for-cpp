@@ -18,5 +18,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         TransportEvents* eventHandler = nullptr);
     ~TlsTransport() = default;
   };
-
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
