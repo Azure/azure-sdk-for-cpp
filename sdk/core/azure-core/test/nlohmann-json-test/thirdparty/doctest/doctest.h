@@ -3930,6 +3930,8 @@ namespace {
     struct FatalConditionHandler
     {
         void reset() {}
+        static void allocateAltStackMem() {}
+        static void freeAltStackMem() {}
     };
 #else // DOCTEST_CONFIG_POSIX_SIGNALS || DOCTEST_CONFIG_WINDOWS_SEH
 
@@ -3965,6 +3967,9 @@ namespace {
             // This stops us from eating debugger breaks etc.
             return EXCEPTION_CONTINUE_SEARCH;
         }
+
+        static void allocateAltStackMem() {}
+        static void freeAltStackMem() {}
 
         FatalConditionHandler() {
             isSet = true;
@@ -4019,7 +4024,7 @@ namespace {
         static struct sigaction oldSigActions[DOCTEST_COUNTOF(signalDefs)];
         static stack_t          oldSigStack;
         static size_t           altStackSize;
-        static char *           altStackMem = nullptr;
+        static char *           altStackMem;
 
         static void handleSignal(int sig) {
             const char* name = "<unknown signal>";
