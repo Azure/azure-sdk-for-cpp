@@ -3930,6 +3930,8 @@ namespace {
     struct FatalConditionHandler
     {
         void reset() {}
+        static void allocateAltStackMem() {}
+        static void freeAltStackMem() {}
     };
 #else // DOCTEST_CONFIG_POSIX_SIGNALS || DOCTEST_CONFIG_WINDOWS_SEH
 
@@ -3965,6 +3967,9 @@ namespace {
             // This stops us from eating debugger breaks etc.
             return EXCEPTION_CONTINUE_SEARCH;
         }
+
+        static void allocateAltStackMem() {}
+        static void freeAltStackMem() {}
 
         FatalConditionHandler() {
             isSet = true;
@@ -4018,7 +4023,8 @@ namespace {
         static bool             isSet;
         static struct sigaction oldSigActions[DOCTEST_COUNTOF(signalDefs)];
         static stack_t          oldSigStack;
-        static char             altStackMem[4 * SIGSTKSZ];
+        static size_t           altStackSize;
+        static char *           altStackMem;
 
         static void handleSignal(int sig) {
             const char* name = "<unknown signal>";
@@ -4034,11 +4040,18 @@ namespace {
             raise(sig);
         }
 
+        static void allocateAltStackMem() {
+            altStackMem = new char[altStackSize];
+        }
+        static void freeAltStackMem() {
+            delete[] altStackMem;
+        }
+
         FatalConditionHandler() {
             isSet = true;
             stack_t sigStack;
             sigStack.ss_sp    = altStackMem;
-            sigStack.ss_size  = sizeof(altStackMem);
+            sigStack.ss_size  = altStackSize;
             sigStack.ss_flags = 0;
             sigaltstack(&sigStack, &oldSigStack);
             struct sigaction sa = {};
@@ -4063,10 +4076,12 @@ namespace {
         }
     };
 
-    bool             FatalConditionHandler::isSet                                      = false;
+    bool             FatalConditionHandler::isSet = false;
     struct sigaction FatalConditionHandler::oldSigActions[DOCTEST_COUNTOF(signalDefs)] = {};
-    stack_t          FatalConditionHandler::oldSigStack                                = {};
-    char             FatalConditionHandler::altStackMem[]                              = {};
+    stack_t          FatalConditionHandler::oldSigStack  = {};
+    size_t           FatalConditionHandler::altStackSize = 4 * SIGSTKSZ;
+    char *           FatalConditionHandler::altStackMem = nullptr;
+    
 
 #endif // DOCTEST_PLATFORM_WINDOWS
 #endif // DOCTEST_CONFIG_POSIX_SIGNALS || DOCTEST_CONFIG_WINDOWS_SEH
@@ -5687,7 +5702,10 @@ int Context::run() {
         p->cout = &fstr;
     }
 
+    FatalConditionHandler::allocateAltStackMem();
+
     auto cleanup_and_return = [&]() {
+        FatalConditionHandler::freeAltStackMem();
         if(fstr.is_open())
             fstr.close();
 
