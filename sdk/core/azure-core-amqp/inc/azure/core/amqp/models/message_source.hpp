@@ -46,7 +46,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     void SetDynamic(bool dynamic);
 
     Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
+    void SetDynamicNodeProperties(
+        Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
 
     std::string GetDistributionMode() const;
     void SetDistributionMode(std::string const& distributionMode);

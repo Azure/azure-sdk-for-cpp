@@ -371,7 +371,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  AmqpValue AmqpValue::GetMapValue(AmqpValue key) const { return amqpvalue_get_map_value(m_value, key); }
+  AmqpValue AmqpValue::GetMapValue(AmqpValue key) const
+  {
+    return amqpvalue_get_map_value(m_value, key);
+  }
   std::pair<AmqpValue, AmqpValue> AmqpValue::GetMapKeyAndValue(uint32_t index) const
   {
     AMQP_VALUE key;
@@ -551,7 +554,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   AmqpValue AmqpValue::GetDescriptor() const { return amqpvalue_get_inplace_descriptor(m_value); }
 
-  AmqpValue AmqpValue::GetDescribedValue() const { return amqpvalue_get_inplace_described_value(m_value); }
+  AmqpValue AmqpValue::GetDescribedValue() const
+  {
+    return amqpvalue_get_inplace_described_value(m_value);
+  }
 
   AmqpValue AmqpValue::CreateCompositeWithDescriptor(uint64_t descriptor)
   {
@@ -567,7 +573,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return header;
   }
-  AmqpValue AmqpValue::CreateHeader(Header const& header) { return amqpvalue_create_header(header); }
+  AmqpValue AmqpValue::CreateHeader(Header const& header)
+  {
+    return amqpvalue_create_header(header);
+  }
 
   bool AmqpValue::IsPropertiesTypeByDescriptor() const
   {

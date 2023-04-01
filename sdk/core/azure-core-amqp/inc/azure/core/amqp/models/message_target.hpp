@@ -45,7 +45,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     void SetDynamic(bool dynamic);
 
     Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
+    void SetDynamicNodeProperties(
+        Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
 
     Azure::Core::Amqp::Models::AmqpValue GetCapabilities() const;
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
