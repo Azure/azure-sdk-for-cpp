@@ -209,6 +209,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   /** @brief An AmqpMap represents an AMQP "map" type. which maps a key to a value.
    *
    */
-  class AmqpMap : public AmqpValue {};
+  class AmqpMap : public AmqpValue {
+  };
 
 }}}} // namespace Azure::Core::Amqp::Models
