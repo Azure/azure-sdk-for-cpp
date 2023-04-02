@@ -290,6 +290,7 @@ protected:
       catch (std::exception& ex)
       {
         GTEST_LOG_(INFO) << "Exception thrown sending CBS response: " << ex.what();
+        return;
       }
     }
     else if (static_cast<std::string>(operation) == "delete-token")
