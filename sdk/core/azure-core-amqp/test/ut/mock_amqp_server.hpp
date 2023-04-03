@@ -22,6 +22,7 @@ class AmqpServerMock : public Azure::Core::Amqp::Network::_internal::SocketListe
                        public Azure::Core::Amqp::_internal::SessionEvents,
                        public Azure::Core::Amqp::_internal::MessageReceiverEvents,
                        public Azure::Core::Amqp::_internal::MessageSenderEvents {
+
 public:
   AmqpServerMock() { m_testPort = FindAvailableSocket(); }
   virtual void Poll() const {}
