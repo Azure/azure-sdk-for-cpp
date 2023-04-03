@@ -569,15 +569,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {
-        return std::make_unique<BearerTokenAuthenticationPolicy>(*this);
+        return std::unique_ptr<HttpPolicy>(new BearerTokenAuthenticationPolicy(*this));
       }
-
-      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
-          : BearerTokenAuthenticationPolicy(other.m_credential, other.m_tokenRequestContext)
-      {
-      }
-
-      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
 
       std::unique_ptr<RawResponse> Send(
           Request& request,
@@ -585,6 +578,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           Context const& context) const override;
 
     protected:
+      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
+          : BearerTokenAuthenticationPolicy(other.m_credential, other.m_tokenRequestContext)
+      {
+      }
+
+      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
+
       virtual std::unique_ptr<RawResponse> AuthorizeAndSendRequest(
           Request& request,
           NextHttpPolicy& nextPolicy,
