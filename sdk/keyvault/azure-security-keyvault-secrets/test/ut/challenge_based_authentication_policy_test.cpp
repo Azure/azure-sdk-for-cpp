@@ -12,6 +12,8 @@
 
 #include <gtest/gtest.h>
 
+// cspell:ignore Fvault Ftest
+
 using Azure::Security::KeyVault::_internal::ChallengeBasedAuthenticationPolicy;
 
 using Azure::Core::CaseInsensitiveMap;
