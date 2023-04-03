@@ -32,7 +32,7 @@ using Azure::Identity::ClientSecretCredentialOptions;
 namespace {
 class TestRequest final {
 public:
-  Core::Url Url;
+  typename Url Url;
   CaseInsensitiveMap Headers;
   std::string Body;
 
