@@ -285,7 +285,7 @@ protected:
       response.SetBodyAmqpValue(Azure::Core::Amqp::Models::AmqpValue());
       try
       {
-        m_cbsMessageSender->SendAsync(response, m_listenerContext);
+        m_cbsMessageSender->SendAsync(response, nullptr, m_listenerContext);
       }
       catch (std::exception& ex)
       {
@@ -324,7 +324,7 @@ protected:
 
       response.SetBodyAmqpValue(Azure::Core::Amqp::Models::AmqpValue());
 
-      m_cbsMessageSender->SendAsync(response, m_listenerContext);
+      m_cbsMessageSender->SendAsync(response, nullptr, m_listenerContext);
     }
   }
 
