@@ -64,6 +64,10 @@ function getTargetOs {
         return "ubuntu-20.04"
     }
 
+    if ($OsVMImage -eq "MMSUbuntu22.04") {
+        return "ubuntu-22.04"
+    }
+
     LogError "Could not infer target OS from " $OSVmImage
 }
 
