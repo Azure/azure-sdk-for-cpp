@@ -85,6 +85,9 @@ stages:
         - Name: azure-core-tracing-opentelemetry
           Path: azure-core-tracing-opentelemetry
           VcpkgPortName: azure-core-tracing-opentelemetry-cpp
+        - Name: azure-core-amqp
+          Path: azure-core-amqp
+          VcpkgPortName: azure-core-amqp-cpp
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services
       TestEnv:
 # Key Vault
