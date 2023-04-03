@@ -212,7 +212,8 @@ AccessToken ClientCertificateCredential::GetToken(
       tokenRequestContext,
       m_clientCredentialCore.GetAdditionallyAllowedTenants());
 
-  auto const scopesStr = m_clientCredentialCore.GetScopesString(tenantId, tokenRequestContext.Scopes);
+  auto const scopesStr
+      = m_clientCredentialCore.GetScopesString(tenantId, tokenRequestContext.Scopes);
 
   // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda argument
   // when they are being executed. They are not supposed to keep a reference to lambda argument to

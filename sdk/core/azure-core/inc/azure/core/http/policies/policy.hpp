@@ -572,7 +572,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
         return std::make_unique<BearerTokenAuthenticationPolicy>(*this);
       }
 
-      
       BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
           : BearerTokenAuthenticationPolicy(other.m_credential, other.m_tokenRequestContext)
       {
