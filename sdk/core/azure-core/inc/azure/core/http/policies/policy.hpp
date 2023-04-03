@@ -247,8 +247,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     virtual std::unique_ptr<RawResponse> Send(
         Request& request,
         NextHttpPolicy nextPolicy,
-        Context const& context) const
-        = 0;
+        Context const& context) const = 0;
 
     /**
      * @brief Destructs `%HttpPolicy`.
