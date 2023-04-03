@@ -54,6 +54,12 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     DateTime::duration MinimumExpiration = std::chrono::minutes(2);
+
+    /**
+     * @brief Tenant ID.
+     *
+     */
+    std::string TenantId;
   };
 
   /**

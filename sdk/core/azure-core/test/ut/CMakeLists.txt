@@ -42,6 +42,7 @@ endif()
 
 add_executable (
   azure-core-test
+    authorization_challenge_parser_test.cpp
     azure_core_test.cpp
     base64_test.cpp
     bearer_token_authentication_policy_test.cpp

@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace Azure { namespace Identity {
   namespace _detail {
@@ -50,6 +51,13 @@ namespace Azure { namespace Identity {
      * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
     std::string AuthorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
+
+    /**
+     * @brief For multi-tenant applications, specifies additional tenants for which the credential
+     * may acquire tokens. Add the wildcard value `"*"` to allow the credential to acquire tokens
+     * for any tenant in which the application is installed.
+     */
+    std::vector<std::string> AdditionallyAllowedTenants;
   };
 
   /**
@@ -72,6 +80,7 @@ namespace Azure { namespace Identity {
         std::string const& clientId,
         std::string const& clientCertificatePath,
         std::string const& authorityHost,
+        std::vector<std::string> additionallyAllowedTenants,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:

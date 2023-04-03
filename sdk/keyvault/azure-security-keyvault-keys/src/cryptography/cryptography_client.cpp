@@ -6,6 +6,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <azure/keyvault/shared/challenge_based_authentication_policy.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
@@ -105,7 +106,7 @@ CryptographyClient::CryptographyClient(
     tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_keyId)};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
+        std::make_unique<_internal::ChallengeBasedAuthenticationPolicy>(credential, tokenContext));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 

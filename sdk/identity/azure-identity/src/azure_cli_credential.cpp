@@ -4,6 +4,7 @@
 #include "azure/identity/azure_cli_credential.hpp"
 
 #include "private/identity_log.hpp"
+#include "private/tenant_id_resolver.hpp"
 #include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/environment.hpp>
@@ -47,6 +48,7 @@ using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Identity::AzureCliCredentialOptions;
 using Azure::Identity::_detail::IdentityLog;
+using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCache;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -77,11 +79,13 @@ void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
   }
 }
 AzureCliCredential::AzureCliCredential(
+    Core::Credentials::TokenCredentialOptions const& options,
     std::string tenantId,
     DateTime::duration cliProcessTimeout,
-    Core::Credentials::TokenCredentialOptions const& options)
-    : TokenCredential("AzureCliCredential"), m_tenantId(std::move(tenantId)),
-      m_cliProcessTimeout(std::move(cliProcessTimeout))
+    std::vector<std::string> additionallyAllowedTenants)
+    : TokenCredential("AzureCliCredential"),
+      m_additionallyAllowedTenants(std::move(additionallyAllowedTenants)),
+      m_tenantId(std::move(tenantId)), m_cliProcessTimeout(std::move(cliProcessTimeout))
 {
   static_cast<void>(options);
 
@@ -95,15 +99,20 @@ AzureCliCredential::AzureCliCredential(
 }
 
 AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
-    : AzureCliCredential(options.TenantId, options.CliProcessTimeout, options)
+    : AzureCliCredential(
+        options,
+        options.TenantId,
+        options.CliProcessTimeout,
+        options.AdditionallyAllowedTenants)
 {
 }
 
 AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
     : AzureCliCredential(
+        options,
         AzureCliCredentialOptions{}.TenantId,
         AzureCliCredentialOptions{}.CliProcessTimeout,
-        options)
+        AzureCliCredentialOptions{}.AdditionallyAllowedTenants)
 {
 }
 
@@ -133,15 +142,17 @@ AccessToken AzureCliCredential::GetToken(
     Context const& context) const
 {
   auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, false, false);
+  auto const tenantId
+      = TenantIdResolver::Resolve(m_tenantId, tokenRequestContext, m_additionallyAllowedTenants);
 
-  // TokenCache::GetToken() can only use the lambda argument when they are being executed. They are
-  // not supposed to keep a reference to lambda argument to call it later. Therefore, any capture
-  // made here will outlive the possible time frame when the lambda might get called.
-  return m_tokenCache.GetToken(scopes, tokenRequestContext.MinimumExpiration, [&]() {
+  // TokenCache::GetToken() can only use the lambda argument when they are being executed. They
+  // are not supposed to keep a reference to lambda argument to call it later. Therefore, any
+  // capture made here will outlive the possible time frame when the lambda might get called.
+  return m_tokenCache.GetToken(scopes, tenantId, tokenRequestContext.MinimumExpiration, [&]() {
     try
     {
       auto const azCliResult
-          = RunShellCommand(GetAzCommand(scopes, m_tenantId), m_cliProcessTimeout, context);
+          = RunShellCommand(GetAzCommand(scopes, tenantId), m_cliProcessTimeout, context);
 
       try
       {

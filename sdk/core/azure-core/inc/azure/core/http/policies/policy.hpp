@@ -247,7 +247,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     virtual std::unique_ptr<RawResponse> Send(
         Request& request,
         NextHttpPolicy nextPolicy,
-        Context const& context) const = 0;
+        Context const& context) const
+        = 0;
 
     /**
      * @brief Destructs `%HttpPolicy`.
@@ -543,16 +544,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Bearer Token authentication policy.
      *
      */
-    class BearerTokenAuthenticationPolicy final : public HttpPolicy {
+    class BearerTokenAuthenticationPolicy : public HttpPolicy {
     private:
       std::shared_ptr<Credentials::TokenCredential const> const m_credential;
       Credentials::TokenRequestContext m_tokenRequestContext;
 
       mutable Credentials::AccessToken m_accessToken;
       mutable std::mutex m_accessTokenMutex;
-
-      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
-      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
+      mutable Credentials::TokenRequestContext m_accessTokenContext;
 
     public:
       /**
@@ -571,14 +570,37 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {
-        return std::make_unique<BearerTokenAuthenticationPolicy>(
-            m_credential, m_tokenRequestContext);
+        return std::make_unique<BearerTokenAuthenticationPolicy>(*this);
       }
+
+      
+      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const& other)
+          : BearerTokenAuthenticationPolicy(other.m_credential, other.m_tokenRequestContext)
+      {
+      }
+
+      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
 
       std::unique_ptr<RawResponse> Send(
           Request& request,
           NextHttpPolicy nextPolicy,
           Context const& context) const override;
+
+    protected:
+      virtual std::unique_ptr<RawResponse> AuthorizeAndSendRequest(
+          Request& request,
+          NextHttpPolicy& nextPolicy,
+          Context const& context) const;
+
+      virtual bool AuthorizeRequestOnChallenge(
+          std::string const& challenge,
+          Request& request,
+          Context const& context) const;
+
+      void AuthenticateAndAuthorizeRequest(
+          Request& request,
+          Credentials::TokenRequestContext const& tokenRequestContext,
+          Context const& context) const;
     };
 
     /**

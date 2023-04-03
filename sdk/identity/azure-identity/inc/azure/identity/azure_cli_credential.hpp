@@ -17,6 +17,7 @@
 
 #include <chrono>
 #include <string>
+#include <vector>
 
 namespace Azure { namespace Identity {
   /**
@@ -36,6 +37,13 @@ namespace Azure { namespace Identity {
      */
     DateTime::duration CliProcessTimeout
         = std::chrono::seconds(13); // Value was taken from .NET SDK.
+
+    /**
+     * @brief For multi-tenant applications, specifies additional tenants for which the credential
+     * may acquire tokens. Add the wildcard value `"*"` to allow the credential to acquire tokens
+     * for any tenant in which the application is installed.
+     */
+    std::vector<std::string> AdditionallyAllowedTenants;
   };
 
   /**
@@ -49,14 +57,16 @@ namespace Azure { namespace Identity {
       : public Core::Credentials::TokenCredential {
   protected:
     _detail::TokenCache m_tokenCache;
+    std::vector<std::string> m_additionallyAllowedTenants;
     std::string m_tenantId;
     DateTime::duration m_cliProcessTimeout;
 
   private:
     explicit AzureCliCredential(
+        Core::Credentials::TokenCredentialOptions const& options,
         std::string tenantId,
         DateTime::duration cliProcessTimeout,
-        Core::Credentials::TokenCredentialOptions const& options);
+        std::vector<std::string> additionallyAllowedTenants);
 
     void ThrowIfNotSafeCmdLineInput(std::string const& input, std::string const& description) const;
 

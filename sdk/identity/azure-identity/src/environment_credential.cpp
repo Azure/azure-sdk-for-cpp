@@ -14,6 +14,7 @@
 #include <vector>
 
 using Azure::Identity::EnvironmentCredential;
+using Azure::Identity::EnvironmentCredentialOptions;
 
 using Azure::Core::Context;
 using Azure::Core::_internal::Environment;
@@ -36,7 +37,9 @@ void PrintCredentialCreationLogMessage(
     char const* credThatGetsCreated);
 } // namespace
 
-EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
+EnvironmentCredential::EnvironmentCredential(
+    TokenCredentialOptions const& options,
+    std::vector<std::string> const& additionallyAllowedTenants)
     : TokenCredential("EnvironmentCredential")
 {
   auto tenantId = Environment::GetVariable(AzureTenantIdEnvVarName);
@@ -49,77 +52,47 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
 
   if (!tenantId.empty() && !clientId.empty())
   {
+    std::vector<std::pair<char const*, char const*>> envVarsToParams
+        = {{AzureTenantIdEnvVarName, "tenantId"}, {AzureClientIdEnvVarName, "clientId"}};
+
     if (!clientSecret.empty())
     {
+      envVarsToParams.push_back({AzureClientSecretEnvVarName, "clientSecret"});
+
+      ClientSecretCredentialOptions clientSecretCredentialOptions;
+      static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
+      clientSecretCredentialOptions.AdditionallyAllowedTenants = additionallyAllowedTenants;
+
       if (!authority.empty())
       {
-        PrintCredentialCreationLogMessage(
-            GetCredentialName(),
-            {
-                {AzureTenantIdEnvVarName, "tenantId"},
-                {AzureClientIdEnvVarName, "clientId"},
-                {AzureClientSecretEnvVarName, "clientSecret"},
-                {AzureAuthorityHostEnvVarName, "authorityHost"},
-            },
-            "ClientSecretCredential");
-
-        ClientSecretCredentialOptions clientSecretCredentialOptions;
-        static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
+        envVarsToParams.push_back({AzureAuthorityHostEnvVarName, "authorityHost"});
         clientSecretCredentialOptions.AuthorityHost = authority;
-
-        m_credentialImpl.reset(new ClientSecretCredential(
-            tenantId, clientId, clientSecret, clientSecretCredentialOptions));
       }
-      else
-      {
-        PrintCredentialCreationLogMessage(
-            GetCredentialName(),
-            {
-                {AzureTenantIdEnvVarName, "tenantId"},
-                {AzureClientIdEnvVarName, "clientId"},
-                {AzureClientSecretEnvVarName, "clientSecret"},
-            },
-            "ClientSecretCredential");
 
-        m_credentialImpl.reset(
-            new ClientSecretCredential(tenantId, clientId, clientSecret, options));
-      }
+      PrintCredentialCreationLogMessage(GetCredentialName(), envVarsToParams, "ClientSecretCredential");
+
+      m_credentialImpl.reset(new ClientSecretCredential(
+          tenantId, clientId, clientSecret, clientSecretCredentialOptions));
     }
     else if (!clientCertificatePath.empty())
     {
+      envVarsToParams.push_back({AzureClientCertificatePathEnvVarName, "clientCertificatePath"});
+
+      ClientCertificateCredentialOptions clientCertificateCredentialOptions;
+      static_cast<TokenCredentialOptions&>(clientCertificateCredentialOptions) = options;
+      clientCertificateCredentialOptions.AdditionallyAllowedTenants = additionallyAllowedTenants;
+
       if (!authority.empty())
       {
-        PrintCredentialCreationLogMessage(
-            GetCredentialName(),
-            {
-                {AzureTenantIdEnvVarName, "tenantId"},
-                {AzureClientIdEnvVarName, "clientId"},
-                {AzureClientCertificatePathEnvVarName, "clientCertificatePath"},
-                {AzureAuthorityHostEnvVarName, "authorityHost"},
-            },
-            "ClientCertificateCredential");
-
-        ClientCertificateCredentialOptions clientCertificateCredentialOptions;
-        static_cast<TokenCredentialOptions&>(clientCertificateCredentialOptions) = options;
+        envVarsToParams.push_back({AzureAuthorityHostEnvVarName, "authorityHost"});
         clientCertificateCredentialOptions.AuthorityHost = authority;
-
-        m_credentialImpl.reset(new ClientCertificateCredential(
-            tenantId, clientId, clientCertificatePath, clientCertificateCredentialOptions));
       }
-      else
-      {
-        PrintCredentialCreationLogMessage(
-            GetCredentialName(),
-            {
-                {AzureTenantIdEnvVarName, "tenantId"},
-                {AzureClientIdEnvVarName, "clientId"},
-                {AzureClientCertificatePathEnvVarName, "clientCertificatePath"},
-            },
-            "ClientCertificateCredential");
 
-        m_credentialImpl.reset(
-            new ClientCertificateCredential(tenantId, clientId, clientCertificatePath, options));
-      }
+      PrintCredentialCreationLogMessage(
+          GetCredentialName(), envVarsToParams, "ClientCertificateCredential");
+
+      m_credentialImpl.reset(new ClientCertificateCredential(
+          tenantId, clientId, clientCertificatePath, clientCertificateCredentialOptions));
     }
   }
 
@@ -154,6 +127,17 @@ EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions options)
       IdentityLog::Write(logLevel, logMsg);
     }
   }
+}
+
+
+EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions const& options)
+    : EnvironmentCredential(options, {})
+{
+}
+
+EnvironmentCredential::EnvironmentCredential(EnvironmentCredentialOptions const& options)
+    : EnvironmentCredential(options, options.AdditionallyAllowedTenants)
+{
 }
 
 AccessToken EnvironmentCredential::GetToken(

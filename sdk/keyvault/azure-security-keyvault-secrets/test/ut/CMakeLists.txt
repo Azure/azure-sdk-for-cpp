@@ -16,6 +16,7 @@ SetUpTestProxy("sdk/keyvault")
 
 add_executable (
   azure-security-keyvault-secrets-test
+    challenge_based_authentication_policy_test.cpp
     macro_guard.cpp
     secret_client_test.cpp
     secret_get_client_deserialize_test.hpp
@@ -38,7 +39,12 @@ endif()
 target_link_libraries(azure-security-keyvault-secrets-test PRIVATE azure-security-keyvault-secrets azure-identity azure-core-test-fw gtest gtest_main gmock)
 
 # Adding private headers so we can test the private APIs with no relative paths include.
-target_include_directories (azure-security-keyvault-secrets-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+target_include_directories(
+    azure-security-keyvault-secrets-test
+      PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-security-keyvault-shared/inc>
+)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

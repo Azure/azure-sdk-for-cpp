@@ -83,6 +83,7 @@ set(
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/credentials/authorization_challenge_parser.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
@@ -121,6 +122,7 @@ set(
     src/azure_assert.cpp
     src/base64.cpp
     src/context.cpp
+    src/credentials/authorization_challenge_parser.cpp
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
     src/datetime.cpp

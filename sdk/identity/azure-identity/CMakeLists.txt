@@ -66,6 +66,7 @@ set(
     src/private/identity_log.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
+    src/private/tenant_id_resolver.hpp
     src/private/token_credential_impl.hpp
     src/azure_cli_credential.cpp
     src/chained_token_credential.cpp
@@ -76,6 +77,7 @@ set(
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp
+    src/tenant_id_resolver.cpp
     src/token_cache.cpp
     src/token_credential_impl.cpp
 )

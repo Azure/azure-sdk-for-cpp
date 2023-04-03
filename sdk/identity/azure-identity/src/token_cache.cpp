@@ -26,7 +26,7 @@ template <typename T> bool ShouldCleanUpCacheFromExpiredItems(T cacheSize);
 }
 
 std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
-    std::string const& key,
+    CacheKey const& key,
     DateTime::duration minimumExpiration) const
 {
   {
@@ -86,10 +86,11 @@ std::shared_ptr<TokenCache::CacheValue> TokenCache::GetOrCreateValue(
 
 AccessToken TokenCache::GetToken(
     std::string const& scopeString,
+    std::string const& tenantId,
     DateTime::duration minimumExpiration,
     std::function<AccessToken()> const& getNewToken) const
 {
-  auto const item = GetOrCreateValue(scopeString, minimumExpiration);
+  auto const item = GetOrCreateValue({scopeString, tenantId}, minimumExpiration);
 
   {
     std::shared_lock<std::shared_timed_mutex> itemReadLock(item->ElementMutex);

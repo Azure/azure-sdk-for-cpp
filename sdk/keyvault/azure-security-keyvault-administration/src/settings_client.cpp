@@ -10,6 +10,7 @@
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/keyvault/administration/settings_client.hpp>
+#include <azure/keyvault/shared/challenge_based_authentication_policy.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 #include <memory>
 
@@ -50,8 +51,8 @@ SettingsClient::SettingsClient(
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
 
-    perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));
+    perRetrypolicies.emplace_back(std::make_unique<_internal::ChallengeBasedAuthenticationPolicy>(
+        credential, std::move(tokenContext)));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 

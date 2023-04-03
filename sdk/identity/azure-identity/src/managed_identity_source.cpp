@@ -136,7 +136,7 @@ Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
   // when they are being executed. They are not supposed to keep a reference to lambda argument to
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
-  return m_tokenCache.GetToken(scopesStr, tokenRequestContext.MinimumExpiration, [&]() {
+  return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
     return TokenCredentialImpl::GetToken(context, [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
 
@@ -218,7 +218,7 @@ Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
   // when they are being executed. They are not supposed to keep a reference to lambda argument to
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
-  return m_tokenCache.GetToken(scopesStr, tokenRequestContext.MinimumExpiration, [&]() {
+  return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
     return TokenCredentialImpl::GetToken(context, [&]() {
       using Azure::Core::Url;
       using Azure::Core::Http::HttpMethod;
@@ -317,7 +317,7 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
   // when they are being executed. They are not supposed to keep a reference to lambda argument to
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
-  return m_tokenCache.GetToken(scopesStr, tokenRequestContext.MinimumExpiration, [&]() {
+  return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
     return TokenCredentialImpl::GetToken(
         context,
         createRequest,
@@ -417,7 +417,7 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
   // when they are being executed. They are not supposed to keep a reference to lambda argument to
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
-  return m_tokenCache.GetToken(scopesStr, tokenRequestContext.MinimumExpiration, [&]() {
+  return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
     return TokenCredentialImpl::GetToken(context, [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
 
