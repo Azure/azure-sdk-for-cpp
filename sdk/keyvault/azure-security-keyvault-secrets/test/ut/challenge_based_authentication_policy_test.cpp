@@ -32,7 +32,7 @@ using Azure::Identity::ClientSecretCredentialOptions;
 namespace {
 class TestRequest final {
 public:
-  typename Url Url;
+  Azure::Core::Url Url;
   CaseInsensitiveMap Headers;
   std::string Body;
 
@@ -95,7 +95,6 @@ public:
 
   std::unique_ptr<RawResponse> Send(Request& request, Context const&) override
   {
-    std::cout << "\n====== " << &m_responses << " : " << m_currentResponse << " =======\n";
     EXPECT_LT(m_currentResponse, m_responses.size());
 
     m_requests->emplace_back(TestRequest(request));
