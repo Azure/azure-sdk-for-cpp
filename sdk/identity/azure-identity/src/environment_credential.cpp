@@ -69,7 +69,8 @@ EnvironmentCredential::EnvironmentCredential(
         clientSecretCredentialOptions.AuthorityHost = authority;
       }
 
-      PrintCredentialCreationLogMessage(GetCredentialName(), envVarsToParams, "ClientSecretCredential");
+      PrintCredentialCreationLogMessage(
+          GetCredentialName(), envVarsToParams, "ClientSecretCredential");
 
       m_credentialImpl.reset(new ClientSecretCredential(
           tenantId, clientId, clientSecret, clientSecretCredentialOptions));
@@ -128,7 +129,6 @@ EnvironmentCredential::EnvironmentCredential(
     }
   }
 }
-
 
 EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions const& options)
     : EnvironmentCredential(options, {})
