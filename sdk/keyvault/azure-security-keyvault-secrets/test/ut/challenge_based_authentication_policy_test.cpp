@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/shared/challenge_based_authentication_policy.hpp"
+#include "azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp"
 
 #include "azure/keyvault/shared/keyvault_shared.hpp"
 #include <azure/core/internal/http/pipeline.hpp>

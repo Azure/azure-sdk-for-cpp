@@ -6,7 +6,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-#include <azure/keyvault/shared/challenge_based_authentication_policy.hpp>
+#include <azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"

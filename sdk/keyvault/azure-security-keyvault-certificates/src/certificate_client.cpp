@@ -3,7 +3,7 @@
 
 #include "azure/keyvault/certificates/certificate_client.hpp"
 
-#include "azure/keyvault/shared/challenge_based_authentication_policy.hpp"
+#include "azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp"
 #include "azure/keyvault/shared/keyvault_shared.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
