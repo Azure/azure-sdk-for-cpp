@@ -93,8 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
   private:
-    Azure::Security::KeyVault::Administration::Models::Setting ParseSetting(
-        std::vector<uint8_t> const& responseBody) const;
+    Models::Setting ParseSetting(std::vector<uint8_t> const& responseBody) const;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,
