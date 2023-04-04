@@ -18,6 +18,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Json::_internal;
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::Models;
 using namespace Azure::Security::KeyVault::Administration::_detail;
 
 std::unique_ptr<Azure::Core::Http::RawResponse> SettingsClient::SendRequest(
