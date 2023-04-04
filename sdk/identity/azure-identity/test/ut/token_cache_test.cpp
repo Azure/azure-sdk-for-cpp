@@ -53,7 +53,7 @@ TEST(TokenCache, GetReuseRefresh)
   auto const Yesterday = Tomorrow - 48h;
 
   {
-    auto const token1 = tokenCache.GetToken("A", 2min, [=]() {
+    auto const token1 = tokenCache.GetToken("A", {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -65,7 +65,7 @@ TEST(TokenCache, GetReuseRefresh)
     EXPECT_EQ(token1.ExpiresOn, Tomorrow);
     EXPECT_EQ(token1.Token, "T1");
 
-    auto const token2 = tokenCache.GetToken("A", 2min, [=]() {
+    auto const token2 = tokenCache.GetToken("A", {}, 2min, [=]() {
       EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
       AccessToken result;
       result.Token = "T2";
@@ -80,9 +80,9 @@ TEST(TokenCache, GetReuseRefresh)
   }
 
   {
-    tokenCache.m_cache["A"]->AccessToken.ExpiresOn = Yesterday;
+    tokenCache.m_cache[{"A", {}}]->AccessToken.ExpiresOn = Yesterday;
 
-    auto const token = tokenCache.GetToken("A", 2min, [=]() {
+    auto const token = tokenCache.GetToken("A", {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T3";
       result.ExpiresOn = Tomorrow + 1min;
@@ -106,7 +106,7 @@ TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
 
   tokenCache.m_onBeforeCacheWriteLock = [&]() {
     tokenCache.m_onBeforeCacheWriteLock = nullptr;
-    static_cast<void>(tokenCache.GetToken("A", 2min, [=]() {
+    static_cast<void>(tokenCache.GetToken("A", {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -114,7 +114,7 @@ TEST(TokenCache, TwoThreadsAttemptToInsertTheSameKey)
     }));
   };
 
-  auto const token = tokenCache.GetToken("A", 2min, [=]() {
+  auto const token = tokenCache.GetToken("A", {}, 2min, [=]() {
     EXPECT_FALSE("getNewToken does not get invoked when the fresh value was inserted just before "
                  "acquiring cache write lock");
     AccessToken result;
@@ -141,12 +141,12 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
 
     tokenCache.m_onBeforeItemWriteLock = [&]() {
       tokenCache.m_onBeforeItemWriteLock = nullptr;
-      auto const item = tokenCache.m_cache["A"];
+      auto const item = tokenCache.m_cache[{"A", {}}];
       item->AccessToken.Token = "T1";
       item->AccessToken.ExpiresOn = Tomorrow;
     };
 
-    auto const token = tokenCache.GetToken("A", 2min, [=]() {
+    auto const token = tokenCache.GetToken("A", {}, 2min, [=]() {
       EXPECT_FALSE("getNewToken does not get invoked when the fresh value was inserted just before "
                    "acquiring item write lock");
       AccessToken result;
@@ -167,12 +167,12 @@ TEST(TokenCache, TwoThreadsAttemptToUpdateTheSameToken)
 
     tokenCache.m_onBeforeItemWriteLock = [&]() {
       tokenCache.m_onBeforeItemWriteLock = nullptr;
-      auto const item = tokenCache.m_cache["A"];
+      auto const item = tokenCache.m_cache[{"A", {}}];
       item->AccessToken.Token = "T3";
       item->AccessToken.ExpiresOn = Yesterday;
     };
 
-    auto const token = tokenCache.GetToken("A", 2min, [=]() {
+    auto const token = tokenCache.GetToken("A", {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T4";
       result.ExpiresOn = Tomorrow + 3min;
@@ -199,7 +199,7 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 1; i <= 35; ++i)
   {
     auto const n = std::to_string(i);
-    static_cast<void>(tokenCache.GetToken(n, 2min, [=]() {
+    static_cast<void>(tokenCache.GetToken(n, {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -214,14 +214,14 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 1; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
-    tokenCache.m_cache[n]->AccessToken.ExpiresOn = Yesterday;
+    tokenCache.m_cache[{n, {}}]->AccessToken.ExpiresOn = Yesterday;
   }
 
   // Add tokens up to 55 total. When 56th gets added, clean up should get triggered.
   for (auto i = 36; i <= 55; ++i)
   {
     auto const n = std::to_string(i);
-    static_cast<void>(tokenCache.GetToken(n, 2min, [=]() {
+    static_cast<void>(tokenCache.GetToken(n, {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T1";
       result.ExpiresOn = Tomorrow;
@@ -235,11 +235,11 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 1; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
-    EXPECT_NE(tokenCache.m_cache.find(n), tokenCache.m_cache.end());
+    EXPECT_NE(tokenCache.m_cache.find({n, {}}), tokenCache.m_cache.end());
   }
 
   // One more addition to the cache and cleanup for the expired ones will get triggered.
-  static_cast<void>(tokenCache.GetToken("56", 2min, [=]() {
+  static_cast<void>(tokenCache.GetToken("56", {}, 2min, [=]() {
     AccessToken result;
     result.Token = "T1";
     result.ExpiresOn = Tomorrow;
@@ -253,14 +253,14 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 1; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
-    EXPECT_EQ(tokenCache.m_cache.find(n), tokenCache.m_cache.end());
+    EXPECT_EQ(tokenCache.m_cache.find({n, {}}), tokenCache.m_cache.end());
   }
 
   // Let's expire items from 21 all the way up to 56.
   for (auto i = 21; i <= 56; ++i)
   {
     auto const n = std::to_string(i);
-    tokenCache.m_cache[n]->AccessToken.ExpiresOn = Yesterday;
+    tokenCache.m_cache[{n, {}}]->AccessToken.ExpiresOn = Yesterday;
   }
 
   // Re-add items 2 and 3. Adding them should not trigger cleanup. After adding, cache should get to
@@ -268,7 +268,7 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 2; i <= 3; ++i)
   {
     auto const n = std::to_string(i);
-    static_cast<void>(tokenCache.GetToken(n, 2min, [=]() {
+    static_cast<void>(tokenCache.GetToken(n, {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T2";
       result.ExpiresOn = Tomorrow;
@@ -284,19 +284,19 @@ TEST(TokenCache, ExpiredCleanup)
   // Out of 4 locked, two are expired, so they should get cleared under normal circumstances, but
   // this time they will remain in the cache.
   std::shared_lock<std::shared_timed_mutex> readLockForUnexpired(
-      tokenCache.m_cache["2"]->ElementMutex);
+      tokenCache.m_cache[{"2", {}}]->ElementMutex);
 
   std::shared_lock<std::shared_timed_mutex> readLockForExpired(
-      tokenCache.m_cache["54"]->ElementMutex);
+      tokenCache.m_cache[{"54", {}}]->ElementMutex);
 
   std::unique_lock<std::shared_timed_mutex> writeLockForUnexpired(
-      tokenCache.m_cache["3"]->ElementMutex);
+      tokenCache.m_cache[{"3", {}}]->ElementMutex);
 
   std::unique_lock<std::shared_timed_mutex> writeLockForExpired(
-      tokenCache.m_cache["55"]->ElementMutex);
+      tokenCache.m_cache[{"55", {}}]->ElementMutex);
 
   // Count is at 55. Inserting the 56th element, and it will trigger cleanup.
-  static_cast<void>(tokenCache.GetToken("1", 2min, [=]() {
+  static_cast<void>(tokenCache.GetToken("1", {}, 2min, [=]() {
     AccessToken result;
     result.Token = "T2";
     result.ExpiresOn = Tomorrow;
@@ -309,17 +309,17 @@ TEST(TokenCache, ExpiredCleanup)
   for (auto i = 1; i <= 20; ++i)
   {
     auto const n = std::to_string(i);
-    EXPECT_NE(tokenCache.m_cache.find(n), tokenCache.m_cache.end());
+    EXPECT_NE(tokenCache.m_cache.find({n, {}}), tokenCache.m_cache.end());
   }
 
-  EXPECT_NE(tokenCache.m_cache.find("54"), tokenCache.m_cache.end());
+  EXPECT_NE(tokenCache.m_cache.find({"54", {}}), tokenCache.m_cache.end());
 
-  EXPECT_NE(tokenCache.m_cache.find("55"), tokenCache.m_cache.end());
+  EXPECT_NE(tokenCache.m_cache.find({"55", {}}), tokenCache.m_cache.end());
 
   for (auto i = 21; i <= 53; ++i)
   {
     auto const n = std::to_string(i);
-    EXPECT_EQ(tokenCache.m_cache.find(n), tokenCache.m_cache.end());
+    EXPECT_EQ(tokenCache.m_cache.find({n, {}}), tokenCache.m_cache.end());
   }
 }
 
@@ -331,7 +331,7 @@ TEST(TokenCache, MinimumExpiration)
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
 
-  auto const token1 = tokenCache.GetToken("A", 2min, [=]() {
+  auto const token1 = tokenCache.GetToken("A", {}, 2min, [=]() {
     AccessToken result;
     result.Token = "T1";
     result.ExpiresOn = Tomorrow;
@@ -343,7 +343,7 @@ TEST(TokenCache, MinimumExpiration)
   EXPECT_EQ(token1.ExpiresOn, Tomorrow);
   EXPECT_EQ(token1.Token, "T1");
 
-  auto const token2 = tokenCache.GetToken("A", 24h, [=]() {
+  auto const token2 = tokenCache.GetToken("A", {}, 24h, [=]() {
     AccessToken result;
     result.Token = "T2";
     result.ExpiresOn = Tomorrow + 1h;
@@ -364,7 +364,7 @@ TEST(TokenCache, MultithreadedAccess)
 
   DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
 
-  auto const token1 = tokenCache.GetToken("A", 2min, [=]() {
+  auto const token1 = tokenCache.GetToken("A", {}, 2min, [=]() {
     AccessToken result;
     result.Token = "T1";
     result.ExpiresOn = Tomorrow;
@@ -377,14 +377,15 @@ TEST(TokenCache, MultithreadedAccess)
   EXPECT_EQ(token1.Token, "T1");
 
   {
-    std::shared_lock<std::shared_timed_mutex> itemReadLock(tokenCache.m_cache["A"]->ElementMutex);
+    std::shared_lock<std::shared_timed_mutex> itemReadLock(
+        tokenCache.m_cache[{"A", {}}]->ElementMutex);
 
     {
       std::shared_lock<std::shared_timed_mutex> cacheReadLock(tokenCache.m_cacheMutex);
 
-      // Parallel threads read both the container and the item we're accessing, and we can access it
-      // in parallel as well.
-      auto const token2 = tokenCache.GetToken("A", 2min, [=]() {
+      // Parallel threads read both the container and the item we're accessing, and we can
+      // access it in parallel as well.
+      auto const token2 = tokenCache.GetToken("A", {}, 2min, [=]() {
         EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
         AccessToken result;
         result.Token = "T2";
@@ -400,7 +401,7 @@ TEST(TokenCache, MultithreadedAccess)
 
     // The cache is unlocked, but one item is being read in a parallel thread, which does not
     // prevent new items (with different key) from being appended to cache.
-    auto const token3 = tokenCache.GetToken("B", 2min, [=]() {
+    auto const token3 = tokenCache.GetToken("B", {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T3";
       result.ExpiresOn = Tomorrow + 2h;
@@ -414,11 +415,12 @@ TEST(TokenCache, MultithreadedAccess)
   }
 
   {
-    std::unique_lock<std::shared_timed_mutex> itemWriteLock(tokenCache.m_cache["A"]->ElementMutex);
+    std::unique_lock<std::shared_timed_mutex> itemWriteLock(
+        tokenCache.m_cache[{"A", {}}]->ElementMutex);
 
     // The cache is unlocked, but one item is being written in a parallel thread, which does not
     // prevent new items (with different key) from being appended to cache.
-    auto const token3 = tokenCache.GetToken("C", 2min, [=]() {
+    auto const token3 = tokenCache.GetToken("C", {}, 2min, [=]() {
       AccessToken result;
       result.Token = "T4";
       result.ExpiresOn = Tomorrow + 3h;
@@ -514,7 +516,8 @@ TEST(TokenCache, PerCredInstance)
     auto const tokenB = credB.GetToken(getCached, {});
     EXPECT_EQ(
         tokenB.Token,
-        "SecretB2"); // if token cache was shared between instances, the value would be "SecretA1"
+        "SecretB2"); // if token cache was shared between instances, the value would be
+                     // "SecretA1"
   }
 
   {
@@ -539,5 +542,130 @@ TEST(TokenCache, PerCredInstance)
     auto const tokenA6
         = credA.GetToken(getCached, {}); // Should get the cached, recently refreshed value
     EXPECT_EQ(tokenA6.Token, "SecretA4");
+  }
+}
+
+TEST(TokenCache, TenantId)
+{
+  TestableTokenCache tokenCache;
+
+  EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
+
+  DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
+
+  {
+    auto const token = tokenCache.GetToken("A", "X", 2min, [=]() {
+      AccessToken result;
+      result.Token = "AX";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 1UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "AX");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("B", "X", 2min, [=]() {
+      AccessToken result;
+      result.Token = "BX";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 2UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "BX");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("A", "Y", 2min, [=]() {
+      AccessToken result;
+      result.Token = "AY";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 3UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "AY");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("B", "Y", 2min, [=]() {
+      AccessToken result;
+      result.Token = "BY";
+      result.ExpiresOn = Tomorrow;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 4UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "BY");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("A", "X", 2min, [=]() {
+      EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
+      AccessToken result;
+      result.Token = "XA";
+      result.ExpiresOn = Tomorrow + 24h;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 4UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "AX");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("B", "X", 2min, [=]() {
+      EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
+      AccessToken result;
+      result.Token = "XB";
+      result.ExpiresOn = Tomorrow + 24h;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 4UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "BX");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("A", "Y", 2min, [=]() {
+      EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
+      AccessToken result;
+      result.Token = "YA";
+      result.ExpiresOn = Tomorrow + 24h;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 4UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "AY");
+  }
+
+  {
+    auto const token = tokenCache.GetToken("B", "Y", 2min, [=]() {
+      EXPECT_FALSE("getNewToken does not get invoked when the existing cache value is good");
+      AccessToken result;
+      result.Token = "YB";
+      result.ExpiresOn = Tomorrow + 24h;
+      return result;
+    });
+
+    EXPECT_EQ(tokenCache.m_cache.size(), 4UL);
+
+    EXPECT_EQ(token.ExpiresOn, Tomorrow);
+    EXPECT_EQ(token.Token, "BY");
   }
 }

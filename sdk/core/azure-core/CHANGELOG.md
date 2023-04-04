@@ -7,6 +7,7 @@
 - Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.
 - Added `DisableTlsCertificateValidation` in `TransportOptions`.
 - Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
+- Added support for challenge-based and multi-tenant authentication.
 
 ### Breaking Changes
 

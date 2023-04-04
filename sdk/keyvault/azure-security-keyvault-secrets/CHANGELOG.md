@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for challenge-based and multi-tenant authentication.
+
 ### Breaking Changes
 
 ### Bugs Fixed

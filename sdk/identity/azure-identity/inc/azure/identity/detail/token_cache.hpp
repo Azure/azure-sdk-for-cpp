@@ -17,6 +17,7 @@
 #include <memory>
 #include <shared_mutex>
 #include <string>
+#include <tuple>
 
 namespace Azure { namespace Identity { namespace _detail {
   /**
@@ -39,26 +40,27 @@ namespace Azure { namespace Identity { namespace _detail {
     // A test hook that gets invoked before item write lock gets acquired.
     virtual void OnBeforeItemWriteLock() const {};
 
+    struct CacheKey
+    {
+      std::string Scope;
+      std::string TenantId;
+    };
+
+    struct CacheKeyComparator
+    {
+      bool operator()(CacheKey const& lhs, CacheKey const& rhs) const
+      {
+        return std::tie(lhs.Scope, lhs.TenantId) < std::tie(rhs.Scope, rhs.TenantId);
+      }
+    };
+
     struct CacheValue
     {
       Core::Credentials::AccessToken AccessToken;
       std::shared_timed_mutex ElementMutex;
     };
 
-    // The current cache Key, std::string Scopes, may later evolve to a struct that contains more
-    // fields. All that depends on the fields in the TokenRequestContext that are used as
-    // characteristics that go into the network request that gets the token.
-    // If tomorrow we add Multi-Tenant Authentication, and the TenantID stops being an immutable
-    // characteristic of a credential instance, but instead becomes variable depending on the fields
-    // of the TokenRequestContext that are taken into consideration as network request for the token
-    // is being sent, it should go into what will form the new CacheKey struct.
-    // i.e. we want all the variable inputs for obtaining a token to be a part of the key, because
-    // we want to have the same kind of result. There should be no "hidden variables".
-    // Otherwise, the cache will stop functioning properly, because the value you'd get from cache
-    // for a given key will fail to authenticate, but if the cache ends up calling the getNewToken
-    // callback, you'll authenticate successfully (however the other caller who need to get the
-    // token for slightly different context will not be as lucky).
-    mutable std::map<std::string, std::shared_ptr<CacheValue>> m_cache;
+    mutable std::map<CacheKey, std::shared_ptr<CacheValue>, CacheKeyComparator> m_cache;
     mutable std::shared_timed_mutex m_cacheMutex;
 
   private:
@@ -73,7 +75,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
     // Gets item from cache, or creates it, puts into cache, and returns.
     std::shared_ptr<CacheValue> GetOrCreateValue(
-        std::string const& key,
+        CacheKey const& key,
         DateTime::duration minimumExpiration) const;
 
   public:
@@ -85,6 +87,7 @@ namespace Azure { namespace Identity { namespace _detail {
      * provided, caches it, and returns its value.
      *
      * @param scopeString Authentication scopes (or resource) as string.
+     * @param tenantId TenantId for authentication.
      * @param minimumExpiration Minimum token lifetime for the cached value to be returned.
      * @param getNewToken Function to get the new token for the given \p scopeString, in case when
      * cache does not have it, or if its remaining lifetime is less than \p minimumExpiration.
@@ -94,6 +97,7 @@ namespace Azure { namespace Identity { namespace _detail {
      */
     Core::Credentials::AccessToken GetToken(
         std::string const& scopeString,
+        std::string const& tenantId,
         DateTime::duration minimumExpiration,
         std::function<Core::Credentials::AccessToken()> const& getNewToken) const;
   };
