@@ -89,8 +89,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns Response containing a list of settings.
      */
-    Azure::Response<Models::SettingsListResult>
-    GetSettings(
+    Azure::Response<Models::SettingsListResult> GetSettings(
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
   private:
