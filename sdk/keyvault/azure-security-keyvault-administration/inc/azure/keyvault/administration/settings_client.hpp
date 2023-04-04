@@ -17,8 +17,6 @@
 #include <memory>
 #include <string>
 
-using namespace Azure::Security::KeyVault::Administration::Models;
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   /**
    * @brief Settings Client class.
@@ -67,7 +65,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns Response containing the new updated setting.
      */
-    Azure::Response<Setting> UpdateSetting(
+    Azure::Response<Azure::Security::KeyVault::Administration::Models::Setting> UpdateSetting(
         std::string const& name,
         std::string const& value,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
@@ -80,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns response containing the setting.
      */
-    Azure::Response<Setting> GetSetting(
+    Azure::Response<Azure::Security::KeyVault::Administration::Models::Setting> GetSetting(
         std::string const& name,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
@@ -91,11 +89,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns Response containing a list of settings.
      */
-    Azure::Response<SettingsListResult> GetSettings(
+    Azure::Response<Azure::Security::KeyVault::Administration::Models::SettingsListResult>
+    GetSettings(
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
   private:
-    Setting ParseSetting(std::vector<uint8_t> const& responseBody) const;
+    Azure::Security::KeyVault::Administration::Models::Setting ParseSetting(
+        std::vector<uint8_t> const& responseBody) const;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,
