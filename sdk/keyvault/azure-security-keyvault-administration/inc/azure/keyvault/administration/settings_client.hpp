@@ -65,7 +65,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns Response containing the new updated setting.
      */
-    Azure::Response<Azure::Security::KeyVault::Administration::Models::Setting> UpdateSetting(
+    Azure::Response<Models::Setting> UpdateSetting(
         std::string const& name,
         std::string const& value,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
@@ -78,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns response containing the setting.
      */
-    Azure::Response<Azure::Security::KeyVault::Administration::Models::Setting> GetSetting(
+    Azure::Response<Models::Setting> GetSetting(
         std::string const& name,
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
@@ -89,7 +89,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @returns Response containing a list of settings.
      */
-    Azure::Response<Azure::Security::KeyVault::Administration::Models::SettingsListResult>
+    Azure::Response<Models::SettingsListResult>
     GetSettings(
         const Azure::Core::Context& context = Azure::Core::Context{}) const;
 
