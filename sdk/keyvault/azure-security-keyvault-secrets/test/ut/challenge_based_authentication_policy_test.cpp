@@ -14,7 +14,7 @@
 
 // cspell:ignore Fvault Ftest
 
-using Azure::Security::KeyVault::_internal::ChallengeBasedAuthenticationPolicy;
+using Azure::Security::KeyVault::_internal::KeyVaultChallengeBasedAuthenticationPolicy;
 
 using Azure::Core::CaseInsensitiveMap;
 using Azure::Core::Context;
@@ -124,7 +124,7 @@ public:
 
     std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
     perRetryPolicies.emplace_back(
-        std::make_unique<ChallengeBasedAuthenticationPolicy>(credential, tokenContext));
+        std::make_unique<KeyVaultChallengeBasedAuthenticationPolicy>(credential, tokenContext));
 
     std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
 
@@ -191,7 +191,7 @@ std::string GetAuthHeaderValueFromServiceRequest(TestRequest const& request)
 }
 } // namespace
 
-TEST(ChallengeBasedAuthenticationPolicy, BearerTokenAuthPolicyCompatible)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, BearerTokenAuthPolicyCompatible)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -230,7 +230,7 @@ TEST(ChallengeBasedAuthenticationPolicy, BearerTokenAuthPolicyCompatible)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AnotherScopeAsScope)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AnotherScopeAsScope)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -299,7 +299,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AnotherScopeAsScope)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AnotherScopeAsResource)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AnotherScopeAsResource)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -368,7 +368,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AnotherScopeAsResource)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantAsterisk)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AnotherTenantAsterisk)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -439,7 +439,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantAsterisk)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantAndScopeWithAltNames)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AnotherTenantAndScopeWithAltNames)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -510,7 +510,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantAndScopeWithAltNames)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantExplicit)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AnotherTenantExplicit)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -581,7 +581,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantExplicit)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantNotAllowed)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AnotherTenantNotAllowed)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -632,7 +632,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AnotherTenantNotAllowed)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, MissingScope)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, MissingScope)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -690,7 +690,7 @@ TEST(ChallengeBasedAuthenticationPolicy, MissingScope)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, EmptyScope)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, EmptyScope)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -750,7 +750,7 @@ TEST(ChallengeBasedAuthenticationPolicy, EmptyScope)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, ScopeValidationInvalidUrl)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, ScopeValidationInvalidUrl)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -800,7 +800,7 @@ TEST(ChallengeBasedAuthenticationPolicy, ScopeValidationInvalidUrl)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, ScopeValidationLongerDomain)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, ScopeValidationLongerDomain)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -850,7 +850,7 @@ TEST(ChallengeBasedAuthenticationPolicy, ScopeValidationLongerDomain)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, ScopeValidationDomainMismatch)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, ScopeValidationDomainMismatch)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -900,7 +900,7 @@ TEST(ChallengeBasedAuthenticationPolicy, ScopeValidationDomainMismatch)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AuthorizationMissing)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AuthorizationMissing)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -947,7 +947,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AuthorizationMissing)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AuthorizationEmpty)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AuthorizationEmpty)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -995,7 +995,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AuthorizationEmpty)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AuthorizationInvalidUrl)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AuthorizationInvalidUrl)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -1044,7 +1044,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AuthorizationInvalidUrl)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AuthorizationEmptyPath)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AuthorizationEmptyPath)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -1093,7 +1093,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AuthorizationEmptyPath)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, AuthorizationLongerPath)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, AuthorizationLongerPath)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();
@@ -1165,7 +1165,7 @@ TEST(ChallengeBasedAuthenticationPolicy, AuthorizationLongerPath)
   }
 }
 
-TEST(ChallengeBasedAuthenticationPolicy, MultipleTimes)
+TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
 {
   auto identityRequests = std::make_shared<std::vector<TestRequest>>();
   auto serviceRequests = std::make_shared<std::vector<TestRequest>>();

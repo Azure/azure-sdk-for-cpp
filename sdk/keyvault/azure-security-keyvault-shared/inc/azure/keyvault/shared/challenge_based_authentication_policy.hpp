@@ -19,13 +19,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
    * @brief Challenge-Based Authentication Policy for Key Vault.
    *
    */
-  class ChallengeBasedAuthenticationPolicy final
+  class KeyVaultChallengeBasedAuthenticationPolicy final
       : public Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy {
   private:
     mutable Core::Credentials::TokenRequestContext m_tokenRequestContext;
 
   public:
-    explicit ChallengeBasedAuthenticationPolicy(
+    explicit KeyVaultChallengeBasedAuthenticationPolicy(
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         Core::Credentials::TokenRequestContext tokenRequestContext)
         : BearerTokenAuthenticationPolicy(credential, tokenRequestContext),
@@ -35,7 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<ChallengeBasedAuthenticationPolicy>(*this);
+      return std::make_unique<KeyVaultChallengeBasedAuthenticationPolicy>(*this);
     }
 
   private:

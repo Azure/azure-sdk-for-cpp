@@ -73,7 +73,8 @@ SecretClient::SecretClient(
     tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(url)};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<_internal::ChallengeBasedAuthenticationPolicy>(credential, tokenContext));
+        std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
+            credential, tokenContext));
   }
 
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
