@@ -241,7 +241,14 @@ stages:
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
       dependsOn: ${{ parameters.DependsOn }}
-      condition: and(succeeded(), or(eq(variables['PublishDailyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')))
+      condition: >-
+        and(
+          succeededOrFailed(), 
+          or(
+            eq(variables['PublishDailyVcpkg'], 'true'), 
+            eq(variables['Build.Reason'],'Schedule')
+          )
+        )
       jobs:
         - job: PublishDailyVcpkg
           displayName: Publish to vcpkg daily branch
