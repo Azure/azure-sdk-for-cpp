@@ -94,7 +94,7 @@ jobs:
               vstsFeed: 'internal/AzureSDKForCpp'
               vstsFeedPackage: 'parseazuresdkcpp'
               downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
-              vstsPackageVersion: 0.6.0
+              vstsPackageVersion: 0.7.0
             condition: >-
                 and(
                   succeeded(),
