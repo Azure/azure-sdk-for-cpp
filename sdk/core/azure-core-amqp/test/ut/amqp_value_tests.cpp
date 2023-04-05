@@ -41,9 +41,9 @@ TEST_F(TestValues, SimpleCreate)
   }
 
   {
-    AmqpValue value{'a'};
+    AmqpValue value{static_cast<std::int8_t>('A')};
     EXPECT_EQ(AmqpValueType::Byte, value.GetType());
-    EXPECT_EQ('a', static_cast<char>(value));
+    EXPECT_EQ(static_cast<char>(65), static_cast<std::int8_t>(value));
   }
 
   {
@@ -105,81 +105,98 @@ TEST_F(TestValues, SimpleCreate)
   }
 }
 
+TEST_F(TestValues, TestBinary)
+{
+  {
+    AmqpBinaryData binaryData;
+    binaryData.push_back('a');
+    binaryData.push_back(3);
+    AmqpValue value(binaryData);
+
+    AmqpBinaryData data2(value);
+    EXPECT_EQ(2, data2.size());
+  }
+}
+
 TEST_F(TestValues, TestList)
 {
   {
-    AmqpValue list1{AmqpValue::CreateList()};
-    EXPECT_EQ(0, list1.GetListItemCount());
+    AmqpList list1;
+    EXPECT_EQ(0, list1.size());
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetListItemCount());
+    EXPECT_ANY_THROW(AmqpList list(boolValue));
   }
   // Put some things in the list.
   {
-    AmqpValue list1{AmqpValue::CreateList()};
-    list1.SetListItemCount(4);
-    EXPECT_EQ(4, list1.GetListItemCount());
+    AmqpList list1{123, 23.97f, "ABCD", static_cast<char>('a')};
+    EXPECT_EQ(4, list1.size());
 
-    list1.SetListItem(0, 123);
-    list1.SetListItem(1, 23.97f);
-    list1.SetListItem(2, "ABCD");
-    list1.SetListItem(3, 'a');
+    EXPECT_NE(list1.end(), std::find(list1.begin(), list1.end(), AmqpValue(123)));
+    EXPECT_NE(list1.end(), std::find(list1.begin(), list1.end(), AmqpValue(23.97f)));
 
-    EXPECT_EQ(123, static_cast<int32_t>(list1.GetListItem(0)));
-    EXPECT_EQ(23.97f, static_cast<float>(list1.GetListItem(1)));
+    EXPECT_EQ(AmqpValue("ABCD"), list1[2]);
+    EXPECT_EQ(AmqpValue('a'), list1[3]);
   }
 }
 
 TEST_F(TestValues, TestMap)
 {
   {
-    AmqpValue map1{AmqpValue::CreateMap()};
-    EXPECT_EQ(0, map1.GetMapValueCount());
+    AmqpMap map1;
+    EXPECT_EQ(0, map1.size());
+  }
+
+  {
+    AmqpMap map1{{"key1", 23}, {3, "ABC"}};
+    EXPECT_EQ(2, map1.size());
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetMapValueCount());
+    EXPECT_ANY_THROW(AmqpMap map{boolValue});
   }
 
   // Put some things in the map.
   {
-    AmqpValue map1{AmqpValue::CreateMap()};
-    map1.SetMapValue("ABC", 5);
-    map1.SetMapValue(3, "ABC");
-    EXPECT_EQ(2, map1.GetMapValueCount());
+    AmqpMap map1;
+    map1["key1"] = 23;
+    map1[AmqpValue(3)] = "ABC";
+    map1["ABC"] = 5;
+    EXPECT_EQ(3, map1.size());
 
-    EXPECT_EQ(5, static_cast<int32_t>(map1.GetMapValue("ABC")));
-    EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1.GetMapValue(3)));
+    EXPECT_EQ(5, static_cast<int32_t>(map1["ABC"]));
+    EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
 
-    auto val{map1.GetMapKeyAndValue(1)};
-    EXPECT_EQ(AmqpValueType::Int, val.first.GetType());
-    EXPECT_EQ(AmqpValueType::String, val.second.GetType());
-    EXPECT_EQ(3, static_cast<int32_t>(val.first));
-    EXPECT_EQ(std::string("ABC"), static_cast<std::string>(val.second));
+    // Now round-trip the map through an AMQP value and confirm that the values persist.
+    AmqpValue valueOfMap = static_cast<AmqpValue>(map1);
+    AmqpMap map2(valueOfMap);
+    EXPECT_EQ(5, static_cast<int32_t>(map1["ABC"]));
+    EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
   }
 }
 
 TEST_F(TestValues, TestArray)
 {
   {
-    AmqpValue value{AmqpValue::CreateArray()};
-    EXPECT_EQ(0, value.GetArrayItemCount());
+    AmqpArray array1{1, 3, 5, 4, 553991123};
+
+    EXPECT_EQ(5, array1.size());
+
+    AmqpValue value = array1;
+    EXPECT_EQ(AmqpValueType::Array, value.GetType());
+
+    AmqpArray array2 = value.AsArray();
+    EXPECT_EQ(5, array2.size());
+    EXPECT_EQ(1, static_cast<std::int32_t>(array2[0]));
+    EXPECT_EQ(3, static_cast<std::int32_t>(array2[1]));
+    EXPECT_EQ(5, static_cast<std::int32_t>(array2[2]));
   }
   {
-    AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetArrayItemCount());
-  }
-
-  // Put some things in the map.
-  {
-    AmqpValue val{AmqpValue::CreateArray()};
-    val.AddArrayItem("3"); // Array values must all have the same type.
-    val.AddArrayItem("Foo");
-    val.AddArrayItem("George");
-    EXPECT_EQ(3, val.GetArrayItemCount());
-
-    EXPECT_EQ(std::string("3"), static_cast<std::string>(val.GetArrayItem(0)));
+    // Because EXPECT_ANY_THROW is a macro, the commas in the lambda below confuse the preprocessor.
+    // So explicitly capture the lambda and then execute it in the EXPECT_ANY_THROW.
+    auto v = []() { AmqpArray testArray{3.1, 2.9, 14}; };
+    EXPECT_ANY_THROW(v());
   }
 }
 

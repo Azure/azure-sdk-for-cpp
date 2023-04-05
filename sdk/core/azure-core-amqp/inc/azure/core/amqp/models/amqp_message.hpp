@@ -6,6 +6,7 @@
 #include "amqp_header.hpp"
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
+#include <vector>
 
 struct MESSAGE_INSTANCE_TAG;
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
@@ -51,22 +52,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     void SetMessageAnnotations(AmqpValue const& annotations);
     AmqpValue const GetMessageAnnotations() const;
 
-    void SetProperties(Properties const& properties);
-    Properties const GetProperties() const;
+    void SetProperties(MessageProperties const& properties);
+    MessageProperties const GetProperties() const;
 
-    void SetApplicationProperties(AmqpValue const& value);
-    AmqpValue const GetApplicationProperties() const;
+    // message application-properties are maps with the key scoped to a string,
+    // and whose values cannot be map, list and array types.
+    void SetApplicationProperties(AmqpMap const& value);
+    AmqpMap const GetApplicationProperties() const;
 
     MessageBodyType GetBodyType() const;
 
     void AddBodyAmqpSequence(AmqpValue const& value);
-    size_t GetBodyAmqpSequenceCount() const;
-    AmqpValue const GetBodyAmqpSequence(uint32_t index) const;
+    std::size_t GetBodyAmqpSequenceCount() const;
+    AmqpValue const GetBodyAmqpSequence(std::uint32_t index) const;
 
-    void AddBodyAmqpData(BinaryData binaryData);
-
-    BinaryData GetBodyAmqpData(size_t index) const;
-    size_t GetBodyAmqpDataCount() const;
+    void AddBodyData(std::vector<uint8_t> const&binaryData);
+    std::vector<uint8_t> GetBodyData(std::uint32_t dataIndex) const;
+    size_t GetBodyDataCount() const;
 
     void SetBodyAmqpValue(AmqpValue value);
     AmqpValue GetBodyAmqpValue() const;

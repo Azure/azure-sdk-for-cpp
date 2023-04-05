@@ -424,10 +424,8 @@ TEST_F(TestMessages, SenderSendAsync)
     MessageSender sender(session, "localhost/ingress", connection, options, &senderEvents);
     EXPECT_NO_THROW(sender.Open());
 
-    uint8_t messageBody[] = "hello";
-
     Azure::Core::Amqp::Models::Message message;
-    message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+    message.AddBodyData({'h', 'e', 'l', 'l', 'o'});
 
     Azure::Core::Context context;
     Azure::Core::Amqp::Common::_internal::
@@ -509,10 +507,8 @@ TEST_F(TestMessages, SenderSendSync)
     MessageSender sender(session, "localhost/ingress", connection, options, nullptr);
     EXPECT_NO_THROW(sender.Open());
 
-    uint8_t messageBody[] = "hello";
-
     Azure::Core::Amqp::Models::Message message;
-    message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+    message.AddBodyData({'h', 'e', 'l', 'l', 'o'});
 
     Azure::Core::Amqp::Common::_internal::
         AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue>
@@ -560,10 +556,9 @@ TEST_F(TestMessages, AuthenticatedSender)
       nullptr);
 
   sender.Open();
-  uint8_t messageBody[] = "hello";
 
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  message.AddBodyData({'h', 'e', 'l', 'l', 'o'});
   sender.Send(message);
 
   sender.Close();
@@ -616,10 +611,9 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   MessageSender sender(session, tokenCredential, endpoint, connection, senderOptions, nullptr);
   EXPECT_TRUE(sender);
   sender.Open();
-  uint8_t messageBody[] = "hello";
 
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  message.AddBodyData({'h', 'e', 'l', 'l', 'o'});
   sender.Send(message);
 
   sender.Close();

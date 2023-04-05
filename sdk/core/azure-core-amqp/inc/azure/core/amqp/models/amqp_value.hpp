@@ -6,210 +6,482 @@
 #include "amqp_header.hpp"
 
 #include <array>
+#include <azure/core/internal/unique_handle.hpp>
+#include <azure/core/uuid.hpp>
 #include <chrono>
+#include <cstdint>
 #include <exception>
 #include <functional>
+#include <list>
+#include <map>
 #include <string>
+#include <vector>
+
 struct AMQP_VALUE_DATA_TAG;
 
-namespace Azure { namespace Core { namespace Amqp { namespace Models {
+namespace Azure { namespace Core {
+  namespace _internal {
 
-  class Properties;
-  struct BinaryData
-  {
-    const uint8_t* bytes;
-    size_t length;
+    template <> struct UniqueHandleHelper<AMQP_VALUE_DATA_TAG>
+    {
+      static void FreeAmqpValue(AMQP_VALUE_DATA_TAG* obj);
 
-    friend std::ostream& operator<<(std::ostream& os, BinaryData const& value);
-  };
+      using type = Azure::Core::_internal::BasicUniqueHandle<AMQP_VALUE_DATA_TAG, FreeAmqpValue>;
+    };
+  } // namespace _internal
 
-  enum class TerminusDurability : uint32_t
-  {
-    None = 0,
-    Configuration = 1,
-    UnsettledState = 2
-  };
+  namespace Amqp { namespace Models {
 
-  // Note : Should be an extendable Enumeration.
-  enum class TerminusExpiryPolicy
-  {
-    LinkDetach,
-    SessionEnd,
-    ConnectionClose,
-    Never
-  };
+      class MessageProperties;
 
-  using Uuid = std::array<unsigned char, 16>;
+      enum class TerminusDurability : std::uint32_t
+      {
+        None = 0,
+        Configuration = 1,
+        UnsettledState = 2
+      };
 
-  enum class AmqpValueType
-  {
-    Invalid,
-    Null,
-    Bool,
-    UByte,
-    UShort,
-    UInt,
-    ULong,
-    Byte,
-    Short,
-    Int,
-    Long,
-    Float,
-    Double,
-    Char,
-    Timestamp,
-    Uuid,
-    Binary,
-    String,
-    Symbol,
-    List,
-    Map,
-    Array,
-    Described,
-    Composite,
-    Unknown
-  };
+      // Note : Should be an extendable Enumeration.
+      enum class TerminusExpiryPolicy
+      {
+        LinkDetach,
+        SessionEnd,
+        ConnectionClose,
+        Never
+      };
 
-  class AmqpValue {
-  public:
-    ~AmqpValue();
+      enum class AmqpValueType
+      {
+        Invalid,
+        Null,
+        Bool,
+        UByte,
+        UShort,
+        UInt,
+        ULong,
+        Byte,
+        Short,
+        Int,
+        Long,
+        Float,
+        Double,
+        Char,
+        Timestamp,
+        Uuid,
+        Binary,
+        String,
+        Symbol,
+        List,
+        Map,
+        Array,
+        Described,
+        Composite,
+        Unknown
+      };
 
-    AmqpValue(bool bool_AmqpValue);
-    AmqpValue(unsigned char byte_value);
-    AmqpValue(char value);
-    AmqpValue(uint16_t value);
-    AmqpValue(int16_t value);
-    AmqpValue(uint32_t value);
-    AmqpValue(int32_t value);
-    AmqpValue(uint64_t value);
-    AmqpValue(int64_t value);
-    AmqpValue(float value);
-    AmqpValue(double value);
+      class AmqpArray;
+      class AmqpMap;
+      class AmqpList;
+      class AmqpBinaryData;
 
-    /* ???? */
-    //    AmqpValue(uint32_t value) : m_value{amqpvalue_create_char(value)} {}
-    //    AmqpValue(timestamp value) : m_value{amqpvalue_create_timestamp(value)} {}
-    //    AmqpValue(std::string const& value) : m_value{amqpvalue_create_symbol(value.c_str())} {}
+      using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
 
-    AmqpValue(Uuid value);
-    AmqpValue(BinaryData value);
-    explicit AmqpValue(std::string value);
-    AmqpValue(const char* value);
+      class AmqpValue {
+      public:
+        /** @brief Construct an AMQP null (empty) value.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-null).
+).
+         *
+         */
+        AmqpValue();
+        ~AmqpValue();
 
-    AmqpValue();
-    AmqpValue(AmqpValue const& that) throw();
-    AmqpValue(AmqpValue&& that) throw();
+        /** @brief Construct an AMQP boolean value.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.2](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-boolean).
+         *
+         * @param value value to be set.
+         */
+        AmqpValue(bool value);
 
-    // Interoperability functions for uAMQP
-    operator AMQP_VALUE_DATA_TAG*() const;
-    AmqpValue(AMQP_VALUE_DATA_TAG* value);
+        /** @brief Construct an AMQP ubyte value, an 8 bit unsigned integer.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.3](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ubyte).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::uint8_t value);
 
-    AmqpValue& operator=(AmqpValue const& that);
-    AmqpValue& operator=(AmqpValue&& that) throw();
+        /** @brief Construct an AMQP ushort value.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.4](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ushort).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::uint16_t value);
 
-    bool IsNull() const;
+        /** @brief Construct an AMQP uint value.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.5](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ushort).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::uint32_t value);
 
-    operator bool() const;
-    operator bool();
-    operator unsigned char() const;
-    operator unsigned char();
-    operator char() const;
-    operator char();
-    operator uint16_t() const;
-    operator uint16_t();
-    operator int16_t() const;
-    operator int16_t();
-    operator uint32_t() const;
-    operator uint32_t();
-    operator int32_t() const;
-    operator int32_t();
-    operator uint64_t() const;
-    operator uint64_t();
-    operator int64_t() const;
-    operator int64_t();
-    operator float() const;
-    operator float();
-    operator double() const;
-    operator double();
-    operator BinaryData() const;
-    operator BinaryData();
-    explicit operator std::string() const;
-    explicit operator std::string();
-    operator Uuid();
-    operator Uuid() const;
+        /** @brief Construct an AMQP ulong value, a 64bit unsigned integer.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.6](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-ulong).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::uint64_t value);
 
-    bool operator==(AmqpValue const& that) const;
-    AmqpValueType GetType() const;
+        /** @brief Construct an AMQP byte value, an 8 bit signed integer.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.7](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-byte).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::int8_t value);
 
-    // List Operations.
-    static AmqpValue CreateList();
-    void SetListItemCount(uint32_t count);
-    uint32_t GetListItemCount() const;
-    void SetListItem(uint32_t index, AmqpValue item);
-    AmqpValue GetListItem(size_t index) const;
-    //    AMQPAmqpValue GetListItemInPlace(size_t index) const;
+        /** @brief Construct an AMQP short value, a 16 bit signed integer.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.8](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-short).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::int16_t value);
 
-    // Map operations.
-    static AmqpValue CreateMap();
-    void SetMapValue(AmqpValue key, AmqpValue value);
-    AmqpValue GetMapValue(AmqpValue key) const;
-    std::pair<AmqpValue, AmqpValue> GetMapKeyAndValue(uint32_t index) const;
-    size_t GetMapValueCount() const;
+        /** @brief Construct an AMQP int value, a 32 bit signed integer.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.9](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-int).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::int32_t value);
 
-    // Array operations - note that all array items must be of the same type.
-    static AmqpValue CreateArray();
-    void AddArrayItem(AmqpValue itemAmqpValue);
-    AmqpValue GetArrayItem(uint32_t index) const;
-    uint32_t GetArrayItemCount() const;
+        /** @brief Construct an AMQP long value, a 64 bit signed integer.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.10](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-long).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(std::int64_t value);
 
-    // Char
-    static AmqpValue CreateChar(uint32_t value);
-    uint32_t GetChar() const;
+        /** @brief Construct an AMQP float value, an IEEE 754-2008 value.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.11](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-float).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(float value);
 
-    // Timestamps
-    static AmqpValue CreateTimestamp(std::chrono::milliseconds value);
-    std::chrono::milliseconds GetTimestamp() const;
+        /** @brief Construct an AMQP double value, an IEEE 754-2008 value.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.12](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-double).
+         *
+         * @param value value to be set.
+         *
+         */
+        AmqpValue(double value);
 
-    // Symbols
-    static AmqpValue CreateSymbol(std::string const& value);
-    std::string GetSymbol() const;
+        /** TODO:
+         * Decimal32, Decimal64, and Decimal128.
+         */
 
-    // Composite values - A composite value is functionally a list with a fixed size.
-    static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
-    void SetCompositeItem(uint32_t index, AmqpValue itemAmqpValue);
-    AmqpValue GetCompositeItem(uint32_t index);
-    //    AMQPAmqpValue GetCompositeItemInPlace(size_t index) const;
-    size_t GetCompositeItemCount() const;
+        /** @brief Construct an AMQP Char value, a UTF-32BE encoded Unicode character.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.16](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-char).
+         *
+         * @param value value to be set.
+         *
+         */
+        static AmqpValue CreateChar(std::uint32_t value);
 
-    static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
-    static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
+        AmqpValue(Azure::Core::Uuid value);
+        explicit AmqpValue(std::string value);
+        AmqpValue(const char* value);
 
-    // Descriptors
-    AmqpValue GetDescriptor() const;
-    AmqpValue GetDescribedValue() const;
+        AmqpValue(AmqpValue const& that) throw();
+        AmqpValue(AmqpValue&& that) throw();
 
-    // Headers.
-    bool IsHeaderTypeByDescriptor() const;
-    Header GetHeaderFromValue() const;
+        // Interoperability functions for uAMQP
+        operator AMQP_VALUE_DATA_TAG*() const;
+        AmqpValue(AMQP_VALUE_DATA_TAG* value);
 
-    static AmqpValue CreateHeader(Header const& header);
+        AmqpValue& operator=(AmqpValue const& that);
+        AmqpValue& operator=(AmqpValue&& that) throw();
 
-    // Properties.
-    bool IsPropertiesTypeByDescriptor() const;
-    Properties GetPropertiesFromValue() const;
+        bool IsNull() const;
 
-    static AmqpValue CreateProperties(Properties const& properties);
+        operator bool() const;
+        operator bool();
+        operator std::uint8_t() const;
+        operator std::uint8_t();
+        operator std::int8_t() const;
+        operator std::int8_t();
+        operator std::uint16_t() const;
+        operator std::uint16_t();
+        operator std::int16_t() const;
+        operator std::int16_t();
+        operator std::uint32_t() const;
+        operator std::uint32_t();
+        operator std::int32_t() const;
+        operator std::int32_t();
+        operator std::uint64_t() const;
+        operator std::uint64_t();
+        operator std::int64_t() const;
+        operator std::int64_t();
+        operator float() const;
+        operator float();
+        operator double() const;
+        operator double();
+        explicit operator std::string() const;
+        explicit operator std::string();
+        operator Uuid();
+        operator Uuid() const;
 
-    friend std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
+        bool operator==(AmqpValue const& that) const;
+        bool operator<(AmqpValue const& that) const;
+        AmqpValueType GetType() const;
 
-  protected:
-    AMQP_VALUE_DATA_TAG* m_value;
-  };
+        // List Operations.
+        AmqpList AsList() const;
 
-  /** @brief An AmqpMap represents an AMQP "map" type. which maps a key to a value.
-   *
-   */
-  class AmqpMap : public AmqpValue {
-  };
+        // Map operations.
+        AmqpMap AsMap() const;
 
-}}}} // namespace Azure::Core::Amqp::Models
+        // Array operations - note that all array items must be of the same type.
+        AmqpArray AsArray() const;
+
+        AmqpBinaryData AsBinary() const;
+
+        // Get Char value.
+        std::uint32_t GetChar() const;
+
+        // Timestamps
+        static AmqpValue CreateTimestamp(std::chrono::milliseconds value);
+        std::chrono::milliseconds GetTimestamp() const;
+
+        // Symbols
+        static AmqpValue CreateSymbol(std::string const& value);
+        std::string GetSymbol() const;
+
+        // Composite values - A composite value is functionally a list with a fixed size.
+        static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
+        void SetCompositeItem(uint32_t index, AmqpValue itemAmqpValue);
+        AmqpValue GetCompositeItem(uint32_t index);
+        //    AMQPAmqpValue GetCompositeItemInPlace(size_t index) const;
+        size_t GetCompositeItemCount() const;
+
+        static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
+        static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
+
+        // Descriptors
+        AmqpValue GetDescriptor() const;
+        AmqpValue GetDescribedValue() const;
+
+        // Headers.
+        bool IsHeaderTypeByDescriptor() const;
+        Header GetHeaderFromValue() const;
+
+        static AmqpValue CreateHeader(Header const& header);
+
+        // Properties.
+        bool IsPropertiesTypeByDescriptor() const;
+        MessageProperties GetPropertiesFromValue() const;
+
+        static AmqpValue CreateProperties(MessageProperties const& properties);
+
+        friend std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
+
+      protected:
+        UniqueAmqpValueHandle m_value;
+      };
+
+      /** @brief An AmqpArray represents a sequentially ordered list of values. The values of the
+       * AmqpArray MUST all have the same underlying type.
+       *
+       */
+      class AmqpArray : public std::vector<AmqpValue> {
+      public:
+        /** @brief Construct a new AmqpArray object. */
+        AmqpArray();
+
+        /** @brief Construct a new AmqpArray object with an initializer list. */
+        AmqpArray(std::initializer_list<AmqpValue> const& values);
+
+        /** @brief Construct a new AmqpArray object from an existing uAMQP AMQP_VALUE item
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP array value to capture.
+         */
+        AmqpArray(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpArray to an AmqpValue.
+         */
+        operator AmqpValue() const;
+
+        /**
+         * @brief Convert an AmqpArray instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+      };
+
+      /** @brief An AmqpMap represents an AMQP "map" type.
+       *
+       * An AMQP Map is a polymorphic map of distinct keys to values.
+       *
+       */
+      class AmqpMap : public std::map<AmqpValue, AmqpValue> {
+      public:
+        /** @brief Construct a new AmqpMap object. */
+        AmqpMap();
+
+        /** @brief Construct a new AmqpArray object with an initializer list. */
+        AmqpMap(std::initializer_list<std::map<AmqpValue, AmqpValue>::value_type> const& values);
+
+        /** @brief Construct a new AmqpMap object from an existing uAMQP AMQP_VALUE item
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP array value to capture.
+         */
+        AmqpMap(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpMap to an AmqpValue.
+         */
+        operator const AmqpValue() const;
+
+        /**
+         * @brief Convert an AmqpMap instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+      };
+
+      /** @brief An AMQP List is a sequence of polymorphic values. It has the behavioral
+       * characteristics of an AMQP array, but allows the members to be polymorphic.
+       */
+      class AmqpList : public std::vector<AmqpValue> {
+      public:
+        AmqpList();
+        /** @brief Construct a new AmqpList object with an initializer list. */
+        AmqpList(std::initializer_list<std::vector<AmqpValue>::value_type> const& values);
+
+        /** @brief Construct a new AmqpList object from an existing uAMQP AMQP_VALUE item
+         *
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP array value to capture.
+         */
+        AmqpList(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpList to an AmqpValue.
+         */
+        operator const AmqpValue() const;
+
+        /**
+         * @brief Convert an AmqpList instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+      };
+
+      /** @brief An AMQP binary value, a sequence of octets
+       *
+       * Defined in [AMQP Core Types
+       * section 1.6.19](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-binary).
+       *
+       */
+
+      class AmqpBinaryData : public std::vector<std::uint8_t> {
+      public:
+        AmqpBinaryData();
+        /** @brief Construct a new AmqpList object with an initializer list. */
+        AmqpBinaryData(std::initializer_list<std::vector<std::uint8_t>::value_type> const& values);
+
+        /** @brief Construct a new AmqpBinaryData object from an existing uAMQP AMQP_VALUE item
+         *
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP "binary" value to capture.
+         */
+        AmqpBinaryData(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpBinaryData to an AmqpValue.
+         */
+        operator const AmqpValue() const;
+
+        /**
+         * @brief Convert an AmqpBinaryData instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+      };
+
+  }} // namespace Amqp::Models
+}} // namespace Azure::Core

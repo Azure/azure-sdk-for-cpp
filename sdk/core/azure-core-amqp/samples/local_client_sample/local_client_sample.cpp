@@ -32,10 +32,8 @@ int main()
   // Send 1000 messages to the remote.
   constexpr int maxMessageSendCount = 1000;
 
-  uint8_t messageBody[] = "Hello";
-
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  message.AddBodyData({'H', 'e', 'l', 'l', 'o'});
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 

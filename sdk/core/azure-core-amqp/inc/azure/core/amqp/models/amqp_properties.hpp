@@ -5,26 +5,27 @@
 
 #include "amqp_value.hpp"
 #include <chrono>
+#include <vector>
 
 struct PROPERTIES_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  class Properties {
+  class MessageProperties {
 
   private:
     PROPERTIES_INSTANCE_TAG* m_properties{};
 
     // uAMQP interop functions.
   public:
-    Properties(PROPERTIES_INSTANCE_TAG* properties) : m_properties(properties) {}
+    MessageProperties(PROPERTIES_INSTANCE_TAG* properties) : m_properties(properties) {}
     operator PROPERTIES_INSTANCE_TAG*() const { return m_properties; }
 
   public:
-    Properties();
+    MessageProperties();
     operator bool() const { return m_properties != nullptr; }
 
-    ~Properties();
+    ~MessageProperties();
 
     AmqpValue GetMessageId() const;
     void SetMessageId(AmqpValue const& messageId);
@@ -32,8 +33,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpValue GetCorrelationId() const;
     void SetCorrelationId(AmqpValue const& correlationId);
 
-    BinaryData GetUserId() const;
-    void SetUserId(BinaryData const& userId);
+    std::vector<uint8_t> GetUserId() const;
+    void SetUserId(std::vector<uint8_t> const& userId);
 
     AmqpValue GetTo() const;
     void SetTo(AmqpValue replyTo);
@@ -65,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     std::string GetReplyToGroupId() const;
     void SetReplyToGroupId(std::string const& replyToGroupId);
 
-    friend std::ostream& operator<<(std::ostream&, Properties const&);
+    friend std::ostream& operator<<(std::ostream&, MessageProperties const&);
   };
 
 }}}} // namespace Azure::Core::Amqp::Models

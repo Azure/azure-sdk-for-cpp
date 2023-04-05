@@ -30,9 +30,8 @@ int main()
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
   constexpr int maxMessageSendCount = 1000;
-  uint8_t messageBody[] = "Hello";
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  message.AddBodyData({'H', 'e', 'l', 'l', 'o'});
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.EnableTrace = true;

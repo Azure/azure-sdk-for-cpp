@@ -45,24 +45,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     bool GetDynamic() const;
     void SetDynamic(bool dynamic);
 
-    Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(
-        Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
+    Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
+    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpMap const& dynamicNodeProperties);
 
     std::string GetDistributionMode() const;
     void SetDistributionMode(std::string const& distributionMode);
 
-    Azure::Core::Amqp::Models::AmqpValue GetFilter() const;
-    void SetFilter(Azure::Core::Amqp::Models::AmqpValue const& filter);
+    Azure::Core::Amqp::Models::AmqpMap GetFilter() const;
+    void SetFilter(Azure::Core::Amqp::Models::AmqpMap const& filter);
 
     Azure::Core::Amqp::Models::AmqpValue GetDefaultOutcome() const;
     void SetDefaultOutcome(Azure::Core::Amqp::Models::AmqpValue const& defaultOutcome);
 
-    Azure::Core::Amqp::Models::AmqpValue GetOutcomes() const;
+    Azure::Core::Amqp::Models::AmqpArray GetOutcomes() const;
     void SetOutcomes(Azure::Core::Amqp::Models::AmqpValue const& outcomes);
+    void SetOutcomes(Azure::Core::Amqp::Models::AmqpArray const& outcomes);
 
-    Azure::Core::Amqp::Models::AmqpValue GetCapabilities() const;
+    Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
+    void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
 
     friend std::ostream& operator<<(std::ostream&, MessageSource const&);
 

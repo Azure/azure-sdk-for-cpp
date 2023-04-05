@@ -238,7 +238,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  Azure::Core::Amqp::Models::AmqpValue MessageTarget::GetCapabilities() const
+  Azure::Core::Amqp::Models::AmqpArray MessageTarget::GetCapabilities() const
   {
     AMQP_VALUE value;
     if (target_get_capabilities(m_target, &value))
@@ -247,7 +247,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
+
+  // Set a single capability.
   void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& value)
+  {
+    if (target_set_capabilities(m_target, value))
+    {
+      throw std::runtime_error("Could not set outcomes.");
+    }
+  }
+  // Set multiple capabilities.
+  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& value)
   {
     if (target_set_capabilities(m_target, value))
     {

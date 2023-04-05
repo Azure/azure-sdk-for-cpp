@@ -48,7 +48,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     void SetDynamicNodeProperties(
         Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
 
-    Azure::Core::Amqp::Models::AmqpValue GetCapabilities() const;
+    /** @brief Retrieve the capabilities on this message target. */
+    Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
+    /**
+     * @brief Set the capabilities supported by this message target.
+     */
+    void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
+    /**
+     * @brief Set a single capability for this message target.
+     */
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
 
     friend std::ostream& operator<<(std::ostream&, MessageTarget const&);

@@ -139,14 +139,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     return annotations;
   }
-  void Message::SetProperties(Properties const& properties)
+  void Message::SetProperties(MessageProperties const& properties)
   {
     if (message_set_properties(m_message, properties))
     {
       throw std::runtime_error("Could not set properties"); // LCOV_EXCL_LINE
     }
   }
-  Properties const Message::GetProperties() const
+  MessageProperties const Message::GetProperties() const
   {
     PROPERTIES_HANDLE properties;
     if (message_get_properties(m_message, &properties))
@@ -155,22 +155,79 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return properties;
   }
-  void Message::SetApplicationProperties(AmqpValue const& value)
+
+  // AMQP ApplicationProperties descriptor (AMQP Specification 1.0 section 3.2.5)
+  // http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties
+  //
+  // ApplicationProperties are defined as being a map from string to simple AMQP value types.
+  constexpr uint64_t AmqpApplicationPropertiesDescriptor = 116;
+
+  /**
+   * The ApplicationPropertes field in an AMQP message for uAMQP expects that the map value is
+   * wrapped as a described value. A described value has a ULONG descriptor value and a value type.
+   *
+   * Making things even more interesting, the ApplicationProperties field in an uAMQP message is
+   * asymmetric.
+   *
+   * The MessageSender class will wrap ApplicationProperties in a described value, so when setting
+   * application properties, the described value must NOT be present, but when decoding an
+   * application properties, the GetApplicationProperties method has to be able to handle both when
+   * the described value is present or not.
+   */
+  void Message::SetApplicationProperties(AmqpMap const& value)
   {
     if (message_set_application_properties(m_message, value))
     {
       throw std::runtime_error("Could not set application properties.");
     }
   }
-  AmqpValue const Message::GetApplicationProperties() const
+
+  AmqpMap const Message::GetApplicationProperties() const
   {
-    AMQP_VALUE properties;
-    if (message_get_application_properties(m_message, &properties))
+    UniqueAmqpValueHandle describedProperties;
     {
-      throw std::runtime_error("Could not get application properties");
+      AMQP_VALUE properties;
+      if (message_get_application_properties(m_message, &properties))
+      {
+        throw std::runtime_error("Could not get application properties");
+      }
+      // If there are no application properties, just return.
+      if (properties == nullptr)
+      {
+        return AmqpMap();
+      }
+      describedProperties.reset(properties);
     }
-    return properties;
+
+    if (amqpvalue_get_type(describedProperties.get()) == AMQP_TYPE_DESCRIBED)
+    {
+      auto describedType = amqpvalue_get_inplace_descriptor(describedProperties.get());
+      uint64_t describedTypeValue;
+      if (amqpvalue_get_ulong(describedType, &describedTypeValue))
+      {
+        throw std::runtime_error("Could not retrieve application properties described type.");
+      }
+      if (describedTypeValue != AmqpApplicationPropertiesDescriptor)
+      {
+        throw std::runtime_error("Application Properties are not the corect described type.");
+      }
+
+      auto value = amqpvalue_get_inplace_described_value(describedProperties.get());
+      if (amqpvalue_get_type(value) != AMQP_TYPE_MAP)
+      {
+        throw std::runtime_error("Application Properties are not a map?!");
+      }
+      return value;
+    }
+    else if (amqpvalue_get_type(describedProperties.get()) != AMQP_TYPE_MAP)
+    {
+      throw std::runtime_error("Application properties must be an AMQP map.");
+    }
+    // Capture the described properties in an AmqpMap and return it.
+    AmqpMap rv(describedProperties.get());
+    return rv;
   }
+
   MessageBodyType Message::GetBodyType() const
   {
     MESSAGE_BODY_TYPE messageType;
@@ -231,28 +288,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Message::AddBodyAmqpData(BinaryData binaryData)
+  void Message::AddBodyData(std::vector<uint8_t> const& binaryData)
   {
     BINARY_DATA amqpData;
-    amqpData.bytes = binaryData.bytes;
-    amqpData.length = binaryData.length;
+    amqpData.bytes = binaryData.data();
+    amqpData.length = binaryData.size();
     if (message_add_body_amqp_data(m_message, amqpData))
     {
       throw std::runtime_error("Could not Add Body Data."); // LCOV_EXCL_LINE
     }
   }
 
-  BinaryData Message::GetBodyAmqpData(size_t index) const
+  std::vector<uint8_t> Message::GetBodyData(uint32_t index) const
   {
     BINARY_DATA binaryData;
     if (message_get_body_amqp_data_in_place(m_message, index, &binaryData))
     {
       throw std::runtime_error("Could not get Body Data.");
     }
-    return BinaryData{static_cast<const uint8_t*>(binaryData.bytes), binaryData.length};
+    return std::vector<uint8_t>(
+        reinterpret_cast<const uint8_t*>(binaryData.bytes), binaryData.bytes + binaryData.length);
   }
 
-  size_t Message::GetBodyAmqpDataCount() const
+  size_t Message::GetBodyDataCount() const
   {
     size_t count;
     if (message_get_body_amqp_data_count(m_message, &count))
@@ -261,6 +319,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return count;
   }
+
   void Message::SetBodyAmqpValue(AmqpValue value)
   {
     if (message_set_body_amqp_value(m_message, value))
@@ -291,13 +350,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         break;
       case MessageBodyType::Data:
         os << "AMQP Data: [";
-        if (message.GetBodyAmqpDataCount() != 0)
+        if (message.GetBodyDataCount() != 0)
         {
-          for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
+          for (uint32_t i = 0; i < message.GetBodyDataCount(); i += 1)
           {
-            auto data = message.GetBodyAmqpData(i);
-            os << "Data: " << data.length << " bytes: " << data;
-            if (i < message.GetBodyAmqpDataCount() - 1)
+            auto data = message.GetBodyData(i);
+            os << "Data: " << data.size() << " bytes: " << data.data();
+            if (i < message.GetBodyDataCount() - 1)
             {
               os << ", ";
             }
@@ -324,9 +383,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     os << "]";
 
-    if (!message.GetApplicationProperties().IsNull())
     {
-      os << std::endl << "Application Properties: " << message.GetApplicationProperties();
+      AMQP_VALUE applicationProperties;
+      if (!message_get_application_properties(message, &applicationProperties))
+      {
+        os << std::endl << "Application Properties: " << message.GetApplicationProperties();
+      }
     }
     if (!message.GetDeliveryAnnotations().IsNull())
     {

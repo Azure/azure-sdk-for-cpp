@@ -16,12 +16,12 @@ protected:
 TEST_F(TestProperties, SimpleCreate)
 {
   {
-    Properties properties;
+    MessageProperties properties;
     GTEST_LOG_(INFO) << properties;
   }
 
   {
-    Properties properties;
+    MessageProperties properties;
     EXPECT_ANY_THROW(
         properties
             .GetAbsoluteExpiryTime()); // Cannot get absolute expiry time before it has been set.
@@ -40,9 +40,9 @@ TEST_F(TestProperties, SimpleCreate)
 
 TEST_F(TestProperties, SetAbsoluteExpiryTime)
 {
-  // AMQP Properties represent times in milliseconds, so we need to reduce the accuracy of
+  // AMQP MessageProperties represent times in milliseconds, so we need to reduce the accuracy of
   // std::chrono::system_clock::now to milliseconds before we check it.
-  Properties properties;
+  MessageProperties properties;
   auto testTimestamp = std::chrono::system_clock::now();
   auto testTimestampMs{
       std::chrono::duration_cast<std::chrono::milliseconds>(testTimestamp.time_since_epoch())};
@@ -57,7 +57,7 @@ TEST_F(TestProperties, SetAbsoluteExpiryTime)
 
 TEST_F(TestProperties, SetContentEncoding)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string contentEncoding = "utf-8";
   properties.SetContentEncoding(contentEncoding);
   EXPECT_EQ(properties.GetContentEncoding(), contentEncoding);
@@ -66,7 +66,7 @@ TEST_F(TestProperties, SetContentEncoding)
 
 TEST_F(TestProperties, SetContentType)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string contentType = "text/plain";
   properties.SetContentType(contentType);
   EXPECT_EQ(properties.GetContentType(), contentType);
@@ -75,7 +75,7 @@ TEST_F(TestProperties, SetContentType)
 
 TEST_F(TestProperties, SetCorrelationId)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string correlationId = "1234";
   properties.SetCorrelationId(AmqpValue{correlationId});
   EXPECT_EQ(properties.GetCorrelationId(), AmqpValue{correlationId});
@@ -84,7 +84,7 @@ TEST_F(TestProperties, SetCorrelationId)
 
 TEST_F(TestProperties, SetCreationTime)
 {
-  Properties properties;
+  MessageProperties properties;
   auto testTimestamp = std::chrono::system_clock::now();
   auto testTimestampMs{
       std::chrono::duration_cast<std::chrono::milliseconds>(testTimestamp.time_since_epoch())};
@@ -99,7 +99,7 @@ TEST_F(TestProperties, SetCreationTime)
 
 TEST_F(TestProperties, SetGroupId)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string groupId = "1234";
   properties.SetGroupId(groupId);
   EXPECT_EQ(properties.GetGroupId(), groupId);
@@ -108,7 +108,7 @@ TEST_F(TestProperties, SetGroupId)
 
 TEST_F(TestProperties, SetGroupSequence)
 {
-  Properties properties;
+  MessageProperties properties;
   uint32_t groupSequence = 1234;
   properties.SetGroupSequence(groupSequence);
   EXPECT_EQ(properties.GetGroupSequence(), groupSequence);
@@ -117,7 +117,7 @@ TEST_F(TestProperties, SetGroupSequence)
 
 TEST_F(TestProperties, SetMessageId)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string messageId = "1234";
   properties.SetMessageId(AmqpValue{messageId});
   EXPECT_EQ(properties.GetMessageId(), AmqpValue{messageId});
@@ -126,7 +126,7 @@ TEST_F(TestProperties, SetMessageId)
 
 TEST_F(TestProperties, SetReplyTo)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string replyTo = "1234";
   properties.SetReplyTo(AmqpValue{replyTo});
   EXPECT_EQ(properties.GetReplyTo(), AmqpValue{replyTo});
@@ -135,7 +135,7 @@ TEST_F(TestProperties, SetReplyTo)
 
 TEST_F(TestProperties, SetReplyToGroupId)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string replyToGroupId = "1234";
   properties.SetReplyToGroupId(replyToGroupId);
   EXPECT_EQ(properties.GetReplyToGroupId(), replyToGroupId);
@@ -144,7 +144,7 @@ TEST_F(TestProperties, SetReplyToGroupId)
 
 TEST_F(TestProperties, SetTo)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string to = "1234";
   properties.SetTo(AmqpValue{to});
   EXPECT_EQ(properties.GetTo(), AmqpValue{to});
@@ -153,16 +153,15 @@ TEST_F(TestProperties, SetTo)
 
 TEST_F(TestProperties, SetUserId)
 {
-  Properties properties;
-  BinaryData userId = {reinterpret_cast<const uint8_t*>("1234"), 5};
-  properties.SetUserId(userId);
-  EXPECT_EQ(properties.GetUserId().length, 5);
+  MessageProperties properties;
+  properties.SetUserId({'1', '2', '3', '4', '\0'});
+  EXPECT_EQ(properties.GetUserId().size(), 5);
   GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetSubject)
 {
-  Properties properties;
+  MessageProperties properties;
   std::string subject = "1234";
   properties.SetSubject(subject);
   EXPECT_EQ(properties.GetSubject(), subject);

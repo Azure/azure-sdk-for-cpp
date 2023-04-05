@@ -13,7 +13,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  Properties::Properties() : m_properties{properties_create()}
+  MessageProperties::MessageProperties() : m_properties{properties_create()}
   {
     if (m_properties == nullptr)
     {
@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  Properties::~Properties()
+  MessageProperties::~MessageProperties()
   {
     if (m_properties)
     {
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  AmqpValue Properties::GetMessageId() const
+  AmqpValue MessageProperties::GetMessageId() const
   {
     AMQP_VALUE value;
     if (properties_get_message_id(m_properties, &value))
@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetMessageId(AmqpValue const& messageId)
+  void MessageProperties::SetMessageId(AmqpValue const& messageId)
   {
     if (properties_set_message_id(m_properties, messageId))
     {
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  AmqpValue Properties::GetCorrelationId() const
+  AmqpValue MessageProperties::GetCorrelationId() const
   {
     AMQP_VALUE value;
     if (properties_get_correlation_id(m_properties, &value))
@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetCorrelationId(AmqpValue const& correlationId)
+  void MessageProperties::SetCorrelationId(AmqpValue const& correlationId)
   {
     if (properties_set_correlation_id(m_properties, correlationId))
     {
@@ -67,26 +67,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  BinaryData Properties::GetUserId() const
+  std::vector<uint8_t> MessageProperties::GetUserId() const
   {
     amqp_binary value;
     if (properties_get_user_id(m_properties, &value))
     {
       throw std::runtime_error("Could not get user id"); // LCOV_EXCL_LINE
     }
-    return BinaryData{reinterpret_cast<const uint8_t*>(value.bytes), value.length};
+    return std::vector<uint8_t>(
+        static_cast<const uint8_t*>(value.bytes),
+        static_cast<const uint8_t*>(value.bytes) + value.length);
   }
 
-  void Properties::SetUserId(BinaryData const& userId)
+  void MessageProperties::SetUserId(std::vector<uint8_t> const& userId)
   {
-    amqp_binary value{userId.bytes, static_cast<uint32_t>(userId.length)};
+    amqp_binary value{userId.data(), static_cast<uint32_t>(userId.size())};
     if (properties_set_user_id(m_properties, value))
     {
       throw std::runtime_error("Could not set user id"); // LCOV_EXCL_LINE
     }
   }
 
-  AmqpValue Properties::GetTo() const
+  AmqpValue MessageProperties::GetTo() const
   {
     AMQP_VALUE value;
     if (properties_get_to(m_properties, &value))
@@ -96,7 +98,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetTo(AmqpValue replyTo)
+  void MessageProperties::SetTo(AmqpValue replyTo)
   {
     if (properties_set_to(m_properties, replyTo))
     {
@@ -104,7 +106,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::string Properties::GetSubject() const
+  std::string MessageProperties::GetSubject() const
   {
     const char* value;
     if (properties_get_subject(m_properties, &value))
@@ -114,7 +116,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  void Properties::SetSubject(std::string const& subject)
+  void MessageProperties::SetSubject(std::string const& subject)
   {
     if (properties_set_subject(m_properties, subject.data()))
     {
@@ -122,7 +124,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  AmqpValue Properties::GetReplyTo() const
+  AmqpValue MessageProperties::GetReplyTo() const
   {
     AMQP_VALUE value;
     if (properties_get_reply_to(m_properties, &value))
@@ -132,7 +134,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return amqpvalue_clone(value);
   }
 
-  void Properties::SetReplyTo(AmqpValue replyTo)
+  void MessageProperties::SetReplyTo(AmqpValue replyTo)
   {
     if (properties_set_reply_to(m_properties, replyTo))
     {
@@ -140,7 +142,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::string Properties::GetContentType() const
+  std::string MessageProperties::GetContentType() const
   {
     const char* value;
     if (properties_get_content_type(m_properties, &value))
@@ -150,7 +152,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  void Properties::SetContentType(std::string const& contentType)
+  void MessageProperties::SetContentType(std::string const& contentType)
   {
     if (properties_set_content_type(m_properties, contentType.data()))
     {
@@ -158,7 +160,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::string Properties::GetContentEncoding() const
+  std::string MessageProperties::GetContentEncoding() const
   {
     const char* value;
     if (properties_get_content_encoding(m_properties, &value))
@@ -168,7 +170,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  void Properties::SetContentEncoding(std::string const& contentEncoding)
+  void MessageProperties::SetContentEncoding(std::string const& contentEncoding)
   {
     if (properties_set_content_encoding(m_properties, contentEncoding.data()))
     {
@@ -176,7 +178,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::chrono::system_clock::time_point Properties::GetAbsoluteExpiryTime() const
+  std::chrono::system_clock::time_point MessageProperties::GetAbsoluteExpiryTime() const
   {
     timestamp expiryTime;
     if (properties_get_absolute_expiry_time(m_properties, &expiryTime))
@@ -188,7 +190,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return std::chrono::system_clock::time_point{
         std::chrono::duration_cast<std::chrono::system_clock::duration>(ms)};
   }
-  void Properties::SetAbsoluteExpiryTime(std::chrono::system_clock::time_point const& expiryTime)
+  void MessageProperties::SetAbsoluteExpiryTime(
+      std::chrono::system_clock::time_point const& expiryTime)
   {
     auto timeStamp{
         std::chrono::duration_cast<std::chrono::milliseconds>(expiryTime.time_since_epoch())};
@@ -199,7 +202,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::chrono::system_clock::time_point Properties::GetCreationTime() const
+  std::chrono::system_clock::time_point MessageProperties::GetCreationTime() const
   {
     timestamp creationTime;
     if (properties_get_creation_time(m_properties, &creationTime))
@@ -211,7 +214,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return std::chrono::system_clock::from_time_t(0) + ms;
   }
 
-  void Properties::SetCreationTime(std::chrono::system_clock::time_point const& creationTime)
+  void MessageProperties::SetCreationTime(std::chrono::system_clock::time_point const& creationTime)
   {
     auto timeStamp{
         std::chrono::duration_cast<std::chrono::milliseconds>(creationTime.time_since_epoch())};
@@ -222,7 +225,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::string Properties::GetGroupId() const
+  std::string MessageProperties::GetGroupId() const
   {
     const char* value;
     if (properties_get_group_id(m_properties, &value))
@@ -232,7 +235,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  void Properties::SetGroupId(std::string const& groupId)
+  void MessageProperties::SetGroupId(std::string const& groupId)
   {
     if (properties_set_group_id(m_properties, groupId.data()))
     {
@@ -240,7 +243,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  uint32_t Properties::GetGroupSequence() const
+  uint32_t MessageProperties::GetGroupSequence() const
   {
     uint32_t sequence;
     if (properties_get_group_sequence(m_properties, &sequence))
@@ -251,7 +254,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return sequence;
   }
 
-  void Properties::SetGroupSequence(uint32_t groupSequence)
+  void MessageProperties::SetGroupSequence(uint32_t groupSequence)
   {
     if (properties_set_group_sequence(m_properties, groupSequence))
     {
@@ -259,7 +262,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  std::string Properties::GetReplyToGroupId() const
+  std::string MessageProperties::GetReplyToGroupId() const
   {
     const char* value;
     if (properties_get_reply_to_group_id(m_properties, &value))
@@ -269,7 +272,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  void Properties::SetReplyToGroupId(std::string const& replyToGroupId)
+  void MessageProperties::SetReplyToGroupId(std::string const& replyToGroupId)
   {
     if (properties_set_reply_to_group_id(m_properties, replyToGroupId.data()))
     {
@@ -286,9 +289,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return time_str;
     }
   } // namespace
-  std::ostream& operator<<(std::ostream& os, Properties const& properties)
+  std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
   {
-    os << "Properties {";
+    os << "MessageProperties {";
     {
       AMQP_VALUE messageId;
       if (!properties_get_message_id(properties, &messageId))

@@ -34,10 +34,8 @@ int main()
 
   constexpr int maxMessageSendCount = 1000;
 
-  uint8_t messageBody[] = "Hello";
-
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  message.AddBodyData({'H', 'e', 'l', 'l', 'o'});
 
   int messageSendCount = 0;
   while (messageSendCount < maxMessageSendCount)

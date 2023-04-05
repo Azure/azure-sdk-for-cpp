@@ -34,10 +34,8 @@ TEST_F(TestMessage, SimpleCreate)
   {
     Message message;
 
-    EXPECT_EQ(
-        message.GetApplicationProperties().GetType(),
-        Azure::Core::Amqp::Models::AmqpValueType::Null);
-    EXPECT_ANY_THROW(message.GetBodyAmqpDataCount());
+    EXPECT_TRUE(message.GetApplicationProperties().empty());
+    EXPECT_ANY_THROW(message.GetBodyDataCount());
     EXPECT_ANY_THROW(message.GetBodyAmqpSequence(0));
     EXPECT_ANY_THROW(message.GetBodyAmqpSequenceCount());
 
@@ -56,15 +54,14 @@ TEST_F(TestMessage, SimpleCreate)
 TEST_F(TestMessage, TestApplicationProperties)
 {
   Message message;
-  Properties properties;
-  properties.SetSubject("Message subject.");
-  message.SetApplicationProperties(AmqpValue::CreateProperties(properties));
+
+  AmqpMap applicationProperties;
+  applicationProperties["Blagh"] = 19532;
+
+  message.SetApplicationProperties(applicationProperties);
 
   auto propertiesAsValue{message.GetApplicationProperties()};
-  //  EXPECT_TRUE(propertiesAsValue.IsPropertiesTypeByDescriptor());
-  auto newProperties{propertiesAsValue.GetPropertiesFromValue()};
-
-  EXPECT_EQ(newProperties.GetSubject(), properties.GetSubject());
+  EXPECT_EQ(applicationProperties["Blagh"], AmqpValue(19532));
 
   GTEST_LOG_(INFO) << message;
 }
@@ -114,7 +111,7 @@ TEST_F(TestMessage, TestMessageAnnotations)
 TEST_F(TestMessage, TestProperties)
 {
   Message message;
-  Properties properties;
+  MessageProperties properties;
   properties.SetSubject("Message subject.");
   message.SetProperties(properties);
 
@@ -138,7 +135,7 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
 
   message.AddBodyAmqpSequence("Test");
   message.AddBodyAmqpSequence(static_cast<uint32_t>(95));
-  message.AddBodyAmqpSequence(AmqpValue::CreateProperties(Properties()));
+  message.AddBodyAmqpSequence(AmqpValue::CreateProperties(MessageProperties()));
 
   EXPECT_EQ(3, message.GetBodyAmqpSequenceCount());
   EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAmqpSequence(0)));
@@ -152,12 +149,12 @@ TEST_F(TestMessage, TestBodyAmqpData)
 {
   Message message;
   uint8_t testBody[] = "Test body";
-  message.AddBodyAmqpData(BinaryData{testBody, sizeof(testBody)});
-  EXPECT_EQ(message.GetBodyAmqpDataCount(), 1);
+  message.AddBodyData({'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0});
+  EXPECT_EQ(message.GetBodyDataCount(), 1);
 
-  auto body = message.GetBodyAmqpData(0);
-  EXPECT_EQ(body.length, sizeof(testBody));
-  EXPECT_EQ(memcmp(body.bytes, testBody, sizeof(testBody)), 0);
+  auto body = message.GetBodyData(0);
+  EXPECT_EQ(body.size(), sizeof(testBody));
+  EXPECT_EQ(memcmp(body.data(), testBody, sizeof(testBody)), 0);
 
   EXPECT_EQ(message.GetBodyType(), MessageBodyType::Data);
   GTEST_LOG_(INFO) << message;

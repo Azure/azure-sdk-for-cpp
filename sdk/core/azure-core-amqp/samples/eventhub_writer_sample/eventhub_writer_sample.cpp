@@ -31,10 +31,8 @@ int main()
 
   constexpr int maxMessageSendCount = 5;
 
-  uint8_t messageBody[] = "Hello";
-
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyAmqpData({messageBody, sizeof(messageBody)});
+  message.AddBodyData({'H', 'e', 'l', 'l', 'o'});
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
