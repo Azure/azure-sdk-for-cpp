@@ -53,7 +53,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     virtual void TearDown() override
     {
       // Reset the attestation policy for this instance back to the default.
-      m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+      if (m_adminClient)
+      {
+        m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+      }
 
       // Make sure you call the base classes TearDown method to ensure recordings are made.
       TestBase::TearDown();

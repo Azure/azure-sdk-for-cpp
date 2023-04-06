@@ -268,8 +268,11 @@ namespace Azure { namespace Core { namespace Test {
     auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
     checkResponseCode(response->GetStatusCode());
 
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-    CheckBodyFromStream(*response, expectedResponseBodySize);
+    if (response->GetStatusCode() == Http::HttpStatusCode::Ok)
+    {
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+      CheckBodyFromStream(*response, expectedResponseBodySize);
+    }
   }
 
   TEST_P(TransportAdapter, getChunkWithStream)
