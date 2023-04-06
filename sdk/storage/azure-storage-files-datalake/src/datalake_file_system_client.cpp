@@ -292,6 +292,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         item.Group = std::move(path.Group);
         item.Permissions = std::move(path.Permissions);
         item.EncryptionScope = std::move(path.EncryptionScope);
+        item.EncryptionContext = std::move(path.EncryptionContext);
         item.ETag = std::move(path.ETag);
         if (path.CreatedOn.HasValue())
         {

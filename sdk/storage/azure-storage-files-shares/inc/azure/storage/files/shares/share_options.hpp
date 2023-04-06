@@ -26,6 +26,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * API version used by this client.
      */
     std::string ApiVersion;
+
+    /**
+     * If set to true, trailing dot (.) will be allowed to suffix directory and file names.
+     * If false, the trailing dot will be trimmed.
+     * Supported by x-ms-version 2022-11-02 and above.
+     */
+    Nullable<bool> AllowTrailingDot;
+
+    /**
+     * If set to true, trailing dot (.) will be allowed to source file names.
+     * If false, the trailing dot will be trimmed.
+     * Supported by x-ms-version 2022-11-02 and above.
+     */
+    Nullable<bool> AllowSourceTrailingDot;
+
+    /**
+     * Share Token Intent.  For use with token authentication.  Used to indicate the intent of the
+     * request. This is currently required when using token authentication.
+     */
+    Nullable<Models::ShareTokenIntent> ShareTokenIntent;
   };
 
   /**

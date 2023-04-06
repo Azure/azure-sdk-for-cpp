@@ -43,7 +43,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareUrl(shareUrl)
+      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
+        m_shareTokenIntent(options.ShareTokenIntent)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -62,8 +64,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(perOperationPolicies));
   }
 
+  ShareClient::ShareClient(
+      const std::string& shareUrl,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      const ShareClientOptions& options)
+      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
+        m_shareTokenIntent(options.ShareTokenIntent)
+  {
+    ShareClientOptions newOptions = options;
+
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    {
+      Azure::Core::Credentials::TokenRequestContext tokenContext;
+      tokenContext.Scopes.emplace_back(_internal::StorageScope);
+      perRetryPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
+              credential, tokenContext));
+    }
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+        newOptions,
+        _internal::FileServicePackageName,
+        _detail::PackageVersion::ToString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
+  }
+
   ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
-      : m_shareUrl(shareUrl)
+      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
+        m_shareTokenIntent(options.ShareTokenIntent)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -80,7 +114,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
   {
-    return ShareDirectoryClient(m_shareUrl, m_pipeline);
+    ShareDirectoryClient directoryClient(m_shareUrl, m_pipeline);
+    directoryClient.m_allowTrailingDot = m_allowTrailingDot;
+    directoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
+    directoryClient.m_shareTokenIntent = m_shareTokenIntent;
+    return directoryClient;
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const
@@ -262,6 +300,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::CreateSharePermissionOptions();
     protocolLayerOptions.SharePermission.Permission = permission;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::CreatePermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -274,6 +313,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePermissionOptions();
     protocolLayerOptions.FilePermissionKey = permissionKey;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto result = _detail::ShareClient::GetPermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
 
