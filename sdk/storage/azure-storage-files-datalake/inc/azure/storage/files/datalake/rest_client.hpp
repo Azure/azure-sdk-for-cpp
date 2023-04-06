@@ -99,6 +99,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> EncryptionScope;
         Nullable<std::string> CreatedOn;
         Nullable<std::string> ExpiresOn;
+        Nullable<std::string> EncryptionContext;
         std::string ETag;
       };
       /**
@@ -412,6 +413,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<int64_t> LeaseDuration;
         Nullable<std::string> ExpiryOptions;
         Nullable<std::string> ExpiresOn;
+        Nullable<std::string> EncryptionContext;
       };
       static Response<Models::CreatePathResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,

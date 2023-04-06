@@ -50,7 +50,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareFileUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareFileUrl(shareFileUrl)
+      : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
+        m_shareTokenIntent(options.ShareTokenIntent)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -71,8 +73,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareFileClient::ShareFileClient(
       const std::string& shareFileUrl,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const ShareClientOptions& options)
-      : m_shareFileUrl(shareFileUrl)
+      : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
+        m_shareTokenIntent(options.ShareTokenIntent)
+  {
+    ShareClientOptions newOptions = options;
+
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
+    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    {
+      Azure::Core::Credentials::TokenRequestContext tokenContext;
+      tokenContext.Scopes.emplace_back(_internal::StorageScope);
+      perRetryPolicies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
+              credential, tokenContext));
+    }
+    perOperationPolicies.emplace_back(
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+        newOptions,
+        _internal::FileServicePackageName,
+        _detail::PackageVersion::ToString(),
+        std::move(perRetryPolicies),
+        std::move(perOperationPolicies));
+  }
+
+  ShareFileClient::ShareFileClient(
+      const std::string& shareFileUrl,
+      const ShareClientOptions& options)
+      : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
+        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
+        m_shareTokenIntent(options.ShareTokenIntent)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -179,6 +213,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileContentMD5 = options.HttpHeaders.ContentHash.Value;
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto result
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::CreateFileResult ret;
@@ -197,6 +233,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = _detail::FileClient::DeleteFileOptions();
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto result
         = _detail::FileClient::Delete(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::DeleteFileResult ret;
@@ -256,6 +294,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
 
     auto downloadResponse
         = _detail::FileClient::Download(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
@@ -382,6 +422,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.SetArchiveAttribute = options.SetArchiveAttribute;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto response = _detail::FileClient::StartCopy(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -399,6 +442,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::FileClient::AbortFileCopyOptions();
     protocolLayerOptions.CopyId = std::move(copyId);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::FileClient::AbortCopy(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
@@ -409,6 +454,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = _detail::FileClient::GetFilePropertiesOptions();
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::FileClient::GetProperties(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
@@ -483,6 +530,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = httpHeaders.ContentDisposition;
     }
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
 
     return _detail::FileClient::SetHttpHeaders(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
@@ -497,6 +546,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(metadata.begin(), metadata.end());
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::FileClient::SetMetadata(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
@@ -520,6 +571,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::FileClient::UploadRange(
         *m_pipeline, m_shareFileUrl, content, protocolLayerOptions, context);
   }
@@ -537,6 +590,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto response = _detail::FileClient::UploadRange(
         *m_pipeline,
         m_shareFileUrl,
@@ -573,6 +628,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::FileClient::GetRangeList(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
@@ -601,6 +658,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     protocolLayerOptions.Prevsharesnapshot = std::move(previousShareSnapshot);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::FileClient::GetRangeList(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
@@ -612,6 +671,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::FileClient::ListFileHandlesOptions();
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto response = _detail::FileClient::ListHandles(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -658,6 +719,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::FileClient::ForceFileCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto result = _detail::FileClient::ForceCloseHandles(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     return Azure::Response<Models::ForceCloseFileHandleResult>(
@@ -671,6 +734,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::FileClient::ForceFileCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto response = _detail::FileClient::ForceCloseHandles(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -995,6 +1060,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1110,6 +1177,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1189,6 +1258,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.SourceRange = std::string("bytes=") + std::to_string(sourceRange.Offset)
         + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.Value() - 1);
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
 
     return _detail::FileClient::UploadRangeFromUri(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
