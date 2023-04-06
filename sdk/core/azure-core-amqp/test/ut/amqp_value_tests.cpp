@@ -217,24 +217,28 @@ TEST_F(TestValues, TestTimestamp)
   {
     std::chrono::milliseconds timeNow{std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch())};
-    AmqpValue value{AmqpValue::CreateTimestamp(timeNow)};
-    EXPECT_EQ(timeNow, value.GetTimestamp());
+    AmqpTimestamp value{timeNow};
+    EXPECT_EQ(timeNow, static_cast<std::chrono::milliseconds const>(value));
+    AmqpValue av{value};
+
+    AmqpTimestamp ts2{av};
+    EXPECT_EQ(timeNow, ts2);
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetTimestamp());
+    EXPECT_ANY_THROW(static_cast<std::chrono::milliseconds const>(boolValue));
   }
 }
 
 TEST_F(TestValues, TestSymbol)
 {
   {
-    AmqpValue value{AmqpValue::CreateSymbol("timeNow")};
-    EXPECT_EQ("timeNow", value.GetSymbol());
+    AmqpSymbol value("timeNow");
+    EXPECT_EQ("timeNow", value);
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetSymbol());
+    EXPECT_ANY_THROW(boolValue.AsSymbol());
   }
 }
 

@@ -83,6 +83,8 @@ namespace Azure { namespace Core {
       class AmqpMap;
       class AmqpList;
       class AmqpBinaryData;
+      class AmqpSymbol;
+      class AmqpTimestamp;
 
       using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
 
@@ -207,6 +209,42 @@ namespace Azure { namespace Core {
          */
         AmqpValue(double value);
 
+        /** @brief Construct an AMQP string value, a UTF-8 encoded sequence of characters.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-string).
+         *
+         * @param value to be set.
+         *
+         */
+        explicit AmqpValue(std::string value);
+
+        /** @brief Construct an AMQP string value, a UTF-8 encoded sequence of characters.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-string).
+         *
+         * @param value to be set.
+         *
+         * @remarks This is a convenience constructor to allow callers to specify:
+         * ```cpp
+         * AmqpValue myValue("This is some text");
+         * ```
+         *
+         */
+        AmqpValue(const char* value);
+
+        /** @brief Construct an AMQP timestamp value, an absolute point in time with a precision of
+         * milliseconds.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-timestamp).
+         *
+         * @param value to be set.
+         *
+         */
+//        AmqpValue(std::chrono::milliseconds const& value);
+
         /** TODO:
          * Decimal32, Decimal64, and Decimal128.
          */
@@ -216,14 +254,20 @@ namespace Azure { namespace Core {
          * Defined in [AMQP Core Types
          * section 1.6.16](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-char).
          *
-         * @param value value to be set.
+         * @param UTF-32 encoded unicode value to be set.
          *
          */
         static AmqpValue CreateChar(std::uint32_t value);
 
+        /** @brief Construct an AMQP Uuid value, an RFC-4122 Universally Unique Identifier.
+         *
+         * Defined in [AMQP Core Types
+         * section 1.6.18](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-uuid).
+         *
+         * @param UTF-32 encoded unicode value to be set.
+         *
+         */
         AmqpValue(Azure::Core::Uuid value);
-        explicit AmqpValue(std::string value);
-        AmqpValue(const char* value);
 
         AmqpValue(AmqpValue const& that) throw();
         AmqpValue(AmqpValue&& that) throw();
@@ -235,6 +279,22 @@ namespace Azure { namespace Core {
         AmqpValue& operator=(AmqpValue const& that);
         AmqpValue& operator=(AmqpValue&& that) throw();
 
+        /** @brief Equality comparison operator.
+         * @param that - Value to compare to this value.
+         * @returns true if the that is equal to this.
+         */
+        bool operator==(AmqpValue const& that) const;
+        /** @brief Less Than comparison operator.
+         * @param that - Value to compare to this value.
+         * @returns true if the that is less than this.
+         */
+        bool operator<(AmqpValue const& that) const;
+        AmqpValueType GetType() const;
+
+        /** @brief Returns 'true' if the AMQP value is "null".
+         *
+         * @returns true if the AmqpValue is null.
+         */
         bool IsNull() const;
 
         operator bool() const;
@@ -263,10 +323,7 @@ namespace Azure { namespace Core {
         explicit operator std::string();
         operator Uuid();
         operator Uuid() const;
-
-        bool operator==(AmqpValue const& that) const;
-        bool operator<(AmqpValue const& that) const;
-        AmqpValueType GetType() const;
+//        operator std::chrono::milliseconds const() const;
 
         // List Operations.
         AmqpList AsList() const;
@@ -279,16 +336,15 @@ namespace Azure { namespace Core {
 
         AmqpBinaryData AsBinary() const;
 
+        AmqpTimestamp AsTimestamp() const;
+
         // Get Char value.
         std::uint32_t GetChar() const;
 
-        // Timestamps
-        static AmqpValue CreateTimestamp(std::chrono::milliseconds value);
-        std::chrono::milliseconds GetTimestamp() const;
-
         // Symbols
-        static AmqpValue CreateSymbol(std::string const& value);
-        std::string GetSymbol() const;
+        AmqpSymbol AsSymbol() const;
+        //        static AmqpValue CreateSymbol(std::string const& value);
+        //        std::string GetSymbol() const;
 
         // Composite values - A composite value is functionally a list with a fixed size.
         static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
@@ -482,6 +538,77 @@ namespace Azure { namespace Core {
          */
         operator AMQP_VALUE_DATA_TAG*() const;
       };
+
+      class AmqpSymbol : public std::string {
+      public:
+        AmqpSymbol();
+        /** @brief Construct a new AmqpSymbol object with an initializer list. */
+        AmqpSymbol(std::string const& values);
+
+        /** @brief Construct a new AmqpSymbol object from an existing uAMQP AMQP_VALUE item
+         *
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP "binary" value to capture.
+         */
+        AmqpSymbol(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpSymbol to an AmqpValue.
+         */
+        operator const AmqpValue() const;
+
+        /**
+         * @brief Convert an AmqpSymbol instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+      };
+
+            class AmqpTimestamp : public std::chrono::milliseconds {
+      public:
+        AmqpTimestamp();
+        /** @brief Construct a new AmqpTimestamp object . */
+        AmqpTimestamp(std::chrono::milliseconds const& values);
+
+        /** @brief Construct a new AmqpSymbol object from an existing uAMQP AMQP_VALUE item
+         *
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP "binary" value to capture.
+         */
+        AmqpTimestamp(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpSymbol to an AmqpValue.
+         */
+        operator const AmqpValue() const;
+
+        /**
+         * @brief Convert an AmqpSymbol instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+      };
+
 
   }} // namespace Amqp::Models
 }} // namespace Azure::Core

@@ -342,11 +342,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         case AmqpValueType::Char:
           return GetChar() < that.GetChar();
         case AmqpValueType::Timestamp:
-          return GetTimestamp() < that.GetTimestamp();
+          return static_cast<std::chrono::milliseconds>(*this)
+              < static_cast<std::chrono::milliseconds>(that);
         case AmqpValueType::String:
           return static_cast<std::string>(*this) < static_cast<std::string>(that);
         case AmqpValueType::Symbol:
-          return GetSymbol() < that.GetSymbol();
+          return AsSymbol() < that.AsSymbol();
 
         case AmqpValueType::Map:
           return AsMap() < that.AsMap();
@@ -399,6 +400,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     AmqpArray AmqpValue::AsArray() const { return AmqpArray(m_value.get()); }
 
+    AmqpSymbol AmqpValue::AsSymbol() const { return AmqpSymbol(m_value.get()); }
+
     AmqpValue AmqpValue::CreateChar(std::uint32_t value) { return amqpvalue_create_char(value); }
 
     std::uint32_t AmqpValue::GetChar() const
@@ -411,34 +414,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return value;
     }
 
-    AmqpValue AmqpValue::CreateTimestamp(std::chrono::milliseconds value)
-    {
-      return amqpvalue_create_timestamp(value.count());
-    }
+    // AmqpValue::AmqpValue(std::chrono::milliseconds const& value)
+    //     : m_value{amqpvalue_create_timestamp(value.count())}
+    //{
+    // }
 
-    std::chrono::milliseconds AmqpValue::GetTimestamp() const
-    {
-      int64_t ms;
-      if (amqpvalue_get_timestamp(m_value.get(), &ms))
-      {
-        throw std::runtime_error("Could not get timestamp.");
-      }
-      return std::chrono::milliseconds(ms);
-    }
+    // AmqpValue::operator std::chrono::milliseconds const() const
+    //{
+    //   int64_t ms;
+    //   if (amqpvalue_get_timestamp(m_value.get(), &ms))
+    //   {
+    //     throw std::runtime_error("Could not get timestamp.");
+    //   }
+    //   return std::chrono::milliseconds(ms);
+    // }
 
-    AmqpValue AmqpValue::CreateSymbol(std::string const& value)
-    {
-      return amqpvalue_create_symbol(value.c_str());
-    }
-    std::string AmqpValue::GetSymbol() const
-    {
-      const char* symbol;
-      if (amqpvalue_get_symbol(m_value.get(), &symbol))
-      {
-        throw std::runtime_error("Could not get symbol.");
-      }
-      return symbol;
-    }
+    // AmqpValue AmqpValue::CreateSymbol(std::string const& value)
+    //{
+    //   return amqpvalue_create_symbol(value.c_str());
+    // }
+    // std::string AmqpValue::GetSymbol() const
+    //{
+    //   const char* symbol;
+    //   if (amqpvalue_get_symbol(m_value.get(), &symbol))
+    //   {
+    //     throw std::runtime_error("Could not get symbol.");
+    //   }
+    //   return symbol;
+    // }
 
     AmqpValueType AmqpValue::GetType() const
     {
@@ -762,6 +765,68 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
     }
     AmqpBinaryData::AmqpBinaryData() {}
+
+    AmqpSymbol::operator AMQP_VALUE_DATA_TAG*() const
+    {
+      Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG> symbol{
+          amqpvalue_create_symbol(c_str())};
+      return symbol.release();
+    }
+
+    AmqpSymbol::operator const AmqpValue() const { return static_cast<AMQP_VALUE>(*this); }
+
+    AmqpSymbol::AmqpSymbol(AMQP_VALUE const value)
+    {
+      if (amqpvalue_get_type(value) != AMQP_TYPE_SYMBOL)
+      {
+        throw std::runtime_error("Input AMQP value MUST be a symbol.");
+      }
+      const char* binaryData;
+      if (amqpvalue_get_symbol(value, &binaryData))
+      {
+        throw std::runtime_error("Could not retrieve binary data.");
+      }
+      // Copy the binary data to our storage.
+      assign(binaryData);
+    }
+
+    AmqpSymbol::AmqpSymbol(std::string const& initializer) : std::string(initializer) {}
+    AmqpSymbol::AmqpSymbol() {}
+
+    AmqpTimestamp::operator AMQP_VALUE_DATA_TAG*() const
+    {
+      Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG> symbol{
+          amqpvalue_create_timestamp(count())};
+      return symbol.release();
+    }
+
+    AmqpTimestamp::operator const AmqpValue() const { return static_cast<AMQP_VALUE>(*this); }
+
+    namespace {
+      std::chrono::milliseconds GetMillisecondsFromAmqp(AMQP_VALUE value)
+      {
+        if (amqpvalue_get_type(value) != AMQP_TYPE_TIMESTAMP)
+        {
+          throw std::runtime_error("Input AMQP value MUST be a timestamp.");
+        }
+        timestamp stamp;
+        if (amqpvalue_get_timestamp(value, &stamp))
+        {
+          throw std::runtime_error("Could not retrieve binary data.");
+        }
+        return std::chrono::milliseconds(stamp);
+      }
+    } // namespace
+    AmqpTimestamp::AmqpTimestamp(AMQP_VALUE const value)
+        : std::chrono::milliseconds(GetMillisecondsFromAmqp(value))
+    {
+    }
+
+    AmqpTimestamp::AmqpTimestamp(std::chrono::milliseconds const& initializer)
+        : std::chrono::milliseconds(initializer)
+    {
+    }
+    AmqpTimestamp::AmqpTimestamp() {}
 
     size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
     {
