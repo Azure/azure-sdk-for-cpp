@@ -1,12 +1,10 @@
 # Release History
 
-## 1.5.0-beta.2 (Unreleased)
+## 1.5.0-beta.2 (2023-04-06)
 
 ### Features Added
 
 - Added support for challenge-based and multi-tenant authentication.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
