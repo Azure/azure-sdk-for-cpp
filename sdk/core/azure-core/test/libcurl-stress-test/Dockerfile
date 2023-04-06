@@ -1,5 +1,4 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
 FROM mcr.microsoft.com/mirror/docker/library/ubuntu:22.04 as build
