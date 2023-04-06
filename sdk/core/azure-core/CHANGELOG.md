@@ -1,6 +1,6 @@
 # Release History
 
-## 1.9.0-beta.1 (Unreleased)
+## 1.9.0-beta.1 (2023-04-06)
 
 ### Features Added
 
@@ -9,7 +9,17 @@
 - Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
 - Added support for challenge-based and multi-tenant authentication.
 
-### Breaking Changes
+### Other Changes
+
+- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jorgen Lind _([GitHub](https://github.com/jorgen))_
+
+## 1.8.1 (2023-04-06)
 
 ### Bugs Fixed
 
@@ -18,14 +28,7 @@
 
 ### Other Changes
 
-- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
 - Libcurl transport doesn't add `Content-Length` request header for GET/HEAD/DELETE requests anymore.
-
-### Acknowledgments
-
-Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
-
-- Jorgen Lind _([GitHub](https://github.com/jorgen))_
 
 ## 1.8.0 (2023-02-02)
 
