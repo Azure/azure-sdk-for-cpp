@@ -554,10 +554,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * multiple times based on the state of the TLS connection.
    *
    * Special consideration for the WINHTTP_CALLBACK_STATUS_SENDING_REQUEST - this callback is
-   * called during the TLS connection - if a TLS root certificate is configured, we verify that the
-   * certificate chain sent from the server contains the certificate the HTTP client was configured
-   * with. If it is, we accept the connection, if it is not, we abort the connection, closing the
-   * incoming request handle.
+   * called during the TLS connection - if a TLS root certificate is configured, we verify that
+   * the certificate chain sent from the server contains the certificate the HTTP client was
+   * configured with. If it is, we accept the connection, if it is not, we abort the connection,
+   * closing the incoming request handle.
    */
   void WinHttpAction::OnHttpStatusOperation(
       HINTERNET hInternet,
@@ -584,8 +584,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDING_REQUEST)
     {
-      // We will only set the Status callback if a root certificate has been set. There is no action
-      // which needs to be completed for this notification.
+      // We will only set the Status callback if a root certificate has been set. There is no
+      // action which needs to be completed for this notification.
       m_httpRequest->HandleExpectedTlsRootCertificates(hInternet);
     }
     else if (internetStatus == m_expectedStatus)
@@ -605,8 +605,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
           CompleteAction();
           break;
         case WINHTTP_CALLBACK_STATUS_READ_COMPLETE:
-          // A WinHttpReadData call has completed. Complete the current action, including the amount
-          // of data read.
+          // A WinHttpReadData call has completed. Complete the current action, including the
+          // amount of data read.
           CompleteActionWithData(statusInformationLength);
           break;
         case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
@@ -700,11 +700,15 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
     GetErrorAndThrow("Error while getting a session handle.");
   }
 
-// These options are only available starting from Windows 10 Version 2004, starting 06/09/2020.
-// These are primarily round trip time (RTT) performance optimizations, and hence if they don't get
-// set successfully, we shouldn't fail the request and continue as if the options don't exist.
-// Therefore, we just ignore the error and move on.
-#ifdef WINHTTP_OPTION_TCP_FAST_OPEN
+  // These options are only available starting from Windows 10 Version 2004, starting 06/09/2020.
+  // These are primarily round trip time (RTT) performance optimizations, and hence if they don't
+  // get set successfully, we shouldn't fail the request and continue as if the options don't exist.
+  // Therefore, we just ignore the error and move on.
+
+  // TCP_FAST_OPEN has a bug when the DNS resolution fails which can result
+  // in a leak.  Until that issue is fixed we've disable this option.
+
+#if defined(WINHTTP_OPTION_TCP_FAST_OPEN) && FALSE
   BOOL tcp_fast_open = TRUE;
   WinHttpSetOption(
       sessionHandle.get(), WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
