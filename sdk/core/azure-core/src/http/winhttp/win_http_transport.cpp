@@ -705,7 +705,7 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
 // set successfully, we shouldn't fail the request and continue as if the options don't exist.
 // Therefore, we just ignore the error and move on.
 #ifdef WINHTTP_OPTION_TCP_FAST_OPEN
-  BOOL tcp_fast_open = TRUE;
+  BOOL tcp_fast_open = FALSE;
   WinHttpSetOption(
       sessionHandle.get(), WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
 #endif
