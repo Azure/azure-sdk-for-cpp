@@ -408,267 +408,269 @@ std::string GetErrorMessage(DWORD error)
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
-  bool WinHttpAction::RegisterWinHttpStatusCallback(
-      Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle)
-  {
-    return (
-        WinHttpSetStatusCallback(
-            internetHandle.get(),
-            &WinHttpAction::StatusCallback,
-            WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
-            0)
-        != WINHTTP_INVALID_STATUS_CALLBACK);
-  }
-
-  /**
-   * Wait for an action to complete.
-   *
-   */
-  bool WinHttpAction::WaitForAction(
-      std::function<void()> initiateAction,
-      DWORD expectedCallbackStatus,
-      Azure::Core::Context const& context,
-      Azure::DateTime::duration const& pollInterval)
-  {
-    // Before doing any work, check to make sure that the context hasn't already been cancelled.
-    context.ThrowIfCancelled();
-
-    // By definition, there cannot be any actions outstanding at this point because we have not
-    // yet called initiateAction. So it's safe to reset our state here.
-    ResetEvent(m_actionCompleteEvent.get());
-    m_expectedStatus = expectedCallbackStatus;
-    m_stowedError = 0;
-    m_stowedErrorInformation = 0;
-    m_bytesAvailable = 0;
-
-    // Call the provided callback to start the WinHTTP action.
-    initiateAction();
-
-    DWORD waitResult;
-    do
-    {
-      waitResult = WaitForSingleObject(
-          m_actionCompleteEvent.get(),
-          static_cast<DWORD>(
-              std::chrono::duration_cast<std::chrono::milliseconds>(pollInterval).count()));
-      if (waitResult == WAIT_TIMEOUT)
+      bool WinHttpAction::RegisterWinHttpStatusCallback(
+          Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle)
       {
-        // If the request was cancelled while we were waiting, throw an exception.
+        return (
+            WinHttpSetStatusCallback(
+                internetHandle.get(),
+                &WinHttpAction::StatusCallback,
+                WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
+                0)
+            != WINHTTP_INVALID_STATUS_CALLBACK);
+      }
+
+      /**
+       * Wait for an action to complete.
+       *
+       */
+      bool WinHttpAction::WaitForAction(
+          std::function<void()> initiateAction,
+          DWORD expectedCallbackStatus,
+          Azure::Core::Context const& context,
+          Azure::DateTime::duration const& pollInterval)
+      {
+        // Before doing any work, check to make sure that the context hasn't already been cancelled.
         context.ThrowIfCancelled();
+
+        // By definition, there cannot be any actions outstanding at this point because we have not
+        // yet called initiateAction. So it's safe to reset our state here.
+        ResetEvent(m_actionCompleteEvent.get());
+        m_expectedStatus = expectedCallbackStatus;
+        m_stowedError = 0;
+        m_stowedErrorInformation = 0;
+        m_bytesAvailable = 0;
+
+        // Call the provided callback to start the WinHTTP action.
+        initiateAction();
+
+        DWORD waitResult;
+        do
+        {
+          waitResult = WaitForSingleObject(
+              m_actionCompleteEvent.get(),
+              static_cast<DWORD>(
+                  std::chrono::duration_cast<std::chrono::milliseconds>(pollInterval).count()));
+          if (waitResult == WAIT_TIMEOUT)
+          {
+            // If the request was cancelled while we were waiting, throw an exception.
+            context.ThrowIfCancelled();
+          }
+          else if (waitResult != WAIT_OBJECT_0)
+          {
+            return false;
+          }
+        } while (waitResult != WAIT_OBJECT_0);
+        if (m_stowedError != NO_ERROR)
+        {
+          return false;
+        }
+        return true;
       }
-      else if (waitResult != WAIT_OBJECT_0)
+
+      void WinHttpAction::CompleteAction()
       {
-        return false;
+        auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
       }
-    } while (waitResult != WAIT_OBJECT_0);
-    if (m_stowedError != NO_ERROR)
-    {
-      return false;
-    }
-    return true;
-  }
-
-  void WinHttpAction::CompleteAction()
-  {
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
-  }
-  void WinHttpAction::CompleteActionWithData(DWORD bytesAvailable)
-  {
-    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
-    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
-    // state before the lock is released.
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    m_bytesAvailable = bytesAvailable;
-  }
-  void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
-  {
-    // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
-    // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
-    // state before the lock is released.
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    m_stowedErrorInformation = stowedErrorInformation;
-    m_stowedError = stowedError;
-  }
-
-  DWORD WinHttpAction::GetStowedError()
-  {
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    return m_stowedError;
-  }
-  DWORD_PTR WinHttpAction::GetStowedErrorInformation()
-  {
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    return m_stowedErrorInformation;
-  }
-  DWORD WinHttpAction::GetBytesAvailable()
-  {
-    std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
-    return m_bytesAvailable;
-  }
-
-  /**
-   * Called by WinHTTP when sending a request to the server. This callback allows us to inspect
-   * the TLS certificate before sending it to the server.
-   */
-  void WinHttpAction::StatusCallback(
-      HINTERNET hInternet,
-      DWORD_PTR dwContext,
-      DWORD internetStatus,
-      LPVOID statusInformation,
-      DWORD statusInformationLength)
-  {
-    // If we're called before our context has been set (on Open and Close callbacks), ignore the
-    // status callback.
-    if (dwContext == 0)
-    {
-      return;
-    }
-
-    try
-    {
-      WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
-      httpAction->OnHttpStatusOperation(
-          hInternet, internetStatus, statusInformation, statusInformationLength);
-    }
-    catch (Azure::Core::RequestFailedException const& rfe)
-    {
-      // If an exception is thrown in the handler, log the error and terminate the connection.
-      Log::Write(
-          Logger::Level::Error,
-          "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
-      WinHttpCloseHandle(hInternet);
-    }
-    catch (std::exception const& ex)
-    {
-      // If an exception is thrown in the handler, log the error and terminate the connection.
-      Log::Write(Logger::Level::Error, "Exception Thrown: " + std::string(ex.what()));
-    }
-  }
-
-  /**
-   * @brief HTTP Callback to enable private certificate checks.
-   *
-   * This method is called by WinHTTP when a certificate is received. This method is called
-   * multiple times based on the state of the TLS connection.
-   *
-   * Special consideration for the WINHTTP_CALLBACK_STATUS_SENDING_REQUEST - this callback is
-   * called during the TLS connection - if a TLS root certificate is configured, we verify that the
-   * certificate chain sent from the server contains the certificate the HTTP client was configured
-   * with. If it is, we accept the connection, if it is not, we abort the connection, closing the
-   * incoming request handle.
-   */
-  void WinHttpAction::OnHttpStatusOperation(
-      HINTERNET hInternet,
-      DWORD internetStatus,
-      LPVOID statusInformation,
-      DWORD statusInformationLength)
-  {
-    Log::Write(
-        Logger::Level::Informational,
-        "Status operation: " + std::to_string(internetStatus) + "("
-            + InternetStatusToString(internetStatus) + ")");
-    if (internetStatus == WINHTTP_CALLBACK_STATUS_SECURE_FAILURE)
-    {
-      Log::Write(Logger::Level::Error, "Security failure. :(");
-    }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_REQUEST_ERROR)
-    {
-      WINHTTP_ASYNC_RESULT* asyncResult = static_cast<WINHTTP_ASYNC_RESULT*>(statusInformation);
-      Log::Write(
-          Logger::Level::Error,
-          "Request error. " + GetErrorMessage(asyncResult->dwError) + " "
-              + std::to_string(asyncResult->dwResult));
-      CompleteActionWithError(asyncResult->dwResult, asyncResult->dwError);
-    }
-    else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDING_REQUEST)
-    {
-      // We will only set the Status callback if a root certificate has been set. There is no action
-      // which needs to be completed for this notification.
-      m_httpRequest->HandleExpectedTlsRootCertificates(hInternet);
-    }
-    else if (internetStatus == m_expectedStatus)
-    {
-      switch (internetStatus)
+      void WinHttpAction::CompleteActionWithData(DWORD bytesAvailable)
       {
-        case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
-          // A WinHttpSendRequest API call has completed, complete the current action.
-          CompleteAction();
-          break;
-        case WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE:
-          // A WinHttpWriteData call has completed, complete the current action.
-          CompleteAction();
-          break;
-        case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
-          // Headers for an HTTP response are available, complete the current action.
-          CompleteAction();
-          break;
-        case WINHTTP_CALLBACK_STATUS_READ_COMPLETE:
-          // A WinHttpReadData call has completed. Complete the current action, including the amount
-          // of data read.
-          CompleteActionWithData(statusInformationLength);
-          break;
-        case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
-          // An HINTERNET handle is closing, complete the outstanding close request.
-          Log::Write(
-              Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
-          CompleteAction();
-          break;
-        default:
+        // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+        // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+        // state before the lock is released.
+        auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+        std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+        m_bytesAvailable = bytesAvailable;
+      }
+      void WinHttpAction::CompleteActionWithError(
+          DWORD_PTR stowedErrorInformation,
+          DWORD stowedError)
+      {
+        // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
+        // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
+        // state before the lock is released.
+        auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+        std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+        m_stowedErrorInformation = stowedErrorInformation;
+        m_stowedError = stowedError;
+      }
+
+      DWORD WinHttpAction::GetStowedError()
+      {
+        std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+        return m_stowedError;
+      }
+      DWORD_PTR WinHttpAction::GetStowedErrorInformation()
+      {
+        std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+        return m_stowedErrorInformation;
+      }
+      DWORD WinHttpAction::GetBytesAvailable()
+      {
+        std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
+        return m_bytesAvailable;
+      }
+
+      /**
+       * Called by WinHTTP when sending a request to the server. This callback allows us to inspect
+       * the TLS certificate before sending it to the server.
+       */
+      void WinHttpAction::StatusCallback(
+          HINTERNET hInternet,
+          DWORD_PTR dwContext,
+          DWORD internetStatus,
+          LPVOID statusInformation,
+          DWORD statusInformationLength)
+      {
+        // If we're called before our context has been set (on Open and Close callbacks), ignore the
+        // status callback.
+        if (dwContext == 0)
+        {
+          return;
+        }
+
+        try
+        {
+          WinHttpAction* httpAction = reinterpret_cast<WinHttpAction*>(dwContext);
+          httpAction->OnHttpStatusOperation(
+              hInternet, internetStatus, statusInformation, statusInformationLength);
+        }
+        catch (Azure::Core::RequestFailedException const& rfe)
+        {
+          // If an exception is thrown in the handler, log the error and terminate the connection.
           Log::Write(
               Logger::Level::Error,
-              "Received expected status " + InternetStatusToString(internetStatus)
-                  + " but it was not handled.");
-          break;
-      }
-    }
-  }
-
-  void WinHttpRequest::HandleExpectedTlsRootCertificates(HINTERNET hInternet)
-  {
-    if (!m_expectedTlsRootCertificates.empty())
-    {
-      // Ask WinHTTP for the server certificate - this won't be valid outside a status callback.
-      wil::unique_cert_context serverCertificate;
-      {
-        DWORD bufferLength = sizeof(PCCERT_CONTEXT);
-        if (!WinHttpQueryOption(
-                hInternet,
-                WINHTTP_OPTION_SERVER_CERT_CONTEXT,
-                reinterpret_cast<void*>(serverCertificate.addressof()),
-                &bufferLength))
+              "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
+          WinHttpCloseHandle(hInternet);
+        }
+        catch (std::exception const& ex)
         {
-          GetErrorAndThrow("Could not retrieve TLS server certificate.");
+          // If an exception is thrown in the handler, log the error and terminate the connection.
+          Log::Write(Logger::Level::Error, "Exception Thrown: " + std::string(ex.what()));
         }
       }
 
-      if (!VerifyCertificatesInChain(m_expectedTlsRootCertificates, serverCertificate.get()))
+      /**
+       * @brief HTTP Callback to enable private certificate checks.
+       *
+       * This method is called by WinHTTP when a certificate is received. This method is called
+       * multiple times based on the state of the TLS connection.
+       *
+       * Special consideration for the WINHTTP_CALLBACK_STATUS_SENDING_REQUEST - this callback is
+       * called during the TLS connection - if a TLS root certificate is configured, we verify that
+       * the certificate chain sent from the server contains the certificate the HTTP client was
+       * configured with. If it is, we accept the connection, if it is not, we abort the connection,
+       * closing the incoming request handle.
+       */
+      void WinHttpAction::OnHttpStatusOperation(
+          HINTERNET hInternet,
+          DWORD internetStatus,
+          LPVOID statusInformation,
+          DWORD statusInformationLength)
       {
         Log::Write(
-            Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
-
-        // To signal to caller that the request is to be terminated, the callback closes the
-        // handle. This ensures that no message is sent to the server.
-        WinHttpCloseHandle(hInternet);
-
-        // To avoid a double free of this handle record that we've
-        // already closed the handle.
-        m_requestHandleClosed = true;
-
-        // And we're done processing the request, return because there's nothing
-        // else to do.
-        return;
+            Logger::Level::Informational,
+            "Status operation: " + std::to_string(internetStatus) + "("
+                + InternetStatusToString(internetStatus) + ")");
+        if (internetStatus == WINHTTP_CALLBACK_STATUS_SECURE_FAILURE)
+        {
+          Log::Write(Logger::Level::Error, "Security failure. :(");
+        }
+        else if (internetStatus == WINHTTP_CALLBACK_STATUS_REQUEST_ERROR)
+        {
+          WINHTTP_ASYNC_RESULT* asyncResult = static_cast<WINHTTP_ASYNC_RESULT*>(statusInformation);
+          Log::Write(
+              Logger::Level::Error,
+              "Request error. " + GetErrorMessage(asyncResult->dwError) + " "
+                  + std::to_string(asyncResult->dwResult));
+          CompleteActionWithError(asyncResult->dwResult, asyncResult->dwError);
+        }
+        else if (internetStatus == WINHTTP_CALLBACK_STATUS_SENDING_REQUEST)
+        {
+          // We will only set the Status callback if a root certificate has been set. There is no
+          // action which needs to be completed for this notification.
+          m_httpRequest->HandleExpectedTlsRootCertificates(hInternet);
+        }
+        else if (internetStatus == m_expectedStatus)
+        {
+          switch (internetStatus)
+          {
+            case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
+              // A WinHttpSendRequest API call has completed, complete the current action.
+              CompleteAction();
+              break;
+            case WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE:
+              // A WinHttpWriteData call has completed, complete the current action.
+              CompleteAction();
+              break;
+            case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
+              // Headers for an HTTP response are available, complete the current action.
+              CompleteAction();
+              break;
+            case WINHTTP_CALLBACK_STATUS_READ_COMPLETE:
+              // A WinHttpReadData call has completed. Complete the current action, including the
+              // amount of data read.
+              CompleteActionWithData(statusInformationLength);
+              break;
+            case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
+              // An HINTERNET handle is closing, complete the outstanding close request.
+              Log::Write(
+                  Logger::Level::Verbose, "Closing handle; completing outstanding Close request");
+              CompleteAction();
+              break;
+            default:
+              Log::Write(
+                  Logger::Level::Error,
+                  "Received expected status " + InternetStatusToString(internetStatus)
+                      + " but it was not handled.");
+              break;
+          }
+        }
       }
-    }
-  }
 
-  void WinHttpRequest::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error) const
-  {
-    std::string errorMessage = exceptionMessage + GetErrorMessage(error);
+      void WinHttpRequest::HandleExpectedTlsRootCertificates(HINTERNET hInternet)
+      {
+        if (!m_expectedTlsRootCertificates.empty())
+        {
+          // Ask WinHTTP for the server certificate - this won't be valid outside a status callback.
+          wil::unique_cert_context serverCertificate;
+          {
+            DWORD bufferLength = sizeof(PCCERT_CONTEXT);
+            if (!WinHttpQueryOption(
+                    hInternet,
+                    WINHTTP_OPTION_SERVER_CERT_CONTEXT,
+                    reinterpret_cast<void*>(serverCertificate.addressof()),
+                    &bufferLength))
+            {
+              GetErrorAndThrow("Could not retrieve TLS server certificate.");
+            }
+          }
 
-    throw Azure::Core::Http::TransportException(errorMessage);
-  }
+          if (!VerifyCertificatesInChain(m_expectedTlsRootCertificates, serverCertificate.get()))
+          {
+            Log::Write(
+                Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
+
+            // To signal to caller that the request is to be terminated, the callback closes the
+            // handle. This ensures that no message is sent to the server.
+            WinHttpCloseHandle(hInternet);
+
+            // To avoid a double free of this handle record that we've
+            // already closed the handle.
+            m_requestHandleClosed = true;
+
+            // And we're done processing the request, return because there's nothing
+            // else to do.
+            return;
+          }
+        }
+      }
+
+      void WinHttpRequest::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error) const
+      {
+        std::string errorMessage = exceptionMessage + GetErrorMessage(error);
+
+        throw Azure::Core::Http::TransportException(errorMessage);
+      }
 }}}} // namespace Azure::Core::Http::_detail
 
 void WinHttpTransport::GetErrorAndThrow(const std::string& exceptionMessage, DWORD error)
@@ -700,12 +702,16 @@ Azure::Core::_internal::UniqueHandle<HINTERNET> WinHttpTransport::CreateSessionH
     GetErrorAndThrow("Error while getting a session handle.");
   }
 
-// These options are only available starting from Windows 10 Version 2004, starting 06/09/2020.
-// These are primarily round trip time (RTT) performance optimizations, and hence if they don't get
-// set successfully, we shouldn't fail the request and continue as if the options don't exist.
-// Therefore, we just ignore the error and move on.
-#ifdef WINHTTP_OPTION_TCP_FAST_OPEN
-  BOOL tcp_fast_open = FALSE;
+  // These options are only available starting from Windows 10 Version 2004, starting 06/09/2020.
+  // These are primarily round trip time (RTT) performance optimizations, and hence if they don't
+  // get set successfully, we shouldn't fail the request and continue as if the options don't exist.
+  // Therefore, we just ignore the error and move on.
+
+  // TCP_FAST_OPEN has a bug when the DNS resolution fails which can result
+  // in a leak.  Until that issue is fixed we've disable this option.
+
+#if defined(WINHTTP_OPTION_TCP_FAST_OPEN) && FALSE
+  BOOL tcp_fast_open = TRUE;
   WinHttpSetOption(
       sessionHandle.get(), WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
 #endif
