@@ -1,12 +1,17 @@
 # Release History
 
+## 1.8.2 (Unreleased)
+
+### Bugs Fixed
+
+- [[#4490]](https://github.com/Azure/azure-sdk-for-cpp/issues/4490) Fixed WinHTTP memory leak during failed requests.
+
 ## 1.8.1 (2023-04-06)
 
 ### Bugs Fixed
 
 - [[#4213]](https://github.com/Azure/azure-sdk-for-cpp/issues/4213) Fixed a bug where `Host` request header is not set for non-default port (80, 443).
 - [[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443) Fixed potentially high CPU usage on Windows.
-- [[#4490]](https://github.com/Azure/azure-sdk-for-cpp/issues/4490) Fixed WinHTTP memory leak during failed requests.
 
 ### Other Changes
 
