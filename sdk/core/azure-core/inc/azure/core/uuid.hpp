@@ -51,7 +51,7 @@ namespace Azure { namespace Core {
      * representation of the Uuid
      * @returns An array with the binary representation of the Uuid.
      */
-    operator std::array<uint8_t, UuidSize> const&() const { return m_uuid; }
+    operator std::array<uint8_t, UuidSize> const &() const { return m_uuid; }
 
     /**
      * @brief Creates a new random UUID.
