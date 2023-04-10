@@ -41,7 +41,7 @@ namespace Azure { namespace Core {
     std::string ToString();
 
     /**
-     * @brief Returns the internal value of the Uuid for consumption by clients who need non-string
+     * @brief Returns the binary value of the Uuid for consumption by clients who need non-string
      * representation of the Uuid
      * @returns An array with the binary representation of the Uuid.
      */
