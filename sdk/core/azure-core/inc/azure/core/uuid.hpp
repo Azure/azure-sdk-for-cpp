@@ -10,9 +10,9 @@
 
 #include "azure/core/platform.hpp"
 
+#include <array>
 #include <cstring>
 #include <string>
-#include <array>
 
 namespace Azure { namespace Core {
   /**
@@ -40,8 +40,18 @@ namespace Azure { namespace Core {
      */
     std::string ToString();
 
+    /**
+     * @brief Construct a Uuid from an existing UUID represented as an array of bytes.
+     * @details Creates a Uuid from a UUID created in an external scope.
+     */
     Uuid(std::array<uint8_t, UuidSize> const& uuid) { m_uuid = uuid; }
-    operator std::array<uint8_t, UuidSize> const() const { return m_uuid; }
+
+    /**
+     * @brief Returns the internal value of the Uuid for consumption by clients who need non-string
+     * representation of the Uuid
+     * @returns An array with the binary representation of the Uuid.
+     */
+    operator std::array<uint8_t, UuidSize> const&() const { return m_uuid; }
 
     /**
      * @brief Creates a new random UUID.
