@@ -65,6 +65,16 @@ jobs:
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 
+  - job: RunAfterSpecificMatrixEntry
+    pool:
+      name: azsdk-pool-mms-ubuntu-2204-general
+      vmImage: ubuntu-20.04
+
+    dependsOn: 'Validate Ubuntu22_included'
+
+    steps:
+      - pwsh: Write-Host 'Hello world'
+
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
     - ${{ each artifact in parameters.Artifacts }}:
