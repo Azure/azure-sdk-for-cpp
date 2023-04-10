@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added "transparent" version of `Azure::Core::Uuid` to enable reading and/or writing from an existing Uuid.
+- Added "transparent" version of `Azure::Core::Uuid` to enable reading or writing from an existing Uuid.
 This is useful when the Uuid was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
 
 ### Breaking Changes
