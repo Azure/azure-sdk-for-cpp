@@ -14,7 +14,7 @@
     {
       "name": "azure-storage-blobs-cpp",
       "default-features": false,
-      "version>=": "12.6.2"
+      "version>=": "12.7.0"
     },
     {
       "name": "vcpkg-cmake",
