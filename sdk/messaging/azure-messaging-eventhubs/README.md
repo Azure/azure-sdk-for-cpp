@@ -1,3 +1,3 @@
-# Generic Service for Samples
+# Azure Messaging EventHub service
 
-This is a helper library for samples that provides a generic service client library.
+C++ SDK for Azure Messaging EventHub.
