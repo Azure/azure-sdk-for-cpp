@@ -17,8 +17,8 @@ TEST(Uuid, Basic)
 TEST(Uuid, Transparent)
 {
   auto uuid1 = Uuid::CreateUuid();
-  auto arrayUuid1(static_cast<std::array<uint8_t, 16>>(uuid1));
-  auto uuid2 = Azure::Core::Uuid(arrayUuid1);
+  auto arrayUuid1(uuid1.GetAsArray());
+  auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
   EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
 }
 
