@@ -77,7 +77,7 @@ namespace Azure { namespace Core {
     return Uuid(uuid);
   }
 
-  Uuid Uuid::FromArray(std::array<uint8_t, UuidSize> const& uuid)
+  Uuid Uuid::CreateFromArray(std::array<uint8_t, UuidSize> const& uuid)
   {
     Uuid rv{uuid.data()};
     return rv;

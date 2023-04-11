@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::FromArray()` to enable reading or writing from an existing UUID.
+- Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::CreateFromArray()` to enable reading or writing from an existing UUID.
 This is useful when the UUID was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
 
 ### Breaking Changes
