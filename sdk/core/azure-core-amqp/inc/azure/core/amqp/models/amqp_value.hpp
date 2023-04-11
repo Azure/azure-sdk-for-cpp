@@ -85,6 +85,7 @@ namespace Azure { namespace Core {
       class AmqpBinaryData;
       class AmqpSymbol;
       class AmqpTimestamp;
+      class AmqpComposite;
 
       using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
 
@@ -97,7 +98,7 @@ namespace Azure { namespace Core {
 ).
          *
          */
-        AmqpValue();
+        AmqpValue() noexcept;
         ~AmqpValue();
 
         /** @brief Construct an AMQP boolean value.
@@ -234,17 +235,6 @@ namespace Azure { namespace Core {
          */
         AmqpValue(const char* value);
 
-        /** @brief Construct an AMQP timestamp value, an absolute point in time with a precision of
-         * milliseconds.
-         *
-         * Defined in [AMQP Core Types
-         * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-timestamp).
-         *
-         * @param value to be set.
-         *
-         */
-//        AmqpValue(std::chrono::milliseconds const& value);
-
         /** TODO:
          * Decimal32, Decimal64, and Decimal128.
          */
@@ -267,17 +257,17 @@ namespace Azure { namespace Core {
          * @param UTF-32 encoded unicode value to be set.
          *
          */
-        AmqpValue(Azure::Core::Uuid value);
+        AmqpValue(Azure::Core::Uuid const& value);
 
-        AmqpValue(AmqpValue const& that) throw();
-        AmqpValue(AmqpValue&& that) throw();
+        AmqpValue(AmqpValue const& that) noexcept;
+        AmqpValue(AmqpValue&& that) noexcept;
 
         // Interoperability functions for uAMQP
         operator AMQP_VALUE_DATA_TAG*() const;
         AmqpValue(AMQP_VALUE_DATA_TAG* value);
 
         AmqpValue& operator=(AmqpValue const& that);
-        AmqpValue& operator=(AmqpValue&& that) throw();
+        AmqpValue& operator=(AmqpValue&& that) noexcept;
 
         /** @brief Equality comparison operator.
          * @param that - Value to compare to this value.
@@ -298,32 +288,18 @@ namespace Azure { namespace Core {
         bool IsNull() const;
 
         operator bool() const;
-        operator bool();
         operator std::uint8_t() const;
-        operator std::uint8_t();
         operator std::int8_t() const;
-        operator std::int8_t();
         operator std::uint16_t() const;
-        operator std::uint16_t();
         operator std::int16_t() const;
-        operator std::int16_t();
         operator std::uint32_t() const;
-        operator std::uint32_t();
         operator std::int32_t() const;
-        operator std::int32_t();
         operator std::uint64_t() const;
-        operator std::uint64_t();
         operator std::int64_t() const;
-        operator std::int64_t();
         operator float() const;
-        operator float();
         operator double() const;
-        operator double();
         explicit operator std::string() const;
-        explicit operator std::string();
-        operator Uuid();
         operator Uuid() const;
-//        operator std::chrono::milliseconds const() const;
 
         // List Operations.
         AmqpList AsList() const;
@@ -343,18 +319,16 @@ namespace Azure { namespace Core {
 
         // Symbols
         AmqpSymbol AsSymbol() const;
-        //        static AmqpValue CreateSymbol(std::string const& value);
-        //        std::string GetSymbol() const;
 
         // Composite values - A composite value is functionally a list with a fixed size.
-        static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
-        void SetCompositeItem(uint32_t index, AmqpValue itemAmqpValue);
-        AmqpValue GetCompositeItem(uint32_t index);
-        //    AMQPAmqpValue GetCompositeItemInPlace(size_t index) const;
-        size_t GetCompositeItemCount() const;
+        AmqpComposite AsComposite() const;
+        //        static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
+        //        void SetCompositeItem(uint32_t index, AmqpValue itemAmqpValue);
+        //        AmqpValue GetCompositeItem(uint32_t index);
+        //        size_t GetCompositeItemCount() const;
 
         static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
-        static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
+        //        static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
 
         // Descriptors
         AmqpValue GetDescriptor() const;
@@ -574,7 +548,7 @@ namespace Azure { namespace Core {
         operator AMQP_VALUE_DATA_TAG*() const;
       };
 
-            class AmqpTimestamp : public std::chrono::milliseconds {
+      class AmqpTimestamp : public std::chrono::milliseconds {
       public:
         AmqpTimestamp();
         /** @brief Construct a new AmqpTimestamp object . */
@@ -609,6 +583,63 @@ namespace Azure { namespace Core {
         operator AMQP_VALUE_DATA_TAG*() const;
       };
 
+      /** @brief An AmqpComposite represents a sequentially ordered list of values. The values of
+       * the composite may have different types.
+       *
+       * @remarks An [AMQP Composite
+       * type](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#doc-idp42752)
+       * is a composite value where each value consists of an ordered sequence of fields, each with
+       * a specified name, type and multiplicity. They roughly correspond to a C or C++ "struct"
+       * type.
+       *
+       * @note The AMQP Composite type representation does NOT include the underlying field names,
+       * just the field values.
+       *
+       */
+      class AmqpComposite : public std::vector<AmqpValue> {
+      public:
+        /** @brief Construct a new AmqpArray object. */
+        AmqpComposite();
+
+        /** @brief Construct a new AmqpArray object with an initializer list. */
+        AmqpComposite(AmqpValue const& descriptor, std::initializer_list<AmqpValue> const& values);
+
+        /** @brief Construct a new AmqpComposite object from an existing uAMQP AMQP_VALUE item
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP array value to capture.
+         */
+        AmqpComposite(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpComposite to an AmqpValue.
+         */
+        operator AmqpValue const() const;
+
+        /** @brief Returns the descriptor for this composite type.
+         *
+         * @returns The descriptor for this composite type.
+         */
+        AmqpValue const& GetDescriptor() const;
+
+        /**
+         * @brief Convert an AmqpComposite instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+
+      private:
+        AmqpValue m_descriptor;
+      };
 
   }} // namespace Amqp::Models
 }} // namespace Azure::Core

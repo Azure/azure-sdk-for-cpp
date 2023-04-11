@@ -37,17 +37,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpValue::AmqpValue(int64_t value) : m_value{amqpvalue_create_long(value)} {}
     AmqpValue::AmqpValue(float value) : m_value{amqpvalue_create_float(value)} {}
     AmqpValue::AmqpValue(double value) : m_value{amqpvalue_create_double(value)} {}
+    AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
+        : m_value{amqpvalue_create_uuid(const_cast<unsigned char*>(
+            static_cast<const unsigned char*>(uuid.GetAsArray().data())))}
+    {
+    }
 
-    /* ???? */
-    //    AMQPValue(std::uint32_t value) : m_value{amqpvalue_create_char(value)} {}
-    //    AMQPValue(timestamp value) : m_value{amqpvalue_create_timestamp(value)} {}
-    //    AMQPValue(std::string const& value) : m_value{amqpvalue_create_symbol(value.c_str())} {}
-
-    //  AmqpValue::AmqpValue(Azure::Core::Uuid value) : m_value{amqpvalue_create_uuid(value.data())}
     AmqpValue::AmqpValue(std::string value) : m_value{amqpvalue_create_string(value.c_str())} {}
     AmqpValue::AmqpValue(const char* value) : m_value{amqpvalue_create_string(value)} {}
 
-    AmqpValue::AmqpValue() : m_value{amqpvalue_create_null()} {}
+    AmqpValue::AmqpValue() noexcept : m_value{amqpvalue_create_null()} {}
     AmqpValue::AmqpValue(AmqpValue const& that) noexcept
         : m_value{amqpvalue_clone(that.m_value.get())}
     {
@@ -92,15 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator bool()
-    {
-      bool value;
-      if (amqpvalue_get_boolean(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator unsigned char() const
     {
       unsigned char value;
@@ -110,15 +101,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator unsigned char()
-    {
-      unsigned char value;
-      if (amqpvalue_get_ubyte(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator std::int8_t() const
     {
       char value;
@@ -128,15 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator std::int8_t()
-    {
-      char value;
-      if (amqpvalue_get_byte(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator uint16_t() const
     {
       uint16_t value;
@@ -146,15 +121,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator uint16_t()
-    {
-      uint16_t value;
-      if (amqpvalue_get_ushort(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator int16_t() const
     {
       int16_t value;
@@ -164,15 +131,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator int16_t()
-    {
-      int16_t value;
-      if (amqpvalue_get_short(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator std::uint32_t() const
     {
       std::uint32_t value;
@@ -182,16 +141,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator std::uint32_t()
-    {
-      std::uint32_t value;
-      if (amqpvalue_get_uint(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
-    AmqpValue::operator int32_t() const
+
+    AmqpValue::operator std::int32_t() const
     {
       int32_t value;
       if (amqpvalue_get_int(m_value.get(), &value) != 0)
@@ -200,15 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator int32_t()
-    {
-      int32_t value;
-      if (amqpvalue_get_int(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator uint64_t() const
     {
       uint64_t value;
@@ -218,15 +161,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator uint64_t()
-    {
-      uint64_t value;
-      if (amqpvalue_get_ulong(m_value.get(), &value) != 0)
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator int64_t() const
     {
       int64_t value;
@@ -236,15 +171,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator int64_t()
-    {
-      int64_t value;
-      if (amqpvalue_get_long(m_value.get(), &value))
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator float() const
     {
       float value;
@@ -254,25 +181,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator float()
-    {
-      float value;
-      if (amqpvalue_get_float(m_value.get(), &value))
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
+
     AmqpValue::operator double() const
-    {
-      double value;
-      if (amqpvalue_get_double(m_value.get(), &value))
-      {
-        throw std::runtime_error("Could not retrieve value");
-      }
-      return value;
-    }
-    AmqpValue::operator double()
     {
       double value;
       if (amqpvalue_get_double(m_value.get(), &value))
@@ -291,14 +201,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-    AmqpValue::operator std::string()
+
+    AmqpValue::operator Azure::Core::Uuid() const
     {
-      const char* value;
-      if (amqpvalue_get_string(m_value.get(), &value))
+      uuid value;
+      if (amqpvalue_get_uuid(m_value.get(), &value))
       {
         throw std::runtime_error("Could not retrieve value");
       }
-      return value;
+      std::array<uint8_t, 16> uuid;
+      memcpy(uuid.data(), value, 16);
+      return Azure::Core::Uuid::CreateFromArray(uuid);
     }
 
     bool AmqpValue::operator==(AmqpValue const& that) const
@@ -355,6 +268,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           return AsArray() < that.AsArray();
 
         case AmqpValueType::Uuid:
+          return static_cast<Azure::Core::Uuid>(*this).GetAsArray()
+              < static_cast<Azure::Core::Uuid>(that).GetAsArray();
         case AmqpValueType::Binary:
         case AmqpValueType::List:
         case AmqpValueType::Described:
@@ -364,43 +279,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    // AmqpValue AmqpValue::CreateList() { return AmqpValue(amqpvalue_create_list()); }
-    // void AmqpValue::SetListItemCount(std::uint32_t count)
-    //{
-    //   if (amqpvalue_set_list_item_count(m_value.get(), count))
-    //   {
-    //     throw std::runtime_error("Could not set List item count");
-    //   }
-    // }
-    // std::uint32_t AmqpValue::GetListItemCount() const
-    //{
-    //   std::uint32_t count;
-    //   if (amqpvalue_get_list_item_count(m_value.get(), &count) != 0)
-    //   {
-    //     throw std::runtime_error("Could not get List item count");
-    //   }
-    //   return count;
-    // }
-    // void AmqpValue::SetListItem(std::uint32_t index, AmqpValue item)
-    //{
-    //   if (amqpvalue_set_list_item(m_value.get(), index, item))
-    //   {
-    //     throw std::runtime_error("Could not set List item count");
-    //   }
-    // }
-    // AmqpValue AmqpValue::GetListItem(size_t index) const
-    //{
-    //   AMQP_VALUE item = amqpvalue_get_list_item(m_value.get(), index);
-    //   return item;
-    // }
-
-    ////  AMQPValue AMQPValue::GetListItemInPlace(size_t index) const { return AMQPValue(); }
-
     AmqpMap AmqpValue::AsMap() const { return AmqpMap(m_value.get()); }
 
     AmqpArray AmqpValue::AsArray() const { return AmqpArray(m_value.get()); }
 
     AmqpSymbol AmqpValue::AsSymbol() const { return AmqpSymbol(m_value.get()); }
+
+    AmqpComposite AmqpValue::AsComposite() const { return AmqpComposite(m_value.get()); }
 
     AmqpValue AmqpValue::CreateChar(std::uint32_t value) { return amqpvalue_create_char(value); }
 
@@ -413,35 +298,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return value;
     }
-
-    // AmqpValue::AmqpValue(std::chrono::milliseconds const& value)
-    //     : m_value{amqpvalue_create_timestamp(value.count())}
-    //{
-    // }
-
-    // AmqpValue::operator std::chrono::milliseconds const() const
-    //{
-    //   int64_t ms;
-    //   if (amqpvalue_get_timestamp(m_value.get(), &ms))
-    //   {
-    //     throw std::runtime_error("Could not get timestamp.");
-    //   }
-    //   return std::chrono::milliseconds(ms);
-    // }
-
-    // AmqpValue AmqpValue::CreateSymbol(std::string const& value)
-    //{
-    //   return amqpvalue_create_symbol(value.c_str());
-    // }
-    // std::string AmqpValue::GetSymbol() const
-    //{
-    //   const char* symbol;
-    //   if (amqpvalue_get_symbol(m_value.get(), &symbol))
-    //   {
-    //     throw std::runtime_error("Could not get symbol.");
-    //   }
-    //   return symbol;
-    // }
 
     AmqpValueType AmqpValue::GetType() const
     {
@@ -501,31 +357,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Unknown AMQP AmqpValue Type");
     }
 
-    AmqpValue AmqpValue::CreateComposite(AmqpValue descriptor, std::uint32_t listSize)
-    {
-      return amqpvalue_create_composite(descriptor, listSize);
-    }
-    void AmqpValue::SetCompositeItem(std::uint32_t index, AmqpValue itemValue)
-    {
-      if (amqpvalue_set_composite_item(m_value.get(), index, itemValue))
-      {
-        throw std::runtime_error("Could not set composite item");
-      }
-    }
-    AmqpValue AmqpValue::GetCompositeItem(std::uint32_t index)
-    {
-      return amqpvalue_get_composite_item(m_value.get(), index);
-    }
-    //  AMQPValue AMQPValue::GetCompositeItemInPlace(size_t index) const { return AMQPValue(); }
-    size_t AmqpValue::GetCompositeItemCount() const
-    {
-      std::uint32_t size;
-      if (amqpvalue_get_composite_item_count(m_value.get(), &size))
-      {
-        throw std::runtime_error("Could not set composite item");
-      }
-      return size;
-    }
     AmqpValue AmqpValue::CreateDescribed(AmqpValue descriptor, AmqpValue value)
     {
       // amqpvalue_create_described takes a reference to the input parameters, we need to stabilize
@@ -543,10 +374,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return amqpvalue_get_inplace_described_value(m_value.get());
     }
 
-    AmqpValue AmqpValue::CreateCompositeWithDescriptor(uint64_t descriptor)
-    {
-      return amqpvalue_create_composite_with_ulong_descriptor(descriptor);
-    }
     bool AmqpValue::IsHeaderTypeByDescriptor() const
     {
       return is_header_type_by_descriptor(m_value.get());
@@ -801,6 +628,58 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     AmqpTimestamp::operator const AmqpValue() const { return static_cast<AMQP_VALUE>(*this); }
+
+    AmqpComposite::AmqpComposite(AMQP_VALUE const value)
+    {
+      if (amqpvalue_get_type(value) != AMQP_TYPE_COMPOSITE)
+      {
+        throw std::runtime_error("Input AMQP value MUST be a composite value.");
+      }
+
+      std::uint32_t compositeSize;
+      if (amqpvalue_get_composite_item_count(value, &compositeSize))
+      {
+        throw std::runtime_error("Could not get composite size from AMQP_VALUE");
+      }
+      for (std::uint32_t i = 0; i < compositeSize; i += 1)
+      {
+        push_back(amqpvalue_get_composite_item_in_place(value, i));
+      }
+
+      m_descriptor = amqpvalue_get_inplace_descriptor(value);
+      if (m_descriptor == nullptr)
+      {
+        throw std::runtime_error("Could not read descriptor for composite value.");
+      }
+    }
+
+    AmqpComposite::AmqpComposite(
+        AmqpValue const& descriptor,
+        std::initializer_list<std::vector<AmqpValue>::value_type> const& initializer)
+        : std::vector<AmqpValue>(initializer), m_descriptor(descriptor)
+    {
+    }
+    AmqpComposite::AmqpComposite() {}
+
+    AmqpComposite::operator AMQP_VALUE_DATA_TAG*() const
+    {
+      Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG> composite{
+          amqpvalue_create_composite(m_descriptor, static_cast<std::uint32_t>(size()))};
+      std::uint32_t i = 0;
+      for (const auto& val : *this)
+      {
+        if (amqpvalue_set_composite_item(composite.get(), i, val))
+        {
+          throw(std::runtime_error("Could not add value to list."));
+        }
+        i += 1;
+      }
+      return composite.release();
+    }
+
+    AmqpValue const& AmqpComposite::GetDescriptor() const { return m_descriptor; }
+
+    AmqpComposite::operator AmqpValue const() const { return static_cast<AMQP_VALUE>(*this); }
 
     namespace {
       std::chrono::milliseconds GetMillisecondsFromAmqp(AMQP_VALUE value)

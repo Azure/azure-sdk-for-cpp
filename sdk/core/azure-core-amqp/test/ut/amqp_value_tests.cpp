@@ -245,26 +245,36 @@ TEST_F(TestValues, TestSymbol)
 TEST_F(TestValues, TestCompositeValue)
 {
   {
-    AmqpValue value{AmqpValue::CreateComposite("My Composite Type", 5)};
+    AmqpComposite value;
+    //    AmqpComposite value("My Composite Type", {1, 2, 5.5, "ABC", 5});
 
-    EXPECT_EQ(5, value.GetCompositeItemCount());
+    EXPECT_EQ(0, value.size());
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetCompositeItemCount());
+    EXPECT_ANY_THROW(AmqpComposite value(boolValue));
   }
 
   // Put some things in the map.
   {
-    AmqpValue val{AmqpValue::CreateComposite("CompType", 2)};
-    val.SetCompositeItem(0, 25);
-    val.SetCompositeItem(1, 25.0f);
+    AmqpComposite val("CompType", {25, 25.0f});
 
-    EXPECT_EQ(25, static_cast<int32_t>(val.GetCompositeItem(0)));
-    EXPECT_EQ(25.0f, static_cast<float>(val.GetCompositeItem(1)));
+    EXPECT_EQ(25, static_cast<int32_t>(val[0]));
+    EXPECT_EQ(25.0f, static_cast<float>(val[1]));
   }
+
+  // Put some things in the map.
   {
-    AmqpValue val{AmqpValue::CreateCompositeWithDescriptor(29)};
+    AmqpComposite compositeVal(116ull, {25, 25.0f});
+    AmqpValue value = static_cast<AmqpValue>(compositeVal);
+    AmqpComposite testVal(value);
+
+    EXPECT_EQ(compositeVal.size(), testVal.size());
+    EXPECT_EQ(compositeVal.GetDescriptor(), testVal.GetDescriptor());
+    EXPECT_EQ(compositeVal[0], testVal[0]);
+    EXPECT_EQ(compositeVal[1], testVal[1]);
+    EXPECT_EQ(25, static_cast<int32_t>(testVal[0]));
+    EXPECT_EQ(25.0f, static_cast<float>(testVal[1]));
   }
 }
 
