@@ -10,6 +10,7 @@
 
 #include "azure/core/platform.hpp"
 
+#include <array>
 #include <cstring>
 #include <string>
 
@@ -22,7 +23,7 @@ namespace Azure { namespace Core {
   private:
     static constexpr size_t UuidSize = 16;
 
-    uint8_t m_uuid[UuidSize];
+    std::array<uint8_t, UuidSize> m_uuid;
     // The UUID reserved variants.
     static constexpr uint8_t ReservedNCS = 0x80;
     static constexpr uint8_t ReservedRFC4122 = 0x40;
@@ -30,7 +31,7 @@ namespace Azure { namespace Core {
     static constexpr uint8_t ReservedFuture = 0x00;
 
   private:
-    Uuid(uint8_t const uuid[UuidSize]) { std::memcpy(m_uuid, uuid, UuidSize); }
+    Uuid(uint8_t const uuid[UuidSize]) { std::memcpy(m_uuid.data(), uuid, UuidSize); }
 
   public:
     /**
@@ -40,9 +41,22 @@ namespace Azure { namespace Core {
     std::string ToString();
 
     /**
+     * @brief Returns the binary value of the Uuid for consumption by clients who need non-string
+     * representation of the Uuid
+     * @returns An array with the binary representation of the Uuid.
+     */
+    std::array<uint8_t, UuidSize> const& AsArray() const { return m_uuid; }
+
+    /**
      * @brief Creates a new random UUID.
      *
      */
     static Uuid CreateUuid();
+
+    /**
+     * @brief Construct a Uuid from an existing UUID represented as an array of bytes.
+     * @details Creates a Uuid from a UUID created in an external scope.
+     */
+    static Uuid FromArray(std::array<uint8_t, UuidSize> const& uuid);
   };
 }} // namespace Azure::Core
