@@ -1,6 +1,6 @@
 # Release History
 
-## 12.6.0-beta.1 (Unreleased)
+## 12.6.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.6.0-beta.1 (2023-04-11)
+
+### Features Added
+- Added support for encryption context:
+  - new filed `EncryptionContext` in `CreatePathOptions` , `PathItem`, `PathProperties`,  `DownloadFileDetails`.
 
 ## 12.5.0 (2023-01-10)
 

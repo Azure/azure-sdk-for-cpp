@@ -5,6 +5,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
@@ -75,7 +76,8 @@ KeyClient::KeyClient(
     tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));
+        std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
+            credential, std::move(tokenContext)));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 

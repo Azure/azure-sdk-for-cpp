@@ -126,6 +126,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             vectorElement2.ExpiresOn = var0["expiryTime"].get<std::string>();
           }
+          if (var0.count("EncryptionContext") != 0)
+          {
+            vectorElement2.EncryptionContext = var0["EncryptionContext"].get<std::string>();
+          }
           if (var0.count("etag") != 0)
           {
             vectorElement2.ETag = var0["etag"].get<std::string>();
@@ -296,6 +300,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       if (options.ExpiresOn.HasValue() && !options.ExpiresOn.Value().empty())
       {
         request.SetHeader("x-ms-expiry-time", options.ExpiresOn.Value());
+      }
+      if (options.EncryptionContext.HasValue() && !options.EncryptionContext.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-context", options.EncryptionContext.Value());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();

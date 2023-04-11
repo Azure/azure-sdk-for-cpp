@@ -1,14 +1,40 @@
 # Release History
 
-## 1.9.0-beta.1 (Unreleased)
+## 1.9.0-beta.2 (Unreleased)
+
+### Features Added
+
+- Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::CreateFromArray()` to enable reading or writing from an existing UUID.
+This is useful when the UUID was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- [[#4490]](https://github.com/Azure/azure-sdk-for-cpp/issues/4490) Fixed WinHTTP memory leak during failed requests.
+
+### Other Changes
+
+## 1.9.0-beta.1 (2023-04-06)
 
 ### Features Added
 
 - Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.
 - Added `DisableTlsCertificateValidation` in `TransportOptions`.
 - Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
+- Added support for challenge-based and multi-tenant authentication.
 
-### Breaking Changes
+### Other Changes
+
+- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jorgen Lind _([GitHub](https://github.com/jorgen))_
+
+## 1.8.1 (2023-04-06)
 
 ### Bugs Fixed
 
@@ -17,14 +43,7 @@
 
 ### Other Changes
 
-- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
 - Libcurl transport doesn't add `Content-Length` request header for GET/HEAD/DELETE requests anymore.
-
-### Acknowledgments
-
-Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
-
-- Jorgen Lind _([GitHub](https://github.com/jorgen))_
 
 ## 1.8.0 (2023-02-02)
 
