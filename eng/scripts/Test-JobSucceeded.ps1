@@ -21,6 +21,8 @@ $buildTimeline = Invoke-RestMethod `
     -Credential $credential `
     -Uri "https://dev.azure.com/$Org/$Project/_apis/build/builds/$BuildId/timeline?api-version=5.0"
 
+Write-Host "URL: https://dev.azure.com/$Org/$Project/_apis/build/builds/$BuildId/timeline?api-version=5.0"
+
 $hasError = $false
 
 foreach($jobName in $JobNames) {
