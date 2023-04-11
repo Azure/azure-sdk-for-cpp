@@ -70,14 +70,14 @@ namespace Azure { namespace Core {
     // SetVariant to ReservedRFC4122
     uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
 
-    constexpr uint8_t version = 4;
+    constexpr uint8_t version = 4; // Version 4: Pseudo-random number
 
     uuid[6] = (uuid[6] & 0xF) | (version << 4);
 
     return Uuid(uuid);
   }
 
-  Uuid Uuid::CreateFromArray(std::array<uint8_t, UuidSize> const& uuid)
+  Uuid Uuid::FromArray(std::array<uint8_t, UuidSize> const& uuid)
   {
     Uuid rv{uuid.data()};
     return rv;

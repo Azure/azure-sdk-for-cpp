@@ -45,7 +45,7 @@ namespace Azure { namespace Core {
      * representation of the Uuid
      * @returns An array with the binary representation of the Uuid.
      */
-    std::array<uint8_t, UuidSize> const& GetAsArray() const { return m_uuid; }
+    std::array<uint8_t, UuidSize> const& AsArray() const { return m_uuid; }
 
     /**
      * @brief Creates a new random UUID.
@@ -57,6 +57,6 @@ namespace Azure { namespace Core {
      * @brief Construct a Uuid from an existing UUID represented as an array of bytes.
      * @details Creates a Uuid from a UUID created in an external scope.
      */
-    static Uuid CreateFromArray(std::array<uint8_t, UuidSize> const& uuid);
+    static Uuid FromArray(std::array<uint8_t, UuidSize> const& uuid);
   };
 }} // namespace Azure::Core
