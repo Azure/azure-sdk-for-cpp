@@ -130,6 +130,7 @@ stages:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         DependsOn:
           - Build
+          # TODO: Don't depend on live tests in scheduled runs
           # Only depend on `LiveTest` if there are live tests to execute
           - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
             # Pulled from stages/archetype-sdk-tests.yml to generate 'LiveTest_<cloud>'

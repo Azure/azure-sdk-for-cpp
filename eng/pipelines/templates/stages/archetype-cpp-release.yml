@@ -243,7 +243,7 @@ stages:
       dependsOn: ${{ parameters.DependsOn }}
       condition: >-
         and(
-          succeededOrFailed(),
+          eq(stageDependencies.Build.QuickValidate.result, 'Succeeded'),
           or(
             eq(variables['PublishDailyVcpkg'], 'true'),
             eq(variables['Build.Reason'],'Schedule')
@@ -259,16 +259,6 @@ stages:
 
           steps:
             - checkout: self
-
-            - task: PowerShell@2
-              displayName: Ensure ubuntu22_included job succeeded
-              inputs:
-                targetType: filePath
-                filePath: eng/scripts/Test-JobSucceeded.ps1
-                arguments: >-
-                  -JobNames 'Validate ubuntu22_included'
-              env:
-                SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
             - download: current
               artifact: packages
