@@ -18,7 +18,7 @@ TEST(Uuid, Transparent)
 {
   auto uuid1 = Uuid::CreateUuid();
   auto arrayUuid1(uuid1.AsArray());
-  auto uuid2 = Azure::Core::Uuid::FromArray(arrayUuid1);
+  auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
   EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
 }
 
