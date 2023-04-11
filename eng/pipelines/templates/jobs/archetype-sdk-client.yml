@@ -53,6 +53,7 @@ jobs:
   - ${{ each config in parameters.JobConfiguration }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
       parameters:
+        GenerateJobName: ${{ config.Name }}_generate_matrix
         MatrixConfigs:
           - Name: base
             Path: ${{ config.Matrix}}
