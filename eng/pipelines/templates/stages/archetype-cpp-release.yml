@@ -263,7 +263,7 @@ stages:
             - task: PowerShell@2
               displayName: Ensure ubuntu22_included job succeeded
               inputs:
-                targetType: file
+                targetType: filePath
                 filePath: eng/scripts/Test-JobSucceeded.ps1
                 arguments: >-
                   -JobNames 'Validate ubuntu22_included'
