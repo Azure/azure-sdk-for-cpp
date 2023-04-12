@@ -16,8 +16,7 @@
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_MESSAGING_EVENTHUBS_DLL) \
-    || (0 /*@AZ_MESSAGING_EVENTHUBS_DLL_INSTALLED_AS_PACKAGE@*/)
+#if defined(AZ_MESSAGING_EVENTHUBS_DLL) || (0 /*@AZ_MESSAGING_EVENTHUBS_DLL_INSTALLED_AS_PACKAGE@*/)
 #define AZ_MESSAGING_EVENTHUBS_BUILT_AS_DLL 1
 #else
 #define AZ_MESSAGING_EVENTHUBS_BUILT_AS_DLL 0

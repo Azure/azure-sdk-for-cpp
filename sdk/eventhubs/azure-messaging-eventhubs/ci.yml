@@ -9,7 +9,7 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - sdk/messaging/azure-messaging-eventhubs
+      - sdk/eventhubs/azure-messaging-eventhubs
 
 pr:
   branches:
@@ -20,13 +20,13 @@ pr:
       - hotfix/*
   paths:
     include:
-      - sdk/messaging/azure-messaging-eventhubs
+      - sdk/eventhubs/azure-messaging-eventhubs
       - eng/common/testproxy
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
-      ServiceDirectory: messaging/azure-messaging-eventhubs
+      ServiceDirectory: eventhubs/azure-messaging-eventhubs
       CtestRegex: "azure-messaging-eventhubs.*"
       LiveTestCtestRegex: "azure-messaging-eventhubs.*"
       LiveTestTimeoutInMinutes: 120
