@@ -1,0 +1,53 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+cmake_minimum_required (VERSION 3.13)
+
+project (azure-messaging-eventhubs-test LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+include(GoogleTest)
+
+# Export the test folder for recordings access.
+add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
+include(TestProxyPrep)
+SetUpTestProxy("sdk/messaging")
+
+################## Unit Tests ##########################
+add_executable (
+  azure-messaging-eventhubs-test
+    
+    eventhubs_test.cpp
+     )
+
+create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
+create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
+
+if (MSVC)
+  target_compile_options(azure-messaging-eventhubs-test PUBLIC /wd6326 /wd26495 /wd26812)
+endif()
+
+target_link_libraries(
+    azure-messaging-eventhubs-test
+      PRIVATE 
+        azure-messaging-eventhubs 
+        azure-identity azure-core-test-fw  
+        azure-security-attestation
+        gtest 
+        gtest_main 
+        gmock)
+
+# Adding private headers so we can test the private APIs with no relative paths include.
+target_include_directories (
+    azure-messaging-eventhubs-test 
+      PRIVATE 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+
+# gtest_add_tests will scan the test from azure-core-test and call add_test
+# for each test to ctest. This enables `ctest -r` to run specific tests directly.
+gtest_discover_tests(azure-messaging-eventhubs-test
+  TEST_PREFIX azure-messaging-eventhubs.
+  NO_PRETTY_TYPES
+  NO_PRETTY_VALUES
+  DISCOVERY_TIMEOUT 600)
