@@ -86,6 +86,7 @@ namespace Azure { namespace Core {
       class AmqpSymbol;
       class AmqpTimestamp;
       class AmqpComposite;
+      class AmqpDescribed;
 
       using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
 
@@ -218,7 +219,7 @@ namespace Azure { namespace Core {
          * @param value to be set.
          *
          */
-        explicit AmqpValue(std::string value);
+        explicit AmqpValue(std::string const& value);
 
         /** @brief Construct an AMQP string value, a UTF-8 encoded sequence of characters.
          *
@@ -244,7 +245,7 @@ namespace Azure { namespace Core {
          * Defined in [AMQP Core Types
          * section 1.6.16](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-char).
          *
-         * @param UTF-32 encoded unicode value to be set.
+         * @param value UTF-32 encoded unicode value to be set.
          *
          */
         static AmqpValue CreateChar(std::uint32_t value);
@@ -259,14 +260,47 @@ namespace Azure { namespace Core {
          */
         AmqpValue(Azure::Core::Uuid const& value);
 
+        /** @brief Construct an AMQP Value from an existing AMQP Value
+         * @param that - source value to copy.
+         */
         AmqpValue(AmqpValue const& that) noexcept;
+
+        /** @brief Move an AMQP Value to another existing AMQP Value
+         * @param that - source value to move.
+         */
         AmqpValue(AmqpValue&& that) noexcept;
 
         // Interoperability functions for uAMQP
+
+        /** @brief Interoperability helper function which converts an AmqpValue to a uAMQP
+         * AMQP_VALUE object.
+         *
+         * @returns uAMQP AMQP_VALUE object.
+         *
+         * @remarks This is an internal operator which should not be called by customers.
+         */
         operator AMQP_VALUE_DATA_TAG*() const;
+
+        /** @brief Interoperability helper function which creates an AmqpValue from a uAMQP
+         * AMQP_VALUE object.
+         *
+         * @param value source uAMQP AMQP_VALUE object.
+         *
+         * @remarks This is an internal operator which should not be called by customers.
+         */
         AmqpValue(AMQP_VALUE_DATA_TAG* value);
 
+        /** @brief Copy an AMQP value to the current AMQP value.
+         *
+         * @param the other AMQP Value to copy.
+         * @returns "this".
+         */
         AmqpValue& operator=(AmqpValue const& that);
+        /** @brief Move an AMQP value to the current AMQP value.
+         *
+         * @param the other AMQP Value to move.
+         * @returns "this".
+         */
         AmqpValue& operator=(AmqpValue&& that) noexcept;
 
         /** @brief Equality comparison operator.
@@ -287,6 +321,12 @@ namespace Azure { namespace Core {
          */
         bool IsNull() const;
 
+        /** @brief convert the current AMQP Value to a boolean.
+         *
+         * @returns bool true if the AMQP value is true.
+         *
+         * @throws std::runtime_error if the underlying AMQP value is not a boolean.
+         */
         operator bool() const;
         operator std::uint8_t() const;
         operator std::int8_t() const;
@@ -322,17 +362,15 @@ namespace Azure { namespace Core {
 
         // Composite values - A composite value is functionally a list with a fixed size.
         AmqpComposite AsComposite() const;
-        //        static AmqpValue CreateComposite(AmqpValue descriptor, uint32_t listSize);
-        //        void SetCompositeItem(uint32_t index, AmqpValue itemAmqpValue);
-        //        AmqpValue GetCompositeItem(uint32_t index);
-        //        size_t GetCompositeItemCount() const;
 
-        static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
+        AmqpDescribed AsDescribed() const;
+
+        //        static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
         //        static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
 
         // Descriptors
-        AmqpValue GetDescriptor() const;
-        AmqpValue GetDescribedValue() const;
+        //      AmqpValue GetDescriptor() const;
+        //    AmqpValue GetDescribedValue() const;
 
         // Headers.
         bool IsHeaderTypeByDescriptor() const;
@@ -624,7 +662,7 @@ namespace Azure { namespace Core {
          *
          * @returns The descriptor for this composite type.
          */
-        AmqpValue const& GetDescriptor() const;
+        AmqpValue const& GetDescriptor() const { return m_descriptor; }
 
         /**
          * @brief Convert an AmqpComposite instance to a uAMQP AMQP_VALUE.
@@ -639,6 +677,80 @@ namespace Azure { namespace Core {
 
       private:
         AmqpValue m_descriptor;
+      };
+
+      /** @brief An AmqpDescribed represents an AMQP described type.
+       *
+       * @remarks An [AMQP Described
+       * type](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#doc-idp38080)
+       * is a tuple consisting of a type and a "descriptor" for that type. The "descriptor"
+       * indicates that the AMQP object is a representation of the type.
+       *
+       */
+      class AmqpDescribed {
+      public:
+        /** @brief Construct a new AmqpDescribed object.
+         *
+         * By convention, AMQP Descriptor values are either symbolic or numeric. Other types are
+         * reserved.
+         *
+         * @param descriptor - the Descriptor for the described value.
+         * @param value - the Value for the described value.
+         *
+         */
+        AmqpDescribed(AmqpSymbol const& descriptor, AmqpValue const& value);
+
+        /** @brief Construct a new AmqpDescribed object with a 64bit descriptor.
+         *
+         * @param descriptor - the Descriptor for the described value. The descriptor value SHOULD
+         * be one of the values from the AMQP specification.
+         * @param value - the Value for the described value.
+         *
+         */
+        AmqpDescribed(uint64_t descriptor, AmqpValue const& value);
+
+        /** @brief Construct a new AmqpDescribed object from an existing uAMQP AMQP_VALUE item
+         * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+         * responsible for freeing that object.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @param value - the AMQP array value to capture.
+         */
+        AmqpDescribed(AMQP_VALUE_DATA_TAG* const value);
+
+        /**
+         * @brief Convert an existing AmqpComposite to an AmqpValue.
+         */
+        operator AmqpValue const() const;
+
+        /** @brief Returns the descriptor for this composite type.
+         *
+         * @returns The descriptor for this composite type.
+         */
+        AmqpValue const& GetDescriptor() const { return m_descriptor; }
+
+        /** @brief Returns the descriptor for this composite type.
+         *
+         * @returns The descriptor for this composite type.
+         */
+        AmqpValue const& GetValue() const { return m_value; }
+
+        /**
+         * @brief Convert an AmqpDescriptor instance to a uAMQP AMQP_VALUE.
+         *
+         * @remarks This is an internal accessor and should never be used by code outside the AMQP
+         * implementation.
+         *
+         * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
+         * by the caller.
+         */
+        operator AMQP_VALUE_DATA_TAG*() const;
+
+      private:
+        AmqpValue m_descriptor;
+        AmqpValue m_value;
       };
 
   }} // namespace Amqp::Models

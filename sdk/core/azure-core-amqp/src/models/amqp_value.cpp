@@ -38,12 +38,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpValue::AmqpValue(float value) : m_value{amqpvalue_create_float(value)} {}
     AmqpValue::AmqpValue(double value) : m_value{amqpvalue_create_double(value)} {}
     AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
-        : m_value{amqpvalue_create_uuid(const_cast<unsigned char*>(
-            static_cast<const unsigned char*>(uuid.GetAsArray().data())))}
+        : m_value{amqpvalue_create_uuid(
+            const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))}
     {
     }
 
-    AmqpValue::AmqpValue(std::string value) : m_value{amqpvalue_create_string(value.c_str())} {}
+    AmqpValue::AmqpValue(std::string const& value) : m_value{amqpvalue_create_string(value.c_str())}
+    {
+    }
     AmqpValue::AmqpValue(const char* value) : m_value{amqpvalue_create_string(value)} {}
 
     AmqpValue::AmqpValue() noexcept : m_value{amqpvalue_create_null()} {}
@@ -268,8 +270,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           return AsArray() < that.AsArray();
 
         case AmqpValueType::Uuid:
-          return static_cast<Azure::Core::Uuid>(*this).GetAsArray()
-              < static_cast<Azure::Core::Uuid>(that).GetAsArray();
+          return static_cast<Azure::Core::Uuid>(*this).AsArray()
+              < static_cast<Azure::Core::Uuid>(that).AsArray();
         case AmqpValueType::Binary:
         case AmqpValueType::List:
         case AmqpValueType::Described:
@@ -286,6 +288,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpSymbol AmqpValue::AsSymbol() const { return AmqpSymbol(m_value.get()); }
 
     AmqpComposite AmqpValue::AsComposite() const { return AmqpComposite(m_value.get()); }
+    AmqpDescribed AmqpValue::AsDescribed() const { return AmqpDescribed(m_value.get()); }
 
     AmqpValue AmqpValue::CreateChar(std::uint32_t value) { return amqpvalue_create_char(value); }
 
@@ -357,22 +360,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Unknown AMQP AmqpValue Type");
     }
 
-    AmqpValue AmqpValue::CreateDescribed(AmqpValue descriptor, AmqpValue value)
-    {
-      // amqpvalue_create_described takes a reference to the input parameters, we need to stabilize
-      // the value of descriptor and value so they don't get accidentally freed.
-      return amqpvalue_create_described(amqpvalue_clone(descriptor), amqpvalue_clone(value));
-    }
+    // AmqpValue AmqpValue::CreateDescribed(AmqpValue descriptor, AmqpValue value)
+    //{
+    //   // amqpvalue_create_described takes a reference to the input parameters, we need to
+    //   stabilize
+    //   // the value of descriptor and value so they don't get accidentally freed.
+    //   return amqpvalue_create_described(amqpvalue_clone(descriptor), amqpvalue_clone(value));
+    // }
 
-    AmqpValue AmqpValue::GetDescriptor() const
-    {
-      return amqpvalue_get_inplace_descriptor(m_value.get());
-    }
+    // AmqpValue AmqpValue::GetDescriptor() const
+    //{
+    //   return amqpvalue_get_inplace_descriptor(m_value.get());
+    // }
 
-    AmqpValue AmqpValue::GetDescribedValue() const
-    {
-      return amqpvalue_get_inplace_described_value(m_value.get());
-    }
+    // AmqpValue AmqpValue::GetDescribedValue() const
+    //{
+    //   return amqpvalue_get_inplace_described_value(m_value.get());
+    // }
 
     bool AmqpValue::IsHeaderTypeByDescriptor() const
     {
@@ -629,6 +633,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     AmqpTimestamp::operator const AmqpValue() const { return static_cast<AMQP_VALUE>(*this); }
 
+    namespace {
+      std::chrono::milliseconds GetMillisecondsFromAmqp(AMQP_VALUE value)
+      {
+        if (amqpvalue_get_type(value) != AMQP_TYPE_TIMESTAMP)
+        {
+          throw std::runtime_error("Input AMQP value MUST be a timestamp.");
+        }
+        timestamp stamp;
+        if (amqpvalue_get_timestamp(value, &stamp))
+        {
+          throw std::runtime_error("Could not retrieve binary data.");
+        }
+        return std::chrono::milliseconds(stamp);
+      }
+    } // namespace
+    AmqpTimestamp::AmqpTimestamp(AMQP_VALUE const value)
+        : std::chrono::milliseconds(GetMillisecondsFromAmqp(value))
+    {
+    }
+
+    AmqpTimestamp::AmqpTimestamp(std::chrono::milliseconds const& initializer)
+        : std::chrono::milliseconds(initializer)
+    {
+    }
+    AmqpTimestamp::AmqpTimestamp() {}
+
     AmqpComposite::AmqpComposite(AMQP_VALUE const value)
     {
       if (amqpvalue_get_type(value) != AMQP_TYPE_COMPOSITE)
@@ -677,35 +707,45 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return composite.release();
     }
 
-    AmqpValue const& AmqpComposite::GetDescriptor() const { return m_descriptor; }
-
     AmqpComposite::operator AmqpValue const() const { return static_cast<AMQP_VALUE>(*this); }
 
-    namespace {
-      std::chrono::milliseconds GetMillisecondsFromAmqp(AMQP_VALUE value)
+    AmqpDescribed::AmqpDescribed(AMQP_VALUE const value)
+    {
+      if (amqpvalue_get_type(value) != AMQP_TYPE_DESCRIBED)
       {
-        if (amqpvalue_get_type(value) != AMQP_TYPE_TIMESTAMP)
-        {
-          throw std::runtime_error("Input AMQP value MUST be a timestamp.");
-        }
-        timestamp stamp;
-        if (amqpvalue_get_timestamp(value, &stamp))
-        {
-          throw std::runtime_error("Could not retrieve binary data.");
-        }
-        return std::chrono::milliseconds(stamp);
+        throw std::runtime_error("Input AMQP value MUST be a described value.");
       }
-    } // namespace
-    AmqpTimestamp::AmqpTimestamp(AMQP_VALUE const value)
-        : std::chrono::milliseconds(GetMillisecondsFromAmqp(value))
+
+      m_descriptor = amqpvalue_get_inplace_descriptor(value);
+      if (m_descriptor.IsNull())
+      {
+        throw std::runtime_error("Could not read descriptor for described value.");
+      }
+
+      m_value = amqpvalue_get_inplace_described_value(value);
+      if (m_value.IsNull())
+      {
+        throw std::runtime_error("Could not read descriptor for described value.");
+      }
+    }
+
+    AmqpDescribed::AmqpDescribed(AmqpSymbol const& descriptor, AmqpValue const& value)
+        : m_descriptor(static_cast<AMQP_VALUE>(descriptor)), m_value(value)
+    {
+    }
+    AmqpDescribed::AmqpDescribed(uint64_t descriptor, AmqpValue const& value)
+        : m_descriptor(descriptor), m_value(value)
     {
     }
 
-    AmqpTimestamp::AmqpTimestamp(std::chrono::milliseconds const& initializer)
-        : std::chrono::milliseconds(initializer)
+    AmqpDescribed::operator AMQP_VALUE_DATA_TAG*() const
     {
+      Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG> composite{
+          amqpvalue_create_described(m_descriptor, m_value)};
+      return composite.release();
     }
-    AmqpTimestamp::AmqpTimestamp() {}
+
+    AmqpDescribed::operator AmqpValue const() const { return static_cast<AMQP_VALUE>(*this); }
 
     size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
     {

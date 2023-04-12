@@ -280,8 +280,36 @@ TEST_F(TestValues, TestCompositeValue)
 
 TEST_F(TestValues, TestDescribed)
 {
+  // Described types with symbol descriptors.
   {
-    AmqpValue value{AmqpValue::CreateDescribed("My Composite Type", 5)};
+    AmqpDescribed value(AmqpSymbol{"My Composite Type"}, 5);
+    EXPECT_EQ("My Composite Type", static_cast<std::string>(value.GetDescriptor().AsSymbol()));
+    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
+
+    AmqpValue value2 = static_cast<AmqpValue>(value);
+    EXPECT_EQ(AmqpValueType::Described, value2.GetType());
+    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
+
+    AmqpDescribed described2 = value2.AsDescribed();
+    EXPECT_EQ(AmqpValueType::Described, value2.GetType());
+    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
+    EXPECT_EQ("My Composite Type", static_cast<std::string>(value.GetDescriptor().AsSymbol()));
+  }
+
+  // Described types with long descriptors.
+  {
+    AmqpDescribed value(937, 5);
+    EXPECT_EQ(937, static_cast<uint64_t>(value.GetDescriptor()));
+    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
+
+    AmqpValue value2 = static_cast<AmqpValue>(value);
+
+    AmqpDescribed described2 = value2.AsDescribed();
+    EXPECT_EQ(AmqpValueType::Described, value2.GetType());
+    EXPECT_EQ(5, static_cast<int32_t>(described2.GetValue()));
+    EXPECT_EQ(937, static_cast<uint64_t>(described2.GetDescriptor()));
+    EXPECT_EQ(AmqpValue(described2.GetValue()), AmqpValue(value.GetValue()));
+    EXPECT_EQ(AmqpValue(described2.GetDescriptor()), AmqpValue(value.GetDescriptor()));
   }
 }
 
