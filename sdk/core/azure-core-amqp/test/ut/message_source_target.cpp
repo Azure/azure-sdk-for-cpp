@@ -80,8 +80,8 @@ TEST_F(TestSourceTarget, TargetProperties)
 
     target.SetCapabilities(AmqpSymbol{"Test"});
     EXPECT_EQ(1, target.GetCapabilities().size());
-    EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities()[0].GetType());
-    EXPECT_EQ("Test", target.GetCapabilities()[0].AsSymbol());
+    EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities().at(0).GetType());
+    EXPECT_EQ("Test", target.GetCapabilities().at(0).AsSymbol());
 
     target.SetTerminusDurability(TerminusDurability::None);
     EXPECT_EQ(TerminusDurability::None, target.GetTerminusDurability());
@@ -163,8 +163,8 @@ TEST_F(TestSourceTarget, SourceProperties)
 
     source.SetCapabilities(AmqpSymbol{"Test"});
     EXPECT_EQ(1, source.GetCapabilities().size());
-    EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities()[0].GetType());
-    EXPECT_EQ("Test", source.GetCapabilities()[0].AsSymbol());
+    EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities().at(0).GetType());
+    EXPECT_EQ("Test", source.GetCapabilities().at(0).AsSymbol());
 
     source.SetTerminusDurability(TerminusDurability::None);
     EXPECT_EQ(TerminusDurability::None, source.GetTerminusDurability());
@@ -219,8 +219,8 @@ TEST_F(TestSourceTarget, SourceProperties)
 
     source.SetOutcomes(AmqpSymbol("Test"));
     EXPECT_EQ(1, source.GetOutcomes().size());
-    EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes()[0].GetType());
-    EXPECT_EQ("Test", source.GetOutcomes()[0].AsSymbol());
+    EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());
+    EXPECT_EQ("Test", source.GetOutcomes().at(0).AsSymbol());
 
     GTEST_LOG_(INFO) << "Source: " << source;
   }

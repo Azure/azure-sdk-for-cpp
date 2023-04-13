@@ -138,15 +138,15 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
   message.SetBody({"Test", 95, AmqpMap{{3, 5}, {4, 9}}});
 
   EXPECT_EQ(3, message.GetBodyAsAmqpList().size());
-  EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[0]));
-  EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList()[1]));
+  EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList().at(0)));
+  EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList().at(1)));
   EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
 
   MESSAGE_INSTANCE_TAG* messageInstance = message;
   Message message2(messageInstance);
   EXPECT_EQ(3, message2.GetBodyAsAmqpList().size());
-  EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList()[0]));
-  EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList()[1]));
+  EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList().at(0)));
+  EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList().at(1)));
   EXPECT_EQ(message2.BodyType, MessageBodyType::Sequence);
 
   GTEST_LOG_(INFO) << message;

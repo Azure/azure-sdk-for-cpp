@@ -302,8 +302,8 @@ TEST_F(TestValues, TestCompositeValue)
   {
     AmqpComposite val("CompType", {25, 25.0f});
 
-    EXPECT_EQ(25, static_cast<int32_t>(val[0]));
-    EXPECT_EQ(25.0f, static_cast<float>(val[1]));
+    EXPECT_EQ(25, static_cast<int32_t>(val.at(0)));
+    EXPECT_EQ(25.0f, static_cast<float>(val.at(1)));
   }
 
   // Put some things in the map.
@@ -314,10 +314,10 @@ TEST_F(TestValues, TestCompositeValue)
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
     EXPECT_EQ(compositeVal.GetDescriptor(), testVal.GetDescriptor());
-    EXPECT_EQ(compositeVal[0], testVal[0]);
-    EXPECT_EQ(compositeVal[1], testVal[1]);
-    EXPECT_EQ(25, static_cast<int32_t>(testVal[0]));
-    EXPECT_EQ(25.0f, static_cast<float>(testVal[1]));
+    EXPECT_EQ(compositeVal.at(0), testVal.at(0));
+    EXPECT_EQ(compositeVal.at(1), testVal.at(1));
+    EXPECT_EQ(25, static_cast<int32_t>(testVal.at(0)));
+    EXPECT_EQ(25.0f, static_cast<float>(testVal.at(1)));
     EXPECT_FALSE(compositeVal < testVal);
   }
 }
