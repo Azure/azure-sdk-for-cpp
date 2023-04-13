@@ -557,10 +557,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return symbol;
   }
 
-  AmqpSymbol::operator const AmqpValue() const
-  {
-    return static_cast<UniqueAmqpValueHandle>(*this).get();
-  }
+  AmqpSymbol::operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
 
   AmqpSymbol::AmqpSymbol(AMQP_VALUE const value)
   {
