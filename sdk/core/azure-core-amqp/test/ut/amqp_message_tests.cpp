@@ -47,12 +47,12 @@ TEST_F(TestMessage, TestApplicationProperties)
   Message message;
 
   // Ensure that ApplicationProperties values round-trip through uAMQP value serialization.
-  message.ApplicationProperties["Blagh"] = 19532;
+  message.ApplicationProperties["Blah"] = 19532;
 
   MESSAGE_INSTANCE_TAG* messageInstance = message;
   Message message2(messageInstance);
 
-  EXPECT_EQ(message2.ApplicationProperties["Blagh"], AmqpValue(19532));
+  EXPECT_EQ(message2.ApplicationProperties["Blah"], AmqpValue(19532));
 
   GTEST_LOG_(INFO) << message;
 }

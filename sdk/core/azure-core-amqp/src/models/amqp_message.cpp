@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     uint32_t uint32Value;
 
-    // Copy the Message Format from the source message. It will eventually be transfered to the
+    // Copy the Message Format from the source message. It will eventually be transferred to the
     // Transfer performative when the message is sent.
     if (!message_get_message_format(message, &uint32Value))
     {
@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     {
       /*
-       * The ApplicationPropertes field in an AMQP message for uAMQP expects that the map value is
+       * The ApplicationProperties field in an AMQP message for uAMQP expects that the map value is
        * wrapped as a described value. A described value has a ULONG descriptor value and a value
        * type.
        *

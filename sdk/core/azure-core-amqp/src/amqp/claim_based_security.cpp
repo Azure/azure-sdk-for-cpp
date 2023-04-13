@@ -59,8 +59,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       case CBS_OPEN_OK:
         return CbsOpenResult::Ok;
-      case CBS_OPEN_CANCELLED:
-        return CbsOpenResult::Cancelled;
+      case CBS_OPEN_CANCELLED: // LCOV_EXCL_LINE
+        return CbsOpenResult::Cancelled; // LCOV_EXCL_LINE
       case CBS_OPEN_ERROR:
         return CbsOpenResult::Error;
       default: // LCOV_EXCL_LINE
@@ -152,7 +152,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (cbs_close(m_cbs))
     {
-      throw std::runtime_error("Could not close cbs");
+      throw std::runtime_error("Could not close cbs"); // LCOV_EXCL_LINE
     }
   }
 
@@ -173,7 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             this)
         == nullptr)
     {
-      throw std::runtime_error("Could not put CBS token.");
+      throw std::runtime_error("Could not put CBS token."); // LCOV_EXCL_LINE
     }
     auto result = m_operationResultQueue.WaitForPolledResult(context, m_connectionToPoll);
 
