@@ -625,7 +625,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
 
       m_descriptor = amqpvalue_get_inplace_descriptor(value);
-      if (m_descriptor == nullptr)
+      if (m_descriptor.IsNull())
       {
         throw std::runtime_error("Could not read descriptor for composite value.");
       }
