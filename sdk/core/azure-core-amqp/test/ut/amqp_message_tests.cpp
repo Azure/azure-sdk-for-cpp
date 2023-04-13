@@ -135,7 +135,7 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
 {
   Message message;
 
-  message.SetBody({"Test", 95, AmqpMap{{3,5},{4,9}}});
+  message.SetBody({"Test", 95, AmqpMap{{3, 5}, {4, 9}}});
 
   EXPECT_EQ(3, message.GetBodyAsAmqpList().size());
   EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[0]));

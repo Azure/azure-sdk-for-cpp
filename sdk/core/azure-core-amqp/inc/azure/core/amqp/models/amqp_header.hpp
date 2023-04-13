@@ -24,52 +24,52 @@ namespace Azure { namespace Core { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-    class MessageHeader {
-    public:
-      // uAMQP integration functions.
-      MessageHeader(HEADER_INSTANCE_TAG* header);
-      operator HEADER_INSTANCE_TAG*() const;
+  class MessageHeader {
+  public:
+    // uAMQP integration functions.
+    MessageHeader(HEADER_INSTANCE_TAG* header);
+    operator HEADER_INSTANCE_TAG*() const;
 
-    public:
-      MessageHeader();
-      virtual ~MessageHeader();
+  public:
+    MessageHeader();
+    virtual ~MessageHeader();
 
-      /** @brief True if the message is considered "durable"
-       *
-       * @remarks For more information, see [AMQP
-       * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
-       */
-      bool Durable{false};
+    /** @brief True if the message is considered "durable"
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    bool Durable{false};
 
-      /** @brief Priority of the message.
-       *
-       * @remarks For more information, see [AMQP
-       * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
-       */
-      std::uint8_t Priority{4}; // Default priority is 4.
+    /** @brief Priority of the message.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    std::uint8_t Priority{4}; // Default priority is 4.
 
-      /** @brief If present, defines the time to live for the message.
-       *
-       * @remarks For more information, see [AMQP
-       * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
-       */
-      Azure::Nullable<std::chrono::milliseconds> TimeToLive;
+    /** @brief If present, defines the time to live for the message.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    Azure::Nullable<std::chrono::milliseconds> TimeToLive;
 
-      /** @brief If true, the message has not been acquired by any other link.
-       *
-       * @remarks For more information, see [AMQP
-       * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
-       */
-      bool IsFirstAcquirer{false};
+    /** @brief If true, the message has not been acquired by any other link.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    bool IsFirstAcquirer{false};
 
-      /** @brief The number of unsuccessful previous attempts to deliver this message.
-       *
-       * @remarks For more information, see [AMQP
-       * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
-       */
+    /** @brief The number of unsuccessful previous attempts to deliver this message.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
 
-      std::uint32_t DeliveryCount{0};
+    std::uint32_t DeliveryCount{0};
 
-      friend std::ostream& operator<<(std::ostream&, MessageHeader const&);
-    };
+    friend std::ostream& operator<<(std::ostream&, MessageHeader const&);
+  };
 }}}} // namespace Azure::Core::Amqp::Models
