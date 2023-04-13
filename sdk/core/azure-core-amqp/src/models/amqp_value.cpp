@@ -289,6 +289,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     AmqpComposite AmqpValue::AsComposite() const { return AmqpComposite(m_value.get()); }
     AmqpDescribed AmqpValue::AsDescribed() const { return AmqpDescribed(m_value.get()); }
+    AmqpTimestamp AmqpValue::AsTimestamp() const { return AmqpTimestamp(m_value.get()); }
 
     AmqpValue AmqpValue::CreateChar(std::uint32_t value) { return amqpvalue_create_char(value); }
 

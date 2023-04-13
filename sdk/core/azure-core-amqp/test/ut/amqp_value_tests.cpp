@@ -111,7 +111,7 @@ TEST_F(TestValues, TestBinary)
     AmqpBinaryData binaryData;
     binaryData.push_back('a');
     binaryData.push_back(3);
-    AmqpValue value(binaryData);
+    AmqpValue value(static_cast<AMQP_VALUE_DATA_TAG*>(binaryData));
 
     AmqpBinaryData data2(value);
     EXPECT_EQ(2, data2.size());
@@ -133,9 +133,8 @@ TEST_F(TestValues, TestList)
     AmqpList list1{123, 23.97f, "ABCD", static_cast<char>('a')};
     EXPECT_EQ(4, list1.size());
 
-    EXPECT_NE(list1.end(), std::find(list1.begin(), list1.end(), AmqpValue(123)));
-    EXPECT_NE(list1.end(), std::find(list1.begin(), list1.end(), AmqpValue(23.97f)));
-
+    EXPECT_NE(23.97f, static_cast<float>(list1[1]));
+    EXPECT_NE(123, static_cast<int32_t>(list1[0]));
     EXPECT_EQ(AmqpValue("ABCD"), list1[2]);
     EXPECT_EQ(AmqpValue('a'), list1[3]);
   }
@@ -169,7 +168,7 @@ TEST_F(TestValues, TestMap)
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
 
     // Now round-trip the map through an AMQP value and confirm that the values persist.
-    AmqpValue valueOfMap = static_cast<AmqpValue>(map1);
+    AmqpValue valueOfMap = static_cast<AMQP_VALUE_DATA_TAG*>(map1);
     AmqpMap map2(valueOfMap);
     EXPECT_EQ(5, static_cast<int32_t>(map1["ABC"]));
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
@@ -219,9 +218,9 @@ TEST_F(TestValues, TestTimestamp)
         std::chrono::system_clock::now().time_since_epoch())};
     AmqpTimestamp value{timeNow};
     EXPECT_EQ(timeNow, static_cast<std::chrono::milliseconds const>(value));
-    AmqpValue av{value};
+    AmqpValue av{static_cast<AMQP_VALUE_DATA_TAG*>(value)};
 
-    AmqpTimestamp ts2{av};
+    AmqpTimestamp ts2{av.AsTimestamp()};
     EXPECT_EQ(timeNow, ts2);
   }
   {
@@ -265,9 +264,9 @@ TEST_F(TestValues, TestCompositeValue)
 
   // Put some things in the map.
   {
-    AmqpComposite compositeVal(116ull, {25, 25.0f});
+    AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
     AmqpValue value = static_cast<AmqpValue>(compositeVal);
-    AmqpComposite testVal(value);
+    AmqpComposite testVal(static_cast<AMQP_VALUE_DATA_TAG*>(value));
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
     EXPECT_EQ(compositeVal.GetDescriptor(), testVal.GetDescriptor());
@@ -286,7 +285,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ("My Composite Type", static_cast<std::string>(value.GetDescriptor().AsSymbol()));
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
-    AmqpValue value2 = static_cast<AmqpValue>(value);
+    AmqpValue value2 = static_cast<AMQP_VALUE_DATA_TAG*>(value);
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
@@ -302,7 +301,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(937, static_cast<uint64_t>(value.GetDescriptor()));
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
-    AmqpValue value2 = static_cast<AmqpValue>(value);
+    AmqpValue value2 = static_cast<AMQP_VALUE_DATA_TAG*>(value);
 
     AmqpDescribed described2 = value2.AsDescribed();
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());
@@ -313,15 +312,15 @@ TEST_F(TestValues, TestDescribed)
   }
 }
 
-//TEST_F(TestValues, ValuesFromHeader)
+// TEST_F(TestValues, ValuesFromHeader)
 //{
-//  Header header;
-//  header.IsDurable(true);
-//  header.SetTimeToLive(std::chrono::milliseconds(512));
-//  AmqpValue headerValue{AmqpValue::CreateHeader(header)};
+//   Header header;
+//   header.IsDurable(true);
+//   header.SetTimeToLive(std::chrono::milliseconds(512));
+//   AmqpValue headerValue{AmqpValue::CreateHeader(header)};
 //
-//  EXPECT_TRUE(header.IsDurable());
+//   EXPECT_TRUE(header.IsDurable());
 //
-//  Header headerFromValue{headerValue.GetHeaderFromValue()};
-//  EXPECT_EQ(header, headerFromValue);
-//}
+//   Header headerFromValue{headerValue.GetHeaderFromValue()};
+//   EXPECT_EQ(header, headerFromValue);
+// }
