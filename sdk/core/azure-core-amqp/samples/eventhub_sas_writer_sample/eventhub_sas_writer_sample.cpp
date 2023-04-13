@@ -31,7 +31,7 @@ int main()
 
   constexpr int maxMessageSendCount = 1000;
   Azure::Core::Amqp::Models::Message message;
-  message.AddBodyData({'H', 'e', 'l', 'l', 'o'});
+  message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.EnableTrace = true;

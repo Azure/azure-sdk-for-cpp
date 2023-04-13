@@ -19,23 +19,6 @@ TEST_F(TestProperties, SimpleCreate)
     MessageProperties properties;
     GTEST_LOG_(INFO) << properties;
   }
-
-  {
-    MessageProperties properties;
-    EXPECT_ANY_THROW(
-        properties
-            .GetAbsoluteExpiryTime()); // Cannot get absolute expiry time before it has been set.
-    EXPECT_ANY_THROW(
-        properties.GetContentEncoding()); // Cannot get content encoding before it has been set.
-    EXPECT_ANY_THROW(properties.GetContentType());
-    EXPECT_EQ(AmqpValueType::Null, properties.GetCorrelationId().GetType());
-    EXPECT_ANY_THROW(properties.GetCreationTime());
-    EXPECT_ANY_THROW(properties.GetGroupId());
-    EXPECT_ANY_THROW(properties.GetGroupSequence());
-    EXPECT_ANY_THROW(properties.GetMessageId());
-    EXPECT_ANY_THROW(properties.GetReplyTo());
-    EXPECT_ANY_THROW(properties.GetReplyToGroupId());
-  }
 }
 
 TEST_F(TestProperties, SetAbsoluteExpiryTime)
@@ -50,36 +33,58 @@ TEST_F(TestProperties, SetAbsoluteExpiryTime)
       std::chrono::duration_cast<std::chrono::system_clock::duration>(testTimestampMs)};
 
   // Set the test timestamp and verify that the returned value is accurate to milliseconds.
-  properties.SetAbsoluteExpiryTime(testTimestamp);
-  EXPECT_EQ(properties.GetAbsoluteExpiryTime(), testTimestampToCheck);
+  properties.AbsoluteExpiryTime = testTimestamp;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.AbsoluteExpiryTime.Value(), testTimestampToCheck);
   GTEST_LOG_(INFO) << properties;
+  GTEST_LOG_(INFO) << properties2;
 }
 
 TEST_F(TestProperties, SetContentEncoding)
 {
   MessageProperties properties;
   std::string contentEncoding = "utf-8";
-  properties.SetContentEncoding(contentEncoding);
-  EXPECT_EQ(properties.GetContentEncoding(), contentEncoding);
+  properties.ContentEncoding = contentEncoding;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.ContentEncoding.Value(), contentEncoding);
+  EXPECT_EQ(properties.ContentEncoding.Value(), properties2.ContentEncoding.Value());
   GTEST_LOG_(INFO) << properties;
+  GTEST_LOG_(INFO) << properties2;
 }
 
 TEST_F(TestProperties, SetContentType)
 {
   MessageProperties properties;
   std::string contentType = "text/plain";
-  properties.SetContentType(contentType);
-  EXPECT_EQ(properties.GetContentType(), contentType);
+  properties.ContentType = contentType;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.ContentType.Value(), contentType);
+  EXPECT_EQ(properties.ContentType.Value(), properties2.ContentType.Value());
   GTEST_LOG_(INFO) << properties;
+  GTEST_LOG_(INFO) << properties2;
 }
 
 TEST_F(TestProperties, SetCorrelationId)
 {
   MessageProperties properties;
   std::string correlationId = "1234";
-  properties.SetCorrelationId(AmqpValue{correlationId});
-  EXPECT_EQ(properties.GetCorrelationId(), AmqpValue{correlationId});
+  properties.CorrelationId = AmqpValue{correlationId};
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.CorrelationId.Value(), AmqpValue{correlationId});
   GTEST_LOG_(INFO) << properties;
+  GTEST_LOG_(INFO) << properties2;
 }
 
 TEST_F(TestProperties, SetCreationTime)
@@ -91,8 +96,12 @@ TEST_F(TestProperties, SetCreationTime)
   std::chrono::system_clock::time_point testTimestampToCheck{
       std::chrono::duration_cast<std::chrono::system_clock::duration>(testTimestampMs)};
 
-  properties.SetCreationTime(testTimestamp);
-  EXPECT_EQ(properties.GetCreationTime(), testTimestampToCheck);
+  properties.CreationTime = testTimestamp;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.CreationTime.Value(), testTimestampToCheck);
 
   GTEST_LOG_(INFO) << properties;
 }
@@ -101,8 +110,12 @@ TEST_F(TestProperties, SetGroupId)
 {
   MessageProperties properties;
   std::string groupId = "1234";
-  properties.SetGroupId(groupId);
-  EXPECT_EQ(properties.GetGroupId(), groupId);
+  properties.GroupId = groupId;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties.GroupId.Value(), groupId);
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -110,8 +123,12 @@ TEST_F(TestProperties, SetGroupSequence)
 {
   MessageProperties properties;
   uint32_t groupSequence = 1234;
-  properties.SetGroupSequence(groupSequence);
-  EXPECT_EQ(properties.GetGroupSequence(), groupSequence);
+  properties.GroupSequence = groupSequence;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.GroupSequence.Value(), groupSequence);
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -119,8 +136,12 @@ TEST_F(TestProperties, SetMessageId)
 {
   MessageProperties properties;
   std::string messageId = "1234";
-  properties.SetMessageId(AmqpValue{messageId});
-  EXPECT_EQ(properties.GetMessageId(), AmqpValue{messageId});
+  properties.MessageId = AmqpValue{messageId};
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.MessageId.Value(), AmqpValue{messageId});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -128,8 +149,12 @@ TEST_F(TestProperties, SetReplyTo)
 {
   MessageProperties properties;
   std::string replyTo = "1234";
-  properties.SetReplyTo(AmqpValue{replyTo});
-  EXPECT_EQ(properties.GetReplyTo(), AmqpValue{replyTo});
+  properties.ReplyTo = AmqpValue{replyTo};
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.ReplyTo.Value(), AmqpValue{replyTo});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -137,8 +162,12 @@ TEST_F(TestProperties, SetReplyToGroupId)
 {
   MessageProperties properties;
   std::string replyToGroupId = "1234";
-  properties.SetReplyToGroupId(replyToGroupId);
-  EXPECT_EQ(properties.GetReplyToGroupId(), replyToGroupId);
+  properties.ReplyToGroupId = replyToGroupId;
+
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+
+  EXPECT_EQ(properties2.ReplyToGroupId.Value(), replyToGroupId);
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -146,16 +175,20 @@ TEST_F(TestProperties, SetTo)
 {
   MessageProperties properties;
   std::string to = "1234";
-  properties.SetTo(AmqpValue{to});
-  EXPECT_EQ(properties.GetTo(), AmqpValue{to});
+  properties.To = AmqpValue{to};
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+  EXPECT_EQ(properties2.To.Value(), AmqpValue{to});
   GTEST_LOG_(INFO) << properties;
 }
 
 TEST_F(TestProperties, SetUserId)
 {
   MessageProperties properties;
-  properties.SetUserId({'1', '2', '3', '4', '\0'});
-  EXPECT_EQ(properties.GetUserId().size(), 5);
+  properties.UserId = {'1', '2', '3', '4', '\0'};
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+  EXPECT_EQ(properties2.UserId.Value().size(), 5);
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -163,7 +196,9 @@ TEST_F(TestProperties, SetSubject)
 {
   MessageProperties properties;
   std::string subject = "1234";
-  properties.SetSubject(subject);
-  EXPECT_EQ(properties.GetSubject(), subject);
+  properties.Subject = subject;
+  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
+  MessageProperties properties2(data);
+  EXPECT_EQ(properties2.Subject.Value(), subject);
   GTEST_LOG_(INFO) << properties;
 }

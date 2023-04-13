@@ -36,7 +36,7 @@ int main()
   constexpr int maxMessageSendCount = 1000;
 
   Azure::Core::Amqp::Models::Message message;
-  message.SetBodyAmqpValue("Hello");
+  message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_TENANT_ID"),

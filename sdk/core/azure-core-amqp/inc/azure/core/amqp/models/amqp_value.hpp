@@ -365,25 +365,6 @@ namespace Azure { namespace Core {
 
         AmqpDescribed AsDescribed() const;
 
-        //        static AmqpValue CreateDescribed(AmqpValue descriptor, AmqpValue value);
-        //        static AmqpValue CreateCompositeWithDescriptor(uint64_t descriptor);
-
-        // Descriptors
-        //      AmqpValue GetDescriptor() const;
-        //    AmqpValue GetDescribedValue() const;
-
-        // Headers.
-        bool IsHeaderTypeByDescriptor() const;
-        Header GetHeaderFromValue() const;
-
-        static AmqpValue CreateHeader(Header const& header);
-
-        // Properties.
-        bool IsPropertiesTypeByDescriptor() const;
-        MessageProperties GetPropertiesFromValue() const;
-
-        static AmqpValue CreateProperties(MessageProperties const& properties);
-
         friend std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
 
       protected:
@@ -521,6 +502,7 @@ namespace Azure { namespace Core {
         AmqpBinaryData();
         /** @brief Construct a new AmqpList object with an initializer list. */
         AmqpBinaryData(std::initializer_list<std::vector<std::uint8_t>::value_type> const& values);
+        AmqpBinaryData(std::vector<std::uint8_t> const& values);
 
         /** @brief Construct a new AmqpBinaryData object from an existing uAMQP AMQP_VALUE item
          *

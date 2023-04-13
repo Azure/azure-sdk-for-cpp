@@ -360,62 +360,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Unknown AMQP AmqpValue Type");
     }
 
-    // AmqpValue AmqpValue::CreateDescribed(AmqpValue descriptor, AmqpValue value)
-    //{
-    //   // amqpvalue_create_described takes a reference to the input parameters, we need to
-    //   stabilize
-    //   // the value of descriptor and value so they don't get accidentally freed.
-    //   return amqpvalue_create_described(amqpvalue_clone(descriptor), amqpvalue_clone(value));
-    // }
-
-    // AmqpValue AmqpValue::GetDescriptor() const
-    //{
-    //   return amqpvalue_get_inplace_descriptor(m_value.get());
-    // }
-
-    // AmqpValue AmqpValue::GetDescribedValue() const
-    //{
-    //   return amqpvalue_get_inplace_described_value(m_value.get());
-    // }
-
-    bool AmqpValue::IsHeaderTypeByDescriptor() const
-    {
-      return is_header_type_by_descriptor(m_value.get());
-    }
-    Header AmqpValue::GetHeaderFromValue() const
-    {
-      HEADER_HANDLE header;
-      if (amqpvalue_get_header(m_value.get(), &header))
-      {
-        throw std::runtime_error("Could not get header from value");
-      }
-      return header;
-    }
-    AmqpValue AmqpValue::CreateHeader(Header const& header)
-    {
-      return amqpvalue_create_header(header);
-    }
-
-    bool AmqpValue::IsPropertiesTypeByDescriptor() const
-    {
-      return is_properties_type_by_descriptor(m_value.get());
-    }
-
-    MessageProperties AmqpValue::GetPropertiesFromValue() const
-    {
-      PROPERTIES_HANDLE properties;
-      if (amqpvalue_get_properties(m_value.get(), &properties))
-      {
-        throw std::runtime_error("Could not get properties from value");
-      }
-      return properties;
-    }
-
-    AmqpValue AmqpValue::CreateProperties(MessageProperties const& properties)
-    {
-      return amqpvalue_create_properties(properties);
-    }
-
     std::ostream& operator<<(std::ostream& os, AmqpValue const& value)
     {
       char* valueAsString = amqpvalue_to_string(value);
@@ -595,6 +539,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         : std::vector<uint8_t>(initializer)
     {
     }
+    AmqpBinaryData::AmqpBinaryData(std::vector<uint8_t> const& initializer)
+        : std::vector<uint8_t>(initializer)
+    {
+    }
     AmqpBinaryData::AmqpBinaryData() {}
 
     AmqpSymbol::operator AMQP_VALUE_DATA_TAG*() const
@@ -747,51 +695,54 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     AmqpDescribed::operator AmqpValue const() const { return static_cast<AMQP_VALUE>(*this); }
 
-    size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
-    {
-      // scratch buffer which will hold the data being logged.
-      std::stringstream ss;
+    namespace {
 
-      size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
-
-      ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
-
-      // Write the buffer data out.
-      for (size_t i = 0; i < bytesToWrite; i += 1)
+      size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
       {
-        ss << std::hex << std::right << std::setw(2) << std::setfill('0') << static_cast<int>(pb[i])
-           << " ";
-      }
+        // scratch buffer which will hold the data being logged.
+        std::stringstream ss;
 
-      // Now write the data in string format (similar to what the debugger does).
-      // Start by padding partial lines to a fixed end.
-      for (size_t i = bytesToWrite; i < 0x10; i += 1)
-      {
-        ss << "   ";
-      }
-      ss << "  * ";
-      for (size_t i = 0; i < bytesToWrite; i += 1)
-      {
-        if (isprint(pb[i]))
+        size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
+
+        ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
+
+        // Write the buffer data out.
+        for (size_t i = 0; i < bytesToWrite; i += 1)
         {
-          ss << pb[i];
+          ss << std::hex << std::right << std::setw(2) << std::setfill('0')
+             << static_cast<int>(pb[i]) << " ";
         }
-        else
+
+        // Now write the data in string format (similar to what the debugger does).
+        // Start by padding partial lines to a fixed end.
+        for (size_t i = bytesToWrite; i < 0x10; i += 1)
         {
-          ss << ".";
+          ss << "   ";
         }
+        ss << "  * ";
+        for (size_t i = 0; i < bytesToWrite; i += 1)
+        {
+          if (isprint(pb[i]))
+          {
+            ss << pb[i];
+          }
+          else
+          {
+            ss << ".";
+          }
+        }
+        for (size_t i = bytesToWrite; i < 0x10; i += 1)
+        {
+          ss << " ";
+        }
+
+        ss << " *";
+
+        os << ss.str();
+
+        return bytesToWrite;
       }
-      for (size_t i = bytesToWrite; i < 0x10; i += 1)
-      {
-        ss << " ";
-      }
-
-      ss << " *";
-
-      os << ss.str();
-
-      return bytesToWrite;
-    }
+    } // namespace
 
     std::ostream& operator<<(std::ostream& os, AmqpBinaryData const& value)
     {

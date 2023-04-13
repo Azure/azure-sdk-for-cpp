@@ -7,405 +7,366 @@
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/amqp_definitions_properties.h>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(PROPERTIES_HANDLE value)
+  {
+    properties_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  MessageProperties::MessageProperties() : m_properties{properties_create()}
-  {
-    if (m_properties == nullptr)
+    MessageProperties::MessageProperties() {}
+
+    MessageProperties::~MessageProperties() {}
+
+    MessageProperties::MessageProperties(PROPERTIES_HANDLE properties)
     {
-      throw std::runtime_error("Could not create properties."); // LCOV_EXCL_LINE
-    }
-  }
-
-  MessageProperties::~MessageProperties()
-  {
-    if (m_properties)
-    {
-      properties_destroy(m_properties);
-      m_properties = nullptr;
-    }
-  }
-
-  AmqpValue MessageProperties::GetMessageId() const
-  {
-    AMQP_VALUE value;
-    if (properties_get_message_id(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get message id");
-    }
-    return amqpvalue_clone(value);
-  }
-
-  void MessageProperties::SetMessageId(AmqpValue const& messageId)
-  {
-    if (properties_set_message_id(m_properties, messageId))
-    {
-      throw std::runtime_error("Could not set message id"); // LCOV_EXCL_LINE
-    }
-  }
-
-  AmqpValue MessageProperties::GetCorrelationId() const
-  {
-    AMQP_VALUE value;
-    if (properties_get_correlation_id(m_properties, &value))
-    {
-      return AmqpValue();
-    }
-    // properties_get_correlation_id returns an in-place value.
-    return amqpvalue_clone(value);
-  }
-
-  void MessageProperties::SetCorrelationId(AmqpValue const& correlationId)
-  {
-    if (properties_set_correlation_id(m_properties, correlationId))
-    {
-      throw std::runtime_error("Could not set correlation id"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::vector<uint8_t> MessageProperties::GetUserId() const
-  {
-    amqp_binary value;
-    if (properties_get_user_id(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get user id"); // LCOV_EXCL_LINE
-    }
-    return std::vector<uint8_t>(
-        static_cast<const uint8_t*>(value.bytes),
-        static_cast<const uint8_t*>(value.bytes) + value.length);
-  }
-
-  void MessageProperties::SetUserId(std::vector<uint8_t> const& userId)
-  {
-    amqp_binary value{userId.data(), static_cast<uint32_t>(userId.size())};
-    if (properties_set_user_id(m_properties, value))
-    {
-      throw std::runtime_error("Could not set user id"); // LCOV_EXCL_LINE
-    }
-  }
-
-  AmqpValue MessageProperties::GetTo() const
-  {
-    AMQP_VALUE value;
-    if (properties_get_to(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get to"); // LCOV_EXCL_LINE
-    }
-    return amqpvalue_clone(value);
-  }
-
-  void MessageProperties::SetTo(AmqpValue replyTo)
-  {
-    if (properties_set_to(m_properties, replyTo))
-    {
-      throw std::runtime_error("Could not set to"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::string MessageProperties::GetSubject() const
-  {
-    const char* value;
-    if (properties_get_subject(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get subject");
-    }
-    return value;
-  }
-
-  void MessageProperties::SetSubject(std::string const& subject)
-  {
-    if (properties_set_subject(m_properties, subject.data()))
-    {
-      throw std::runtime_error("Could not set subject");
-    }
-  }
-
-  AmqpValue MessageProperties::GetReplyTo() const
-  {
-    AMQP_VALUE value;
-    if (properties_get_reply_to(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get reply to");
-    }
-    return amqpvalue_clone(value);
-  }
-
-  void MessageProperties::SetReplyTo(AmqpValue replyTo)
-  {
-    if (properties_set_reply_to(m_properties, replyTo))
-    {
-      throw std::runtime_error("Could not set reply to"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::string MessageProperties::GetContentType() const
-  {
-    const char* value;
-    if (properties_get_content_type(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get content type");
-    }
-    return value;
-  }
-
-  void MessageProperties::SetContentType(std::string const& contentType)
-  {
-    if (properties_set_content_type(m_properties, contentType.data()))
-    {
-      throw std::runtime_error("Could not set content type"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::string MessageProperties::GetContentEncoding() const
-  {
-    const char* value;
-    if (properties_get_content_encoding(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get content encoding");
-    }
-    return value;
-  }
-
-  void MessageProperties::SetContentEncoding(std::string const& contentEncoding)
-  {
-    if (properties_set_content_encoding(m_properties, contentEncoding.data()))
-    {
-      throw std::runtime_error("Could not set content type");
-    }
-  }
-
-  std::chrono::system_clock::time_point MessageProperties::GetAbsoluteExpiryTime() const
-  {
-    timestamp expiryTime;
-    if (properties_get_absolute_expiry_time(m_properties, &expiryTime))
-    {
-      throw std::runtime_error("Could not get absolute expiry time");
-    }
-
-    std::chrono::milliseconds ms{expiryTime};
-    return std::chrono::system_clock::time_point{
-        std::chrono::duration_cast<std::chrono::system_clock::duration>(ms)};
-  }
-  void MessageProperties::SetAbsoluteExpiryTime(
-      std::chrono::system_clock::time_point const& expiryTime)
-  {
-    auto timeStamp{
-        std::chrono::duration_cast<std::chrono::milliseconds>(expiryTime.time_since_epoch())};
-
-    if (properties_set_absolute_expiry_time(m_properties, timeStamp.count()))
-    {
-      throw std::runtime_error("Could not set absolute expiry time"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::chrono::system_clock::time_point MessageProperties::GetCreationTime() const
-  {
-    timestamp creationTime;
-    if (properties_get_creation_time(m_properties, &creationTime))
-    {
-      throw std::runtime_error("Could not get creation time");
-    }
-
-    std::chrono::milliseconds ms{creationTime};
-    return std::chrono::system_clock::from_time_t(0) + ms;
-  }
-
-  void MessageProperties::SetCreationTime(std::chrono::system_clock::time_point const& creationTime)
-  {
-    auto timeStamp{
-        std::chrono::duration_cast<std::chrono::milliseconds>(creationTime.time_since_epoch())};
-
-    if (properties_set_creation_time(m_properties, timeStamp.count()))
-    {
-      throw std::runtime_error("Could not set creation time"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::string MessageProperties::GetGroupId() const
-  {
-    const char* value;
-    if (properties_get_group_id(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get group id");
-    }
-    return value;
-  }
-
-  void MessageProperties::SetGroupId(std::string const& groupId)
-  {
-    if (properties_set_group_id(m_properties, groupId.data()))
-    {
-      throw std::runtime_error("Could not set group id"); // LCOV_EXCL_LINE
-    }
-  }
-
-  uint32_t MessageProperties::GetGroupSequence() const
-  {
-    uint32_t sequence;
-    if (properties_get_group_sequence(m_properties, &sequence))
-    {
-      throw std::runtime_error("Could not get group sequence");
-    }
-
-    return sequence;
-  }
-
-  void MessageProperties::SetGroupSequence(uint32_t groupSequence)
-  {
-    if (properties_set_group_sequence(m_properties, groupSequence))
-    {
-      throw std::runtime_error("Could not set group sequence"); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::string MessageProperties::GetReplyToGroupId() const
-  {
-    const char* value;
-    if (properties_get_reply_to_group_id(m_properties, &value))
-    {
-      throw std::runtime_error("Could not get reply-to group id");
-    }
-    return value;
-  }
-
-  void MessageProperties::SetReplyToGroupId(std::string const& replyToGroupId)
-  {
-    if (properties_set_reply_to_group_id(m_properties, replyToGroupId.data()))
-    {
-      throw std::runtime_error("Could not set reply-to group id");
-    }
-  }
-
-  namespace {
-    std::string timeToString(std::chrono::system_clock::time_point t)
-    {
-      std::time_t time = std::chrono::system_clock::to_time_t(t);
-      std::string time_str = std::ctime(&time);
-      time_str.resize(time_str.size() - 1);
-      return time_str;
-    }
-  } // namespace
-  std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
-  {
-    os << "MessageProperties {";
-    {
-      AMQP_VALUE messageId;
-      if (!properties_get_message_id(properties, &messageId))
+      AMQP_VALUE value;
+      // properties_get_message_id returns the value in-place.
+      if (!properties_get_message_id(properties, &value))
       {
-        os << "MessageId: " << properties.GetMessageId();
+        MessageId = value;
       }
-      else
+
+      if (!properties_get_correlation_id(properties, &value))
       {
-        os << "MessageId: <null>";
+        CorrelationId = value;
       }
-    }
-    {
-      amqp_binary binary;
-      if (!properties_get_user_id(properties.m_properties, &binary))
+
       {
-        os << ", UserId: "
-           << std::string(
-                  static_cast<const char*>(binary.bytes),
-                  static_cast<const char*>(binary.bytes) + binary.length);
+        amqp_binary binaryValue;
+
+        if (!properties_get_user_id(properties, &binaryValue))
+        {
+          UserId = std::vector<uint8_t>(
+              static_cast<const uint8_t*>(binaryValue.bytes),
+              static_cast<const uint8_t*>(binaryValue.bytes) + binaryValue.length);
+        }
       }
-    }
-    {
-      AMQP_VALUE value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_to(properties.m_properties, &value))
+
+      if (!properties_get_to(properties, &value))
       {
-        os << ", To: " << AmqpValue(value);
+        To = value;
+      }
+
+      const char* stringValue;
+      {
+        if (!properties_get_subject(properties, &stringValue))
+        {
+          Subject = stringValue;
+        }
+      }
+
+      if (!properties_get_reply_to(properties, &value))
+      {
+        ReplyTo = value;
+      }
+
+      if (!properties_get_content_type(properties, &stringValue))
+      {
+        ContentType = stringValue;
+      }
+
+      if (!properties_get_content_encoding(properties, &stringValue))
+      {
+        ContentEncoding = stringValue;
+      }
+
+      timestamp timestampValue;
+      if (!properties_get_absolute_expiry_time(properties, &timestampValue))
+      {
+        std::chrono::milliseconds ms{timestampValue};
+        AbsoluteExpiryTime = std::chrono::system_clock::time_point{
+            std::chrono::duration_cast<std::chrono::system_clock::duration>(ms)};
+      }
+
+      if (!properties_get_creation_time(properties, &timestampValue))
+      {
+        std::chrono::milliseconds ms{timestampValue};
+        CreationTime = std::chrono::system_clock::time_point{
+            std::chrono::duration_cast<std::chrono::system_clock::duration>(ms)};
+      }
+      if (!properties_get_group_id(properties, &stringValue))
+      {
+        GroupId = stringValue;
+      }
+
+      uint32_t uintValue;
+      if (!properties_get_group_sequence(properties, &uintValue))
+      {
+        GroupSequence = uintValue;
+      }
+
+      if (!properties_get_reply_to_group_id(properties, &stringValue))
+      {
+        ReplyToGroupId = stringValue;
       }
     }
 
+    MessageProperties::operator PROPERTIES_HANDLE() const
     {
-      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_subject(properties.m_properties, &value))
+      Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG> returnValue(
+          properties_create());
+      if (MessageId.HasValue())
       {
-        os << ", Subject: " << value;
+        if (properties_set_message_id(returnValue.get(), MessageId.Value()))
+        {
+          throw std::runtime_error("Could not set message id"); // LCOV_EXCL_LINE
+        }
       }
+      if (CorrelationId.HasValue())
+      {
+        if (properties_set_correlation_id(returnValue.get(), CorrelationId.Value()))
+        {
+          throw std::runtime_error("Could not set correlation id"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (UserId.HasValue())
+      {
+        amqp_binary value{UserId.Value().data(), static_cast<uint32_t>(UserId.Value().size())};
+        if (properties_set_user_id(returnValue.get(), value))
+        {
+          throw std::runtime_error("Could not set user id"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (To.HasValue())
+      {
+        if (properties_set_to(returnValue.get(), To.Value()))
+        {
+          throw std::runtime_error("Could not set to"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (Subject.HasValue())
+      {
+        if (properties_set_subject(returnValue.get(), Subject.Value().data()))
+        {
+          throw std::runtime_error("Could not set subject");
+        }
+      }
+
+      if (ReplyTo.HasValue())
+      {
+        if (properties_set_reply_to(returnValue.get(), ReplyTo.Value()))
+        {
+          throw std::runtime_error("Could not set reply to"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (ContentType.HasValue())
+      {
+        if (properties_set_content_type(returnValue.get(), ContentType.Value().data()))
+        {
+          throw std::runtime_error("Could not set content type"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (ContentEncoding.HasValue())
+      {
+        if (properties_set_content_encoding(returnValue.get(), ContentEncoding.Value().data()))
+        {
+          throw std::runtime_error("Could not set content type");
+        }
+      }
+
+      if (AbsoluteExpiryTime.HasValue())
+      {
+        auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
+            AbsoluteExpiryTime.Value().time_since_epoch())};
+
+        if (properties_set_absolute_expiry_time(returnValue.get(), timeStamp.count()))
+        {
+          throw std::runtime_error("Could not set absolute expiry time"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (CreationTime.HasValue())
+      {
+        auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
+            CreationTime.Value().time_since_epoch())};
+
+        if (properties_set_creation_time(returnValue.get(), timeStamp.count()))
+        {
+          throw std::runtime_error("Could not set absolute expiry time"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (GroupId.HasValue())
+      {
+        if (properties_set_group_id(returnValue.get(), GroupId.Value().data()))
+        {
+          throw std::runtime_error("Could not set group id"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (GroupSequence.HasValue())
+      {
+        if (properties_set_group_sequence(returnValue.get(), GroupSequence.Value()))
+        {
+          throw std::runtime_error("Could not set group sequence"); // LCOV_EXCL_LINE
+        }
+      }
+
+      if (ReplyToGroupId.HasValue())
+      {
+        if (properties_set_reply_to_group_id(returnValue.get(), ReplyToGroupId.Value().data()))
+        {
+          throw std::runtime_error("Could not set reply-to group id");
+        }
+      }
+
+      return returnValue.release();
     }
 
-    {
-      AMQP_VALUE value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_reply_to(properties.m_properties, &value))
+    namespace {
+      std::string timeToString(std::chrono::system_clock::time_point t)
       {
-        os << ", ReplyTo: " << AmqpValue(value);
+        std::time_t time = std::chrono::system_clock::to_time_t(t);
+        std::string time_str = std::ctime(&time);
+        time_str.resize(time_str.size() - 1);
+        return time_str;
       }
-    }
-    {
-      AMQP_VALUE value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_correlation_id(properties.m_properties, &value))
-      {
-        os << ", CorrelationId: " << AmqpValue(value);
-      }
-    }
 
-    {
-      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_content_type(properties.m_properties, &value))
+      size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
       {
-        os << ", ContentType: " << value;
-      }
-    }
+        // scratch buffer which will hold the data being logged.
+        std::stringstream ss;
 
+        size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
+
+        ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
+
+        // Write the buffer data out.
+        for (size_t i = 0; i < bytesToWrite; i += 1)
+        {
+          ss << std::hex << std::right << std::setw(2) << std::setfill('0')
+             << static_cast<int>(pb[i]) << " ";
+        }
+
+        // Now write the data in string format (similar to what the debugger does).
+        // Start by padding partial lines to a fixed end.
+        for (size_t i = bytesToWrite; i < 0x10; i += 1)
+        {
+          ss << "   ";
+        }
+        ss << "  * ";
+        for (size_t i = 0; i < bytesToWrite; i += 1)
+        {
+          if (isprint(pb[i]))
+          {
+            ss << pb[i];
+          }
+          else
+          {
+            ss << ".";
+          }
+        }
+        for (size_t i = bytesToWrite; i < 0x10; i += 1)
+        {
+          ss << " ";
+        }
+
+        ss << " *";
+
+        os << ss.str();
+
+        return bytesToWrite;
+      }
+    } // namespace
+
+    std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
     {
-      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_content_encoding(properties.m_properties, &value))
+      os << "MessageProperties {";
       {
-        os << ", ContentEncoding: " << value;
+        if (properties.MessageId.HasValue())
+        {
+          os << "MessageId: " << properties.MessageId.Value();
+        }
+        else
+        {
+          os << "MessageId: <null>";
+        }
       }
-    }
-
-    {
-      timestamp expiryTime;
-      if (!properties_get_absolute_expiry_time(properties.m_properties, &expiryTime))
       {
-        std::chrono::milliseconds ms{expiryTime};
-
-        os << ", AbsoluteExpiryTime: "
-           << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
+        if (properties.UserId.HasValue())
+        {
+          os << ", UserId: ";
+          const uint8_t* pb = properties.UserId.Value().data();
+          size_t cb = properties.UserId.Value().size();
+          size_t currentOffset = 0;
+          do
+          {
+            auto cbLogged = LogRawData(os, currentOffset, pb, cb);
+            pb += cbLogged;
+            cb -= cbLogged;
+            currentOffset += cbLogged;
+            if (cb)
+            {
+              os << std::endl;
+            }
+          } while (cb);
+        }
       }
-    }
-
-    {
-      timestamp creationTime;
-      if (!properties_get_creation_time(properties.m_properties, &creationTime))
+      if (properties.To.HasValue())
       {
-        std::chrono::milliseconds ms{creationTime};
-        os << ", CreationTime: " << timeToString(std::chrono::system_clock::from_time_t(0) + ms);
+        os << ", To: " << properties.To.Value();
       }
-    }
 
-    {
-      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_group_id(properties.m_properties, &value))
+      if (properties.Subject.HasValue())
       {
-        os << ", GroupId: " << value;
+        os << ", Subject: " << properties.Subject.Value();
       }
-    }
 
-    {
-      uint32_t sequence;
-      if (!properties_get_group_sequence(properties.m_properties, &sequence))
+      if (properties.ReplyTo.HasValue())
       {
-        os << ", "
-           << "GroupSequence: " << sequence;
+        os << ", ReplyTo: " << properties.ReplyTo.Value();
       }
-    }
+      if (properties.CorrelationId.HasValue())
+      {
+        os << ", CorrelationId: " << properties.CorrelationId.Value();
+      }
 
-    {
-      const char* value; // AmqpValue is returned in-place, so doesn't need to be freed.
-      if (!properties_get_reply_to_group_id(properties.m_properties, &value))
+      if (properties.ContentType.HasValue())
       {
-        os << ", "
-           << "ReplyToGroupId: " << value;
+        os << ", ContentType: " << properties.ContentType.Value();
       }
+
+      if (properties.ContentEncoding.HasValue())
+      {
+        os << ", ContentEncoding: " << properties.ContentEncoding.Value();
+      }
+
+      if (properties.AbsoluteExpiryTime.HasValue())
+      {
+        os << ", AbsoluteExpiryTime: " << timeToString(properties.AbsoluteExpiryTime.Value());
+      }
+      if (properties.CreationTime.HasValue())
+      {
+        os << ", CreationTime: " << timeToString(properties.CreationTime.Value());
+      }
+      if (properties.GroupId.HasValue())
+      {
+        os << ", GroupId: " << properties.GroupId.Value();
+      }
+      if (properties.GroupSequence.HasValue())
+      {
+        os << ", GroupSequence: " << properties.GroupSequence.Value();
+      }
+
+      if (properties.ReplyToGroupId.HasValue())
+      {
+        os << ", ReplyToGroupId: " << properties.ReplyToGroupId.Value();
+      }
+      os << "}";
+      return os;
     }
-    os << "}";
-    return os;
-  }
 }}}} // namespace Azure::Core::Amqp::Models

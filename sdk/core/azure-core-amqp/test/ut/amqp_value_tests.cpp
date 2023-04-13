@@ -313,15 +313,15 @@ TEST_F(TestValues, TestDescribed)
   }
 }
 
-TEST_F(TestValues, ValuesFromHeader)
-{
-  Header header;
-  header.IsDurable(true);
-  header.SetTimeToLive(std::chrono::milliseconds(512));
-  AmqpValue headerValue{AmqpValue::CreateHeader(header)};
-
-  EXPECT_TRUE(header.IsDurable());
-
-  Header headerFromValue{headerValue.GetHeaderFromValue()};
-  EXPECT_EQ(header, headerFromValue);
-}
+//TEST_F(TestValues, ValuesFromHeader)
+//{
+//  Header header;
+//  header.IsDurable(true);
+//  header.SetTimeToLive(std::chrono::milliseconds(512));
+//  AmqpValue headerValue{AmqpValue::CreateHeader(header)};
+//
+//  EXPECT_TRUE(header.IsDurable());
+//
+//  Header headerFromValue{headerValue.GetHeaderFromValue()};
+//  EXPECT_EQ(header, headerFromValue);
+//}
