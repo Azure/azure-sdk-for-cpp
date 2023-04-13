@@ -231,7 +231,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpMap const& value)
   {
-    if (source_set_dynamic_node_properties(m_source, value))
+    if (source_set_dynamic_node_properties(m_source, static_cast<UniqueAmqpValueHandle>(value).get()))
     {
       throw std::runtime_error("Could not set dynamic node properties.");
     }
@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetFilter(Azure::Core::Amqp::Models::AmqpMap const& value)
   {
-    if (source_set_filter(m_source, value))
+    if (source_set_filter(m_source, static_cast<UniqueAmqpValueHandle>(value).get()))
     {
       throw std::runtime_error("Could not set filter set.");
     }
@@ -323,7 +323,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& value)
   {
-    if (source_set_capabilities(m_source, value))
+    if (source_set_capabilities(m_source, static_cast<UniqueAmqpValueHandle>(value).get()))
     {
       throw std::runtime_error("Could not set outcomes.");
     }

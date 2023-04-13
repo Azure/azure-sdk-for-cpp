@@ -234,14 +234,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     if (!DeliveryAnnotations.empty())
     {
-      if (message_set_delivery_annotations(rv.get(), static_cast<AMQP_VALUE>(DeliveryAnnotations)))
+      if (message_set_delivery_annotations(rv.get(), static_cast<UniqueAmqpValueHandle>(DeliveryAnnotations).get()))
       {
         throw std::runtime_error("Could not set delivery annotations.");
       }
     }
     if (!MessageAnnotations.empty())
     {
-      if (message_set_message_annotations(rv.get(), MessageAnnotations))
+      if (message_set_message_annotations(rv.get(), static_cast<UniqueAmqpValueHandle>(MessageAnnotations).get()))
       {
         throw std::runtime_error("Could not set message annotations.");
       }
@@ -261,14 +261,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         appProperties.emplace(val);
       }
-      if (message_set_application_properties(rv.get(), appProperties))
+      if (message_set_application_properties(rv.get(), static_cast<UniqueAmqpValueHandle>(appProperties).get()))
       {
         throw std::runtime_error("Could not set application properties.");
       }
     }
     if (!Footer.empty())
     {
-      if (message_set_footer(rv.get(), Footer))
+      if (message_set_footer(rv.get(), static_cast<UniqueAmqpValueHandle>(Footer).get()))
       {
         throw std::runtime_error("Could not set message annotations.");
       }

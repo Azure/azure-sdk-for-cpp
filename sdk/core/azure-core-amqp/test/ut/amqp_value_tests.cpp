@@ -207,7 +207,7 @@ TEST_F(TestValues, TestMap)
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
 
     // Now round-trip the map through an AMQP value and confirm that the values persist.
-    AmqpValue valueOfMap = static_cast<AMQP_VALUE_DATA_TAG*>(map1);
+    AmqpValue valueOfMap = static_cast<UniqueAmqpValueHandle>(map1).get();
     AmqpMap map2(valueOfMap);
     EXPECT_EQ(5, static_cast<int32_t>(map2["ABC"]));
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map2[AmqpValue(3)]));
@@ -276,7 +276,7 @@ TEST_F(TestValues, TestSymbol)
 {
   {
     AmqpSymbol value("timeNow");
-    EXPECT_EQ("timeNow", value);
+    EXPECT_EQ(value, "timeNow");
     EXPECT_FALSE(value < AmqpSymbol("timeNow"));
   }
   {
@@ -327,7 +327,7 @@ TEST_F(TestValues, TestDescribed)
   // Described types with symbol descriptors.
   {
     AmqpDescribed value(AmqpSymbol{"My Composite Type"}, 5);
-    EXPECT_EQ("My Composite Type", static_cast<std::string>(value.GetDescriptor().AsSymbol()));
+    EXPECT_EQ(AmqpSymbol("My Composite Type"), value.GetDescriptor().AsSymbol());
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
     AmqpValue value2 = static_cast<AMQP_VALUE_DATA_TAG*>(value);
@@ -337,7 +337,7 @@ TEST_F(TestValues, TestDescribed)
     AmqpDescribed described2 = value2.AsDescribed();
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
-    EXPECT_EQ("My Composite Type", static_cast<std::string>(value.GetDescriptor().AsSymbol()));
+    EXPECT_EQ(value.GetDescriptor().AsSymbol(), "My Composite Type");
     EXPECT_FALSE(value < described2);
   }
 
