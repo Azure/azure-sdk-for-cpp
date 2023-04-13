@@ -35,7 +35,7 @@ TEST_F(TestHeaders, TestTtl)
   //  EXPECT_EQ(0, header.GetTimeToLive().count());
   header.TimeToLive = std::chrono::milliseconds(100);
 
-  auto  handle = static_cast<UniqueMessageHeaderHandle>(header);
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
   MessageHeader header2(handle.get());
 
   EXPECT_EQ(100, header2.TimeToLive.Value().count());
