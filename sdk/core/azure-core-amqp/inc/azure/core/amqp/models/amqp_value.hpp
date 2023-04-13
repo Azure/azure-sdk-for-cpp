@@ -255,7 +255,7 @@ namespace Azure { namespace Core {
          * Defined in [AMQP Core Types
          * section 1.6.18](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-uuid).
          *
-         * @param UTF-32 encoded unicode value to be set.
+         * @param value UTF-32 encoded unicode value to be set.
          *
          */
         AmqpValue(Azure::Core::Uuid const& value);
@@ -292,13 +292,13 @@ namespace Azure { namespace Core {
 
         /** @brief Copy an AMQP value to the current AMQP value.
          *
-         * @param the other AMQP Value to copy.
+         * @param that the other AMQP Value to copy.
          * @returns "this".
          */
         AmqpValue& operator=(AmqpValue const& that);
         /** @brief Move an AMQP value to the current AMQP value.
          *
-         * @param the other AMQP Value to move.
+         * @param that the other AMQP Value to move.
          * @returns "this".
          */
         AmqpValue& operator=(AmqpValue&& that) noexcept;
