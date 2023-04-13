@@ -169,7 +169,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
               size_t dataCount;
               if (!message_get_body_amqp_data_count(message, &dataCount))
               {
-                for (auto i = 0; i < dataCount; i += 1)
+                for (auto i = 0ul; i < dataCount; i += 1)
                 {
                   BINARY_DATA binaryValue;
                   if (!message_get_body_amqp_data_in_place(message, i, &binaryValue))
@@ -187,7 +187,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
               size_t sequenceCount;
               if (!message_get_body_amqp_sequence_count(message, &sequenceCount))
               {
-                for (auto i = 0; i < sequenceCount; i += 1)
+                for (auto i = 0ul; i < sequenceCount; i += 1)
                 {
                   AMQP_VALUE sequence;
                   if (!message_get_body_amqp_sequence_in_place(message, i, &sequence))
