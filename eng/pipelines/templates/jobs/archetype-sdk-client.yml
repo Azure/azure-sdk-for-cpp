@@ -47,6 +47,9 @@ parameters:
   - name: JobName
     type: string
     default: Validate 
+  - name: RunMetaJobs
+    type: boolean
+    default: true
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -74,7 +77,7 @@ jobs:
         PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
-  - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
+  - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
     - ${{ each artifact in parameters.Artifacts }}:
       - job:
         displayName: Create API Review for ${{ artifact.name }}

@@ -111,6 +111,7 @@ stages:
           TestEnv: ${{ parameters.TestEnv }}
           PreTestSteps: ${{ parameters.PreTestSteps }}
           PostTestSteps: ${{ parameters.PostTestSteps }}
+          RunMetaJobs: false
 
   - stage: Build
     dependsOn: []
