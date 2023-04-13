@@ -685,7 +685,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   AmqpDescribed::AmqpDescribed(AmqpSymbol const& descriptor, AmqpValue const& value)
-      : m_descriptor(static_cast<AmqpValue>(descriptor)), m_value(value)
+      : m_descriptor(static_cast<UniqueAmqpValueHandle>(descriptor).get()), m_value(value)
   {
   }
   AmqpDescribed::AmqpDescribed(uint64_t descriptor, AmqpValue const& value)
