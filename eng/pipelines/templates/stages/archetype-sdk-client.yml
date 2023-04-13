@@ -88,12 +88,37 @@ stages:
           ArtifactsSource: ${{ parameters.ArtifactsSource }}
           CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
           CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
+  
+  # QuickBuild runs a narrower set of fast builds. If these builds pass, 
+  # Integration can launch immediately without awaiting more build and test jobs
+  - stage: QuickBuild
+    dependsOn: []
+    jobs: 
+      - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
+        parameters:
+          MatrixFile: eng/pipelines/templates/stages/platform-matrix-quick.json
+          JobName: QuickValidate 
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          Artifacts: ${{ parameters.Artifacts }}
+          CtestRegex: ${{ parameters.CtestRegex }}
+          CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+          CoverageEnabled: ${{ parameters.CoverageEnabled }}
+          CoverageReportPath: ${{ parameters.CoverageReportPath }}
+          LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+          BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+          ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+            TestPipeline: true
+          TestEnv: ${{ parameters.TestEnv }}
+          PreTestSteps: ${{ parameters.PreTestSteps }}
+          PostTestSteps: ${{ parameters.PostTestSteps }}
 
   - stage: Build
     dependsOn: []
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
         parameters:
+          MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
+          JobName: Validate 
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
           CtestRegex: ${{ parameters.CtestRegex }}
@@ -128,6 +153,8 @@ stages:
     - template: archetype-cpp-release.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        IntegrationDependsOn:
+          - QuickBuild
         DependsOn:
           - Build
           # TODO: Don't depend on live tests in scheduled runs

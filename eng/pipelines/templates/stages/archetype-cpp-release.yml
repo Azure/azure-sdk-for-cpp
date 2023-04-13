@@ -5,6 +5,8 @@ parameters:
   TestPipeline: false
   DependsOn:
     - Build
+  IntegrationDependsOn:
+    - QuickBuild
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -240,7 +242,7 @@ stages:
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
-      dependsOn: ${{ parameters.DependsOn }}
+      dependsOn: ${{ parameters.IntegrationDependsOn }}
       condition: >-
         and(
           succeededOrFailed(),
@@ -252,8 +254,7 @@ stages:
       jobs:
         - job: PublishDailyVcpkg
           displayName: Publish to vcpkg daily branch
-          condition: eq(stageDependencies.Build.QuickValidate.result, 'Succeeded')
-          
+
           pool:
             name: azsdk-pool-mms-win-2022-general
             vmImage: windows-2022

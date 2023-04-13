@@ -41,39 +41,37 @@ parameters:
   - name: PostTestSteps
     type: stepList
     default: []
-  - name: JobConfiguration
-    type: object
-    default:
-      - Name: Validate
-        Matrix: eng/pipelines/templates/stages/platform-matrix.json
-      - Name: QuickValidate
-        Matrix: eng/pipelines/templates/stages/platform-matrix-quick.json
+  - name: MatrixFile
+    type: string
+    default: eng/pipelines/templates/stages/platform-matrix.json
+  - name: JobName
+    type: string
+    default: Validate 
 
 jobs:
-  - ${{ each config in parameters.JobConfiguration }}:
-    - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-      parameters:
-        GenerateJobName: ${{ config.Name }}_generate_matrix
-        MatrixConfigs:
-          - Name: base
-            Path: ${{ config.Matrix}}
-            Selection: all
-            GenerateVMJobs: true
-        JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-        AdditionalParameters:
-          DisplayName: ${{ config.Name }}
-          Artifacts: ${{ parameters.Artifacts }}
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          CtestRegex: ${{ parameters.CtestRegex }}
-          CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
-          CoverageReportPath: ${{ parameters.CoverageReportPath }}
-          CoverageEnabled: ${{ parameters.CoverageEnabled }}
-          LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
-          BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
-          TestEnv: ${{ parameters.TestEnv }}
-          PreTestSteps: ${{ parameters.PreTestSteps }}
-          PostTestSteps: ${{ parameters.PostTestSteps }}
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      GenerateJobName: ${{ parameters.JobName }}_generate_matrix
+      MatrixConfigs:
+        - Name: base
+          Path: ${{ parameters.MatrixFile }}
+          Selection: all
+          GenerateVMJobs: true
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      AdditionalParameters:
+        DisplayName: ${{ parameters.JobName }}
+        Artifacts: ${{ parameters.Artifacts }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        CtestRegex: ${{ parameters.CtestRegex }}
+        CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+        CoverageReportPath: ${{ parameters.CoverageReportPath }}
+        CoverageEnabled: ${{ parameters.CoverageEnabled }}
+        LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+        BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+        TestEnv: ${{ parameters.TestEnv }}
+        PreTestSteps: ${{ parameters.PreTestSteps }}
+        PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
