@@ -701,7 +701,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       /**
        * @brief Convert an existing AmqpSymbol to an AmqpValue.
        */
-      operator const AmqpValue() const;
+      operator AmqpValue() const;
 
       /**
        * @brief Convert an AmqpSymbol instance to a uAMQP AMQP_VALUE.
