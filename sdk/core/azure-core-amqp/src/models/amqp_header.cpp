@@ -53,9 +53,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  MessageHeader::operator HEADER_HANDLE() const
+  MessageHeader::operator UniqueMessageHeaderHandle() const
   {
-    Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG> rv{header_create()};
+    UniqueMessageHeaderHandle rv{header_create()};
     if (Durable)
     {
       if (header_set_durable(rv.get(), Durable))
@@ -93,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    return rv.release();
+    return rv;
   }
 
   std::ostream& operator<<(std::ostream& os, MessageHeader const& header)

@@ -685,7 +685,6 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   {
     server.ShouldSendMessage(true);
     auto message = receiver.WaitForIncomingMessage(connection);
-    EXPECT_TRUE(message);
     EXPECT_EQ(static_cast<std::string>(message.GetBodyAsAmqpValue()), "This is a message body.");
   }
 
@@ -774,7 +773,6 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   {
     server.ShouldSendMessage(true);
     auto message = receiver.WaitForIncomingMessage(connection);
-    EXPECT_TRUE(message);
     EXPECT_EQ(static_cast<std::string>(message.GetBodyAsAmqpValue()), "This is a message body.");
   }
 

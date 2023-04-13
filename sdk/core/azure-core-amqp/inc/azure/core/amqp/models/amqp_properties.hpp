@@ -23,31 +23,33 @@ namespace Azure { namespace Core { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  class MessageProperties final {
-    // uAMQP interop functions.
-  public:
-    MessageProperties(PROPERTIES_INSTANCE_TAG* properties); //: m_properties(properties) {}
-    operator PROPERTIES_INSTANCE_TAG*() const;
+    using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
 
-  public:
-    MessageProperties();
-    ~MessageProperties();
+    class MessageProperties final {
+      // uAMQP interop functions.
+    public:
+      MessageProperties(PROPERTIES_INSTANCE_TAG* properties); //: m_properties(properties) {}
+      operator UniquePropertiesHandle() const;
 
-    Azure::Nullable<AmqpValue> MessageId;
-    Azure::Nullable<AmqpValue> CorrelationId;
-    Azure::Nullable<std::vector<uint8_t>> UserId;
-    Azure::Nullable<AmqpValue> To;
-    Azure::Nullable<std::string> Subject;
-    Azure::Nullable<AmqpValue> ReplyTo;
-    Azure::Nullable<std::string> ContentType;
-    Azure::Nullable<std::string> ContentEncoding;
-    Azure::Nullable<std::chrono::system_clock::time_point> AbsoluteExpiryTime;
-    Azure::Nullable<std::chrono::system_clock::time_point> CreationTime;
-    Azure::Nullable<std::string> GroupId;
-    Azure::Nullable<uint32_t> GroupSequence;
-    Azure::Nullable<std::string> ReplyToGroupId;
+    public:
+      MessageProperties();
+      ~MessageProperties();
 
-    friend std::ostream& operator<<(std::ostream&, MessageProperties const&);
-  };
+      Azure::Nullable<AmqpValue> MessageId;
+      Azure::Nullable<AmqpValue> CorrelationId;
+      Azure::Nullable<std::vector<uint8_t>> UserId;
+      Azure::Nullable<AmqpValue> To;
+      Azure::Nullable<std::string> Subject;
+      Azure::Nullable<AmqpValue> ReplyTo;
+      Azure::Nullable<std::string> ContentType;
+      Azure::Nullable<std::string> ContentEncoding;
+      Azure::Nullable<std::chrono::system_clock::time_point> AbsoluteExpiryTime;
+      Azure::Nullable<std::chrono::system_clock::time_point> CreationTime;
+      Azure::Nullable<std::string> GroupId;
+      Azure::Nullable<uint32_t> GroupSequence;
+      Azure::Nullable<std::string> ReplyToGroupId;
+
+      friend std::ostream& operator<<(std::ostream&, MessageProperties const&);
+    };
 
 }}}} // namespace Azure::Core::Amqp::Models

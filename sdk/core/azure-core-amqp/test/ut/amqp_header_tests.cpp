@@ -35,8 +35,8 @@ TEST_F(TestHeaders, TestTtl)
   //  EXPECT_EQ(0, header.GetTimeToLive().count());
   header.TimeToLive = std::chrono::milliseconds(100);
 
-  HEADER_INSTANCE_TAG* handle = header;
-  MessageHeader header2(handle);
+  auto  handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
 
   EXPECT_EQ(100, header2.TimeToLive.Value().count());
 
@@ -49,8 +49,8 @@ TEST_F(TestHeaders, TestDeliveryCount)
   EXPECT_EQ(0, header.DeliveryCount);
   header.DeliveryCount = 1;
 
-  HEADER_INSTANCE_TAG* handle = header;
-  MessageHeader header2(handle);
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
 
   EXPECT_EQ(1, header2.DeliveryCount);
 
@@ -62,8 +62,8 @@ TEST_F(TestHeaders, TestPriority)
   MessageHeader header;
   header.Priority = 1;
 
-  HEADER_INSTANCE_TAG* handle = header;
-  MessageHeader header2(handle);
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
 
   EXPECT_EQ(1, header2.Priority);
   GTEST_LOG_(INFO) << header;
@@ -75,8 +75,8 @@ TEST_F(TestHeaders, TestDurable)
   EXPECT_EQ(false, header.Durable);
   header.Durable = true;
 
-  HEADER_INSTANCE_TAG* handle = header;
-  MessageHeader header2(handle);
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
 
   EXPECT_EQ(true, header2.Durable);
   GTEST_LOG_(INFO) << header;
@@ -88,8 +88,8 @@ TEST_F(TestHeaders, TestFirstAcquirer)
   EXPECT_EQ(false, header.IsFirstAcquirer);
 
   header.IsFirstAcquirer = true;
-  HEADER_INSTANCE_TAG* handle = header;
-  MessageHeader header2(handle);
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
 
   EXPECT_EQ(true, header2.IsFirstAcquirer);
   GTEST_LOG_(INFO) << header;

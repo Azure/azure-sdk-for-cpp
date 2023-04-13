@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  MessageProperties::operator PROPERTIES_HANDLE() const
+  MessageProperties::operator UniquePropertiesHandle() const
   {
     Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG> returnValue(properties_create());
     if (MessageId.HasValue())
@@ -223,7 +223,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    return returnValue.release();
+    return returnValue;
   }
 
   namespace {

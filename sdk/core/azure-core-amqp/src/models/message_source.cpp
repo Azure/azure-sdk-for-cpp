@@ -14,6 +14,12 @@
 
 #include <azure_uamqp_c/amqp_definitions_source.h>
 
+void Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessageSource(
+    SOURCE_HANDLE value)
+{
+  source_destroy(value);
+}
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   MessageSource::MessageSource(SOURCE_HANDLE handle) : m_source{handle} {}
@@ -24,58 +30,53 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::invalid_argument("source cannot be null");
     }
-    if (amqpvalue_get_source(source, &m_source))
     {
-      throw std::runtime_error("Could not retrieve source from value.");
+      SOURCE_HANDLE sourceHandle;
+      if (amqpvalue_get_source(source, &sourceHandle))
+      {
+        throw std::runtime_error("Could not retrieve source from value.");
+      }
+      m_source.reset(sourceHandle);
     }
   }
 
-  MessageSource::MessageSource(std::string const& address)
+  MessageSource::MessageSource(std::string const& address) : m_source(source_create())
   {
-    m_source = source_create();
     if (m_source == nullptr)
     {
       throw std::runtime_error("Could not create source.");
     }
-    if (source_set_address(m_source, amqpvalue_create_string(address.c_str())))
+    if (source_set_address(m_source.get(), amqpvalue_create_string(address.c_str())))
     {
       throw std::runtime_error("Could not set address.");
     }
   }
-  MessageSource::MessageSource(char const* address)
+  MessageSource::MessageSource(char const* address) : m_source(source_create())
   {
-    m_source = source_create();
     if (m_source == nullptr)
     {
       throw std::runtime_error("Could not create source.");
     }
-    if (source_set_address(m_source, amqpvalue_create_string(address)))
+    if (source_set_address(m_source.get(), amqpvalue_create_string(address)))
     {
       throw std::runtime_error("Could not set address.");
     }
   }
 
-  MessageSource::MessageSource() { m_source = source_create(); }
+  MessageSource::MessageSource() : m_source(source_create()) {}
 
-  MessageSource::~MessageSource()
-  {
-    if (m_source != nullptr)
-    {
-      source_destroy(m_source);
-      m_source = nullptr;
-    }
-  }
+  MessageSource::~MessageSource() {}
 
   // Convert the MessageSource into a Value.
   MessageSource::operator const Azure::Core::Amqp::Models::AmqpValue() const
   {
-    return amqpvalue_create_source(m_source);
+    return amqpvalue_create_source(m_source.get());
   }
 
   Azure::Core::Amqp::Models::AmqpValue MessageSource::GetAddress() const
   {
     AMQP_VALUE address;
-    if (source_get_address(m_source, &address))
+    if (source_get_address(m_source.get(), &address))
     {
       throw std::runtime_error("Could not retrieve address from source.");
     }
@@ -83,7 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetAddress(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
-    if (source_set_address(m_source, value))
+    if (source_set_address(m_source.get(), value))
     {
       throw std::runtime_error("Could not set value.");
     }
@@ -92,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::TerminusDurability MessageSource::GetTerminusDurability() const
   {
     terminus_durability value;
-    if (source_get_durable(m_source, &value))
+    if (source_get_durable(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get durable from source.");
     }
@@ -125,7 +126,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       default:
         throw std::logic_error("Unknown terminus durability.");
     }
-    if (source_set_durable(m_source, durability))
+    if (source_set_durable(m_source.get(), durability))
     {
       throw std::runtime_error("Could not set durable.");
     }
@@ -134,7 +135,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::TerminusExpiryPolicy MessageSource::GetExpiryPolicy() const
   {
     terminus_expiry_policy value;
-    if (source_get_expiry_policy(m_source, &value))
+    if (source_get_expiry_policy(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get durable from source.");
     }
@@ -176,7 +177,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       default:
         throw std::logic_error("Unknown terminus durability.");
     }
-    if (source_set_expiry_policy(m_source, policy))
+    if (source_set_expiry_policy(m_source.get(), policy))
     {
       throw std::runtime_error("Could not set durable.");
     }
@@ -185,7 +186,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   std::chrono::system_clock::time_point MessageSource::GetTimeout() const
   {
     seconds value;
-    if (source_get_timeout(m_source, &value))
+    if (source_get_timeout(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get timeout from source.");
     }
@@ -194,7 +195,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   void MessageSource::SetTimeout(std::chrono::system_clock::time_point const& value)
   {
     if (source_set_timeout(
-            m_source,
+            m_source.get(),
             static_cast<uint32_t>(
                 std::chrono::duration_cast<std::chrono::seconds>(value.time_since_epoch())
                     .count())))
@@ -206,7 +207,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   bool MessageSource::GetDynamic() const
   {
     bool value;
-    if (source_get_dynamic(m_source, &value))
+    if (source_get_dynamic(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get dynamic.");
     }
@@ -214,7 +215,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetDynamic(bool value)
   {
-    if (source_set_dynamic(m_source, value))
+    if (source_set_dynamic(m_source.get(), value))
     {
       throw std::runtime_error("Could not set dynamic.");
     }
@@ -223,7 +224,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::AmqpMap MessageSource::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
-    if (source_get_dynamic_node_properties(m_source, &value))
+    if (source_get_dynamic_node_properties(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get dynamic.");
     }
@@ -231,7 +232,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpMap const& value)
   {
-    if (source_set_dynamic_node_properties(m_source, static_cast<UniqueAmqpValueHandle>(value).get()))
+    if (source_set_dynamic_node_properties(
+            m_source.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
     {
       throw std::runtime_error("Could not set dynamic node properties.");
     }
@@ -240,7 +242,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   std::string MessageSource::GetDistributionMode() const
   {
     const char* value;
-    if (source_get_distribution_mode(m_source, &value))
+    if (source_get_distribution_mode(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get distribution mode.");
     }
@@ -248,7 +250,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetDistributionMode(std::string const& value)
   {
-    if (source_set_distribution_mode(m_source, value.c_str()))
+    if (source_set_distribution_mode(m_source.get(), value.c_str()))
     {
       throw std::runtime_error("Could not set dynamic node properties.");
     }
@@ -257,7 +259,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::AmqpMap MessageSource::GetFilter() const
   {
     AMQP_VALUE value;
-    if (source_get_filter(m_source, &value))
+    if (source_get_filter(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get filter set.");
     }
@@ -265,7 +267,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetFilter(Azure::Core::Amqp::Models::AmqpMap const& value)
   {
-    if (source_set_filter(m_source, static_cast<UniqueAmqpValueHandle>(value).get()))
+    if (source_set_filter(m_source.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
     {
       throw std::runtime_error("Could not set filter set.");
     }
@@ -274,7 +276,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::AmqpValue MessageSource::GetDefaultOutcome() const
   {
     AMQP_VALUE value;
-    if (source_get_default_outcome(m_source, &value))
+    if (source_get_default_outcome(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get default outcome.");
     }
@@ -282,7 +284,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetDefaultOutcome(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
-    if (source_set_default_outcome(m_source, value))
+    if (source_set_default_outcome(m_source.get(), value))
     {
       throw std::runtime_error("Could not set default outcome.");
     }
@@ -291,7 +293,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::AmqpArray MessageSource::GetOutcomes() const
   {
     AMQP_VALUE value;
-    if (source_get_outcomes(m_source, &value))
+    if (source_get_outcomes(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get outcomes.");
     }
@@ -299,7 +301,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetOutcomes(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
-    if (source_set_outcomes(m_source, value))
+    if (source_set_outcomes(m_source.get(), value))
     {
       throw std::runtime_error("Could not set outcomes.");
     }
@@ -308,7 +310,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   Azure::Core::Amqp::Models::AmqpArray MessageSource::GetCapabilities() const
   {
     AMQP_VALUE value;
-    if (source_get_capabilities(m_source, &value))
+    if (source_get_capabilities(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get capabilities.");
     }
@@ -316,14 +318,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   void MessageSource::SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& value)
   {
-    if (source_set_capabilities(m_source, value))
+    if (source_set_capabilities(m_source.get(), value))
     {
       throw std::runtime_error("Could not set outcomes.");
     }
   }
   void MessageSource::SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& value)
   {
-    if (source_set_capabilities(m_source, static_cast<UniqueAmqpValueHandle>(value).get()))
+    if (source_set_capabilities(m_source.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
     {
       throw std::runtime_error("Could not set outcomes.");
     }

@@ -8,60 +8,72 @@
 #include "amqp_value.hpp"
 
 struct TARGET_INSTANCE_TAG;
+
+namespace Azure { namespace Core { namespace _internal {
+
+  template <> struct UniqueHandleHelper<TARGET_INSTANCE_TAG>
+  {
+    static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
+
+    using type = Azure::Core::_internal::BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
+  };
+}}} // namespace Azure::Core::_internal
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  class MessageTarget {
-  public:
-    MessageTarget();
-    ~MessageTarget();
+      class MessageTarget {
+      public:
+        MessageTarget();
+        ~MessageTarget();
 
-    MessageTarget(MessageTarget const&);
-    MessageTarget& operator=(MessageTarget const&);
-    MessageTarget(MessageTarget&&) noexcept;
-    MessageTarget& operator=(MessageTarget&&) noexcept;
+        MessageTarget(MessageTarget const&);
+        MessageTarget& operator=(MessageTarget const&);
+        MessageTarget(MessageTarget&&) noexcept;
+        MessageTarget& operator=(MessageTarget&&) noexcept;
 
-    MessageTarget(TARGET_INSTANCE_TAG* message);
-    MessageTarget(std::string const& value);
-    MessageTarget(char const* value);
+        MessageTarget(TARGET_INSTANCE_TAG* message);
+        MessageTarget(std::string const& value);
+        MessageTarget(char const* value);
 
-    MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
-    operator const Azure::Core::Amqp::Models::AmqpValue() const;
+        MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
+        operator const Azure::Core::Amqp::Models::AmqpValue() const;
 
-    operator TARGET_INSTANCE_TAG*() const { return m_target; }
+        operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
 
-    Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
-    void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
+        Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
+        void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
 
-    Azure::Core::Amqp::Models::TerminusDurability GetTerminusDurability() const;
-    void SetTerminusDurability(Azure::Core::Amqp::Models::TerminusDurability terminusDurability);
+        Azure::Core::Amqp::Models::TerminusDurability GetTerminusDurability() const;
+        void SetTerminusDurability(
+            Azure::Core::Amqp::Models::TerminusDurability terminusDurability);
 
-    Azure::Core::Amqp::Models::TerminusExpiryPolicy GetExpiryPolicy() const;
-    void SetExpiryPolicy(Azure::Core::Amqp::Models::TerminusExpiryPolicy expiryPolicy);
+        Azure::Core::Amqp::Models::TerminusExpiryPolicy GetExpiryPolicy() const;
+        void SetExpiryPolicy(Azure::Core::Amqp::Models::TerminusExpiryPolicy expiryPolicy);
 
-    std::chrono::system_clock::time_point GetTimeout() const;
-    void SetTimeout(std::chrono::system_clock::time_point const& timeout);
+        std::chrono::system_clock::time_point GetTimeout() const;
+        void SetTimeout(std::chrono::system_clock::time_point const& timeout);
 
-    bool GetDynamic() const;
-    void SetDynamic(bool dynamic);
+        bool GetDynamic() const;
+        void SetDynamic(bool dynamic);
 
-    Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(
-        Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
+        Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
+        void SetDynamicNodeProperties(
+            Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
 
-    /** @brief Retrieve the capabilities on this message target. */
-    Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
-    /**
-     * @brief Set the capabilities supported by this message target.
-     */
-    void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
-    /**
-     * @brief Set a single capability for this message target.
-     */
-    void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
+        /** @brief Retrieve the capabilities on this message target. */
+        Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
+        /**
+         * @brief Set the capabilities supported by this message target.
+         */
+        void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
+        /**
+         * @brief Set a single capability for this message target.
+         */
+        void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
 
-    friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
+        friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
 
-  private:
-    TARGET_INSTANCE_TAG* m_target;
-  };
+      private:
+        Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG> m_target;
+      };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

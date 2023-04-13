@@ -35,8 +35,8 @@ TEST_F(TestProperties, SetAbsoluteExpiryTime)
   // Set the test timestamp and verify that the returned value is accurate to milliseconds.
   properties.AbsoluteExpiryTime = testTimestamp;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.AbsoluteExpiryTime.Value(), testTimestampToCheck);
   GTEST_LOG_(INFO) << properties;
@@ -49,8 +49,8 @@ TEST_F(TestProperties, SetContentEncoding)
   std::string contentEncoding = "utf-8";
   properties.ContentEncoding = contentEncoding;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.ContentEncoding.Value(), contentEncoding);
   EXPECT_EQ(properties.ContentEncoding.Value(), properties2.ContentEncoding.Value());
@@ -64,8 +64,8 @@ TEST_F(TestProperties, SetContentType)
   std::string contentType = "text/plain";
   properties.ContentType = contentType;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.ContentType.Value(), contentType);
   EXPECT_EQ(properties.ContentType.Value(), properties2.ContentType.Value());
@@ -79,8 +79,8 @@ TEST_F(TestProperties, SetCorrelationId)
   std::string correlationId = "1234";
   properties.CorrelationId = AmqpValue{correlationId};
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.CorrelationId.Value(), AmqpValue{correlationId});
   GTEST_LOG_(INFO) << properties;
@@ -98,8 +98,8 @@ TEST_F(TestProperties, SetCreationTime)
 
   properties.CreationTime = testTimestamp;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.CreationTime.Value(), testTimestampToCheck);
 
@@ -112,8 +112,8 @@ TEST_F(TestProperties, SetGroupId)
   std::string groupId = "1234";
   properties.GroupId = groupId;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties.GroupId.Value(), groupId);
   GTEST_LOG_(INFO) << properties;
@@ -125,8 +125,8 @@ TEST_F(TestProperties, SetGroupSequence)
   uint32_t groupSequence = 1234;
   properties.GroupSequence = groupSequence;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.GroupSequence.Value(), groupSequence);
   GTEST_LOG_(INFO) << properties;
@@ -138,8 +138,8 @@ TEST_F(TestProperties, SetMessageId)
   std::string messageId = "1234";
   properties.MessageId = AmqpValue{messageId};
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.MessageId.Value(), AmqpValue{messageId});
   GTEST_LOG_(INFO) << properties;
@@ -151,8 +151,8 @@ TEST_F(TestProperties, SetReplyTo)
   std::string replyTo = "1234";
   properties.ReplyTo = AmqpValue{replyTo};
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.ReplyTo.Value(), AmqpValue{replyTo});
   GTEST_LOG_(INFO) << properties;
@@ -164,8 +164,8 @@ TEST_F(TestProperties, SetReplyToGroupId)
   std::string replyToGroupId = "1234";
   properties.ReplyToGroupId = replyToGroupId;
 
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
 
   EXPECT_EQ(properties2.ReplyToGroupId.Value(), replyToGroupId);
   GTEST_LOG_(INFO) << properties;
@@ -176,8 +176,8 @@ TEST_F(TestProperties, SetTo)
   MessageProperties properties;
   std::string to = "1234";
   properties.To = AmqpValue{to};
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
   EXPECT_EQ(properties2.To.Value(), AmqpValue{to});
   GTEST_LOG_(INFO) << properties;
 }
@@ -186,8 +186,8 @@ TEST_F(TestProperties, SetUserId)
 {
   MessageProperties properties;
   properties.UserId = {'1', '2', '3', '4', '\0'};
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
   EXPECT_EQ(properties2.UserId.Value().size(), 5);
   GTEST_LOG_(INFO) << properties;
 }
@@ -197,8 +197,8 @@ TEST_F(TestProperties, SetSubject)
   MessageProperties properties;
   std::string subject = "1234";
   properties.Subject = subject;
-  PROPERTIES_INSTANCE_TAG* data = static_cast<PROPERTIES_INSTANCE_TAG*>(properties);
-  MessageProperties properties2(data);
+  auto data = static_cast<UniquePropertiesHandle>(properties);
+  MessageProperties properties2(data.get());
   EXPECT_EQ(properties2.Subject.Value(), subject);
   GTEST_LOG_(INFO) << properties;
 }

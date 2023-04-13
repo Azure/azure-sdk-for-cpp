@@ -49,8 +49,8 @@ TEST_F(TestMessage, TestApplicationProperties)
   // Ensure that ApplicationProperties values round-trip through uAMQP value serialization.
   message.ApplicationProperties["Blah"] = 19532;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
 
   EXPECT_EQ(message2.ApplicationProperties["Blah"], AmqpValue(19532));
 
@@ -62,8 +62,8 @@ TEST_F(TestMessage, TestDeliveryAnnotations)
   Message message;
   message.DeliveryAnnotations["12345"] = 19532;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
   EXPECT_EQ(AmqpValue{19532}, message2.DeliveryAnnotations["12345"]);
   GTEST_LOG_(INFO) << message;
 }
@@ -73,8 +73,8 @@ TEST_F(TestMessage, TestAnnotations)
   Message message;
   message.MessageAnnotations["12345"] = 19532;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
   EXPECT_EQ(AmqpValue{19532}, message2.MessageAnnotations["12345"]);
   GTEST_LOG_(INFO) << message;
 }
@@ -84,8 +84,8 @@ TEST_F(TestMessage, TestFooter)
   Message message;
   message.Footer["12345"] = 37.2;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
   EXPECT_EQ(AmqpValue{37.2}, message2.Footer["12345"]);
 
   GTEST_LOG_(INFO) << message;
@@ -96,8 +96,8 @@ TEST_F(TestMessage, TestHeader)
   Message message;
   message.Header.DeliveryCount = 1;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
 
   // Ensure that message values survive across round-trips through MESSAGE.
   EXPECT_EQ(message2.Header.DeliveryCount, 1);
@@ -111,8 +111,8 @@ TEST_F(TestMessage, TestProperties)
   properties.Subject = "Message subject.";
   message.Properties = properties;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
 
   auto newProperties{message2.Properties};
   EXPECT_EQ(newProperties.Subject.Value(), properties.Subject.Value());
@@ -124,8 +124,8 @@ TEST_F(TestMessage, TestFormat)
   Message message;
   message.MessageFormat = 12345;
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
 
   EXPECT_EQ(message2.MessageFormat.Value(), 12345);
   GTEST_LOG_(INFO) << message;
@@ -142,8 +142,8 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
   EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList().at(1)));
   EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
   EXPECT_EQ(3, message2.GetBodyAsAmqpList().size());
   EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList().at(0)));
   EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList().at(1)));
@@ -165,8 +165,8 @@ TEST_F(TestMessage, TestBodyAmqpData)
 
   EXPECT_EQ(message.BodyType, MessageBodyType::Data);
 
-  MESSAGE_INSTANCE_TAG* messageInstance = message;
-  Message message2(messageInstance);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
   EXPECT_EQ(message2.GetBodyAsBinary().size(), 1);
 
   auto body2 = message2.GetBodyAsBinary()[0];

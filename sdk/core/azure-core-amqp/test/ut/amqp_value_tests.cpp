@@ -138,7 +138,7 @@ TEST_F(TestValues, TestBinary)
     AmqpBinaryData binaryData;
     binaryData.push_back('a');
     binaryData.push_back(3);
-    AmqpValue value(static_cast<AMQP_VALUE_DATA_TAG*>(binaryData));
+    AmqpValue value(static_cast<UniqueAmqpValueHandle>(binaryData).get());
 
     AmqpBinaryData data2(value);
     EXPECT_EQ(2, data2.size());
@@ -166,7 +166,7 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValue("ABCD"), list1.at(2));
     EXPECT_EQ(AmqpValue('a'), list1.at(3));
 
-    AmqpValue value(static_cast<AMQP_VALUE_DATA_TAG*>(list1));
+    AmqpValue value(static_cast<UniqueAmqpValueHandle>(list1).get());
     const AmqpList list2(value);
 
     EXPECT_EQ(4, list2.size());
@@ -259,11 +259,11 @@ TEST_F(TestValues, TestTimestamp)
     std::chrono::milliseconds timeNow{std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch())};
     AmqpTimestamp value{timeNow};
-    EXPECT_EQ(timeNow, static_cast<std::chrono::milliseconds const>(value));
-    AmqpValue av{static_cast<AMQP_VALUE_DATA_TAG*>(value)};
+    EXPECT_EQ(static_cast<std::chrono::milliseconds>(value), timeNow);
+    AmqpValue av{value};
 
     AmqpTimestamp ts2{av.AsTimestamp()};
-    EXPECT_EQ(timeNow, ts2);
+    EXPECT_EQ(timeNow, static_cast<std::chrono::milliseconds>(ts2));
     EXPECT_FALSE(value < ts2);
   }
   {
@@ -309,7 +309,7 @@ TEST_F(TestValues, TestCompositeValue)
   // Put some things in the map.
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
-    AmqpValue value = static_cast<AMQP_VALUE_DATA_TAG*>(compositeVal);
+    AmqpValue value = compositeVal;
     AmqpComposite testVal(value.AsComposite());
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
@@ -330,7 +330,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(AmqpSymbol("My Composite Type"), value.GetDescriptor().AsSymbol());
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
-    AmqpValue value2 = static_cast<AMQP_VALUE_DATA_TAG*>(value);
+    AmqpValue value2 = value;
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
@@ -347,7 +347,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(937, static_cast<uint64_t>(value.GetDescriptor()));
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
-    AmqpValue value2 = static_cast<AMQP_VALUE_DATA_TAG*>(value);
+    AmqpValue value2 = value;
 
     AmqpDescribed described2 = value2.AsDescribed();
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());
