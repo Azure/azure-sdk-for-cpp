@@ -161,10 +161,14 @@ TEST_F(TestValues, TestList)
     const AmqpList list1{123, 23.97f, "ABCD", static_cast<char>('a')};
     EXPECT_EQ(4, list1.size());
 
-    EXPECT_EQ(23.97f, static_cast<float>(list1[1]));
-    EXPECT_EQ(123, static_cast<int32_t>(list1[0]));
-    EXPECT_EQ(AmqpValue("ABCD"), list1[2]);
-    EXPECT_EQ(AmqpValue('a'), list1[3]);
+    AmqpValue val1 = list1[1];
+    EXPECT_EQ(23.97f, static_cast<float>(val1));
+    AmqpValue val0 = list1[0];
+    EXPECT_EQ(123, static_cast<int32_t>(val0));
+    AmqpValue val2 = list1[2];
+    EXPECT_EQ(AmqpValue("ABCD"), val2);
+    AmqpValue val3 = list1[3];
+    EXPECT_EQ(AmqpValue('a'), val3);
 
     AmqpValue value(static_cast<AMQP_VALUE_DATA_TAG*>(list1));
     const AmqpList list2(value);
