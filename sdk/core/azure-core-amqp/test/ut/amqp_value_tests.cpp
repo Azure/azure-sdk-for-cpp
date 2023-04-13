@@ -161,24 +161,20 @@ TEST_F(TestValues, TestList)
     const AmqpList list1{123, 23.97f, "ABCD", static_cast<char>('a')};
     EXPECT_EQ(4, list1.size());
 
-    AmqpValue val1 = list1[1];
-    EXPECT_EQ(23.97f, static_cast<float>(val1));
-    AmqpValue val0 = list1[0];
-    EXPECT_EQ(123, static_cast<int32_t>(val0));
-    AmqpValue val2 = list1[2];
-    EXPECT_EQ(AmqpValue("ABCD"), val2);
-    AmqpValue val3 = list1[3];
-    EXPECT_EQ(AmqpValue('a'), val3);
+    EXPECT_EQ(23.97f, static_cast<float const>(list1.at(1)));
+    EXPECT_EQ(123, static_cast<int32_t>(list1.at(0)));
+    EXPECT_EQ(AmqpValue("ABCD"), list1.at(2));
+    EXPECT_EQ(AmqpValue('a'), list1.at(3));
 
     AmqpValue value(static_cast<AMQP_VALUE_DATA_TAG*>(list1));
     const AmqpList list2(value);
 
     EXPECT_EQ(4, list2.size());
 
-    EXPECT_EQ(23.97f, static_cast<float>(list2[1]));
-    EXPECT_EQ(123, static_cast<int32_t>(list2[0]));
-    EXPECT_EQ(AmqpValue("ABCD"), list2[2]);
-    EXPECT_EQ(AmqpValue('a'), list2[3]);
+    EXPECT_EQ(23.97f, static_cast<float>(list2.at(1)));
+    EXPECT_EQ(123, static_cast<int32_t>(list2.at(0)));
+    EXPECT_EQ(AmqpValue("ABCD"), list2.at(2));
+    EXPECT_EQ(AmqpValue('a'), list2.at(3));
     EXPECT_FALSE(list1 < list2);
   }
 }
@@ -231,9 +227,9 @@ TEST_F(TestValues, TestArray)
 
     const AmqpArray array2 = value.AsArray();
     EXPECT_EQ(5, array2.size());
-    EXPECT_EQ(1, static_cast<std::int32_t>(array2[0]));
-    EXPECT_EQ(3, static_cast<std::int32_t>(array2[1]));
-    EXPECT_EQ(5, static_cast<std::int32_t>(array2[2]));
+    EXPECT_EQ(1, static_cast<std::int32_t>(array2.at(0)));
+    EXPECT_EQ(3, static_cast<std::int32_t>(array2.at(1)));
+    EXPECT_EQ(5, static_cast<std::int32_t>(array2.at(2)));
     EXPECT_FALSE(array1 < array2);
   }
   {
