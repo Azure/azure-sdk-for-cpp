@@ -253,6 +253,7 @@ stages:
         - job: PublishDailyVcpkg
           displayName: Publish to vcpkg daily branch
           condition: eq(stageDependencies.Build.QuickValidate.result, 'Succeeded')
+          
           pool:
             name: azsdk-pool-mms-win-2022-general
             vmImage: windows-2022
