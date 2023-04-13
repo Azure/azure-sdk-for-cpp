@@ -225,7 +225,7 @@ TEST_F(TestValues, TestTimestamp)
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(static_cast<std::chrono::milliseconds const>(boolValue));
+    EXPECT_ANY_THROW(boolValue.AsTimestamp());
   }
 }
 
@@ -265,7 +265,7 @@ TEST_F(TestValues, TestCompositeValue)
   // Put some things in the map.
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
-    AmqpValue value = static_cast<AmqpValue>(compositeVal);
+    AmqpValue value = static_cast<AMQP_VALUE_DATA_TAG*>(compositeVal);
     AmqpComposite testVal(static_cast<AMQP_VALUE_DATA_TAG*>(value));
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
