@@ -19,15 +19,13 @@
 
 struct AMQP_VALUE_DATA_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>
+{
+  static void FreeAmqpValue(AMQP_VALUE_DATA_TAG* obj);
 
-  template <> struct UniqueHandleHelper<AMQP_VALUE_DATA_TAG>
-  {
-    static void FreeAmqpValue(AMQP_VALUE_DATA_TAG* obj);
+  using type = Azure::Core::_internal::BasicUniqueHandle<AMQP_VALUE_DATA_TAG, FreeAmqpValue>;
+};
 
-    using type = Azure::Core::_internal::BasicUniqueHandle<AMQP_VALUE_DATA_TAG, FreeAmqpValue>;
-  };
-}}} // namespace Azure::Core::_internal
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   class MessageProperties;
