@@ -12,15 +12,12 @@
 
 struct HEADER_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>
+{
+  static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
 
-  template <> struct UniqueHandleHelper<HEADER_INSTANCE_TAG>
-  {
-    static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
-
-    using type = Azure::Core::_internal::BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
-  };
-}}} // namespace Azure::Core::_internal
+  using type = Azure::Core::_internal::BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
+};
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

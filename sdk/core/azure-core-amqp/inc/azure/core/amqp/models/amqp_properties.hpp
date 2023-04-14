@@ -10,16 +10,13 @@
 
 struct PROPERTIES_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>
+{
+  static void FreeAmqpProperties(PROPERTIES_INSTANCE_TAG* obj);
 
-  template <> struct UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>
-  {
-    static void FreeAmqpProperties(PROPERTIES_INSTANCE_TAG* obj);
-
-    using type
-        = Azure::Core::_internal::BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
-  };
-}}} // namespace Azure::Core::_internal
+  using type
+      = Azure::Core::_internal::BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
+};
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
