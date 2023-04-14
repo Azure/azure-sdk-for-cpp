@@ -7,6 +7,7 @@
 #include <azure/core/nullable.hpp>
 #include <chrono>
 #include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <stdexcept>
 
@@ -23,15 +24,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
 
-  class MessageHeader {
+  class MessageHeader final {
   public:
     // uAMQP integration functions.
     MessageHeader(HEADER_INSTANCE_TAG* header);
     operator UniqueMessageHeaderHandle() const;
 
   public:
-    MessageHeader();
-    virtual ~MessageHeader();
+    MessageHeader() = default;
+    ~MessageHeader() = default;
 
     /** @brief True if the message is considered "durable"
      *
@@ -68,7 +69,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
 
     std::uint32_t DeliveryCount{0};
-
-    friend std::ostream& operator<<(std::ostream&, MessageHeader const&);
   };
+  std::ostream& operator<<(std::ostream&, MessageHeader const&);
 }}}} // namespace Azure::Core::Amqp::Models

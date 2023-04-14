@@ -28,6 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::~AmqpValue() { m_value.reset(); }
   AmqpValue::AmqpValue(bool bool_value) : m_value{amqpvalue_create_boolean(bool_value)} {}
   AmqpValue::AmqpValue(unsigned char byte_value) : m_value{amqpvalue_create_ubyte(byte_value)} {}
+  AmqpValue::AmqpValue(char value) : m_value{amqpvalue_create_byte(value)} {}
   AmqpValue::AmqpValue(std::int8_t value) : m_value{amqpvalue_create_byte(value)} {}
   AmqpValue::AmqpValue(uint16_t value) : m_value{amqpvalue_create_ushort(value)} {}
   AmqpValue::AmqpValue(int16_t value) : m_value{amqpvalue_create_short(value)} {}
@@ -105,6 +106,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   AmqpValue::operator std::int8_t() const
+  {
+    char value;
+    if (amqpvalue_get_byte(m_value.get(), &value) != 0)
+    {
+      throw std::runtime_error("Could not retrieve value");
+    }
+    return value;
+  }
+
+  AmqpValue::operator char() const
   {
     char value;
     if (amqpvalue_get_byte(m_value.get(), &value) != 0)

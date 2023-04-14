@@ -9,6 +9,7 @@
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/uuid.hpp>
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <functional>
@@ -157,6 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpValue(std::int8_t value);
+    AmqpValue(char value);
 
     /** @brief Construct an AMQP short value, a 16 bit signed integer.
      *
@@ -327,6 +329,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     operator bool() const;
     operator std::uint8_t() const;
     operator std::int8_t() const;
+    operator char() const;
     operator std::uint16_t() const;
     operator std::int16_t() const;
     operator std::uint32_t() const;
@@ -362,11 +365,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     AmqpDescribed AsDescribed() const;
 
-    friend std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
-
   protected:
     UniqueAmqpValueHandle m_value;
   };
+  std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
 
   namespace _detail {
 
@@ -412,7 +414,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     };
   } // namespace _detail
 
-  class AmqpArray : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray> {
+  class AmqpArray final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray> {
   public:
     /** @brief Construct a new AmqpArray object. */
     AmqpArray() : AmqpCollectionBase(){};
@@ -430,15 +432,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @param value - the AMQP array value to capture.
      */
     AmqpArray(AMQP_VALUE_DATA_TAG* const value);
-    friend std::ostream& operator<<(std::ostream& os, AmqpArray const& value);
   };
+  std::ostream& operator<<(std::ostream& os, AmqpArray const& value);
 
   /** @brief An AmqpMap represents an AMQP "map" type.
    *
    * An AMQP Map is a polymorphic map of distinct keys to values.
    *
    */
-  class AmqpMap : public _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap> {
+  class AmqpMap final
+      : public _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap> {
     //      std::map<AmqpValue, AmqpValue> m_value;
 
   public:
@@ -473,14 +476,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       return m_value.emplace(values...);
     }
-
-    friend std::ostream& operator<<(std::ostream& os, AmqpMap const& value);
   };
+  std::ostream& operator<<(std::ostream& os, AmqpMap const& value);
 
   /** @brief An AMQP List is a sequence of polymorphic values. It has the behavioral
    * characteristics of an AMQP array, but allows the members to be polymorphic.
    */
-  class AmqpList : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList> {
+  class AmqpList final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList> {
   public:
     AmqpList() : AmqpCollectionBase(){};
     /** @brief Construct a new AmqpList object with an initializer list. */
@@ -500,8 +502,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @param value - the AMQP array value to capture.
      */
     AmqpList(AMQP_VALUE_DATA_TAG* const value);
-    friend std::ostream& operator<<(std::ostream& os, AmqpList const& value);
   };
+  std::ostream& operator<<(std::ostream& os, AmqpList const& value);
 
   /** @brief An AMQP binary value, a sequence of octets
    *
@@ -509,7 +511,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    * section 1.6.19](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-binary).
    *
    */
-  class AmqpBinaryData
+  class AmqpBinaryData final
       : public _detail::AmqpCollectionBase<std::vector<std::uint8_t>, AmqpBinaryData> {
   public:
     AmqpBinaryData() : AmqpCollectionBase(){};
@@ -528,10 +530,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @param value - the AMQP "binary" value to capture.
      */
     AmqpBinaryData(AMQP_VALUE_DATA_TAG* const value);
-    friend std::ostream& operator<<(std::ostream& os, AmqpBinaryData const& value);
   };
+  std::ostream& operator<<(std::ostream& os, AmqpBinaryData const& value);
 
-  class AmqpSymbol : public _detail::AmqpCollectionBase<std::string, AmqpSymbol> {
+  class AmqpSymbol final : public _detail::AmqpCollectionBase<std::string, AmqpSymbol> {
   public:
     AmqpSymbol() : AmqpCollectionBase(){};
     /** @brief Construct a new AmqpSymbol object with an initializer list. */
@@ -551,16 +553,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpSymbol(AMQP_VALUE_DATA_TAG* const value);
 
-    friend std::ostream& operator<<(std::ostream& os, AmqpSymbol const& value);
-
     bool operator==(AmqpSymbol const& that) const { return m_value == that.m_value; }
     bool operator==(const decltype(m_value)::value_type* const that) const
     {
       return m_value == that;
     }
   };
+  std::ostream& operator<<(std::ostream& os, AmqpSymbol const& value);
 
-  class AmqpTimestamp {
+  class AmqpTimestamp final {
     std::chrono::milliseconds m_value;
 
   public:
@@ -615,7 +616,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    *
    *
    */
-  class AmqpComposite : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpComposite> {
+  class AmqpComposite final
+      : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpComposite> {
   public:
     /** @brief Construct a new AmqpComposite object. */
     AmqpComposite() : AmqpCollectionBase(){};
@@ -667,7 +669,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    * indicates that the AMQP object is a representation of the type.
    *
    */
-  class AmqpDescribed {
+  class AmqpDescribed final {
   public:
     /** @brief Construct a new AmqpDescribed object.
      *

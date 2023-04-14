@@ -12,15 +12,13 @@
 #include <vector>
 
 struct MESSAGE_INSTANCE_TAG;
-namespace Azure { namespace Core { namespace _internal {
 
-  template <> struct UniqueHandleHelper<MESSAGE_INSTANCE_TAG>
-  {
-    static void FreeAmqpMessage(MESSAGE_INSTANCE_TAG* obj);
+template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>
+{
+  static void FreeAmqpMessage(MESSAGE_INSTANCE_TAG* obj);
 
-    using type = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
-  };
-}}} // namespace Azure::Core::_internal
+  using type = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
+};
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
@@ -38,7 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   };
   using UniqueMessageHandle = Azure::Core::_internal::UniqueHandle<MESSAGE_INSTANCE_TAG>;
 
-  class Message {
+  class Message final {
   public:
     /** @brief Construct a new AMQP Message object. */
     Message() = default;
@@ -212,11 +210,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Message(MESSAGE_INSTANCE_TAG* message);
     operator UniqueMessageHandle() const;
 
-    friend std::ostream& operator<<(std::ostream&, Message const&);
-
   private:
     std::vector<AmqpBinaryData> m_binaryDataBody;
     AmqpList m_amqpSequenceBody;
     AmqpValue m_amqpValueBody;
   };
+  std::ostream& operator<<(std::ostream&, Message const&);
 }}}} // namespace Azure::Core::Amqp::Models

@@ -17,10 +17,6 @@ void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHe
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  MessageHeader::MessageHeader() {}
-
-  MessageHeader::~MessageHeader() {}
-
   MessageHeader::MessageHeader(HEADER_HANDLE handle)
   {
     bool boolValue;

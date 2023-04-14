@@ -18,10 +18,10 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TA
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  class MessageSource {
+  class MessageSource final {
   public:
     MessageSource();
-    ~MessageSource();
+    ~MessageSource() = default;
 
     MessageSource(MessageSource const&);
     MessageSource& operator=(MessageSource const&);
@@ -73,9 +73,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
 
-    friend std::ostream& operator<<(std::ostream&, MessageSource const&);
-
   private:
     Azure::Core::_internal::UniqueHandle<SOURCE_INSTANCE_TAG> m_source;
   };
+  std::ostream& operator<<(std::ostream&, MessageSource const&);
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

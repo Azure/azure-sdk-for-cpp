@@ -43,10 +43,12 @@ TEST_F(TestValues, SimpleCreate)
   }
 
   {
-    AmqpValue value{static_cast<std::int8_t>('A')};
+    AmqpValue value{'A'};
     EXPECT_EQ(AmqpValueType::Byte, value.GetType());
     EXPECT_EQ(static_cast<char>(65), static_cast<std::int8_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
+    char ch{value};
+    EXPECT_EQ('A', ch);
   }
 
   {
@@ -158,13 +160,14 @@ TEST_F(TestValues, TestList)
   }
   // Put some things in the list.
   {
-    const AmqpList list1{123, 23.97f, "ABCD", static_cast<char>('a')};
+    const AmqpList list1{123, 23.97f, "ABCD", 'a'};
     EXPECT_EQ(4, list1.size());
 
     EXPECT_EQ(23.97f, static_cast<float>(list1.at(1)));
     EXPECT_EQ(123, static_cast<int32_t>(list1.at(0)));
     EXPECT_EQ(AmqpValue("ABCD"), list1.at(2));
-    EXPECT_EQ(AmqpValue('a'), list1.at(3));
+    EXPECT_EQ(AmqpValueType::Byte, list1[3].GetType());
+    EXPECT_EQ(AmqpValue('a'), list1[3]);
 
     AmqpValue value(static_cast<UniqueAmqpValueHandle>(list1).get());
     const AmqpList list2(value);
@@ -288,10 +291,9 @@ TEST_F(TestValues, TestSymbol)
 TEST_F(TestValues, TestCompositeValue)
 {
   {
-    AmqpComposite value;
-    //    AmqpComposite value("My Composite Type", {1, 2, 5.5, "ABC", 5});
+    AmqpComposite value("My Composite Type", {1, 2, 5.5, "ABC", 5});
 
-    EXPECT_EQ(0, value.size());
+    EXPECT_EQ(5, value.size());
   }
   {
     AmqpValue boolValue{false};

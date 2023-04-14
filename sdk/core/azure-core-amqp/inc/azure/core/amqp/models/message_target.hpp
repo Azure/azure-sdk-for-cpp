@@ -18,24 +18,21 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TA
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  class MessageTarget {
+  class MessageTarget final {
   public:
     MessageTarget();
-    ~MessageTarget();
+    ~MessageTarget() = default;
 
     MessageTarget(MessageTarget const&);
     MessageTarget& operator=(MessageTarget const&);
     MessageTarget(MessageTarget&&) noexcept;
     MessageTarget& operator=(MessageTarget&&) noexcept;
 
-    MessageTarget(TARGET_INSTANCE_TAG* message);
     MessageTarget(std::string const& value);
     MessageTarget(char const* value);
 
     MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
     operator const Azure::Core::Amqp::Models::AmqpValue() const;
-
-    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
 
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
     void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
@@ -67,9 +64,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
 
-    friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
+    // uAMQP interoperability functions, do not use.
+  public:
+    MessageTarget(TARGET_INSTANCE_TAG* message);
+    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
 
   private:
     Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG> m_target;
   };
+  std::ostream& operator<<(std::ostream&, MessageTarget const&);
+
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

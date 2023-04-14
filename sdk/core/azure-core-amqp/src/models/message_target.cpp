@@ -63,8 +63,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTarget::MessageTarget() : m_target{target_create()} {}
 
-  MessageTarget::~MessageTarget() {}
-
   // Convert the MessageSource into a Value.
   MessageTarget::operator const Azure::Core::Amqp::Models::AmqpValue() const
   {
