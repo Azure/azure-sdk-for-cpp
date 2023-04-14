@@ -213,7 +213,7 @@ private:
     (void)receiver;
   }
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-      Azure::Core::Amqp::Models::Message message) override
+      Azure::Core::Amqp::Models::Message const& message) override
   {
     m_messageQueue.CompleteOperation(message);
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();

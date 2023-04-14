@@ -16,62 +16,81 @@ protected:
 TEST_F(TestHeaders, SimpleCreate)
 {
   {
-    Header header;
+    MessageHeader header;
   }
 
   {
-    Header header;
-    EXPECT_EQ(0, header.GetDeliveryCount());
-    EXPECT_EQ(4, header.Priority()); // Not 100% sure why 4 is the default value, but...
-    EXPECT_EQ(false, header.IsDurable());
-    EXPECT_EQ(false, header.IsFirstAcquirer());
-    EXPECT_ANY_THROW(header.GetTimeToLive());
+    MessageHeader header;
+    EXPECT_EQ(0, header.DeliveryCount);
+    EXPECT_EQ(4, header.Priority); // Not 100% sure why 4 is the default value, but...
+    EXPECT_EQ(false, header.Durable);
+    EXPECT_EQ(false, header.IsFirstAcquirer);
+    EXPECT_FALSE(header.TimeToLive.HasValue());
   }
 }
 
 TEST_F(TestHeaders, TestTtl)
 {
-  Header header;
+  MessageHeader header;
   //  EXPECT_EQ(0, header.GetTimeToLive().count());
-  header.SetTimeToLive(std::chrono::milliseconds(100));
-  EXPECT_EQ(100, header.GetTimeToLive().count());
+  header.TimeToLive = std::chrono::milliseconds(100);
+
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
+
+  EXPECT_EQ(100, header2.TimeToLive.Value().count());
 
   GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestDeliveryCount)
 {
-  Header header;
-  EXPECT_EQ(0, header.GetDeliveryCount());
-  header.SetDeliveryCount(1);
-  EXPECT_EQ(1, header.GetDeliveryCount());
+  MessageHeader header;
+  EXPECT_EQ(0, header.DeliveryCount);
+  header.DeliveryCount = 1;
+
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
+
+  EXPECT_EQ(1, header2.DeliveryCount);
 
   GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestPriority)
 {
-  Header header;
-  EXPECT_EQ(4, header.Priority());
-  header.SetPriority(1);
-  EXPECT_EQ(1, header.Priority());
+  MessageHeader header;
+  header.Priority = 1;
+
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
+
+  EXPECT_EQ(1, header2.Priority);
   GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestDurable)
 {
-  Header header;
-  EXPECT_EQ(false, header.IsDurable());
-  header.IsDurable(true);
-  EXPECT_EQ(true, header.IsDurable());
+  MessageHeader header;
+  EXPECT_EQ(false, header.Durable);
+  header.Durable = true;
+
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
+
+  EXPECT_EQ(true, header2.Durable);
   GTEST_LOG_(INFO) << header;
 }
 
 TEST_F(TestHeaders, TestFirstAcquirer)
 {
-  Header header;
-  EXPECT_EQ(false, header.IsFirstAcquirer());
-  header.SetFirstAcquirer(true);
-  EXPECT_EQ(true, header.IsFirstAcquirer());
+  MessageHeader header;
+  EXPECT_EQ(false, header.IsFirstAcquirer);
+
+  header.IsFirstAcquirer = true;
+  auto handle = static_cast<UniqueMessageHeaderHandle>(header);
+  MessageHeader header2(handle.get());
+
+  EXPECT_EQ(true, header2.IsFirstAcquirer);
   GTEST_LOG_(INFO) << header;
 }

@@ -9,111 +9,100 @@
 #include <chrono>
 #include <iostream>
 
+void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(
+    HEADER_HANDLE handle)
+{
+  header_destroy(handle);
+}
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  Header::Header() : m_header(header_create())
+  MessageHeader::MessageHeader(HEADER_HANDLE handle)
   {
-    if (!m_header)
+    bool boolValue;
+    if (!header_get_durable(handle, &boolValue))
     {
-      throw std::runtime_error("Could not create header."); // LCOV_EXCL_LINE
+      Durable = boolValue;
+    }
+
+    uint8_t uint8Value;
+    if (!header_get_priority(handle, &uint8Value))
+    {
+      Priority = uint8Value;
+    }
+
+    milliseconds millisecondsValue;
+    if (!header_get_ttl(handle, &millisecondsValue))
+    {
+      TimeToLive = std::chrono::milliseconds(millisecondsValue);
+    }
+
+    if (!header_get_first_acquirer(handle, &boolValue))
+    {
+      IsFirstAcquirer = boolValue;
+    }
+
+    uint32_t uint32Value;
+    if (!header_get_delivery_count(handle, &uint32Value))
+    {
+      DeliveryCount = uint32Value;
     }
   }
 
-  Header::~Header() { header_destroy(m_header); }
+  MessageHeader::operator UniqueMessageHeaderHandle() const
+  {
+    UniqueMessageHeaderHandle rv{header_create()};
+    if (Durable)
+    {
+      if (header_set_durable(rv.get(), Durable))
+      {
+        throw std::runtime_error("Could not set durable value.");
+      }
+    }
+    if (Priority != 4)
+    {
+      if (header_set_priority(rv.get(), Priority))
+      {
+        throw std::runtime_error("Could not set priority value.");
+      }
+    }
+    if (TimeToLive.HasValue())
+    {
+      if (header_set_ttl(rv.get(), static_cast<milliseconds>(TimeToLive.Value().count())))
+      {
+        throw std::runtime_error("Could not set header TTL."); // LCOV_EXCL_LINE
+      }
+    }
 
-  bool Header::IsDurable() const
-  {
-    bool isDurable;
-    if (header_get_durable(m_header, &isDurable))
+    if (IsFirstAcquirer)
     {
-      throw std::runtime_error("Could not get durable state from header."); // LCOV_EXCL_LINE
+      if (header_set_first_acquirer(rv.get(), IsFirstAcquirer))
+      {
+        throw std::runtime_error("Could not set first acquirer value.");
+      }
     }
-    return isDurable;
-  }
-  void Header::IsDurable(bool durable) { header_set_durable(m_header, durable); }
+    if (DeliveryCount != 0)
+    {
+      if (header_set_delivery_count(rv.get(), DeliveryCount))
+      {
+        throw std::runtime_error("Could not set delivery count value.");
+      }
+    }
 
-  uint8_t Header::Priority() const
-  {
-    uint8_t priority;
-    if (header_get_priority(m_header, &priority))
-    {
-      throw std::runtime_error("Could not get priority from header."); // LCOV_EXCL_LINE
-    }
-    return priority;
-  }
-  void Header::SetPriority(uint8_t priority) { header_set_priority(m_header, priority); }
-
-  std::chrono::milliseconds Header::GetTimeToLive() const
-  {
-    milliseconds ms;
-    if (header_get_ttl(m_header, &ms))
-    {
-      throw std::runtime_error("Could not get header TTL.");
-    }
-    return std::chrono::milliseconds(ms);
-  }
-  void Header::SetTimeToLive(std::chrono::milliseconds timeToLive)
-  {
-    if (header_set_ttl(m_header, static_cast<milliseconds>(timeToLive.count())))
-    {
-      throw std::runtime_error("Could not set header TTL."); // LCOV_EXCL_LINE
-    }
-  }
-
-  bool Header::IsFirstAcquirer() const
-  {
-    bool firstAcquirer;
-    if (header_get_first_acquirer(m_header, &firstAcquirer))
-    {
-      throw std::runtime_error("Could not get first acquirer value."); // LCOV_EXCL_LINE
-    }
-    return firstAcquirer;
-  }
-  void Header::SetFirstAcquirer(bool value)
-  {
-    if (header_set_first_acquirer(m_header, value))
-    {
-      throw std::runtime_error("Could not set first acquirer value.");
-    }
+    return rv;
   }
 
-  uint32_t Header::GetDeliveryCount() const
-  {
-    uint32_t count;
-    if (header_get_delivery_count(m_header, &count))
-    {
-      throw std::runtime_error("Could not get delivery count."); // LCOV_EXCL_LINE
-    }
-    return count;
-  }
-  void Header::SetDeliveryCount(uint32_t value)
-  {
-    if (header_set_delivery_count(m_header, value))
-    {
-      throw std::runtime_error("Could not set delivery count."); // LCOV_EXCL_LINE
-    }
-  }
-
-  std::ostream& operator<<(std::ostream& os, Header const& header)
+  std::ostream& operator<<(std::ostream& os, MessageHeader const& header)
   {
     os << "Header{";
-    os << "durable=" << header.IsDurable();
+    os << "durable=" << header.Durable;
+    os << ", priority=" << header.Priority;
+    if (header.TimeToLive.HasValue())
     {
-      uint8_t priority;
-      if (!header_get_priority(header, &priority))
-      {
-        os << ", priority=" << header.Priority();
-      }
+      os << ", ttl=" << header.TimeToLive.Value().count() << " milliseconds";
     }
-    {
-      milliseconds ttl;
-      if (!header_get_ttl(header, &ttl))
-      {
-        os << ", ttl=" << header.GetTimeToLive().count() << " milliseconds";
-      }
-    }
-    os << ", firstAcquirer=" << header.IsFirstAcquirer();
-    os << ", deliveryCount=" << header.GetDeliveryCount();
+    os << ", firstAcquirer=" << header.IsFirstAcquirer;
+    os << ", deliveryCount=" << header.DeliveryCount;
     os << "}";
     return os;
   }
