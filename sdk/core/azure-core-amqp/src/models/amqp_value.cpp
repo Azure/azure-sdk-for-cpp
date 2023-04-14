@@ -405,6 +405,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
   }
+  template <>
   _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray>::operator UniqueAmqpValueHandle()
       const
   {
@@ -445,7 +446,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap>::operator UniqueAmqpValueHandle() const
+  template <>
+  _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap>::
+  operator UniqueAmqpValueHandle() const
   {
     UniqueAmqpValueHandle value{amqpvalue_create_map()};
     for (const auto& val : *this)
@@ -457,7 +460,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return value;
   }
-
 
   AmqpList::AmqpList(AMQP_VALUE const value)
   {
@@ -476,6 +478,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
+  template <>
   _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList>::operator UniqueAmqpValueHandle()
       const
   {
@@ -496,6 +499,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return list;
   }
 
+  template <>
   _detail::AmqpCollectionBase<std::vector<uint8_t>, AmqpBinaryData>::
   operator UniqueAmqpValueHandle() const
   {
@@ -520,6 +524,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         static_cast<const uint8_t*>(binaryData.bytes) + binaryData.length);
   }
 
+  template <>
   _detail::AmqpCollectionBase<std::string, AmqpSymbol>::operator UniqueAmqpValueHandle() const
   {
     UniqueAmqpValueHandle symbol{amqpvalue_create_symbol(m_value.c_str())};
