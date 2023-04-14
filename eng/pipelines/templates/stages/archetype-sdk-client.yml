@@ -89,9 +89,9 @@ stages:
           CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
           CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
   
-  # QuickBuild runs a narrower set of fast builds. If these builds pass, 
+  # PrePublishBuild runs a narrower set of fast builds. If these builds pass, 
   # Integration can launch immediately without awaiting more build and test jobs
-  - stage: QuickBuild
+  - stage: PrePublishBuild
     dependsOn: []
     jobs: 
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
@@ -155,7 +155,7 @@ stages:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         IntegrationDependsOn:
-          - QuickBuild
+          - PrePublishBuild
         DependsOn:
           - Build
           # Only depend on `LiveTest` if there are live tests to execute

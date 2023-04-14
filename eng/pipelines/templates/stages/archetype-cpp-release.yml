@@ -6,7 +6,7 @@ parameters:
   DependsOn:
     - Build
   IntegrationDependsOn:
-    - QuickBuild
+    - PrePublishBuild
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
