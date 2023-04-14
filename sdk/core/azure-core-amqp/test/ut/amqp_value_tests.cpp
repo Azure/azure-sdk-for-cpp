@@ -326,19 +326,19 @@ TEST_F(TestValues, TestDescribed)
 {
   // Described types with symbol descriptors.
   {
-    AmqpDescribed value(AmqpSymbol{"My Composite Type"}, 5);
-    EXPECT_EQ(AmqpSymbol("My Composite Type"), value.GetDescriptor().AsSymbol());
-    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
+    AmqpDescribed described1(AmqpSymbol{"My Composite Type"}, 5);
+    EXPECT_EQ(AmqpSymbol("My Composite Type"), described1.GetDescriptor().AsSymbol());
+    EXPECT_EQ(5, static_cast<int32_t>(described1.GetValue()));
 
-    AmqpValue value2 = value;
-    EXPECT_EQ(AmqpValueType::Described, value2.GetType());
-    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
+    AmqpValue value = described1;
+    EXPECT_EQ(AmqpValueType::Described, value.GetType());
 
-    AmqpDescribed described2 = value2.AsDescribed();
-    EXPECT_EQ(AmqpValueType::Described, value2.GetType());
-    EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
-    EXPECT_EQ(value.GetDescriptor().AsSymbol(), "My Composite Type");
-    EXPECT_FALSE(value < described2);
+    AmqpDescribed described2 = value.AsDescribed();
+    EXPECT_EQ(AmqpValueType::Described, value.GetType());
+    EXPECT_EQ(5, static_cast<int32_t>(described2.GetValue()));
+    EXPECT_EQ(described2.GetDescriptor().AsSymbol(), "My Composite Type");
+    EXPECT_FALSE(described1 < described2);
+//    EXPECT_TRUE(described1 == described2);
   }
 
   // Described types with long descriptors.

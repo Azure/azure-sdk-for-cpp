@@ -25,7 +25,7 @@ void Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpVa
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  AmqpValue::~AmqpValue() {}
+  AmqpValue::~AmqpValue() { m_value.reset(); }
   AmqpValue::AmqpValue(bool bool_value) : m_value{amqpvalue_create_boolean(bool_value)} {}
   AmqpValue::AmqpValue(unsigned char byte_value) : m_value{amqpvalue_create_ubyte(byte_value)} {}
   AmqpValue::AmqpValue(std::int8_t value) : m_value{amqpvalue_create_byte(value)} {}
@@ -695,7 +695,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   AmqpDescribed::operator UniqueAmqpValueHandle() const
   {
-    UniqueAmqpValueHandle composite{amqpvalue_create_described(m_descriptor, m_value)};
+    // For <reasons>, amqpvalue_create_described does not clone the provided descriptor or value,
+    // but amqpvalue_destroy on a described destroys the underlying value. That means we need to
+    // manually clone the input descriptors to ensure that the reference counts work out.
+    UniqueAmqpValueHandle composite{
+        amqpvalue_create_described(amqpvalue_clone(m_descriptor), amqpvalue_clone(m_value))};
     return composite;
   }
 
