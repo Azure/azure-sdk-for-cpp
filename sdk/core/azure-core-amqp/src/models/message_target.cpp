@@ -88,7 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  Azure::Core::Amqp::Models::TerminusDurability MessageTarget::GetTerminusDurability() const
+  TerminusDurability MessageTarget::GetTerminusDurability() const
   {
     terminus_durability value;
     if (target_get_durable(m_target.get(), &value))
@@ -98,27 +98,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     switch (value)
     {
       case terminus_durability_configuration:
-        return Azure::Core::Amqp::Models::TerminusDurability::Configuration;
+        return TerminusDurability::Configuration;
       case terminus_durability_none:
-        return Azure::Core::Amqp::Models::TerminusDurability::None;
+        return TerminusDurability::None;
       case terminus_durability_unsettled_state:
-        return Azure::Core::Amqp::Models::TerminusDurability::UnsettledState;
+        return TerminusDurability::UnsettledState;
       default:
         throw std::logic_error("Unknown terminus durability.");
     }
   }
-  void MessageTarget::SetTerminusDurability(Azure::Core::Amqp::Models::TerminusDurability value)
+  void MessageTarget::SetTerminusDurability(TerminusDurability value)
   {
     terminus_durability durability;
     switch (value)
     {
-      case Azure::Core::Amqp::Models::TerminusDurability::None:
+      case TerminusDurability::None:
         durability = terminus_durability_none;
         break;
-      case Azure::Core::Amqp::Models::TerminusDurability::Configuration:
+      case TerminusDurability::Configuration:
         durability = terminus_durability_configuration;
         break;
-      case Azure::Core::Amqp::Models::TerminusDurability::UnsettledState:
+      case TerminusDurability::UnsettledState:
         durability = terminus_durability_unsettled_state;
         break;
       default: // LCOV_EXCL_LINE
@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  Azure::Core::Amqp::Models::TerminusExpiryPolicy MessageTarget::GetExpiryPolicy() const
+  TerminusExpiryPolicy MessageTarget::GetExpiryPolicy() const
   {
     terminus_expiry_policy value;
     if (target_get_expiry_policy(m_target.get(), &value))
@@ -139,38 +139,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (strcmp(value, terminus_expiry_policy_connection_close) == 0)
     {
-      return Azure::Core::Amqp::Models::TerminusExpiryPolicy::ConnectionClose;
+      return TerminusExpiryPolicy::ConnectionClose;
     }
     if (strcmp(value, terminus_expiry_policy_link_detach) == 0)
     {
-      return Azure::Core::Amqp::Models::TerminusExpiryPolicy::LinkDetach;
+      return TerminusExpiryPolicy::LinkDetach;
     }
     if (strcmp(value, terminus_expiry_policy_never) == 0)
     {
-      return Azure::Core::Amqp::Models::TerminusExpiryPolicy::Never;
+      return TerminusExpiryPolicy::Never;
     }
     if (strcmp(value, terminus_expiry_policy_session_end) == 0)
     {
-      return Azure::Core::Amqp::Models::TerminusExpiryPolicy::SessionEnd;
+      return TerminusExpiryPolicy::SessionEnd;
     }
     throw std::logic_error(
         std::string("Unknown terminus expiry policy: ") + value); // LCOV_EXCL_LINE
   }
-  void MessageTarget::SetExpiryPolicy(Azure::Core::Amqp::Models::TerminusExpiryPolicy value)
+  void MessageTarget::SetExpiryPolicy(TerminusExpiryPolicy value)
   {
     terminus_expiry_policy policy;
     switch (value)
     {
-      case Azure::Core::Amqp::Models::TerminusExpiryPolicy::LinkDetach:
+      case TerminusExpiryPolicy::LinkDetach:
         policy = terminus_expiry_policy_link_detach;
         break;
-      case Azure::Core::Amqp::Models::TerminusExpiryPolicy::SessionEnd:
+      case TerminusExpiryPolicy::SessionEnd:
         policy = terminus_expiry_policy_session_end;
         break;
-      case Azure::Core::Amqp::Models::TerminusExpiryPolicy::ConnectionClose:
+      case TerminusExpiryPolicy::ConnectionClose:
         policy = terminus_expiry_policy_connection_close;
         break;
-      case Azure::Core::Amqp::Models::TerminusExpiryPolicy::Never:
+      case TerminusExpiryPolicy::Never:
         policy = terminus_expiry_policy_never;
         break;
       default: // LCOV_EXCL_LINE

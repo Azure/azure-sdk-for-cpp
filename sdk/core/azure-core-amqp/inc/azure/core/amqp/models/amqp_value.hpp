@@ -28,23 +28,24 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TA
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  class MessageProperties;
+  namespace _internal {
 
-  enum class TerminusDurability : std::uint32_t
-  {
-    None = 0,
-    Configuration = 1,
-    UnsettledState = 2
-  };
+    enum class TerminusDurability : std::uint32_t
+    {
+      None = 0,
+      Configuration = 1,
+      UnsettledState = 2
+    };
 
-  // Note : Should be an extendable Enumeration.
-  enum class TerminusExpiryPolicy
-  {
-    LinkDetach,
-    SessionEnd,
-    ConnectionClose,
-    Never
-  };
+    // Note : Should be an extendable Enumeration.
+    enum class TerminusExpiryPolicy
+    {
+      LinkDetach,
+      SessionEnd,
+      ConnectionClose,
+      Never
+    };
+  } // namespace _internal
 
   enum class AmqpValueType
   {

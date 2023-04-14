@@ -9,15 +9,12 @@
 
 struct TARGET_INSTANCE_TAG;
 
-namespace Azure { namespace Core { namespace _internal {
+template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>
+{
+  static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
 
-  template <> struct UniqueHandleHelper<TARGET_INSTANCE_TAG>
-  {
-    static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
-
-    using type = Azure::Core::_internal::BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
-  };
-}}} // namespace Azure::Core::_internal
+  using type = Azure::Core::_internal::BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
+};
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -43,11 +40,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
     void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
 
-    Azure::Core::Amqp::Models::TerminusDurability GetTerminusDurability() const;
-    void SetTerminusDurability(Azure::Core::Amqp::Models::TerminusDurability terminusDurability);
+    TerminusDurability GetTerminusDurability() const;
+    void SetTerminusDurability(TerminusDurability terminusDurability);
 
-    Azure::Core::Amqp::Models::TerminusExpiryPolicy GetExpiryPolicy() const;
-    void SetExpiryPolicy(Azure::Core::Amqp::Models::TerminusExpiryPolicy expiryPolicy);
+    TerminusExpiryPolicy GetExpiryPolicy() const;
+    void SetExpiryPolicy(TerminusExpiryPolicy expiryPolicy);
 
     std::chrono::system_clock::time_point GetTimeout() const;
     void SetTimeout(std::chrono::system_clock::time_point const& timeout);
