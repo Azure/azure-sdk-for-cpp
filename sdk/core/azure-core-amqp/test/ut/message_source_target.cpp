@@ -37,11 +37,13 @@ TEST_F(TestSourceTarget, SimpleSourceTarget)
 
   {
     EXPECT_ANY_THROW(MessageSource source(AmqpValue{}));
-    EXPECT_ANY_THROW(MessageSource source(AmqpValue::CreateArray()));
+    AmqpValue val = AmqpArray();
+    EXPECT_ANY_THROW(MessageSource source{val});
   }
   {
     EXPECT_ANY_THROW(MessageTarget target(AmqpValue{}));
-    EXPECT_ANY_THROW(MessageTarget target(AmqpValue::CreateArray()));
+    AmqpValue val = AmqpArray();
+    EXPECT_ANY_THROW(MessageTarget target(val));
   }
 }
 
@@ -76,10 +78,10 @@ TEST_F(TestSourceTarget, TargetProperties)
     target.SetAddress("Address");
     EXPECT_EQ(AmqpValue("Address"), target.GetAddress());
 
-    target.SetCapabilities(AmqpValue::CreateSymbol("Test"));
-    EXPECT_EQ(target.GetCapabilities().GetType(), AmqpValueType::Array);
-    EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities().GetArrayItem(0).GetType());
-    EXPECT_EQ("Test", target.GetCapabilities().GetArrayItem(0).GetSymbol());
+    target.SetCapabilities(AmqpSymbol{"Test"});
+    EXPECT_EQ(1, target.GetCapabilities().size());
+    EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities().at(0).GetType());
+    EXPECT_EQ(target.GetCapabilities()[0].AsSymbol(), "Test");
 
     target.SetTerminusDurability(TerminusDurability::None);
     EXPECT_EQ(TerminusDurability::None, target.GetTerminusDurability());
@@ -115,11 +117,13 @@ TEST_F(TestSourceTarget, TargetProperties)
 
     target.SetDynamicNodeProperties("Dynamic properties");
     EXPECT_ANY_THROW(target.GetDynamicNodeProperties());
-    auto dynamicMap = AmqpValue::CreateMap();
-    dynamicMap.SetMapValue("Key", 23);
+    AmqpMap dynamicMap;
+    dynamicMap["Key"] = 23;
     target.SetDynamicNodeProperties(dynamicMap);
+
+    AmqpMap map2{target.GetDynamicNodeProperties().AsMap()};
     EXPECT_EQ(target.GetDynamicNodeProperties().GetType(), AmqpValueType::Map);
-    EXPECT_EQ(target.GetDynamicNodeProperties().GetMapValue("Key"), AmqpValue(23));
+    EXPECT_EQ(dynamicMap["Key"], AmqpValue(23));
 
     GTEST_LOG_(INFO) << "Target: " << target;
   }
@@ -157,10 +161,10 @@ TEST_F(TestSourceTarget, SourceProperties)
     source.SetAddress("Address");
     EXPECT_EQ(AmqpValue("Address"), source.GetAddress());
 
-    source.SetCapabilities(AmqpValue::CreateSymbol("Test"));
-    EXPECT_EQ(source.GetCapabilities().GetType(), AmqpValueType::Array);
-    EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities().GetArrayItem(0).GetType());
-    EXPECT_EQ("Test", source.GetCapabilities().GetArrayItem(0).GetSymbol());
+    source.SetCapabilities(AmqpSymbol{"Test"});
+    EXPECT_EQ(1, source.GetCapabilities().size());
+    EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities()[0].GetType());
+    EXPECT_EQ(source.GetCapabilities()[0].AsSymbol(), "Test");
 
     source.SetTerminusDurability(TerminusDurability::None);
     EXPECT_EQ(TerminusDurability::None, source.GetTerminusDurability());
@@ -194,33 +198,29 @@ TEST_F(TestSourceTarget, SourceProperties)
     source.SetDynamic(false);
     EXPECT_EQ(false, source.GetDynamic());
 
-    source.SetDynamicNodeProperties("Dynamic properties");
-    EXPECT_ANY_THROW(source.GetDynamicNodeProperties());
-    auto dynamicMap = AmqpValue::CreateMap();
-    dynamicMap.SetMapValue("Key", 23);
+    AmqpMap dynamicMap;
+    dynamicMap["Key"] = 23;
     source.SetDynamicNodeProperties(dynamicMap);
-    EXPECT_EQ(source.GetDynamicNodeProperties().GetType(), AmqpValueType::Map);
-    EXPECT_EQ(source.GetDynamicNodeProperties().GetMapValue("Key"), AmqpValue(23));
+
+    auto map2(source.GetDynamicNodeProperties());
+    EXPECT_EQ(map2["Key"], AmqpValue(23));
 
     source.SetDistributionMode("A different mode");
     EXPECT_EQ("A different mode", source.GetDistributionMode());
 
     // A filter set is a map.
-    source.SetFilter("Dynamic properties");
-    EXPECT_ANY_THROW(source.GetFilter());
-    auto filterMap = AmqpValue::CreateMap();
-    filterMap.SetMapValue("Key", 23);
+    AmqpMap filterMap;
+    filterMap["Key"] = 23;
     source.SetFilter(filterMap);
-    EXPECT_EQ(source.GetFilter().GetType(), AmqpValueType::Map);
-    EXPECT_EQ(source.GetFilter().GetMapValue("Key"), AmqpValue(23));
+    EXPECT_EQ(source.GetFilter()["Key"], AmqpValue(23));
 
     source.SetDefaultOutcome("Default outcome");
     EXPECT_EQ(source.GetDefaultOutcome(), "Default outcome");
 
-    source.SetOutcomes(AmqpValue::CreateSymbol("Test"));
-    EXPECT_EQ(source.GetOutcomes().GetType(), AmqpValueType::Array);
-    EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().GetArrayItem(0).GetType());
-    EXPECT_EQ("Test", source.GetOutcomes().GetArrayItem(0).GetSymbol());
+    source.SetOutcomes(AmqpSymbol("Test"));
+    EXPECT_EQ(1, source.GetOutcomes().size());
+    EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());
+    EXPECT_EQ(source.GetOutcomes().at(0).AsSymbol(), "Test");
 
     GTEST_LOG_(INFO) << "Source: " << source;
   }

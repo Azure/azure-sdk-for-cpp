@@ -3,49 +3,72 @@
 
 #pragma once
 
+#include <azure/core/internal/unique_handle.hpp>
+#include <azure/core/nullable.hpp>
 #include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <stdexcept>
 
 struct HEADER_INSTANCE_TAG;
+
+template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>
+{
+  static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
+};
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  class Header {
-    HEADER_INSTANCE_TAG* m_header;
+  using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
 
+  class MessageHeader final {
   public:
     // uAMQP integration functions.
-    Header(HEADER_INSTANCE_TAG* header) : m_header(header) {}
-    operator HEADER_INSTANCE_TAG*() const { return m_header; }
+    MessageHeader(HEADER_INSTANCE_TAG* header);
+    operator UniqueMessageHeaderHandle() const;
 
   public:
-    Header();
-    operator bool() const { return m_header != nullptr; }
+    MessageHeader() = default;
+    ~MessageHeader() = default;
 
-    virtual ~Header();
+    /** @brief True if the message is considered "durable"
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    bool Durable{false};
 
-    bool IsDurable() const;
-    void IsDurable(bool durable);
+    /** @brief Priority of the message.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    std::uint8_t Priority{4}; // Default priority is 4.
 
-    uint8_t Priority() const;
-    void SetPriority(uint8_t priority);
+    /** @brief If present, defines the time to live for the message.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    Azure::Nullable<std::chrono::milliseconds> TimeToLive;
 
-    std::chrono::milliseconds GetTimeToLive() const;
-    void SetTimeToLive(std::chrono::milliseconds timeToLive);
+    /** @brief If true, the message has not been acquired by any other link.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
+    bool IsFirstAcquirer{false};
 
-    bool IsFirstAcquirer() const;
-    void SetFirstAcquirer(bool value);
+    /** @brief The number of unsuccessful previous attempts to deliver this message.
+     *
+     * @remarks For more information, see [AMQP
+     * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
+     */
 
-    uint32_t GetDeliveryCount() const;
-    void SetDeliveryCount(uint32_t value);
-
-    bool operator==(Header const& that) const
-    {
-      return (this->IsDurable() == that.IsDurable())
-          && (this->GetDeliveryCount() == that.GetDeliveryCount())
-          && (this->GetTimeToLive() == that.GetTimeToLive())
-          && (this->IsFirstAcquirer() == that.IsFirstAcquirer());
-    }
-    friend std::ostream& operator<<(std::ostream&, Header const&);
+    std::uint32_t DeliveryCount{0};
   };
+  std::ostream& operator<<(std::ostream&, MessageHeader const&);
 }}}} // namespace Azure::Core::Amqp::Models

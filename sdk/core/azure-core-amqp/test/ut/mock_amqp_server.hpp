@@ -190,7 +190,7 @@ private:
   std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> m_messageReceiver;
 
   std::thread m_serverThread;
-  uint16_t m_testPort;
+  std::uint16_t m_testPort;
   bool m_forceCbsError{false};
 
 protected:
@@ -199,19 +199,12 @@ protected:
 
   bool IsCbsMessage(Azure::Core::Amqp::Models::Message const& message)
   {
-    auto applicationProperties = message.GetApplicationProperties();
-    if (applicationProperties.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Described)
+    if (!message.ApplicationProperties.empty())
     {
-      auto descriptor = applicationProperties.GetDescriptor();
-      auto value = applicationProperties.GetDescribedValue();
-      if (static_cast<uint64_t>(descriptor) != 116)
-      {
-        return false;
-      }
+      auto operation = message.ApplicationProperties.at("operation");
+      auto type = message.ApplicationProperties.at("type");
+      auto name = message.ApplicationProperties.at("name");
 
-      auto operation = value.GetMapValue("operation");
-      auto type = value.GetMapValue("type");
-      auto name = value.GetMapValue("name");
       // If we're processing a put-token message, then we should get a "type" and "name"
       // value.
       EXPECT_EQ(operation.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
@@ -229,12 +222,9 @@ protected:
 
   void ProcessCbsMessage(Azure::Core::Amqp::Models::Message const& message)
   {
-    auto applicationProperties = message.GetApplicationProperties();
-    auto value = applicationProperties.GetDescribedValue();
-
-    auto operation = value.GetMapValue("operation");
-    auto type = value.GetMapValue("type");
-    auto name = value.GetMapValue("name");
+    auto operation = message.ApplicationProperties.at("operation");
+    auto type = message.ApplicationProperties.at("type");
+    auto name = message.ApplicationProperties.at("name");
     // If we're processing a put-token message, then we should get a "type" and "name"
     // value.
     EXPECT_EQ(operation.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
@@ -243,47 +233,41 @@ protected:
       EXPECT_EQ(type.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
       EXPECT_EQ(name.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
       // The body of a put-token operation MUST be an AMQP AmqpValue.
-      EXPECT_EQ(message.GetBodyType(), Azure::Core::Amqp::Models::MessageBodyType::Value);
+      EXPECT_EQ(message.BodyType, Azure::Core::Amqp::Models::MessageBodyType::Value);
 
       // Respond to the operation.
       Azure::Core::Amqp::Models::Message response;
-      Azure::Core::Amqp::Models::Properties responseProperties;
+      Azure::Core::Amqp::Models::MessageProperties responseProperties;
 
       // Management specification section 3.2: The correlation-id of the response message
       // MUST be the correlation-id from the request message (if present), else the
       // message-id from the request message.
-      auto requestCorrelationId = message.GetProperties().GetCorrelationId();
-      if (requestCorrelationId.IsNull())
+      auto requestCorrelationId = message.Properties.CorrelationId;
+      if (!message.Properties.CorrelationId.HasValue())
       {
-        requestCorrelationId = message.GetProperties().GetMessageId();
+        requestCorrelationId = message.Properties.MessageId.Value();
       }
-      responseProperties.SetCorrelationId(requestCorrelationId);
-      response.SetProperties(responseProperties);
+      response.Properties.CorrelationId = requestCorrelationId;
 
       // Populate the response application properties.
 
-      auto propertyMap = Azure::Core::Amqp::Models::AmqpValue::CreateMap();
       if (m_forceCbsError)
       {
-        propertyMap.SetMapValue("status-code", 500);
-        propertyMap.SetMapValue("status-description", "Internal Server Error");
+        response.ApplicationProperties["status-code"] = 500;
+        response.ApplicationProperties["status-description"] = "Internal Server Error";
       }
       else
       {
-        propertyMap.SetMapValue("status-code", 200);
-        propertyMap.SetMapValue("status-description", "OK-put");
+        response.ApplicationProperties["status-code"] = 200;
+        response.ApplicationProperties["status-description"] = "OK-put";
       }
-
-      // Create a descriptor to hold the property map and set it as the response's
-      // application properties.
-      response.SetApplicationProperties(propertyMap);
 
       // Set the response body type to an empty AMQP value.
       if (m_listenerContext.IsCancelled())
       {
         return;
       }
-      response.SetBodyAmqpValue(Azure::Core::Amqp::Models::AmqpValue());
+      response.SetBody(Azure::Core::Amqp::Models::AmqpValue());
       try
       {
         m_cbsMessageSender->SendAsync(response, nullptr, m_listenerContext);
@@ -297,33 +281,27 @@ protected:
     else if (static_cast<std::string>(operation) == "delete-token")
     {
       Azure::Core::Amqp::Models::Message response;
-      Azure::Core::Amqp::Models::Properties responseProperties;
+      Azure::Core::Amqp::Models::MessageProperties responseProperties;
 
       // Management specification section 3.2: The correlation-id of the response message
       // MUST be the correlation-id from the request message (if present), else the
       // message-id from the request message.
-      auto requestCorrelationId = message.GetProperties().GetCorrelationId();
-      if (requestCorrelationId.IsNull())
+      auto requestCorrelationId = message.Properties.CorrelationId;
+      if (!message.Properties.CorrelationId.HasValue())
       {
-        requestCorrelationId = message.GetProperties().GetMessageId();
+        requestCorrelationId = message.Properties.MessageId;
       }
-      responseProperties.SetCorrelationId(requestCorrelationId);
-      response.SetProperties(responseProperties);
+      response.Properties.CorrelationId = requestCorrelationId;
+      response.ApplicationProperties["status-code"] = 200;
+      response.ApplicationProperties["status-description"] = "OK-delete";
 
-      auto propertyMap = Azure::Core::Amqp::Models::AmqpValue::CreateMap();
-      propertyMap.SetMapValue("status-code", 200);
-      propertyMap.SetMapValue("status-description", "OK-delete");
-
-      // Create a descriptor to hold the property map and set it as the response's
-      // application properties.
-      response.SetApplicationProperties(propertyMap);
       // Set the response body type to an empty AMQP value.
       if (m_listenerContext.IsCancelled())
       {
         return;
       }
 
-      response.SetBodyAmqpValue(Azure::Core::Amqp::Models::AmqpValue());
+      response.SetBody(Azure::Core::Amqp::Models::AmqpValue());
 
       m_cbsMessageSender->SendAsync(response, nullptr, m_listenerContext);
     }
@@ -449,7 +427,7 @@ protected:
                      << " New state: " << ReceiverStateToString(newState);
   }
   Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-      Azure::Core::Amqp::Models::Message message) override
+      Azure::Core::Amqp::Models::Message const& message) override
   {
     GTEST_LOG_(INFO) << "Received a message " << message;
     if (IsCbsMessage(message))

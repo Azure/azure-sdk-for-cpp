@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Amqp {
           MessageReceiverState oldState)
           = 0;
       virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-          Azure::Core::Amqp::Models::Message message)
+          Azure::Core::Amqp::Models::Message const& message)
           = 0;
     };
 

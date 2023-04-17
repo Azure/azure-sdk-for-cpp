@@ -8,12 +8,20 @@
 #include "amqp_value.hpp"
 
 struct SOURCE_INSTANCE_TAG;
+
+template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>
+{
+  static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
+};
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  class MessageSource {
+  class MessageSource final {
   public:
     MessageSource();
-    ~MessageSource();
+    ~MessageSource() = default;
 
     MessageSource(MessageSource const&);
     MessageSource& operator=(MessageSource const&);
@@ -27,17 +35,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessageSource(std::string const& value);
     MessageSource(char const* value);
 
-    operator SOURCE_INSTANCE_TAG*() const { return m_source; }
+    operator SOURCE_INSTANCE_TAG*() const { return m_source.get(); }
     operator const Azure::Core::Amqp::Models::AmqpValue() const;
 
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
     void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
 
-    Azure::Core::Amqp::Models::TerminusDurability GetTerminusDurability() const;
-    void SetTerminusDurability(Azure::Core::Amqp::Models::TerminusDurability terminusDurability);
+    TerminusDurability GetTerminusDurability() const;
+    void SetTerminusDurability(TerminusDurability terminusDurability);
 
-    Azure::Core::Amqp::Models::TerminusExpiryPolicy GetExpiryPolicy() const;
-    void SetExpiryPolicy(Azure::Core::Amqp::Models::TerminusExpiryPolicy expiryPolicy);
+    TerminusExpiryPolicy GetExpiryPolicy() const;
+    void SetExpiryPolicy(TerminusExpiryPolicy expiryPolicy);
 
     std::chrono::system_clock::time_point GetTimeout() const;
     void SetTimeout(std::chrono::system_clock::time_point const& timeout);
@@ -45,28 +53,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     bool GetDynamic() const;
     void SetDynamic(bool dynamic);
 
-    Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(
-        Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
+    Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
+    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpMap const& dynamicNodeProperties);
 
     std::string GetDistributionMode() const;
     void SetDistributionMode(std::string const& distributionMode);
 
-    Azure::Core::Amqp::Models::AmqpValue GetFilter() const;
-    void SetFilter(Azure::Core::Amqp::Models::AmqpValue const& filter);
+    Azure::Core::Amqp::Models::AmqpMap GetFilter() const;
+    void SetFilter(Azure::Core::Amqp::Models::AmqpMap const& filter);
 
     Azure::Core::Amqp::Models::AmqpValue GetDefaultOutcome() const;
     void SetDefaultOutcome(Azure::Core::Amqp::Models::AmqpValue const& defaultOutcome);
 
-    Azure::Core::Amqp::Models::AmqpValue GetOutcomes() const;
+    Azure::Core::Amqp::Models::AmqpArray GetOutcomes() const;
     void SetOutcomes(Azure::Core::Amqp::Models::AmqpValue const& outcomes);
+    void SetOutcomes(Azure::Core::Amqp::Models::AmqpArray const& outcomes);
 
-    Azure::Core::Amqp::Models::AmqpValue GetCapabilities() const;
+    Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
     void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
-
-    friend std::ostream& operator<<(std::ostream&, MessageSource const&);
+    void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
 
   private:
-    SOURCE_INSTANCE_TAG* m_source;
+    Azure::Core::_internal::UniqueHandle<SOURCE_INSTANCE_TAG> m_source;
   };
+  std::ostream& operator<<(std::ostream&, MessageSource const&);
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

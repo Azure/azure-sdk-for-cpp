@@ -26,125 +26,129 @@ TEST_F(TestMessage, SimpleCreate)
     Message message4;
     message4 = message2;
     GTEST_LOG_(INFO) << message4;
-    Message message5 = std::move(message4);
+    Message message5 = std::move(message3);
     GTEST_LOG_(INFO) << message5;
-    EXPECT_FALSE(message4);
   }
 
   {
     Message message;
 
-    EXPECT_EQ(
-        message.GetApplicationProperties().GetType(),
-        Azure::Core::Amqp::Models::AmqpValueType::Null);
-    EXPECT_ANY_THROW(message.GetBodyAmqpDataCount());
-    EXPECT_ANY_THROW(message.GetBodyAmqpSequence(0));
-    EXPECT_ANY_THROW(message.GetBodyAmqpSequenceCount());
-
-    EXPECT_EQ(MessageBodyType::None, message.GetBodyType());
-    EXPECT_EQ(
-        Azure::Core::Amqp::Models::AmqpValueType::Null, message.GetDeliveryAnnotations().GetType());
-    EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValueType::Null, message.GetFooter().GetType());
-    EXPECT_EQ(0, message.GetFormat());
-    EXPECT_FALSE(message.GetHeader());
-    EXPECT_EQ(
-        Azure::Core::Amqp::Models::AmqpValueType::Null, message.GetMessageAnnotations().GetType());
-    EXPECT_FALSE(message.GetProperties());
+    EXPECT_TRUE(message.ApplicationProperties.empty());
+    // By default, the body type is None, so retrieving the body as any other type should throw.
+    EXPECT_EQ(MessageBodyType::None, message.BodyType);
+    EXPECT_ANY_THROW(message.GetBodyAsAmqpList());
+    EXPECT_ANY_THROW(message.GetBodyAsAmqpValue());
+    EXPECT_ANY_THROW(message.GetBodyAsBinary());
   }
 }
 
 TEST_F(TestMessage, TestApplicationProperties)
 {
   Message message;
-  Properties properties;
-  properties.SetSubject("Message subject.");
-  message.SetApplicationProperties(AmqpValue::CreateProperties(properties));
 
-  auto propertiesAsValue{message.GetApplicationProperties()};
-  //  EXPECT_TRUE(propertiesAsValue.IsPropertiesTypeByDescriptor());
-  auto newProperties{propertiesAsValue.GetPropertiesFromValue()};
+  // Ensure that ApplicationProperties values round-trip through uAMQP value serialization.
+  message.ApplicationProperties["Blah"] = 19532;
 
-  EXPECT_EQ(newProperties.GetSubject(), properties.GetSubject());
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+
+  EXPECT_EQ(message2.ApplicationProperties["Blah"], AmqpValue(19532));
 
   GTEST_LOG_(INFO) << message;
 }
 
-TEST_F(TestMessage, TestBodyAmqpValue) {}
-
 TEST_F(TestMessage, TestDeliveryAnnotations)
 {
   Message message;
-  message.SetDeliveryAnnotations("12345");
-  EXPECT_EQ(message.GetDeliveryAnnotations(), "12345");
+  message.DeliveryAnnotations["12345"] = 19532;
+
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+  EXPECT_EQ(AmqpValue{19532}, message2.DeliveryAnnotations["12345"]);
   GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestAnnotations)
 {
   Message message;
-  message.SetMessageAnnotations("12345");
-  EXPECT_EQ(message.GetMessageAnnotations(), "12345");
+  message.MessageAnnotations["12345"] = 19532;
+
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+  EXPECT_EQ(AmqpValue{19532}, message2.MessageAnnotations["12345"]);
   GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestFooter)
 {
   Message message;
-  message.SetFooter(32.7);
-  EXPECT_EQ(static_cast<double>(message.GetFooter()), 32.7);
+  message.Footer["12345"] = 37.2;
+
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+  EXPECT_EQ(AmqpValue{37.2}, message2.Footer["12345"]);
+
   GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestHeader)
 {
   Message message;
-  message.SetHeader(Header());
-  EXPECT_EQ(message.GetHeader().GetDeliveryCount(), 0);
-  GTEST_LOG_(INFO) << message;
-}
+  message.Header.DeliveryCount = 1;
 
-TEST_F(TestMessage, TestMessageAnnotations)
-{
-  Message message;
-  message.SetMessageAnnotations("12345");
-  EXPECT_EQ(message.GetMessageAnnotations(), "12345");
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+
+  // Ensure that message values survive across round-trips through MESSAGE.
+  EXPECT_EQ(message2.Header.DeliveryCount, 1);
   GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestProperties)
 {
   Message message;
-  Properties properties;
-  properties.SetSubject("Message subject.");
-  message.SetProperties(properties);
+  MessageProperties properties;
+  properties.Subject = "Message subject.";
+  message.Properties = properties;
 
-  auto newProperties{message.GetProperties()};
-  EXPECT_EQ(newProperties.GetSubject(), properties.GetSubject());
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+
+  auto newProperties{message2.Properties};
+  EXPECT_EQ(newProperties.Subject.Value(), properties.Subject.Value());
   GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestFormat)
 {
   Message message;
-  message.SetFormat(12345);
-  EXPECT_EQ(message.GetFormat(), 12345);
+  message.MessageFormat = 12345;
+
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+
+  EXPECT_EQ(message2.MessageFormat.Value(), 12345);
   GTEST_LOG_(INFO) << message;
 }
 
 TEST_F(TestMessage, TestBodyAmqpSequence)
 {
   Message message;
-  EXPECT_ANY_THROW(message.GetBodyAmqpSequence(0));
 
-  message.AddBodyAmqpSequence("Test");
-  message.AddBodyAmqpSequence(static_cast<uint32_t>(95));
-  message.AddBodyAmqpSequence(AmqpValue::CreateProperties(Properties()));
+  message.SetBody({"Test", 95, AmqpMap{{3, 5}, {4, 9}}});
 
-  EXPECT_EQ(3, message.GetBodyAmqpSequenceCount());
-  EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAmqpSequence(0)));
-  EXPECT_EQ(95, static_cast<uint32_t>(message.GetBodyAmqpSequence(1)));
+  EXPECT_EQ(3, message.GetBodyAsAmqpList().size());
+  EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList().at(0)));
+  EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList().at(1)));
+  EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
 
-  EXPECT_EQ(message.GetBodyType(), MessageBodyType::Sequence);
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+  EXPECT_EQ(3, message2.GetBodyAsAmqpList().size());
+  EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList().at(0)));
+  EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList().at(1)));
+  EXPECT_EQ(message2.BodyType, MessageBodyType::Sequence);
+
   GTEST_LOG_(INFO) << message;
 }
 
@@ -152,13 +156,24 @@ TEST_F(TestMessage, TestBodyAmqpData)
 {
   Message message;
   uint8_t testBody[] = "Test body";
-  message.AddBodyAmqpData(BinaryData{testBody, sizeof(testBody)});
-  EXPECT_EQ(message.GetBodyAmqpDataCount(), 1);
+  message.SetBody(AmqpBinaryData{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0});
+  EXPECT_EQ(message.GetBodyAsBinary().size(), 1);
 
-  auto body = message.GetBodyAmqpData(0);
-  EXPECT_EQ(body.length, sizeof(testBody));
-  EXPECT_EQ(memcmp(body.bytes, testBody, sizeof(testBody)), 0);
+  auto body = message.GetBodyAsBinary()[0];
+  EXPECT_EQ(body.size(), sizeof(testBody));
+  EXPECT_EQ(memcmp(body.data(), testBody, sizeof(testBody)), 0);
 
-  EXPECT_EQ(message.GetBodyType(), MessageBodyType::Data);
+  EXPECT_EQ(message.BodyType, MessageBodyType::Data);
+
+  auto messageInstance = static_cast<UniqueMessageHandle>(message);
+  Message message2(messageInstance.get());
+  EXPECT_EQ(message2.GetBodyAsBinary().size(), 1);
+
+  auto body2 = message2.GetBodyAsBinary()[0];
+  EXPECT_EQ(body2.size(), sizeof(testBody));
+  EXPECT_EQ(memcmp(body2.data(), testBody, sizeof(testBody)), 0);
+
+  EXPECT_EQ(message2.BodyType, MessageBodyType::Data);
+
   GTEST_LOG_(INFO) << message;
 }

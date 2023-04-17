@@ -4,68 +4,48 @@
 #pragma once
 
 #include "amqp_value.hpp"
+#include <azure/core/nullable.hpp>
 #include <chrono>
+#include <vector>
 
 struct PROPERTIES_INSTANCE_TAG;
 
+template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>
+{
+  static void FreeAmqpProperties(PROPERTIES_INSTANCE_TAG* obj);
+
+  using type
+      = Azure::Core::_internal::BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
+};
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  class Properties {
+  using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
 
-  private:
-    PROPERTIES_INSTANCE_TAG* m_properties{};
-
-    // uAMQP interop functions.
+  class MessageProperties final {
   public:
-    Properties(PROPERTIES_INSTANCE_TAG* properties) : m_properties(properties) {}
-    operator PROPERTIES_INSTANCE_TAG*() const { return m_properties; }
+    MessageProperties() = default;
+    ~MessageProperties() = default;
 
+    Azure::Nullable<AmqpValue> MessageId;
+    Azure::Nullable<AmqpValue> CorrelationId;
+    Azure::Nullable<std::vector<uint8_t>> UserId;
+    Azure::Nullable<AmqpValue> To;
+    Azure::Nullable<std::string> Subject;
+    Azure::Nullable<AmqpValue> ReplyTo;
+    Azure::Nullable<std::string> ContentType;
+    Azure::Nullable<std::string> ContentEncoding;
+    Azure::Nullable<std::chrono::system_clock::time_point> AbsoluteExpiryTime;
+    Azure::Nullable<std::chrono::system_clock::time_point> CreationTime;
+    Azure::Nullable<std::string> GroupId;
+    Azure::Nullable<uint32_t> GroupSequence;
+    Azure::Nullable<std::string> ReplyToGroupId;
+
+    // uAMQP interop functions. Do not use outside the AMQP implementation.
   public:
-    Properties();
-    operator bool() const { return m_properties != nullptr; }
-
-    ~Properties();
-
-    AmqpValue GetMessageId() const;
-    void SetMessageId(AmqpValue const& messageId);
-
-    AmqpValue GetCorrelationId() const;
-    void SetCorrelationId(AmqpValue const& correlationId);
-
-    BinaryData GetUserId() const;
-    void SetUserId(BinaryData const& userId);
-
-    AmqpValue GetTo() const;
-    void SetTo(AmqpValue replyTo);
-
-    std::string GetSubject() const;
-    void SetSubject(std::string const& replyTo);
-
-    AmqpValue GetReplyTo() const;
-    void SetReplyTo(AmqpValue replyTo);
-
-    std::string GetContentType() const;
-    void SetContentType(std::string const& contentType);
-
-    std::string GetContentEncoding() const;
-    void SetContentEncoding(std::string const& contentEncoding);
-
-    std::chrono::system_clock::time_point GetAbsoluteExpiryTime() const;
-    void SetAbsoluteExpiryTime(std::chrono::system_clock::time_point const& absoluteExpiryTime);
-
-    std::chrono::system_clock::time_point GetCreationTime() const;
-    void SetCreationTime(std::chrono::system_clock::time_point const& creationTime);
-
-    std::string GetGroupId() const;
-    void SetGroupId(std::string const& groupId);
-
-    uint32_t GetGroupSequence() const;
-    void SetGroupSequence(uint32_t groupSequence);
-
-    std::string GetReplyToGroupId() const;
-    void SetReplyToGroupId(std::string const& replyToGroupId);
-
-    friend std::ostream& operator<<(std::ostream&, Properties const&);
+    MessageProperties(PROPERTIES_INSTANCE_TAG* properties);
+    operator UniquePropertiesHandle() const;
   };
+  std::ostream& operator<<(std::ostream&, MessageProperties const&);
 
 }}}} // namespace Azure::Core::Amqp::Models

@@ -7,281 +7,367 @@
 #include <azure_uamqp_c/message.h>
 #include <iostream>
 
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
+  {
+    message_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  Message::Message() : m_message(message_create())
-  {
-    if (!m_message)
-    {
-      throw std::runtime_error("Could not create message.");
-    }
-  }
+  namespace {
 
-  Message::Message(MESSAGE_HANDLE message) : m_message(message_clone(message)) {}
+    Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG> GetHeaderFromMessage(
+        MESSAGE_HANDLE message)
+    {
+      {
+        HEADER_HANDLE headerValue;
+        if (!message_get_header(message, &headerValue))
+        {
+          return Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>(headerValue);
+        }
+      }
+      return nullptr;
+    }
+    Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG> GetPropertiesFromMessage(
+        MESSAGE_HANDLE message)
+    {
+      PROPERTIES_HANDLE propertiesValue;
+      if (!message_get_properties(message, &propertiesValue))
+      {
+        return Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>(propertiesValue);
+      }
+      return nullptr;
+    }
+  } // namespace
 
-  Message::~Message()
-  {
-    if (m_message)
-    {
-      message_destroy(m_message);
-      m_message = nullptr;
-    }
-  }
+  // AMQP ApplicationProperties descriptor (AMQP Specification 1.0 section 3.2.5)
+  // http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties
+  //
+  // ApplicationProperties are defined as being a map from string to simple AMQP value types.
+  constexpr uint64_t AmqpApplicationPropertiesDescriptor = 116;
 
-  Message::Message(Message const& that) : m_message{nullptr}
+  Message::Message(MESSAGE_HANDLE message)
+      : Header{GetHeaderFromMessage(message).get()}, Properties{
+                                                         GetPropertiesFromMessage(message).get()}
   {
-    if (that.m_message)
-    {
-      m_message = message_clone(that.m_message);
-    }
-  }
+    uint32_t uint32Value;
 
-  Message& Message::operator=(Message const& that)
-  {
-    if (that.m_message)
+    // Copy the Message Format from the source message. It will eventually be transferred to the
+    // Transfer performative when the message is sent.
+    if (!message_get_message_format(message, &uint32Value))
     {
-      m_message = message_clone(that.m_message);
-    }
-    return *this;
-  }
-
-  Message::Message(Message&& that) noexcept : m_message{that.m_message}
-  {
-    that.m_message = nullptr;
-  }
-  Message& Message::operator=(Message&& that) noexcept
-  {
-    m_message = that.m_message;
-    that.m_message = nullptr;
-    return *this;
-  }
-
-  void Message::SetHeader(Header const& header)
-  {
-    if (message_set_header(m_message, header))
-    {
-      throw std::runtime_error("Could not set message header"); // LCOV_EXCL_LINE
-    }
-  }
-  Header const Message::GetHeader() const
-  {
-    HEADER_HANDLE header;
-    if (message_get_header(m_message, &header))
-    {
-      throw std::runtime_error("Could not set message header"); // LCOV_EXCL_LINE
-    }
-    return header;
-  }
-  void Message::SetFooter(AmqpValue const& header)
-  {
-    if (message_set_footer(m_message, header))
-    {
-      throw std::runtime_error("Could not set footer"); // LCOV_EXCL_LINE
-    }
-  }
-
-  AmqpValue const Message::GetFooter() const
-  {
-    annotations footer;
-    if (message_get_footer(m_message, &footer))
-    {
-      throw std::runtime_error("Could not get footer"); // LCOV_EXCL_LINE
-    }
-    return footer;
-  }
-
-  void Message::SetDeliveryAnnotations(AmqpValue const& annotations)
-  {
-    if (message_set_delivery_annotations(m_message, annotations))
-    {
-      throw std::runtime_error("Could not set delivery annotations"); // LCOV_EXCL_LINE
-    }
-  }
-  AmqpValue const Message::GetDeliveryAnnotations() const
-  {
-    annotations value;
-    if (message_get_delivery_annotations(m_message, &value))
-    {
-      throw std::runtime_error("Could not get delivery annotations"); // LCOV_EXCL_LINE
-    }
-    return value;
-  }
-  void Message::SetFormat(uint32_t messageFormat)
-  {
-    if (message_set_message_format(m_message, messageFormat))
-    {
-      throw std::runtime_error("Could not set message format"); // LCOV_EXCL_LINE
-    }
-  }
-  uint32_t Message::GetFormat() const
-  {
-    uint32_t format;
-    if (message_get_message_format(m_message, &format))
-    {
-      throw std::runtime_error("Could not get message format"); // LCOV_EXCL_LINE
-    }
-    return format;
-  }
-  void Message::SetMessageAnnotations(AmqpValue const& annotations)
-  {
-    if (message_set_message_annotations(m_message, annotations))
-    {
-      throw std::runtime_error("Could not set message annotations"); // LCOV_EXCL_LINE
-    }
-  }
-  AmqpValue const Message::GetMessageAnnotations() const
-  {
-    message_annotations annotations;
-    if (message_get_message_annotations(m_message, &annotations))
-    {
-      throw std::runtime_error("Could not get message annotations"); // LCOV_EXCL_LINE
+      MessageFormat = uint32Value;
     }
 
-    return annotations;
-  }
-  void Message::SetProperties(Properties const& properties)
-  {
-    if (message_set_properties(m_message, properties))
     {
-      throw std::runtime_error("Could not set properties"); // LCOV_EXCL_LINE
+      AMQP_VALUE annotationsVal;
+      // message_get_delivery_annotations returns a clone of the message annotations.
+      if (!message_get_delivery_annotations(message, &annotationsVal) && annotationsVal != nullptr)
+      {
+        UniqueAmqpValueHandle deliveryAnnotations(annotationsVal);
+        auto deliveryMap = AmqpValue{deliveryAnnotations.get()}.AsMap();
+        DeliveryAnnotations = deliveryMap;
+      }
+    }
+    {
+      // message_get_message_annotations returns a clone of the message annotations.
+      AMQP_VALUE annotationVal;
+      if (!message_get_message_annotations(message, &annotationVal) && annotationVal)
+      {
+        UniqueAmqpValueHandle messageAnnotations(annotationVal);
+        if (messageAnnotations)
+        {
+          auto messageMap = AmqpValue{messageAnnotations.get()}.AsMap();
+          MessageAnnotations = messageMap;
+        }
+      }
+    }
+    {
+      /*
+       * The ApplicationProperties field in an AMQP message for uAMQP expects that the map value
+       * is wrapped as a described value. A described value has a ULONG descriptor value and a
+       * value type.
+       *
+       * Making things even more interesting, the ApplicationProperties field in an uAMQP message
+       * is asymmetric.
+       *
+       * The MessageSender class will wrap ApplicationProperties in a described value, so when
+       * setting application properties, the described value must NOT be present, but when
+       * decoding an application properties, the GetApplicationProperties method has to be able to
+       * handle both when the described value is present or not.
+       */
+      AMQP_VALUE properties;
+      if (!message_get_application_properties(message, &properties) && properties)
+      {
+        UniqueAmqpValueHandle describedProperties(properties);
+        properties = nullptr;
+        if (describedProperties)
+        {
+          AMQP_VALUE value;
+          if (amqpvalue_get_type(describedProperties.get()) == AMQP_TYPE_DESCRIBED)
+          {
+            auto describedType = amqpvalue_get_inplace_descriptor(describedProperties.get());
+            uint64_t describedTypeValue;
+            if (amqpvalue_get_ulong(describedType, &describedTypeValue))
+            {
+              throw std::runtime_error("Could not retrieve application properties described type.");
+            }
+            if (describedTypeValue != AmqpApplicationPropertiesDescriptor)
+            {
+              throw std::runtime_error("Application Properties are not the corect described type.");
+            }
+
+            value = amqpvalue_get_inplace_described_value(describedProperties.get());
+          }
+          else
+          {
+            value = describedProperties.get();
+          }
+          if (amqpvalue_get_type(value) != AMQP_TYPE_MAP)
+          {
+            throw std::runtime_error("Application Properties must be a map?!");
+          }
+          auto appProperties = AmqpMap(value);
+          for (auto const& val : appProperties)
+          {
+            if (val.first.GetType() != AmqpValueType::String)
+            {
+              throw std::runtime_error("Key of Application Properties must be a string.");
+            }
+            ApplicationProperties.emplace(
+                std::make_pair(static_cast<std::string>(val.first), val.second));
+          }
+        }
+      }
+    }
+    {
+      annotations footerVal;
+      if (!message_get_footer(message, &footerVal) && footerVal)
+      {
+        UniqueAmqpValueHandle footerAnnotations(footerVal);
+        footerVal = nullptr;
+        auto footerMap = AmqpValue{footerAnnotations.get()}.AsMap();
+        Footer = footerMap;
+      }
+    }
+    {
+      MESSAGE_BODY_TYPE bodyType;
+
+      if (!message_get_body_type(message, &bodyType))
+      {
+        switch (bodyType)
+        {
+          case MESSAGE_BODY_TYPE_NONE:
+            BodyType = MessageBodyType::None;
+            break;
+          case MESSAGE_BODY_TYPE_DATA: {
+            size_t dataCount;
+            if (!message_get_body_amqp_data_count(message, &dataCount))
+            {
+              for (auto i = 0ul; i < dataCount; i += 1)
+              {
+                BINARY_DATA binaryValue;
+                if (!message_get_body_amqp_data_in_place(message, i, &binaryValue))
+                {
+                  m_binaryDataBody.push_back(AmqpBinaryData(std::vector<std::uint8_t>(
+                      binaryValue.bytes, binaryValue.bytes + binaryValue.length)));
+                }
+              }
+            }
+            BodyType = MessageBodyType::Data;
+          }
+          break;
+          case MESSAGE_BODY_TYPE_SEQUENCE: {
+
+            size_t sequenceCount;
+            if (!message_get_body_amqp_sequence_count(message, &sequenceCount))
+            {
+              for (auto i = 0ul; i < sequenceCount; i += 1)
+              {
+                AMQP_VALUE sequence;
+                if (!message_get_body_amqp_sequence_in_place(message, i, &sequence))
+                {
+                  m_amqpSequenceBody.push_back(sequence);
+                }
+              }
+            }
+            BodyType = MessageBodyType::Sequence;
+          }
+          break;
+          case MESSAGE_BODY_TYPE_VALUE: {
+            AMQP_VALUE bodyValue;
+            if (!message_get_body_amqp_value_in_place(message, &bodyValue))
+            {
+              m_amqpValueBody = bodyValue;
+            }
+            BodyType = MessageBodyType::Value;
+          }
+          break;
+          case MESSAGE_BODY_TYPE_INVALID:
+          default:
+            throw std::runtime_error("Unknown body type.");
+        }
+      }
     }
   }
-  Properties const Message::GetProperties() const
+  Message::operator UniqueMessageHandle() const
   {
-    PROPERTIES_HANDLE properties;
-    if (message_get_properties(m_message, &properties))
+    UniqueMessageHandle rv(message_create());
+
+    if (message_set_header(rv.get(), static_cast<UniqueMessageHeaderHandle>(Header).get()))
     {
-      throw std::runtime_error("Could not get properties"); // LCOV_EXCL_LINE
+      throw std::runtime_error("Could not set message header.");
     }
-    return properties;
-  }
-  void Message::SetApplicationProperties(AmqpValue const& value)
-  {
-    if (message_set_application_properties(m_message, value))
+    if (message_set_properties(rv.get(), static_cast<UniquePropertiesHandle>(Properties).get()))
     {
-      throw std::runtime_error("Could not set application properties.");
+      throw std::runtime_error("Could not set message properties.");
     }
-  }
-  AmqpValue const Message::GetApplicationProperties() const
-  {
-    AMQP_VALUE properties;
-    if (message_get_application_properties(m_message, &properties))
+
+    if (MessageFormat.HasValue())
     {
-      throw std::runtime_error("Could not get application properties");
+      if (message_set_message_format(rv.get(), MessageFormat.Value()))
+      {
+        throw std::runtime_error("Could not set destination message format.");
+      }
     }
-    return properties;
-  }
-  MessageBodyType Message::GetBodyType() const
-  {
-    MESSAGE_BODY_TYPE messageType;
-    if (message_get_body_type(m_message, &messageType))
+    if (!DeliveryAnnotations.empty())
     {
-      throw std::runtime_error("Could not get body type");
+      if (message_set_delivery_annotations(
+              rv.get(), static_cast<UniqueAmqpValueHandle>(DeliveryAnnotations).get()))
+      {
+        throw std::runtime_error("Could not set delivery annotations.");
+      }
     }
-    switch (messageType)
+    if (!MessageAnnotations.empty())
     {
-      case MESSAGE_BODY_TYPE_NONE:
-        return MessageBodyType::None;
-      case MESSAGE_BODY_TYPE_DATA:
-        return MessageBodyType::Data;
+      if (message_set_message_annotations(
+              rv.get(), static_cast<UniqueAmqpValueHandle>(MessageAnnotations).get()))
+      {
+        throw std::runtime_error("Could not set message annotations.");
+      }
+    }
+    if (!ApplicationProperties.empty())
+    {
+      AmqpMap appProperties;
+      for (auto const& val : ApplicationProperties)
+      {
+        if ((val.second.GetType() == AmqpValueType::List)
+            || (val.second.GetType() == AmqpValueType::Map)
+            || (val.second.GetType() == AmqpValueType::Composite)
+            || (val.second.GetType() == AmqpValueType::Described))
+        {
+          throw std::runtime_error(
+              "Message Application Property values must be simple value types");
+        }
+        appProperties.emplace(val);
+      }
+      if (message_set_application_properties(
+              rv.get(), static_cast<UniqueAmqpValueHandle>(appProperties).get()))
+      {
+        throw std::runtime_error("Could not set application properties.");
+      }
+    }
+    if (!Footer.empty())
+    {
+      if (message_set_footer(rv.get(), static_cast<UniqueAmqpValueHandle>(Footer).get()))
+      {
+        throw std::runtime_error("Could not set message annotations.");
+      }
+    }
+    switch (BodyType)
+    {
+      case MessageBodyType::None:
         break;
-      case MESSAGE_BODY_TYPE_SEQUENCE:
-        return MessageBodyType::Sequence;
-      case MESSAGE_BODY_TYPE_VALUE:
-        return MessageBodyType::Value;
-      case MESSAGE_BODY_TYPE_INVALID: // LCOV_EXCL_LINE
-        return MessageBodyType::Invalid; // LCOV_EXCL_LINE
+      case MessageBodyType::Data:
+        for (auto const& binaryVal : m_binaryDataBody)
+        {
+          BINARY_DATA valueData;
+          valueData.bytes = binaryVal.data();
+          valueData.length = static_cast<uint32_t>(binaryVal.size());
+          if (message_add_body_amqp_data(rv.get(), valueData))
+          {
+            throw std::runtime_error("Could not set message body AMQP sequence value.");
+          }
+        }
+        break;
+      case MessageBodyType::Sequence:
+        for (auto const& sequenceVal : m_amqpSequenceBody)
+        {
+          if (message_add_body_amqp_sequence(rv.get(), sequenceVal))
+          {
+            throw std::runtime_error("Could not set message body AMQP sequence value.");
+          }
+        }
+        break;
+      case MessageBodyType::Value:
+        if (message_set_body_amqp_value(rv.get(), m_amqpValueBody))
+        {
+          throw std::runtime_error("Could not set message body AMQP value.");
+        }
+        break;
+      case MessageBodyType::Invalid: // LCOV_EXCL_LINE
+      default: // LCOV_EXCL_LINE
+        throw std::runtime_error("Unknown message body type."); // LCOV_EXCL_LINE
     }
-    return MessageBodyType::None; // LCOV_EXCL_LINE
-  }
-  size_t Message::GetBodyAmqpSequenceCount() const
-  {
-    size_t count;
-    if (message_get_body_amqp_sequence_count(m_message, &count))
-    {
-      throw std::runtime_error("Could not get body sequence count.");
-    }
-    return count;
-  }
-  AmqpValue const Message::GetBodyAmqpSequence(uint32_t index) const
-  {
-    AMQP_VALUE value;
-    if (message_get_body_amqp_sequence_in_place(m_message, index, &value))
-    {
-      throw std::runtime_error("Could not get BodySequence.");
-    }
-    return amqpvalue_clone(value);
-  }
-
-  void Message::AddBodyAmqpSequence(AmqpValue const& value)
-  {
-    if (message_add_body_amqp_sequence(m_message, value))
-    {
-      throw std::runtime_error("Could not Add Body Sequence."); // LCOV_EXCL_LINE
-    }
+    return rv;
   }
 
-  AmqpValue Message::GetBodyAmqpValue() const
+  AmqpList Message::GetBodyAsAmqpList() const
   {
-    AMQP_VALUE value;
-    if (message_get_body_amqp_value_in_place(m_message, &value))
+    if (BodyType != MessageBodyType::Sequence)
     {
-      throw std::runtime_error("Could not get Body AmqpValue."); // LCOV_EXCL_LINE
+      throw std::runtime_error("Invalid body type, should be MessageBodyType::Sequence.");
     }
-    return amqpvalue_clone(value);
+    return m_amqpSequenceBody;
   }
 
-  void Message::AddBodyAmqpData(BinaryData binaryData)
+  void Message::SetBody(AmqpBinaryData const& value)
   {
-    BINARY_DATA amqpData;
-    amqpData.bytes = binaryData.bytes;
-    amqpData.length = binaryData.length;
-    if (message_add_body_amqp_data(m_message, amqpData))
-    {
-      throw std::runtime_error("Could not Add Body Data."); // LCOV_EXCL_LINE
-    }
+    BodyType = MessageBodyType::Data;
+    m_binaryDataBody.push_back(value);
+  }
+  void Message::SetBody(std::vector<AmqpBinaryData> const& value)
+  {
+    BodyType = MessageBodyType::Data;
+    m_binaryDataBody = value;
+  }
+  void Message::SetBody(AmqpValue const& value)
+  {
+    BodyType = MessageBodyType::Value;
+    m_amqpValueBody = value;
+  }
+  void Message::SetBody(AmqpList const& value)
+  {
+    BodyType = MessageBodyType::Sequence;
+    m_amqpSequenceBody = value;
   }
 
-  BinaryData Message::GetBodyAmqpData(size_t index) const
+  AmqpValue Message::GetBodyAsAmqpValue() const
   {
-    BINARY_DATA binaryData;
-    if (message_get_body_amqp_data_in_place(m_message, index, &binaryData))
+    if (BodyType != MessageBodyType::Value)
     {
-      throw std::runtime_error("Could not get Body Data.");
+      throw std::runtime_error("Invalid body type, should be MessageBodyType::Value.");
     }
-    return BinaryData{static_cast<const uint8_t*>(binaryData.bytes), binaryData.length};
+    return m_amqpValueBody;
   }
-
-  size_t Message::GetBodyAmqpDataCount() const
+  std::vector<AmqpBinaryData> Message::GetBodyAsBinary() const
   {
-    size_t count;
-    if (message_get_body_amqp_data_count(m_message, &count))
+    if (BodyType != MessageBodyType::Data)
     {
-      throw std::runtime_error("Could not get AMQP Data Count.");
+      throw std::runtime_error("Invalid body type, should be MessageBodyType::Value.");
     }
-    return count;
-  }
-  void Message::SetBodyAmqpValue(AmqpValue value)
-  {
-    if (message_set_body_amqp_value(m_message, value))
-    {
-      throw std::runtime_error("Could not set body AMQP value"); // LCOV_EXCL_LINE
-    }
+    return m_binaryDataBody;
   }
 
   std::ostream& operator<<(std::ostream& os, Message const& message)
   {
     os << "Message: " << std::endl;
-    if (message.GetHeader())
-    {
-      os << "Header " << message.GetHeader() << std::endl;
-    }
-    if (message.GetProperties())
-    {
-      os << "Properties: " << message.GetProperties();
-    }
+    os << "Header " << message.Header << std::endl;
+    os << "Properties: " << message.Properties;
     os << "Body: [" << std::endl;
-    switch (message.GetBodyType())
+    switch (message.BodyType)
     {
       case MessageBodyType::Invalid: // LCOV_EXCL_LINE
         os << "Invalid"; // LCOV_EXCL_LINE
@@ -289,56 +375,77 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case MessageBodyType::None:
         os << "None";
         break;
-      case MessageBodyType::Data:
+      case MessageBodyType::Data: {
         os << "AMQP Data: [";
-        if (message.GetBodyAmqpDataCount() != 0)
+        auto bodyBinary = message.GetBodyAsBinary();
+        uint8_t i = 0;
+        for (auto const& val : bodyBinary)
         {
-          for (size_t i = 0; i < message.GetBodyAmqpDataCount(); i += 1)
-          {
-            auto data = message.GetBodyAmqpData(i);
-            os << "Data: " << data.length << " bytes: " << data;
-            if (i < message.GetBodyAmqpDataCount() - 1)
-            {
-              os << ", ";
-            }
-          }
-        }
-        os << "]";
-        break;
-      case MessageBodyType::Sequence:
-        os << "AMQP Sequence: [";
-        for (size_t i = 0; i < message.GetBodyAmqpSequenceCount(); i += 1)
-        {
-          auto data = message.GetBodyAmqpSequence(static_cast<uint32_t>(i));
-          os << data;
-          if (i < message.GetBodyAmqpSequenceCount() - 1)
+          os << "Data: " << val << std::endl;
+          if (i < bodyBinary.size() - 1)
           {
             os << ", ";
           }
+          i += 1;
         }
         os << "]";
-        break;
+      }
+      break;
+      case MessageBodyType::Sequence: {
+        os << "AMQP Sequence: [";
+        auto bodySequence = message.GetBodyAsAmqpList();
+        uint8_t i = 0;
+        for (auto const& val : bodySequence)
+        {
+          os << "Sequence: " << val << std::endl;
+          if (i < bodySequence.size() - 1)
+          {
+            os << ", ";
+          }
+          i += 1;
+        }
+        os << "]";
+      }
+      break;
       case MessageBodyType::Value:
-        os << "AmqpValue: " << message.GetBodyAmqpValue();
+        os << "AmqpValue: " << message.GetBodyAsAmqpValue();
         break;
     }
     os << "]";
 
-    if (!message.GetApplicationProperties().IsNull())
     {
-      os << std::endl << "Application Properties: " << message.GetApplicationProperties();
+      if (!message.ApplicationProperties.empty())
+      {
+        os << std::endl << "Application Properties: ";
+        for (auto const& val : message.ApplicationProperties)
+        {
+          os << "{" << val.first << ", " << val.second << "}";
+        }
+      }
     }
-    if (!message.GetDeliveryAnnotations().IsNull())
+    if (!message.DeliveryAnnotations.empty())
     {
-      os << std::endl << "Delivery Annotations: " << message.GetDeliveryAnnotations();
+      os << std::endl << "Delivery Annotations: ";
+      for (auto const& val : message.DeliveryAnnotations)
+      {
+        os << "{" << val.first << ", " << val.second << "}";
+      }
     }
-    if (!message.GetMessageAnnotations().IsNull())
+    if (!message.MessageAnnotations.empty())
     {
-      os << std::endl << "Message Annotations: " << message.GetMessageAnnotations();
+      os << std::endl << "Message Annotations: ";
+      for (auto const& val : message.MessageAnnotations)
+      {
+        os << "{" << val.first << ", " << val.second << "}";
+      }
     }
-    if (!message.GetFooter().IsNull())
+    if (!message.Footer.empty())
     {
-      os << "Footer: " << message.GetFooter();
+      os << "Footer: ";
+      for (auto const& val : message.Footer)
+      {
+        os << "{" << val.first << ", " << val.second << "}";
+      }
     }
     return os;
   }
