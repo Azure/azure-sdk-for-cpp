@@ -17,9 +17,8 @@ SetUpTestProxy("sdk/messaging")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
-    
     eventhubs_test.cpp
-     )
+)
 
 create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
@@ -32,8 +31,8 @@ target_link_libraries(
     azure-messaging-eventhubs-test
       PRIVATE 
         azure-messaging-eventhubs 
-        azure-identity azure-core-test-fw  
-        azure-security-attestation
+        azure-identity 
+        azure-core-test-fw  
         gtest 
         gtest_main 
         gmock)

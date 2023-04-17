@@ -36,6 +36,7 @@ include(CreateMapFile)
 set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
   inc/azure/messaging/eventhubs/eventhubs.hpp
+  inc/azure/messaging/eventhubs/producer-client.hpp
   inc/azure/messaging/eventhubs.hpp
 )
 
@@ -43,6 +44,7 @@ set(
   AZURE_MESSAGING_EVENTHUBS_SOURCE
   src/eventhubs.cpp
   src/private/package_version.hpp
+  src/producer-client.cpp
 )
 add_library(
   azure-messaging-eventhubs
@@ -55,7 +57,7 @@ target_include_directories(azure-messaging-eventhubs  PUBLIC
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core)
+target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")

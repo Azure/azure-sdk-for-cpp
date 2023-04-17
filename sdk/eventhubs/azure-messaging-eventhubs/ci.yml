@@ -24,7 +24,7 @@ pr:
       - eng/common/testproxy
 
 stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  - template: ../../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: eventhubs/azure-messaging-eventhubs
       CtestRegex: "azure-messaging-eventhubs.*"
