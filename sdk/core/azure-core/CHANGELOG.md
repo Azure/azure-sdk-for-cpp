@@ -12,6 +12,7 @@ This is useful when the UUID was generated outside the Azure SDK, or needs to be
 ### Bugs Fixed
 
 - [[#4490]](https://github.com/Azure/azure-sdk-for-cpp/issues/4490) Fixed WinHTTP memory leak during failed requests.
+- Fixed the UUID generation so the variant is RFC 4122 conforming.
 
 ### Other Changes
 
