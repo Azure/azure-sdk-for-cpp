@@ -28,6 +28,33 @@ TEST(Uuid, Randomness)
   EXPECT_EQ(uuids.size(), size);
 }
 
+TEST(Uuid, Rfc4122Conforming)
+{
+  const int size = 100;
+  for (int i = 0; i < size; i++)
+  {
+    auto uuid = Uuid::CreateUuid();
+    auto uuidStr = uuid.ToString();
+    auto version = uuidStr[14];
+    EXPECT_EQ(version, '4'); // Version 4: Pseudo-random number
+
+    // The variant field consists of a variable number of the most significant bits of octet 8 of
+    // the UUID.
+    // https://www.rfc-editor.org/rfc/rfc4122.html#section-4.1.1
+    // The high bits of the variant need to be of the form 10xx, which means they can only be either
+    // 8, 9, A|a, B|b. The 0-7 values are reserved for backward compatibility. The C|c, D|d values
+    // are reserved for Microsoft, and the E|e, F|f values are reserved for future use.
+    auto variant = uuidStr[19];
+
+    // The test is written this way to improve logging IF it was to fail, so we can see the value
+    // of the incorrect variant.
+    EXPECT_TRUE(
+        (variant == '8' || variant == '9' || variant == 'A' || variant == 'B' || variant == 'a'
+         || variant == 'b'))
+        << variant << " is not one of the expected values of 8, 9, A, B, a, b";
+  }
+}
+
 TEST(Uuid, separatorPosition)
 {
   auto uuidKey = Uuid::CreateUuid().ToString();

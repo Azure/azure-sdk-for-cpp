@@ -67,8 +67,15 @@ namespace Azure { namespace Core {
       std::memcpy(uuid + i, &x, 4);
     }
 
-    // SetVariant to ReservedRFC4122
-    uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
+    // The variant field consists of a variable number of the most significant bits of octet 8 of
+    // the UUID.
+    // https://www.rfc-editor.org/rfc/rfc4122.html#section-4.1.1
+    // For setting the variant to conform to RFC4122, the high bits need to be of the form 10xx,
+    // which means the hex value of the first 4 bits can only be either 8, 9, A|a, B|b. The 0-7
+    // values are reserved for backward compatibility. The C|c, D|d values are reserved for
+    // Microsoft, and the E|e, F|f values are reserved for future use.
+    // Therefore, we have to zero out the two high bits, and then set the highest bit to 1.
+    uuid[8] = (uuid[8] & 0x3F) | 0x80;
 
     constexpr uint8_t version = 4;
 
