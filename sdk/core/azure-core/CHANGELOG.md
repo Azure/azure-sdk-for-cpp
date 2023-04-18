@@ -9,6 +9,10 @@
 - Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
 - Added support for challenge-based and multi-tenant authentication.
 
+### Bugs Fixed
+
+- Fixed the UUID generation so the variant is RFC 4122 conforming.
+
 ### Other Changes
 
 - [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
