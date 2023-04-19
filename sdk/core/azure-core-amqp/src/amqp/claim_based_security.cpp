@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void ClaimsBasedSecurity::SetTrace(bool traceOn) { m_impl->SetTrace(traceOn); }
 
   ClaimsBasedSecurityImpl::ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session)
-      : m_session{session}, m_cbs(cbs_create(*session))
+      : m_cbs(cbs_create(*session)), m_session{session}
   {
   }
 

@@ -47,8 +47,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     /** @brief Construct a new instance of a ClaimsBasedSecurity client.
      *
      * @param session - Session on which to authenticate the client.
-     * @param connectionToPoll - connection on which the session was opened. Used primarily to pump
-     * AMQP messages.
      *
      * @remarks Note that this method takes a reference to the session and connectionToPoll objects
      * so it is critical that the lifetime of the ClaimsBasedSecurity object be scoped shorter than

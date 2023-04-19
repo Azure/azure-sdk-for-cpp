@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <list>
 #include <mutex>
+#include <thread>
 #include <tuple>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _internal {
