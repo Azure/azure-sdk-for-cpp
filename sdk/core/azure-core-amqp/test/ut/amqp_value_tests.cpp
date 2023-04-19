@@ -253,7 +253,7 @@ TEST_F(TestValues, TestChar)
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(static_cast<char32_t>(boolValue));
+    EXPECT_ANY_THROW((void)static_cast<char32_t>(boolValue));
   }
 }
 
