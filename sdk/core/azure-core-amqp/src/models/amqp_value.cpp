@@ -38,6 +38,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::AmqpValue(int64_t value) : m_value{amqpvalue_create_long(value)} {}
   AmqpValue::AmqpValue(float value) : m_value{amqpvalue_create_float(value)} {}
   AmqpValue::AmqpValue(double value) : m_value{amqpvalue_create_double(value)} {}
+  AmqpValue::AmqpValue(char32_t value) : m_value{amqpvalue_create_char(value)} {}
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
       : m_value{amqpvalue_create_uuid(
           const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))}
@@ -205,6 +206,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
+  AmqpValue::operator char32_t() const
+  {
+    std::uint32_t value;
+    if (amqpvalue_get_char(m_value.get(), &value))
+    {
+      throw std::runtime_error("Could not get character.");
+    }
+    return value;
+  }
+
   AmqpValue::operator std::string() const
   {
     const char* value;
@@ -266,7 +277,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case AmqpValueType::Double:
         return static_cast<double>(*this) < static_cast<double>(that);
       case AmqpValueType::Char:
-        return GetChar() < that.GetChar();
+        return static_cast<char32_t>(*this) < static_cast<char32_t>(that);
       case AmqpValueType::String:
         return static_cast<std::string>(*this) < static_cast<std::string>(that);
       case AmqpValueType::Symbol:
@@ -305,18 +316,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpBinaryData AmqpValue::AsBinary() const { return AmqpBinaryData(m_value.get()); }
   AmqpDescribed AmqpValue::AsDescribed() const { return AmqpDescribed(m_value.get()); }
   AmqpTimestamp AmqpValue::AsTimestamp() const { return AmqpTimestamp(m_value.get()); }
-
-  AmqpValue AmqpValue::CreateChar(std::uint32_t value) { return amqpvalue_create_char(value); }
-
-  std::uint32_t AmqpValue::GetChar() const
-  {
-    std::uint32_t value;
-    if (amqpvalue_get_char(m_value.get(), &value))
-    {
-      throw std::runtime_error("Could not get character.");
-    }
-    return value;
-  }
 
   AmqpValueType AmqpValue::GetType() const
   {

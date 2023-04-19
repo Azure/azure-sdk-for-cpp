@@ -54,9 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      * so it is critical that the lifetime of the ClaimsBasedSecurity object be scoped shorter than
      * the lifetime of the session and connectionToPoll object.
      */
-    ClaimsBasedSecurity(
-        Azure::Core::Amqp::_internal::Session const& session,
-        Azure::Core::Amqp::_internal::Connection const& connectionToPoll);
+    ClaimsBasedSecurity(Azure::Core::Amqp::_internal::Session const& session);
     ~ClaimsBasedSecurity() noexcept;
 
     ClaimsBasedSecurity(ClaimsBasedSecurity const&) = default;

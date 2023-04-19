@@ -4,14 +4,20 @@
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/private/claims_based_security_impl.hpp"
+#include "azure/core/amqp/private/connection_impl.hpp"
 #include "azure/core/amqp/private/session_impl.hpp"
 #include <iostream>
+
+void Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(CBS_HANDLE value)
+{
+  cbs_destroy(value);
+}
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using namespace Azure::Core::Amqp::_internal;
 
-  ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session, Connection const& connection)
-      : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(session, connection)}
+  ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session)
+      : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(session.GetImpl())}
   {
   }
 
@@ -35,23 +41,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ClaimsBasedSecurity::SetTrace(bool traceOn) { m_impl->SetTrace(traceOn); }
 
-  ClaimsBasedSecurityImpl::ClaimsBasedSecurityImpl(
-      Session const& session,
-      Connection const& connection)
-      : m_connectionToPoll(connection)
+  ClaimsBasedSecurityImpl::ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session)
+      : m_session{session}, m_cbs(cbs_create(*session))
   {
-    m_cbs = cbs_create(*(session.GetImpl()));
-    cbs_set_trace(m_cbs, true);
   }
 
-  ClaimsBasedSecurityImpl::~ClaimsBasedSecurityImpl() noexcept
-  {
-    if (m_cbs)
-    {
-      cbs_destroy(m_cbs);
-      m_cbs = nullptr;
-    }
-  }
+  ClaimsBasedSecurityImpl::~ClaimsBasedSecurityImpl() noexcept {}
 
   CbsOpenResult CbsOpenResultStateFromLowLevel(CBS_OPEN_COMPLETE_RESULT lowLevel)
   {
@@ -140,23 +135,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   CbsOpenResult ClaimsBasedSecurityImpl::Open(Azure::Core::Context context)
   {
     if (cbs_open_async(
-            m_cbs, ClaimsBasedSecurityImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
+            m_cbs.get(), ClaimsBasedSecurityImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
     {
       return CbsOpenResult::Error;
     }
-    auto result = m_openResultQueue.WaitForPolledResult(context, m_connectionToPoll);
+    auto result = m_openResultQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
     return std::get<0>(*result);
   }
 
   void ClaimsBasedSecurityImpl::Close()
   {
-    if (cbs_close(m_cbs))
+    if (cbs_close(m_cbs.get()))
     {
       throw std::runtime_error("Could not close cbs"); // LCOV_EXCL_LINE
     }
   }
 
-  void ClaimsBasedSecurityImpl::SetTrace(bool traceOn) { cbs_set_trace(m_cbs, traceOn); }
+  void ClaimsBasedSecurityImpl::SetTrace(bool traceOn) { cbs_set_trace(m_cbs.get(), traceOn); }
 
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurityImpl::PutToken(
       CbsTokenType tokenType,
@@ -165,7 +160,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::Context context)
   {
     if (cbs_put_token_async(
-            m_cbs,
+            m_cbs.get(),
             (tokenType == CbsTokenType::Jwt ? "jwt" : "servicebus.windows.net:sastoken"),
             audience.c_str(),
             token.c_str(),
@@ -175,7 +170,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not put CBS token."); // LCOV_EXCL_LINE
     }
-    auto result = m_operationResultQueue.WaitForPolledResult(context, m_connectionToPoll);
+    auto result
+        = m_operationResultQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
 
     // Throw an error if we failed to authenticate with the server.
     if (std::get<0>(*result) != CbsOperationResult::Ok)

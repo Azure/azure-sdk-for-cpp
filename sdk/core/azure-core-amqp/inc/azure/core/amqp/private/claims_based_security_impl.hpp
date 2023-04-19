@@ -5,13 +5,20 @@
 #include "azure/core/amqp/claims_based_security.hpp"
 #include <azure_uamqp_c/cbs.h>
 
+template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
+{
+  static void FreeAmqpCbs(CBS_HANDLE obj);
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
+};
+
+using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl {
 
   public:
-    ClaimsBasedSecurityImpl(
-        Azure::Core::Amqp::_internal::Session const& session,
-        Azure::Core::Amqp::_internal::Connection const& connectionToPoll);
+    ClaimsBasedSecurityImpl(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> session);
     virtual ~ClaimsBasedSecurityImpl() noexcept;
 
     // Disable copy and move because the underlying m_cbs takes a reference to this object.
@@ -30,7 +37,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SetTrace(bool traceEnabled);
 
   private:
-    CBS_HANDLE m_cbs;
+    UniqueAmqpCbsHandle m_cbs;
+    std::shared_ptr<_detail::SessionImpl> m_session;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
     Azure::Core::Amqp::Common::_internal::
@@ -43,7 +51,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CBS_OPERATION_RESULT operationResult,
         uint32_t statusCode,
         const char* statusDescription);
-
-    _internal::Connection const& m_connectionToPoll;
   };
 }}}} // namespace Azure::Core::Amqp::_detail

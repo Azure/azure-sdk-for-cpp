@@ -12,30 +12,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class MessageSenderImpl : public std::enable_shared_from_this<MessageSenderImpl> {
   public:
     MessageSenderImpl(
-        _internal::Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::string const& target,
-        _internal::Connection const& connectionToPoll,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
-        _internal::Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& endpoint,
         std::string const& target,
-        _internal::Connection const& connectionToPoll,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
-        _internal::Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<_internal::ServiceBusSasConnectionStringCredential> credential,
         std::string const& target,
-        _internal::Connection const& connectionToPoll,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
-        _internal::Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         std::string const& target,
-        _internal::Connection const& connectionToPoll,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     virtual ~MessageSenderImpl() noexcept;
@@ -50,10 +46,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Open();
     void Close();
     std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
-        Azure::Core::Amqp::Models::Message const& message,
+        Azure::Core::Amqp::Models::AmqpMessage const& message,
         Azure::Core::Context context);
-    void SendAsync(
-        Azure::Core::Amqp::Models::Message const& message,
+    void QueueSend(
+        Azure::Core::Amqp::Models::AmqpMessage const& message,
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Azure::Core::Context context);
     void SetTrace(bool traceEnabled);
@@ -76,11 +72,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::unique_ptr<_detail::Link> m_link;
     _internal::MessageSenderEvents* m_events;
 
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+        Azure::Core::Amqp::Models::AmqpMessage>
         m_messageQueue;
 
-    _internal::Connection const& m_connection;
-    _internal::Session const& m_session;
+    std::shared_ptr<_detail::SessionImpl> m_session;
     std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;

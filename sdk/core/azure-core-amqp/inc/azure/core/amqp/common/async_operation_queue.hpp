@@ -53,6 +53,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
             return nullptr;
           }
         }
+        std::this_thread::yield();
+
         // Note: We need to call Poll() *outside* the lock because the poller is going to call the
         // CompleteOperation function.
         Poll(pollers...);

@@ -37,13 +37,13 @@ TEST_F(TestCbs, SimpleCbs)
   Session session(connection, nullptr);
 
   {
-    ClaimsBasedSecurity cbs(session, connection);
+    ClaimsBasedSecurity cbs(session);
   }
 
   {
     // Create two cbs objects
-    ClaimsBasedSecurity cbs1(session, connection);
-    ClaimsBasedSecurity cbs2(session, connection);
+    ClaimsBasedSecurity cbs1(session);
+    ClaimsBasedSecurity cbs2(session);
   }
 }
 
@@ -55,7 +55,7 @@ TEST_F(TestCbs, CbsOpen)
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection, nullptr);
     {
-      ClaimsBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
 
       EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
@@ -70,7 +70,7 @@ TEST_F(TestCbs, CbsOpen)
     mockServer.StartListening();
 
     {
-      ClaimsBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session);
       cbs.SetTrace(true);
       EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
       GTEST_LOG_(INFO) << "Open Completed.";
@@ -92,7 +92,7 @@ TEST_F(TestCbs, CbsOpenAndPut)
     mockServer.StartListening();
 
     {
-      ClaimsBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session);
       cbs.SetTrace(true);
 
       EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
@@ -121,7 +121,7 @@ TEST_F(TestCbs, CbsOpenAndPutError)
     mockServer.StartListening();
 
     {
-      ClaimsBasedSecurity cbs(session, connection);
+      ClaimsBasedSecurity cbs(session);
       cbs.SetTrace(true);
 
       EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());

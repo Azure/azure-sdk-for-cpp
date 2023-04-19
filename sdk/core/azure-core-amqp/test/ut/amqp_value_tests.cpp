@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include <cuchar>
 
 using namespace Azure::Core::Amqp::Models;
 
@@ -246,13 +247,13 @@ TEST_F(TestValues, TestArray)
 TEST_F(TestValues, TestChar)
 {
   {
-    AmqpValue value{AmqpValue::CreateChar(37)};
-    EXPECT_EQ(37, value.GetChar());
-    EXPECT_FALSE(value < AmqpValue::CreateChar(36));
+    AmqpValue value{U'\U0001f34c'};
+    EXPECT_EQ(U'\U0001f34c', static_cast<char32_t>(value));
+    EXPECT_FALSE(static_cast<char32_t>(value) < U'\U0001f34c');
   }
   {
     AmqpValue boolValue{false};
-    EXPECT_ANY_THROW(boolValue.GetChar());
+    EXPECT_ANY_THROW(static_cast<char32_t>(boolValue));
   }
 }
 

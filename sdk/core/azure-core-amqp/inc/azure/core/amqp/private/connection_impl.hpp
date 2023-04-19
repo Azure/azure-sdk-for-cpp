@@ -3,13 +3,22 @@
 
 #pragma once
 
+#include "azure/core/amqp/connection.hpp"
+#include "azure/core/amqp/network/transport.hpp"
+#include <azure/core/credentials/credentials.hpp>
+#include <azure_uamqp_c/connection.h>
 #include <chrono>
 #include <memory>
 #include <string>
 
-#include "azure/core/amqp/connection.hpp"
-#include <azure/core/credentials/credentials.hpp>
-#include <azure_uamqp_c/connection.h>
+template <> struct Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
+{
+  static void FreeAmqpConnection(CONNECTION_HANDLE obj);
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
+};
+
+using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
@@ -45,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      */
     void FinishConstruction();
 
-    operator CONNECTION_HANDLE() const { return m_connection; }
+    operator CONNECTION_HANDLE() const { return m_connection.get(); }
 
     void Open();
     void Listen();
@@ -79,7 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     std::shared_ptr<Network::_internal::Transport> m_transport;
-    CONNECTION_HANDLE m_connection{};
+    UniqueAmqpConnection m_connection{};
     std::string m_hostName;
     std::string m_containerId;
     _internal::ConnectionOptions m_options;

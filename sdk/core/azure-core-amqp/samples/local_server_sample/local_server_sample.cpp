@@ -106,7 +106,7 @@ public:
   // Wait for incoming messages. This method is somewhat more complicated because it
   // needs to wait on multiple waiters (both the connection and the transport).
   template <class... Waiters>
-  Azure::Core::Amqp::Models::Message WaitForIncomingMessage(
+  Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
       Azure::Core::Context context,
       Waiters&... waiters)
   {
@@ -119,7 +119,7 @@ private:
   Common::_internal::AsyncOperationQueue<std::unique_ptr<Connection>> m_connectionQueue;
   Common::_internal::AsyncOperationQueue<std::unique_ptr<Session>> m_sessionQueue;
   Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
-  Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message> m_messageQueue;
+  Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::AmqpMessage> m_messageQueue;
 
   virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
   {
@@ -213,7 +213,8 @@ private:
     (void)receiver;
   }
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-      Azure::Core::Amqp::Models::Message const& message) override
+      Azure::Core::Amqp::_internal::MessageReceiver const&,
+      Azure::Core::Amqp::Models::AmqpMessage const& message) override
   {
     m_messageQueue.CompleteOperation(message);
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();

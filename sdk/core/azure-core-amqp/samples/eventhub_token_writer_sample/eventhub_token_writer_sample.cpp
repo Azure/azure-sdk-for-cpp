@@ -35,7 +35,7 @@ int main()
 
   constexpr int maxMessageSendCount = 1000;
 
-  Azure::Core::Amqp::Models::Message message;
+  Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
@@ -51,7 +51,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::MessageSender sender(
-      session, credential, EH_ENTITY_URL, connection, senderOptions, nullptr);
+      session, credential, EH_ENTITY_URL, senderOptions, nullptr);
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
   sender.Open();
