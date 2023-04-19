@@ -79,8 +79,7 @@ public:
   }
 
   /** @brief Override for non CBS message receive operations which allows a specialization to
-   * customize the link behavior.
-   *  @param message The message received.
+   * customize the behavior for received messages.
    */
   virtual void MessageReceived(
       std::string const&,
