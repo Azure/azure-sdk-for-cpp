@@ -96,7 +96,6 @@ namespace Azure { namespace Core { namespace Amqp {
        * @brief Create a new Management object instance.
        *
        * @param session - the session on which to create the instance.
-       * @param connectionToPoll - the connection on which the session is created.
        * @param managementNodeName - the name of the message source and target.
        * @param options - additional options for the Management object.
        * @param managementEvents - events associated with the management object.

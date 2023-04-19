@@ -29,7 +29,6 @@ namespace Azure { namespace Core { namespace Amqp {
        * @brief Create a new Management object instance.
        *
        * @param session - the session on which to create the instance.
-       * @param connectionToPoll - the connection on which the session is created.
        * @param managementNodeName - the name of the message source and target.
        * @param options - additional options for the Management object.
        * @param managementEvents - events associated with the management object.
@@ -88,7 +87,7 @@ namespace Azure { namespace Core { namespace Amqp {
           Azure::Core::Amqp::_internal::ManagementOptions const& options,
           Azure::Core::Amqp::_internal::ManagementEvents* managementEvents)
           : m_management{amqp_management_create(*session, managementNodeName.c_str())},
-            m_session{session}, m_options{options}, m_eventHandler{managementEvents}
+            m_options{options}, m_session{session}, m_eventHandler{managementEvents}
       {
         if (options.EnableTrace)
         {
@@ -105,7 +104,7 @@ namespace Azure { namespace Core { namespace Amqp {
               m_management.get(), options.ExpectedStatusDescriptionKeyName.c_str());
         }
       }
-      ManagementImpl::~ManagementImpl() { m_eventHandler = nullptr; }
+      ManagementImpl::~ManagementImpl() noexcept { m_eventHandler = nullptr; }
 
       ManagementImpl::operator bool() const { return static_cast<bool>(m_management); };
 
