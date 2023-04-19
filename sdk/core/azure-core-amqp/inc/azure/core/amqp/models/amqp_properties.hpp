@@ -22,8 +22,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
 
-  class MessageProperties final {
-  public:
+  struct MessageProperties final
+  {
     MessageProperties() = default;
     ~MessageProperties() = default;
 
@@ -40,11 +40,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Azure::Nullable<std::string> GroupId;
     Azure::Nullable<uint32_t> GroupSequence;
     Azure::Nullable<std::string> ReplyToGroupId;
-
-    //    // uAMQP interop functions. Do not use outside the AMQP implementation.
-    //  public:
-    //    MessageProperties(PROPERTIES_INSTANCE_TAG* properties);
-    //    operator UniquePropertiesHandle() const;
   };
   std::ostream& operator<<(std::ostream&, MessageProperties const&);
 }}}} // namespace Azure::Core::Amqp::Models

@@ -24,13 +24,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
 
-  class MessageHeader final {
-    //  public:
-    //    // uAMQP integration functions.
-    //    MessageHeader(HEADER_INSTANCE_TAG* header);
-    //    operator UniqueMessageHeaderHandle() const;
+  struct MessageHeader final {
 
-  public:
     MessageHeader() = default;
     ~MessageHeader() = default;
 
