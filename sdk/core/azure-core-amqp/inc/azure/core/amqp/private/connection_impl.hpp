@@ -15,7 +15,8 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANC
 {
   static void FreeAmqpConnection(CONNECTION_HANDLE obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
+  using type
+      = Azure::Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
 };
 
 using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;

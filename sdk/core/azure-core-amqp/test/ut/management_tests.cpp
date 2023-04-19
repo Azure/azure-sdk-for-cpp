@@ -112,7 +112,8 @@ TEST_F(TestManagement, ManagementRequestResponse)
     }
 
   private:
-    AmqpValue OnMessageReceived(MessageReceiver const& receiver, AmqpMessage const& incomingMessage) override
+    AmqpValue OnMessageReceived(MessageReceiver const& receiver, AmqpMessage const& incomingMessage)
+        override
     {
       if (receiver.GetSourceName() != "Test" && receiver.GetSourceName() != "$cbs")
       {
@@ -281,7 +282,7 @@ TEST_F(TestManagement, ManagementRequestResponse)
     mockServer.StopListening();
   }
 
-    // Send a response to the request with a bogus status code name.
+  // Send a response to the request with a bogus status code name.
   {
     ManagementReceiver mockServer;
 
@@ -342,7 +343,7 @@ TEST_F(TestManagement, ManagementRequestResponse)
     mockServer.StopListening();
   }
 
-    // Send a management request with an unknown operation name.
+  // Send a management request with an unknown operation name.
   {
     ManagementReceiver mockServer;
 
@@ -360,7 +361,8 @@ TEST_F(TestManagement, ManagementRequestResponse)
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
-    auto response = management.ExecuteOperation("Unknown Operation", "Type", "Locales", messageToSend);
+    auto response
+        = management.ExecuteOperation("Unknown Operation", "Type", "Locales", messageToSend);
     EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Error);
     EXPECT_EQ(std::get<1>(response), 0);
     EXPECT_EQ(std::get<2>(response), "");

@@ -24,7 +24,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
 
-  struct MessageHeader final {
+  struct MessageHeader final
+  {
 
     MessageHeader() = default;
     ~MessageHeader() = default;
@@ -69,14 +70,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 }}}} // namespace Azure::Core::Amqp::Models
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-    /**  
-    * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE and back.
-    * 
-    * @remarks This class should not be used directly. It is used by the uAMQP interoperability layer.
-    */
-    class MessageHeaderFactory {
-    public:
-      static MessageHeader FromUamqp(UniqueMessageHeaderHandle const& properties);
-      static UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
-    };
+  /**
+   * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE and
+   * back.
+   *
+   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+   * layer.
+   */
+  class MessageHeaderFactory {
+  public:
+    static MessageHeader FromUamqp(UniqueMessageHeaderHandle const& properties);
+    static UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
+  };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
