@@ -112,7 +112,7 @@ TEST_F(TestManagement, ManagementRequestResponse)
     }
 
   private:
-    AmqpValue OnMessageReceived(MessageReceiver const& receiver, AmqpMessage const& incomingMessage)
+    AmqpValue OnMessageReceived(MessageReceiver const& receiver, AmqpMessage const& incomingMessage) override
     {
       if (receiver.GetSourceName() != "Test" && receiver.GetSourceName() != "$cbs")
       {
