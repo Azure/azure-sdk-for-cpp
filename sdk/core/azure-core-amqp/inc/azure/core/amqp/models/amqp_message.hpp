@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Move an AMQP message object to another object. @returns A reference to this.*/
     AmqpMessage& operator=(AmqpMessage&&) noexcept = default;
 
-    AmqpMessage(nullptr_t) : m_hasValue{false} {}
+    AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
     operator bool() const noexcept { return m_hasValue; }
 
     /** @brief The header for the message.

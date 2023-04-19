@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     uint32_t GetReceivedMessageId() const;
 
-    _internal::Session const& GetSession() const { return m_session; }
+    std::shared_ptr<_detail::SessionImpl> const& GetSession() const { return m_session; }
 
     void Attach();
 
