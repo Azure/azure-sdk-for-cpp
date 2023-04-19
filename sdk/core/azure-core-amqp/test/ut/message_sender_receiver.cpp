@@ -717,7 +717,8 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
 
     void Poll() const override
     {
-      if (m_shouldSendMessage)
+      if (m_shouldSendMessage
+          && m_linkMessageQueues.find(m_senderNodeName) != m_linkMessageQueues.end())
       {
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
