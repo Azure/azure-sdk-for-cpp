@@ -56,15 +56,15 @@ function getTargetOs {
         return "win-2022"
     }
 
-    if ($OsVMImage -eq "MMSUbuntu18.04") {
+    if ($OsVMImage -in "MMSUbuntu18.04", "ubuntu-18.04") {
         return "ubuntu-18.04"
     }
 
-    if ($OsVMImage -eq "MMSUbuntu20.04") {
+    if ($OsVMImage -in "MMSUbuntu20.04", "ubuntu-20.04") {
         return "ubuntu-20.04"
     }
 
-    if ($OsVMImage -eq "MMSUbuntu22.04") {
+    if ($OsVMImage -in "MMSUbuntu22.04", "ubuntu-22.04") {
         return "ubuntu-22.04"
     }
 
