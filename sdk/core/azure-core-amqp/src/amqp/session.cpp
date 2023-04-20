@@ -9,6 +9,12 @@
 
 #include <azure_uamqp_c/session.h>
 
+void Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>::FreeAmqpSession(
+    SESSION_HANDLE value)
+{
+  session_destroy(value);
+}
+
 namespace Azure { namespace Core { namespace Amqp {
   namespace _internal {
     Endpoint::~Endpoint()
@@ -24,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp {
         Endpoint& newEndpoint,
         SessionEvents* eventHandler)
         : m_impl{std::make_shared<Azure::Core::Amqp::_detail::SessionImpl>(
-            parentConnection,
+            parentConnection.GetImpl(),
             newEndpoint,
             eventHandler)}
     {
@@ -32,7 +38,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     Session::Session(Connection const& parentConnection, SessionEvents* eventHandler)
         : m_impl{std::make_shared<Azure::Core::Amqp::_detail::SessionImpl>(
-            parentConnection,
+            parentConnection.GetImpl(),
             eventHandler)}
     {
     }
@@ -61,38 +67,33 @@ namespace Azure { namespace Core { namespace Amqp {
 
   namespace _detail {
 
-    SessionImpl::~SessionImpl() noexcept
-    {
-      // Release any queued links before destroying the session.
-      //    m_newLinkAttachedQueue.Clear();
-      if (m_session)
-      {
-        session_destroy(m_session);
-        m_session = nullptr;
-      }
-    }
+    SessionImpl::~SessionImpl() noexcept {}
 
     SessionImpl::SessionImpl(
-        _internal::Connection const& connection,
+        std::shared_ptr<_detail::ConnectionImpl> connection,
         _internal::Endpoint& endpoint,
         _internal::SessionEvents* eventHandler)
-        : m_connectionToPoll(connection), m_eventHandler{eventHandler}
+        : m_session{session_create_from_endpoint(
+            *connection,
+            endpoint.Release(),
+            SessionImpl::OnLinkAttachedFn,
+            this)},
+          m_connectionToPoll(connection), m_eventHandler{eventHandler}
     {
-      m_session = session_create_from_endpoint(
-          *connection.GetImpl(), endpoint.Release(), SessionImpl::OnLinkAttachedFn, this);
     }
 
     SessionImpl::SessionImpl(
-        _internal::Connection const& connection,
+        std::shared_ptr<_detail::ConnectionImpl> connection,
         _internal::SessionEvents* eventHandler)
-        : m_connectionToPoll(connection), m_eventHandler{eventHandler}
+        : m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
+          m_connectionToPoll(connection), m_eventHandler{eventHandler}
+
     {
-      m_session = session_create(*connection.GetImpl(), SessionImpl::OnLinkAttachedFn, this);
     }
 
     void SessionImpl::SetIncomingWindow(uint32_t window)
     {
-      if (session_set_incoming_window(m_session, window))
+      if (session_set_incoming_window(m_session.get(), window))
       {
         throw std::runtime_error("Could not set incoming window"); // LCOV_EXCL_LINE
       }
@@ -100,7 +101,7 @@ namespace Azure { namespace Core { namespace Amqp {
     uint32_t SessionImpl::GetIncomingWindow()
     {
       uint32_t window;
-      if (session_get_incoming_window(m_session, &window))
+      if (session_get_incoming_window(m_session.get(), &window))
       {
         throw std::runtime_error("Could not get incoming window"); // LCOV_EXCL_LINE
       }
@@ -109,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     void SessionImpl::SetOutgoingWindow(uint32_t window)
     {
-      if (session_set_outgoing_window(m_session, window))
+      if (session_set_outgoing_window(m_session.get(), window))
       {
         throw std::runtime_error("Could not set outgoing window"); // LCOV_EXCL_LINE
       }
@@ -118,7 +119,7 @@ namespace Azure { namespace Core { namespace Amqp {
     uint32_t SessionImpl::GetOutgoingWindow()
     {
       uint32_t window;
-      if (session_get_outgoing_window(m_session, &window))
+      if (session_get_outgoing_window(m_session.get(), &window))
       {
         throw std::runtime_error("Could not get outgoing window"); // LCOV_EXCL_LINE
       }
@@ -127,7 +128,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     void SessionImpl::SetHandleMax(uint32_t max)
     {
-      if (session_set_handle_max(m_session, max))
+      if (session_set_handle_max(m_session.get(), max))
       {
         throw std::runtime_error("Could not set handle max."); // LCOV_EXCL_LINE
       }
@@ -135,7 +136,7 @@ namespace Azure { namespace Core { namespace Amqp {
     uint32_t SessionImpl::GetHandleMax()
     {
       uint32_t max;
-      if (session_get_handle_max(m_session, &max))
+      if (session_get_handle_max(m_session.get(), &max))
       {
         throw std::runtime_error("Could not get handle max."); // LCOV_EXCL_LINE
       }
@@ -144,7 +145,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     void SessionImpl::Begin()
     {
-      if (session_begin(m_session))
+      if (session_begin(m_session.get()))
       {
         throw std::runtime_error("Could not begin session"); // LCOV_EXCL_LINE
       }
@@ -154,7 +155,7 @@ namespace Azure { namespace Core { namespace Amqp {
       // When we end the session, it clears all the links, so we need to ensure that the
       //    m_newLinkAttachedQueue.Clear();
       if (session_end(
-              m_session,
+              m_session.get(),
               condition.empty() ? nullptr : condition.c_str(),
               description.empty() ? nullptr : description.c_str()))
       {

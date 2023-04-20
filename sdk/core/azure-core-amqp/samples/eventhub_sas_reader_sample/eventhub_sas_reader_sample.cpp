@@ -35,7 +35,7 @@ int main()
   receiverOptions.EnableTrace = true;
 
   Azure::Core::Amqp::_internal::MessageReceiver receiver(
-      session, connection, credential, hostUrl, receiverOptions);
+      session, credential, hostUrl, receiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();
@@ -47,7 +47,7 @@ int main()
   int messageReceiveCount = 0;
   while (messageReceiveCount < maxMessageReceiveCount)
   {
-    auto message = receiver.WaitForIncomingMessage(connection);
+    auto message = receiver.WaitForIncomingMessage();
     std::cout << "Received message: " << message << std::endl;
     messageReceiveCount += 1;
   }

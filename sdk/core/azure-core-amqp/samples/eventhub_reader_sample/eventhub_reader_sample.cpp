@@ -43,7 +43,7 @@ int main()
   int messageReceiveCount = 0;
   while (messageReceiveCount < maxMessageReceiveCount)
   {
-    auto message = receiver.WaitForIncomingMessage(connection);
+    auto message = receiver.WaitForIncomingMessage();
     std::cout << "Received message: " << message << std::endl;
     messageReceiveCount += 1;
   }

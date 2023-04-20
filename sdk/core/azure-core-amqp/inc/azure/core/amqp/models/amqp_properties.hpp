@@ -4,6 +4,7 @@
 #pragma once
 
 #include "amqp_value.hpp"
+#include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
 #include <chrono>
 #include <vector>
@@ -17,13 +18,12 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANC
   using type
       = Azure::Core::_internal::BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
 };
-
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
 
-  class MessageProperties final {
-  public:
+  struct MessageProperties final
+  {
     MessageProperties() = default;
     ~MessageProperties() = default;
 
@@ -40,12 +40,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Azure::Nullable<std::string> GroupId;
     Azure::Nullable<uint32_t> GroupSequence;
     Azure::Nullable<std::string> ReplyToGroupId;
-
-    // uAMQP interop functions. Do not use outside the AMQP implementation.
-  public:
-    MessageProperties(PROPERTIES_INSTANCE_TAG* properties);
-    operator UniquePropertiesHandle() const;
   };
   std::ostream& operator<<(std::ostream&, MessageProperties const&);
-
 }}}} // namespace Azure::Core::Amqp::Models
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+  /**
+   * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
+   * PROPERTIES_HANDLE and back.
+   *
+   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+   * layer.
+   */
+  class MessagePropertiesFactory {
+  public:
+    static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
+    static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
+  };
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

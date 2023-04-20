@@ -73,7 +73,8 @@ namespace Azure { namespace Core { namespace Amqp {
           MessageReceiverState oldState)
           = 0;
       virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-          Azure::Core::Amqp::Models::Message const& message)
+          MessageReceiver const& receiver,
+          Azure::Core::Amqp::Models::AmqpMessage const& message)
           = 0;
     };
 
@@ -86,14 +87,12 @@ namespace Azure { namespace Core { namespace Amqp {
           MessageReceiverEvents* receiverEvents = nullptr);
       MessageReceiver(
           Session& session,
-          Connection const& connectionToPoll,
           std::shared_ptr<ConnectionStringCredential> credentials,
           std::string const& receiverSource,
           MessageReceiverOptions const& options,
           MessageReceiverEvents* receiverEvents = nullptr);
       MessageReceiver(
           Session& session,
-          Connection const& connectionToPoll,
           std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
           std::string const& receiverSource,
           MessageReceiverOptions const& options,
@@ -122,6 +121,7 @@ namespace Azure { namespace Core { namespace Amqp {
       void Open();
       void Close();
       std::string GetLinkName() const;
+      std::string GetSourceName() const;
       uint32_t GetReceivedMessageId();
       void SendMessageDisposition(
           const char* linkName,
@@ -129,8 +129,7 @@ namespace Azure { namespace Core { namespace Amqp {
           Azure::Core::Amqp::Models::AmqpValue deliveryState);
       void SetTrace(bool traceEnabled);
 
-      Azure::Core::Amqp::Models::Message WaitForIncomingMessage(
-          Connection& connection,
+      Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
           Azure::Core::Context context = {});
 
     private:

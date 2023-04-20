@@ -35,8 +35,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::Amqp::_internal::MessageSender sender(
-      session, targetUrl, connection, senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender(session, targetUrl, senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();
@@ -45,7 +44,7 @@ int main()
 
   constexpr int maxMessageSendCount = 1000;
 
-  Azure::Core::Amqp::Models::Message message;
+  Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
   int messageSendCount = 0;

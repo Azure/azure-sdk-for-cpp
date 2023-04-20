@@ -18,9 +18,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   namespace {
 
-    Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG> GetHeaderFromMessage(
-        MESSAGE_HANDLE message)
+    UniqueMessageHeaderHandle GetHeaderFromMessage(MESSAGE_HANDLE message)
     {
+      if (message != nullptr)
       {
         HEADER_HANDLE headerValue;
         if (!message_get_header(message, &headerValue))
@@ -30,13 +30,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return nullptr;
     }
-    Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG> GetPropertiesFromMessage(
-        MESSAGE_HANDLE message)
+
+    UniquePropertiesHandle GetPropertiesFromMessage(MESSAGE_HANDLE const& message)
     {
-      PROPERTIES_HANDLE propertiesValue;
-      if (!message_get_properties(message, &propertiesValue))
+      if (message != nullptr)
       {
-        return Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>(propertiesValue);
+        PROPERTIES_HANDLE propertiesValue;
+        if (!message_get_properties(message, &propertiesValue))
+        {
+          return Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>(propertiesValue);
+        }
       }
       return nullptr;
     }
@@ -48,17 +51,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   // ApplicationProperties are defined as being a map from string to simple AMQP value types.
   constexpr uint64_t AmqpApplicationPropertiesDescriptor = 116;
 
-  Message::Message(MESSAGE_HANDLE message)
-      : Header{GetHeaderFromMessage(message).get()}, Properties{
-                                                         GetPropertiesFromMessage(message).get()}
+  AmqpMessage _internal::AmqpMessageFactory::FromUamqp(UniqueMessageHandle const& message)
   {
+    return FromUamqp(message.get());
+  }
+  AmqpMessage _internal::AmqpMessageFactory::FromUamqp(MESSAGE_HANDLE message)
+  {
+    if (message == nullptr)
+    {
+      return AmqpMessage(nullptr);
+    }
+    AmqpMessage rv;
+    rv.Header = _internal::MessageHeaderFactory::FromUamqp(GetHeaderFromMessage(message));
+    rv.Properties
+        = _internal::MessagePropertiesFactory::FromUamqp(GetPropertiesFromMessage(message));
     uint32_t uint32Value;
 
     // Copy the Message Format from the source message. It will eventually be transferred to the
     // Transfer performative when the message is sent.
     if (!message_get_message_format(message, &uint32Value))
     {
-      MessageFormat = uint32Value;
+      rv.MessageFormat = uint32Value;
     }
 
     {
@@ -68,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle deliveryAnnotations(annotationsVal);
         auto deliveryMap = AmqpValue{deliveryAnnotations.get()}.AsMap();
-        DeliveryAnnotations = deliveryMap;
+        rv.DeliveryAnnotations = deliveryMap;
       }
     }
     {
@@ -80,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         if (messageAnnotations)
         {
           auto messageMap = AmqpValue{messageAnnotations.get()}.AsMap();
-          MessageAnnotations = messageMap;
+          rv.MessageAnnotations = messageMap;
         }
       }
     }
@@ -136,7 +149,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             {
               throw std::runtime_error("Key of Application Properties must be a string.");
             }
-            ApplicationProperties.emplace(
+            rv.ApplicationProperties.emplace(
                 std::make_pair(static_cast<std::string>(val.first), val.second));
           }
         }
@@ -149,7 +162,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         UniqueAmqpValueHandle footerAnnotations(footerVal);
         footerVal = nullptr;
         auto footerMap = AmqpValue{footerAnnotations.get()}.AsMap();
-        Footer = footerMap;
+        rv.Footer = footerMap;
       }
     }
     {
@@ -160,7 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         switch (bodyType)
         {
           case MESSAGE_BODY_TYPE_NONE:
-            BodyType = MessageBodyType::None;
+            rv.BodyType = MessageBodyType::None;
             break;
           case MESSAGE_BODY_TYPE_DATA: {
             size_t dataCount;
@@ -171,12 +184,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                 BINARY_DATA binaryValue;
                 if (!message_get_body_amqp_data_in_place(message, i, &binaryValue))
                 {
-                  m_binaryDataBody.push_back(AmqpBinaryData(std::vector<std::uint8_t>(
+                  rv.m_binaryDataBody.push_back(AmqpBinaryData(std::vector<std::uint8_t>(
                       binaryValue.bytes, binaryValue.bytes + binaryValue.length)));
                 }
               }
             }
-            BodyType = MessageBodyType::Data;
+            rv.BodyType = MessageBodyType::Data;
           }
           break;
           case MESSAGE_BODY_TYPE_SEQUENCE: {
@@ -189,20 +202,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                 AMQP_VALUE sequence;
                 if (!message_get_body_amqp_sequence_in_place(message, i, &sequence))
                 {
-                  m_amqpSequenceBody.push_back(sequence);
+                  rv.m_amqpSequenceBody.push_back(sequence);
                 }
               }
             }
-            BodyType = MessageBodyType::Sequence;
+            rv.BodyType = MessageBodyType::Sequence;
           }
           break;
           case MESSAGE_BODY_TYPE_VALUE: {
             AMQP_VALUE bodyValue;
             if (!message_get_body_amqp_value_in_place(message, &bodyValue))
             {
-              m_amqpValueBody = bodyValue;
+              rv.m_amqpValueBody = bodyValue;
             }
-            BodyType = MessageBodyType::Value;
+            rv.BodyType = MessageBodyType::Value;
           }
           break;
           case MESSAGE_BODY_TYPE_INVALID:
@@ -211,47 +224,51 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
       }
     }
+    return rv;
   }
-  Message::operator UniqueMessageHandle() const
+
+  UniqueMessageHandle _internal::AmqpMessageFactory::ToUamqp(AmqpMessage const& message)
   {
     UniqueMessageHandle rv(message_create());
 
-    if (message_set_header(rv.get(), static_cast<UniqueMessageHeaderHandle>(Header).get()))
+    if (message_set_header(
+            rv.get(), _internal::MessageHeaderFactory::ToUamqp(message.Header).get()))
     {
       throw std::runtime_error("Could not set message header.");
     }
-    if (message_set_properties(rv.get(), static_cast<UniquePropertiesHandle>(Properties).get()))
+    if (message_set_properties(
+            rv.get(), _internal::MessagePropertiesFactory::ToUamqp(message.Properties).get()))
     {
       throw std::runtime_error("Could not set message properties.");
     }
 
-    if (MessageFormat.HasValue())
+    if (message.MessageFormat.HasValue())
     {
-      if (message_set_message_format(rv.get(), MessageFormat.Value()))
+      if (message_set_message_format(rv.get(), message.MessageFormat.Value()))
       {
         throw std::runtime_error("Could not set destination message format.");
       }
     }
-    if (!DeliveryAnnotations.empty())
+    if (!message.DeliveryAnnotations.empty())
     {
       if (message_set_delivery_annotations(
-              rv.get(), static_cast<UniqueAmqpValueHandle>(DeliveryAnnotations).get()))
+              rv.get(), static_cast<UniqueAmqpValueHandle>(message.DeliveryAnnotations).get()))
       {
         throw std::runtime_error("Could not set delivery annotations.");
       }
     }
-    if (!MessageAnnotations.empty())
+    if (!message.MessageAnnotations.empty())
     {
       if (message_set_message_annotations(
-              rv.get(), static_cast<UniqueAmqpValueHandle>(MessageAnnotations).get()))
+              rv.get(), static_cast<UniqueAmqpValueHandle>(message.MessageAnnotations).get()))
       {
         throw std::runtime_error("Could not set message annotations.");
       }
     }
-    if (!ApplicationProperties.empty())
+    if (!message.ApplicationProperties.empty())
     {
       AmqpMap appProperties;
-      for (auto const& val : ApplicationProperties)
+      for (auto const& val : message.ApplicationProperties)
       {
         if ((val.second.GetType() == AmqpValueType::List)
             || (val.second.GetType() == AmqpValueType::Map)
@@ -269,19 +286,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set application properties.");
       }
     }
-    if (!Footer.empty())
+    if (!message.Footer.empty())
     {
-      if (message_set_footer(rv.get(), static_cast<UniqueAmqpValueHandle>(Footer).get()))
+      if (message_set_footer(rv.get(), static_cast<UniqueAmqpValueHandle>(message.Footer).get()))
       {
         throw std::runtime_error("Could not set message annotations.");
       }
     }
-    switch (BodyType)
+    switch (message.BodyType)
     {
       case MessageBodyType::None:
         break;
       case MessageBodyType::Data:
-        for (auto const& binaryVal : m_binaryDataBody)
+        for (auto const& binaryVal : message.m_binaryDataBody)
         {
           BINARY_DATA valueData;
           valueData.bytes = binaryVal.data();
@@ -293,7 +310,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         break;
       case MessageBodyType::Sequence:
-        for (auto const& sequenceVal : m_amqpSequenceBody)
+        for (auto const& sequenceVal : message.m_amqpSequenceBody)
         {
           if (message_add_body_amqp_sequence(rv.get(), sequenceVal))
           {
@@ -302,7 +319,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         break;
       case MessageBodyType::Value:
-        if (message_set_body_amqp_value(rv.get(), m_amqpValueBody))
+        if (message_set_body_amqp_value(rv.get(), message.m_amqpValueBody))
         {
           throw std::runtime_error("Could not set message body AMQP value.");
         }
@@ -314,7 +331,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  AmqpList Message::GetBodyAsAmqpList() const
+  AmqpList AmqpMessage::GetBodyAsAmqpList() const
   {
     if (BodyType != MessageBodyType::Sequence)
     {
@@ -323,28 +340,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return m_amqpSequenceBody;
   }
 
-  void Message::SetBody(AmqpBinaryData const& value)
+  void AmqpMessage::SetBody(AmqpBinaryData const& value)
   {
     BodyType = MessageBodyType::Data;
     m_binaryDataBody.push_back(value);
   }
-  void Message::SetBody(std::vector<AmqpBinaryData> const& value)
+  void AmqpMessage::SetBody(std::vector<AmqpBinaryData> const& value)
   {
     BodyType = MessageBodyType::Data;
     m_binaryDataBody = value;
   }
-  void Message::SetBody(AmqpValue const& value)
+  void AmqpMessage::SetBody(AmqpValue const& value)
   {
     BodyType = MessageBodyType::Value;
     m_amqpValueBody = value;
   }
-  void Message::SetBody(AmqpList const& value)
+  void AmqpMessage::SetBody(AmqpList const& value)
   {
     BodyType = MessageBodyType::Sequence;
     m_amqpSequenceBody = value;
   }
 
-  AmqpValue Message::GetBodyAsAmqpValue() const
+  AmqpValue AmqpMessage::GetBodyAsAmqpValue() const
   {
     if (BodyType != MessageBodyType::Value)
     {
@@ -352,7 +369,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return m_amqpValueBody;
   }
-  std::vector<AmqpBinaryData> Message::GetBodyAsBinary() const
+  std::vector<AmqpBinaryData> AmqpMessage::GetBodyAsBinary() const
   {
     if (BodyType != MessageBodyType::Data)
     {
@@ -361,7 +378,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return m_binaryDataBody;
   }
 
-  std::ostream& operator<<(std::ostream& os, Message const& message)
+  std::ostream& operator<<(std::ostream& os, AmqpMessage const& message)
   {
     os << "Message: " << std::endl;
     os << "Header " << message.Header << std::endl;
