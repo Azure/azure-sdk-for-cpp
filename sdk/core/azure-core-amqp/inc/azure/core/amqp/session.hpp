@@ -142,8 +142,8 @@ namespace Azure { namespace Core { namespace Amqp {
       Session(
           Connection const& parentConnection,
           Endpoint& newEndpoint,
-          SessionEvents* eventHandler);
-      Session(Connection const& parentConnection, SessionEvents* eventHandler);
+          SessionEvents* eventHandler = nullptr);
+      Session(Connection const& parentConnection, SessionEvents* eventHandler = nullptr);
       Session(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> impl) : m_impl{impl} {}
       ~Session() noexcept;
 

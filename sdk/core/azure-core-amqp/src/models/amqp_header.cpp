@@ -17,73 +17,75 @@ void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHe
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  MessageHeader::MessageHeader(HEADER_HANDLE handle)
+  MessageHeader _internal::MessageHeaderFactory::FromUamqp(UniqueMessageHeaderHandle const& handle)
   {
+    MessageHeader rv;
     bool boolValue;
-    if (!header_get_durable(handle, &boolValue))
+    if (!header_get_durable(handle.get(), &boolValue))
     {
-      Durable = boolValue;
+      rv.Durable = boolValue;
     }
 
     uint8_t uint8Value;
-    if (!header_get_priority(handle, &uint8Value))
+    if (!header_get_priority(handle.get(), &uint8Value))
     {
-      Priority = uint8Value;
+      rv.Priority = uint8Value;
     }
 
     milliseconds millisecondsValue;
-    if (!header_get_ttl(handle, &millisecondsValue))
+    if (!header_get_ttl(handle.get(), &millisecondsValue))
     {
-      TimeToLive = std::chrono::milliseconds(millisecondsValue);
+      rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
     }
 
-    if (!header_get_first_acquirer(handle, &boolValue))
+    if (!header_get_first_acquirer(handle.get(), &boolValue))
     {
-      IsFirstAcquirer = boolValue;
+      rv.IsFirstAcquirer = boolValue;
     }
 
     uint32_t uint32Value;
-    if (!header_get_delivery_count(handle, &uint32Value))
+    if (!header_get_delivery_count(handle.get(), &uint32Value))
     {
-      DeliveryCount = uint32Value;
+      rv.DeliveryCount = uint32Value;
     }
+    return rv;
   }
 
-  MessageHeader::operator UniqueMessageHeaderHandle() const
+  UniqueMessageHeaderHandle _internal::MessageHeaderFactory::ToUamqp(MessageHeader const& header)
   {
     UniqueMessageHeaderHandle rv{header_create()};
-    if (Durable)
+    if (header.Durable)
     {
-      if (header_set_durable(rv.get(), Durable))
+      if (header_set_durable(rv.get(), header.Durable))
       {
         throw std::runtime_error("Could not set durable value.");
       }
     }
-    if (Priority != 4)
+    if (header.Priority != 4)
     {
-      if (header_set_priority(rv.get(), Priority))
+      if (header_set_priority(rv.get(), header.Priority))
       {
         throw std::runtime_error("Could not set priority value.");
       }
     }
-    if (TimeToLive.HasValue())
+    if (header.TimeToLive.HasValue())
     {
-      if (header_set_ttl(rv.get(), static_cast<milliseconds>(TimeToLive.Value().count())))
+      if (header_set_ttl(rv.get(), static_cast<milliseconds>(header.TimeToLive.Value().count())))
       {
         throw std::runtime_error("Could not set header TTL."); // LCOV_EXCL_LINE
       }
     }
 
-    if (IsFirstAcquirer)
+    if (header.IsFirstAcquirer)
     {
-      if (header_set_first_acquirer(rv.get(), IsFirstAcquirer))
+      if (header_set_first_acquirer(rv.get(), header.IsFirstAcquirer))
       {
         throw std::runtime_error("Could not set first acquirer value.");
       }
     }
-    if (DeliveryCount != 0)
+    if (header.DeliveryCount != 0)
     {
-      if (header_set_delivery_count(rv.get(), DeliveryCount))
+      if (header_set_delivery_count(rv.get(), header.DeliveryCount))
       {
         throw std::runtime_error("Could not set delivery count value.");
       }
@@ -96,7 +98,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     os << "Header{";
     os << "durable=" << header.Durable;
-    os << ", priority=" << header.Priority;
+    os << ", priority=" << std::dec << static_cast<int>(header.Priority);
     if (header.TimeToLive.HasValue())
     {
       os << ", ttl=" << header.TimeToLive.Value().count() << " milliseconds";

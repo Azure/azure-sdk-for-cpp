@@ -36,25 +36,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   };
   using UniqueMessageHandle = Azure::Core::_internal::UniqueHandle<MESSAGE_INSTANCE_TAG>;
 
-  class Message final {
+  namespace _internal {
+    class AmqpMessageFactory;
+  }
+
+  class AmqpMessage final {
   public:
     /** @brief Construct a new AMQP Message object. */
-    Message() = default;
+    AmqpMessage() = default;
 
     /** @brief Destroy an instance of an AMQP Message object. */
-    ~Message() = default;
+    ~AmqpMessage() = default;
 
     /** @brief Construct a new AMQP message object from an existing object. */
-    Message(Message const&) = default;
+    AmqpMessage(AmqpMessage const&) = default;
 
     /** @brief Copy an AMQP message object to another object. @returns A reference to this.*/
-    Message& operator=(Message const&) = default;
+    AmqpMessage& operator=(AmqpMessage const&) = default;
 
     /** @brief Create a new AMQP Message from an existing message moving the contents. */
-    Message(Message&&) noexcept = default;
+    AmqpMessage(AmqpMessage&&) noexcept = default;
 
     /** @brief Move an AMQP message object to another object. @returns A reference to this.*/
-    Message& operator=(Message&&) noexcept = default;
+    AmqpMessage& operator=(AmqpMessage&&) noexcept = default;
+
+    AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
+    operator bool() const noexcept { return m_hasValue; }
 
     /** @brief The header for the message.
      *
@@ -206,14 +213,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     std::vector<AmqpBinaryData> GetBodyAsBinary() const;
 
-    // uAMQP interop functions.
-    Message(MESSAGE_INSTANCE_TAG* message);
-    operator UniqueMessageHandle() const;
+    friend class _internal::AmqpMessageFactory;
 
   private:
     std::vector<AmqpBinaryData> m_binaryDataBody;
     AmqpList m_amqpSequenceBody;
     AmqpValue m_amqpValueBody;
+    bool m_hasValue{true}; // By default, an AmqpMessage has a value.
   };
-  std::ostream& operator<<(std::ostream&, Message const&);
+  std::ostream& operator<<(std::ostream&, AmqpMessage const&);
+
 }}}} // namespace Azure::Core::Amqp::Models
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+  /**
+   * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
+   * PROPERTIES_HANDLE and back.
+   *
+   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+   * layer.
+   */
+  class AmqpMessageFactory {
+  public:
+    static AmqpMessage FromUamqp(UniqueMessageHandle const& properties);
+    static AmqpMessage FromUamqp(MESSAGE_INSTANCE_TAG* properties);
+    static UniqueMessageHandle ToUamqp(AmqpMessage const& properties);
+  };
+}}}}} // namespace Azure::Core::Amqp::Models::_internal

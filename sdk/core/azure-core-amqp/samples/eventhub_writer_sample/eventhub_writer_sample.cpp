@@ -13,14 +13,14 @@
 
 int main()
 {
+  auto credentials
+      = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
+          EH_CONNECTION_STRING);
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
-  connectOptions.SaslCredentials
-      = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
-          EH_CONNECTION_STRING);
-  std::string hostUrl = "amqps://" + connectOptions.SaslCredentials->GetHostName() + "/"
-      + connectOptions.SaslCredentials->GetEntityPath();
+  std::string hostUrl
+      = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
 
   Azure::Core::Amqp::_internal::Session session(connection, nullptr);
@@ -31,7 +31,7 @@ int main()
 
   constexpr int maxMessageSendCount = 5;
 
-  Azure::Core::Amqp::Models::Message message;
+  Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
@@ -40,7 +40,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   Azure::Core::Amqp::_internal::MessageSender sender(
-      session, hostUrl, connection, senderOptions, nullptr);
+      session, credentials, hostUrl, senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

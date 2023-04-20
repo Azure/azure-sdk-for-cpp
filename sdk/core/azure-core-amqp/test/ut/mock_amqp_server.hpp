@@ -8,6 +8,11 @@
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/message_sender.hpp>
 #include <azure/core/amqp/models/amqp_message.hpp>
+#include <azure/core/amqp/models/message_source.hpp>
+#include <azure/core/amqp/models/message_target.hpp>
+#include <azure/core/amqp/models/messaging_values.hpp>
+#include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
+#include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
 
 extern uint16_t FindAvailableSocket();
@@ -22,8 +27,18 @@ class AmqpServerMock : public Azure::Core::Amqp::Network::_internal::SocketListe
                        public Azure::Core::Amqp::_internal::SessionEvents,
                        public Azure::Core::Amqp::_internal::MessageReceiverEvents,
                        public Azure::Core::Amqp::_internal::MessageSenderEvents {
-
 public:
+  struct MessageLinkComponents
+  {
+    std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> LinkSender;
+    std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> LinkReceiver;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+        std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage>>
+        MessageQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> MessageReceiverPresentQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> MessageSenderPresentQueue;
+  };
+
   AmqpServerMock() { m_testPort = FindAvailableSocket(); }
   virtual void Poll() const {}
 
@@ -34,19 +49,25 @@ public:
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
     return result != nullptr;
   }
-  bool WaitForMessageReceiver(Azure::Core::Context context = {})
+  bool WaitForMessageReceiver(std::string const& nodeName, Azure::Core::Context context = {})
   {
-    auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connection);
+    auto result = m_linkMessageQueues[nodeName].MessageReceiverPresentQueue.WaitForPolledResult(
+        context, *this, *m_connection);
     return result != nullptr;
   }
-  bool WaitForMessageSender(Azure::Core::Context context = {})
+  bool WaitForMessageSender(std::string const& nodeName, Azure::Core::Context context = {})
   {
-    auto result = m_messageSenderQueue.WaitForPolledResult(context, *m_connection);
+    auto result = m_linkMessageQueues[nodeName].MessageSenderPresentQueue.WaitForPolledResult(
+        context, *this, *m_connection);
     return result != nullptr;
   }
-  std::unique_ptr<Azure::Core::Amqp::Models::Message> WaitForMessage()
+  std::unique_ptr<Azure::Core::Amqp::Models::AmqpMessage> WaitForMessage(
+      std::string const& nodeName)
   {
-    auto result = m_messageQueue.WaitForPolledResult(m_listenerContext, *m_connection, *this);
+    // Poll for completion on both the mock server and the connection, that ensures that
+    // we can implement unsolicited sends from the Poll function.
+    auto result = m_linkMessageQueues[nodeName].MessageQueue.WaitForPolledResult(
+        m_listenerContext, *m_connection, *this);
     if (result)
     {
       return std::move(std::get<0>(*result));
@@ -58,20 +79,17 @@ public:
   }
 
   /** @brief Override for non CBS message receive operations which allows a specialization to
-   * customize the link behavior.
-   *  @param message The message received.
-   *  @return The value to send back to the sender.
+   * customize the behavior for received messages.
    */
-  virtual Azure::Core::Amqp::Models::AmqpValue MessageReceived(
-      Azure::Core::Amqp::Models::Message message)
-  {
-    (void)message;
-    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
-  };
-  virtual void MessageLoop()
+  virtual void MessageReceived(
+      std::string const&,
+      MessageLinkComponents const&,
+      Azure::Core::Amqp::Models::AmqpMessage const&) const {};
+
+  virtual void MessageLoop(std::string const& nodeName, MessageLinkComponents const& linkComponents)
   {
     GTEST_LOG_(INFO) << "Wait for incoming message.";
-    auto message = WaitForMessage();
+    auto message = WaitForMessage(nodeName);
     if (!message)
     {
       GTEST_LOG_(INFO) << "No message, canceling thread";
@@ -79,13 +97,13 @@ public:
     else
     {
       GTEST_LOG_(INFO) << "Received message: " << *message;
-      if (IsCbsMessage(*message))
+      if (nodeName == "$cbs" && IsCbsMessage(*message))
       {
-        ProcessCbsMessage(*message);
+        ProcessCbsMessage(linkComponents, *message);
       }
       else
       {
-        OnMessageReceived(*message);
+        MessageReceived(nodeName, linkComponents, *message);
       }
     }
   };
@@ -114,20 +132,33 @@ public:
         GTEST_LOG_(INFO) << "Cancelling thread.";
         return;
       }
-      GTEST_LOG_(INFO) << "Wait for message receiver.";
-      if (!WaitForMessageReceiver(m_listenerContext))
-      {
-        GTEST_LOG_(INFO) << "Cancelling thread.";
-        return;
-      }
-      if (!WaitForMessageSender(m_listenerContext))
-      {
-        GTEST_LOG_(INFO) << "Cancelling thread.";
-        return;
-      }
       while (!m_listenerContext.IsCancelled())
       {
-        MessageLoop();
+        std::this_thread::yield();
+        m_connection->Poll();
+        for (const auto& val : m_linkMessageQueues)
+        {
+          if (!val.second.LinkReceiver)
+          {
+            GTEST_LOG_(INFO) << "Wait for message receiver for " << val.first;
+
+            if (!WaitForMessageReceiver(val.first, m_listenerContext))
+            {
+              GTEST_LOG_(INFO) << "Cancelling thread.";
+              return;
+            }
+          }
+          if (!val.second.LinkSender)
+          {
+            GTEST_LOG_(INFO) << "Wait for message sender for " << val.first;
+            if (!WaitForMessageSender(val.first, m_listenerContext))
+            {
+              GTEST_LOG_(INFO) << "Cancelling thread.";
+              return;
+            }
+          }
+          MessageLoop(val.first, val.second);
+        }
       }
       listener.Stop();
     });
@@ -140,26 +171,22 @@ public:
   }
 
   void StopListening()
-  { // Cancel the listener context, which will cause any WaitForXxx calls to exit.
+  {
+    GTEST_LOG_(INFO) << "Stop listening";
+    // Cancel the listener context, which will cause any WaitForXxx calls to exit.
 
     m_listenerContext.Cancel();
     m_serverThread.join();
-
-    if (m_messageSender)
+    for (auto& val : m_linkMessageQueues)
     {
-      m_messageSender.reset();
-    }
-    if (m_messageReceiver)
-    {
-      m_messageReceiver.reset();
-    }
-    if (m_cbsMessageSender)
-    {
-      m_cbsMessageSender.reset();
-    }
-    if (m_cbsMessageReceiver)
-    {
-      m_cbsMessageReceiver.reset();
+      if (val.second.LinkSender)
+      {
+        val.second.LinkSender.reset();
+      }
+      if (val.second.LinkReceiver)
+      {
+        val.second.LinkReceiver.reset();
+      }
     }
     if (m_session)
     {
@@ -177,33 +204,26 @@ private:
   std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
   std::shared_ptr<Azure::Core::Amqp::_internal::Session> m_session;
 
-  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_messageReceiverQueue;
-  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_messageSenderQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_connectionQueue;
-  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-      std::unique_ptr<Azure::Core::Amqp::Models::Message>>
-      m_messageQueue;
-
-  std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> m_cbsMessageSender;
-  std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> m_cbsMessageReceiver;
-
-  std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> m_messageReceiver;
 
   std::thread m_serverThread;
   std::uint16_t m_testPort;
   bool m_forceCbsError{false};
 
 protected:
-  std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> m_messageSender;
+  // For each incoming message source, we create a queue of messages intended for that message
+  // source.
+  //
+  // Each message queue is keyed by the message-id.
+  std::map<std::string, MessageLinkComponents> m_linkMessageQueues;
   Azure::Core::Context m_listenerContext; // Used to cancel the listener if necessary.
 
-  bool IsCbsMessage(Azure::Core::Amqp::Models::Message const& message)
+  bool IsCbsMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
   {
     if (!message.ApplicationProperties.empty())
     {
       auto operation = message.ApplicationProperties.at("operation");
       auto type = message.ApplicationProperties.at("type");
-      auto name = message.ApplicationProperties.at("name");
 
       // If we're processing a put-token message, then we should get a "type" and "name"
       // value.
@@ -220,7 +240,9 @@ protected:
     return false;
   }
 
-  void ProcessCbsMessage(Azure::Core::Amqp::Models::Message const& message)
+  void ProcessCbsMessage(
+      MessageLinkComponents const& linkComponents,
+      Azure::Core::Amqp::Models::AmqpMessage const& message)
   {
     auto operation = message.ApplicationProperties.at("operation");
     auto type = message.ApplicationProperties.at("type");
@@ -236,7 +258,7 @@ protected:
       EXPECT_EQ(message.BodyType, Azure::Core::Amqp::Models::MessageBodyType::Value);
 
       // Respond to the operation.
-      Azure::Core::Amqp::Models::Message response;
+      Azure::Core::Amqp::Models::AmqpMessage response;
       Azure::Core::Amqp::Models::MessageProperties responseProperties;
 
       // Management specification section 3.2: The correlation-id of the response message
@@ -262,15 +284,16 @@ protected:
         response.ApplicationProperties["status-description"] = "OK-put";
       }
 
+      response.SetBody(Azure::Core::Amqp::Models::AmqpValue());
+
       // Set the response body type to an empty AMQP value.
       if (m_listenerContext.IsCancelled())
       {
         return;
       }
-      response.SetBody(Azure::Core::Amqp::Models::AmqpValue());
       try
       {
-        m_cbsMessageSender->SendAsync(response, nullptr, m_listenerContext);
+        linkComponents.LinkSender->QueueSend(response, nullptr, m_listenerContext);
       }
       catch (std::exception& ex)
       {
@@ -280,7 +303,7 @@ protected:
     }
     else if (static_cast<std::string>(operation) == "delete-token")
     {
-      Azure::Core::Amqp::Models::Message response;
+      Azure::Core::Amqp::Models::AmqpMessage response;
       Azure::Core::Amqp::Models::MessageProperties responseProperties;
 
       // Management specification section 3.2: The correlation-id of the response message
@@ -295,15 +318,15 @@ protected:
       response.ApplicationProperties["status-code"] = 200;
       response.ApplicationProperties["status-description"] = "OK-delete";
 
+      response.SetBody(Azure::Core::Amqp::Models::AmqpValue());
+
       // Set the response body type to an empty AMQP value.
       if (m_listenerContext.IsCancelled())
       {
         return;
       }
 
-      response.SetBody(Azure::Core::Amqp::Models::AmqpValue());
-
-      m_cbsMessageSender->SendAsync(response, nullptr, m_listenerContext);
+      linkComponents.LinkSender->QueueSend(response, nullptr, m_listenerContext);
     }
   }
 
@@ -367,19 +390,14 @@ protected:
       senderOptions.SourceAddress = static_cast<std::string>(msgSource.GetAddress());
       senderOptions.InitialDeliveryCount = 0;
       std::string targetAddress = static_cast<std::string>(msgTarget.GetAddress());
-      if (senderOptions.SourceAddress == "$cbs")
+      MessageLinkComponents& linkComponents = m_linkMessageQueues[senderOptions.SourceAddress];
+
+      if (!linkComponents.LinkSender)
       {
-        m_cbsMessageSender = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
-            session, newLinkInstance, targetAddress, *m_connection, senderOptions, this);
-        m_cbsMessageSender->Open();
-        m_messageSenderQueue.CompleteOperation(true);
-      }
-      else
-      {
-        m_messageSender = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
-            session, newLinkInstance, targetAddress, *m_connection, senderOptions, this);
-        m_messageSender->Open();
-        m_messageSenderQueue.CompleteOperation(true);
+        linkComponents.LinkSender = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
+            session, newLinkInstance, targetAddress, senderOptions, this);
+        linkComponents.LinkSender->Open();
+        linkComponents.MessageSenderPresentQueue.CompleteOperation(true);
       }
     }
     else if (role == Azure::Core::Amqp::_internal::SessionRole::Sender)
@@ -390,19 +408,14 @@ protected:
       receiverOptions.TargetAddress = static_cast<std::string>(msgTarget.GetAddress());
       receiverOptions.InitialDeliveryCount = 0;
       std::string sourceAddress = static_cast<std::string>(msgSource.GetAddress());
-      if (receiverOptions.TargetAddress == "$cbs")
+      MessageLinkComponents& linkComponents = m_linkMessageQueues[receiverOptions.TargetAddress];
+      if (!linkComponents.LinkReceiver)
       {
-        m_cbsMessageReceiver = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
-            session, newLinkInstance, sourceAddress, receiverOptions, this);
-        m_cbsMessageReceiver->Open();
-        m_messageReceiverQueue.CompleteOperation(true);
-      }
-      else
-      {
-        m_messageReceiver = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
-            session, newLinkInstance, sourceAddress, receiverOptions, this);
-        m_messageReceiver->Open();
-        m_messageReceiverQueue.CompleteOperation(true);
+        linkComponents.LinkReceiver
+            = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
+                session, newLinkInstance, sourceAddress, receiverOptions, this);
+        linkComponents.LinkReceiver->Open();
+        linkComponents.MessageReceiverPresentQueue.CompleteOperation(true);
       }
     }
     return true;
@@ -427,13 +440,12 @@ protected:
                      << " New state: " << ReceiverStateToString(newState);
   }
   Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-      Azure::Core::Amqp::Models::Message const& message) override
+      Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+      Azure::Core::Amqp::Models::AmqpMessage const& message) override
   {
     GTEST_LOG_(INFO) << "Received a message " << message;
-    if (IsCbsMessage(message))
-    {
-    }
-    m_messageQueue.CompleteOperation(std::make_unique<Azure::Core::Amqp::Models::Message>(message));
+    m_linkMessageQueues[receiver.GetSourceName()].MessageQueue.CompleteOperation(
+        std::make_unique<Azure::Core::Amqp::Models::AmqpMessage>(message));
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
 

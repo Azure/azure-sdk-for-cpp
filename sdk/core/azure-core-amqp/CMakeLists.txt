@@ -82,7 +82,7 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/network/transport.cpp 
 )
 
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} "src/amqp/management.cpp")
 
 target_include_directories(
   azure-core-amqp

@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::Amqp::_internal::SessionRole role,
       std::string const& source,
       std::string const& target)
-      : m_impl{std::make_shared<LinkImpl>(session, name, role, source, target)}
+      : m_impl{std::make_shared<LinkImpl>(session.GetImpl(), name, role, source, target)}
   {
   }
 
@@ -32,7 +32,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionRole role,
       std::string const& source,
       std::string const& target)
-      : m_impl{std::make_shared<LinkImpl>(session, linkEndpoint, name, role, source, target)}
+      : m_impl{
+          std::make_shared<LinkImpl>(session.GetImpl(), linkEndpoint, name, role, source, target)}
   {
   }
 
@@ -92,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   /* LINK Implementation */
 
   LinkImpl::LinkImpl(
-      _internal::Session const& session,
+      std::shared_ptr<_detail::SessionImpl> session,
       std::string const& name,
       _internal::SessionRole role,
       std::string const& source,
@@ -100,7 +101,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       : m_session{session}, m_source(source), m_target(target)
   {
     m_link = link_create(
-        *session.GetImpl(),
+        *session,
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
         Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
@@ -108,7 +109,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   LinkImpl::LinkImpl(
-      _internal::Session const& session,
+      std::shared_ptr<_detail::SessionImpl> session,
       _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
       _internal::SessionRole role,
@@ -117,7 +118,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       : m_session{session}, m_source(source), m_target(target)
   {
     m_link = link_create_from_endpoint(
-        *session.GetImpl(),
+        *session,
         linkEndpoint.Release(),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,

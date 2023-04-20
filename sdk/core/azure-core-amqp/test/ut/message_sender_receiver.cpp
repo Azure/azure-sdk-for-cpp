@@ -77,11 +77,11 @@ TEST_F(TestMessages, SimpleSender)
   //  Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
 
   {
-    MessageSender sender(session, "MySource", connection, {}, nullptr);
+    MessageSender sender(session, "MySource", {}, nullptr);
   }
   {
-    MessageSender sender1(session, "MySource", connection, {}, nullptr);
-    MessageSender sender2(session, "MySource", connection, {}, nullptr);
+    MessageSender sender1(session, "MySource", {}, nullptr);
+    MessageSender sender2(session, "MySource", {}, nullptr);
   }
 }
 TEST_F(TestMessages, SenderProperties)
@@ -90,7 +90,7 @@ TEST_F(TestMessages, SenderProperties)
   Session session(connection, nullptr);
 
   {
-    MessageSender sender(session, "MySource", connection, {}, nullptr);
+    MessageSender sender(session, "MySource", {}, nullptr);
     sender.SetTrace(true);
   }
 }
@@ -135,7 +135,7 @@ public:
     }
     return nullptr;
   }
-  Azure::Core::Amqp::Models::Message WaitForMessage(Azure::Core::Context context)
+  Azure::Core::Amqp::Models::AmqpMessage WaitForMessage(Azure::Core::Context context)
   {
     auto result = m_messageQueue.WaitForPolledResult(context, *m_connectionToPoll);
     if (result)
@@ -154,7 +154,7 @@ private:
       m_listeningSessionQueue;
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>>
       m_messageReceiverQueue;
-  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::Message>
+  Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::AmqpMessage>
       m_messageQueue;
   std::shared_ptr<Connection> m_connectionToPoll;
 
@@ -240,7 +240,8 @@ private:
     return true;
   }
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-      Azure::Core::Amqp::Models::Message const& message) override
+      Azure::Core::Amqp::_internal::MessageReceiver const&,
+      Azure::Core::Amqp::Models::AmqpMessage const& message) override
   {
     GTEST_LOG_(INFO) << "Message received";
     m_messageQueue.CompleteOperation(message);
@@ -308,7 +309,9 @@ TEST_F(TestMessages, ReceiverOpenClose)
         (void)oldState;
       }
 
-      Models::AmqpValue OnMessageReceived(Models::Message const&) override
+      Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Models::AmqpMessage const&) override
       {
         return Models::AmqpValue();
       }
@@ -347,7 +350,7 @@ TEST_F(TestMessages, SenderOpenClose)
     MessageSenderOptions options;
     options.SourceAddress = "MySource";
 
-    MessageSender sender(session, "MyTarget", connection, options, nullptr);
+    MessageSender sender(session, "MyTarget", options, nullptr);
     sender.Open();
     sender.Close();
   }
@@ -424,17 +427,17 @@ TEST_F(TestMessages, SenderSendAsync)
     options.SourceAddress = "ingress";
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
-    MessageSender sender(session, "localhost/ingress", connection, options, &senderEvents);
+    MessageSender sender(session, "localhost/ingress", options, &senderEvents);
     EXPECT_NO_THROW(sender.Open());
 
-    Azure::Core::Amqp::Models::Message message;
+    Azure::Core::Amqp::Models::AmqpMessage message;
     message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
     Azure::Core::Context context;
     Azure::Core::Amqp::Common::_internal::
         AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue>
             sendCompleteQueue;
-    sender.SendAsync(
+    sender.QueueSend(
         message,
         [&](MessageSendResult sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
           GTEST_LOG_(INFO) << "Send Complete!";
@@ -507,10 +510,10 @@ TEST_F(TestMessages, SenderSendSync)
     options.MaxMessageSize = 65536;
     options.SourceAddress = "ingress";
     options.Name = "sender-link";
-    MessageSender sender(session, "localhost/ingress", connection, options, nullptr);
+    MessageSender sender(session, "localhost/ingress", options, nullptr);
     EXPECT_NO_THROW(sender.Open());
 
-    Azure::Core::Amqp::Models::Message message;
+    Azure::Core::Amqp::Models::AmqpMessage message;
     message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
     Azure::Core::Amqp::Common::_internal::
@@ -554,13 +557,12 @@ TEST_F(TestMessages, AuthenticatedSender)
       session,
       sasCredential,
       sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
-      connection,
       senderOptions,
       nullptr);
 
   sender.Open();
 
-  Azure::Core::Amqp::Models::Message message;
+  Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
   sender.Send(message);
 
@@ -611,11 +613,11 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
-  MessageSender sender(session, tokenCredential, endpoint, connection, senderOptions, nullptr);
+  MessageSender sender(session, tokenCredential, endpoint, senderOptions, nullptr);
   EXPECT_TRUE(sender);
   sender.Open();
 
-  Azure::Core::Amqp::Models::Message message;
+  Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
   sender.Send(message);
 
@@ -628,19 +630,23 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   class ReceiverMock : public MessageTests::AmqpServerMock {
   public:
     void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
+    void SetSenderNodeName(std::string const& senderNodeName) { m_senderNodeName = senderNodeName; }
 
   private:
     mutable bool m_shouldSendMessage{false};
+    std::string m_senderNodeName;
 
     void Poll() const override
     {
-      if (m_shouldSendMessage)
+      if (m_shouldSendMessage
+          && m_linkMessageQueues.find(m_senderNodeName) != m_linkMessageQueues.end())
       {
-        Azure::Core::Amqp::Models::Message sendMessage;
+        GTEST_LOG_(INFO) << "Sending message to client." + m_senderNodeName;
+        Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-        if (m_messageSender)
+        if (m_linkMessageQueues.at(m_senderNodeName).LinkSender)
         {
-          m_messageSender->Send(sendMessage);
+          m_linkMessageQueues.at(m_senderNodeName).LinkSender->Send(sendMessage);
           m_shouldSendMessage = false;
         }
       }
@@ -651,7 +657,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
 
   auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
       "Endpoint=amqp://localhost:" + std::to_string(server.GetPort())
-      + ";SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+      + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
   ConnectionOptions connectionOptions;
 
@@ -662,6 +668,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   Connection connection(sasCredential->GetTransport(), connectionOptions);
   Session session(connection, nullptr);
 
+  server.SetSenderNodeName(sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
   server.StartListening();
 
   MessageReceiverOptions receiverOptions;
@@ -672,7 +679,6 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   receiverOptions.Name = "receiver-link";
   MessageReceiver receiver(
       session,
-      connection,
       sasCredential,
       sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
       receiverOptions,
@@ -684,14 +690,14 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   // Send a message.
   {
     server.ShouldSendMessage(true);
-    auto message = receiver.WaitForIncomingMessage(connection);
+    auto message = receiver.WaitForIncomingMessage();
     EXPECT_EQ(static_cast<std::string>(message.GetBodyAsAmqpValue()), "This is a message body.");
   }
 
   {
     Azure::Core::Context receiveContext;
     receiveContext.Cancel();
-    auto message = receiver.WaitForIncomingMessage(connection, receiveContext);
+    auto message = receiver.WaitForIncomingMessage(receiveContext);
     (void)message;
   }
   receiver.Close();
@@ -703,19 +709,22 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   class ReceiverMock : public MessageTests::AmqpServerMock {
   public:
     void ShouldSendMessage(bool shouldSend) { m_shouldSendMessage = shouldSend; }
+    void SetSenderNodeName(std::string const& senderNodeName) { m_senderNodeName = senderNodeName; }
 
   private:
     mutable bool m_shouldSendMessage{false};
+    std::string m_senderNodeName;
 
     void Poll() const override
     {
-      if (m_shouldSendMessage)
+      if (m_shouldSendMessage
+          && m_linkMessageQueues.find(m_senderNodeName) != m_linkMessageQueues.end())
       {
-        Azure::Core::Amqp::Models::Message sendMessage;
+        Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-        if (m_messageSender)
+        if (m_linkMessageQueues.at(m_senderNodeName).LinkSender)
         {
-          m_messageSender->Send(sendMessage);
+          m_linkMessageQueues.at(m_senderNodeName).LinkSender->Send(sendMessage);
           m_shouldSendMessage = false;
         }
       }
@@ -756,6 +765,7 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   Connection connection(endpoint, connectionOptions);
   Session session(connection, nullptr);
 
+  server.SetSenderNodeName(endpoint);
   server.StartListening();
 
   MessageReceiverOptions receiverOptions;
@@ -764,22 +774,21 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
-  MessageReceiver receiver(
-      session, connection, tokenCredential, endpoint, receiverOptions, nullptr);
+  MessageReceiver receiver(session, tokenCredential, endpoint, receiverOptions, nullptr);
 
   receiver.Open();
 
   // Send a message.
   {
     server.ShouldSendMessage(true);
-    auto message = receiver.WaitForIncomingMessage(connection);
+    auto message = receiver.WaitForIncomingMessage();
     EXPECT_EQ(static_cast<std::string>(message.GetBodyAsAmqpValue()), "This is a message body.");
   }
 
   {
     Azure::Core::Context receiveContext;
     receiveContext.Cancel();
-    auto message = receiver.WaitForIncomingMessage(connection, receiveContext);
+    auto message = receiver.WaitForIncomingMessage(receiveContext);
     //    EXPECT_FALSE(message);
     (void)message;
   }

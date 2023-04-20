@@ -271,7 +271,8 @@ private:
   }
   // Inherited via MessageReceiver
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-      Azure::Core::Amqp::Models::Message const&) override
+      Azure::Core::Amqp::_internal::MessageReceiver const&,
+      Azure::Core::Amqp::Models::AmqpMessage const&) override
   {
     GTEST_LOG_(INFO) << "Message received";
 

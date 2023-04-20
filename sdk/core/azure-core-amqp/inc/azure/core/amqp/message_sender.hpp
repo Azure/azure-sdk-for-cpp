@@ -90,7 +90,6 @@ namespace Azure { namespace Core { namespace Amqp {
       MessageSender(
           Session const& session,
           std::string const& target,
-          Connection const& connectionToPoll,
           MessageSenderOptions const& options,
           MessageSenderEvents* events);
 
@@ -101,21 +100,18 @@ namespace Azure { namespace Core { namespace Amqp {
           Session const& session,
           LinkEndpoint& newLinkEndpoint,
           std::string const& target,
-          Connection const& connectionToPoll,
           MessageSenderOptions const& options,
           MessageSenderEvents* events);
       MessageSender(
           Session const& session,
           std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
           std::string const& target,
-          Connection const& connectionToPoll,
           MessageSenderOptions const& options,
           MessageSenderEvents* events);
       MessageSender(
           Session const& session,
           std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
           std::string const& target,
-          Connection const& connectionToPoll,
           MessageSenderOptions const& options,
           MessageSenderEvents* events);
       MessageSender(std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> sender)
@@ -135,10 +131,10 @@ namespace Azure { namespace Core { namespace Amqp {
       void Open();
       void Close();
       std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
-          Azure::Core::Amqp::Models::Message const& message,
+          Azure::Core::Amqp::Models::AmqpMessage const& message,
           Azure::Core::Context context = {});
-      void SendAsync(
-          Azure::Core::Amqp::Models::Message const& message,
+      void QueueSend(
+          Azure::Core::Amqp::Models::AmqpMessage const& message,
           MessageSendCompleteCallback onSendComplete,
           Azure::Core::Context context = {});
       void SetTrace(bool traceEnabled);

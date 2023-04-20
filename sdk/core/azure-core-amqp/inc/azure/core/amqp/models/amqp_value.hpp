@@ -11,6 +11,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <cuchar>
 #include <exception>
 #include <functional>
 #include <list>
@@ -235,10 +236,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpValue(const char* value);
 
-    /** TODO:
-     * Decimal32, Decimal64, and Decimal128.
-     */
-
     /** @brief Construct an AMQP Char value, a UTF-32BE encoded Unicode character.
      *
      * Defined in [AMQP Core Types
@@ -247,7 +244,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @param value UTF-32 encoded unicode value to be set.
      *
      */
-    static AmqpValue CreateChar(std::uint32_t value);
+    AmqpValue(char32_t value);
+
+    /** TODO:
+     * Decimal32, Decimal64, and Decimal128.
+     */
 
     /** @brief Construct an AMQP Uuid value, an RFC-4122 Universally Unique Identifier.
      *
@@ -307,6 +308,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @returns true if the that is equal to this.
      */
     bool operator==(AmqpValue const& that) const;
+
+    /** @brief Equality comparison operator.
+     * @param that - Value to compare to this value.
+     * @returns true if the that is equal to this.
+     */
+    bool operator!=(AmqpValue const& that) const { return !(*this == that); };
+
     /** @brief Less Than comparison operator.
      * @param that - Value to compare to this value.
      * @returns true if the that is less than this.
@@ -338,6 +346,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     operator std::int64_t() const;
     operator float() const;
     operator double() const;
+    operator char32_t() const;
     explicit operator std::string() const;
     operator Uuid() const;
 
@@ -353,9 +362,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpBinaryData AsBinary() const;
 
     AmqpTimestamp AsTimestamp() const;
-
-    // Get Char value.
-    std::uint32_t GetChar() const;
 
     // Symbols
     AmqpSymbol AsSymbol() const;
@@ -442,7 +448,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    */
   class AmqpMap final
       : public _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap> {
-    //      std::map<AmqpValue, AmqpValue> m_value;
 
   public:
     /** @brief Construct a new AmqpMap object. */

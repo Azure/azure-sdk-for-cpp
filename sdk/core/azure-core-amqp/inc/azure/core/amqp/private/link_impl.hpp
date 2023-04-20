@@ -17,13 +17,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     using OnLinkDetachReceived = std::function<void(_internal::Error& error)>;
 
     LinkImpl(
-        _internal::Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::string const& name,
         _internal::SessionRole role,
         std::string const& source,
         std::string const& target);
     LinkImpl(
-        _internal::Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& linkEndpoint,
         std::string const& name,
         _internal::SessionRole role,
@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     uint32_t GetReceivedMessageId() const;
 
-    _internal::Session const& GetSession() const { return m_session; }
+    std::shared_ptr<_detail::SessionImpl> const& GetSession() const { return m_session; }
 
     void Attach();
 
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     LINK_HANDLE m_link;
-    _internal::Session const& m_session;
+    std::shared_ptr<_detail::SessionImpl> m_session;
     std::string m_source;
     std::string m_target;
 

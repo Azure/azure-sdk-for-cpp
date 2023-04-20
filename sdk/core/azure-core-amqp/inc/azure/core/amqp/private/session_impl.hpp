@@ -11,6 +11,15 @@
 
 #include <azure_uamqp_c/session.h>
 
+template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
+{
+  static void FreeAmqpSession(SESSION_HANDLE obj);
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
+};
+
+using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
@@ -19,11 +28,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         void(AMQP_VALUE_DATA_TAG* performative, uint32_t framePayloadSize, uint8_t* payload)>;
 
     SessionImpl(
-        _internal::Connection const& parentConnection,
+        std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::Endpoint& newEndpoint,
         _internal::SessionEvents* eventHandler);
     SessionImpl(
-        _internal::Connection const& parentConnection,
+        std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
 
@@ -31,7 +40,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl& operator=(SessionImpl const&) = delete;
     SessionImpl(SessionImpl&&) noexcept = delete;
     SessionImpl& operator=(SessionImpl&&) noexcept = delete;
-    operator SESSION_HANDLE() const { return m_session; }
+    operator SESSION_HANDLE() const { return m_session.get(); }
+
+    std::shared_ptr<ConnectionImpl> GetConnectionToPoll() const { return m_connectionToPoll; }
 
     void SetIncomingWindow(uint32_t incomingWindow);
     uint32_t GetIncomingWindow();
@@ -52,17 +63,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SendAttach(_internal::Endpoint& endpoint, _internal::Attach& attach);
     void SendDisposition(_internal::Endpoint& endpoint, _internal::Disposition& disposition);
     void SendDetach(_internal::Endpoint& endpoint, _internal::Detach& detach);
-    // SessionSendTransferResult SendTransfer(
-    //     Endpoint& endpoint,
-    //     Transfer& transfer,
-    //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-    //     uint32_t* deliveryNumber,
-    //     Azure::Core::Amqp::_internal::Network::Transport::TransportSendCompleteFn sendComplete);
 
   private:
     SessionImpl();
-    SESSION_INSTANCE_TAG* m_session;
-    _internal::Connection const& m_connectionToPoll;
+    UniqueAmqpSession m_session;
+    std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     _internal::SessionEvents* m_eventHandler{};
 
     //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;

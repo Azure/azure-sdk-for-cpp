@@ -22,14 +22,12 @@ namespace Azure { namespace Core { namespace Amqp {
      */
     MessageReceiver::MessageReceiver(
         Session& session,
-        Connection const& connectionToPoll,
         std::shared_ptr<ConnectionStringCredential> credential,
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-            session,
-            connectionToPoll,
+            session.GetImpl(),
             credential,
             source,
             options,
@@ -38,14 +36,12 @@ namespace Azure { namespace Core { namespace Amqp {
     }
     MessageReceiver::MessageReceiver(
         Session& session,
-        Connection const& connectionToPoll,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-            session,
-            connectionToPoll,
+            session.GetImpl(),
             credential,
             source,
             options,
@@ -57,8 +53,11 @@ namespace Azure { namespace Core { namespace Amqp {
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_impl{
-            std::make_shared<_detail::MessageReceiverImpl>(session, source, options, eventHandler)}
+        : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
+            session.GetImpl(),
+            source,
+            options,
+            eventHandler)}
     {
     }
 
@@ -71,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp {
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-            session,
+            session.GetImpl(),
             linkEndpoint,
             source,
             options,
@@ -86,11 +85,11 @@ namespace Azure { namespace Core { namespace Amqp {
     void MessageReceiver::Open() { m_impl->Open(); }
     void MessageReceiver::Close() { m_impl->Close(); }
     void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
-    Azure::Core::Amqp::Models::Message MessageReceiver::WaitForIncomingMessage(
-        Connection& connection,
+    std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
+    Azure::Core::Amqp::Models::AmqpMessage MessageReceiver::WaitForIncomingMessage(
         Azure::Core::Context context)
     {
-      return m_impl->WaitForIncomingMessage(context, connection);
+      return m_impl->WaitForIncomingMessage(context);
     }
     std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
   } // namespace _internal
@@ -99,41 +98,38 @@ namespace Azure { namespace Core { namespace Amqp {
     /** Configure the MessageReceiver for receiving messages from a service instance.
      */
     MessageReceiverImpl::MessageReceiverImpl(
-        Session& session,
-        Connection const& connectionToPoll,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<ConnectionStringCredential> credential,
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_options{options}, m_source{source}, m_session{session}, m_connection{&connectionToPoll},
+        : m_options{options}, m_source{source}, m_session{session},
           m_connectionCredential{credential}, m_eventHandler(eventHandler)
     {
     }
     MessageReceiverImpl::MessageReceiverImpl(
-        Session& session,
-        Connection const& connectionToPoll,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_options{options}, m_source{source}, m_session{session}, m_connection{&connectionToPoll},
-          m_tokenCredential{credential}, m_eventHandler(eventHandler)
+        : m_options{options}, m_source{source}, m_session{session}, m_tokenCredential{credential},
+          m_eventHandler(eventHandler)
     {
     }
     MessageReceiverImpl::MessageReceiverImpl(
-        Session& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         std::string const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
-        : m_options{options}, m_source{source}, m_session{session}, m_connection{nullptr},
-          m_eventHandler(eventHandler)
+        : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
     {
     }
 
     /** Configure the MessageReceiverImpl for receiving messages from a network listener.
      */
     MessageReceiverImpl::MessageReceiverImpl(
-        Session const& session,
+        std::shared_ptr<_detail::SessionImpl> session,
         LinkEndpoint& linkEndpoint,
         std::string const& source,
         MessageReceiverOptions const& options,
@@ -187,11 +183,13 @@ namespace Azure { namespace Core { namespace Amqp {
     {
       MessageReceiverImpl* receiver = static_cast<MessageReceiverImpl*>(const_cast<void*>(context));
 
-      Azure::Core::Amqp::Models::Message incomingMessage(message);
+      auto incomingMessage(
+          Azure::Core::Amqp::Models::_internal::AmqpMessageFactory::FromUamqp(message));
       Azure::Core::Amqp::Models::AmqpValue rv;
       if (receiver->m_eventHandler)
       {
-        rv = receiver->m_eventHandler->OnMessageReceived(incomingMessage);
+        rv = receiver->m_eventHandler->OnMessageReceived(
+            receiver->shared_from_this(), incomingMessage);
       }
       else
       {
@@ -201,7 +199,7 @@ namespace Azure { namespace Core { namespace Amqp {
     }
 
     Azure::Core::Amqp::Models::AmqpValue MessageReceiverImpl::OnMessageReceived(
-        Azure::Core::Amqp::Models::Message message)
+        Azure::Core::Amqp::Models::AmqpMessage message)
     {
       m_messageQueue.CompleteOperation(message);
       return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
@@ -283,7 +281,7 @@ namespace Azure { namespace Core { namespace Amqp {
         std::string const& audience,
         std::string const& token)
     {
-      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session, *m_connection);
+      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
       if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
       {
         auto result = m_claimsBasedSecurity->PutToken(
