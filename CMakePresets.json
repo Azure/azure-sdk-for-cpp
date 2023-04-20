@@ -14,7 +14,8 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_MANIFEST_MODE": true
+        "VCPKG_MANIFEST_MODE": true,
+        "ENABLE_AZURE_CORE_AMQP": true
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {

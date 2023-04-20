@@ -17,7 +17,7 @@ SetUpTestProxy("sdk/messaging")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
-    eventhubs_test.cpp
+    producer_client_test.cpp
 )
 
 create_per_service_target_build(messgaing azure-messaging-eventhubs-test)

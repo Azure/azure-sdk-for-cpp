@@ -35,16 +35,15 @@ include(CreateMapFile)
 
 set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
-  inc/azure/messaging/eventhubs/eventhubs.hpp
-  inc/azure/messaging/eventhubs/producer-client.hpp
   inc/azure/messaging/eventhubs.hpp
+  inc/azure/messaging/eventhubs/producer_client.hpp
+  inc/azure/messaging/eventhubs/event_data_batch.hpp
 )
 
 set(
   AZURE_MESSAGING_EVENTHUBS_SOURCE
-  src/eventhubs.cpp
   src/private/package_version.hpp
-  src/producer-client.cpp
+  src/producer_client.cpp
 )
 add_library(
   azure-messaging-eventhubs
@@ -77,11 +76,11 @@ endif()
 az_vcpkg_export(
     azure-messaging-eventhubs
     MESSAGING_EVENTHUBS
-    "azure/messaging/eventhubs/dll_import_export.hpp"
+    azure/messaging/eventhubs/dll_import_export.hpp
   )
 
 az_rtti_setup(
   azure-security-keyvault-keys
   MESSAGING_EVENTHUBS
-  "azure/messaging/eventhubs/rtti.hpp"
+  azure/messaging/eventhubs/rtti.hpp
 )

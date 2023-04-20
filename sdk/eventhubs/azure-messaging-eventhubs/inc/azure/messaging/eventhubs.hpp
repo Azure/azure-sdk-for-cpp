@@ -8,4 +8,5 @@
 
 #pragma once
 
-#include "azure/messaging/eventhubs/eventhubs.hpp"
+#include "azure/messaging/eventhubs/producer_client.hpp"
+#include "azure/messaging/eventhubs/event_data_batch.hpp"
