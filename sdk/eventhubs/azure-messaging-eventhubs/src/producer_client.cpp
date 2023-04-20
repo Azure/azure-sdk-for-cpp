@@ -21,15 +21,19 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
   connectOptions.EnableTrace = options.SenderOptions.EnableTrace;
   connectOptions.HostName = credentials->GetHostName();
 
-  m_connection= std::make_shared<Azure::Core::Amqp::_internal::Connection>(targetUrl, connectOptions);
-  m_session
-      = std::make_shared<Azure::Core::Amqp::_internal::Session>(*m_connection.get(), nullptr);
-  m_session->SetIncomingWindow(std::numeric_limits<int32_t>::max());
-  m_session->SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
+   Azure::Core::Amqp::_internal::Connection connection(targetUrl, connectOptions, nullptr);
+  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
+  session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
+  session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  m_sender = std::make_shared<Azure::Core::Amqp::_internal::MessageSender>(*m_session.get(), credentials, targetUrl, *m_connection.get(), options.SenderOptions, nullptr);
+  m_sender = Azure::Core::Amqp::_internal::MessageSender(
+      session,
+      credentials,
+      targetUrl,
+      options.SenderOptions,
+      nullptr);
 
-  m_sender->Open();
+  m_sender.Open();
 }
 
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
@@ -47,16 +51,14 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
   std::string targetUrl
       = "amqps://" + m_credentials.FullyQualifiedNamespace + "/" + m_credentials.EventHub;
 
-  m_connection
-      = std::make_shared<Azure::Core::Amqp::_internal::Connection>(targetUrl, connectOptions,nullptr);
-   m_session = std::make_shared<Azure::Core::Amqp::_internal::Session>(
-      *m_connection.get(), nullptr);
-  m_session->SetIncomingWindow(std::numeric_limits<int32_t>::max());
-  m_session->SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
+  Azure::Core::Amqp::_internal::Connection connection(targetUrl, connectOptions, nullptr);
+  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
+  session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
+  session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  m_sender = std::make_shared<Azure::Core::Amqp::_internal::MessageSender>(
-      *m_session.get(), credential, targetUrl, *m_connection.get(), options.SenderOptions, nullptr);
-  m_sender->Open();
+  m_sender = Azure::Core::Amqp::_internal::MessageSender(
+      session, credential, targetUrl, options.SenderOptions, nullptr);
+  m_sender.Open();
 }
 
 std::vector<std::tuple<
@@ -71,10 +73,11 @@ Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
       Azure::Core::Amqp::Models::AmqpValue>>
       returnValue;
 
-  Azure::Core::Amqp::Models::Message message = eventDataBatch.GetMessages();
-
-  auto result = m_sender->Send(message);
-  returnValue.emplace_back(result);
-
+  auto messages = eventDataBatch.GetMessages();
+  for (int i = 0; i < messages.size(); i++)
+  {
+    auto result = m_sender.Send(messages[0]);
+    returnValue.emplace_back(result);
+  }
   return returnValue;
 }

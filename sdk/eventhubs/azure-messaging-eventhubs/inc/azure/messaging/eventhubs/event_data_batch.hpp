@@ -39,7 +39,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class EventDataBatch {
   private:
     std::mutex m_rwMutex;
-    std::vector<Azure::Core::Amqp::Models::Message> m_messages;
+    std::vector<Azure::Core::Amqp::Models::AmqpMessage> m_messages;
     std::string m_partitionID;
     std::string m_partitionKey;
     uint64_t m_maxBytes;
@@ -89,7 +89,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Adds a message to the data batch
      *
      */
-    void AddMessage(Azure::Core::Amqp::Models::Message& message)
+    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
       if (message.MessageAnnotations["x-opt-partition-key"] == nullptr && !m_partitionKey.empty())
@@ -112,7 +112,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Gets the messages in the batch
      *
      */
-    const std::vector<Azure::Core::Amqp::Models::Message> GetMessages()
+    const std::vector<Azure::Core::Amqp::Models::AmqpMessage> GetMessages()
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
       /* if (m_messages.size() == 0)
@@ -147,7 +147,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       return message;*/
 
-      std::vector<Azure::Core::Amqp::Models::Message> messages(m_messages);
+      std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages(m_messages);
       return messages;
 
     }

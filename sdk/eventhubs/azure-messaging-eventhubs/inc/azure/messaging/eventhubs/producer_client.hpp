@@ -45,11 +45,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ProducerClient {
     
     Azure::Core::Http::Policies::RetryOptions m_retryOptions;
-    std::shared_ptr<Azure::Core::Amqp::_internal::MessageSender> m_sender;
+    Azure::Core::Amqp::_internal::MessageSender m_sender;
     const std::string m_authScope = "https://eventhubs.azure.net/.default";
     ProducerClientCreds m_credentials{};
-    std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
-    std::shared_ptr<Azure::Core::Amqp::_internal::Session> m_session;
+
   public:
     std::string const& GetEventHubName() { return m_credentials.EventHub; }
 
