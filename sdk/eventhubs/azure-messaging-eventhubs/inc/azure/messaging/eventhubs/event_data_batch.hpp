@@ -16,7 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief MaxBytes overrides the max size (in bytes) for a batch.
      * By default NewEventDataBatch will use the max message size provided by the service.
      */
-    uint64_t MaxBytes;
+    uint32_t MaxBytes = std::numeric_limits<int32_t>::max();
 
     /** @brief PartitionKey is hashed to calculate the partition assignment.Messages and message
      * batches with the same PartitionKey are guaranteed to end up in the same partition.

@@ -13,8 +13,8 @@
 #include <limits>
 #include <string>
 
-#define EH_HOST "<<<Replace with the eventhubs host name>>>"
-#define EH_ENTITY "<<<Replace with the eventhub name>>>"
+#define EH_HOST "gearamaeh1.servicebus.windows.net"
+#define EH_ENTITY "eventhub"
 
 #define EH_AUTHENTICATION_SCOPE "https://eventhubs.azure.net/.default"
 
@@ -33,7 +33,7 @@ int main()
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  constexpr int maxMessageSendCount = 1000;
+  constexpr int maxMessageSendCount = 1;
 
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});

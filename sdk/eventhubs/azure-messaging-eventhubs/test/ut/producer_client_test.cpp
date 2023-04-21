@@ -4,9 +4,9 @@
 #include "gtest/gtest.h"
 
 #include <azure/core/context.hpp>
-#include <azure/messaging/eventhubs.hpp>
-#include <azure/identity.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/identity.hpp>
+#include <azure/messaging/eventhubs.hpp>
 
 TEST(ProducerClientTest, ConnectionStringNoEntityPath)
 {
@@ -20,7 +20,8 @@ TEST(ProducerClientTest, ConnectionStringNoEntityPath)
 TEST(ProducerClientTest, ConnectionStringEntityPath)
 {
   std::string const connStringEntityPath
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+      + ";EntityPath=eventhub";
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(connStringEntityPath, "eventhub");
   EXPECT_EQ("eventhub", client.GetEventHubName());
@@ -32,44 +33,57 @@ TEST(ProducerClientTest, TokenCredential)
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_TENANT_ID"),
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_ID"),
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_SECRET"))};
-
+  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  producerOptions.ApplicationID = "appId";
   auto client = Azure::Messaging::EventHubs::ProducerClient(
       "gearamaeh1.servicebus.windows.net", "eventhub", credential);
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
-
 
 TEST(ProducerClientTest, SendMessage)
 {
   std::string const connStringEntityPath
       = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
       + ";EntityPath=eventhub";
-  
+
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "unit-test";
   producerOptions.SenderOptions.EnableTrace = true;
   producerOptions.SenderOptions.SourceAddress = "ingress";
-  producerOptions.SenderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
+  producerOptions.SenderOptions.SettleMode
+      = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   producerOptions.ApplicationID = "unit-test";
-  
 
   Azure::Core::Amqp::Models::AmqpMessage message1;
   message1.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
   Azure::Core::Amqp::Models::AmqpMessage message2;
-  message2.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o','2'});
-  
+  message2.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o', '2'});
+
   Azure::Core::Amqp::Models::AmqpMessage message3;
   message2.SetBody(Azure::Core::Amqp::Models::AmqpList{'H', 'e', 'l', 'l', 'o', '3'});
-  
-  Azure::Messaging::EventHubs::EventDataBatch eventBatch ;
+
+  Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
+  edboptions.MaxBytes = 1024;
+  edboptions.PartitionID = "1";
+  Azure::Messaging::EventHubs::EventDataBatch eventBatch(edboptions);
+
+  Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
+  edboptions2.MaxBytes = 1024;
+  edboptions2.PartitionID = "2";
+  Azure::Messaging::EventHubs::EventDataBatch eventBatch2(edboptions2);
 
   eventBatch.AddMessage(message1);
   eventBatch.AddMessage(message2);
-  auto client = Azure::Messaging::EventHubs::ProducerClient(connStringEntityPath, "eventhub", producerOptions);
+
+  eventBatch2.AddMessage(message3);
+  eventBatch2.AddMessage(message2);
+
+  auto client = Azure::Messaging::EventHubs::ProducerClient(
+      connStringEntityPath, "eventhub", producerOptions);
 
   auto result = client.SendEventDataBatch(eventBatch);
 
-  //EXPECT_EQ(std::get<0>(result[0]), Azure::Core::Amqp::_internal::MessageSendResult::Ok);
+  EXPECT_EQ(result, Azure::Core::Amqp::_internal::MessageSendResult::Ok);
 }
