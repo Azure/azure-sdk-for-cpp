@@ -50,9 +50,6 @@ parameters:
   - name: RunMetaJobs
     type: boolean
     default: true
-  - name: variables
-    type: object
-    default: {}]
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
