@@ -93,7 +93,8 @@ stages:
           Codeql.Enabled: true
           Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
           Codeql.SkipTaskAutoInjection: false
-        steps: []
+        steps:
+          - pwsh: Echo "Empty step so that CodeQL injection happens"
   
   # PrePublishBuild runs a narrower set of fast builds. If these builds pass, 
   # Integration can launch immediately without awaiting more build and test jobs
