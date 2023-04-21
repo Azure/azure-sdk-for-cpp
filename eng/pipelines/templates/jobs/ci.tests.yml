@@ -89,6 +89,12 @@ jobs:
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
+    - name: Codeql.Enabled 
+      value: true
+    - name: Codeql.BuildIdentifier 
+      value: ${{ parameters.ServiceDirectory }}
+    - name: Codeql.SkipTaskAutoInjection
+      value: false
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
