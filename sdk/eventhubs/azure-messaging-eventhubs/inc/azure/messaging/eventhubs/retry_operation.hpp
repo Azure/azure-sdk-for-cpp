@@ -1,0 +1,48 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+#pragma once
+#include <azure/core/amqp.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <functional>
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal {
+  class RetryOperation {
+  private:
+    Azure::Core::Http::Policies::RetryOptions m_retryOptions;
+
+    /**
+     * @brief Calculate the exponential delay needed for this retry.
+     *
+     * @param retryOptions Options controlling the delay algorithm.
+     * @param attempt Which attempt is this?
+     * @param jitterFactor Test hook removing the randomness from the delay algorithm.
+     *
+     * @returns Number of milliseconds to delay.
+     *
+     * @remarks This function calculates the exponential backoff needed for each retry, including a
+     * jitter factor.
+     */
+    std::chrono::milliseconds CalculateExponentialDelay(
+        Azure::Core::Http::Policies::RetryOptions const& retryOptions,
+        int32_t attempt,
+        double jitterFactor);
+
+    bool WasLastAttempt(Azure::Core::Http::Policies::RetryOptions const& retryOptions, int32_t attempt)
+    {
+      return attempt > retryOptions.MaxRetries;
+    }
+
+    bool ShouldRetry(
+        bool response,
+        Azure::Core::Http::Policies::RetryOptions const& retryOptions,
+        int32_t attempt,
+        std::chrono::milliseconds& retryAfter,
+        double jitterFactor = -1);
+    
+  public:
+
+    explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions& retryOptions)
+        : m_retryOptions(std::move(retryOptions)){}
+    
+    bool Execute(std::function<bool()> operation);
+  };
+}}}} // namespace Azure::Messaging::EventHubs::_internal

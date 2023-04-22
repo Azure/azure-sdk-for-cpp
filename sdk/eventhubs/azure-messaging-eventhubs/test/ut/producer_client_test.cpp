@@ -80,10 +80,10 @@ TEST(ProducerClientTest, SendMessage)
   eventBatch2.AddMessage(message3);
   eventBatch2.AddMessage(message2);
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, "eventhub", producerOptions);
+    auto client = Azure::Messaging::EventHubs::ProducerClient(
+        connStringEntityPath, "eventhub", producerOptions);
 
-  auto result = client.SendEventDataBatch(eventBatch);
+    auto result = client.SendEventDataBatch(eventBatch);
 
-  EXPECT_EQ(result, Azure::Core::Amqp::_internal::MessageSendResult::Ok);
-}
+    EXPECT_TRUE(result);
+  }

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #include "event_data_batch.hpp"
+#include "retry_operation.hpp"
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -20,7 +21,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string EventHub;
 
     std::string TargetUrl;
-    
+
     std::shared_ptr<Core::Credentials::TokenCredential> Credential;
     std::shared_ptr<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>
         SasCredential;
@@ -66,8 +67,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param options Additional options for creating the client
      */
     ProducerClient(
-        std::string connectionString,
-        std::string eventHub,
+        std::string const& connectionString,
+        std::string const& eventHub,
         ProducerClientOptions options = ProducerClientOptions());
 
     /**@brief Constructs a new ProducerClient instance
@@ -77,22 +78,31 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param options Additional options for creating the client
      */
     ProducerClient(
-        std::string fullyQualifiedNamespace,
-        std::string eventHub,
+        std::string const&fullyQualifiedNamespace,
+        std::string const& eventHub,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = ProducerClientOptions());
+
+    ~ProducerClient()
+    {
+      for (auto sender : m_senders)
+      {
+        sender.second.Close();
+      }
+      m_senders.clear();
+    }
 
     /**@brief Proceeds to send and EventDataBatch
      *
      * @param eventDataBatch Batch to send
      * @param ctx Request context
      */
-    Azure::Core::Amqp::_internal::MessageSendResult SendEventDataBatch(
+    bool const SendEventDataBatch(
         EventDataBatch& eventDataBatch,
         Azure::Core::Context ctx = Azure::Core::Context());
 
   private:
-    Azure::Core::Amqp::_internal::MessageSender GetSender(std::string partitionId = "");
-    void CreateSender(std::string partitionId = "");
+    Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
+    void CreateSender(std::string const& partitionId = "");
   };
 }}} // namespace Azure::Messaging::EventHubs

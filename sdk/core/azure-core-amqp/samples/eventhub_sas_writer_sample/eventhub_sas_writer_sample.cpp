@@ -11,7 +11,7 @@
 
 // Note: The connection string provided must either have an "EntityPath" entry or the constructor
 // for the SasConnectionStringCredential has to have an entity path provided.
-#define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
+#define EH_CONNECTION_STRING "Endpoint=sb://gearamaeh1.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=vGnItFc7WRv4xGxgtdOjkAdThFpMyfR9F+AEhDe33Xk=;EntityPath=eventhub"
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  constexpr int maxMessageSendCount = 1000;
+  constexpr int maxMessageSendCount = 1;
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 

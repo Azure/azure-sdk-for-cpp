@@ -1,9 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 #include "azure/messaging/eventhubs/producer_client.hpp"
 #include <azure/core/amqp.hpp>
 
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
-    std::string connectionString,
-    std::string eventHub,
+    std::string const& connectionString,
+    std::string const& eventHub,
     ProducerClientOptions options)
     : m_retryOptions(options.RetryOptions), m_credentials{connectionString, "",eventHub},
       m_producerClientOptions(options)
@@ -21,8 +23,8 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
 }
 
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
-    std::string fullyQualifiedNamespace,
-    std::string eventHub,
+    std::string const& fullyQualifiedNamespace,
+    std::string const& eventHub,
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
     ProducerClientOptions options)
     : m_credentials{"", fullyQualifiedNamespace, eventHub},
@@ -33,7 +35,7 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
 }
 
 Azure::Core::Amqp::_internal::MessageSender Azure::Messaging::EventHubs::ProducerClient::GetSender(
-    std::string partitionId)
+    std::string const& partitionId)
 {
   if (m_senders.find(partitionId) == m_senders.end())
   {
@@ -44,7 +46,7 @@ Azure::Core::Amqp::_internal::MessageSender Azure::Messaging::EventHubs::Produce
   return sender;
 }
 
-void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string partitionId)
+void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const& partitionId)
 {
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
@@ -52,8 +54,8 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string parti
   connectOptions.HostName = m_credentials.FullyQualifiedNamespace;
 
   Azure::Core::Amqp::_internal::Connection connection(
-      m_credentials.TargetUrl, connectOptions, nullptr);
-  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
+      m_credentials.TargetUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Session session(connection);
   session.SetIncomingWindow((uint32_t)m_producerClientOptions.SenderOptions.MaxMessageSize.ValueOr(
       std::numeric_limits<int32_t>::max()));
   session.SetOutgoingWindow((uint32_t)m_producerClientOptions.SenderOptions.MaxMessageSize.ValueOr(
@@ -78,12 +80,16 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string parti
   m_senders.insert_or_assign(partitionId, sender);
 }
 
-Azure::Core::Amqp::_internal::MessageSendResult Azure::Messaging::EventHubs::ProducerClient::
+
+
+bool const Azure::Messaging::EventHubs::ProducerClient::
     SendEventDataBatch(EventDataBatch& eventDataBatch, Azure::Core::Context ctx)
 {
+  
   auto messages = eventDataBatch.GetMessages();
-
-  auto result = GetSender(eventDataBatch.GetPartitionID()).Send(messages[0], ctx);
-  // }
-  return std::get<0>(result);
+  Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(m_retryOptions);
+  return retryOp.Execute([&]() -> bool {
+    auto result = GetSender(eventDataBatch.GetPartitionID()).Send(messages[0], ctx);
+    return std::get<0>(result) == Azure::Core::Amqp::_internal::MessageSendResult::Ok;
+  });
 }

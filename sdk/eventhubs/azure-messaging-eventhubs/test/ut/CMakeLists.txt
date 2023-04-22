@@ -18,6 +18,7 @@ SetUpTestProxy("sdk/messaging")
 add_executable (
   azure-messaging-eventhubs-test
     producer_client_test.cpp
+    retry_operation_test.cpp
 )
 
 create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
@@ -31,6 +32,7 @@ target_link_libraries(
     azure-messaging-eventhubs-test
       PRIVATE 
         azure-messaging-eventhubs 
+        azure-core
         azure-identity 
         azure-core-test-fw  
         gtest 
