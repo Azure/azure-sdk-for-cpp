@@ -1,5 +1,11 @@
 # Release History
 
+## 1.8.2 (2023-04-24)
+
+### Bugs Fixed
+
+- [[#4490]](https://github.com/Azure/azure-sdk-for-cpp/issues/4490) Fixed WinHTTP memory leak during failed requests.
+
 ## 1.8.1 (2023-04-06)
 
 ### Bugs Fixed
