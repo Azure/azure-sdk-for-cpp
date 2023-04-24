@@ -214,6 +214,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionContext
         = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
             response.RawResponse->GetHeaders(), _detail::EncryptionContextHeaderName);
+    ret.Details.Owner = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::OwnerHeaderName);
+    ret.Details.Group = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::GroupHeaderName);
+    ret.Details.Permissions = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::PermissionsHeaderName);
     return Azure::Response<Models::DownloadFileResult>(
         std::move(ret), std::move(response.RawResponse));
   }

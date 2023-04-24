@@ -344,6 +344,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
     ret.EncryptionContext = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
         response.RawResponse->GetHeaders(), _detail::EncryptionContextHeaderName);
+    ret.Owner = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::OwnerHeaderName);
+    ret.Group = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::GroupHeaderName);
+    ret.Permissions = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response.RawResponse->GetHeaders(), _detail::PermissionsHeaderName);
     return Azure::Response<Models::PathProperties>(std::move(ret), std::move(response.RawResponse));
   }
 
