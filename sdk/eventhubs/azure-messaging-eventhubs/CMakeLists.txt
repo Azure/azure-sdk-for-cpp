@@ -67,6 +67,7 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
+  add_compile_definitions(TESTING_BUILD_AMQP)
   if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()

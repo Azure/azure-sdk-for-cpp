@@ -4,9 +4,30 @@
 #include <azure/core/amqp.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <functional>
-namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal {
+
+#if defined(TESTING_BUILD_AMQP)
+// Define the class used from tests to validate retry enabled
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
+  class RetryOperationTest_ShouldRetryTrue1_Test;
+  class RetryOperationTest_ShouldRetryTrue2_Test;
+  class RetryOperationTest_ShouldRetryFalse1_Test;
+  class RetryOperationTest_ShouldRetryFalse2_Test;
+}}}}} // namespace Azure::Messaging::EventHubs::_internal::Test
+#endif
+    namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal {
   class RetryOperation {
-  private:
+#if defined(TESTING_BUILD_AMQP)
+  // make tests classes friends to validate set Retry
+  friend class Azure::Messaging::EventHubs::_internal::Test::
+      RetryOperationTest_ShouldRetryTrue1_Test;
+  friend class Azure::Messaging::EventHubs::_internal::Test::
+      RetryOperationTest_ShouldRetryTrue2_Test;
+  friend class Azure::Messaging::EventHubs::_internal::Test::
+      RetryOperationTest_ShouldRetryFalse1_Test;
+  friend class Azure::Messaging::EventHubs::_internal::Test::
+      RetryOperationTest_ShouldRetryFalse2_Test;
+#endif
+  protected:
     Azure::Core::Http::Policies::RetryOptions m_retryOptions;
 
     /**
@@ -22,18 +43,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
      * jitter factor.
      */
     std::chrono::milliseconds CalculateExponentialDelay(
-        Azure::Core::Http::Policies::RetryOptions const& retryOptions,
         int32_t attempt,
         double jitterFactor);
 
-    bool WasLastAttempt(Azure::Core::Http::Policies::RetryOptions const& retryOptions, int32_t attempt)
+    bool WasLastAttempt(int32_t attempt)
     {
-      return attempt > retryOptions.MaxRetries;
+      return attempt >= m_retryOptions.MaxRetries;
     }
 
     bool ShouldRetry(
         bool response,
-        Azure::Core::Http::Policies::RetryOptions const& retryOptions,
         int32_t attempt,
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1);

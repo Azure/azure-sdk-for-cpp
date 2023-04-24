@@ -17,7 +17,7 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::Execute(
     {
       bool result = operation();
 
-      if (ShouldRetry(result, m_retryOptions, retryCount, retryAfter))
+      if (ShouldRetry(result, retryCount, retryAfter))
       {
         retryCount++;
         std::this_thread::sleep_for(retryAfter);
@@ -33,7 +33,7 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::Execute(
       {
         Log::Write(Logger::Level::Warning, std::string("Exception while trying ") + e.what());
       }
-      if (ShouldRetry(false, m_retryOptions, retryCount, retryAfter))
+      if (ShouldRetry(false, retryCount, retryAfter))
       {
         retryCount++;
         std::this_thread::sleep_for(retryAfter);
@@ -45,7 +45,6 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::Execute(
 
 bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
     bool response,
-    Azure::Core::Http::Policies::RetryOptions const& retryOptions,
     int32_t attempt,
     std::chrono::milliseconds& retryAfter,
     double jitterFactor)
@@ -54,7 +53,7 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
   using Azure::Core::Diagnostics::_internal::Log;
 
   // Are we out of retry attempts?
-  if (response || WasLastAttempt(retryOptions, attempt) )
+  if (response || WasLastAttempt(attempt) )
   {
     Log::Write(
         Logger::Level::Informational, std::string("Response was true or lase attempt.Operation will not be retried."));
@@ -66,14 +65,13 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
         Logger::Level::Informational, std::string("Response was false.Operation will be retried."));
   }
 
-  retryAfter = CalculateExponentialDelay(retryOptions, attempt, jitterFactor);
+  retryAfter = CalculateExponentialDelay(attempt, jitterFactor);
 
   return true;
 }
 
 std::chrono::milliseconds
 Azure::Messaging::EventHubs::_internal::RetryOperation::CalculateExponentialDelay(
-    Azure::Core::Http::Policies::RetryOptions const& retryOptions,
     int32_t attempt,
     double jitterFactor)
 {
@@ -89,7 +87,7 @@ Azure::Messaging::EventHubs::_internal::RetryOperation::CalculateExponentialDela
 
   // Scale exponentially: 1 x RetryDelay on 1st attempt, 2x on 2nd, 4x on 3rd, 8x on 4th ... all
   // the way up to std::numeric_limits<int32_t>::max() * RetryDelay.
-  auto exponentialRetryAfter = retryOptions.RetryDelay
+  auto exponentialRetryAfter = m_retryOptions.RetryDelay
       * (((attempt - 1) <= beforeLastBit) ? (1 << (attempt - 1))
                                           : std::numeric_limits<int32_t>::max());
 
@@ -99,5 +97,5 @@ Azure::Messaging::EventHubs::_internal::RetryOperation::CalculateExponentialDela
        * jitterFactor)
           .count()));
 
-  return std::min(exponentialRetryAfter, retryOptions.MaxRetryDelay);
+  return std::min(exponentialRetryAfter, m_retryOptions.MaxRetryDelay);
 }

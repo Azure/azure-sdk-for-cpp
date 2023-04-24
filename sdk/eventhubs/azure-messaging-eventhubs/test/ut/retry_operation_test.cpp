@@ -16,14 +16,44 @@ bool testNegative() { return false; };
 Azure::Core::Http::Policies::RetryOptions retryOptions;
 } // namespace LocalTest
 
-TEST(RetryOperationTest, ExecuteTrue)
-{
-  Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
-  EXPECT_TRUE(retryOp.Execute(LocalTest::testFunc));
-}
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
+  TEST(RetryOperationTest, ExecuteTrue)
+  {
+    Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
+    EXPECT_TRUE(retryOp.Execute(LocalTest::testFunc));
+  }
 
-TEST(RetryOperationTest, ExecuteFalse)
-{
-  Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
-  EXPECT_FALSE(retryOp.Execute(LocalTest::testNegative));
-}
+  TEST(RetryOperationTest, ExecuteFalse)
+  {
+    Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
+    EXPECT_FALSE(retryOp.Execute(LocalTest::testNegative));
+  }
+
+  TEST(RetryOperationTest, ShouldRetryTrue1)
+  {
+    std::chrono::milliseconds retryAfter{};
+    Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
+    EXPECT_FALSE(retryOp.ShouldRetry(true, 0, retryAfter));
+  }
+
+    TEST(RetryOperationTest, ShouldRetryTrue2)
+  {
+    std::chrono::milliseconds retryAfter{};
+    Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
+    EXPECT_FALSE(retryOp.ShouldRetry(true, LocalTest::retryOptions.MaxRetries, retryAfter));
+  }
+
+  TEST(RetryOperationTest, ShouldRetryFalse1)
+  {
+    std::chrono::milliseconds retryAfter{};
+    Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
+    EXPECT_TRUE(retryOp.ShouldRetry(false, 0, retryAfter));
+  }
+
+  TEST(RetryOperationTest, ShouldRetryFalse2)
+  {
+    std::chrono::milliseconds retryAfter{};
+    Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
+    EXPECT_FALSE(retryOp.ShouldRetry(false, LocalTest::retryOptions.MaxRetries, retryAfter));
+  }
+}}}}} // namespace Azure::Messaging::EventHubs::_internal::Test
