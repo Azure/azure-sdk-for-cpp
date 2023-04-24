@@ -45,7 +45,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     std::chrono::milliseconds CalculateExponentialDelay(
         int32_t attempt,
         double jitterFactor);
-
+     
     bool WasLastAttempt(int32_t attempt)
     {
       return attempt >= m_retryOptions.MaxRetries;
