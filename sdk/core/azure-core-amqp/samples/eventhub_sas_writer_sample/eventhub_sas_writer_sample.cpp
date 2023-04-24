@@ -29,7 +29,7 @@ int main()
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  constexpr int maxMessageSendCount = 1;
+  constexpr int maxMessageSendCount = 1000;
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
