@@ -11,7 +11,7 @@
 
 // Note: The connection string provided must either have an "EntityPath" entry or the constructor
 // for the SasConnectionStringCredential has to have an entity path provided.
-#define EH_CONNECTION_STRING "Endpoint=sb://gearamaeh1.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=vGnItFc7WRv4xGxgtdOjkAdThFpMyfR9F+AEhDe33Xk=;EntityPath=eventhub"
+#define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()
 {
