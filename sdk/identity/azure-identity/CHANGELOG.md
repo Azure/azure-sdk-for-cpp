@@ -1,14 +1,20 @@
 # Release History
 
-## 1.5.0-beta.3 (Unreleased)
+## 1.5.0 (2023-05-04)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for challenge-based and multi-tenant authentication.
+- Added `DefaultAzureCredential`.
 
 ### Bugs Fixed
 
+- [[#4443]](https://github.com/Azure/azure-sdk-for-cpp/issues/4443) Fixed potentially high CPU usage on Windows.
+
 ### Other Changes
+
+- Improved diagnostics to utilize `Azure::Core::Credentials::TokenCredential::GetCredentialName()`.
+- Improved log messages.
 
 ## 1.5.0-beta.2 (2023-04-06)
 
