@@ -111,7 +111,7 @@ stages:
           TestEnv: ${{ parameters.TestEnv }}
           PreTestSteps: ${{ parameters.PreTestSteps }}
           PostTestSteps: ${{ parameters.PostTestSteps }}
-          RunMetaJobs: false
+          RunMetaJobs: true
 
   - stage: Build
     dependsOn: []
@@ -133,6 +133,7 @@ stages:
           TestEnv: ${{ parameters.TestEnv }}
           PreTestSteps: ${{ parameters.PreTestSteps }}
           PostTestSteps: ${{ parameters.PostTestSteps }}
+          RunMetaJobs: false
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
