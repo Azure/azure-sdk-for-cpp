@@ -703,7 +703,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * Not applicable for directories.
        */
       Nullable<std::string> EncryptionContext;
-      
+
       /**
        * The owner of the file.
        */
