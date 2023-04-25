@@ -342,14 +342,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.VersionId = std::move(response.Value.VersionId);
     ret.IsCurrentVersion = std::move(response.Value.IsCurrentVersion);
     ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
-    ret.EncryptionContext = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
-        response.RawResponse->GetHeaders(), _detail::EncryptionContextHeaderName);
-    ret.Owner = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
-        response.RawResponse->GetHeaders(), _detail::OwnerHeaderName);
-    ret.Group = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
-        response.RawResponse->GetHeaders(), _detail::GroupHeaderName);
-    ret.Permissions = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
-        response.RawResponse->GetHeaders(), _detail::PermissionsHeaderName);
+    auto& headers = response.RawResponse->GetHeaders();
+    auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
+    if (encryptionContext != headers.end())
+    {
+      ret.EncryptionContext = encryptionContext->second;
+    }
+    auto owner = headers.find(_detail::OwnerHeaderName);
+    if (owner != headers.end())
+    {
+      ret.Owner = owner->second;
+    }
+    auto group = headers.find(_detail::GroupHeaderName);
+    if (group != headers.end())
+    {
+      ret.Group = group->second;
+    }
+    auto permissions = headers.find(_detail::PermissionsHeaderName);
+    if (permissions != headers.end())
+    {
+      ret.Permissions = permissions->second;
+    }
     return Azure::Response<Models::PathProperties>(std::move(ret), std::move(response.RawResponse));
   }
 
