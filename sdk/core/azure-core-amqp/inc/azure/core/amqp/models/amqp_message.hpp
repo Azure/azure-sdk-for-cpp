@@ -40,6 +40,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     class AmqpMessageFactory;
   }
 
+  constexpr int AmqpMessageFormatValue = 0; // Specifies the message format for an AMQP message.
+
   class AmqpMessage final {
   public:
     /** @brief Construct a new AMQP Message object. */
@@ -60,6 +62,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Move an AMQP message object to another object. @returns A reference to this.*/
     AmqpMessage& operator=(AmqpMessage&&) noexcept = default;
 
+    bool operator==(AmqpMessage const& other) const noexcept;
+
     AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
     operator bool() const noexcept { return m_hasValue; }
 
@@ -69,13 +73,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
      */
     MessageHeader Header;
-
-    /** @brief Specifies the 'format' of the message.
-     *
-     * For more information, see [AMQP Transfer
-     * performative](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-transfer)
-     */
-    Azure::Nullable<uint32_t> MessageFormat;
 
     /** @brief Delivery Annotations for the message.
      *
@@ -123,7 +120,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     MessageBodyType BodyType{MessageBodyType::None};
 
-    /** @brief Set the body of the message.
+    /** @brief Sets the body of the message to a list of sequence sections.
      *
      * An AMQP Message Body can be one of the following formats:
      *
@@ -131,11 +128,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * - One or more sequence sections.
      * - A single AMQP Value.
      *
-     * This method sets the body of the message to a sequence of sections. See [Amqp
+     * This method appends the bodySequence value to the sequence of sections. See [Amqp
      * Sequence](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-sequence)
      * for more information.
      *
      * @param bodySequence - the list of AMQP values which make up the body of the message.
+     *
+     */
+    void SetBody(std::vector<AmqpList> const& bodySequence);
+
+    /** @brief Appends a list to the body of the message.
+     *
+     * An AMQP Message Body can be one of the following formats:
+     *
+     * - One or more binary data sections
+     * - One or more sequence sections.
+     * - A single AMQP Value.
+     *
+     * This method appends the bodySequence value to the sequence of sections. See [Amqp
+     * Sequence](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-sequence)
+     * for more information.
+     *
+     * @param bodySequence - the list of AMQP values which make up the body of the message.
+     *
+     * @remarks This is a convenience method to make it simpler to append a single binary value to
+     * the message body.
+     *
      *
      */
     void SetBody(AmqpList const& bodySequence);
@@ -158,7 +176,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     void SetBody(std::vector<AmqpBinaryData> const& bodyBinarySequence);
 
-    /** @brief Set the body of the message.
+    /** @brief Appends a binary value to the body of the message.
      *
      * An AMQP Message Body can be one of the following formats:
      *
@@ -172,7 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param bodyBinary - a single value binary data.
      *
-     * @remarks This is a convenience method to make it simpler to set a single binary value for
+     * @remarks This is a convenience method to make it simpler to append a single binary value to
      * the message body.
      *
      */
@@ -195,11 +213,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     void SetBody(AmqpValue const& bodyValue);
 
-    /** @brief Returns an Amqp Sequence message body.
+    /** @brief Returns a list of Amqp Sequence values.
      *
      * @remarks This API will fail if BodyType is not MessageBodyType::Sequence.
      */
-    AmqpList GetBodyAsAmqpList() const;
+    std::vector<AmqpList> GetBodyAsAmqpList() const;
 
     /** @brief Returns an Amqp Value message body.
      *
@@ -209,15 +227,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief Returns an Amqp Binary message body.
      *
-     * @remarks This API will fail if BodyType is not MessageBodyType::Data.
+     * @remarks This API will fail if BodyType is not MessageBodyType::Binary.
      */
     std::vector<AmqpBinaryData> GetBodyAsBinary() const;
+
+    /** @brief Returns the serialized size of the message.
+     *
+     * @remarks This API will fail if BodyType is not set.
+     */
+    static size_t GetSerializedSize(AmqpMessage const& message);
+
+    /** @brief Serialize the message into a buffer.
+     *
+     * @remarks This API will fail if BodyType is not set.
+     */
+    static std::vector<uint8_t> Serialize(AmqpMessage const& message);
+
+    /** @brief Deserialize the message from a buffer.
+     *
+     * @remarks This API will fail if BodyType is not set.
+     */
+    static AmqpMessage Deserialize(std::uint8_t const* buffer, size_t size);
 
     friend class _internal::AmqpMessageFactory;
 
   private:
     std::vector<AmqpBinaryData> m_binaryDataBody;
-    AmqpList m_amqpSequenceBody;
+    std::vector<AmqpList> m_amqpSequenceBody;
     AmqpValue m_amqpValueBody;
     bool m_hasValue{true}; // By default, an AmqpMessage has a value.
   };
@@ -226,17 +262,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 }}}} // namespace Azure::Core::Amqp::Models
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-  /**
-   * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
-   * PROPERTIES_HANDLE and back.
-   *
-   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-   * layer.
-   */
-  class AmqpMessageFactory {
-  public:
-    static AmqpMessage FromUamqp(UniqueMessageHandle const& properties);
-    static AmqpMessage FromUamqp(MESSAGE_INSTANCE_TAG* properties);
-    static UniqueMessageHandle ToUamqp(AmqpMessage const& properties);
-  };
+    /**
+     * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
+     * PROPERTIES_HANDLE and back.
+     *
+     * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+     * layer.
+     */
+    class AmqpMessageFactory {
+    public:
+      static AmqpMessage FromUamqp(UniqueMessageHandle const& properties);
+      static AmqpMessage FromUamqp(MESSAGE_INSTANCE_TAG* properties);
+      static UniqueMessageHandle ToUamqp(AmqpMessage const& properties);
+    };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

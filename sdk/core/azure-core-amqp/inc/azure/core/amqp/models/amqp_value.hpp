@@ -54,10 +54,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Invalid,
     Null,
     Bool,
-    UByte,
-    UShort,
-    UInt,
-    ULong,
+    Ubyte,
+    Ushort,
+    Uint,
+    Ulong,
     Byte,
     Short,
     Int,
@@ -335,41 +335,176 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @throws std::runtime_error if the underlying AMQP value is not a boolean.
      */
     operator bool() const;
-    operator std::uint8_t() const;
-    operator std::int8_t() const;
-    operator char() const;
-    operator std::uint16_t() const;
-    operator std::int16_t() const;
-    operator std::uint32_t() const;
-    operator std::int32_t() const;
-    operator std::uint64_t() const;
-    operator std::int64_t() const;
-    operator float() const;
-    operator double() const;
-    operator char32_t() const;
-    explicit operator std::string() const;
-    operator Uuid() const;
 
-    // List Operations.
+    /** @brief convert the current AMQP Value to an unsigned 8 bit integer.
+     *
+     * @returns the value as an unsigned 8 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an unsigned 8 bit integer.
+     */
+    operator std::uint8_t() const;
+
+    /** @brief convert the current AMQP Value to a signed 8 bit integer.
+     *
+     * @returns the value as an 8 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a signed 8 bit integer.
+     */
+    operator std::int8_t() const;
+
+    /** @brief convert the current AMQP Value to a signed 8 bit integer. Convenience function to
+     * allow an AmqpValue to be constructed from a 'char' value.
+     *
+     * @returns the value as a char.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a signed 8 bit integer.
+     */
+    operator char() const;
+
+    /** @brief convert the current AMQP Value to an unsigned 16 bit integer.
+     *
+     * @returns the value as an unsigned 16 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an unsigned 16 bit integer.
+     */
+    operator std::uint16_t() const;
+
+    /** @brief convert the current AMQP Value to a signed 16 bit integer.
+     *
+     * @returns the value as a signed 16 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a signed 16 bit integer.
+     */
+    operator std::int16_t() const;
+
+    /** @brief convert the current AMQP Value to an unsigned 32 bit integer.
+     *
+     * @returns the value as an unsigned 32 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an unsigned 32 bit integer.
+     */
+    operator std::uint32_t() const;
+
+    /** @brief convert the current AMQP Value to a signed 32 bit integer.
+     *
+     * @returns the value as a signed 32 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a signed 32 bit integer.
+     */
+    operator std::int32_t() const;
+
+    /** @brief convert the current AMQP Value to an unsigned 64 bit integer.
+     *
+     * @returns the value as an unsigned 64 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an unsigned 64 bit integer.
+     */
+    operator std::uint64_t() const;
+
+    /** @brief convert the current AMQP Value to a signed 64 bit integer.
+     *
+     * @returns the value as a signed 64 bit integer.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a signed 64 bit integer.
+     */
+    operator std::int64_t() const;
+
+    /** @brief convert the current AMQP Value to a 32 bit IEEE 'float' value..
+     *
+     * @returns the value as a float.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a float.
+     */
+    operator float() const;
+
+    /** @brief convert the current AMQP Value to a 64 bit IEEE 'double' value.
+     *
+     * @returns the value as a double.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a double.
+     */
+    operator double() const;
+
+    /** @brief convert the current AMQP Value to a 32bit UCS32 value.
+     *
+     * @returns the value as a 32 bit character.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a 32 bit character.
+     */
+    operator char32_t() const;
+
+    /** @brief convert the current AMQP Value to a string.
+     *
+     * @returns the value as a string.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a string.
+     */
+    explicit operator std::string() const;
+
+    /** @brief convert the current AMQP Value to a UUID.
+     *
+     * @returns the value as an Azure::Core::Uuid value.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a UUID.
+     */
+    operator Azure::Core::Uuid() const;
+
+    /** @brief convert the current AMQP Value to an AmqpList.
+     *
+     * @returns the value as an AmqpList.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a list.
+     */
     AmqpList AsList() const;
 
-    // Map operations.
+    /** @brief convert the current AMQP Value to an AmqpMap.
+     *
+     * @returns the value as an AmqpMap.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a map.
+     */
     AmqpMap AsMap() const;
 
-    // Array operations - note that all array items must be of the same type.
+    /** @brief convert the current AMQP Value to an AmqpArray.
+     *
+     * @returns the value as an AmqpArray.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an array.
+     */
     AmqpArray AsArray() const;
 
+    /** @brief convert the current AMQP Value to an AmqpBinaryData.
+     *
+     * @returns the value as an AmqpBinaryData.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a binary data.
+     */
     AmqpBinaryData AsBinary() const;
 
+    /** @brief convert the current AMQP Value to an AmqpTimestamp.
+     *
+     * @returns the value as an AmqpTimestamp.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a timestamp.
+     */
     AmqpTimestamp AsTimestamp() const;
 
-    // Symbols
+    /** @brief convert the current AMQP Value to an AmqpSymbol.
+     *
+     * @returns the value as an AmqpSymbol.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a symbol.
+     */
     AmqpSymbol AsSymbol() const;
 
     // Composite values - A composite value is functionally a list with a fixed size.
     AmqpComposite AsComposite() const;
 
     AmqpDescribed AsDescribed() const;
+
+    static std::vector<uint8_t> Serialize(AmqpValue const& value);
+    static size_t GetSerializedSize(AmqpValue const& value);
+    static AmqpValue Deserialize(uint8_t const* data, size_t size);
 
   protected:
     UniqueAmqpValueHandle m_value;
@@ -405,6 +540,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         return m_value.at(pos);
       }
       bool operator<(ThisType const& that) const { return m_value < that.m_value; }
+      bool operator==(ThisType const& that) const { return m_value == that.m_value; }
       bool empty() const noexcept { return m_value.empty(); }
 
       /**

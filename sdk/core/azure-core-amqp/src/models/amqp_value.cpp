@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/models/amqp_properties.hpp"
+#include "azure/core/amqp/models/amqp_protocol.hpp"
 
 // Note: These blank lines are significant because clang-format orders includes alphabetically, but
 // there are dependencies in the uAMQP headers which require this ordering.
@@ -22,10 +23,16 @@ void Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpVa
 {
   amqpvalue_destroy(value);
 }
+void Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::FreeAmqpDecoder(
+    AMQPVALUE_DECODER_HANDLE value)
+{
+  amqpvalue_decoder_destroy(value);
+}
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
-  AmqpValue::~AmqpValue() { m_value.reset(); }
+  AmqpValue::~AmqpValue() {}
+
   AmqpValue::AmqpValue(bool bool_value) : m_value{amqpvalue_create_boolean(bool_value)} {}
   AmqpValue::AmqpValue(unsigned char byte_value) : m_value{amqpvalue_create_ubyte(byte_value)} {}
   AmqpValue::AmqpValue(char value) : m_value{amqpvalue_create_byte(value)} {}
@@ -256,13 +263,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         return false;
       case AmqpValueType::Bool:
         return static_cast<bool>(*this) < static_cast<bool>(that);
-      case AmqpValueType::UByte:
+      case AmqpValueType::Ubyte:
         return static_cast<uint8_t>(*this) < static_cast<uint8_t>(that);
-      case AmqpValueType::UShort:
+      case AmqpValueType::Ushort:
         return static_cast<uint16_t>(*this) < static_cast<uint16_t>(that);
-      case AmqpValueType::UInt:
+      case AmqpValueType::Uint:
         return static_cast<uint32_t>(*this) < static_cast<uint32_t>(that);
-      case AmqpValueType::ULong:
+      case AmqpValueType::Ulong:
         return static_cast<uint64_t>(*this) < static_cast<uint64_t>(that);
       case AmqpValueType::Byte:
         return static_cast<std::int8_t>(*this) < static_cast<std::int8_t>(that);
@@ -328,13 +335,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case AMQP_TYPE_BOOL:
         return AmqpValueType::Bool;
       case AMQP_TYPE_UBYTE:
-        return AmqpValueType::UByte;
+        return AmqpValueType::Ubyte;
       case AMQP_TYPE_USHORT:
-        return AmqpValueType::UShort;
+        return AmqpValueType::Ushort;
       case AMQP_TYPE_UINT:
-        return AmqpValueType::UInt;
+        return AmqpValueType::Uint;
       case AMQP_TYPE_ULONG:
-        return AmqpValueType::ULong;
+        return AmqpValueType::Ulong;
       case AMQP_TYPE_BYTE:
         return AmqpValueType::Byte;
       case AMQP_TYPE_SHORT:
@@ -381,6 +388,78 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     os << valueAsString;
     free(valueAsString);
     return os;
+  }
+
+  class AmqpValueDeserializer {
+  public:
+    AmqpValueDeserializer() : m_decoder{amqpvalue_decoder_create(OnAmqpValueDecoded, this)} {}
+
+    AmqpValue operator()(std::uint8_t const* data, size_t size) const
+    {
+      if (amqpvalue_decode_bytes(m_decoder.get(), data, size))
+      {
+        throw std::runtime_error("Could not decode object");
+      }
+      return m_decodedValue;
+    }
+
+  private:
+    Azure::Core::Amqp::_detail::UniqueAmqpDecoderHandle m_decoder;
+    AmqpValue m_decodedValue;
+
+    static void OnAmqpValueDecoded(void* context, AMQP_VALUE value)
+    {
+      auto deserializer = static_cast<AmqpValueDeserializer*>(context);
+      deserializer->m_decodedValue = value;
+    }
+  };
+
+  AmqpValue AmqpValue::Deserialize(uint8_t const* data, size_t size)
+  {
+    return AmqpValueDeserializer{}(data, size);
+  }
+
+  class AmqpValueSerializer {
+  public:
+    AmqpValueSerializer() = default;
+
+    std::vector<uint8_t> operator()(AmqpValue const& value)
+    {
+      if (amqpvalue_encode(value, OnAmqpValueEncoded, this))
+      {
+        throw std::runtime_error("Could not decode object");
+      }
+
+      return m_encodedValue;
+    }
+
+  private:
+    std::vector<uint8_t> m_encodedValue;
+
+    // The OnAmqpValueEncoded callback appends the array provided to the existing encoded value,
+    // extending as needed.
+    //
+    // Returns 0 if successful, 1 otherwise.
+    static int OnAmqpValueEncoded(void* context, unsigned char const* bytes, size_t length)
+    {
+      auto serializer = static_cast<AmqpValueSerializer*>(context);
+      serializer->m_encodedValue.insert(serializer->m_encodedValue.end(), bytes, bytes + length);
+      return 0;
+    }
+  };
+
+  std::vector<uint8_t> AmqpValue::Serialize(AmqpValue const& value)
+  {
+    return AmqpValueSerializer{}(value);
+  }
+  size_t AmqpValue::GetSerializedSize(AmqpValue const& value)
+  {
+    size_t encodedSize;
+    if (amqpvalue_get_encoded_size(value, &encodedSize))
+    {
+      throw std::runtime_error("Could not get encoded size for value.");
+    }
+    return encodedSize;
   }
 
   AmqpArray::AmqpArray(AMQP_VALUE const value)
@@ -434,7 +513,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (amqpvalue_get_type(value) != AMQP_TYPE_MAP)
     {
-      throw std::runtime_error("Input AMQP value MUST be an array.");
+      throw std::runtime_error("Input AMQP value MUST be a map.");
     }
     std::uint32_t mapSize;
     if (amqpvalue_get_map_pair_count(value, &mapSize))
@@ -756,6 +835,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return os;
   }
 
+  std::ostream& operator<<(std::ostream& os, AmqpList const& value)
+  {
+    // Let the AmqpValue specialization handle serialization of the list.
+    AmqpValue arrayValue(value);
+    os << arrayValue;
+    return os;
+  }
+
   std::ostream& operator<<(std::ostream& os, AmqpMap const& value)
   {
     // Let the AmqpValue specialization handle serialization of the map.
@@ -775,5 +862,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     return (m_value == nullptr) || (amqpvalue_get_type(m_value.get()) == AMQP_TYPE_NULL);
   }
-
 }}}} // namespace Azure::Core::Amqp::Models

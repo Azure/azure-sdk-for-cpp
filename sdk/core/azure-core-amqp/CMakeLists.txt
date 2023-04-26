@@ -51,6 +51,7 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/models/amqp_message.hpp
     inc/azure/core/amqp/models/amqp_properties.hpp
     inc/azure/core/amqp/models/amqp_value.hpp
+    inc/azure/core/amqp/models/amqp_protocol.hpp
     inc/azure/core/amqp/models/message_source.hpp
     inc/azure/core/amqp/models/message_target.hpp
     inc/azure/core/amqp/models/messaging_values.hpp

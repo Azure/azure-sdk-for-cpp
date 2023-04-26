@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <exception>
 #include <stdexcept>
+#include <vector>
 
 struct HEADER_INSTANCE_TAG;
 
@@ -29,6 +30,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     MessageHeader() = default;
     ~MessageHeader() = default;
+
+    bool operator==(MessageHeader const&) const noexcept;
 
     /** @brief True if the message is considered "durable"
      *
@@ -65,21 +68,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
 
     std::uint32_t DeliveryCount{0};
+
+    bool ShouldSerialize() const noexcept;
+    static size_t GetSerializedSize(MessageHeader const& messageHeader);
+    static std::vector<uint8_t> Serialize(MessageHeader const& messageHeader);
+    static MessageHeader Deserialize(std::uint8_t const* data, size_t size);
   };
   std::ostream& operator<<(std::ostream&, MessageHeader const&);
+
 }}}} // namespace Azure::Core::Amqp::Models
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-  /**
-   * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE and
-   * back.
-   *
-   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-   * layer.
-   */
-  class MessageHeaderFactory {
-  public:
-    static MessageHeader FromUamqp(UniqueMessageHeaderHandle const& properties);
-    static UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
-  };
+    /**
+     * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE
+     * and back.
+     *
+     * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+     * layer.
+     */
+    struct MessageHeaderFactory
+    {
+      static MessageHeader FromUamqp(UniqueMessageHeaderHandle const& properties);
+      static UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
+    };
+
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

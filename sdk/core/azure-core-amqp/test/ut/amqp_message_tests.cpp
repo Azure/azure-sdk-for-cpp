@@ -119,37 +119,43 @@ TEST_F(TestMessage, TestProperties)
   GTEST_LOG_(INFO) << message;
 }
 
-TEST_F(TestMessage, TestFormat)
-{
-  AmqpMessage message;
-  message.MessageFormat = 12345;
-
-  auto messageInstance = _internal::AmqpMessageFactory::ToUamqp(message);
-  AmqpMessage message2(_internal::AmqpMessageFactory::FromUamqp(messageInstance));
-
-  EXPECT_EQ(message2.MessageFormat.Value(), 12345);
-  GTEST_LOG_(INFO) << message;
-}
-
 TEST_F(TestMessage, TestBodyAmqpSequence)
 {
-  AmqpMessage message;
+  {
+    AmqpMessage message;
 
-  message.SetBody({"Test", 95, AmqpMap{{3, 5}, {4, 9}}});
+    message.SetBody({"Test", 95, AmqpMap{{3, 5}, {4, 9}}});
 
-  EXPECT_EQ(3, message.GetBodyAsAmqpList().size());
-  EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList().at(0)));
-  EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList().at(1)));
-  EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
+    EXPECT_EQ(1, message.GetBodyAsAmqpList().size());
+    EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[0].at(0)));
+    EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList()[0].at(1)));
+    EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
 
-  auto messageInstance = _internal::AmqpMessageFactory::ToUamqp(message);
-  AmqpMessage message2(_internal::AmqpMessageFactory::FromUamqp(messageInstance));
-  EXPECT_EQ(3, message2.GetBodyAsAmqpList().size());
-  EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList().at(0)));
-  EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList().at(1)));
-  EXPECT_EQ(message2.BodyType, MessageBodyType::Sequence);
+    auto messageInstance = _internal::AmqpMessageFactory::ToUamqp(message);
+    AmqpMessage message2(_internal::AmqpMessageFactory::FromUamqp(messageInstance));
+    EXPECT_EQ(1, message2.GetBodyAsAmqpList().size());
+    EXPECT_EQ(message, message2);
+    EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList()[0].at(0)));
+    EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList()[0].at(1)));
+    EXPECT_EQ(message2.BodyType, MessageBodyType::Sequence);
 
-  GTEST_LOG_(INFO) << message;
+    GTEST_LOG_(INFO) << message;
+  }
+  {
+    AmqpMessage message;
+    message.SetBody({{1}, {"Test", 3}, {"Test", 95, AmqpMap{{3, 5}, {4, 9}}}});
+    EXPECT_EQ(3, message.GetBodyAsAmqpList().size());
+    EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[1].at(0)));
+    EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList()[2].at(1)));
+    EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
+    auto messageInstance = _internal::AmqpMessageFactory::ToUamqp(message);
+    AmqpMessage message2(_internal::AmqpMessageFactory::FromUamqp(messageInstance));
+    EXPECT_EQ(3, message2.GetBodyAsAmqpList().size());
+    EXPECT_EQ("Test", static_cast<std::string>(message2.GetBodyAsAmqpList()[2].at(0)));
+    EXPECT_EQ(95, static_cast<int32_t>(message2.GetBodyAsAmqpList()[2].at(1)));
+    EXPECT_EQ(message2.BodyType, MessageBodyType::Sequence);
+    GTEST_LOG_(INFO) << message;
+  }
 }
 
 TEST_F(TestMessage, TestBodyAmqpData)
@@ -176,4 +182,202 @@ TEST_F(TestMessage, TestBodyAmqpData)
   EXPECT_EQ(message2.BodyType, MessageBodyType::Data);
 
   GTEST_LOG_(INFO) << message;
+}
+
+class MessageSerialization : public testing::Test {
+protected:
+  void SetUp() override {}
+  void TearDown() override {}
+};
+
+TEST_F(MessageSerialization, SerializeMessageBodyValue)
+{ // Body as a single AMQP value.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody("String Value Body.");
+    buffer = AmqpMessage::Serialize(message);
+
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+}
+// Body as a single BinaryData value.
+TEST_F(MessageSerialization, SerializeMessageBodyBinary)
+{
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody(AmqpBinaryData{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+
+  // Body as AMQP Value.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody(AmqpMap{{"key1", "value1"}, {"key2", "value2"}});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+  // Body as a vector of BinaryData values.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody(std::vector<AmqpBinaryData>{
+        AmqpBinaryData{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0},
+        AmqpBinaryData{1, 3, 5, 7, 9, 10}});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+  // Body as a vector of BinaryData values, v2.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody(AmqpBinaryData{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0});
+    message.SetBody(AmqpBinaryData{1, 3, 5, 7, 9, 10});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(deserialized.GetBodyAsBinary().size(), 2);
+    EXPECT_EQ(message, deserialized);
+  }
+}
+
+TEST_F(MessageSerialization, SerializeMessageBodySequence)
+{
+  // Body as a single AMQP Sequence.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.Properties.ContentType = "application/binary";
+    message.Footer["footer1"] = "value1";
+    message.SetBody(AmqpList{1, 3, 5, 7});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+
+  // Body as a vector of Amqp List values.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody(std::vector<AmqpList>{
+        AmqpList{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0}, AmqpList{1, 3, 5, 7, 9, 10}});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+
+  // Body as a vector of Amqp List values, added one at a time.
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Properties.MessageId = "12345";
+    message.SetBody(AmqpList{'T', 'e', 's', 't', ' ', 'b', 'o', 'd', 'y', 0});
+    message.SetBody(AmqpList{1, 3, 5, 7, 9, 10});
+    buffer = AmqpMessage::Serialize(message);
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+}
+
+TEST_F(MessageSerialization, SerializeMessageWithHeader)
+{ // Body as a single AMQP value, with message header..
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Header.Priority = 5;
+    message.Properties.MessageId = "12345";
+    message.SetBody("String Value Body.");
+    buffer = AmqpMessage::Serialize(message);
+
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+}
+
+TEST_F(MessageSerialization, SerializeMessageWithDeliveryAnnotations)
+{ // Body as a single AMQP value, with message header..
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Header.Priority = 5;
+    message.Properties.MessageId = "12345";
+    message.DeliveryAnnotations["key1"] = "value1";
+    message.DeliveryAnnotations["key2"] = "value2";
+
+    message.SetBody("String Value Body.");
+    buffer = AmqpMessage::Serialize(message);
+
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+}
+
+TEST_F(MessageSerialization, SerializeMessageWithMessageAnnotations)
+{ // Body as a single AMQP value, with message header..
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Header.Priority = 5;
+    message.Properties.MessageId = "12345";
+    message.MessageAnnotations["key1"] = "value1";
+    message.MessageAnnotations["key2"] = "value2";
+
+    message.SetBody("String Value Body.");
+    buffer = AmqpMessage::Serialize(message);
+
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+}
+
+TEST_F(MessageSerialization, SerializeMessageWithApplicationProperties)
+{ // Body as a single AMQP value, with message header..
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Header.Priority = 5;
+    message.Properties.MessageId = "12345";
+    message.Properties.ContentEncoding = "utf-8";
+    message.MessageAnnotations["key1"] = "value1";
+    message.MessageAnnotations["key2"] = "value2";
+    message.ApplicationProperties["key1"] = "value1";
+    message.ApplicationProperties["key2"] = 37;
+
+    message.SetBody("String Value Body.");
+    buffer = AmqpMessage::Serialize(message);
+
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
+}
+TEST_F(MessageSerialization, SerializeMessageWithFooter)
+{ // Body as a single AMQP value, with message header..
+  {
+    std::vector<uint8_t> buffer;
+    AmqpMessage message;
+    message.Header.Priority = 5;
+    message.Properties.MessageId = "12345";
+    message.Properties.ContentEncoding = "utf-8";
+    message.Footer["footer1"] = "value1";
+    message.Footer["footer2"] = 37;
+
+    message.SetBody("String Value Body.");
+    buffer = AmqpMessage::Serialize(message);
+
+    AmqpMessage deserialized = AmqpMessage::Deserialize(buffer.data(), buffer.size());
+    EXPECT_EQ(message, deserialized);
+  }
 }

@@ -14,13 +14,10 @@
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
+#include <azure/core/amqp/models/amqp_protocol.hpp>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {
-
-// AMQP ApplicationProperties descriptor (AMQP Specification 1.0 section 3.2.5)
-// http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties
-constexpr uint64_t AmqpApplicationPropertiesDescriptor = 116;
 
 class AmqpServerMock : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
                        public Azure::Core::Amqp::_internal::ConnectionEvents,

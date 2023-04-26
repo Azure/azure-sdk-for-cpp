@@ -66,8 +66,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     SessionImpl();
-    UniqueAmqpSession m_session;
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
+    UniqueAmqpSession m_session;
     _internal::SessionEvents* m_eventHandler{};
 
     //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;

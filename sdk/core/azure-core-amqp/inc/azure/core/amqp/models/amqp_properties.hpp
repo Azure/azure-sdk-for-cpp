@@ -40,21 +40,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Azure::Nullable<std::string> GroupId;
     Azure::Nullable<uint32_t> GroupSequence;
     Azure::Nullable<std::string> ReplyToGroupId;
+
+    bool operator==(MessageProperties const&) const noexcept;
+    bool ShouldSerialize() const noexcept;
+
+    static size_t GetSerializedSize(MessageProperties const& properties);
+    static std::vector<uint8_t> Serialize(MessageProperties const& properties);
+    static MessageProperties Deserialize(uint8_t const* data, size_t size);
   };
   std::ostream& operator<<(std::ostream&, MessageProperties const&);
 }}}} // namespace Azure::Core::Amqp::Models
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-  /**
-   * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
-   * PROPERTIES_HANDLE and back.
-   *
-   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-   * layer.
-   */
-  class MessagePropertiesFactory {
-  public:
-    static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
-    static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
-  };
+    /**
+     * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
+     * PROPERTIES_HANDLE and back.
+     *
+     * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+     * layer.
+     */
+    class MessagePropertiesFactory {
+    public:
+      static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
+      static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
+    };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
