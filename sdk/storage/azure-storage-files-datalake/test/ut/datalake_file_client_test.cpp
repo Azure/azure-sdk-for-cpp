@@ -612,9 +612,13 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, FileDownloadOwnerGroupPermissions)
   {
     auto downloadResult = m_fileClient->Download().Value;
-    ASSERT_TRUE(downloadResult.Details.Owner.HasValue());
-    ASSERT_TRUE(downloadResult.Details.Group.HasValue());
-    ASSERT_TRUE(downloadResult.Details.Permissions.HasValue());
+    ASSERT_TRUE(
+        downloadResult.Details.Owner.HasValue() && !downloadResult.Details.Owner.Value().empty());
+    ASSERT_TRUE(
+        downloadResult.Details.Group.HasValue() && !downloadResult.Details.Group.Value().empty());
+    ASSERT_TRUE(
+        downloadResult.Details.Permissions.HasValue()
+        && !downloadResult.Details.Permissions.Value().empty());
   }
 
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
