@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "amqp_message.hpp"
 #include <azure/core/amqp.hpp>
 #include <mutex>
 namespace Azure { namespace Messaging { namespace EventHubs {
@@ -88,16 +89,38 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Adds a message to the data batch
      *
+     * @param message The message to add to the batch
      */
-    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
+    void AddMessage(Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage& message)
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
-      if (message.MessageAnnotations["x-opt-partition-key"] == nullptr && !m_partitionKey.empty())
+      auto amqpMessage = message.ToAMQPMessage();
+
+      if (amqpMessage.MessageAnnotations["x-opt-partition-key"] == nullptr
+          && !m_partitionKey.empty())
       {
-        message.MessageAnnotations["x-opt-partition-key"]
+        amqpMessage.MessageAnnotations["x-opt-partition-key"]
             = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
       }
-      m_messages.push_back(message);
+      m_messages.push_back(amqpMessage);
+    }
+
+    /** @brief Adds a message to the data batch
+     *
+     * @param message The message to add to the batch
+     */
+    void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message)
+    {
+      std::lock_guard<std::mutex> lock(m_rwMutex);
+      auto amqpMessage = message.ToAMQPMessage();
+
+      if (amqpMessage.MessageAnnotations["x-opt-partition-key"] == nullptr
+          && !m_partitionKey.empty())
+      {
+        amqpMessage.MessageAnnotations["x-opt-partition-key"]
+            = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
+      }
+      m_messages.push_back(amqpMessage);
     }
 
     /** @brief Gets the number of messages in the batch

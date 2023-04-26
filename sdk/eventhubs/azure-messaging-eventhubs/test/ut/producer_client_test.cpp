@@ -55,14 +55,15 @@ TEST(ProducerClientTest, SendMessage)
   producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   producerOptions.ApplicationID = "unit-test";
 
-  Azure::Core::Amqp::Models::AmqpMessage message1;
-  message1.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
+  Azure::Messaging::EventHubs::Models::EventData message1;
+  message1.Body.Value = Azure::Core::Amqp::Models::AmqpValue("Hello");
 
-  Azure::Core::Amqp::Models::AmqpMessage message2;
-  message2.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o', '2'});
+  Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage message2;
+  message2.Body.Data.push_back(
+      Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o', '2'});
 
-  Azure::Core::Amqp::Models::AmqpMessage message3;
-  message2.SetBody(Azure::Core::Amqp::Models::AmqpList{'H', 'e', 'l', 'l', 'o', '3'});
+  Azure::Messaging::EventHubs::Models::EventData message3;
+  message2.Body.Sequence = Azure::Core::Amqp::Models::AmqpList{'H', 'e', 'l', 'l', 'o', '3'};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = 1024;
@@ -80,10 +81,10 @@ TEST(ProducerClientTest, SendMessage)
   eventBatch2.AddMessage(message3);
   eventBatch2.AddMessage(message2);
 
-    auto client = Azure::Messaging::EventHubs::ProducerClient(
-        connStringEntityPath, "eventhub", producerOptions);
+  auto client = Azure::Messaging::EventHubs::ProducerClient(
+      connStringEntityPath, "eventhub", producerOptions);
 
-    auto result = client.SendEventDataBatch(eventBatch);
+  auto result = client.SendEventDataBatch(eventBatch);
 
-    EXPECT_TRUE(result);
-  }
+  EXPECT_TRUE(result);
+}

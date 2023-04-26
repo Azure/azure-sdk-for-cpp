@@ -36,6 +36,7 @@ include(CreateMapFile)
 set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
   inc/azure/messaging/eventhubs.hpp
+  inc/azure/messaging/eventhubs/amqp_message.hpp
   inc/azure/messaging/eventhubs/producer_client.hpp
   inc/azure/messaging/eventhubs/event_data_batch.hpp
   inc/azure/messaging/eventhubs/retry_operation.hpp

@@ -19,6 +19,7 @@ add_executable (
   azure-messaging-eventhubs-test
     producer_client_test.cpp
     retry_operation_test.cpp
+    amqp_message_test.cpp
 )
 
 create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
