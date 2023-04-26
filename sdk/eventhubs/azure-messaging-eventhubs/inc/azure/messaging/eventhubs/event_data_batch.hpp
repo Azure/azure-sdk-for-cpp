@@ -115,41 +115,40 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const std::vector<Azure::Core::Amqp::Models::AmqpMessage> GetMessages()
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
-      /* if (m_messages.size() == 0)
-      {
-        return nullptr;
-      }
+      // if (m_messages.size() == 0)
+      // {
+      //   return nullptr;
+      // }
+      //
+      // Azure::Core::Amqp::Models::Message message = m_messages[0];
 
-      Azure::Core::Amqp::Models::Message message = m_messages[0];
-      
-      message.ClearBody();
-      for (int i = 0; i < m_messages.size(); i++)
-      {
-        if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
-        {
-          auto data = m_messages[i].GetBodyAsBinary();
-          for (auto oneData : data)
-          {
-            message.SetBody(oneData);
-          }
-        }
-        else if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Value)
-        {
-          auto data = m_messages[i].GetBodyAsAmqpValue();
-          message.SetBody(data)//.AsBinary());
-        }
-        else if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Sequence)
-        {
-          auto data = m_messages[i].GetBodyAsAmqpList();
-          message.SetBody(data); //((Azure::Core::Amqp::Models::AmqpValue)data).AsBinary());
-        }
-      }
+      // message.ClearBody();
+      // for (int i = 0; i < m_messages.size(); i++)
+      // {
+      //   if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
+      //   {
+      //     auto data = m_messages[i].GetBodyAsBinary();
+      //     for (auto oneData : data)
+      //   {
+      //   message.SetBody(oneData);
+      //}
+      //}
+      // else if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Value)
+      //{
+      // auto data = m_messages[i].GetBodyAsAmqpValue();
+      // message.SetBody(data)//.AsBinary());
+      //}
+      // else if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Sequence)
+      //{
+      // auto data = m_messages[i].GetBodyAsAmqpList();
+      // message.SetBody(data); //((Azure::Core::Amqp::Models::AmqpValue)data).AsBinary());
+      // }
+      //}
 
-      return message;*/
+      // return message;
 
       std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages(m_messages);
       return messages;
-
     }
   };
 }}} // namespace Azure::Messaging::EventHubs
