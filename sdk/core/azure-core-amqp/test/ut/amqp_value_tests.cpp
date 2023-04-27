@@ -891,7 +891,7 @@ TEST_F(TestValueSerialization, SerializeBinary)
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Binary);
     EXPECT_EQ(value.AsBinary().size(), 16);
-    auto binary{value.AsBinary()};
+    auto binary(value.AsBinary());
     std::array<uint8_t, 16> valueAsArray;
 
     std::copy_n(binary.begin(), 16, valueAsArray.begin());
@@ -908,7 +908,7 @@ TEST_F(TestValueSerialization, SerializeBinary)
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Binary);
     EXPECT_EQ(value.AsBinary().size(), 16);
-    auto binary{value.AsBinary()};
+    auto binary(value.AsBinary());
     std::array<uint8_t, 16> valueAsArray;
 
     std::copy_n(binary.begin(), 16, valueAsArray.begin());
@@ -1283,7 +1283,7 @@ TEST_F(TestValueSerialization, SerializeArray)
     std::vector<uint8_t> testVector{0xe0, 0x01, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Array);
-    AmqpArray array{value.AsArray()};
+    AmqpArray array(value.AsArray());
     EXPECT_EQ(array.size(), 0);
 
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
@@ -1294,7 +1294,7 @@ TEST_F(TestValueSerialization, SerializeArray)
     std::vector<uint8_t> testVector{0xf0, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Array);
-    AmqpArray array{value.AsArray()};
+    AmqpArray array(value.AsArray());
     EXPECT_EQ(array.size(), 0);
 
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
@@ -1336,7 +1336,7 @@ TEST_F(TestValueSerialization, SerializeArray)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Array);
-    AmqpArray array{value.AsArray()};
+    AmqpArray array(value.AsArray());
     EXPECT_EQ(array.size(), values.size());
     EXPECT_TRUE(std::equal(values.begin(), values.end(), array.begin(), array.end()));
 
@@ -1378,7 +1378,7 @@ TEST_F(TestValueSerialization, SerializeArray)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Array);
-    AmqpArray array{value.AsArray()};
+    AmqpArray array(value.AsArray());
     EXPECT_EQ(array.size(), values.size());
     size_t i = 0;
     for (auto const& val : array)
@@ -1410,7 +1410,7 @@ TEST_F(TestValueSerialization, SerializeMap)
     std::vector<uint8_t> testVector{0xc1, 0x01, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Map);
-    AmqpMap map{value.AsMap()};
+    AmqpMap map(value.AsMap());
     EXPECT_EQ(map.size(), 0);
 
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
@@ -1422,7 +1422,7 @@ TEST_F(TestValueSerialization, SerializeMap)
     std::vector<uint8_t> testVector{0xd1, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Map);
-    AmqpMap map{value.AsMap()};
+    AmqpMap map(value.AsMap());
     EXPECT_EQ(map.size(), 0);
 
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
@@ -1471,7 +1471,7 @@ TEST_F(TestValueSerialization, SerializeMap)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Map);
-    AmqpMap map{value.AsMap()};
+    AmqpMap map(value.AsMap());
     EXPECT_EQ(map.size(), values.size());
     EXPECT_TRUE(std::equal(values.begin(), values.end(), map.begin(), map.end()));
 
@@ -1519,7 +1519,7 @@ TEST_F(TestValueSerialization, SerializeMap)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Map);
-    AmqpMap map{value.AsMap()};
+    AmqpMap map(value.AsMap());
     EXPECT_EQ(map.size(), values.size());
     int i = 0;
     auto valIterator = values.begin();
