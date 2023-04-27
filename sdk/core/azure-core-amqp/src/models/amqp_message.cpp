@@ -683,6 +683,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                 m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpSequence);
                 m_expectedMessageFields.erase(AmqpDescriptors::Footer);
                 break;
+              default:
+                throw std::runtime_error("Unknown message descriptor.");
             }
           }
 
@@ -753,8 +755,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             case AmqpDescriptors::Footer:
               m_decodedValue.Footer = describedType.GetValue().AsMap();
               break;
-            default:
-              throw std::runtime_error("Unknown message descriptor.");
+            default: // LCOV_EXCL_LINE
+              throw std::runtime_error("Unknown message descriptor."); // LCOV_EXCL_LINE
           }
         }
       };
