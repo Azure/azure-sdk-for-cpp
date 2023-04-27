@@ -160,7 +160,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::String, value.GetType());
     EXPECT_EQ(std::string("Fred"), fredP);
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW((bool)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
   }
 
   {
@@ -169,7 +169,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Uuid, value.GetType());
     EXPECT_EQ(uuid.ToString(), static_cast<Azure::Core::Uuid>(value).ToString());
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW((bool)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
   }
 
   {
