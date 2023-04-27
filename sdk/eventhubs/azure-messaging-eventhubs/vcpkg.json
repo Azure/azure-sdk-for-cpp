@@ -2,6 +2,11 @@
   "name": "azure-messaging-eventhubs",
   "version-string": "1.0.0",
   "dependencies": [
-    "azure-core-cpp"
+    {
+      "name": "azure-core-cpp"
+    },
+    {
+      "name": "azure-core-amqp-cpp"
+    }
   ]
 }

@@ -17,6 +17,9 @@
       "version>=": "1.8.0"
     },
     {
+      "name": "azure-core-amqp-cpp",
+    }
+    {
       "name": "vcpkg-cmake",
       "host": true
     },
