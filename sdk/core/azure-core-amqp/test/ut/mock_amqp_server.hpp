@@ -8,13 +8,13 @@
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/message_sender.hpp>
 #include <azure/core/amqp/models/amqp_message.hpp>
+#include <azure/core/amqp/models/amqp_protocol.hpp>
 #include <azure/core/amqp/models/message_source.hpp>
 #include <azure/core/amqp/models/message_target.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
-#include <azure/core/amqp/models/amqp_protocol.hpp>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {

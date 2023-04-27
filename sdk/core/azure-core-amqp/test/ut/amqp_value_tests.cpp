@@ -4,9 +4,9 @@
 #include <gtest/gtest.h>
 
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include <algorithm>
 #include <cuchar>
 #include <random>
-#include <algorithm>
 
 using namespace Azure::Core::Amqp::Models;
 
@@ -632,7 +632,7 @@ TEST_F(TestValueSerialization, SerializeUlong)
 TEST_F(TestValueSerialization, SerializeByte)
 {
   {
-        std::vector<uint8_t> testVector{0x51, 0x25};
+    std::vector<uint8_t> testVector{0x51, 0x25};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Byte);
     EXPECT_EQ(0x25, static_cast<int8_t>(value));
@@ -644,7 +644,7 @@ TEST_F(TestValueSerialization, SerializeByte)
   }
 
   {
-      std::vector<uint8_t> testVector{0x51, 0x89};
+    std::vector<uint8_t> testVector{0x51, 0x89};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Byte);
     EXPECT_EQ(-119, static_cast<int8_t>(value));
