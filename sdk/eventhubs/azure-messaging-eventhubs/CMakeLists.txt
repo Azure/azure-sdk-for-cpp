@@ -68,12 +68,20 @@ add_library(
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} 
     ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
  )
+create_per_service_target_build(messaging azure-messaging-eventhubs)
+add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
 target_include_directories(azure-messaging-eventhubs  PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
-
+# Include shared source code
+# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
+target_include_directories(
+  azure-messaging-eventhubs
+    PRIVATE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-messaging-eventhubs/inc>
+)
 target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
@@ -103,3 +111,5 @@ az_rtti_setup(
   MESSAGING_EVENTHUBS
   azure/messaging/eventhubs/rtti.hpp
 )
+
+unset(FETCH_SOURCE_DEPS CACHE)
