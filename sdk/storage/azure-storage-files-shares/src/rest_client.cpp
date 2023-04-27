@@ -2436,7 +2436,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           kUnknown,
           kEnumerationResults,
-          kHandleList,
+          kEntries,
           kHandle,
           kHandleId,
           kPath,
@@ -2452,7 +2452,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
             {"EnumerationResults", XmlTagEnum::kEnumerationResults},
-            {"HandleList", XmlTagEnum::kHandleList},
+            {"Entries", XmlTagEnum::kEntries},
             {"Handle", XmlTagEnum::kHandle},
             {"HandleId", XmlTagEnum::kHandleId},
             {"Path", XmlTagEnum::kPath},
@@ -2484,49 +2484,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == _internal::XmlNodeType::Text)
           {
             if (xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kHandleId)
             {
               vectorElement1.HandleId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kPath)
             {
               vectorElement1.Path.Content = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kFileId)
             {
               vectorElement1.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kParentId)
             {
               vectorElement1.ParentId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kSessionId)
             {
               vectorElement1.SessionId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kClientIp)
             {
               vectorElement1.ClientIp = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kOpenTime)
             {
               vectorElement1.OpenedOn
@@ -2534,7 +2534,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kLastReconnectTime)
             {
               vectorElement1.LastReconnectedOn
@@ -2542,7 +2542,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kAccessRightList
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
@@ -2558,7 +2558,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == _internal::XmlNodeType::Attribute)
           {
             if (xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kPath && node.Name == "Encoded")
             {
               vectorElement1.Path.Encoded = node.Value == std::string("true");
@@ -2567,7 +2567,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == _internal::XmlNodeType::EndTag)
           {
             if (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kAccessRightList
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
@@ -2576,7 +2576,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle)
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle)
             {
               response.HandleList.push_back(std::move(vectorElement1));
               vectorElement1 = Models::_detail::HandleItem();
@@ -4015,7 +4015,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           kUnknown,
           kEnumerationResults,
-          kHandleList,
+          kEntries,
           kHandle,
           kHandleId,
           kPath,
@@ -4031,7 +4031,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
             {"EnumerationResults", XmlTagEnum::kEnumerationResults},
-            {"HandleList", XmlTagEnum::kHandleList},
+            {"Entries", XmlTagEnum::kEntries},
             {"Handle", XmlTagEnum::kHandle},
             {"HandleId", XmlTagEnum::kHandleId},
             {"Path", XmlTagEnum::kPath},
@@ -4063,49 +4063,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == _internal::XmlNodeType::Text)
           {
             if (xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kHandleId)
             {
               vectorElement1.HandleId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kPath)
             {
               vectorElement1.Path.Content = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kFileId)
             {
               vectorElement1.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kParentId)
             {
               vectorElement1.ParentId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kSessionId)
             {
               vectorElement1.SessionId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kClientIp)
             {
               vectorElement1.ClientIp = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kOpenTime)
             {
               vectorElement1.OpenedOn
@@ -4113,7 +4113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kLastReconnectTime)
             {
               vectorElement1.LastReconnectedOn
@@ -4121,7 +4121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kAccessRightList
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
@@ -4137,7 +4137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == _internal::XmlNodeType::Attribute)
           {
             if (xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kPath && node.Name == "Encoded")
             {
               vectorElement1.Path.Encoded = node.Value == std::string("true");
@@ -4146,7 +4146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == _internal::XmlNodeType::EndTag)
           {
             if (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle
                 && xmlPath[3] == XmlTagEnum::kAccessRightList
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
@@ -4155,7 +4155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kHandleList && xmlPath[2] == XmlTagEnum::kHandle)
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kHandle)
             {
               response.HandleList.push_back(std::move(vectorElement1));
               vectorElement1 = Models::_detail::HandleItem();
