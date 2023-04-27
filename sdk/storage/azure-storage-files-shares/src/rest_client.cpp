@@ -184,9 +184,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const FileAttributes FileAttributes::Offline("Offline");
     const FileAttributes FileAttributes::NotContentIndexed("NotContentIndexed");
     const FileAttributes FileAttributes::NoScrubData("NoScrubData");
-    const AccessRight AccessRight::Read("Read");
-    const AccessRight AccessRight::Write("Write");
-    const AccessRight AccessRight::Delete("Delete");
+    namespace _detail {
+      const AccessRight AccessRight::Read("Read");
+      const AccessRight AccessRight::Write("Write");
+      const AccessRight AccessRight::Delete("Delete");
+    } // namespace _detail
     const CopyStatus CopyStatus::Pending("pending");
     const CopyStatus CopyStatus::Success("success");
     const CopyStatus CopyStatus::Aborted("aborted");
@@ -2468,7 +2470,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         };
         std::vector<XmlTagEnum> xmlPath;
         Models::_detail::HandleItem vectorElement1;
-        Models::AccessRight vectorElement2;
+        Models::_detail::AccessRight vectorElement2;
         while (true)
         {
           auto node = reader.Read();
@@ -2546,7 +2548,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kAccessRightList
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
-              vectorElement2 = Models::AccessRight(node.Value);
+              vectorElement2 = Models::_detail::AccessRight(node.Value);
             }
             else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -2572,7 +2574,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
               vectorElement1.AccessRightList.push_back(std::move(vectorElement2));
-              vectorElement2 = Models::AccessRight();
+              vectorElement2 = Models::_detail::AccessRight();
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -4047,7 +4049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         };
         std::vector<XmlTagEnum> xmlPath;
         Models::_detail::HandleItem vectorElement1;
-        Models::AccessRight vectorElement2;
+        Models::_detail::AccessRight vectorElement2;
         while (true)
         {
           auto node = reader.Read();
@@ -4125,7 +4127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kAccessRightList
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
-              vectorElement2 = Models::AccessRight(node.Value);
+              vectorElement2 = Models::_detail::AccessRight(node.Value);
             }
             else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -4151,7 +4153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[4] == XmlTagEnum::kAccessRight)
             {
               vectorElement1.AccessRightList.push_back(std::move(vectorElement2));
-              vectorElement2 = Models::AccessRight();
+              vectorElement2 = Models::_detail::AccessRight();
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults

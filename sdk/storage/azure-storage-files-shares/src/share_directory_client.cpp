@@ -596,15 +596,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             = static_cast<Models::ShareFileHandleAccessRights>(0);
         for (auto& accessRight : handle.AccessRightList)
         {
-          if (accessRight == Models::AccessRight::Read)
+          if (accessRight == Models::_detail::AccessRight::Read)
           {
             accessRights |= Models::ShareFileHandleAccessRights::Read;
           }
-          if (accessRight == Models::AccessRight::Write)
+          if (accessRight == Models::_detail::AccessRight::Write)
           {
             accessRights |= Models::ShareFileHandleAccessRights::Write;
           }
-          if (accessRight == Models::AccessRight::Delete)
+          if (accessRight == Models::_detail::AccessRight::Delete)
           {
             accessRights |= Models::ShareFileHandleAccessRights::Delete;
           }
