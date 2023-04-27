@@ -211,9 +211,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(response.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(response.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = response.Value.Details.IsServerEncrypted;
-    ret.Details.EncryptionContext
-        = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
-            response.RawResponse->GetHeaders(), _detail::EncryptionContextHeaderName);
+    auto& headers = response.RawResponse->GetHeaders();
+    auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
+    if (encryptionContext != headers.end())
+    {
+      ret.Details.EncryptionContext = encryptionContext->second;
+    }
+    auto owner = headers.find(_detail::OwnerHeaderName);
+    if (owner != headers.end())
+    {
+      ret.Details.Owner = owner->second;
+    }
+    auto group = headers.find(_detail::GroupHeaderName);
+    if (group != headers.end())
+    {
+      ret.Details.Group = group->second;
+    }
+    auto permissions = headers.find(_detail::PermissionsHeaderName);
+    if (permissions != headers.end())
+    {
+      ret.Details.Permissions = permissions->second;
+    }
     return Azure::Response<Models::DownloadFileResult>(
         std::move(ret), std::move(response.RawResponse));
   }
