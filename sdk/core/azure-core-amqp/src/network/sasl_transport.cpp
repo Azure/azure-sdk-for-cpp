@@ -77,4 +77,4 @@ Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
   saslConfig.sasl_mechanism = saslMechanism;
   SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
 }
-// LCOV_EXCL_END
+// LCOV_EXCL_STOP

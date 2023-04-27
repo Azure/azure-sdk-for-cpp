@@ -427,7 +427,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (amqpvalue_encode(value, OnAmqpValueEncoded, this))
       {
-        throw std::runtime_error("Could not decode object");
+        throw std::runtime_error("Could not encode object");
       }
 
       return m_encodedValue;
