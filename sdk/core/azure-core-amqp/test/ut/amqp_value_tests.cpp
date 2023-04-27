@@ -55,7 +55,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Ubyte, value.GetType());
     EXPECT_EQ(255, static_cast<uint8_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue{static_cast<uint8_t>(254)}, value);
   }
 
@@ -66,7 +66,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
     char ch{value};
     EXPECT_EQ('D', ch);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue('B'), value);
   }
 
@@ -75,7 +75,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Ushort, value.GetType());
     EXPECT_EQ(65535, static_cast<uint16_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue{static_cast<uint16_t>(65534)}, value);
   }
   {
@@ -100,7 +100,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Uint, value.GetType());
     EXPECT_EQ(32u, static_cast<uint32_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(31u), value);
   }
 
