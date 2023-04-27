@@ -136,7 +136,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
   }
 
-    {
+  {
     AmqpValue value1{29};
     AmqpValue value2(std::move(value1));
     AmqpValue value3(value2);
