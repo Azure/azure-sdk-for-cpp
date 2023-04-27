@@ -1148,7 +1148,7 @@ TEST_F(TestValueSerialization, SerializeList)
     std::vector<uint8_t> testVector{0xd0, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::List);
-    AmqpList list{value.AsList()};
+    AmqpList list(value.AsList());
     EXPECT_EQ(list.size(), 0);
 
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
@@ -1184,7 +1184,7 @@ TEST_F(TestValueSerialization, SerializeList)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::List);
-    AmqpList list{value.AsList()};
+    AmqpList list(value.AsList());
     EXPECT_EQ(list.size(), values.size());
     EXPECT_TRUE(std::equal(values.begin(), values.end(), list.begin(), list.end()));
 
@@ -1220,7 +1220,7 @@ TEST_F(TestValueSerialization, SerializeList)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::List);
-    AmqpList list{value.AsList()};
+    AmqpList list(value.AsList());
     EXPECT_EQ(list.size(), values.size());
     EXPECT_TRUE(std::equal(values.begin(), values.end(), list.begin(), list.end()));
 
@@ -1261,7 +1261,7 @@ TEST_F(TestValueSerialization, SerializeList)
 
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::List);
-    AmqpList list{value.AsList()};
+    AmqpList list(value.AsList());
     EXPECT_EQ(list.size(), values.size());
     EXPECT_TRUE(std::equal(values.begin(), values.end(), list.begin(), list.end()));
 
