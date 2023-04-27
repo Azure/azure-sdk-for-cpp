@@ -38,7 +38,7 @@ int main()
       session, credential, hostUrl, receiverOptions);
 
   // Open the connection to the remote.
-  receiver.Open();
+  receiver.Open();  
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 

@@ -20,7 +20,7 @@ add_executable (
     producer_client_test.cpp
     retry_operation_test.cpp
     amqp_message_test.cpp
-)
+    consumer_client_test.cpp)
 
 create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)

@@ -7,7 +7,7 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     std::string const& connectionString,
     std::string const& eventHub,
     ProducerClientOptions options)
-    : m_retryOptions(options.RetryOptions), m_credentials{connectionString, "",eventHub},
+    : m_credentials{connectionString, "",eventHub},
       m_producerClientOptions(options)
 {
   m_credentials.SasCredential
@@ -73,8 +73,17 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
     targetUrl += "/Partitions/" + partitionId;
   }
 
-  auto sender = Azure::Core::Amqp::_internal::MessageSender(
-      session, m_credentials.SasCredential, targetUrl, senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender;
+  if (m_credentials.SasCredential == nullptr)
+  {
+    sender = Azure::Core::Amqp::_internal::MessageSender(
+        session, m_credentials.Credential, targetUrl, senderOptions, nullptr);
+  }
+  else
+  {
+    sender = Azure::Core::Amqp::_internal::MessageSender(
+        session, m_credentials.SasCredential, targetUrl, senderOptions, nullptr);
+  }
 
   sender.Open();
   m_senders.insert_or_assign(partitionId, sender);
@@ -87,7 +96,7 @@ bool const Azure::Messaging::EventHubs::ProducerClient::
 {
   
   auto messages = eventDataBatch.GetMessages();
-  Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(m_retryOptions);
+  Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(m_producerClientOptions.RetryOptions);
   return retryOp.Execute([&]() -> bool {
     auto result = GetSender(eventDataBatch.GetPartitionID()).Send(messages[0], ctx);
     return std::get<0>(result) == Azure::Core::Amqp::_internal::MessageSendResult::Ok;

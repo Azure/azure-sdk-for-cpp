@@ -40,6 +40,7 @@ set(
   inc/azure/messaging/eventhubs/producer_client.hpp
   inc/azure/messaging/eventhubs/event_data_batch.hpp
   inc/azure/messaging/eventhubs/retry_operation.hpp
+  inc/azure/messaging/eventhubs/consumer_client.hpp
 )
 
 set(
@@ -47,6 +48,7 @@ set(
   src/private/package_version.hpp
   src/producer_client.cpp
   src/retry_operation.cpp
+  src/consumer_client.cpp
 )
 add_library(
   azure-messaging-eventhubs

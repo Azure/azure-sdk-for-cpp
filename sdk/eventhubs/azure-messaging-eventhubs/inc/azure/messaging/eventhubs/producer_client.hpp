@@ -49,7 +49,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class ProducerClient {
 
-    Azure::Core::Http::Policies::RetryOptions m_retryOptions;
     const std::string m_defaultAuthScope = "https://eventhubs.azure.net/.default";
     ProducerClientCreds m_credentials{};
     ProducerClientOptions m_producerClientOptions{};
@@ -58,7 +57,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   public:
     std::string const& GetEventHubName() { return m_credentials.EventHub; }
 
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() { return m_retryOptions; }
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() { return m_producerClientOptions.RetryOptions; }
 
     /**@brief Constructs a new ProducerClient instance
      *
