@@ -20,6 +20,11 @@ if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
     SetCompileOptions(MESSAGING)
+elseif(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-core-cpp "1.8.0" CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp "1.8.0" REQUIRED)
+  endif()
 endif()
 
 
