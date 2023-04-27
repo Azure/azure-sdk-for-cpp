@@ -22,7 +22,6 @@ if(FETCH_SOURCE_DEPS)
     SetCompileOptions(MESSAGING)
 endif()
 
-
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
@@ -48,30 +47,31 @@ endif()
 
 set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
-  inc/azure/messaging/eventhubs.hpp
-  inc/azure/messaging/eventhubs/amqp_message.hpp
-  inc/azure/messaging/eventhubs/producer_client.hpp
-  inc/azure/messaging/eventhubs/event_data_batch.hpp
-  inc/azure/messaging/eventhubs/retry_operation.hpp
-  inc/azure/messaging/eventhubs/consumer_client.hpp
+    inc/azure/messaging/eventhubs.hpp
+    inc/azure/messaging/eventhubs/amqp_message.hpp
+    inc/azure/messaging/eventhubs/producer_client.hpp
+    inc/azure/messaging/eventhubs/event_data_batch.hpp
+    inc/azure/messaging/eventhubs/retry_operation.hpp
+    inc/azure/messaging/eventhubs/consumer_client.hpp
 )
 
 set(
   AZURE_MESSAGING_EVENTHUBS_SOURCE
-  src/private/package_version.hpp
-  src/producer_client.cpp
-  src/retry_operation.cpp
-  src/consumer_client.cpp
+    src/private/package_version.hpp
+    src/producer_client.cpp
+    src/retry_operation.cpp
+    src/consumer_client.cpp
 )
 add_library(
   azure-messaging-eventhubs
-    ${AZURE_MESSAGING_EVENTHUBS_HEADER} 
-    ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
+    ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
  )
 create_per_service_target_build(messaging azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
-target_include_directories(azure-messaging-eventhubs  PUBLIC
+target_include_directories(
+  azure-messaging-eventhubs  
+    PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
@@ -82,10 +82,11 @@ target_include_directories(
     PRIVATE
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-messaging-eventhubs/inc>
 )
+
 target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
+create_code_coverage(messaging azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
