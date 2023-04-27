@@ -143,6 +143,7 @@ directive:
       $.ListSharesResponse["x-namespace"] = "_detail";
       $.FilesAndDirectoriesListSegment["x-namespace"] = "_detail";
       $.ListFilesAndDirectoriesSegmentResponse["x-namespace"] = "_detail";
+      $.AccessRight["x-namespace"] = "_detail";
   - from: swagger-document
     where: $
     transform: >
