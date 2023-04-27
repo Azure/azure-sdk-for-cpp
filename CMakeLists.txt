@@ -113,9 +113,10 @@ add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template)
 
 if(ENABLE_AZURE_CORE_AMQP)
-#messaging sdks need AMQP
-add_subdirectory(sdk/eventhubs)
+# Messaging sdks need AMQP
+  add_subdirectory(sdk/eventhubs)
 endif( )
+
 if(BUILD_SAMPLES)
   add_subdirectory(samples/integration/vcpkg-all-smoke)
 endif()
