@@ -6,6 +6,7 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include <cuchar>
 #include <random>
+#include <algorithm>
 
 using namespace Azure::Core::Amqp::Models;
 
@@ -1160,7 +1161,7 @@ TEST_F(TestValueSerialization, SerializeList)
     constexpr size_t valueCount = 0x15;
     // Create an array of random values.
     std::vector<AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.push_back(AmqpValue(static_cast<uint32_t>(GenerateRandomValue<long>())));
     }
@@ -1196,7 +1197,7 @@ TEST_F(TestValueSerialization, SerializeList)
     constexpr size_t valueCount = 0x10;
     // Create an array of random values.
     std::vector<AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.push_back(AmqpValue(static_cast<int64_t>(GenerateRandomValue<long long>())));
     }
@@ -1237,7 +1238,7 @@ TEST_F(TestValueSerialization, SerializeList)
     constexpr size_t valueCount = 0x210;
     // Create an array of random values.
     std::vector<AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.push_back(AmqpValue(static_cast<int64_t>(GenerateRandomValue<long long>())));
     }
@@ -1308,7 +1309,7 @@ TEST_F(TestValueSerialization, SerializeArray)
     constexpr size_t valueCount = 0x10;
     // Create an array of random values.
     std::vector<AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.push_back(AmqpValue(static_cast<int64_t>(GenerateRandomValue<long long>())));
     }
@@ -1353,7 +1354,7 @@ TEST_F(TestValueSerialization, SerializeArray)
     constexpr size_t valueCount = 0x210;
     // Create an array of random values.
     std::vector<AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.push_back(AmqpValue(static_cast<int64_t>(GenerateRandomValue<long long>())));
     }
@@ -1436,7 +1437,7 @@ TEST_F(TestValueSerialization, SerializeMap)
     constexpr size_t valueCount = 0x10;
     // Create an map of random values.
     std::map<AmqpValue, AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.emplace(
           AmqpValue(std::to_string(i)),
@@ -1486,7 +1487,7 @@ TEST_F(TestValueSerialization, SerializeMap)
     constexpr size_t valueCount = 0x210;
     // Create an map of random values.
     std::map<AmqpValue, AmqpValue> values;
-    for (int i = 0; i < valueCount; i += 1)
+    for (size_t i = 0; i < valueCount; i += 1)
     {
       values.emplace(
           AmqpValue(std::to_string(i)),
