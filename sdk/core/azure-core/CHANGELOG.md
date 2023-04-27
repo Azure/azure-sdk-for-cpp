@@ -7,10 +7,6 @@
 - Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::CreateFromArray()` to enable reading or writing from an existing UUID.
 This is useful when the UUID was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
 
-### Bugs Fixed
-
-- Fixed the UUID generation so the variant is RFC 4122 conforming.
-
 ## 1.9.0 (2023-05-04)
 
 ### Features Added
@@ -19,6 +15,10 @@ This is useful when the UUID was generated outside the Azure SDK, or needs to be
 - Added `DisableTlsCertificateValidation` in `TransportOptions`.
 - Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
 - Added support for challenge-based and multi-tenant authentication.
+
+### Bugs Fixed
+
+- Fixed the UUID generation so the variant is RFC 4122 conforming.
 
 ### Other Changes
 
