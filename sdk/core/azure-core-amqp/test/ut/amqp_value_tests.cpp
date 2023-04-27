@@ -47,7 +47,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(-17, static_cast<int8_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_LT(AmqpValue{static_cast<int8_t>(-18)}, value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
   }
 
   {
@@ -83,7 +83,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Short, value.GetType());
     EXPECT_EQ(32767, static_cast<int16_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue{static_cast<int16_t>(32766)}, value);
   }
 
@@ -92,7 +92,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Int, value.GetType());
     EXPECT_EQ(32, static_cast<int32_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(31), value);
   }
   {
@@ -109,7 +109,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Long, value.GetType());
     EXPECT_EQ(32ll, static_cast<int64_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(static_cast<int64_t>(31ll)), value);
   }
   {
@@ -117,7 +117,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Ulong, value.GetType());
     EXPECT_EQ(39ull, static_cast<uint64_t>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(static_cast<uint64_t>(38ull)), value);
   }
 
@@ -126,7 +126,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Float, value.GetType());
     EXPECT_EQ(39.0f, static_cast<float>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(38.0f), value);
   }
   {
@@ -134,7 +134,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Double, value.GetType());
     EXPECT_EQ(39.0, static_cast<double>(value));
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(38.0), value);
   }
 
@@ -151,7 +151,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::String, value.GetType());
     EXPECT_EQ(std::string("Fred"), fredP);
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue("ABC"), value);
   }
   {
@@ -160,7 +160,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::String, value.GetType());
     EXPECT_EQ(std::string("Fred"), fredP);
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((bool)static_cast<bool>(value));
   }
 
   {
@@ -169,7 +169,7 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Uuid, value.GetType());
     EXPECT_EQ(uuid.ToString(), static_cast<Azure::Core::Uuid>(value).ToString());
     EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW(static_cast<bool>(value));
+    EXPECT_ANY_THROW((bool)static_cast<bool>(value));
   }
 
   {
