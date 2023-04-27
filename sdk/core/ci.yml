@@ -15,6 +15,8 @@ trigger:
       - CMakeLists.txt
       - sdk/core
       - doc/
+      - samples/
+      - .github/
       - /**/*.md
 
 pr:
@@ -32,6 +34,8 @@ pr:
       - CMakeLists.txt
       - sdk/core
       - doc/
+      - samples/
+      - .github/
       - /**/*.md
 
 stages:

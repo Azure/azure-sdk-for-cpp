@@ -453,7 +453,7 @@ TEST(Context, PreCondition)
 
 // Type-safe assert requires RTTI build
 #if defined(NDEBUG)
-  // Release build won't provide assert msg
+  // Release build won't provide an assert message
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "");
 #else
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");

@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.1 (Unreleased)
+## 12.5.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.5.0-beta.1 (2023-04-11)
+
+### Features Added
+
+- Added support for OAuth:
+  - New field `ShareTokenIntent` in ShareClientOptions.
+  - New constructor with `TokenCredential` in `ShareServiceClient`, `ShareClient`, `ShareDirectoryClient`, `ShareFileClient`.
+- Added support for trailing dot:
+  - New field `AllowTrailingDot`,  `AllowSourceTrailingDot` in `ShareClientOptions`.
 
 ## 12.4.0 (2023-03-07)
 

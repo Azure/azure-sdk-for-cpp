@@ -1,18 +1,24 @@
 # Release History
 
-## 4.4.0-beta.1 (Unreleased)
+## 4.4.0-beta.2 (Unreleased)
 
 ### Features Added
-
-- Added support for challenge-based and multi-tenant authentication.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- [3366](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
-
 ### Other Changes
+
+## 4.4.0-beta.1 (2023-04-11)
+
+### Features Added
+
+- Added support for challenge-based and multi-tenant authentication.
+
+### Bugs Fixed
+
+- [3366](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
 
 ## 4.3.0 (2022-10-11)
 

@@ -108,6 +108,7 @@
     "northcentralus",
     "nostd",
     "NTSTATUS",
+    "OIDC",
     "okhttp",
     "opentelemetry",
     "otel",
