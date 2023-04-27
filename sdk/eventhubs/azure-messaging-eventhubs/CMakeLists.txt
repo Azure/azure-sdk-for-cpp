@@ -34,9 +34,9 @@ include(AzureBuildTargetForCI)
 include(CreateMapFile)
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.7.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.5.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.7.0" REQUIRED)
+    find_package(azure-core-cpp "1.5.0" REQUIRED)
   endif()
 endif()
 
