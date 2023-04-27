@@ -143,6 +143,7 @@ directive:
       $.ListSharesResponse["x-namespace"] = "_detail";
       $.FilesAndDirectoriesListSegment["x-namespace"] = "_detail";
       $.ListFilesAndDirectoriesSegmentResponse["x-namespace"] = "_detail";
+      $.AccessRight["x-namespace"] = "_detail";
   - from: swagger-document
     where: $
     transform: >
@@ -590,6 +591,8 @@ directive:
       $.HandleItem.properties["LastReconnectTime"]["x-ms-client-name"] = "LastReconnectedOn";
       $.HandleItem.properties["Path"]["description"] = "File or directory name including full path starting from share root.";
       $.HandleItem["x-namespace"] = "_detail";
+      delete $.ListHandlesResponse.properties.HandleList["xml"];
+      $.ListHandlesResponse.properties.HandleList["x-ms-xml"] = {"name": "Entries", "wrapped": true};
 ```
 
 ### ForceCloseFileHandles

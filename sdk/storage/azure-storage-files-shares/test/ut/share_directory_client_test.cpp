@@ -1075,4 +1075,22 @@ namespace Azure { namespace Storage { namespace Test {
     // Delete
     EXPECT_NO_THROW(directoryClient.Delete());
   }
+
+  // cspell:ignore myshare mydirectory
+  // Can't run this test on pipeline, test it locally.
+  TEST_F(FileShareDirectoryClientTest, DISABLED_listHandlesAccessRights)
+  {
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), "myshare");
+    auto directoryClient
+        = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("mydirectory");
+    auto directoryHandles = directoryClient.ListHandles().DirectoryHandles;
+    Files::Shares::Models::ShareFileHandleAccessRights allAccessRights
+        = Files::Shares::Models::ShareFileHandleAccessRights::Read
+        | Files::Shares::Models::ShareFileHandleAccessRights::Write
+        | Files::Shares::Models::ShareFileHandleAccessRights::Delete;
+    EXPECT_EQ(directoryHandles.size(), 1L);
+    EXPECT_TRUE(directoryHandles[0].accessRights.HasValue());
+    EXPECT_EQ(allAccessRights, directoryHandles[0].accessRights.Value());
+  }
 }}} // namespace Azure::Storage::Test

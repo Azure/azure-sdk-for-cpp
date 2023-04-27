@@ -1091,25 +1091,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string NextMarker;
         Nullable<std::string> DirectoryId;
       };
-    } // namespace _detail
-    /**
-     * @brief Access rights of the access policy.
-     */
-    class AccessRight final {
-    public:
-      AccessRight() = default;
-      explicit AccessRight(std::string value) : m_value(std::move(value)) {}
-      bool operator==(const AccessRight& other) const { return m_value == other.m_value; }
-      bool operator!=(const AccessRight& other) const { return !(*this == other); }
-      const std::string& ToString() const { return m_value; }
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
+      /**
+       * @brief Access rights of the access policy.
+       */
+      class AccessRight final {
+      public:
+        AccessRight() = default;
+        explicit AccessRight(std::string value) : m_value(std::move(value)) {}
+        bool operator==(const AccessRight& other) const { return m_value == other.m_value; }
+        bool operator!=(const AccessRight& other) const { return !(*this == other); }
+        const std::string& ToString() const { return m_value; }
+        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
+        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
+        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
 
-    private:
-      std::string m_value;
-    };
-    namespace _detail {
+      private:
+        std::string m_value;
+      };
       /**
        * @brief A listed Azure Storage handle item.
        */

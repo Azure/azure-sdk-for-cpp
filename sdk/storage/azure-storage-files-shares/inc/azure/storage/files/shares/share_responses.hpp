@@ -190,6 +190,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
     };
 
+    enum class ShareFileHandleAccessRights
+    {
+      Read = 1,
+      Write = 2,
+      Delete = 4,
+    };
+    inline ShareFileHandleAccessRights operator|(
+        ShareFileHandleAccessRights lhs,
+        ShareFileHandleAccessRights rhs)
+    {
+      using type = std::underlying_type_t<ShareFileHandleAccessRights>;
+      return static_cast<ShareFileHandleAccessRights>(
+          static_cast<type>(lhs) | static_cast<type>(rhs));
+    }
+    inline ShareFileHandleAccessRights& operator|=(
+        ShareFileHandleAccessRights& lhs,
+        ShareFileHandleAccessRights rhs)
+    {
+      lhs = lhs | rhs;
+      return lhs;
+    }
+    inline ShareFileHandleAccessRights operator&(
+        ShareFileHandleAccessRights lhs,
+        ShareFileHandleAccessRights rhs)
+    {
+      using type = std::underlying_type_t<ShareFileHandleAccessRights>;
+      return static_cast<ShareFileHandleAccessRights>(
+          static_cast<type>(lhs) & static_cast<type>(rhs));
+    }
+    inline ShareFileHandleAccessRights& operator&=(
+        ShareFileHandleAccessRights& lhs,
+        ShareFileHandleAccessRights rhs)
+    {
+      lhs = lhs & rhs;
+      return lhs;
+    }
+
     /**
      * @brief A listed directory item.
      */
@@ -251,6 +288,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Time handle was last connected to (UTC).
        */
       DateTime LastReconnectedOn;
+      /**
+       * Access rights of the handle.
+       */
+      Azure::Nullable<ShareFileHandleAccessRights> accessRights;
     };
   } // namespace Models
 
