@@ -135,6 +135,19 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(uuid.ToString(), static_cast<Azure::Core::Uuid>(value).ToString());
     EXPECT_TRUE(AmqpValue() < value);
   }
+
+    {
+    AmqpValue value1{29};
+    AmqpValue value2(std::move(value1));
+    AmqpValue value3(value2);
+    AmqpValue value4;
+    value4 = value2;
+    EXPECT_EQ(value4, value2);
+    GTEST_LOG_(INFO) << value4;
+    AmqpValue value5 = std::move(value3);
+    GTEST_LOG_(INFO) << value5;
+    EXPECT_NE(value5, value3);
+  }
 }
 
 TEST_F(TestValues, TestBinary)

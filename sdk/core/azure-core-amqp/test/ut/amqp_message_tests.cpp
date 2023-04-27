@@ -25,9 +25,11 @@ TEST_F(TestMessage, SimpleCreate)
     AmqpMessage message3(message2);
     AmqpMessage message4;
     message4 = message2;
+    EXPECT_EQ(message4, message2);
     GTEST_LOG_(INFO) << message4;
     AmqpMessage message5 = std::move(message3);
     GTEST_LOG_(INFO) << message5;
+    EXPECT_NE(message5, message3);
   }
 
   {

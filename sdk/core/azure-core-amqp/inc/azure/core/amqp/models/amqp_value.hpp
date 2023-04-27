@@ -541,6 +541,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       bool operator<(ThisType const& that) const { return m_value < that.m_value; }
       bool operator==(ThisType const& that) const { return m_value == that.m_value; }
+      bool operator!=(ThisType const& that) const { return m_value != that.m_value; }
       bool empty() const noexcept { return m_value.empty(); }
 
       /**
