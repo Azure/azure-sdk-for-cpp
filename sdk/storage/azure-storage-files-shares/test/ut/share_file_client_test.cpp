@@ -1416,6 +1416,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(destFileClient.Delete());
   }
 
+  // cspell:ignore myshare myfile
   // Can't run this test on pipeline, test it locally.
   TEST_F(FileShareFileClientTest, DISABLED_listHandlesAccessRights)
   {
