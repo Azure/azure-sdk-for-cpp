@@ -337,7 +337,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(
         appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
   }
-  
+
   TEST_F(AppendBlobClientTest, DISABLED_HighThroughputAppendBlob)
   {
     auto appendBlobClient = m_blobContainerClient->GetAppendBlobClient(RandomString());
