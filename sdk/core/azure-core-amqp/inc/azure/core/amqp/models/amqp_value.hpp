@@ -11,7 +11,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <cuchar>
+#include <uchar.h>
 #include <exception>
 #include <functional>
 #include <list>
