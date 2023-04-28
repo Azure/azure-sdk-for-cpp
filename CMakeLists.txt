@@ -28,6 +28,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable a build configuration to disable features when building for Windows Store.
+message(STATUS "CMAKE_SYSTEM_NAME=" ${CMAKE_SYSTEM_NAME})
 if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
   set(BUILD_WINDOWS_UWP True)
   message(STATUS "Building for Windows Store, CMAKE_SYSTEM_NAME=" CMAKE_SYSTEM_NAME)

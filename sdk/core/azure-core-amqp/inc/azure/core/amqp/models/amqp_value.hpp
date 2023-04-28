@@ -739,7 +739,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     operator UniqueAmqpValueHandle() const;
 
     operator std::chrono::milliseconds const() const { return m_value; }
-    operator std::chrono::milliseconds() const { return m_value; }
 
     bool operator<(AmqpTimestamp const& that) { return m_value < that.m_value; }
   };
