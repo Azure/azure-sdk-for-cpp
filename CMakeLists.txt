@@ -16,12 +16,6 @@ if(FETCH_SOURCE_DEPS)
   return()
 endif()
 
-# Enable a build configuration to disable features when building for Windows Store.
-if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-  set(BUILD_WINDOWS_UWP True)
-  message(STATUS "Building for Windows Store")
-endif()
-
 include(AzureTransportAdapters)
 include(AzureVcpkg)
 include(AzureBuildTargetForCI)
@@ -32,6 +26,12 @@ az_vcpkg_integrate()
 project(azure-sdk LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Enable a build configuration to disable features when building for Windows Store.
+if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+  set(BUILD_WINDOWS_UWP True)
+  message(STATUS "Building for Windows Store, CMAKE_SYSTEM_NAME=" CMAKE_SYSTEM_NAME)
+endif()
 
 if(MSVC_USE_STATIC_CRT AND MSVC)
   # 1. More about static/shared CRT:
