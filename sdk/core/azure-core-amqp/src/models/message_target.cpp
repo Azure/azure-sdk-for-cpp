@@ -135,19 +135,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get expiry policy from target."); // LCOV_EXCL_LINE
     }
-    if (strcmp(value, terminus_expiry_policy_connection_close) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_connection_close) == 0)
     {
       return TerminusExpiryPolicy::ConnectionClose;
     }
-    if (strcmp(value, terminus_expiry_policy_link_detach) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_link_detach) == 0)
     {
       return TerminusExpiryPolicy::LinkDetach;
     }
-    if (strcmp(value, terminus_expiry_policy_never) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_never) == 0)
     {
       return TerminusExpiryPolicy::Never;
     }
-    if (strcmp(value, terminus_expiry_policy_session_end) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_session_end) == 0)
     {
       return TerminusExpiryPolicy::SessionEnd;
     }

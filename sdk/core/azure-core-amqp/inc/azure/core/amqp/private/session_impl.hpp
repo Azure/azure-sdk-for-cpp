@@ -24,9 +24,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
   public:
-    using OnEndpointFrameReceivedCallback = std::function<
-        void(AMQP_VALUE_DATA_TAG* performative, uint32_t framePayloadSize, uint8_t* payload)>;
-
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::Endpoint& newEndpoint,
@@ -53,16 +50,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
-    _internal::Endpoint CreateLinkEndpoint(std::string const& name);
-    void DestroyLinkEndpoint(_internal::Endpoint& endpoint);
-    void SetLinkEndpointCallback(
-        _internal::Endpoint& endpoint,
-        OnEndpointFrameReceivedCallback callback);
-    void StartLinkEndpoint(_internal::Endpoint& endpoint, OnEndpointFrameReceivedCallback callback);
-    void SendFlow(_internal::Endpoint& endpoint, _internal::Flow& flow);
-    void SendAttach(_internal::Endpoint& endpoint, _internal::Attach& attach);
-    void SendDisposition(_internal::Endpoint& endpoint, _internal::Disposition& disposition);
-    void SendDetach(_internal::Endpoint& endpoint, _internal::Detach& detach);
 
   private:
     SessionImpl();

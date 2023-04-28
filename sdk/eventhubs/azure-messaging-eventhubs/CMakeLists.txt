@@ -79,7 +79,7 @@ az_vcpkg_export(
   )
 
 az_rtti_setup(
-  azure-security-keyvault-keys
+  azure-messaging-eventhubs
   MESSAGING_EVENTHUBS
   "azure/messaging/eventhubs/rtti.hpp"
 )

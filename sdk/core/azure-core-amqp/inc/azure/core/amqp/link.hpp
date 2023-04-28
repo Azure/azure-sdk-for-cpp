@@ -63,8 +63,6 @@ namespace Azure { namespace Core { namespace Amqp {
 
     class Link final {
     public:
-      using OnLinkDetachReceived = std::function<void(Error& error)>;
-
       Link(
           _internal::Session const& session,
           std::string const& name,

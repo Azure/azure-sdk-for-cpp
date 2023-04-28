@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Array,
     Described,
     Composite,
-    Unknown
+    Unknown,
   };
 
   class AmqpArray;

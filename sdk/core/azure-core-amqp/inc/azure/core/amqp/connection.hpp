@@ -74,22 +74,44 @@ namespace Azure { namespace Core { namespace Amqp {
 
     class Connection;
 
+    /** @brief The ConnectionEvents interface defines a series of events triggered on a connection
+     * object.
+     */
     struct ConnectionEvents
     {
-      virtual void OnEndpointFrameReceived(
-          Connection const& connection,
-          Azure::Core::Amqp::Models::AmqpValue const& value,
-          uint32_t framePayloadSize,
-          uint8_t* payloadBytes)
-          = 0;
+      /** @brief Called when the connection state changes.
+       *
+       * @param connection The connection object whose state changed.
+       * @param newState The new state of the connection.
+       * @param oldState The previous state of the connection.
+       */
       virtual void OnConnectionStateChanged(
           Connection const& connection,
           ConnectionState newState,
           ConnectionState oldState)
           = 0;
-      virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) = 0;
+
+      /** @brief Called when a new endpoint connects to the connection.
+       *
+       * @param connection The connection object.
+       * @param endpoint The endpoint that connected.
+       * @return true if the endpoint was accepted, false otherwise.
+       *
+       * @remarks Note that this function should only be overriden if the application is listening
+       * on the connection.
+       */
+      virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint)
+      {
+        (void)connection;
+        (void)endpoint;
+        return false;
+      }
+
+      /** @brief called when an I/O error has occurred on the connection.
+       *
+       * @param connection The connection object.
+       */
       virtual void OnIoError(Connection const& connection) = 0;
-      virtual ~ConnectionEvents() = default;
     };
 
     class Connection final {

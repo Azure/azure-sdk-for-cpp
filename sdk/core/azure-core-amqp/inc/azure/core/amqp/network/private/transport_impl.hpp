@@ -15,12 +15,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
     struct TransportImpl : public std::enable_shared_from_this<TransportImpl>
     {
-      using TransportOpenCompleteFn = std::function<void(TransportOpenResult)>;
       using TransportCloseCompleteFn = std::function<void()>;
       using TransportSendCompleteFn = std::function<void(TransportSendResult)>;
-      using TransportBytesReceivedCompleteFn
-          = std::function<void(uint8_t const* buffer, size_t size)>;
-      using TransportErrorCompleteFn = std::function<void()>;
 
     private:
       XIO_HANDLE m_xioInstance{};
