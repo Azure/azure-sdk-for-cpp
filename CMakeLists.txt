@@ -29,9 +29,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable a build configuration to disable features when building for Windows Store.
 message(STATUS "CMAKE_SYSTEM_NAME=" ${CMAKE_SYSTEM_NAME} ";")
-if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+message(STATUS "VCPKG_TARGET_TRIPLET=" ${VCPKG_TARGET_TRIPLET} ";")
+
+# In the CI pipeline, for <reasons>, CMAKE_SYSTEM_NAME is set to "Windows" even when building for Windows Store.
+# use the CMAKE triplet to detect the windows store build.
+if ((${VCPKG_TARGET_TRIPLET} MATCHES ".*-uwp"))
   set(BUILD_WINDOWS_UWP True)
-  message(STATUS "Building for Windows Store, CMAKE_SYSTEM_NAME=" CMAKE_SYSTEM_NAME)
+  message(STATUS "Building for Windows Store, CMAKE_SYSTEM_NAME=" ${CMAKE_SYSTEM_NAME})
 endif()
 
 if(MSVC_USE_STATIC_CRT AND MSVC)
