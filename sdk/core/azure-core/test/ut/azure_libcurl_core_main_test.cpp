@@ -68,13 +68,13 @@ int main(int argc, char** argv)
 #if defined(AZ_PLATFORM_WINDOWS)
 // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
 #if defined(_DEBUG) && defined(_MSC_VER)
-_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
-signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
+  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
 #endif // AZ_PLATFORM_WINDOWS
 
-testing::InitGoogleTest(&argc, argv);
-auto r = RUN_ALL_TESTS();
-return r;
+  testing::InitGoogleTest(&argc, argv);
+  auto r = RUN_ALL_TESTS();
+  return r;
 }
