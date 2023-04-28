@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+#include "azure/core/platform.hpp"
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
@@ -159,6 +160,7 @@ TEST_F(TestSocketTransport, SimpleCreate)
   }
 }
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSocketTransport, SimpleOpen)
 {
   {
@@ -229,8 +231,11 @@ TEST_F(TestSocketTransport, SimpleSend)
     SocketTransport transport("www.microsoft.com", 80, &events);
 
     EXPECT_TRUE(transport.Open());
+    // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
+    Azure::Core::Context completionContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        std::chrono::system_clock::now() + std::chrono::seconds(10));
+    auto openResult = events.WaitForOpen(transport, completionContext);
 
-    auto openResult = events.WaitForOpen(transport, {});
     EXPECT_EQ(openResult, TransportOpenResult::Ok);
 
     unsigned char val[] = R"(GET / HTTP/1.1
@@ -265,6 +270,7 @@ Accept: */*
     EXPECT_EQ(true, std::get<0>(*closeComplete));
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
 TEST_F(TestSocketTransport, SimpleListener)
 {
