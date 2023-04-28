@@ -53,19 +53,6 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   connectOptions.EnableTrace = m_producerClientOptions.SenderOptions.EnableTrace;
   connectOptions.HostName = m_credentials.FullyQualifiedNamespace;
 
-  Azure::Core::Amqp::_internal::Connection connection(
-      m_credentials.TargetUrl, connectOptions);
-  Azure::Core::Amqp::_internal::Session session(connection);
-  session.SetIncomingWindow((uint32_t)m_producerClientOptions.SenderOptions.MaxMessageSize.ValueOr(
-      std::numeric_limits<int32_t>::max()));
-  session.SetOutgoingWindow((uint32_t)m_producerClientOptions.SenderOptions.MaxMessageSize.ValueOr(
-      std::numeric_limits<int32_t>::max()));
-  auto senderOptions = m_producerClientOptions.SenderOptions;
-  if (senderOptions.AuthenticationScopes.empty())
-  {
-    senderOptions.AuthenticationScopes = {m_defaultAuthScope};
-  }
-
   auto targetUrl = m_credentials.TargetUrl;
 
   if (!partitionId.empty())
@@ -73,16 +60,29 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
     targetUrl += "/Partitions/" + partitionId;
   }
 
+  Azure::Core::Amqp::_internal::Connection connection(
+      targetUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Session session(connection);
+  session.SetIncomingWindow((uint32_t)m_producerClientOptions.SenderOptions.MaxMessageSize.ValueOr(
+      std::numeric_limits<int32_t>::max()));
+  session.SetOutgoingWindow((uint32_t)m_producerClientOptions.SenderOptions.MaxMessageSize.ValueOr(
+      std::numeric_limits<int32_t>::max()));
+    
   Azure::Core::Amqp::_internal::MessageSender sender;
   if (m_credentials.SasCredential == nullptr)
   {
+    auto senderOptions = m_producerClientOptions.SenderOptions;
+    if (senderOptions.AuthenticationScopes.empty())
+    {
+      senderOptions.AuthenticationScopes = {m_defaultAuthScope};
+    }
     sender = Azure::Core::Amqp::_internal::MessageSender(
         session, m_credentials.Credential, targetUrl, senderOptions, nullptr);
   }
   else
   {
     sender = Azure::Core::Amqp::_internal::MessageSender(
-        session, m_credentials.SasCredential, targetUrl, senderOptions, nullptr);
+        session, m_credentials.SasCredential, targetUrl, m_producerClientOptions.SenderOptions, nullptr);
   }
 
   sender.Open();
