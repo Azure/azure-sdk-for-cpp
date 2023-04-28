@@ -52,11 +52,14 @@ parameters:
   - name: PostTestSteps
     type: stepList
     default: []
+  - name: DisplayName
+    type: string
+    default: Validate
 
 
 jobs:
   - job:
-    displayName: "Validate"
+    displayName: ${{ parameters.DisplayName }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
     strategy:
