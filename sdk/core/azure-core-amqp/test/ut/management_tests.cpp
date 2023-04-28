@@ -22,12 +22,14 @@ TEST_F(TestManagement, BasicTests)
 {
   {
     Management management;
+    EXPECT_FALSE(management);
   }
 
   {
     Connection connection("amqps://localhost:5151", {});
     Session session(connection);
     Management management(session, "Test", {});
+    EXPECT_TRUE(management);
   }
 }
 
@@ -253,12 +255,19 @@ TEST_F(TestManagement, ManagementRequestResponse)
   {
     ManagementReceiver mockServer;
 
+    struct ManagementEventsHandler : public ManagementEvents
+    {
+      void OnError() override { Error = true; }
+      bool Error{false};
+    };
+    ManagementEventsHandler managementEvents;
+
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
 
-    Management management(session, "Test", options);
+    Management management(session, "Test", options, &managementEvents);
 
     // Set the response status code to something other than an int - that will cause the response to
     // be rejected by the management client.
@@ -277,6 +286,7 @@ TEST_F(TestManagement, ManagementRequestResponse)
     EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Error);
     EXPECT_EQ(std::get<1>(response), 0);
     EXPECT_EQ(std::get<2>(response), "Error processing management operation.");
+    EXPECT_TRUE(managementEvents.Error);
     management.Close();
 
     mockServer.StopListening();

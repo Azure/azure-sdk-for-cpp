@@ -40,6 +40,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Azure::Nullable<std::string> GroupId;
     Azure::Nullable<uint32_t> GroupSequence;
     Azure::Nullable<std::string> ReplyToGroupId;
+
+    bool operator==(MessageProperties const&) const noexcept;
+    bool ShouldSerialize() const noexcept;
+
+    static size_t GetSerializedSize(MessageProperties const& properties);
+    static std::vector<uint8_t> Serialize(MessageProperties const& properties);
+    static MessageProperties Deserialize(uint8_t const* data, size_t size);
   };
   std::ostream& operator<<(std::ostream&, MessageProperties const&);
 }}}} // namespace Azure::Core::Amqp::Models
