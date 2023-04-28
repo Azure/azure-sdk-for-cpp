@@ -188,7 +188,7 @@
     },
     {
       "name": "x64-debug-tests",
-      "displayName": "X64 Debug With Tests, static, winhttp",
+      "displayName": "X64 Debug With Tests, winhttp+curl",
       "description": "Windows X64 Debug build with Tests configured",
       "inherits": "x64-debug",
       "cacheVariables": {

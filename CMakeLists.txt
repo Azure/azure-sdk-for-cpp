@@ -19,6 +19,7 @@ endif()
 # Enable a build configuration to disable features when building for Windows Store.
 if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
   set(BUILD_WINDOWS_UWP True)
+  message(STATUS "Building for Windows Store")
 endif()
 
 include(AzureTransportAdapters)
