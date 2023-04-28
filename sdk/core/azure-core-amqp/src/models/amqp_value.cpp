@@ -324,33 +324,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpDescribed AmqpValue::AsDescribed() const { return AmqpDescribed(m_value.get()); }
   AmqpTimestamp AmqpValue::AsTimestamp() const { return AmqpTimestamp(m_value.get()); }
 
-  static const std::map<AMQP_TYPE, AmqpValueType> UamqpToAmqpTypeMap{
-      {AMQP_TYPE_INVALID, AmqpValueType::Invalid},
-      {AMQP_TYPE_NULL, AmqpValueType::Null},
-      {AMQP_TYPE_BOOL, AmqpValueType::Bool},
-      {AMQP_TYPE_UBYTE, AmqpValueType::Ubyte},
-      {AMQP_TYPE_USHORT, AmqpValueType::Ushort},
-      {AMQP_TYPE_UINT, AmqpValueType::Uint},
-      {AMQP_TYPE_ULONG, AmqpValueType::Ulong},
-      {AMQP_TYPE_BYTE, AmqpValueType::Byte},
-      {AMQP_TYPE_SHORT, AmqpValueType::Short},
-      {AMQP_TYPE_INT, AmqpValueType::Int},
-      {AMQP_TYPE_LONG, AmqpValueType::Long},
-      {AMQP_TYPE_FLOAT, AmqpValueType::Float},
-      {AMQP_TYPE_DOUBLE, AmqpValueType::Double},
-      {AMQP_TYPE_CHAR, AmqpValueType::Char},
-      {AMQP_TYPE_TIMESTAMP, AmqpValueType::Timestamp},
-      {AMQP_TYPE_UUID, AmqpValueType::Uuid},
-      {AMQP_TYPE_BINARY, AmqpValueType::Binary},
-      {AMQP_TYPE_STRING, AmqpValueType::String},
-      {AMQP_TYPE_SYMBOL, AmqpValueType::Symbol},
-      {AMQP_TYPE_LIST, AmqpValueType::List},
-      {AMQP_TYPE_MAP, AmqpValueType::Map},
-      {AMQP_TYPE_ARRAY, AmqpValueType::Array},
-      {AMQP_TYPE_COMPOSITE, AmqpValueType::Composite},
-      {AMQP_TYPE_DESCRIBED, AmqpValueType::Described},
-      {AMQP_TYPE_UNKNOWN, AmqpValueType::Unknown},
-  };
+  namespace {
+
+    const std::map<AMQP_TYPE, AmqpValueType> UamqpToAmqpTypeMap{
+        {AMQP_TYPE_INVALID, AmqpValueType::Invalid},
+        {AMQP_TYPE_NULL, AmqpValueType::Null},
+        {AMQP_TYPE_BOOL, AmqpValueType::Bool},
+        {AMQP_TYPE_UBYTE, AmqpValueType::Ubyte},
+        {AMQP_TYPE_USHORT, AmqpValueType::Ushort},
+        {AMQP_TYPE_UINT, AmqpValueType::Uint},
+        {AMQP_TYPE_ULONG, AmqpValueType::Ulong},
+        {AMQP_TYPE_BYTE, AmqpValueType::Byte},
+        {AMQP_TYPE_SHORT, AmqpValueType::Short},
+        {AMQP_TYPE_INT, AmqpValueType::Int},
+        {AMQP_TYPE_LONG, AmqpValueType::Long},
+        {AMQP_TYPE_FLOAT, AmqpValueType::Float},
+        {AMQP_TYPE_DOUBLE, AmqpValueType::Double},
+        {AMQP_TYPE_CHAR, AmqpValueType::Char},
+        {AMQP_TYPE_TIMESTAMP, AmqpValueType::Timestamp},
+        {AMQP_TYPE_UUID, AmqpValueType::Uuid},
+        {AMQP_TYPE_BINARY, AmqpValueType::Binary},
+        {AMQP_TYPE_STRING, AmqpValueType::String},
+        {AMQP_TYPE_SYMBOL, AmqpValueType::Symbol},
+        {AMQP_TYPE_LIST, AmqpValueType::List},
+        {AMQP_TYPE_MAP, AmqpValueType::Map},
+        {AMQP_TYPE_ARRAY, AmqpValueType::Array},
+        {AMQP_TYPE_COMPOSITE, AmqpValueType::Composite},
+        {AMQP_TYPE_DESCRIBED, AmqpValueType::Described},
+        {AMQP_TYPE_UNKNOWN, AmqpValueType::Unknown},
+    };
+  } // namespace
 
   AmqpValueType AmqpValue::GetType() const
   {

@@ -14,7 +14,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class LinkImpl final : public std::enable_shared_from_this<LinkImpl> {
   public:
-
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::string const& name,
