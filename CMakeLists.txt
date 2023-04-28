@@ -16,6 +16,11 @@ if(FETCH_SOURCE_DEPS)
   return()
 endif()
 
+# Enable a build configuration to disable features when building for Windows Store.
+if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+  set(BUILD_WINDOWS_UWP True)
+endif()
+
 include(AzureTransportAdapters)
 include(AzureVcpkg)
 include(AzureBuildTargetForCI)
@@ -107,7 +112,10 @@ endif()
 # sub-projects
 add_subdirectory(sdk/core)
 add_subdirectory(sdk/attestation)
-add_subdirectory(sdk/eventhubs)
+# AMQP doesn't work for UWP yet, and eventhubs depends on AMQP, so we cannot include eventhubs on UWP.
+if (NOT BUILD_WINDOWS_UWP)
+  add_subdirectory(sdk/eventhubs)
+endif()
 add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
 add_subdirectory(sdk/storage)

@@ -9,7 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-core)
-add_subdirectory(azure-core-amqp)
+
+if (NOT BUILD_WINDOWS_UWP)
+  add_subdirectory(azure-core-amqp)
+endif()
 if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
   add_subdirectory(azure-core-tracing-opentelemetry)
 endif()
