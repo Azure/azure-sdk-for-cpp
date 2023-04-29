@@ -105,7 +105,7 @@ TEST_F(TestTlsTransport, SimpleSend)
     TestTransportEvents events;
     TlsTransport transport("www.microsoft.com", 443, &events);
 
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
 
     auto openResult = events.WaitForOpen(transport, {});
     EXPECT_EQ(openResult, TransportOpenResult::Ok);
@@ -167,13 +167,13 @@ TEST_F(TestSocketTransport, SimpleOpen)
 
     SocketTransport transport("www.microsoft.com", 80);
 
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
     EXPECT_TRUE(transport.Close([]() {}));
   }
 
   {
     SocketTransport transport("www.microsoft.com", 80);
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
     transport.Close(nullptr);
   }
   {
@@ -230,7 +230,7 @@ TEST_F(TestSocketTransport, SimpleSend)
     TestTransportEvents events;
     SocketTransport transport("www.microsoft.com", 80, &events);
 
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
     // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
     Azure::Core::Context completionContext = Azure::Core::Context::ApplicationContext.WithDeadline(
         std::chrono::system_clock::now() + std::chrono::seconds(10));
@@ -413,7 +413,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
   SendingEvents sendingEvents;
   SocketTransport sender("localhost", testPort, &sendingEvents);
 
-  EXPECT_TRUE(sender.Open());
+  ASSERT_TRUE(sender.Open());
 
   // Note: Keep this string under 64 bytes in length because the default socket I/O buffer size
   // is 64 bytes and that helps ensure that this will be handled in a single OnReceiveBytes
