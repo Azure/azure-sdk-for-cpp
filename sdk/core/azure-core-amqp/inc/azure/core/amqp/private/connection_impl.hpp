@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
   public:
     ConnectionImpl(
-        std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport,
+        std::shared_ptr<Azure::Core::Amqp::Network::_detail::TransportImpl> transport,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
@@ -88,7 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SetTrace(bool enableTrace);
 
   private:
-    std::shared_ptr<Network::_internal::Transport> m_transport;
+    std::shared_ptr<Network::_detail::TransportImpl> m_transport;
     UniqueAmqpConnection m_connection{};
     std::string m_hostName;
     std::string m_containerId;

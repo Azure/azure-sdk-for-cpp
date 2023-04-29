@@ -53,7 +53,7 @@ TEST_F(TestCbs, CbsOpen)
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
     {
       ClaimsBasedSecurity cbs(session);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
@@ -65,7 +65,7 @@ TEST_F(TestCbs, CbsOpen)
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
 
     mockServer.StartListening();
 
@@ -87,7 +87,7 @@ TEST_F(TestCbs, CbsOpenAndPut)
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
 
     mockServer.StartListening();
 
@@ -116,7 +116,7 @@ TEST_F(TestCbs, CbsOpenAndPutError)
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
 
     mockServer.StartListening();
 
