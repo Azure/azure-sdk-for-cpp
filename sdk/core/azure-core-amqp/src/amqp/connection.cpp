@@ -139,13 +139,15 @@ namespace Azure { namespace Core { namespace Amqp {
         if (requestUrl.GetScheme() == "amqp")
         {
           Azure::Core::Amqp::Network::_internal::SocketTransport transport{
-              requestUrl.GetHost(), requestUrl.GetPort() ? requestUrl.GetPort() : (uint16_t)5672};
+              requestUrl.GetHost(),
+              requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(5672)};
           m_transport = transport.GetImpl();
         }
         else if (requestUrl.GetScheme() == "amqps")
         {
           Azure::Core::Amqp::Network::_internal::TlsTransport transport{
-              requestUrl.GetHost(), requestUrl.GetPort() ? requestUrl.GetPort() : (uint16_t)5672};
+              requestUrl.GetHost(),
+              requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(5672)};
           m_transport = transport.GetImpl();
         }
         else
