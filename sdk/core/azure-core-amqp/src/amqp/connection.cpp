@@ -148,6 +148,10 @@ namespace Azure { namespace Core { namespace Amqp {
               requestUrl.GetHost(), requestUrl.GetPort() ? requestUrl.GetPort() : (uint16_t)5672};
           m_transport = transport.GetImpl();
         }
+        else
+        {
+          throw std::runtime_error("Unknown connection scheme: " + requestUrl.GetScheme() + ".");
+        }
         m_hostName = requestUrl.GetHost();
       }
 
