@@ -2,12 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include "azure/core/internal/unique_handle.hpp"
+#include <azure_c_shared_utility/xio.h>
 #include <exception>
 #include <functional>
 #include <stdexcept>
 #include <string>
 
-#include <azure_c_shared_utility/xio.h>
+template <> struct Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>
+{
+  static void FreeXio(XIO_HANDLE obj);
+
+  using type = Azure::Core::_internal::BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
+};
+using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
 
@@ -15,7 +23,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   {
 
   private:
-    XIO_HANDLE m_xioInstance{};
+    UniqueXioHandle m_xioInstance{};
     Azure::Core::Amqp::Network::_internal::TransportEvents* m_eventHandler;
     bool m_isOpen{false};
 
@@ -38,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         size_t,
         Azure::Core::Amqp::Network::_internal::Transport::TransportSendCompleteFn) const;
     void Poll() const;
-    operator XIO_HANDLE() { return m_xioInstance; }
-    void SetInstance(XIO_INSTANCE_TAG* instance);
+    operator XIO_HANDLE() { return m_xioInstance.get(); }
+    void SetInstance(XIO_HANDLE instance);
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_detail

@@ -77,9 +77,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
     protected:
       Transport(TransportEvents* events);
 
-      void SetInstance(XIO_INSTANCE_TAG* xioInstance);
-
-    private:
       std::shared_ptr<_detail::TransportImpl> m_impl;
     };
   } // namespace _internal

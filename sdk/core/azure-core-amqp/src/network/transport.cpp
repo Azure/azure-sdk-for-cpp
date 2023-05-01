@@ -9,6 +9,11 @@
 #include <azure_c_shared_utility/xio.h>
 #include <cassert>
 
+void Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value)
+{
+  xio_destroy(value);
+}
+
 namespace Azure { namespace Core { namespace Amqp { namespace Network {
   namespace {
     void EnsureGlobalStateInitialized()
@@ -41,7 +46,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
     }
     void Transport::Poll() const { return m_impl->Poll(); }
 
-    void Transport::SetInstance(XIO_HANDLE handle) { m_impl->SetInstance(handle); }
   } // namespace _internal
   namespace _detail {
 
@@ -61,19 +65,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
     void TransportImpl::SetInstance(XIO_HANDLE handle)
     {
       assert(m_xioInstance == nullptr);
-      m_xioInstance = handle;
+      assert(handle != nullptr);
+      m_xioInstance.reset(handle);
 
       EnsureGlobalStateInitialized();
     }
 
-    TransportImpl::~TransportImpl()
-    {
-      if (m_xioInstance)
-      {
-        xio_destroy(m_xioInstance);
-        m_xioInstance = nullptr;
-      }
-    }
+    TransportImpl::~TransportImpl() {}
 
     template <typename CompleteFn> struct CloseCallbackWrapper
     {
@@ -94,7 +92,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
       if (m_xioInstance)
       {
         if (xio_close(
-                m_xioInstance,
+                m_xioInstance.get(),
                 std::remove_pointer<decltype(closeOperation.get())>::type::OnOperationFn,
                 closeOperation.release()))
         {
@@ -163,7 +161,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
       }
 
       if (xio_open(
-              m_xioInstance, OnOpenCompleteFn, this, OnBytesReceivedFn, this, OnIoErrorFn, this))
+              m_xioInstance.get(),
+              OnOpenCompleteFn,
+              this,
+              OnBytesReceivedFn,
+              this,
+              OnIoErrorFn,
+              this))
       {
         return false;
       }
@@ -209,7 +213,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
           decltype(sendComplete),
           SendCallbackRewriter<decltype(sendComplete)>>>(sendComplete)};
       if (xio_send(
-              m_xioInstance,
+              m_xioInstance.get(),
               buffer,
               size,
               std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
@@ -224,7 +228,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
     {
       if (m_xioInstance)
       {
-        xio_dowork(m_xioInstance);
+        xio_dowork(m_xioInstance.get());
       }
     }
   } // namespace _detail

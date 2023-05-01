@@ -230,7 +230,7 @@ TEST_F(TestSocketTransport, SimpleSend)
     TestTransportEvents events;
     SocketTransport transport("www.microsoft.com", 80, &events);
 
-    ASSERT_TRUE(transport.Open());
+    EXPECT_TRUE(transport.Open());
     // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
     Azure::Core::Context completionContext = Azure::Core::Context::ApplicationContext.WithDeadline(
         std::chrono::system_clock::now() + std::chrono::seconds(10));

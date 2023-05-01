@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/socket_transport.hpp"
+#include "azure/core/amqp/network/private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
@@ -18,7 +19,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   {
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
 
-    SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
+    m_impl->SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

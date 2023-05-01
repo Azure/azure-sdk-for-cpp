@@ -10,6 +10,7 @@
 
 struct SOCKET_LISTENER_INSTANCE_TAG;
 struct IO_INTERFACE_DESCRIPTION_TAG;
+struct XIO_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 

@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
+#include "azure/core/amqp/network/private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
@@ -29,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     detectIoConfig.header_detect_entries = headerDetectEntries;
     auto xio = xio_create(header_detect_io_get_interface_description(), &detectIoConfig);
 
-    SetInstance(xio);
+    m_impl->SetInstance(xio);
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
