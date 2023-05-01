@@ -13,7 +13,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include(AzureBuildTargetForCI)
 include(GoogleTest)
 
-
 # Unit Tests
 add_executable(azure-core-amqp-tests
     "amqp_value_tests.cpp"
@@ -26,7 +25,7 @@ add_executable(azure-core-amqp-tests
     "link_tests.cpp" 
     "message_sender_receiver.cpp"
     "connection_string_tests.cpp"
- claim_based_security_tests.cpp "message_source_target.cpp" "management_tests.cpp")
+ claim_based_security_tests.cpp "message_source_target.cpp" "management_tests.cpp" "azure_core_amqp_tests.cpp")
 add_dependencies(azure-core-amqp-tests azure-core-amqp)
 
 target_include_directories(azure-core-amqp-tests PRIVATE ${azure-core-amqp_SOURCE_DIR})

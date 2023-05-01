@@ -32,7 +32,7 @@ TEST_F(TestCbs, SimpleCbs)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Connection connection("amqp://127.0.0.1:5672", {});
   // Create a session
   Session session(connection, nullptr);
 
@@ -52,7 +52,7 @@ TEST_F(TestCbs, CbsOpen)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
     {
       ClaimsBasedSecurity cbs(session);
@@ -64,7 +64,7 @@ TEST_F(TestCbs, CbsOpen)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
 
     mockServer.StartListening();
@@ -86,7 +86,7 @@ TEST_F(TestCbs, CbsOpenAndPut)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
 
     mockServer.StartListening();
@@ -115,7 +115,7 @@ TEST_F(TestCbs, CbsOpenAndPutError)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
 
     mockServer.StartListening();
