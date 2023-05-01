@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+#include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include <algorithm>
 #include <random>
@@ -11,7 +12,13 @@ using namespace Azure::Core::Amqp::Models;
 
 class TestValues : public testing::Test {
 protected:
-  void SetUp() override {}
+  void SetUp() override
+  {
+    // Ensure that our logger is hooked up to global state.
+    auto globalInstance
+        = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+    (void)globalInstance;
+  }
   void TearDown() override {}
 };
 

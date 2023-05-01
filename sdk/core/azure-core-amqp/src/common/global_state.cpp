@@ -45,13 +45,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         logLevel = Logger::Level::Verbose;
     }
     std::stringstream ss;
-    ss << "File: " << file << "Func: " << func << ":" << line;
+    ss << "File: " << file << ":" << line << " Func: " << func;
 
     char outputBuffer[512];
     va_list args;
     va_start(args, format);
-    vsprintf(outputBuffer, format, args);
-    ss << "Msg: " << outputBuffer;
+    vsnprintf(outputBuffer, sizeof(outputBuffer), format, args);
+    ss << " Msg: " << outputBuffer;
     Log::Write(logLevel, ss.str());
     va_end(args);
   }
