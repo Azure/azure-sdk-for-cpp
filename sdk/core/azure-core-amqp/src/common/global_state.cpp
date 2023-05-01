@@ -7,10 +7,10 @@
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xlogging.h>
 #include <cassert>
-#include <stdarg.h>
 #include <iomanip>
 #include <mutex>
 #include <sstream>
+#include <stdarg.h>
 #include <stdexcept>
 
 using namespace Azure::Core::Diagnostics::_internal;
