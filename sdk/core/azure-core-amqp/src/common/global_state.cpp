@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+// cspell: words xlogging
+
 #include "azure/core/amqp/common/global_state.hpp"
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
@@ -48,7 +50,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     char outputBuffer[512];
     va_list args;
     va_start(args, format);
-    vsprintf_s(outputBuffer, format, args);
+    vsprintf(outputBuffer, format, args);
     ss << "Msg: " << outputBuffer;
     Log::Write(logLevel, ss.str());
     va_end(args);
