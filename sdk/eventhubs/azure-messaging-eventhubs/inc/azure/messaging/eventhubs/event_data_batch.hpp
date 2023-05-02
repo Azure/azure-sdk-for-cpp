@@ -114,12 +114,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::lock_guard<std::mutex> lock(m_rwMutex);
       auto amqpMessage = message.ToAMQPMessage();
 
+     
+      /*
       if (amqpMessage.MessageAnnotations["x-opt-partition-key"] == nullptr
           && !m_partitionKey.empty())
       {
         amqpMessage.MessageAnnotations["x-opt-partition-key"]
             = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
-      }
+      }*/
       m_messages.push_back(amqpMessage);
     }
 

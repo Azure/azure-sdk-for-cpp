@@ -7,7 +7,7 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
-
+#include <numeric>
 TEST(ProducerClientTest, ConnectionStringNoEntityPath)
 {
   std::string const connStringNoEntityPath
@@ -47,31 +47,32 @@ TEST(ProducerClientTest, SendMessage)
       + ";EntityPath=eventhub";
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
-  producerOptions.SenderOptions.Name = "unit-test";
+  producerOptions.SenderOptions.Name = "sender-link";
   producerOptions.SenderOptions.EnableTrace = true;
   producerOptions.SenderOptions.SourceAddress = "ingress";
   producerOptions.SenderOptions.SettleMode
       = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-  producerOptions.ApplicationID = "unit-test";
-
-  Azure::Messaging::EventHubs::Models::EventData message1;
-  message1.Body.Value = Azure::Core::Amqp::Models::AmqpValue("Hello");
+  producerOptions.ApplicationID = "some";
 
   Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage message2;
-  message2.Body.Data.push_back(
+  Azure::Messaging::EventHubs::Models::EventData message1;
+  message2.Body.Value = Azure::Core::Amqp::Models::AmqpValue("Hello5");
+
+  message1.Body.Data.push_back(
       Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o', '2'});
 
   Azure::Messaging::EventHubs::Models::EventData message3;
   message2.Body.Sequence = Azure::Core::Amqp::Models::AmqpList{'H', 'e', 'l', 'l', 'o', '3'};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
-  edboptions.MaxBytes = 1024;
+  edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
   edboptions.PartitionID = "1";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch(edboptions);
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
-  edboptions2.MaxBytes = 1024;
+  edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
+  ;
   edboptions2.PartitionID = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2(edboptions2);
 
@@ -83,8 +84,9 @@ TEST(ProducerClientTest, SendMessage)
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(
       connStringEntityPath, "eventhub", producerOptions);
-
-  auto result = client.SendEventDataBatch(eventBatch);
-
-  EXPECT_TRUE(result);
+  for (int i = 0; i < 1; i++)
+  { 
+    auto result = client.SendEventDataBatch(eventBatch);
+    EXPECT_TRUE(result);
+  }
 }
