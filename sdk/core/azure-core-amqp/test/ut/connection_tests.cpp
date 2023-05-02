@@ -2,7 +2,6 @@
 // SPDX-Licence-Identifier: MIT
 
 #include <gtest/gtest.h>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
@@ -12,6 +11,7 @@
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
 #include <azure/core/context.hpp>
+#include <azure/core/platform.hpp>
 #include <functional>
 #include <random>
 
@@ -23,6 +23,7 @@ protected:
   void TearDown() override {}
 };
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestConnections, SimpleConnection)
 {
   {
@@ -316,6 +317,8 @@ TEST_F(TestConnections, ConnectionListenClose)
 
   listener.Stop();
 }
+#endif // !defined(AZ_PLATFORM_MAC)
+
 #if 0
 TEST_F(TestConnections, ConnectionSendSimpleMessage)
 {

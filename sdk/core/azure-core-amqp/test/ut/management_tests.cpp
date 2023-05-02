@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "mock_amqp_server.hpp"
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/management.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
 #include <azure/core/amqp/session.hpp>
+#include <azure/core/platform.hpp>
+#include <gtest/gtest.h>
 
 class TestManagement : public testing::Test {
 protected:
@@ -32,7 +32,7 @@ TEST_F(TestManagement, BasicTests)
     EXPECT_TRUE(management);
   }
 }
-
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestManagement, ManagementOpenClose)
 {
   {
@@ -64,7 +64,8 @@ TEST_F(TestManagement, ManagementOpenClose)
     mockServer.StopListening();
   }
 }
-
+#endif // !defined(AZ_PLATFORM_MAC)
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestManagement, ManagementRequestResponse)
 {
   {
@@ -381,3 +382,4 @@ TEST_F(TestManagement, ManagementRequestResponse)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)

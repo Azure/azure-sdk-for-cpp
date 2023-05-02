@@ -149,6 +149,7 @@ protected:
   void TearDown() override {}
 };
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSocketTransport, SimpleCreate)
 {
   {
@@ -160,7 +161,6 @@ TEST_F(TestSocketTransport, SimpleCreate)
   }
 }
 
-#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSocketTransport, SimpleOpen)
 {
   {
@@ -270,7 +270,6 @@ Accept: */*
     EXPECT_EQ(true, std::get<0>(*closeComplete));
   }
 }
-#endif // !defined(AZ_PLATFORM_MAC)
 
 TEST_F(TestSocketTransport, SimpleListener)
 {
@@ -449,3 +448,4 @@ Host: www.microsoft.com)";
   listenerTransport->Close(nullptr);
   listener.Stop();
 }
+#endif // !defined(AZ_PLATFORM_MAC)

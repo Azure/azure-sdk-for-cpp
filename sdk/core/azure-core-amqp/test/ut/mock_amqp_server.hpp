@@ -2,7 +2,6 @@
 // SPDX-Licence-Identifier: MIT
 
 #pragma once
-
 #include <azure/core/amqp/claims_based_security.hpp>
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
@@ -15,6 +14,7 @@
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
+#include <gtest/gtest.h>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {

@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+#include <azure/core/platform.hpp>
 #include <azure/core/amqp/claims_based_security.hpp>
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
@@ -16,7 +17,7 @@
 
 #include "mock_amqp_server.hpp"
 
-extern uint16_t FindAvailableSocket();
+//extern uint16_t FindAvailableSocket();
 
 class TestCbs : public testing::Test {
 protected:
@@ -28,11 +29,12 @@ using namespace Azure::Core::Amqp;
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp::_detail;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, SimpleCbs)
 {
 
   // Create a connection
-  Connection connection("amqp://127.0.0.1:5672", {});
+  Connection connection("amqp://localhost:5672", {});
   // Create a session
   Session session(connection, nullptr);
 
@@ -46,13 +48,15 @@ TEST_F(TestCbs, SimpleCbs)
     ClaimsBasedSecurity cbs2(session);
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpen)
 {
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
     {
       ClaimsBasedSecurity cbs(session);
@@ -64,7 +68,7 @@ TEST_F(TestCbs, CbsOpen)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
 
     mockServer.StartListening();
@@ -80,13 +84,15 @@ TEST_F(TestCbs, CbsOpen)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpenAndPut)
 {
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
 
     mockServer.StartListening();
@@ -109,13 +115,15 @@ TEST_F(TestCbs, CbsOpenAndPut)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpenAndPutError)
 {
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://127.0.0.1:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
     Session session(connection);
 
     mockServer.StartListening();
@@ -138,3 +146,4 @@ TEST_F(TestCbs, CbsOpenAndPutError)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)

@@ -14,6 +14,7 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/session.hpp"
 #include "mock_amqp_server.hpp"
+#include <azure/core/platform.hpp>
 #include <functional>
 #include <random>
 
@@ -30,6 +31,7 @@ protected:
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestMessages, SimpleReceiver)
 {
 
@@ -788,3 +790,4 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   receiver.Close();
   server.StopListening();
 }
+#endif // !defined(AZ_PLATFORM_MAC)

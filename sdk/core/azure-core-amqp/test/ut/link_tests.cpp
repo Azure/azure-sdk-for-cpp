@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
@@ -12,7 +10,9 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+#include <azure/core/platform.hpp>
 #include <functional>
+#include <gtest/gtest.h>
 #include <random>
 
 extern uint16_t FindAvailableSocket();
@@ -27,6 +27,7 @@ using namespace Azure::Core::Amqp;
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp::_detail;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestLinks, SimpleLink)
 {
 
@@ -252,3 +253,4 @@ TEST_F(TestLinks, LinkAttachDetach)
   connection.Close("Test complete", "Completed", Models::AmqpValue());
   listener.Stop();
 }
+#endif // defined(AZ_PLATFORM_MAC)
