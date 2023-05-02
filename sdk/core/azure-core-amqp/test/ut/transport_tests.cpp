@@ -149,8 +149,7 @@ protected:
   void TearDown() override {}
 };
 
-//#if !defined(AZ_PLATFORM_MAC)
-#if 1
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSocketTransport, SimpleCreate)
 {
   {

@@ -50,7 +50,8 @@ TEST_F(TestCbs, SimpleCbs)
 }
 #endif // !defined(AZ_PLATFORM_MAC)
 
-#if !defined(AZ_PLATFORM_MAC)
+#if 1
+// #if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpen)
 {
   {
