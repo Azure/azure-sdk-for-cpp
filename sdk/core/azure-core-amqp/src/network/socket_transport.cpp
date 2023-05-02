@@ -30,9 +30,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         Logger::Level::Verbose,
         "Create socket transport for host " + host + " port: " + std::to_string(port));
 
+    // On the mac, the default TLS implementation uses TLS if appropriate otherwise it uses standard
+    // sockets. So if this is being built for a mac, always use TLS, otherwise use socketio.
 #if defined(AZ_PLATFORM_MAC)
     TLSIO_CONFIG tlsConfig{host.c_str(), port, nullptr, nullptr, false};
-    auto iface = xio_create(platform_get_default_tlsio(), &socketConfig);
+    auto iface = xio_create(platform_get_default_tlsio(), &tlsConfig);
 #else
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
     auto iface = xio_create(socketio_get_interface_description(), &socketConfig);
