@@ -3,13 +3,17 @@
 
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/private/transport_impl.hpp"
-
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
 #include <exception>
 #include <stdexcept>
+
+#if defined(AZ_PLATFORM_MAC)
+#include <azure_c_shared_utility/tlsio.h>
+#include <azure_c_shared_utility/tlsio_appleios.h>
+#endif // AZ_PLATFORM_MAC
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
@@ -26,8 +30,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         Logger::Level::Verbose,
         "Create socket transport for host " + host + " port: " + std::to_string(port));
 
+#if defined(AZ_PLATFORM_MAC)
+    TLSIO_CONFIG tlsConfig{host.c_str(), port, nullptr, nullptr, false};
+    auto iface = xio_create(platform_get_default_tlsio(), &socketConfig);
+#else
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
     auto iface = xio_create(socketio_get_interface_description(), &socketConfig);
+#endif
     if (iface == nullptr)
     {
       throw std::runtime_error("Could not allocate socket transport.");
