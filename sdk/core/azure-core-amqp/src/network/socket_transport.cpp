@@ -10,11 +10,6 @@
 #include <exception>
 #include <stdexcept>
 
-#if defined(AZ_PLATFORM_MAC)
-#include <azure_c_shared_utility/tlsio.h>
-#include <azure_c_shared_utility/tlsio_appleios.h>
-#endif // AZ_PLATFORM_MAC
-
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
@@ -30,20 +25,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         Logger::Level::Verbose,
         "Create socket transport for host " + host + " port: " + std::to_string(port));
 
-    // On the mac, the default TLS implementation uses TLS if appropriate otherwise it uses standard
-    // sockets. So if this is being built for a mac, always use TLS, otherwise use socketio.
-#if defined(AZ_PLATFORM_MAC)
-    TLSIO_CONFIG tlsConfig{host.c_str(), port, nullptr, nullptr, false};
-    auto iface = xio_create(platform_get_default_tlsio(), &tlsConfig);
-#else
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
-    auto iface = xio_create(socketio_get_interface_description(), &socketConfig);
-#endif
-    if (iface == nullptr)
-    {
-      throw std::runtime_error("Could not allocate socket transport.");
-    }
-    m_impl->SetInstance(iface);
+    m_impl->SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
