@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include <azure/core/platform.hpp>
 #include <azure/core/amqp/claims_based_security.hpp>
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
@@ -14,10 +13,11 @@
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
+#include <azure/core/platform.hpp>
 
 #include "mock_amqp_server.hpp"
 
-//extern uint16_t FindAvailableSocket();
+// extern uint16_t FindAvailableSocket();
 
 class TestCbs : public testing::Test {
 protected:
