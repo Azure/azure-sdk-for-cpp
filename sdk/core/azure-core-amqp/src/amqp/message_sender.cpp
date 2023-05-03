@@ -380,6 +380,7 @@ namespace Azure { namespace Core { namespace Amqp {
           Azure::Core::Amqp::_internal::MessageSendResult,
           Azure::Core::Amqp::Models::AmqpValue>
           sendCompleteQueue;
+
       QueueSend(
           message,
           [&](Azure::Core::Amqp::_internal::MessageSendResult sendResult,

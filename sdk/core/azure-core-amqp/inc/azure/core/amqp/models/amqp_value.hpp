@@ -319,6 +319,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @returns true if the that is less than this.
      */
     bool operator<(AmqpValue const& that) const;
+
+    /** @brief Returns the underlying type of the AMQP value.
+     *
+     * @returns AmqpValueType of the AMQP value.
+     */
     AmqpValueType GetType() const;
 
     /** @brief Returns 'true' if the AMQP value is "null".
@@ -496,13 +501,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpSymbol AsSymbol() const;
 
-    // Composite values - A composite value is functionally a list with a fixed size.
+    /** @brief convert the current AMQP Value to an AMQP Composite value.
+     *
+     * An AMQP Composite value is functionally a list with a defined structure. The structure
+     * definition can be found via the GetDescriptor method.
+     *
+     * @returns the value as an AmqpComposite.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a Composite value.
+     */
     AmqpComposite AsComposite() const;
 
+    /** @brief convert the current AMQP Value to an AMQP Described value.
+     *
+     * An AMQP Described value is a tuple consisting of a Descriptor and Value.
+     *
+     * @returns the value as an AmqpDescribed.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a Described value.
+     */
     AmqpDescribed AsDescribed() const;
 
+    /** @brief Serialize this AMQP value as an array of bytes. */
     static std::vector<uint8_t> Serialize(AmqpValue const& value);
+
+    /** @brief Returns the size (in bytes) of the serialized form of this value */
     static size_t GetSerializedSize(AmqpValue const& value);
+
+    /** @brief Deserialize an AMQP value from an array of bytes.
+     *
+     * @param[in] data The serialized form of the AMQP value to deserialize.
+     * @param[in] size The size of the data parameter to deserialize.
+     */
     static AmqpValue Deserialize(uint8_t const* data, size_t size);
 
   protected:
@@ -512,6 +542,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   namespace _detail {
 
+    /** @brief Base type for AMQP collection types.
+     *
+     * Provides convenient conversions for STL collection types to enable classes derived from
+     * AmqpCollectionBase to be used as STL containers.
+     */
     template <typename T, typename ThisType> class AmqpCollectionBase {
     protected:
       T m_value;
@@ -523,8 +558,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AmqpCollectionBase() {}
 
     public:
+      /** @brief Convert this collection type to an AMQP value.*/
       operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
+
+      /** @brief Returns the size of the underlying value.*/
       inline typename T::size_type size() const { return m_value.size(); }
+
       const typename T::value_type& operator[](const typename T::size_type pos) const noexcept
       {
         return m_value.operator[](pos);
@@ -541,21 +580,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       bool operator<(ThisType const& that) const { return m_value < that.m_value; }
       bool operator==(ThisType const& that) const { return m_value == that.m_value; }
       bool operator!=(ThisType const& that) const { return m_value != that.m_value; }
+      /** @brief Returns true if the underlying value is empty.*/
       bool empty() const noexcept { return m_value.empty(); }
 
       /**
-       * @brief Convert an AmqpArray instance to a uAMQP AMQP_VALUE.
+       * @brief Convert an AmqpCollectionBase instance to a uAMQP AMQP_VALUE.
        *
        * @remarks This is an internal accessor and should never be used by code outside the AMQP
        * implementation.
        *
-       * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
-       * by the caller.
        */
       operator UniqueAmqpValueHandle() const;
     };
   } // namespace _detail
 
+  /** @brief Represents an AMQP array.
+   *
+   * An AMQP array is an aggregate of value types, all of which are of the same type.
+   */
   class AmqpArray final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray> {
   public:
     /** @brief Construct a new AmqpArray object. */

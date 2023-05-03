@@ -25,11 +25,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       const char* file,
       const char* func,
       int line,
-      unsigned int, // Either LOG_NONE or LOG_LINE
+      unsigned int options, // Either LOG_NONE or LOG_LINE
       const char* format,
       ...)
   {
     Logger::Level logLevel;
+    thread_local std::string accumulatedString;
     switch (logCategory)
     {
       case AZ_LOG_ERROR:
@@ -45,14 +46,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         logLevel = Logger::Level::Verbose; // LCOV_EXCL_LINE
     }
     std::stringstream ss;
-    ss << "File: " << file << ":" << line << " Func: " << func;
-
+    // We don't want to log header information for outgoing and incoming frames, the header information
+    // gets in the way of the message.
+    if (logCategory == AZ_LOG_TRACE
+        && (strcmp(func, "log_outgoing_frame") == 0 || strcmp(func, "log_incoming_frame") == 0
+            || strcmp(func, "log_message_chunk") == 0))
+    {
+    }
+    else
+    {
+      ss << "File: " << file << ":" << line << " Func: " << func;
+    }
     char outputBuffer[512];
     va_list args;
     va_start(args, format);
     vsnprintf(outputBuffer, sizeof(outputBuffer), format, args);
-    ss << " Msg: " << outputBuffer;
-    Log::Write(logLevel, ss.str());
+    ss << outputBuffer;
+    if (options == LOG_NONE)
+    {
+      accumulatedString += ss.str();
+    }
+    else
+    {
+      accumulatedString += ss.str() + "\n";
+      Log::Write(logLevel, accumulatedString);
+      accumulatedString.clear();
+    }
     va_end(args);
   }
 

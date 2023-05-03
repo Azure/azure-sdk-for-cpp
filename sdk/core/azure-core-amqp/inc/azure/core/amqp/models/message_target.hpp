@@ -32,22 +32,42 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   class MessageTarget final {
   public:
+    /** @brief Creates a default message target.
+     */
     MessageTarget();
+    /** @brief Deletes a message target. */
     ~MessageTarget() = default;
 
-    MessageTarget(MessageTarget const&);
-    MessageTarget& operator=(MessageTarget const&);
-    MessageTarget(MessageTarget&&) noexcept;
-    MessageTarget& operator=(MessageTarget&&) noexcept;
+    /** @brief Creates a message target with the given address.
+     *
+     * @param address The address of the target.
+     */
+    MessageTarget(std::string const& address);
 
-    MessageTarget(std::string const& value);
-    MessageTarget(char const* value);
+    /** @brief Creates a message target with the given address.
+     *
+     * @param address The address of the target.
+     */
+    MessageTarget(char const* address);
+
+    /** @brief Creates a message target with detailed options.
+     *
+     * @param options Options used constructing the message target.
+     */
     MessageTarget(MessageTargetOptions const& options);
 
-    // Construct a Message Target from an AMQP value.
+    /** @brief Creates a message target from an AMQP value.
+     *
+     * @param value The AMQP value to create the message target from.
+     *
+     * @remarks Normally used in the OnLinkAttached callback.
+     */
     MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
 
-    // Represent the Message Target as an AMQP value.
+    /** @brief Creates an AMQP value from a message target.
+     *
+     * @remarks Creates an AMQP Described value with the descriptor being the message target (0x29).
+     */
     operator const Azure::Core::Amqp::Models::AmqpValue() const;
 
     /** @brief The address of the target.
