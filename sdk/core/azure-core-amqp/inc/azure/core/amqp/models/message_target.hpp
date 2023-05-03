@@ -15,8 +15,20 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TA
 
   using type = Azure::Core::_internal::BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
 };
+using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+
+  struct MessageTargetOptions
+  {
+    AmqpValue Address;
+    Azure::Nullable<TerminusDurability> TerminusDurabilityValue;
+    Azure::Nullable<TerminusExpiryPolicy> TerminusExpiryPolicyValue;
+    Azure::Nullable<std::chrono::system_clock::time_point> Timeout;
+    Azure::Nullable<bool> Dynamic;
+    AmqpMap DynamicNodeProperties;
+    AmqpArray Capabilities;
+  };
 
   class MessageTarget final {
   public:
@@ -30,48 +42,49 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     MessageTarget(std::string const& value);
     MessageTarget(char const* value);
+    MessageTarget(MessageTargetOptions const& options);
 
+    // Construct a Message Target from an AMQP value.
     MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
+
+    // Represent the Message Target as an AMQP value.
     operator const Azure::Core::Amqp::Models::AmqpValue() const;
 
+    /** @brief The address of the target.
+     *
+     * @returns The address of the target.
+     */
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
-    void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
 
+    /** @brief The durability of the target. */
     TerminusDurability GetTerminusDurability() const;
-    void SetTerminusDurability(TerminusDurability terminusDurability);
 
+    /** @brief The expiry policy of the target. */
     TerminusExpiryPolicy GetExpiryPolicy() const;
-    void SetExpiryPolicy(TerminusExpiryPolicy expiryPolicy);
 
+    /** @brief Duration that an expiring target will be retained. */
     std::chrono::system_clock::time_point GetTimeout() const;
-    void SetTimeout(std::chrono::system_clock::time_point const& timeout);
 
+    /** @brief Does the target request that the remote node be dynamically created? */
     bool GetDynamic() const;
-    void SetDynamic(bool dynamic);
 
-    Azure::Core::Amqp::Models::AmqpValue GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(
-        Azure::Core::Amqp::Models::AmqpValue const& dynamicNodeProperties);
+    /** @brief Retrieve the dynamic node properties on this message target.
+     * @remarks See
+     * http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-node-properties
+     * for more information.
+     */
+    Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
 
     /** @brief Retrieve the capabilities on this message target. */
     Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
-    /**
-     * @brief Set the capabilities supported by this message target.
-     */
-    void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
-    /**
-     * @brief Set a single capability for this message target.
-     */
-    void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
-
-    // uAMQP interoperability functions, do not use.
-  public:
-    MessageTarget(TARGET_INSTANCE_TAG* message);
-    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
 
   private:
-    Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG> m_target;
+    UniqueMessageTargetHandle m_target;
+
+    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
+
+    // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
+    friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
   };
-  std::ostream& operator<<(std::ostream&, MessageTarget const&);
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

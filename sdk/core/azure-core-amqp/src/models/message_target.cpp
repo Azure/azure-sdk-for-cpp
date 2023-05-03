@@ -22,7 +22,7 @@ void Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessag
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}
+  //  MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}
 
   MessageTarget::MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& source)
   {
@@ -63,6 +63,101 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTarget::MessageTarget() : m_target{target_create()} {}
 
+  MessageTarget::MessageTarget(MessageTargetOptions const& options) : m_target{target_create()}
+  {
+    if (!options.Address.IsNull())
+    {
+      if (target_set_address(m_target.get(), options.Address))
+      {
+        throw std::runtime_error("Could not set source address.");
+      }
+    }
+    if (options.TerminusDurabilityValue.HasValue())
+    {
+      terminus_durability durability;
+      switch (options.TerminusDurabilityValue.Value())
+      {
+        case TerminusDurability::None:
+          durability = terminus_durability_none;
+          break;
+        case TerminusDurability::Configuration:
+          durability = terminus_durability_configuration;
+          break;
+        case TerminusDurability::UnsettledState:
+          durability = terminus_durability_unsettled_state;
+          break;
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
+      }
+      if (target_set_durable(m_target.get(), durability))
+      {
+        throw std::runtime_error("Could not set durable.");
+      }
+    }
+    if (options.TerminusExpiryPolicyValue.HasValue())
+    {
+      terminus_expiry_policy policy;
+      switch (options.TerminusExpiryPolicyValue.Value())
+      {
+        case TerminusExpiryPolicy::LinkDetach:
+          policy = terminus_expiry_policy_link_detach;
+          break;
+        case TerminusExpiryPolicy::SessionEnd:
+          policy = terminus_expiry_policy_session_end;
+          break;
+        case TerminusExpiryPolicy::ConnectionClose:
+          policy = terminus_expiry_policy_connection_close;
+          break;
+        case TerminusExpiryPolicy::Never:
+          policy = terminus_expiry_policy_never;
+          break;
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
+      }
+      if (target_set_expiry_policy(m_target.get(), policy))
+      {
+        throw std::runtime_error("Could not set durable.");
+      }
+    }
+    if (options.Timeout.HasValue())
+    {
+      if (target_set_timeout(
+              m_target.get(),
+              static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
+                                        options.Timeout.Value().time_since_epoch())
+                                        .count())))
+      {
+        throw std::runtime_error("Could not set value.");
+      }
+    }
+    if (options.Dynamic.HasValue())
+    {
+      if (target_set_dynamic(m_target.get(), *options.Dynamic))
+      {
+        throw std::runtime_error("Could not set dynamic.");
+      }
+    }
+
+    if (!options.DynamicNodeProperties.empty())
+    {
+      if (target_set_dynamic_node_properties(
+              m_target.get(),
+              static_cast<UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
+      {
+        throw std::runtime_error("Could not set dynamic node properties.");
+      }
+    }
+
+    if (!options.Capabilities.empty())
+    {
+      if (target_set_capabilities(
+              m_target.get(), static_cast<UniqueAmqpValueHandle>(options.Capabilities).get()))
+      {
+        throw std::runtime_error("Could not set capabilities.");
+      }
+    }
+  }
+
   // Convert the MessageSource into a Value.
   MessageTarget::operator const Azure::Core::Amqp::Models::AmqpValue() const
   {
@@ -77,13 +172,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not retrieve address from source.");
     }
     return address;
-  }
-  void MessageTarget::SetAddress(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (target_set_address(m_target.get(), value))
-    {
-      throw std::runtime_error("Could not set value."); // LCOV_EXCL_LINE
-    }
   }
 
   TerminusDurability MessageTarget::GetTerminusDurability() const
@@ -103,28 +191,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         return TerminusDurability::UnsettledState;
       default:
         throw std::logic_error("Unknown terminus durability.");
-    }
-  }
-  void MessageTarget::SetTerminusDurability(TerminusDurability value)
-  {
-    terminus_durability durability;
-    switch (value)
-    {
-      case TerminusDurability::None:
-        durability = terminus_durability_none;
-        break;
-      case TerminusDurability::Configuration:
-        durability = terminus_durability_configuration;
-        break;
-      case TerminusDurability::UnsettledState:
-        durability = terminus_durability_unsettled_state;
-        break;
-      default: // LCOV_EXCL_LINE
-        throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
-    }
-    if (target_set_durable(m_target.get(), durability))
-    {
-      throw std::runtime_error("Could not set durable."); // LCOV_EXCL_LINE
     }
   }
 
@@ -154,31 +220,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     throw std::logic_error(
         std::string("Unknown terminus expiry policy: ") + value); // LCOV_EXCL_LINE
   }
-  void MessageTarget::SetExpiryPolicy(TerminusExpiryPolicy value)
-  {
-    terminus_expiry_policy policy;
-    switch (value)
-    {
-      case TerminusExpiryPolicy::LinkDetach:
-        policy = terminus_expiry_policy_link_detach;
-        break;
-      case TerminusExpiryPolicy::SessionEnd:
-        policy = terminus_expiry_policy_session_end;
-        break;
-      case TerminusExpiryPolicy::ConnectionClose:
-        policy = terminus_expiry_policy_connection_close;
-        break;
-      case TerminusExpiryPolicy::Never:
-        policy = terminus_expiry_policy_never;
-        break;
-      default: // LCOV_EXCL_LINE
-        throw std::logic_error("Unknown terminus expiry policy."); // LCOV_EXCL_LINE
-    }
-    if (target_set_expiry_policy(m_target.get(), policy))
-    {
-      throw std::runtime_error("Could not set expiry policy."); // LCOV_EXCL_LINE
-    }
-  }
 
   std::chrono::system_clock::time_point MessageTarget::GetTimeout() const
   {
@@ -188,17 +229,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not get timeout from source.");
     }
     return std::chrono::system_clock::from_time_t(value);
-  }
-  void MessageTarget::SetTimeout(std::chrono::system_clock::time_point const& value)
-  {
-    if (target_set_timeout(
-            m_target.get(),
-            static_cast<uint32_t>(
-                std::chrono::duration_cast<std::chrono::seconds>(value.time_since_epoch())
-                    .count())))
-    {
-      throw std::runtime_error("Could not set timeout."); // LCOV_EXCL_LINE
-    }
   }
 
   bool MessageTarget::GetDynamic() const
@@ -210,29 +240,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  void MessageTarget::SetDynamic(bool value)
-  {
-    if (target_set_dynamic(m_target.get(), value))
-    {
-      throw std::runtime_error("Could not set dynamic.");
-    }
-  }
 
-  Azure::Core::Amqp::Models::AmqpValue MessageTarget::GetDynamicNodeProperties() const
+  Azure::Core::Amqp::Models::AmqpMap MessageTarget::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
     if (target_get_dynamic_node_properties(m_target.get(), &value))
     {
       throw std::runtime_error("Could not get dynamic.");
     }
-    return value;
-  }
-  void MessageTarget::SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (target_set_dynamic_node_properties(m_target.get(), value))
-    {
-      throw std::runtime_error("Could not set dynamic node properties.");
-    }
+    return AmqpValue{value}.AsMap();
   }
 
   Azure::Core::Amqp::Models::AmqpArray MessageTarget::GetCapabilities() const
@@ -245,22 +261,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  // Set a single capability.
-  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (target_set_capabilities(m_target.get(), value))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
-  }
-  // Set multiple capabilities.
-  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& value)
-  {
-    if (target_set_capabilities(m_target.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
-  }
   extern const char* StringFromTerminusDurability(TerminusDurability);
   extern const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy);
 
@@ -285,7 +285,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       terminus_expiry_policy policy;
       if (!target_get_expiry_policy(target, &policy))
       {
-        os << ", Expiry Policy: " << StringFromTerminusExpiryPolicy(target.GetExpiryPolicy());
+        os << ", Expiry Policy: " << policy;
       }
     }
     {
