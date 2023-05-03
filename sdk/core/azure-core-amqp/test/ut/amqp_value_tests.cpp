@@ -38,6 +38,8 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
     EXPECT_FALSE(value);
     EXPECT_TRUE(AmqpValue() < value);
+    EXPECT_ANY_THROW((void)static_cast<char>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::int8_t>(value));
   }
   {
     EXPECT_LT(AmqpValue(false), AmqpValue(true));
@@ -55,7 +57,6 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_LT(AmqpValue{static_cast<int8_t>(-18)}, value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_ANY_THROW((void)static_cast<unsigned char>(value));
-    EXPECT_ANY_THROW((void)static_cast<char>(value));
     EXPECT_ANY_THROW((void)static_cast<uint16_t>(value));
     EXPECT_ANY_THROW((void)static_cast<int16_t>(value));
     EXPECT_ANY_THROW((void)static_cast<uint32_t>(value));
