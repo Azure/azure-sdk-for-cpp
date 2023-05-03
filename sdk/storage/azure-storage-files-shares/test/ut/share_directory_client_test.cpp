@@ -1090,7 +1090,7 @@ namespace Azure { namespace Storage { namespace Test {
         | Files::Shares::Models::ShareFileHandleAccessRights::Write
         | Files::Shares::Models::ShareFileHandleAccessRights::Delete;
     EXPECT_EQ(directoryHandles.size(), 1L);
-    EXPECT_TRUE(directoryHandles[0].accessRights.HasValue());
-    EXPECT_EQ(allAccessRights, directoryHandles[0].accessRights.Value());
+    EXPECT_TRUE(directoryHandles[0].AccessRights.HasValue());
+    EXPECT_EQ(allAccessRights, directoryHandles[0].AccessRights.Value());
   }
 }}} // namespace Azure::Storage::Test

@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Access rights of the handle.
        */
-      Azure::Nullable<ShareFileHandleAccessRights> accessRights;
+      Azure::Nullable<ShareFileHandleAccessRights> AccessRights;
     };
   } // namespace Models
 
