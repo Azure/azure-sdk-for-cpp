@@ -35,14 +35,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       case AZ_LOG_ERROR:
         logLevel = Logger::Level::Error;
         break;
-      case AZ_LOG_INFO:
-        logLevel = Logger::Level::Informational;
-        break;
+      case AZ_LOG_INFO: // LCOV_EXCL_LINE
+        logLevel = Logger::Level::Informational; // LCOV_EXCL_LINE
+        break; // LCOV_EXCL_LINE
       case AZ_LOG_TRACE:
         logLevel = Logger::Level::Verbose;
         break;
-      default:
-        logLevel = Logger::Level::Verbose;
+      default: // LCOV_EXCL_LINE
+        logLevel = Logger::Level::Verbose; // LCOV_EXCL_LINE
     }
     std::stringstream ss;
     ss << "File: " << file << ":" << line << " Func: " << func;

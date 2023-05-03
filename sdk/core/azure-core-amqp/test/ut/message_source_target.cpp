@@ -157,71 +157,156 @@ TEST_F(TestSourceTarget, SourceProperties)
   }
 
   {
-    MessageSource source;
-    source.SetAddress("Address");
+    MessageSourceOptions options;
+    options.Address = "Address";
+    MessageSource source(options);
     EXPECT_EQ(AmqpValue("Address"), source.GetAddress());
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
 
-    source.SetCapabilities(AmqpSymbol{"Test"});
+  {
+    MessageSourceOptions options;
+    options.Capabilities.push_back(AmqpSymbol{"Test"});
+    MessageSource source(options);
     EXPECT_EQ(1, source.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities()[0].GetType());
     EXPECT_EQ(source.GetCapabilities()[0].AsSymbol(), "Test");
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
 
-    source.SetTerminusDurability(TerminusDurability::None);
+  {
+    MessageSourceOptions options;
+    options.TerminusDurability = TerminusDurability::None;
+
+    MessageSource source(options);
     EXPECT_EQ(TerminusDurability::None, source.GetTerminusDurability());
-    source.SetTerminusDurability(TerminusDurability::Configuration);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusDurability = TerminusDurability::Configuration;
+    MessageSource source(options);
+
     EXPECT_EQ(TerminusDurability::Configuration, source.GetTerminusDurability());
-    source.SetTerminusDurability(TerminusDurability::UnsettledState);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusDurability = TerminusDurability::UnsettledState;
+    MessageSource source(options);
     EXPECT_EQ(TerminusDurability::UnsettledState, source.GetTerminusDurability());
-    EXPECT_ANY_THROW(source.SetTerminusDurability(static_cast<TerminusDurability>(655345)));
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusDurability = static_cast<TerminusDurability>(655345);
+    EXPECT_ANY_THROW(MessageSource source(options));
+  }
 
-    source.SetExpiryPolicy(TerminusExpiryPolicy::LinkDetach);
+  {
+    MessageSourceOptions options;
+    options.TerminusExpiryPolicy = TerminusExpiryPolicy::LinkDetach;
+    MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::LinkDetach, source.GetExpiryPolicy());
-    source.SetExpiryPolicy(TerminusExpiryPolicy::ConnectionClose);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusExpiryPolicy = TerminusExpiryPolicy::ConnectionClose;
+    MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::ConnectionClose, source.GetExpiryPolicy());
-    source.SetExpiryPolicy(TerminusExpiryPolicy::Never);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusExpiryPolicy = TerminusExpiryPolicy::Never;
+    MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::Never, source.GetExpiryPolicy());
-    source.SetExpiryPolicy(TerminusExpiryPolicy::SessionEnd);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusExpiryPolicy = TerminusExpiryPolicy::SessionEnd;
+    MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::SessionEnd, source.GetExpiryPolicy());
-    EXPECT_ANY_THROW(source.SetExpiryPolicy(static_cast<TerminusExpiryPolicy>(655345)));
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.TerminusDurability = static_cast<TerminusDurability>(655345);
 
+    EXPECT_ANY_THROW(MessageSource source(options));
+  }
+  {
     std::chrono::system_clock::time_point expirationTime{
         std::chrono::system_clock::now() + std::chrono::seconds(60)};
     GTEST_LOG_(INFO) << "Expiration time set: " << timeToString(expirationTime);
-    source.SetTimeout(expirationTime);
+    MessageSourceOptions options;
+    options.Timeout = expirationTime;
+    MessageSource source(options);
+
     GTEST_LOG_(INFO) << "Expiration time get: " << timeToString(source.GetTimeout());
     EXPECT_EQ(
         std::chrono::duration_cast<std::chrono::seconds>(expirationTime.time_since_epoch()),
         std::chrono::duration_cast<std::chrono::seconds>(source.GetTimeout().time_since_epoch()));
+  }
+  {
+    MessageSourceOptions options;
+    options.Dynamic = true;
+    MessageSource source(options);
 
-    source.SetDynamic(true);
     EXPECT_EQ(true, source.GetDynamic());
-    source.SetDynamic(false);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.Dynamic = false;
+    MessageSource source(options);
     EXPECT_EQ(false, source.GetDynamic());
-
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
     AmqpMap dynamicMap;
     dynamicMap["Key"] = 23;
-    source.SetDynamicNodeProperties(dynamicMap);
+
+    MessageSourceOptions options;
+    options.DynamicNodeProperties["Key"] = 23;
+    MessageSource source(options);
 
     auto map2(source.GetDynamicNodeProperties());
     EXPECT_EQ(map2["Key"], AmqpValue(23));
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.DistributionMode = "A different mode";
+    MessageSource source(options);
 
-    source.SetDistributionMode("A different mode");
     EXPECT_EQ("A different mode", source.GetDistributionMode());
-
-    // A filter set is a map.
-    AmqpMap filterMap;
-    filterMap["Key"] = 23;
-    source.SetFilter(filterMap);
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.Filter["Key"] = 23;
+    MessageSource source(options);
     EXPECT_EQ(source.GetFilter()["Key"], AmqpValue(23));
-
-    source.SetDefaultOutcome("Default outcome");
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+  {
+    MessageSourceOptions options;
+    options.DefaultOutcome = "Default outcome";
+    MessageSource source(options);
     EXPECT_EQ(source.GetDefaultOutcome(), "Default outcome");
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
 
-    source.SetOutcomes(AmqpSymbol("Test"));
+  {
+    MessageSourceOptions options;
+    options.Outcomes.push_back(AmqpSymbol("Test"));
+    MessageSource source(options);
     EXPECT_EQ(1, source.GetOutcomes().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());
     EXPECT_EQ(source.GetOutcomes().at(0).AsSymbol(), "Test");
-
     GTEST_LOG_(INFO) << "Source: " << source;
   }
 
