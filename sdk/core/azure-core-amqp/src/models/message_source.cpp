@@ -72,10 +72,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         throw std::runtime_error("Could not set source address.");
       }
     }
-    if (options.TerminusDurability.HasValue())
+    if (options.SourceTerminusDurability.HasValue())
     {
       terminus_durability durability;
-      switch (options.TerminusDurability.Value())
+      switch (options.SourceTerminusDurability.Value())
       {
         case TerminusDurability::None:
           durability = terminus_durability_none;
@@ -94,10 +94,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         throw std::runtime_error("Could not set durable.");
       }
     }
-    if (options.TerminusExpiryPolicy.HasValue())
+    if (options.SourceTerminusExpiryPolicy.HasValue())
     {
       terminus_expiry_policy policy;
-      switch (options.TerminusExpiryPolicy.Value())
+      switch (options.SourceTerminusExpiryPolicy.Value())
       {
         case TerminusExpiryPolicy::LinkDetach:
           policy = terminus_expiry_policy_link_detach;

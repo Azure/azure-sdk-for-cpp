@@ -176,7 +176,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.TerminusDurability = TerminusDurability::None;
+    options.SourceTerminusDurability = TerminusDurability::None;
 
     MessageSource source(options);
     EXPECT_EQ(TerminusDurability::None, source.GetTerminusDurability());
@@ -184,7 +184,7 @@ TEST_F(TestSourceTarget, SourceProperties)
   }
   {
     MessageSourceOptions options;
-    options.TerminusDurability = TerminusDurability::Configuration;
+    options.SourceTerminusDurability = TerminusDurability::Configuration;
     MessageSource source(options);
 
     EXPECT_EQ(TerminusDurability::Configuration, source.GetTerminusDurability());
@@ -192,48 +192,48 @@ TEST_F(TestSourceTarget, SourceProperties)
   }
   {
     MessageSourceOptions options;
-    options.TerminusDurability = TerminusDurability::UnsettledState;
+    options.SourceTerminusDurability = TerminusDurability::UnsettledState;
     MessageSource source(options);
     EXPECT_EQ(TerminusDurability::UnsettledState, source.GetTerminusDurability());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
   {
     MessageSourceOptions options;
-    options.TerminusDurability = static_cast<TerminusDurability>(655345);
+    options.SourceTerminusDurability = static_cast<TerminusDurability>(655345);
     EXPECT_ANY_THROW(MessageSource source(options));
   }
 
   {
     MessageSourceOptions options;
-    options.TerminusExpiryPolicy = TerminusExpiryPolicy::LinkDetach;
+    options.SourceTerminusExpiryPolicy = TerminusExpiryPolicy::LinkDetach;
     MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::LinkDetach, source.GetExpiryPolicy());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
   {
     MessageSourceOptions options;
-    options.TerminusExpiryPolicy = TerminusExpiryPolicy::ConnectionClose;
+    options.SourceTerminusExpiryPolicy = TerminusExpiryPolicy::ConnectionClose;
     MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::ConnectionClose, source.GetExpiryPolicy());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
   {
     MessageSourceOptions options;
-    options.TerminusExpiryPolicy = TerminusExpiryPolicy::Never;
+    options.SourceTerminusExpiryPolicy = TerminusExpiryPolicy::Never;
     MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::Never, source.GetExpiryPolicy());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
   {
     MessageSourceOptions options;
-    options.TerminusExpiryPolicy = TerminusExpiryPolicy::SessionEnd;
+    options.SourceTerminusExpiryPolicy = TerminusExpiryPolicy::SessionEnd;
     MessageSource source(options);
     EXPECT_EQ(TerminusExpiryPolicy::SessionEnd, source.GetExpiryPolicy());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
   {
     MessageSourceOptions options;
-    options.TerminusDurability = static_cast<TerminusDurability>(655345);
+    options.SourceTerminusDurability = static_cast<TerminusDurability>(655345);
 
     EXPECT_ANY_THROW(MessageSource source(options));
   }

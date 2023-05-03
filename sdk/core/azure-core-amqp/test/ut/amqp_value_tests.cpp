@@ -54,6 +54,18 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_LT(AmqpValue{static_cast<int8_t>(-18)}, value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<unsigned char>(value));
+    EXPECT_ANY_THROW((void)static_cast<char>(value));
+    EXPECT_ANY_THROW((void)static_cast<uint16_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<int16_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<uint32_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<int32_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<uint64_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<int64_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<float>(value));
+    EXPECT_ANY_THROW((void)static_cast<double>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::string>(value));
+    EXPECT_ANY_THROW((void)static_cast<Azure::Core::Uuid>(value));
   }
 
   {

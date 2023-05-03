@@ -21,8 +21,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   struct MessageSourceOptions
   {
     Azure::Core::Amqp::Models::AmqpValue Address;
-    Azure::Nullable<TerminusDurability> TerminusDurability;
-    Azure::Nullable<TerminusExpiryPolicy> TerminusExpiryPolicy;
+    Azure::Nullable<TerminusDurability> SourceTerminusDurability;
+    Azure::Nullable<TerminusExpiryPolicy> SourceTerminusExpiryPolicy;
     Azure::Nullable<std::chrono::system_clock::time_point> Timeout;
     Azure::Nullable<bool> Dynamic;
     Azure::Core::Amqp::Models::AmqpMap DynamicNodeProperties;
