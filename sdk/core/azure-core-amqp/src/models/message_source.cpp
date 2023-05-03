@@ -163,8 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (!options.DefaultOutcome.IsNull())
     {
-      if (source_set_default_outcome(
-              m_source.get(), static_cast<UniqueAmqpValueHandle>(options.DefaultOutcome).get()))
+      if (source_set_default_outcome(m_source.get(), options.DefaultOutcome))
       {
         throw std::runtime_error("Could not set default outcome.");
       }
@@ -359,7 +358,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   std::ostream& operator<<(std::ostream& os, MessageSource const& source)
   {
-    os << "Source{ " << std::endl;
+    os << "Source{ ";
     {
       AMQP_VALUE value;
       if (!source_get_address(source, &value))
@@ -378,7 +377,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       terminus_expiry_policy policy;
       if (!source_get_expiry_policy(source, &policy))
       {
-        os << ", Expiry Policy: " << StringFromTerminusExpiryPolicy(source.GetExpiryPolicy());
+        os << ", Expiry Policy: " << policy;
       }
     }
     {
@@ -426,14 +425,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AMQP_VALUE outcome;
       if (!source_get_default_outcome(source, &outcome))
       {
-        os << ", Default Outcome: " << source.GetDefaultOutcome();
+        os << ", Default Outcome: " << AmqpValue{outcome};
       }
     }
     {
-      AMQP_VALUE outcome;
-      if (!source_get_outcomes(source, &outcome))
+      AMQP_VALUE outcomes;
+      if (!source_get_outcomes(source, &outcomes))
       {
-        os << ", Outcome: " << source.GetOutcomes();
+        os << ", Outcomes: " << AmqpValue{outcomes};
       }
     }
     os << "}";

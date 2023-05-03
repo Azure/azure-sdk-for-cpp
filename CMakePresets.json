@@ -202,15 +202,14 @@
     },
     {
       "name": "x64-static-debug-tests",
-      "displayName": "X64 Debug With Tests, static, winhttp",
+      "displayName": "X64 Debug With Tests, static",
       "description": "Windows X64 Debug build with Tests configured",
       "inherits": "x64-static-debug",
       "cacheVariables": {
         "BUILD_TESTING": true,
         "ENABLE_PROXY_TESTS": false,
         "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_TRANSPORT_WINHTTP": true
+        "BUILD_PERFORMANCE_TESTS": true
       }
     },
     {
