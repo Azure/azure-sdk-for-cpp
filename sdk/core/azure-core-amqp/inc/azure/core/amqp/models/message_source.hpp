@@ -55,13 +55,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @param address The address of the source.
      */
-    MessageSource(std::string const& value);
+    MessageSource(std::string const& address);
 
     /** @brief Creates a message source with the given address.
      *
      * @param address The address of the source.
      */
-    MessageSource(char const* value);
+    MessageSource(char const* address);
 
     /** @brief Creates an AMQP value from a message source.
      *

@@ -46,8 +46,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         logLevel = Logger::Level::Verbose; // LCOV_EXCL_LINE
     }
     std::stringstream ss;
-    // We don't want to log header information for outgoing and incoming frames, the header information
-    // gets in the way of the message.
+    // We don't want to log header information for outgoing and incoming frames, the header
+    // information gets in the way of the message.
     if (logCategory == AZ_LOG_TRACE
         && (strcmp(func, "log_outgoing_frame") == 0 || strcmp(func, "log_incoming_frame") == 0
             || strcmp(func, "log_message_chunk") == 0))
