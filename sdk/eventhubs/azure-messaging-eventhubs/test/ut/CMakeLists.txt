@@ -35,7 +35,8 @@ target_link_libraries(
         azure-security-attestation
         gtest 
         gtest_main 
-        gmock)
+        gmock
+)
 
 # Adding private headers so we can test the private APIs with no relative paths include.
 target_include_directories (
