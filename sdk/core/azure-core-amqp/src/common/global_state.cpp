@@ -20,6 +20,7 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
+  // Logging callback for uAMQP and azure-c-shared-utility.
   void AmqpLogFunction(
       LOG_CATEGORY logCategory,
       const char* file,
@@ -30,6 +31,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       ...)
   {
     Logger::Level logLevel;
+    // We accumulate the log message in a thread_local string, and only write it to the logger when
+    // LOG_LINE is set. This allows the caller to accumulate traces to be logged on a single line.
     thread_local std::string accumulatedString;
     switch (logCategory)
     {
@@ -82,6 +85,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       throw std::runtime_error("Could not initialize platform."); // LCOV_EXCL_LINE
     }
 
+    // Integrate AMQP logging with Azure Core logging.
     xlogging_set_log_function(AmqpLogFunction);
   }
 

@@ -15,17 +15,21 @@ include(GoogleTest)
 
 # Unit Tests
 add_executable(azure-core-amqp-tests
-    "amqp_value_tests.cpp"
-    "amqp_header_tests.cpp"
-    "amqp_properties_tests.cpp"
-    "amqp_message_tests.cpp"
-    "connection_tests.cpp"
-    "transport_tests.cpp" 
-    "session_tests.cpp"
-    "link_tests.cpp" 
-    "message_sender_receiver.cpp"
-    "connection_string_tests.cpp"
- claim_based_security_tests.cpp "message_source_target.cpp" "management_tests.cpp" "azure_core_amqp_tests.cpp")
+  amqp_header_tests.cpp
+  amqp_message_tests.cpp
+  amqp_properties_tests.cpp
+  amqp_value_tests.cpp
+  azure_core_amqp_tests.cpp
+  claim_based_security_tests.cpp
+  connection_string_tests.cpp
+  connection_tests.cpp
+  link_tests.cpp
+  management_tests.cpp
+  message_sender_receiver.cpp
+  message_source_target.cpp
+  session_tests.cpp
+  transport_tests.cpp 
+)
 add_dependencies(azure-core-amqp-tests azure-core-amqp)
 
 target_include_directories(azure-core-amqp-tests PRIVATE ${azure-core-amqp_SOURCE_DIR})

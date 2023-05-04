@@ -64,6 +64,7 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/amqp/connection.cpp
 	src/amqp/connection_string_credential.cpp
 	src/amqp/link.cpp
+    src/amqp/management.cpp
 	src/amqp/message_receiver.cpp
 	src/amqp/message_sender.cpp
 	src/amqp/session.cpp
@@ -83,7 +84,7 @@ set(AZURE_CORE_AMQP_SOURCE
 	src/network/transport.cpp 
 )
 
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} "src/amqp/management.cpp")
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
 
 target_include_directories(
   azure-core-amqp
@@ -99,11 +100,6 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
 target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c PUBLIC Azure::azure-core)
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET azure-core-amqp PROPERTY CXX_STANDARD 14)
-endif()
-
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
@@ -133,5 +129,5 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_SAMPLES)
-add_subdirectory ("samples")
+  add_subdirectory (samples)
 endif()
