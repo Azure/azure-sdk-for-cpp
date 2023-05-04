@@ -20,7 +20,7 @@ add_executable (
   eventhubs_test.cpp
 )
 
-create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
+create_per_service_target_build(messaging azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
 
 if (MSVC)
