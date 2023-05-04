@@ -17,6 +17,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Failed,
     InstanceClosed
   };
+
   enum class CbsOpenResult
   {
     Invalid,
