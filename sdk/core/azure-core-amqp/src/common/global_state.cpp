@@ -34,6 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     // We accumulate the log message in a thread_local string, and only write it to the logger when
     // LOG_LINE is set. This allows the caller to accumulate traces to be logged on a single line.
     thread_local std::string accumulatedString;
+
     switch (logCategory)
     {
       case AZ_LOG_ERROR:

@@ -48,9 +48,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      *
      * @param session - Session on which to authenticate the client.
      *
-     * @remarks Note that this method takes a reference to the session and connectionToPoll objects
-     * so it is critical that the lifetime of the ClaimsBasedSecurity object be scoped shorter than
-     * the lifetime of the session and connectionToPoll object.
      */
     ClaimsBasedSecurity(Azure::Core::Amqp::_internal::Session const& session);
     ~ClaimsBasedSecurity() noexcept;
