@@ -7,8 +7,8 @@
 #include "azure/core/amqp/link.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
-#include "private/message_receiver_impl.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "private/message_receiver_impl.hpp"
 #include <azure/core/credentials/credentials.hpp>
 // #include <azure_uamqp_c/link.h>
 #include <azure_uamqp_c/message_receiver.h>

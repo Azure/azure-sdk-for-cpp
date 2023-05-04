@@ -5,10 +5,10 @@
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
+#include "azure/core/amqp/session.hpp"
 #include "private/connection_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
-#include "azure/core/amqp/session.hpp"
 #include <azure/core/credentials/credentials.hpp>
 
 #include <azure_uamqp_c/message_sender.h>

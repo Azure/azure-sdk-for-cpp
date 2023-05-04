@@ -5,10 +5,10 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/management.hpp"
-#include "private/connection_impl.hpp"
-#include "private/message_receiver_impl.hpp"
-#include "private/session_impl.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "connection_impl.hpp"
+#include "message_receiver_impl.hpp"
+#include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure_uamqp_c/amqp_management.h>
