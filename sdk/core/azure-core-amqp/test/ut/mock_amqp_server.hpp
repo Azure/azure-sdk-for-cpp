@@ -121,9 +121,11 @@ public:
       Azure::Core::Amqp::Network::_internal::SocketListener listener(GetPort(), this);
       GTEST_LOG_(INFO) << "Start test listener on port " << GetPort();
       listener.Start();
+      GTEST_LOG_(INFO) << "listener started";
       running = true;
       threadStarted.notify_one();
 
+      GTEST_LOG_(INFO) << "Wait for connection on listener.";
       if (!WaitForConnection(listener, m_listenerContext))
       {
         GTEST_LOG_(INFO) << "Cancelling thread.";
@@ -161,9 +163,12 @@ public:
     });
 
     // Wait until our running thread is actually listening before we return.
-    GTEST_LOG_(INFO) << "Wait for listener to start.";
+    GTEST_LOG_(INFO) << "Wait 10 seconds for listener to start.";
     std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
-    threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
+    threadStarted.wait_until(
+        waitForThreadStart,
+        std::chrono::system_clock::now() + std::chrono::seconds(10),
+        [&running]() { return running == true; });
     GTEST_LOG_(INFO) << "Listener running.";
   }
 

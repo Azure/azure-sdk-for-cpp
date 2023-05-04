@@ -60,7 +60,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     using TransportCloseCompleteFn = std::function<void()>;
     using TransportSendCompleteFn = std::function<void(TransportSendResult)>;
     Transport(std::shared_ptr<_detail::TransportImpl> impl) : m_impl{impl} {}
-    Transport(Transport&& instance) = delete;
     virtual ~Transport();
     virtual bool Open();
     virtual bool Close(TransportCloseCompleteFn);
@@ -71,7 +70,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   protected:
     Transport(TransportEvents* events);
-
     std::shared_ptr<_detail::TransportImpl> m_impl;
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
