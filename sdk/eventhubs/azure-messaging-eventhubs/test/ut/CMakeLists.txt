@@ -17,11 +17,10 @@ SetUpTestProxy("sdk/messaging")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
-    
-    eventhubs_test.cpp
-     )
+  eventhubs_test.cpp
+)
 
-create_per_service_target_build(messgaing azure-messaging-eventhubs-test)
+create_per_service_target_build(messaging azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
 
 if (MSVC)
@@ -36,7 +35,8 @@ target_link_libraries(
         azure-security-attestation
         gtest 
         gtest_main 
-        gmock)
+        gmock
+)
 
 # Adding private headers so we can test the private APIs with no relative paths include.
 target_include_directories (
@@ -44,7 +44,7 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-# gtest_add_tests will scan the test from azure-core-test and call add_test
+# gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-messaging-eventhubs-test
   TEST_PREFIX azure-messaging-eventhubs.
