@@ -131,6 +131,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
         Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
         Azure::Core::Context context = {})
     {
+      GTEST_LOG_(INFO) << "Waiting for listener to accept connection.";
       auto result = m_listenerQueue.WaitForPolledResult(context, listener);
       return std::get<0>(*result);
     }
@@ -142,6 +143,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
 
     virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
     {
+      GTEST_LOG_(INFO) << "Socket for listener accepted connection.";
       // Capture the XIO into a transport so it won't leak.
       m_listenerQueue.CompleteOperation(
           std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(xio, nullptr));
@@ -166,8 +168,11 @@ TEST_F(TestConnections, ConnectionOpenClose)
     // Open the connection
     connection.Open();
 
-    // Ensure that we got an OnComplete callback.
-    auto transport = listenerEvents.WaitForResult(listener);
+    // Ensure that we got an OnComplete callback within 5 seconds.
+    auto transport = listenerEvents.WaitForResult(
+        listener,
+        Azure::Core::Context::ApplicationContext.WithDeadline(
+            std::chrono::system_clock::now() + std::chrono::seconds(5)));
 
     // Now we can close the connection.
     connection.Close("xxx", "yyy", {});
