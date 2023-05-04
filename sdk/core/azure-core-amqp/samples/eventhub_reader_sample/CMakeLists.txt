@@ -1,13 +1,13 @@
 # Copyright(c) Microsoft Corporation.All rights reserved.
 # SPDX - License - Identifier : MIT
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(eventhub_reader_sample)
 
-# Unit Tests
+# Samples
 add_executable(eventhub_reader_sample
     eventhub_reader_sample.cpp
 )
