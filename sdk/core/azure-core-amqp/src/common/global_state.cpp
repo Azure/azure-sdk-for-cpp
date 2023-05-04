@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     }
     else
     {
-      ss << "File: " << file << ":" << line << " Func: " << func;
+      ss << "File: " << file << ":" << line << " Func: " << func << ": ";
     }
     char outputBuffer[512];
     va_list args;

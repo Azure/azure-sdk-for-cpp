@@ -188,11 +188,10 @@ TEST_F(TestSessions, SessionBeginEnd)
         std::shared_ptr<Network::_internal::Transport>>
         m_listenerQueue;
 
-    virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
+    virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport)
     {
       // Capture the XIO into a transport so it won't leak.
-      m_listenerQueue.CompleteOperation(
-          std::make_shared<Network::_internal::Transport>(xio, nullptr));
+      m_listenerQueue.CompleteOperation(transport);
     }
   };
 

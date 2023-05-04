@@ -121,14 +121,14 @@ private:
   Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
   Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::AmqpMessage> m_messageQueue;
 
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport) override
   {
     std::cout << "OnSocketAccepted - Socket connection received." << std::endl;
 
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
     std::shared_ptr<Network::_internal::Transport> amqpTransport{
-        std::make_shared<Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Network::_internal::AmqpHeaderTransport>(transport, nullptr)};
     ConnectionOptions options;
     options.ContainerId = "some";
     options.HostName = "localhost";

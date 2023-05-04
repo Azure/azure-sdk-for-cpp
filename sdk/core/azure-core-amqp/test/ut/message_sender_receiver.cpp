@@ -163,11 +163,13 @@ private:
   // Inherited via MessageReceiver
 
   // Inherited via SocketListenerEvents.
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";

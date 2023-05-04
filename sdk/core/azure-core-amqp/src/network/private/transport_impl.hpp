@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   public:
     TransportImpl(
-        XIO_INSTANCE_TAG* instance,
+        XIO_HANDLE instance,
         Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler);
     TransportImpl(TransportImpl&& instance) = delete;
     TransportImpl(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler);
@@ -47,6 +47,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         Azure::Core::Amqp::Network::_internal::Transport::TransportSendCompleteFn) const;
     void Poll() const;
     operator XIO_HANDLE() { return m_xioInstance.get(); }
+    XIO_HANDLE Release() { return m_xioInstance.release(); }
+    void SetEventHandler(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler)
+    {
+      m_eventHandler = eventHandler;
+    }
     void SetInstance(XIO_HANDLE instance);
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_detail

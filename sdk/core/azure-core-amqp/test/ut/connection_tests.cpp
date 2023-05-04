@@ -141,12 +141,12 @@ TEST_F(TestConnections, ConnectionOpenClose)
         std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport>>
         m_listenerQueue;
 
-    virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
+    virtual void OnSocketAccepted(
+        std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport)
     {
       GTEST_LOG_(INFO) << "Socket for listener accepted connection.";
       // Capture the XIO into a transport so it won't leak.
-      m_listenerQueue.CompleteOperation(
-          std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(xio, nullptr));
+      m_listenerQueue.CompleteOperation(transport);
     }
   };
 
@@ -211,10 +211,12 @@ private:
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
       std::unique_ptr<Azure::Core::Amqp::_internal::Connection>>
       m_listeningQueue;
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "containerId";
     options.HostName = "localhost";

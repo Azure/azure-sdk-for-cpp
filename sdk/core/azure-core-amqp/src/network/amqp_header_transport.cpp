@@ -16,7 +16,7 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   AmqpHeaderTransport::AmqpHeaderTransport(
-      XIO_HANDLE parentTransport,
+      std::shared_ptr<Transport> parentTransport,
       TransportEvents* eventHandler)
       : Transport(eventHandler)
   {
@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         //        {header_detect_io_get_sasl_amqp_header(), nullptr},
         {header_detect_io_get_amqp_header(), nullptr},
     };
-    detectIoConfig.underlying_io = parentTransport;
+    detectIoConfig.underlying_io = parentTransport->GetImpl()->Release();
     detectIoConfig.header_detect_entry_count = std::extent<decltype(headerDetectEntries)>::value;
     detectIoConfig.header_detect_entries = headerDetectEntries;
     auto xio = xio_create(header_detect_io_get_interface_description(), &detectIoConfig);

@@ -143,11 +143,13 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
       m_receiveLinkQueue;
   std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
 
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;

@@ -305,7 +305,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
   public:
     TestListenerEvents() {}
 
-    std::unique_ptr<Transport> GetListenerTransport(
+    std::shared_ptr<Transport> GetListenerTransport(
         SocketListener const& listener,
         Azure::Core::Context context)
     {
@@ -320,20 +320,24 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
     {
       auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
-      return std::get<0>(*result);
+      if (result)
+      {
+        return std::get<0>(*result);
+      }
+      throw Azure::Core::OperationCancelledException("Wait for receive cancelled");
     }
 
   private:
-    AsyncOperationQueue<std::unique_ptr<Transport>> m_listenerTransportQueue;
+    AsyncOperationQueue<std::shared_ptr<Transport>> m_listenerTransportQueue;
     AsyncOperationQueue<TransportOpenResult> openResultQueue;
     AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
     AsyncOperationQueue<bool> errorQueue;
-    virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport) override
+    virtual void OnSocketAccepted(std::shared_ptr<Transport> newTransport) override
     {
       GTEST_LOG_(INFO) << "Listener started, new connection.";
-      auto listenerTransport = std::make_unique<Transport>(newTransport, this);
-      listenerTransport->Open();
-      m_listenerTransportQueue.CompleteOperation(std::move(listenerTransport));
+      newTransport->SetEventHandler(this);
+      newTransport->Open();
+      m_listenerTransportQueue.CompleteOperation(newTransport);
     }
     void OnOpenComplete(TransportOpenResult result) override
     {
@@ -436,7 +440,10 @@ Host: www.microsoft.com)";
   auto listenerTransport = events.GetListenerTransport(listener, {});
 
   GTEST_LOG_(INFO) << "Wait for received event.";
-  events.WaitForReceive(*listenerTransport, {});
+  events.WaitForReceive(
+      *listenerTransport,
+      Azure::Core::Context::ApplicationContext.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(10)));
 
   GTEST_LOG_(INFO) << "Listener received the bytes we just sent, now wait until the sender "
                       "received those bytes back.";

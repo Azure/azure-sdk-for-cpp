@@ -219,8 +219,9 @@ protected:
   {
     if (!message.ApplicationProperties.empty())
     {
-      auto operation = message.ApplicationProperties.at("operation");
-      auto type = message.ApplicationProperties.at("type");
+      Azure::Core::Amqp::Models::AmqpValue operation
+          = message.ApplicationProperties.at("operation");
+      Azure::Core::Amqp::Models::AmqpValue type = message.ApplicationProperties.at("type");
 
       // If we're processing a put-token message, then we should get a "type" and "name"
       // value.
@@ -241,9 +242,9 @@ protected:
       MessageLinkComponents const& linkComponents,
       Azure::Core::Amqp::Models::AmqpMessage const& message)
   {
-    auto operation = message.ApplicationProperties.at("operation");
-    auto type = message.ApplicationProperties.at("type");
-    auto name = message.ApplicationProperties.at("name");
+    Azure::Core::Amqp::Models::AmqpValue operation = message.ApplicationProperties.at("operation");
+    Azure::Core::Amqp::Models::AmqpValue type = message.ApplicationProperties.at("type");
+    Azure::Core::Amqp::Models::AmqpValue name = message.ApplicationProperties.at("name");
     // If we're processing a put-token message, then we should get a "type" and "name"
     // value.
     EXPECT_EQ(operation.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
@@ -327,11 +328,13 @@ protected:
     }
   }
 
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;

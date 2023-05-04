@@ -31,10 +31,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
     {
     }
 
-    Transport::Transport(XIO_HANDLE xio, TransportEvents* eventHandler)
-        : m_impl{std::make_shared<_detail::TransportImpl>(xio, eventHandler)}
-    {
-    }
     Transport::~Transport() {}
 
     bool Transport::Open() { return m_impl->Open(); }
@@ -45,6 +41,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network {
       return m_impl->Send(buffer, size, callback);
     }
     void Transport::Poll() const { return m_impl->Poll(); }
+
+    void Transport::SetEventHandler(TransportEvents* eventHandler)
+    {
+      m_impl->SetEventHandler(eventHandler);
+    }
 
   } // namespace _internal
   namespace _detail {
