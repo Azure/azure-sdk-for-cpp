@@ -5,8 +5,8 @@
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/message_sender.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
-#include "azure/core/amqp/private/link_impl.hpp"
-#include "azure/core/amqp/private/session_impl.hpp"
+#include "private/link_impl.hpp"
+#include "private/session_impl.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 

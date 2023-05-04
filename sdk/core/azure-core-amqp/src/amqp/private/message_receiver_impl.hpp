@@ -4,9 +4,9 @@
 #pragma once
 
 #include "azure/core/amqp/message_receiver.hpp"
-#include "azure/core/amqp/private/connection_impl.hpp"
-#include "azure/core/amqp/private/message_receiver_impl.hpp"
-#include "azure/core/amqp/private/session_impl.hpp"
+#include "private/connection_impl.hpp"
+#include "private/message_receiver_impl.hpp"
+#include "private/session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure_uamqp_c/amqpvalue.h>

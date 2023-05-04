@@ -2,11 +2,11 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection.hpp"
+#include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
-#include "azure/core/amqp/network/private/transport_impl.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
-#include "azure/core/amqp/private/connection_impl.hpp"
+#include "private/connection_impl.hpp"
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/url.hpp>

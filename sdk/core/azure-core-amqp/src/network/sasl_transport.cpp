@@ -3,7 +3,7 @@
 
 // LCOV_EXCL_START
 #include "azure/core/amqp/network/sasl_transport.hpp"
-#include "azure/core/amqp/network/private/transport_impl.hpp"
+#include "private/transport_impl.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>

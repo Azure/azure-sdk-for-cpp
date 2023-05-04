@@ -4,8 +4,8 @@
 #include "azure/core/amqp/session.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/link.hpp"
-#include "azure/core/amqp/private/connection_impl.hpp"
-#include "azure/core/amqp/private/session_impl.hpp"
+#include "private/connection_impl.hpp"
+#include "private/session_impl.hpp"
 
 #include <azure_uamqp_c/session.h>
 

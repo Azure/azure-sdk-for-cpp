@@ -2,7 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/amqp_header_detect_transport.hpp"
-#include "azure/core/amqp/network/private/transport_impl.hpp"
+#include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>

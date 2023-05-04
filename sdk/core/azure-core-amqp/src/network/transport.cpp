@@ -4,7 +4,7 @@
 #include "azure/core/amqp/network/transport.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
-#include "azure/core/amqp/network/private/transport_impl.hpp"
+#include "private/transport_impl.hpp"
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xio.h>
 #include <cassert>
