@@ -1,6 +1,6 @@
 # Azure SDK AMQP Library for C++
 
-Azure::Core::_internal::AMQP (`azure-core-amqp`) provides an implementation
+Azure::Core::Amqp (`azure-core-amqp`) provides an implementation
 to enable developers to create Azure SDKs which consume the AMQP protocol.
 
 ## Getting started
