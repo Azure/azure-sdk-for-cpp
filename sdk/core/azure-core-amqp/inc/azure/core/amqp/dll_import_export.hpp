@@ -10,7 +10,7 @@
 #pragma once
 
 /**
- * @def AZ_CORE_DLLEXPORT
+ * @def AZ_CORE_AMQP_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
