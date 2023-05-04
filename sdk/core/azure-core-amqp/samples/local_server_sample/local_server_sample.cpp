@@ -130,7 +130,6 @@ private:
     std::shared_ptr<Network::_internal::Transport> amqpTransport{
         std::make_shared<Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
     ConnectionOptions options;
-    //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";
     options.HostName = "localhost";
     auto newConnection{std::make_unique<Connection>(amqpTransport, options, this)};
