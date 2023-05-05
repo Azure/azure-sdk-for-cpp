@@ -609,7 +609,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             accessRights |= Models::ShareFileHandleAccessRights::Delete;
           }
         }
-        directoryHandle.AccessRights = std::move(accessRights);
+        directoryHandle.AccessRights = accessRights;
       }
 
       pagedResponse.DirectoryHandles.push_back(std::move(directoryHandle));
