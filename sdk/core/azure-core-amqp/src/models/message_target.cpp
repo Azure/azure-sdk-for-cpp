@@ -262,7 +262,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   extern const char* StringFromTerminusDurability(TerminusDurability);
-  extern const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy);
 
   std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
   {
