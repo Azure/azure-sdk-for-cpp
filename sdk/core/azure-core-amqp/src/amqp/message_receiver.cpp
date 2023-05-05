@@ -10,10 +10,15 @@
 #include "azure/core/amqp/session.hpp"
 #include "private/message_receiver_impl.hpp"
 #include <azure/core/credentials/credentials.hpp>
-// #include <azure_uamqp_c/link.h>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure_uamqp_c/message_receiver.h>
 #include <iostream>
 #include <memory>
+#include <sstream>
+
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp {
   using namespace Azure::Core::Amqp::_internal;
@@ -215,6 +220,7 @@ namespace Azure { namespace Core { namespace Amqp {
       }
       if (m_claimsBasedSecurity)
       {
+        Log::Write(Logger::Level::Verbose, "Close CBS object.");
         m_claimsBasedSecurity->Close();
       }
       if (m_messageReceiver)
@@ -270,9 +276,10 @@ namespace Azure { namespace Core { namespace Amqp {
       }
       else
       {
-        std::cout << "Message receiver changed state. New: "
-                  << MESSAGE_RECEIVER_STATEStrings[newState]
-                  << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
+        std::stringstream ss;
+        ss << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
+           << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
+        Log::Write(Logger::Level::Verbose, ss.str());
       }
     }
 
@@ -281,9 +288,12 @@ namespace Azure { namespace Core { namespace Amqp {
         std::string const& audience,
         std::string const& token)
     {
+      Log::Write(Logger::Level::Verbose, "Authenticate token with audience " + audience);
       m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
       if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
       {
+        Log::Write(Logger::Level::Verbose, "CBS is open, put the token");
+
         auto result = m_claimsBasedSecurity->PutToken(
             (type == CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
             audience,
