@@ -1418,7 +1418,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   // cspell:ignore myshare myfile
   // Can't run this test on pipeline, test it locally.
-  TEST_F(FileShareFileClientTest, DISABLED_listHandlesAccessRights)
+  TEST_F(FileShareFileClientTest, DISABLED_ListHandlesAccessRights)
   {
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         StandardStorageConnectionString(), "myshare");
