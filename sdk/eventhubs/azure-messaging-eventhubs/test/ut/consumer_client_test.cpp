@@ -72,8 +72,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.EnableTrace = true;
     
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Inclusive = true;
 
-    client.SetConsumer(LocalTest::ProcesMessageSuccess, "1");
-    client.StartConsuming(5, "1");
+    Azure::Messaging::EventHubs::PartitionClient partitionClient = client.NewPartitionClient("1",partitionOptions);
+
+
+   // client.SetConsumer(LocalTest::ProcesMessageSuccess, "1");
+   // client.StartConsuming(5, "1");
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test

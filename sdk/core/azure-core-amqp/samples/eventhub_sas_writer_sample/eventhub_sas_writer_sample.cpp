@@ -8,6 +8,8 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <azure/core/internal/environment.hpp>
+
 
 // Note: The connection string provided must either have an "EntityPath" entry or the constructor
 // for the SasConnectionStringCredential has to have an entity path provided.
@@ -15,10 +17,14 @@
 
 int main()
 {
+  std::string connectionString
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
   auto credential{
       std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          EH_CONNECTION_STRING)};
-  std::string eventUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath();
+          connectionString)};
+  
+  std::string eventUrl = "amqps://" + credential->GetHostName() + "/"
+      + "eventhub" + "/Partitions/1";
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
@@ -29,9 +35,10 @@ int main()
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 
-  constexpr int maxMessageSendCount = 1000;
+  constexpr int maxMessageSendCount = 1;
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
+
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.EnableTrace = true;

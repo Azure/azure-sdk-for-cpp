@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "partition_client.hpp"
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -60,7 +61,7 @@ protected:
   std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
   ConsumerClientCreds m_credentials;
   ConsumerClientOptions m_consumerClientOptions;
-  std::map<std::string, std::function<void(Azure::Core::Amqp::Models::AmqpMessage)>> m_processors;
+  //std::map<std::string, std::function<void(Azure::Core::Amqp::Models::AmqpMessage)>> m_processors;
 
 public:
   /** @brief Getter for event hub name
@@ -123,32 +124,13 @@ public:
       std::string const& consumerGroup = "$Default",
       ConsumerClientOptions const& options = ConsumerClientOptions());
 
-  /** @brief Sets the consumer for a partition / consumer group
+  /** @brief Create new Partition client o
    *
-   * @param consumerMethod Callback to be invoked when a message is received
-   * @param partitionId Partition ID to consume from, if empty , the consumer group will be used
+   * @param partitionId targeted partition
+   * @param options client options
    */
-  void SetConsumer(
-      std::function<void(Azure::Core::Amqp::Models::AmqpMessage)> consumerMethod,
-      std::string partitionId = "")
-  {
-    m_processors.insert_or_assign(
-        partitionId.empty() ? m_credentials.ConsumerGroup : partitionId, consumerMethod);
-  }
-
-      /** @brief Starts consuming messages from the Event Hub
-       *
-       * @param maxMessages Maximum number of messages to receive at a time
-       * @param partitionId Partition ID to consume from, if empty , the consumer group will be used
-       * @param ctx Azure context to control the request lifetime.
-       */
-      void StartConsuming(
-      int const& maxMessages,
-      std::string const& partitionId = "",
-      Azure::Core::Context ctx = Azure::Core::Context());
-
-protected:
-  void CreateConsumer(std::string const& partitionId = "");
-  Azure::Core::Amqp::_internal::MessageReceiver GetConsumer(std::string const& partitionId = "");
+  PartitionClient NewPartitionClient(
+      std::string partitionId,
+      PartitionClientOptions const& options);
 };
 }}} // namespace Azure::Messaging::EventHubs

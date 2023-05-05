@@ -13,3 +13,5 @@
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/producer_client.hpp"
 #include "azure/messaging/eventhubs/retry_operation.hpp"
+#include "azure/messaging/eventhubs/partition_client.hpp"
+#include "azure/messaging/eventhubs/checkpoint_store.hpp"

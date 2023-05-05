@@ -32,10 +32,16 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
 {
 }
 
-void Azure::Messaging::EventHubs::ConsumerClient::CreateConsumer(std::string const& partitionId)
+Azure::Messaging::EventHubs::PartitionClient Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
+    std::string partitionId,
+    Azure::Messaging::EventHubs::PartitionClientOptions const& options)
 {
+  Azure::Messaging::EventHubs::PartitionClient partitionClient;
+  partitionClient.m_partitionOptions = options;
+  partitionClient.RetryOptions = m_consumerClientOptions.RetryOptions;
+
   std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
-  m_credentials.HostUrl = "amqps://" + m_credentials.FullyQualifiedNamespace + "/"
+  std::string hostUrl = "amqps://" + m_credentials.FullyQualifiedNamespace + "/"
       + m_credentials.EventHub + "/ConsumerGroups/" + m_credentials.ConsumerGroup + suffix;
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
@@ -69,40 +75,6 @@ void Azure::Messaging::EventHubs::ConsumerClient::CreateConsumer(std::string con
 
   // Open the connection to the remote.
   receiver.Open();
-  m_receivers.insert_or_assign(partitionId, receiver);
-}
-
-Azure::Core::Amqp::_internal::MessageReceiver
-Azure::Messaging::EventHubs::ConsumerClient::GetConsumer(std::string const& partitionId)
-{
-  if (m_receivers.find(partitionId) == m_receivers.end())
-  {
-    CreateConsumer(partitionId);
-  }
-  auto consumer = m_receivers.at(partitionId);
-  return consumer;
-}
-
-void Azure::Messaging::EventHubs::ConsumerClient::StartConsuming(
-    int const& maxMessages,
-    std::string const& partitionId,
-    Azure::Core::Context ctx)
-{
-  int messageReceived = 0;
-  while (messageReceived < maxMessages && !ctx.IsCancelled())
-  {
-    auto receiver = GetConsumer(partitionId);
-    auto message = receiver.WaitForIncomingMessage(ctx);
-    if (message)
-    {
-      messageReceived++;
-
-      auto processor
-          = m_processors.at(partitionId.empty() ? m_credentials.ConsumerGroup : partitionId);
-      if (processor != nullptr)
-      {
-        processor(message);
-      }
-    }
-  }
+  partitionClient.m_receivers.push_back(std::move(receiver));
+  return partitionClient;
 }

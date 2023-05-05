@@ -18,7 +18,10 @@
     },
     {
       "name": "azure-core-amqp-cpp",
-    }
+    },
+    {
+      "name": "azure-storage-blobs-cpp",
+    },
     {
       "name": "vcpkg-cmake",
       "host": true

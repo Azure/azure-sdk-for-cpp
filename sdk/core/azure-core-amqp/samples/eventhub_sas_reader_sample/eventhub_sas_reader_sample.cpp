@@ -8,18 +8,21 @@
 #include <iostream>
 #include <limits>
 #include <string>
-
+#include <azure/core/internal/environment.hpp>
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()
 {
+  std::string connectionString
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+      + ";EntityPath=eventhub";
   auto credential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          EH_CONNECTION_STRING);
+          connectionString);
   std::string hostUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
-      + "/ConsumerGroups/$Default/Partitions/0";
+      + "/ConsumerGroups/$Default/Partitions/1";
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = "whatever";
+  connectOptions.ContainerId = "unit-test";
   connectOptions.EnableTrace = true;
   connectOptions.HostName = credential->GetHostName();
   Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
@@ -28,8 +31,8 @@ int main()
   session.SetIncomingWindow(100);
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
-  receiverOptions.Name = "receiver-link";
-  receiverOptions.TargetAddress = "ingress-rx";
+  receiverOptions.Name = "unit-test";
+  receiverOptions.TargetAddress = "ingress";
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   receiverOptions.EnableTrace = true;
@@ -42,7 +45,7 @@ int main()
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 
-  constexpr int maxMessageReceiveCount = 1000;
+  constexpr int maxMessageReceiveCount = 10000;
 
   int messageReceiveCount = 0;
   while (messageReceiveCount < maxMessageReceiveCount)

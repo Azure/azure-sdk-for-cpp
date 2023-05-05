@@ -40,8 +40,10 @@ if(FETCH_SOURCE_DEPS)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.5.0" CONFIG QUIET)
+  find_package(azure-storage-blobs-cpp "12.7.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp "1.5.0" REQUIRED)
+    find_package(azure-storage-blobs-cpp "12.7.0" REQUIRED)
   endif()
 endif()
 
@@ -53,6 +55,7 @@ set(
     inc/azure/messaging/eventhubs/event_data_batch.hpp
     inc/azure/messaging/eventhubs/retry_operation.hpp
     inc/azure/messaging/eventhubs/consumer_client.hpp
+    inc/azure/messaging/eventhubs/partition_client.hpp
 )
 
 set(
@@ -61,11 +64,13 @@ set(
     src/producer_client.cpp
     src/retry_operation.cpp
     src/consumer_client.cpp
+    src/partition_client.cpp
+    src/checkpoint_store.cpp
 )
 add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
- )
+   )
 create_per_service_target_build(messaging azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
@@ -83,7 +88,7 @@ target_include_directories(
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-messaging-eventhubs/inc>
 )
 
-target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
+target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp Azure::azure-storage-blobs)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(messaging azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
