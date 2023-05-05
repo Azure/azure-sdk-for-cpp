@@ -674,6 +674,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
+  receiverOptions.EnableTrace = true;
   MessageReceiver receiver(
       session,
       sasCredential,

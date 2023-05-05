@@ -85,6 +85,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
+    bool m_cbsOpen{false};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         Azure::Core::Amqp::Models::AmqpMessage>

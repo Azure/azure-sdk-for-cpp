@@ -218,7 +218,7 @@ namespace Azure { namespace Core { namespace Amqp {
       {
         m_eventHandler = nullptr;
       }
-      if (m_claimsBasedSecurity)
+      if (m_claimsBasedSecurity && m_cbsOpen)
       {
         Log::Write(Logger::Level::Verbose, "Close CBS object.");
         m_claimsBasedSecurity->Close();
@@ -290,8 +290,12 @@ namespace Azure { namespace Core { namespace Amqp {
     {
       Log::Write(Logger::Level::Verbose, "Authenticate token with audience " + audience);
       m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
-      if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
+      // Propagate our SetTrace settings to the CBS instance.
+      m_claimsBasedSecurity->SetTrace(m_options.EnableTrace);
+      auto openResult = m_claimsBasedSecurity->Open();
+      if (openResult == CbsOpenResult::Ok)
       {
+        m_cbsOpen = true;
         Log::Write(Logger::Level::Verbose, "CBS is open, put the token");
 
         auto result = m_claimsBasedSecurity->PutToken(
@@ -301,6 +305,10 @@ namespace Azure { namespace Core { namespace Amqp {
       }
       else
       {
+        Log::Write(
+            Logger::Level::Error,
+            "Could not open Claims Based Security object. OpenResult: "
+                + std::to_string(static_cast<int>(openResult)));
         throw std::runtime_error("Could not open Claims Based Security."); // LCOV_EXCL_LINE
       }
     }
