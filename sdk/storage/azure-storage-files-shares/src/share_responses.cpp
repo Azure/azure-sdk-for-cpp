@@ -9,6 +9,63 @@
 #include "azure/storage/files/shares/share_file_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
+  namespace Models {
+    ShareFileHandleAccessRights::ShareFileHandleAccessRights(const std::string& value)
+    {
+      if (!value.empty())
+      {
+        m_value.insert(value);
+      }
+    }
+    ShareFileHandleAccessRights ShareFileHandleAccessRights::operator|(
+        const ShareFileHandleAccessRights& other) const
+    {
+      ShareFileHandleAccessRights ret;
+      std::set_union(
+          m_value.begin(),
+          m_value.end(),
+          other.m_value.begin(),
+          other.m_value.end(),
+          std::inserter(ret.m_value, ret.m_value.begin()));
+      return ret;
+    }
+    ShareFileHandleAccessRights ShareFileHandleAccessRights::operator&(
+        const ShareFileHandleAccessRights& other) const
+    {
+      ShareFileHandleAccessRights ret;
+      std::set_intersection(
+          m_value.begin(),
+          m_value.end(),
+          other.m_value.begin(),
+          other.m_value.end(),
+          std::inserter(ret.m_value, ret.m_value.begin()));
+      return ret;
+    }
+    ShareFileHandleAccessRights ShareFileHandleAccessRights::operator^(
+        const ShareFileHandleAccessRights& other) const
+    {
+      ShareFileHandleAccessRights ret;
+      std::set_symmetric_difference(
+          m_value.begin(),
+          m_value.end(),
+          other.m_value.begin(),
+          other.m_value.end(),
+          std::inserter(ret.m_value, ret.m_value.begin()));
+      return ret;
+    }
+    std::string ShareFileHandleAccessRights::ToString() const
+    {
+      std::string ret;
+      for (const auto& v : m_value)
+      {
+        ret += (ret.empty() ? "" : " | ") + v;
+      }
+      return ret;
+    }
+    const ShareFileHandleAccessRights ShareFileHandleAccessRights::Read("Read");
+    const ShareFileHandleAccessRights ShareFileHandleAccessRights::Write("Write");
+    const ShareFileHandleAccessRights ShareFileHandleAccessRights::Delete("Delete");
+  } // namespace Models
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StartFileCopyOperation::PollInternal(
       const Azure::Core::Context&)

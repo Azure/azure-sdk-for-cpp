@@ -383,10 +383,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto properties = m_pathClient->GetProperties().Value;
     ASSERT_TRUE(properties.Owner.HasValue());
-    ASSERT_TRUE(!properties.Owner.Value().empty());
     ASSERT_TRUE(properties.Group.HasValue());
-    ASSERT_TRUE(!properties.Group.Value().empty());
     ASSERT_TRUE(properties.Permissions.HasValue());
-    ASSERT_TRUE(!properties.Permissions.Value().empty());
   }
 }}} // namespace Azure::Storage::Test

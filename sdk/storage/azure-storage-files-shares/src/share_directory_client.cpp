@@ -592,24 +592,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       directoryHandle.SessionId = std::move(handle.SessionId);
       if (!handle.AccessRightList.empty())
       {
-        Models::ShareFileHandleAccessRights accessRights
-            = static_cast<Models::ShareFileHandleAccessRights>(0);
+        Models::ShareFileHandleAccessRights accessRights;
         for (auto& accessRight : handle.AccessRightList)
         {
-          if (accessRight == Models::_detail::AccessRight::Read)
-          {
-            accessRights |= Models::ShareFileHandleAccessRights::Read;
-          }
-          if (accessRight == Models::_detail::AccessRight::Write)
-          {
-            accessRights |= Models::ShareFileHandleAccessRights::Write;
-          }
-          if (accessRight == Models::_detail::AccessRight::Delete)
-          {
-            accessRights |= Models::ShareFileHandleAccessRights::Delete;
-          }
+          accessRights |= Models::ShareFileHandleAccessRights(accessRight.ToString());
         }
-        directoryHandle.AccessRights = accessRights;
+        directoryHandle.AccessRights = std::move(accessRights);
       }
 
       pagedResponse.DirectoryHandles.push_back(std::move(directoryHandle));

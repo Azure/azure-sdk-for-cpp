@@ -190,42 +190,45 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
     };
 
-    enum class ShareFileHandleAccessRights
-    {
-      Read = 1,
-      Write = 2,
-      Delete = 4,
+    /**
+     * @brief Access rights of the handle.
+     */
+    class ShareFileHandleAccessRights final {
+    public:
+      ShareFileHandleAccessRights() = default;
+      explicit ShareFileHandleAccessRights(const std::string& value);
+      bool operator==(const ShareFileHandleAccessRights& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const ShareFileHandleAccessRights& other) const { return !(*this == other); }
+      std::string ToString() const;
+      const std::unordered_set<std::string>& GetValues() const { return m_value; }
+      ShareFileHandleAccessRights operator|(const ShareFileHandleAccessRights& other) const;
+      ShareFileHandleAccessRights operator&(const ShareFileHandleAccessRights& other) const;
+      ShareFileHandleAccessRights operator^(const ShareFileHandleAccessRights& other) const;
+      ShareFileHandleAccessRights& operator|=(const ShareFileHandleAccessRights& other)
+      {
+        *this = *this | other;
+        return *this;
+      }
+      ShareFileHandleAccessRights& operator&=(const ShareFileHandleAccessRights& other)
+      {
+        *this = *this & other;
+        return *this;
+      }
+      ShareFileHandleAccessRights& operator^=(const ShareFileHandleAccessRights& other)
+      {
+        *this = *this ^ other;
+        return *this;
+      }
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Read;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Write;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Delete;
+
+    private:
+      std::unordered_set<std::string> m_value;
     };
-    inline ShareFileHandleAccessRights operator|(
-        ShareFileHandleAccessRights lhs,
-        ShareFileHandleAccessRights rhs)
-    {
-      using type = std::underlying_type_t<ShareFileHandleAccessRights>;
-      return static_cast<ShareFileHandleAccessRights>(
-          static_cast<type>(lhs) | static_cast<type>(rhs));
-    }
-    inline ShareFileHandleAccessRights& operator|=(
-        ShareFileHandleAccessRights& lhs,
-        ShareFileHandleAccessRights rhs)
-    {
-      lhs = lhs | rhs;
-      return lhs;
-    }
-    inline ShareFileHandleAccessRights operator&(
-        ShareFileHandleAccessRights lhs,
-        ShareFileHandleAccessRights rhs)
-    {
-      using type = std::underlying_type_t<ShareFileHandleAccessRights>;
-      return static_cast<ShareFileHandleAccessRights>(
-          static_cast<type>(lhs) & static_cast<type>(rhs));
-    }
-    inline ShareFileHandleAccessRights& operator&=(
-        ShareFileHandleAccessRights& lhs,
-        ShareFileHandleAccessRights rhs)
-    {
-      lhs = lhs & rhs;
-      return lhs;
-    }
 
     /**
      * @brief A listed directory item.
