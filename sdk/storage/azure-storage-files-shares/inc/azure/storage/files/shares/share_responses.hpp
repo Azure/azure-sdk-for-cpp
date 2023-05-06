@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       bool operator!=(const ShareFileHandleAccessRights& other) const { return !(*this == other); }
       std::string ToString() const;
-      const std::unordered_set<std::string>& GetValues() const { return m_value; }
+      const std::set<std::string>& GetValues() const { return m_value; }
       ShareFileHandleAccessRights operator|(const ShareFileHandleAccessRights& other) const;
       ShareFileHandleAccessRights operator&(const ShareFileHandleAccessRights& other) const;
       ShareFileHandleAccessRights operator^(const ShareFileHandleAccessRights& other) const;
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Delete;
 
     private:
-      std::unordered_set<std::string> m_value;
+      std::set<std::string> m_value;
     };
 
     /**
