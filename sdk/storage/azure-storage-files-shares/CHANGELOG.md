@@ -2,7 +2,13 @@
 
 ## 12.5.0 (2023-05-09)
 
+### Features Added
+
 - New features in `12.5.0-beta.1` are now generally available.
+
+### Bugs Fixed
+
+- Fixed a bug where `ShareFileClient::ListHandles` and `ShareDirectoryClient::ListHandles` returned an empty list regardless of there are handles or not.
 
 ## 12.5.0-beta.1 (2023-04-11)
 
