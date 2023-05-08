@@ -242,7 +242,8 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
 
     ConnectionOptions connectOptions;
     connectOptions.EnableTrace = true;
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
+    Connection connection(
+        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
