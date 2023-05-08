@@ -16,6 +16,9 @@
 #include <string>
 #include <tuple>
 
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
+
 void Azure::Core::_internal::UniqueHandleHelper<AMQP_MANAGEMENT_INSTANCE_TAG>::FreeAmqpManagement(
     AMQP_MANAGEMENT_HANDLE value)
 {
@@ -170,13 +173,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void ManagementImpl::OnOpenCompleteFn(void* context, AMQP_MANAGEMENT_OPEN_RESULT openResult)
   {
     ManagementImpl* management = static_cast<ManagementImpl*>(context);
+    Log::Write(
+        Logger::Level::Informational, "OnManagementOpenComplete: " + std::to_string(openResult));
     management->m_openCompleteQueue.CompleteOperation(openResult);
   }
 
   void ManagementImpl::OnManagementErrorFn(void* context)
   {
-    Azure::Core::Diagnostics::_internal::Log::Write(
-        Azure::Core::Diagnostics::Logger::Level::Error, "Error processing management operation.");
+    Log::Write(Logger::Level::Error, "Error processing management operation.");
     ManagementImpl* management = static_cast<ManagementImpl*>(context);
     if (management->m_eventHandler)
     {

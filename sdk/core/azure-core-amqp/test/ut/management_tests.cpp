@@ -185,7 +185,7 @@ TEST_F(TestManagement, ManagementRequestResponseSimple)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
