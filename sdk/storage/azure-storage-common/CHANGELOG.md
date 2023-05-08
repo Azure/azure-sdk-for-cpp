@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Bumped up SAS token service version to `2022-11-02`.
+- Bumped up Account SAS version to `2022-11-02`.
 
 ## 12.3.1 (2023-03-07)
 
