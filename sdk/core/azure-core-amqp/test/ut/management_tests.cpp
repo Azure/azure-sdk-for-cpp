@@ -153,7 +153,7 @@ TEST_F(TestManagement, ManagementRequestResponse)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -204,9 +204,13 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
 
   {
     ManagementReceiver mockServer;
+    ConnectionOptions connectOptions;
+    connectOptions.EnableTrace = true;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    Connection connection(
+        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
+
     ManagementOptions options;
     options.EnableTrace = true;
     Management management(session, "Test", options);
@@ -216,7 +220,7 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -236,7 +240,9 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
   {
     ManagementReceiver mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    ConnectionOptions connectOptions;
+    connectOptions.EnableTrace = true;
+    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -249,7 +255,7 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -276,7 +282,10 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
     };
     ManagementEventsHandler managementEvents;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    ConnectionOptions connectOptions;
+    connectOptions.EnableTrace = true;
+    Connection connection(
+        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -291,7 +300,7 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -312,7 +321,10 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
   {
     ManagementReceiver mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    ConnectionOptions connectOptions;
+    connectOptions.EnableTrace = true;
+    Connection connection(
+        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -328,7 +340,7 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -348,7 +360,10 @@ TEST_F(TestManagement, ManagementRequestResponseInvalidNodeName)
   {
     ManagementReceiver mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    ConnectionOptions connectOptions;
+    connectOptions.EnableTrace = true;
+    Connection connection(
+        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -357,7 +372,7 @@ TEST_F(TestManagement, ManagementRequestResponseInvalidNodeName)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -377,7 +392,10 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
   {
     ManagementReceiver mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
+    ConnectionOptions connectOptions;
+    connectOptions.EnableTrace = true;
+    Connection connection(
+        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
     Session session(connection);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -386,7 +404,7 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
