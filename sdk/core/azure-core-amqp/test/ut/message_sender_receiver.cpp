@@ -611,7 +611,7 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
   MessageSender sender(session, tokenCredential, endpoint, senderOptions, nullptr);
-  EXPECT_TRUE(sender);
+  ASSERT_TRUE(sender);
   sender.Open();
 
   Azure::Core::Amqp::Models::AmqpMessage message;

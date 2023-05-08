@@ -157,7 +157,10 @@ namespace Azure { namespace Core { namespace Amqp {
       }
       if (m_claimsBasedSecurity)
       {
-        m_claimsBasedSecurity->Close();
+        if (m_cbsOpen)
+        {
+          m_claimsBasedSecurity->Close();
+        }
       }
       if (m_messageSender)
       {
@@ -256,6 +259,7 @@ namespace Azure { namespace Core { namespace Amqp {
       m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
       if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
       {
+        m_cbsOpen = true;
         auto result = m_claimsBasedSecurity->PutToken(
             (type == CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
             audience,

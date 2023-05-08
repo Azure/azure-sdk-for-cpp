@@ -82,5 +82,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
     std::string m_target;
     _internal::MessageSenderOptions m_options;
+    bool m_cbsOpen{false};
   };
 }}}} // namespace Azure::Core::Amqp::_detail
