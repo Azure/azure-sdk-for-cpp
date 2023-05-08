@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/core/amqp/message_receiver.hpp"
+#include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
 #include "message_receiver_impl.hpp"
 #include "session_impl.hpp"
@@ -50,7 +51,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     operator bool() const { return (m_messageReceiver != nullptr); }
 
-    void Open();
+    void Open(Azure::Core::Context const& context);
     void Close();
     std::string GetLinkName() const;
     std::string GetSourceName() const { return m_source; }
@@ -84,7 +85,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_detail::SessionImpl> m_session;
     std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
+    std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
     bool m_cbsOpen{false};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
@@ -110,6 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Authenticate(
         _internal::CredentialType type,
         std::string const& audience,
-        std::string const& token);
+        std::string const& token,
+        Azure::Core::Context const& context);
   };
 }}}} // namespace Azure::Core::Amqp::_detail

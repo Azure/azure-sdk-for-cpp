@@ -87,7 +87,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     MessageReceiver::operator bool() const { return m_impl.operator bool(); }
 
-    void MessageReceiver::Open() { m_impl->Open(); }
+    void MessageReceiver::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
     void MessageReceiver::Close() { m_impl->Close(); }
     void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
     std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
@@ -286,13 +286,14 @@ namespace Azure { namespace Core { namespace Amqp {
     void MessageReceiverImpl::Authenticate(
         CredentialType type,
         std::string const& audience,
-        std::string const& token)
+        std::string const& token,
+        Azure::Core::Context const& context)
     {
       Log::Write(Logger::Level::Verbose, "Authenticate token with audience " + audience);
-      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
+      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurityImpl>(m_session);
       // Propagate our SetTrace settings to the CBS instance.
       m_claimsBasedSecurity->SetTrace(m_options.EnableTrace);
-      auto openResult = m_claimsBasedSecurity->Open();
+      auto openResult = m_claimsBasedSecurity->Open(context);
       if (openResult == CbsOpenResult::Ok)
       {
         m_cbsOpen = true;
@@ -301,7 +302,8 @@ namespace Azure { namespace Core { namespace Amqp {
         auto result = m_claimsBasedSecurity->PutToken(
             (type == CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
             audience,
-            token);
+            token,
+            context);
       }
       else
       {
@@ -313,7 +315,7 @@ namespace Azure { namespace Core { namespace Amqp {
       }
     }
 
-    void MessageReceiverImpl::Open()
+    void MessageReceiverImpl::Open(Azure::Core::Context const& context)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do it.
       if (m_connectionCredential)
@@ -325,18 +327,19 @@ namespace Azure { namespace Core { namespace Amqp {
             CredentialType::ServiceBusSas,
             sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
             sasCredential->GenerateSasToken(
-                std::chrono::system_clock::now() + std::chrono::minutes(60)));
+                std::chrono::system_clock::now() + std::chrono::minutes(60)),
+            context);
       }
       else if (m_tokenCredential)
       {
         Azure::Core::Credentials::TokenRequestContext requestContext;
         requestContext.Scopes = m_options.AuthenticationScopes;
-        Azure::Core::Context context;
 
         Authenticate(
             CredentialType::BearerToken,
             m_source,
-            m_tokenCredential->GetToken(requestContext, context).Token);
+            m_tokenCredential->GetToken(requestContext, context).Token,
+            context);
       }
 
       // Once we've authenticated the connection, establish the link and receiver.

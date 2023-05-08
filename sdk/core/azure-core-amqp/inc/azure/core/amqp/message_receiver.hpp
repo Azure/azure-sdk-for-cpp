@@ -118,7 +118,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
       operator bool() const;
 
-      void Open();
+      void Open(Azure::Core::Context const& context = {});
       void Close();
       std::string GetLinkName() const;
       std::string GetSourceName() const;

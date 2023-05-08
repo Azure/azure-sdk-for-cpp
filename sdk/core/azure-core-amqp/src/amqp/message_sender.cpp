@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     MessageSender::operator bool() const { return m_impl.operator bool(); }
 
-    void MessageSender::Open() { m_impl->Open(); }
+    void MessageSender::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
     void MessageSender::Close() { m_impl->Close(); }
     std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> MessageSender::Send(
         Azure::Core::Amqp::Models::AmqpMessage const& message,
@@ -254,16 +254,18 @@ namespace Azure { namespace Core { namespace Amqp {
     void MessageSenderImpl::Authenticate(
         CredentialType type,
         std::string const& audience,
-        std::string const& token)
+        std::string const& token,
+        Azure::Core::Context const& context)
     {
-      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
-      if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
+      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurityImpl>(m_session);
+      if (m_claimsBasedSecurity->Open(context) == CbsOpenResult::Ok)
       {
         m_cbsOpen = true;
         auto result = m_claimsBasedSecurity->PutToken(
             (type == CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
             audience,
-            token);
+            token,
+            context);
       }
       else
       {
@@ -271,7 +273,7 @@ namespace Azure { namespace Core { namespace Amqp {
       }
     }
 
-    void MessageSenderImpl::Open()
+    void MessageSenderImpl::Open(Azure::Core::Context const& context)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
       // it.
@@ -284,18 +286,19 @@ namespace Azure { namespace Core { namespace Amqp {
             sasCredential->GetCredentialType(),
             sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
             sasCredential->GenerateSasToken(
-                std::chrono::system_clock::now() + std::chrono::minutes(60)));
+                std::chrono::system_clock::now() + std::chrono::minutes(60)),
+            context);
       }
       else if (m_tokenCredential)
       {
         Azure::Core::Credentials::TokenRequestContext requestContext;
         requestContext.Scopes = m_options.AuthenticationScopes;
-        Azure::Core::Context context;
 
         Authenticate(
             CredentialType::BearerToken,
             m_target,
-            m_tokenCredential->GetToken(requestContext, context).Token);
+            m_tokenCredential->GetToken(requestContext, context).Token,
+            context);
       }
 
       if (m_link == nullptr)

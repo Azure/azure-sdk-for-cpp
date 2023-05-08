@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Sas,
     Jwt
   };
-
+#if defined(TESTING_BUILD)
   /** @brief Implementation of AMQP 1.0 Claims-based Security (CBS) protocol.
    *
    * This class allows AMQP clients to implement the CBS protocol for authentication and
@@ -70,4 +70,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     std::shared_ptr<ClaimsBasedSecurityImpl> m_impl;
   };
+#endif // TESTING_BUILD
 }}}} // namespace Azure::Core::Amqp::_detail

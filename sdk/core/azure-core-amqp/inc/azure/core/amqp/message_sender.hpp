@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
       operator bool() const;
 
-      void Open();
+      void Open(Azure::Core::Context const& context = {});
       void Close();
       std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
           Azure::Core::Amqp::Models::AmqpMessage const& message,
