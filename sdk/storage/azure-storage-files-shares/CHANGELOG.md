@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where `ShareFileClient::ListHandles` and `ShareDirectoryClient::ListHandles` returned an empty list regardless of there are handles or not.
+- Fixed a bug where `ShareFileClient::ListHandles` and `ShareDirectoryClient::ListHandles` always return empty list.
 
 ## 12.5.0-beta.1 (2023-04-11)
 
