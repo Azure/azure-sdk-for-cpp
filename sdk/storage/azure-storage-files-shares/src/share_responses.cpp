@@ -53,15 +53,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::inserter(ret.m_value, ret.m_value.begin()));
       return ret;
     }
-    std::string ShareFileHandleAccessRights::ToString() const
-    {
-      std::string ret;
-      for (const auto& v : m_value)
-      {
-        ret += (ret.empty() ? "" : " | ") + v;
-      }
-      return ret;
-    }
     const ShareFileHandleAccessRights ShareFileHandleAccessRights::Read("Read");
     const ShareFileHandleAccessRights ShareFileHandleAccessRights::Write("Write");
     const ShareFileHandleAccessRights ShareFileHandleAccessRights::Delete("Delete");

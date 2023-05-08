@@ -202,7 +202,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return m_value == other.m_value;
       }
       bool operator!=(const ShareFileHandleAccessRights& other) const { return !(*this == other); }
-      std::string ToString() const;
       const std::set<std::string>& GetValues() const { return m_value; }
       ShareFileHandleAccessRights operator|(const ShareFileHandleAccessRights& other) const;
       ShareFileHandleAccessRights operator&(const ShareFileHandleAccessRights& other) const;
