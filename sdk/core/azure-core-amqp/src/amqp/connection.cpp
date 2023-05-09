@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
       Azure::Core::Amqp::Network::_internal::SocketTransport transport{
           requestUrl.GetHost(),
-          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(5672)};
+          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(AmqpPort)};
       m_transport = transport.GetImpl();
     }
     else if (requestUrl.GetScheme() == "amqps")
@@ -145,7 +145,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
       Azure::Core::Amqp::Network::_internal::TlsTransport transport{
           requestUrl.GetHost(),
-          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(5672)};
+          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(AmqpPort)};
       m_transport = transport.GetImpl();
     }
     else

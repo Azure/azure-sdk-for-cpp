@@ -21,15 +21,9 @@ using namespace Azure::Core::Amqp::_internal;
 TEST_F(TestManagement, BasicTests)
 {
   {
-    Management management;
-    EXPECT_FALSE(management);
-  }
-
-  {
     Connection connection("amqps://localhost:5151", {});
     Session session(connection);
     Management management(session, "Test", {});
-    EXPECT_TRUE(management);
   }
 }
 #if !defined(AZ_PLATFORM_MAC)
@@ -57,7 +51,7 @@ TEST_F(TestManagement, ManagementOpenClose)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    EXPECT_EQ(openResult, ManagementOpenResult::Ok);
+    EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
 
     management.Close();
 
@@ -153,7 +147,7 @@ TEST_F(TestManagement, ManagementRequestResponse)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
@@ -185,15 +179,15 @@ TEST_F(TestManagement, ManagementRequestResponseSimple)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Test", "Test", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Ok);
-    EXPECT_EQ(std::get<1>(response), 200);
-    EXPECT_EQ(std::get<2>(response), "Successful");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::Ok);
+    EXPECT_EQ(response.StatusCode, 200);
+    EXPECT_EQ(response.Description, "Successful");
     management.Close();
 
     mockServer.StopListening();
@@ -220,15 +214,15 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Test", "Test", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::FailedBadStatus);
-    EXPECT_EQ(std::get<1>(response), 500);
-    EXPECT_EQ(std::get<2>(response), "Bad Things Happened.");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::FailedBadStatus);
+    EXPECT_EQ(response.StatusCode, 500);
+    EXPECT_EQ(response.Description, "Bad Things Happened.");
     management.Close();
 
     mockServer.StopListening();
@@ -256,15 +250,15 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Error);
-    EXPECT_EQ(std::get<1>(response), 0);
-    EXPECT_EQ(std::get<2>(response), "Error processing management operation.");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
+    EXPECT_EQ(response.StatusCode, 0);
+    EXPECT_EQ(response.Description, "Error processing management operation.");
     management.Close();
 
     mockServer.StopListening();
@@ -301,15 +295,15 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Error);
-    EXPECT_EQ(std::get<1>(response), 0);
-    EXPECT_EQ(std::get<2>(response), "Error processing management operation.");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
+    EXPECT_EQ(response.StatusCode, 0);
+    EXPECT_EQ(response.Description, "Error processing management operation.");
     EXPECT_TRUE(managementEvents.Error);
     management.Close();
 
@@ -341,15 +335,15 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Ok);
-    EXPECT_EQ(std::get<1>(response), 235);
-    EXPECT_EQ(std::get<2>(response), "Bad Things Happened..");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::Ok);
+    EXPECT_EQ(response.StatusCode, 235);
+    EXPECT_EQ(response.Description, "Bad Things Happened..");
     management.Close();
 
     mockServer.StopListening();
@@ -373,15 +367,15 @@ TEST_F(TestManagement, ManagementRequestResponseInvalidNodeName)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Error);
-    EXPECT_EQ(std::get<1>(response), 0);
-    EXPECT_EQ(std::get<2>(response), "");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
+    EXPECT_EQ(response.StatusCode, 0);
+    EXPECT_EQ(response.Description, "");
     management.Close();
 
     mockServer.StopListening();
@@ -405,16 +399,16 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
     mockServer.StartListening();
 
     auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenResult::Ok);
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
 
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response
         = management.ExecuteOperation("Unknown Operation", "Type", "Locales", messageToSend);
-    EXPECT_EQ(std::get<0>(response), ManagementOperationResult::Error);
-    EXPECT_EQ(std::get<1>(response), 0);
-    EXPECT_EQ(std::get<2>(response), "");
+    EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
+    EXPECT_EQ(response.StatusCode, 0);
+    EXPECT_EQ(response.Description, "");
     management.Close();
 
     mockServer.StopListening();

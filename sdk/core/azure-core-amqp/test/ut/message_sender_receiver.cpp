@@ -168,7 +168,7 @@ private:
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
             transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
@@ -611,7 +611,6 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
   MessageSender sender(session, tokenCredential, endpoint, senderOptions, nullptr);
-  ASSERT_TRUE(sender);
   sender.Open();
 
   Azure::Core::Amqp::Models::AmqpMessage message;

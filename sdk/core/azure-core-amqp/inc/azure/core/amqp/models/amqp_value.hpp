@@ -317,6 +317,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Less Than comparison operator.
      * @param that - Value to compare to this value.
      * @returns true if the that is less than this.
+     *
+     * @remark When comparing AMQP values, if the two values are not the same type, this returns if
+     * the numeric value of this.GetType() is less than that.GetType().
+     * If the two values are of the same type, this returns if the value of this is less than the
+     * value of that.
      */
     bool operator<(AmqpValue const& that) const;
 

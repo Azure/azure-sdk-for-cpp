@@ -128,7 +128,7 @@ private:
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
     std::shared_ptr<Network::_internal::Transport> amqpTransport{
-        std::make_shared<Network::_internal::AmqpHeaderTransport>(transport, nullptr)};
+        std::make_shared<Network::_internal::AmqpHeaderDetectTransport>(transport, nullptr)};
     ConnectionOptions options;
     options.ContainerId = "some";
     options.HostName = "localhost";
@@ -214,7 +214,7 @@ private:
 int main()
 {
   SampleEvents sampleEvents;
-  Network::_internal::SocketListener listener(5672, &sampleEvents);
+  Network::_internal::SocketListener listener(_detail::AmqpPort, &sampleEvents);
 
   listener.Start();
   auto connection = sampleEvents.WaitForIncomingConnection(listener);

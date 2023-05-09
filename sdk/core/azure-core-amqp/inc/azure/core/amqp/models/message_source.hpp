@@ -72,18 +72,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Gets the address of the source.
      *
      * @return The address of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
 
     /** @brief Gets the durability of the source.
      *
      * @return The durability of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     TerminusDurability GetTerminusDurability() const;
 
     /** @brief Gets the expiry policy of the source.
      *
      * @return The expiry policy of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     TerminusExpiryPolicy GetExpiryPolicy() const;
 
@@ -92,12 +104,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * @return The timeout of the source.
      *
      * @remarks The source starts expiring as indicated by the expiry-policy.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     std::chrono::system_clock::time_point GetTimeout() const;
 
     /** @brief Requests dynamic creation of a remote node.
      *
      * @return Whether the source is dynamic.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     bool GetDynamic() const;
 
@@ -105,12 +125,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * @remarks See
      * http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-node-properties
      * for more information.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
 
     /** @brief Gets the distribution mode of the source.
      *
      * @return The distribution mode of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     std::string GetDistributionMode() const;
 
@@ -128,6 +156,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @return The default outcome of the source.
      *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     *
      */
     Azure::Core::Amqp::Models::AmqpValue GetDefaultOutcome() const;
 
@@ -135,12 +167,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @return The outcomes of the source.
      *
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      */
     Azure::Core::Amqp::Models::AmqpArray GetOutcomes() const;
 
     /** @brief Gets the capabilities of the source.
      *
      * @return The capabilities of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
      *
      */
     Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;

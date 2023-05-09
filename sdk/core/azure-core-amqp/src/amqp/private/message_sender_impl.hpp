@@ -42,8 +42,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl(MessageSenderImpl&&) noexcept = delete;
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
-    operator bool() const { return (m_messageSender != nullptr); }
-
     void Open(Azure::Core::Context const& context);
     void Close();
     std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(

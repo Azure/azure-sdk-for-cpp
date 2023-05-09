@@ -15,7 +15,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  AmqpHeaderTransport::AmqpHeaderTransport(
+  AmqpHeaderDetectTransport::AmqpHeaderDetectTransport(
       std::shared_ptr<Transport> parentTransport,
       TransportEvents* eventHandler)
       : Transport(eventHandler)

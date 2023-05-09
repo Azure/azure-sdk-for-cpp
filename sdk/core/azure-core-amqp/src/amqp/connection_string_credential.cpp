@@ -2,21 +2,20 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
-
 #include <algorithm>
 #include <azure/core/base64.hpp>
 #include <azure/core/url.hpp>
-#include <iostream>
-#include <iterator>
-#include <unordered_map>
-#include <vector>
-
 #include <azure_c_shared_utility/azure_base64.h>
 #include <azure_c_shared_utility/buffer_.h>
 #include <azure_c_shared_utility/sastoken.h>
 #include <azure_c_shared_utility/strings.h>
 #include <azure_c_shared_utility/urlencode.h>
+#include <iostream>
+#include <iterator>
+#include <unordered_map>
+#include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
@@ -105,7 +104,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         // The m_endpoint should be a URL, extract the host and optionally port from the URL.
         Azure::Core::Url endpointUrl{m_endpoint};
         m_hostName = endpointUrl.GetHost();
-        m_port = endpointUrl.GetPort() != 0 ? endpointUrl.GetPort() : static_cast<uint16_t>(5671);
+        m_port = endpointUrl.GetPort() != 0 ? endpointUrl.GetPort()
+                                            : static_cast<uint16_t>(_detail::AmqpsPort);
       }
       else
       {

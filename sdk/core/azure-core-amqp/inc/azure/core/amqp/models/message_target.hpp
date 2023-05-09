@@ -73,29 +73,70 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief The address of the target.
      *
      * @returns The address of the target.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
      */
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
 
-    /** @brief The durability of the target. */
+    /** @brief The durability of the target.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
+     */
     TerminusDurability GetTerminusDurability() const;
 
-    /** @brief The expiry policy of the target. */
+    /** @brief The expiry policy of the target.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
+     */
     TerminusExpiryPolicy GetExpiryPolicy() const;
 
-    /** @brief Duration that an expiring target will be retained. */
+    /** @brief Duration that an expiring target will be retained.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
+     */
     std::chrono::system_clock::time_point GetTimeout() const;
 
-    /** @brief Does the target request that the remote node be dynamically created? */
+    /** @brief Does the target request that the remote node be dynamically created?
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
+     */
     bool GetDynamic() const;
 
     /** @brief Retrieve the dynamic node properties on this message target.
+     *
      * @remarks See
      * http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-node-properties
      * for more information.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
      */
     Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
 
-    /** @brief Retrieve the capabilities on this message target. */
+    /** @brief Retrieve the capabilities on this message target.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-target)
+     * for more information about the fields in a message target.
+     *
+     */
     Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
 
   private:

@@ -148,7 +148,7 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
             transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";

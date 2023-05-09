@@ -120,13 +120,10 @@ namespace Azure { namespace Core { namespace Amqp {
       }
       virtual ~MessageSender() noexcept;
 
-      MessageSender() = default;
       MessageSender(MessageSender const&) = default;
       MessageSender& operator=(MessageSender const&) = default;
       MessageSender(MessageSender&&) noexcept = default;
       MessageSender& operator=(MessageSender&&) noexcept = default;
-
-      operator bool() const;
 
       void Open(Azure::Core::Context const& context = {});
       void Close();

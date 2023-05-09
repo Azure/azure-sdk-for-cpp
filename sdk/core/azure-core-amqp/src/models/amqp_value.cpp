@@ -98,7 +98,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     bool value;
     if (amqpvalue_get_boolean(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve boolean value");
     }
     return value;
   }
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     unsigned char value;
     if (amqpvalue_get_ubyte(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve ubyte value");
     }
     return value;
   }
@@ -118,7 +118,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     char value;
     if (amqpvalue_get_byte(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve byte value");
     }
     return value;
   }
@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     char value;
     if (amqpvalue_get_byte(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve byte value");
     }
     return value;
   }
@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     uint16_t value;
     if (amqpvalue_get_ushort(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve ushort value");
     }
     return value;
   }
@@ -148,7 +148,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     int16_t value;
     if (amqpvalue_get_short(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve short value");
     }
     return value;
   }
@@ -158,7 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     std::uint32_t value;
     if (amqpvalue_get_uint(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve uint value");
     }
     return value;
   }
@@ -168,7 +168,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     int32_t value;
     if (amqpvalue_get_int(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve int value");
     }
     return value;
   }
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     uint64_t value;
     if (amqpvalue_get_ulong(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve ulong value");
     }
     return value;
   }
@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     int64_t value;
     if (amqpvalue_get_long(m_value.get(), &value) != 0)
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve long value");
     }
     return value;
   }
@@ -198,7 +198,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     float value;
     if (amqpvalue_get_float(m_value.get(), &value))
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve float value");
     }
     return value;
   }
@@ -208,7 +208,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     double value;
     if (amqpvalue_get_double(m_value.get(), &value))
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve double value");
     }
     return value;
   }
@@ -228,7 +228,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     const char* value;
     if (amqpvalue_get_string(m_value.get(), &value))
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve string value");
     }
     return value;
   }
@@ -238,11 +238,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     uuid value;
     if (amqpvalue_get_uuid(m_value.get(), &value))
     {
-      throw std::runtime_error("Could not retrieve value");
+      throw std::runtime_error("Could not retrieve uuid value");
     }
-    std::array<uint8_t, 16> uuid;
-    memcpy(uuid.data(), value, 16);
-    return Azure::Core::Uuid::CreateFromArray(uuid);
+    std::array<uint8_t, 16> uuidArray;
+    memcpy(uuidArray.data(), value, 16);
+    return Azure::Core::Uuid::CreateFromArray(uuidArray);
   }
 
   bool AmqpValue::operator==(AmqpValue const& that) const
