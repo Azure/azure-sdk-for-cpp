@@ -3,9 +3,15 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
+#include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
+
+#include <azure_uamqp_c/amqp_definitions_annotations.h>
+#include <azure_uamqp_c/amqp_definitions_application_properties.h>
+#include <azure_uamqp_c/amqp_definitions_footer.h>
 #include <azure_uamqp_c/message.h>
 #include <iostream>
+#include <set>
 
 namespace Azure { namespace Core { namespace _internal {
   void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
@@ -13,6 +19,8 @@ namespace Azure { namespace Core { namespace _internal {
     message_destroy(value);
   }
 }}} // namespace Azure::Core::_internal
+
+using namespace Azure::Core::Amqp::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
@@ -45,16 +53,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   } // namespace
 
-  // AMQP ApplicationProperties descriptor (AMQP Specification 1.0 section 3.2.5)
-  // http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties
-  //
-  // ApplicationProperties are defined as being a map from string to simple AMQP value types.
-  constexpr uint64_t AmqpApplicationPropertiesDescriptor = 116;
-
   AmqpMessage _internal::AmqpMessageFactory::FromUamqp(UniqueMessageHandle const& message)
   {
     return FromUamqp(message.get());
   }
+
   AmqpMessage _internal::AmqpMessageFactory::FromUamqp(MESSAGE_HANDLE message)
   {
     if (message == nullptr)
@@ -65,17 +68,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     rv.Header = _internal::MessageHeaderFactory::FromUamqp(GetHeaderFromMessage(message));
     rv.Properties
         = _internal::MessagePropertiesFactory::FromUamqp(GetPropertiesFromMessage(message));
-    uint32_t uint32Value;
-
-    // Copy the Message Format from the source message. It will eventually be transferred to the
-    // Transfer performative when the message is sent.
-    if (!message_get_message_format(message, &uint32Value))
-    {
-      rv.MessageFormat = uint32Value;
-    }
 
     {
-      AMQP_VALUE annotationsVal;
+      delivery_annotations annotationsVal;
       // message_get_delivery_annotations returns a clone of the message annotations.
       if (!message_get_delivery_annotations(message, &annotationsVal) && annotationsVal != nullptr)
       {
@@ -127,7 +122,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             {
               throw std::runtime_error("Could not retrieve application properties described type.");
             }
-            if (describedTypeValue != AmqpApplicationPropertiesDescriptor)
+            if (describedTypeValue
+                != static_cast<uint64_t>(
+                    Azure::Core::Amqp::_detail::AmqpDescriptors::ApplicationProperties))
             {
               throw std::runtime_error("Application Properties are not the corect described type.");
             }
@@ -231,6 +228,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     UniqueMessageHandle rv(message_create());
 
+    // AMQP 1.0 specifies a message format of 0.
+    if (message_set_message_format(rv.get(), AmqpMessageFormatValue))
+    {
+      throw std::runtime_error("Could not set destination message format.");
+    }
+
     if (message_set_header(
             rv.get(), _internal::MessageHeaderFactory::ToUamqp(message.Header).get()))
     {
@@ -242,13 +245,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set message properties.");
     }
 
-    if (message.MessageFormat.HasValue())
-    {
-      if (message_set_message_format(rv.get(), message.MessageFormat.Value()))
-      {
-        throw std::runtime_error("Could not set destination message format.");
-      }
-    }
     if (!message.DeliveryAnnotations.empty())
     {
       if (message_set_delivery_annotations(
@@ -312,7 +308,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case MessageBodyType::Sequence:
         for (auto const& sequenceVal : message.m_amqpSequenceBody)
         {
-          if (message_add_body_amqp_sequence(rv.get(), sequenceVal))
+          if (message_add_body_amqp_sequence(rv.get(), AmqpValue(sequenceVal)))
           {
             throw std::runtime_error("Could not set message body AMQP sequence value.");
           }
@@ -331,7 +327,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  AmqpList AmqpMessage::GetBodyAsAmqpList() const
+  std::vector<AmqpList> AmqpMessage::GetBodyAsAmqpList() const
   {
     if (BodyType != MessageBodyType::Sequence)
     {
@@ -355,10 +351,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     BodyType = MessageBodyType::Value;
     m_amqpValueBody = value;
   }
-  void AmqpMessage::SetBody(AmqpList const& value)
+  void AmqpMessage::SetBody(std::vector<AmqpList> const& value)
   {
     BodyType = MessageBodyType::Sequence;
     m_amqpSequenceBody = value;
+  }
+  void AmqpMessage::SetBody(AmqpList const& value)
+  {
+    BodyType = MessageBodyType::Sequence;
+    m_amqpSequenceBody.push_back(value);
   }
 
   AmqpValue AmqpMessage::GetBodyAsAmqpValue() const
@@ -376,6 +377,386 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Invalid body type, should be MessageBodyType::Value.");
     }
     return m_binaryDataBody;
+  }
+
+  bool AmqpMessage::operator==(AmqpMessage const& that) const noexcept
+  {
+    return (Header == that.Header) && (DeliveryAnnotations == that.DeliveryAnnotations)
+        && (MessageAnnotations == that.MessageAnnotations) && (Properties == that.Properties)
+        && (ApplicationProperties == that.ApplicationProperties) && (Footer == that.Footer)
+        && (BodyType == that.BodyType) && (m_amqpValueBody == that.m_amqpValueBody)
+        && (m_amqpSequenceBody == that.m_amqpSequenceBody)
+        && (m_binaryDataBody == that.m_binaryDataBody);
+  }
+
+  size_t AmqpMessage::GetSerializedSize(AmqpMessage const& message)
+  {
+    size_t serializedSize{};
+
+    serializedSize += MessageHeader::GetSerializedSize(message.Header);
+    serializedSize += AmqpValue::GetSerializedSize(message.MessageAnnotations);
+    serializedSize += MessageProperties::GetSerializedSize(message.Properties);
+
+    // ApplicationProperties is a map of string to value, we need to convert it to an AmqpMap.
+    {
+      AmqpMap appProperties;
+      for (auto const& val : message.ApplicationProperties)
+      {
+        if ((val.second.GetType() == AmqpValueType::List)
+            || (val.second.GetType() == AmqpValueType::Map)
+            || (val.second.GetType() == AmqpValueType::Composite)
+            || (val.second.GetType() == AmqpValueType::Described))
+        {
+          throw std::runtime_error(
+              "Message Application Property values must be simple value types");
+        }
+        appProperties.emplace(val);
+      }
+      serializedSize += AmqpValue::GetSerializedSize(appProperties);
+    }
+
+    switch (message.BodyType)
+    {
+      default:
+      case MessageBodyType::Invalid:
+        throw std::runtime_error("Invalid message body type.");
+
+      case MessageBodyType::Value:
+        serializedSize += AmqpValue::GetSerializedSize(message.m_amqpValueBody);
+        break;
+      case MessageBodyType::Data:
+        for (auto const& val : message.m_binaryDataBody)
+        {
+          serializedSize += AmqpValue::GetSerializedSize(val);
+        }
+        break;
+      case MessageBodyType::Sequence:
+        for (auto const& val : message.m_amqpSequenceBody)
+        {
+          serializedSize += AmqpValue::GetSerializedSize(val);
+        }
+        break;
+    }
+    return serializedSize;
+  }
+
+  std::vector<uint8_t> AmqpMessage::Serialize(AmqpMessage const& message)
+  {
+    std::vector<uint8_t> rv;
+
+    // Append the message Header to the serialized message.
+    if (message.Header.ShouldSerialize())
+    {
+      auto serializedHeader = MessageHeader::Serialize(message.Header);
+      rv.insert(rv.end(), serializedHeader.begin(), serializedHeader.end());
+    }
+    if (!message.DeliveryAnnotations.empty())
+    {
+      AmqpValue deliveryAnnotations{
+          amqpvalue_create_delivery_annotations(AmqpValue{message.DeliveryAnnotations})};
+      auto serializedDeliveryAnnotations = AmqpValue::Serialize(deliveryAnnotations);
+      rv.insert(
+          rv.end(), serializedDeliveryAnnotations.begin(), serializedDeliveryAnnotations.end());
+    }
+    if (!message.MessageAnnotations.empty())
+    {
+      AmqpValue messageAnnotations{
+          amqpvalue_create_message_annotations(AmqpValue{message.MessageAnnotations})};
+      auto serializedAnnotations = AmqpValue::Serialize(messageAnnotations);
+      rv.insert(rv.end(), serializedAnnotations.begin(), serializedAnnotations.end());
+    }
+
+    if (message.Properties.ShouldSerialize())
+    {
+      auto serializedMessageProperties = MessageProperties::Serialize(message.Properties);
+      rv.insert(rv.end(), serializedMessageProperties.begin(), serializedMessageProperties.end());
+    }
+
+    if (!message.ApplicationProperties.empty())
+    {
+      AmqpMap appProperties;
+      for (auto const& val : message.ApplicationProperties)
+      {
+        if ((val.second.GetType() == AmqpValueType::List)
+            || (val.second.GetType() == AmqpValueType::Map)
+            || (val.second.GetType() == AmqpValueType::Composite)
+            || (val.second.GetType() == AmqpValueType::Described))
+        {
+          throw std::runtime_error(
+              "Message Application Property values must be simple value types");
+        }
+        appProperties.emplace(val);
+      }
+      AmqpValue propertiesValue{amqpvalue_create_application_properties(AmqpValue{appProperties})};
+      auto serializedApplicationProperties = AmqpValue::Serialize(propertiesValue);
+      rv.insert(
+          rv.end(), serializedApplicationProperties.begin(), serializedApplicationProperties.end());
+    }
+
+    switch (message.BodyType)
+    {
+      default:
+      case MessageBodyType::Invalid:
+        throw std::runtime_error("Invalid message body type.");
+
+      case MessageBodyType::Value: {
+        // The message body element is an AMQP Described type, create one and serialize the
+        // described body.
+        AmqpDescribed describedBody(
+            static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpValue), message.m_amqpValueBody);
+        auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+        rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
+      }
+      break;
+      case MessageBodyType::Data:
+        for (auto const& val : message.m_binaryDataBody)
+        {
+          AmqpDescribed describedBody(static_cast<std::uint64_t>(AmqpDescriptors::DataBinary), val);
+          auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+          rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
+        }
+        break;
+      case MessageBodyType::Sequence: {
+        for (auto const& val : message.m_amqpSequenceBody)
+        {
+          AmqpDescribed describedBody(
+              static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpSequence), val);
+          auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+          rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
+        }
+      }
+    }
+    if (!message.Footer.empty())
+    {
+      AmqpValue footer{amqpvalue_create_footer(AmqpValue{message.Footer})};
+      auto serializedFooter = AmqpValue::Serialize(footer);
+      rv.insert(rv.end(), serializedFooter.begin(), serializedFooter.end());
+    }
+
+    return rv;
+  }
+
+  namespace {
+    class AmqpMessageDeserializer {
+    public:
+      AmqpMessageDeserializer()
+          : m_decoder{amqpvalue_decoder_create(OnAmqpMessageFieldDecodedFn, this)}
+      {
+      }
+
+      AmqpMessage operator()(std::uint8_t const* data, size_t size) const
+      {
+        if (amqpvalue_decode_bytes(m_decoder.get(), data, size))
+        {
+          throw std::runtime_error("Could not decode object");
+        }
+        return m_decodedValue;
+      }
+
+    private:
+      UniqueAmqpDecoderHandle m_decoder;
+      AmqpMessage m_decodedValue;
+      // The message fields, in their expected order.
+      std::set<Amqp::_detail::AmqpDescriptors> m_expectedMessageFields{
+          AmqpDescriptors::Header,
+          AmqpDescriptors::DeliveryAnnotations,
+          AmqpDescriptors::MessageAnnotations,
+          AmqpDescriptors::Properties,
+          AmqpDescriptors::ApplicationProperties,
+          AmqpDescriptors::DataAmqpSequence,
+          AmqpDescriptors::DataAmqpValue,
+          AmqpDescriptors::DataBinary,
+          AmqpDescriptors::Footer};
+
+      // Invoked on each descriptor encountered while decrypting the message.
+      static void OnAmqpMessageFieldDecodedFn(void* context, AMQP_VALUE value)
+      {
+        auto deserializer = static_cast<AmqpMessageDeserializer*>(context);
+
+        deserializer->OnAmqpMessageFieldDecoded(value);
+      }
+
+      // Invoked when a message field
+      void OnAmqpMessageFieldDecoded(AmqpValue value)
+      {
+        if (value.GetType() != AmqpValueType::Described)
+        {
+          throw std::runtime_error("Decoded message field whose type is NOT described.");
+        }
+        AmqpDescribed describedType(value.AsDescribed());
+        if (describedType.GetDescriptor().GetType() != AmqpValueType::Ulong)
+        {
+          throw std::runtime_error("Decoded message field MUST be a LONG type.");
+        }
+
+        AmqpDescriptors fieldDescriptor(
+            static_cast<AmqpDescriptors>(static_cast<uint64_t>(describedType.GetDescriptor())));
+        if (m_expectedMessageFields.find(fieldDescriptor) == m_expectedMessageFields.end())
+        {
+          throw std::runtime_error("Found message field is not in the set of expected fields.");
+        }
+        else
+        {
+          // Once we've seen a field, we can remove that field from the set of expected fields,
+          // and also the fields which must come before it.
+          //
+          // The two exceptions are the DataBinary and DataAmqpSequence  fields, which can have
+          // more than one instance.
+          switch (fieldDescriptor)
+          {
+            case AmqpDescriptors::Header:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              break;
+            case AmqpDescriptors::DeliveryAnnotations:
+              // Once we've seen a DeliveryAnnotations, we no longer expect to see a Header or
+              // another DeliveryAnnotations.
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              break;
+            case AmqpDescriptors::MessageAnnotations:
+              // Once we've seen a MessageAnnotations, we no longer expect to see a Header,
+              // DeliveryAnnotations, or a MessageAnnotations.
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              break;
+            case AmqpDescriptors::Properties:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::Properties);
+              break;
+            case AmqpDescriptors::ApplicationProperties:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::Properties);
+              m_expectedMessageFields.erase(AmqpDescriptors::ApplicationProperties);
+              break;
+            case AmqpDescriptors::DataAmqpSequence:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::Properties);
+              m_expectedMessageFields.erase(AmqpDescriptors::ApplicationProperties);
+              // When we see an DataAmqpSequence, we no longer expect to see any other data type.
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpValue);
+              m_expectedMessageFields.erase(AmqpDescriptors::DataBinary);
+              break;
+            case AmqpDescriptors::DataAmqpValue:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::Properties);
+              m_expectedMessageFields.erase(AmqpDescriptors::ApplicationProperties);
+              // When we see an DataAmqpValue, we no longer expect to see any other data type.
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpValue);
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpSequence);
+              m_expectedMessageFields.erase(AmqpDescriptors::DataBinary);
+              break;
+            case AmqpDescriptors::DataBinary:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::Properties);
+              m_expectedMessageFields.erase(AmqpDescriptors::ApplicationProperties);
+              // When we see an DataBinary, we no longer expect to see any other data type.
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpValue);
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpSequence);
+              break;
+            case AmqpDescriptors::Footer:
+              m_expectedMessageFields.erase(AmqpDescriptors::Header);
+              m_expectedMessageFields.erase(AmqpDescriptors::DeliveryAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::MessageAnnotations);
+              m_expectedMessageFields.erase(AmqpDescriptors::Properties);
+              m_expectedMessageFields.erase(AmqpDescriptors::ApplicationProperties);
+              // When we see an DataBinary, we no longer expect to see any other data type.
+              m_expectedMessageFields.erase(AmqpDescriptors::DataBinary);
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpValue);
+              m_expectedMessageFields.erase(AmqpDescriptors::DataAmqpSequence);
+              m_expectedMessageFields.erase(AmqpDescriptors::Footer);
+              break;
+            default:
+              throw std::runtime_error("Unknown message descriptor.");
+          }
+        }
+
+        switch (fieldDescriptor)
+        {
+          case AmqpDescriptors::Header: {
+            UniqueMessageHeaderHandle messageHeader;
+            HEADER_HANDLE h;
+            if (amqpvalue_get_header(value, &h))
+            {
+              throw std::runtime_error("Could not convert field to header.");
+            }
+            messageHeader.reset(h);
+            h = nullptr;
+            m_decodedValue.Header = _internal::MessageHeaderFactory::FromUamqp(messageHeader);
+            break;
+          }
+          case AmqpDescriptors::DeliveryAnnotations:
+            m_decodedValue.DeliveryAnnotations = describedType.GetValue().AsMap();
+            break;
+          case AmqpDescriptors::MessageAnnotations:
+            m_decodedValue.MessageAnnotations = describedType.GetValue().AsMap();
+            break;
+          case AmqpDescriptors::Properties: {
+            UniquePropertiesHandle properties;
+            PROPERTIES_HANDLE h;
+            if (amqpvalue_get_properties(value, &h))
+            {
+              throw std::runtime_error("Could not convert field to header.");
+            }
+            properties.reset(h);
+            h = nullptr;
+            m_decodedValue.Properties = _internal::MessagePropertiesFactory::FromUamqp(properties);
+            break;
+          }
+          case AmqpDescriptors::ApplicationProperties: {
+            auto propertyMap = describedType.GetValue().AsMap();
+            for (auto const& val : propertyMap)
+            {
+              if (val.first.GetType() != AmqpValueType::String)
+              {
+                throw std::runtime_error("Key of applications properties must be a string.");
+              }
+              if ((val.second.GetType() == AmqpValueType::List)
+                  || (val.second.GetType() == AmqpValueType::Map)
+                  || (val.second.GetType() == AmqpValueType::Composite)
+                  || (val.second.GetType() == AmqpValueType::Described))
+              {
+                throw std::runtime_error(
+                    "Message Application Property values must be simple value types");
+              }
+              m_decodedValue.ApplicationProperties.emplace(
+                  static_cast<std::string>(val.first), val.second);
+            }
+            break;
+          }
+          case AmqpDescriptors::DataAmqpValue:
+            m_decodedValue.SetBody(describedType.GetValue());
+            break;
+          case AmqpDescriptors::DataAmqpSequence:
+            m_decodedValue.SetBody(describedType.GetValue().AsList());
+            break;
+          case AmqpDescriptors::DataBinary:
+            // Each call to SetBody will append the binary value to the vector of binary bodies.
+            m_decodedValue.SetBody(describedType.GetValue().AsBinary());
+            break;
+          case AmqpDescriptors::Footer:
+            m_decodedValue.Footer = describedType.GetValue().AsMap();
+            break;
+          default: // LCOV_EXCL_LINE
+            throw std::runtime_error("Unknown message descriptor."); // LCOV_EXCL_LINE
+        }
+      }
+    };
+  } // namespace
+
+  AmqpMessage AmqpMessage::Deserialize(std::uint8_t const* buffer, size_t size)
+  {
+    return AmqpMessageDeserializer{}(buffer, size);
   }
 
   std::ostream& operator<<(std::ostream& os, AmqpMessage const& message)

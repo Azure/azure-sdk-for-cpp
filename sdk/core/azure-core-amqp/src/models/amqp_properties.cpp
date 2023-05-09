@@ -230,6 +230,74 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   namespace {
+
+    template <typename T> bool CompareNullable(T const& left, T const& right)
+    {
+      if (left.HasValue() != right.HasValue())
+      {
+        return false;
+      }
+      if (left.HasValue())
+      {
+        return left.Value() == right.Value();
+      }
+      return true;
+    }
+  } // namespace
+
+  bool MessageProperties::operator==(MessageProperties const& that) const noexcept
+  {
+    return (
+        CompareNullable(MessageId, that.MessageId)
+        && CompareNullable(CorrelationId, that.CorrelationId)
+        && CompareNullable(UserId, that.UserId) && CompareNullable(To, that.To)
+        && CompareNullable(Subject, that.Subject) && CompareNullable(ReplyTo, that.ReplyTo)
+        && CompareNullable(ContentType, that.ContentType)
+        && CompareNullable(ContentEncoding, that.ContentEncoding)
+        && CompareNullable(AbsoluteExpiryTime, that.AbsoluteExpiryTime)
+        && CompareNullable(CreationTime, that.CreationTime)
+        && CompareNullable(GroupId, that.GroupId)
+        && CompareNullable(GroupSequence, that.GroupSequence)
+        && CompareNullable(ReplyToGroupId, that.ReplyToGroupId));
+  }
+
+  bool MessageProperties::ShouldSerialize() const noexcept
+  {
+    return (
+        MessageId.HasValue() || CorrelationId.HasValue() || UserId.HasValue() || To.HasValue()
+        || Subject.HasValue() || ReplyTo.HasValue() || ContentType.HasValue()
+        || ContentEncoding.HasValue() || AbsoluteExpiryTime.HasValue() || CreationTime.HasValue()
+        || GroupId.HasValue() || GroupSequence.HasValue() || ReplyToGroupId.HasValue());
+  }
+
+  size_t MessageProperties::GetSerializedSize(MessageProperties const& properties)
+  {
+    auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);
+    AmqpValue propertiesAsValue{amqpvalue_create_properties(handle.get())};
+    return AmqpValue::GetSerializedSize(propertiesAsValue);
+  }
+
+  std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
+  {
+    auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);
+    AmqpValue propertiesAsValue{amqpvalue_create_properties(handle.get())};
+    return Azure::Core::Amqp::Models::AmqpValue::Serialize(propertiesAsValue);
+  }
+
+  MessageProperties MessageProperties::Deserialize(uint8_t const* data, size_t size)
+  {
+    AmqpValue value{AmqpValue::Deserialize(data, size)};
+    PROPERTIES_HANDLE handle;
+    if (amqpvalue_get_properties(value, &handle))
+    {
+      throw std::runtime_error("Could not convert value to AMQP Properties.");
+    }
+    UniquePropertiesHandle uniqueHandle{handle};
+    handle = nullptr;
+    return _internal::MessagePropertiesFactory::FromUamqp(uniqueHandle);
+  }
+
+  namespace {
     std::string timeToString(std::chrono::system_clock::time_point t)
     {
       std::time_t time = std::chrono::system_clock::to_time_t(t);

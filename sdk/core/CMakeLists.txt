@@ -15,7 +15,7 @@ endif()
 
 # AMQP is an optional feature, don't include it unless explicitly enabled.
 if (ENABLE_AZURE_CORE_AMQP)
-add_subdirectory(azure-core-amqp)
+  add_subdirectory(azure-core-amqp)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS) 

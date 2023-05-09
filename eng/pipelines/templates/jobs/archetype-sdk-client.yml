@@ -41,17 +41,28 @@ parameters:
   - name: PostTestSteps
     type: stepList
     default: []
+  - name: MatrixFile
+    type: string
+    default: eng/pipelines/templates/stages/platform-matrix.json
+  - name: JobName
+    type: string
+    default: Validate 
+  - name: RunMetaJobs
+    type: boolean
+    default: true
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
+      GenerateJobName: ${{ parameters.JobName }}_generate_matrix
       MatrixConfigs:
         - Name: base
-          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Path: ${{ parameters.MatrixFile }}
           Selection: all
           GenerateVMJobs: true
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       AdditionalParameters:
+        DisplayName: ${{ parameters.JobName }}
         Artifacts: ${{ parameters.Artifacts }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
@@ -66,7 +77,7 @@ jobs:
         PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
-  - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
+  - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
     - ${{ each artifact in parameters.Artifacts }}:
       - job:
         displayName: Create API Review for ${{ artifact.name }}
@@ -118,7 +129,6 @@ jobs:
               pwsh: true
               workingDirectory: $(Pipeline.Workspace)
             displayName: Create API Review for ${{ artifact.name }}
-            continueOnError: true
             condition: >-
               and(
                 succeeded(),

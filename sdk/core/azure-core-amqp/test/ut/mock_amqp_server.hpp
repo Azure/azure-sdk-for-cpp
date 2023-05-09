@@ -8,6 +8,7 @@
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/message_sender.hpp>
 #include <azure/core/amqp/models/amqp_message.hpp>
+#include <azure/core/amqp/models/amqp_protocol.hpp>
 #include <azure/core/amqp/models/message_source.hpp>
 #include <azure/core/amqp/models/message_target.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
@@ -17,10 +18,6 @@
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {
-
-// AMQP ApplicationProperties descriptor (AMQP Specification 1.0 section 3.2.5)
-// http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-application-properties
-constexpr uint64_t AmqpApplicationPropertiesDescriptor = 116;
 
 class AmqpServerMock : public Azure::Core::Amqp::Network::_internal::SocketListenerEvents,
                        public Azure::Core::Amqp::_internal::ConnectionEvents,

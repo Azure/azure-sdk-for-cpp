@@ -48,7 +48,7 @@ Azure::Messaging::EventHubs::PartitionClient Azure::Messaging::EventHubs::Consum
   connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
   connectOptions.EnableTrace = m_consumerClientOptions.ReceiverOptions.EnableTrace;
   connectOptions.HostName = m_credentials.FullyQualifiedNamespace;
-  Azure::Core::Amqp::_internal::Connection connection(m_credentials.HostUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
 
   Azure::Core::Amqp::_internal::Session session(connection, nullptr);
   session.SetIncomingWindow(

@@ -24,11 +24,6 @@ namespace Azure { namespace Core {
     static constexpr size_t UuidSize = 16;
 
     std::array<uint8_t, UuidSize> m_uuid;
-    // The UUID reserved variants.
-    static constexpr uint8_t ReservedNCS = 0x80;
-    static constexpr uint8_t ReservedRFC4122 = 0x40;
-    static constexpr uint8_t ReservedMicrosoft = 0x20;
-    static constexpr uint8_t ReservedFuture = 0x00;
 
   private:
     Uuid(uint8_t const uuid[UuidSize]) { std::memcpy(m_uuid.data(), uuid, UuidSize); }

@@ -73,20 +73,21 @@ namespace Azure { namespace Core { namespace Amqp {
         std::shared_ptr<_detail::ConnectionImpl> connection,
         _internal::Endpoint& endpoint,
         _internal::SessionEvents* eventHandler)
-        : m_session{session_create_from_endpoint(
-            *connection,
-            endpoint.Release(),
-            SessionImpl::OnLinkAttachedFn,
-            this)},
-          m_connectionToPoll(connection), m_eventHandler{eventHandler}
+        : m_connectionToPoll(connection), m_session{session_create_from_endpoint(
+                                              *connection,
+                                              endpoint.Release(),
+                                              SessionImpl::OnLinkAttachedFn,
+                                              this)},
+          m_eventHandler{eventHandler}
     {
     }
 
     SessionImpl::SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> connection,
         _internal::SessionEvents* eventHandler)
-        : m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
-          m_connectionToPoll(connection), m_eventHandler{eventHandler}
+        : m_connectionToPoll(connection),
+          m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
+          m_eventHandler{eventHandler}
 
     {
     }
