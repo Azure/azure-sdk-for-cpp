@@ -1,14 +1,10 @@
 # Release History
 
-## 4.2.0-beta.2 (Unreleased)
+## 4.2.0 (2023-05-09)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for challenge-based and multi-tenant authentication.
 
 ## 4.2.0-beta.1 (2023-04-11)
 
