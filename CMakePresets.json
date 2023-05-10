@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 2,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 13,
@@ -59,7 +59,8 @@
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows"
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "BUILD_SHARED_LIBS": true
       },
       "architecture": {
         "value": "x64",
@@ -73,7 +74,8 @@
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x86-windows"
+        "VCPKG_TARGET_TRIPLET": "x86-windows",
+        "BUILD_SHARED_LIBS": true
       },
       "architecture": {
         "value": "x86",
@@ -185,16 +187,29 @@
       }
     },
     {
+      "name": "x64-debug-tests",
+      "displayName": "X64 Debug With Tests, winhttp+curl",
+      "description": "Windows X64 Debug build with Tests configured",
+      "inherits": "x64-debug",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "ENABLE_PROXY_TESTS": false,
+        "BUILD_SAMPLES": true,
+        "BUILD_PERFORMANCE_TESTS": true,
+        "BUILD_TRANSPORT_WINHTTP": true,
+        "BUILD_TRANSPORT_CURL": true
+      }
+    },
+    {
       "name": "x64-static-debug-tests",
-      "displayName": "X64 Debug With Tests, static, winhttp",
+      "displayName": "X64 Debug With Tests, static",
       "description": "Windows X64 Debug build with Tests configured",
       "inherits": "x64-static-debug",
       "cacheVariables": {
         "BUILD_TESTING": true,
         "ENABLE_PROXY_TESTS": false,
         "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_TRANSPORT_WINHTTP": true
+        "BUILD_PERFORMANCE_TESTS": true
       }
     },
     {

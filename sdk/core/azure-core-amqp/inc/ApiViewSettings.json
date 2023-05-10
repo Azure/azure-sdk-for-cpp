@@ -1,0 +1,26 @@
+{
+  "sourceFilesToProcess": null,
+  "sourceFilesToSkip": [
+    "azure/core/amqp/network/private/transport_impl.hpp",
+    "azure/core/amqp/private/claims_based_security_impl.hpp",
+    "azure/core/amqp/private/link_impl.hpp",
+    "azure/core/amqp/private/message_sender_impl.hpp",
+    "azure/core/amqp/private/message_receiver_impl.hpp",
+    "azure/core/amqp/private/session_impl.hpp",
+    "azure/core/amqp/private/connection_impl.hpp"
+],
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc"
+  ],
+  "additionalCompilerSwitches": [
+    "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
+  ],
+  "allowInternal": true,
+  "includeInternal": true,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::",
+  "reviewName": "Azure Core AMQP API Review",
+  "serviceName": null,
+  "packageName": "azure-core-amqp-cpp"
+}
