@@ -32,7 +32,6 @@ TEST_F(TestHeaders, SimpleCreate)
 TEST_F(TestHeaders, TestTtl)
 {
   MessageHeader header;
-  //  EXPECT_EQ(0, header.GetTimeToLive().count());
   header.TimeToLive = std::chrono::milliseconds(100);
 
   auto handle = _internal::MessageHeaderFactory::ToUamqp(header);

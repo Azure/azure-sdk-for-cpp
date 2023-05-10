@@ -7,11 +7,6 @@
 #include <algorithm>
 #include <azure/core/base64.hpp>
 #include <azure/core/url.hpp>
-#include <iostream>
-#include <iterator>
-#include <unordered_map>
-#include <vector>
-
 #include <azure_c_shared_utility/azure_base64.h>
 #include <azure_c_shared_utility/buffer_.h>
 #include <azure_c_shared_utility/sastoken.h>

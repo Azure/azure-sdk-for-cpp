@@ -383,7 +383,6 @@ TEST_F(TestSourceTarget, SourceProperties)
     EXPECT_EQ(1, source.GetOutcomes().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());
     EXPECT_EQ(source.GetOutcomes().at(0).AsSymbol(), "Test");
-
     GTEST_LOG_(INFO) << "Source: " << source;
   }
 

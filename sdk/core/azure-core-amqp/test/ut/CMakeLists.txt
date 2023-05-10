@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-
 cmake_minimum_required (VERSION 3.13)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -12,7 +11,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(AzureBuildTargetForCI)
 include(GoogleTest)
-
 
 # Unit Tests
 add_executable(azure-core-amqp-tests

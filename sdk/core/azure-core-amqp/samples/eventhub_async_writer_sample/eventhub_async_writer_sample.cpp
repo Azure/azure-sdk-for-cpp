@@ -21,7 +21,6 @@ int main()
   connectOptions.ContainerId = "some";
   connectOptions.HostName = credentials->GetHostName();
   connectOptions.SaslCredentials = credentials;
-  //  connectOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::Connection connection(targetUrl, connectOptions);
 
   Azure::Core::Amqp::_internal::Session session(connection, nullptr);

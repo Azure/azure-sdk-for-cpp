@@ -2,7 +2,6 @@
 // SPDX-Licence-Identifier: MIT
 
 #pragma once
-
 #include <azure/core/amqp/claims_based_security.hpp>
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>

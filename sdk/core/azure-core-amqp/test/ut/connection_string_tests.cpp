@@ -6,8 +6,6 @@
 #include <gtest/gtest.h>
 #include <utility>
 
-#include "azure/core/amqp/connection_string_credential.hpp"
-
 class ConnectionStringTest : public testing::Test {
 protected:
   void SetUp() override {}

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
@@ -272,8 +270,7 @@ private:
     return true;
   }
   virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
-
-  // Inherited via MessageReceiver
+    // Inherited via MessageReceiver
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
       Azure::Core::Amqp::_internal::MessageReceiver const&,
       Azure::Core::Amqp::Models::AmqpMessage const&) override

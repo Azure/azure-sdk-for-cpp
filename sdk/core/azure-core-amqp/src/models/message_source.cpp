@@ -279,7 +279,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-
   std::string MessageSource::GetDistributionMode() const
   {
     const char* value;
@@ -289,7 +288,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-
   Azure::Core::Amqp::Models::AmqpMap MessageSource::GetFilter() const
   {
     AMQP_VALUE value;
@@ -342,22 +340,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         return "Unsettled State";
     }
     throw std::runtime_error("Unknown terminus durability"); // LCOV_EXCL_LINE
-  }
-
-  const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy policy)
-  {
-    switch (policy)
-    {
-      case TerminusExpiryPolicy::LinkDetach:
-        return "LinkDetach";
-      case TerminusExpiryPolicy::SessionEnd:
-        return "Session End";
-      case TerminusExpiryPolicy::ConnectionClose:
-        return "Connection Close";
-      case TerminusExpiryPolicy::Never:
-        return "Never";
-    }
-    throw std::runtime_error("Unknown terminus expiry policy");
   }
 
   std::ostream& operator<<(std::ostream& os, MessageSource const& source)

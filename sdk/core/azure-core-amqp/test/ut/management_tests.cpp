@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "mock_amqp_server.hpp"
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/management.hpp>
@@ -222,6 +220,9 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
     messageToSend.SetBody(AmqpValue("Test"));
 
     auto response = management.ExecuteOperation("Test", "Test", "Test", messageToSend);
+    EXPECT_EQ(response.Status, ManagementOperationStatus::FailedBadStatus);
+    EXPECT_EQ(response.StatusCode, 500);
+    EXPECT_EQ(response.Description, "Bad Things Happened.");
     management.Close();
 
     mockServer.StopListening();

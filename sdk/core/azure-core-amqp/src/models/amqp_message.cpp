@@ -52,7 +52,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return nullptr;
     }
   } // namespace
-
   AmqpMessage _internal::AmqpMessageFactory::FromUamqp(UniqueMessageHandle const& message)
   {
     return FromUamqp(message.get());

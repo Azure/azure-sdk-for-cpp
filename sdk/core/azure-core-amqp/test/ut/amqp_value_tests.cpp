@@ -6,7 +6,6 @@
 #include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include <algorithm>
-#include <cuchar>
 #include <random>
 
 using namespace Azure::Core::Amqp::Models;
