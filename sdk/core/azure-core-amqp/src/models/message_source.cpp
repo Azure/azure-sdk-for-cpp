@@ -179,7 +179,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Capabilities.empty())
     {
       if (source_set_capabilities(
-              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
+              m_source.get(),
+              static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
