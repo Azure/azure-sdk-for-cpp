@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     auto rv = messaging_delivery_released();
     if (!rv)
     {
-      throw std::runtime_error("Could not allocate delivery accepted described value.");
+      throw std::runtime_error("Could not allocate delivery released described value.");
     }
     return rv;
   }
@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     auto rv = messaging_delivery_received(sectionNumber, sectionOffset);
     if (!rv)
     {
-      throw std::runtime_error("Could not allocate delivery accepted described value.");
+      throw std::runtime_error("Could not allocate delivery received described value.");
     }
     return rv;
   }
@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         errorDescription.empty() ? nullptr : errorDescription.c_str());
     if (!rv)
     {
-      throw std::runtime_error("Could not allocate delivery accepted described value.");
+      throw std::runtime_error("Could not allocate delivery rejected described value.");
     }
     return rv;
   }
@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     auto rv = messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations);
     if (!rv)
     {
-      throw std::runtime_error("Could not allocate delivery accepted described value.");
+      throw std::runtime_error("Could not allocate delivery modified described value.");
     }
     return rv;
   }
@@ -67,7 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     auto rv = messaging_create_source(address.c_str());
     if (!rv)
     {
-      throw std::runtime_error("Could not allocate delivery accepted described value.");
+      throw std::runtime_error("Could not allocate source described value.");
     }
     return rv;
   }
@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     auto rv = messaging_create_target(address.c_str());
     if (!rv)
     {
-      throw std::runtime_error("Could not allocate delivery accepted described value.");
+      throw std::runtime_error("Could not allocate target described value.");
     }
     return rv;
   }
