@@ -214,7 +214,8 @@ private:
 int main()
 {
   SampleEvents sampleEvents;
-  Network::_internal::SocketListener listener(_detail::AmqpPort, &sampleEvents);
+  // Configure a socket listener on the AMQP port (5672).
+  Network::_internal::SocketListener listener(5672, &sampleEvents);
 
   listener.Start();
   auto connection = sampleEvents.WaitForIncomingConnection(listener);

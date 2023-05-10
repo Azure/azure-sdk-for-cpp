@@ -62,7 +62,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Models::AmqpValue deliveryState);
     void SetTrace(bool traceEnabled);
 
-    //    Models::Message WaitForIncomingMessage();
     template <class... Waiters>
     Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
         Azure::Core::Context context,

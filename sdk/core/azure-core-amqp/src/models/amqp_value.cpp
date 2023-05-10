@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     that.m_value = nullptr;
   }
-  AmqpValue::AmqpValue(AMQP_VALUE_DATA_TAG* value)
+  AmqpValue::AmqpValue(AMQP_VALUE value)
   {
     // We shouldn't take ownership of the incoming value, so instead we clone it.
     // if no value is provided, treat it as null.
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   }
 
-  AmqpValue::operator AMQP_VALUE_DATA_TAG*() const { return m_value.get(); }
+  AmqpValue::operator AMQP_VALUE() const { return m_value.get(); }
 
   AmqpValue& AmqpValue::operator=(AmqpValue const& that)
   {

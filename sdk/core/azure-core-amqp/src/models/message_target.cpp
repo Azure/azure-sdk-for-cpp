@@ -44,7 +44,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not create source."); // LCOV_EXCL_LINE
     }
-    if (target_set_address(m_target.get(), amqpvalue_create_string(address.c_str())))
+    if (target_set_address(m_target.get(), AmqpValue{address}))
     {
       throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
     }
@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not create source."); // LCOV_EXCL_LINE
     }
-    if (target_set_address(m_target.get(), amqpvalue_create_string(address)))
+    if (target_set_address(m_target.get(), AmqpValue{address}))
     {
       throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
     }

@@ -158,6 +158,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpValue(std::int8_t value);
+
+    /** @brief Construct an AMQP byte value, an 8 bit signed integer.
+     *
+     * Defined in [AMQP Core Types
+     * section 1.6.7](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-byte).
+     *
+     * @param value value to be set.
+     *
+     * @remarks This field is a convenience overload to allow clients to declare an AmqpValue with a
+     * C++ character.
+     *
+     */
     AmqpValue(char value);
 
     /** @brief Construct an AMQP short value, a 16 bit signed integer.
