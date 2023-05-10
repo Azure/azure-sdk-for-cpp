@@ -7,8 +7,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(eventhub_sas_writer_sample)
 
-#find_package(azure-identity-cpp CONFIG REQUIRED)
-
 add_executable(eventhub_token_writer_sample
     eventhub_token_writer_sample.cpp
 )

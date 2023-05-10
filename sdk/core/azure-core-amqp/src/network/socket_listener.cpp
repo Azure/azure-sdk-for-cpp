@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       listener->m_eventHandler->OnSocketAccepted(transport);
     }
   }
-    void SocketListener::Start()
+  void SocketListener::Start()
   {
     if (m_started)
     {
