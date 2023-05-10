@@ -21,7 +21,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   };
   class SocketListener final {
   public:
-    using SocketAcceptedFn = std::function<void(std::shared_ptr<Transport>)>;
     SocketListener(uint16_t port, SocketListenerEvents* eventHandler);
     ~SocketListener();
 
@@ -39,7 +38,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     std::atomic_bool m_started{false};
     SocketListenerEvents* m_eventHandler{};
 
-    SocketAcceptedFn m_onConnection;
     SOCKET_LISTENER_INSTANCE_TAG* m_socket;
   };
 

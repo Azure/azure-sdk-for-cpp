@@ -48,8 +48,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
   }
 
-  Management::operator bool() const { return static_cast<bool>(m_impl); }
-
   /**
    * @brief Open the management instance.
    *

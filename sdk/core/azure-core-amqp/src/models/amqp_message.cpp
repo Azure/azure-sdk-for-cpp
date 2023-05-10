@@ -390,57 +390,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         && (m_binaryDataBody == that.m_binaryDataBody);
   }
 
-  size_t AmqpMessage::GetSerializedSize(AmqpMessage const& message)
-  {
-    size_t serializedSize{};
-
-    serializedSize += MessageHeader::GetSerializedSize(message.Header);
-    serializedSize += AmqpValue::GetSerializedSize(message.MessageAnnotations);
-    serializedSize += MessageProperties::GetSerializedSize(message.Properties);
-
-    // ApplicationProperties is a map of string to value, we need to convert it to an AmqpMap.
-    {
-      AmqpMap appProperties;
-      for (auto const& val : message.ApplicationProperties)
-      {
-        if ((val.second.GetType() == AmqpValueType::List)
-            || (val.second.GetType() == AmqpValueType::Map)
-            || (val.second.GetType() == AmqpValueType::Composite)
-            || (val.second.GetType() == AmqpValueType::Described))
-        {
-          throw std::runtime_error(
-              "Message Application Property values must be simple value types");
-        }
-        appProperties.emplace(val);
-      }
-      serializedSize += AmqpValue::GetSerializedSize(appProperties);
-    }
-
-    switch (message.BodyType)
-    {
-      default:
-      case MessageBodyType::Invalid:
-        throw std::runtime_error("Invalid message body type.");
-
-      case MessageBodyType::Value:
-        serializedSize += AmqpValue::GetSerializedSize(message.m_amqpValueBody);
-        break;
-      case MessageBodyType::Data:
-        for (auto const& val : message.m_binaryDataBody)
-        {
-          serializedSize += AmqpValue::GetSerializedSize(val);
-        }
-        break;
-      case MessageBodyType::Sequence:
-        for (auto const& val : message.m_amqpSequenceBody)
-        {
-          serializedSize += AmqpValue::GetSerializedSize(val);
-        }
-        break;
-    }
-    return serializedSize;
-  }
-
   std::vector<uint8_t> AmqpMessage::Serialize(AmqpMessage const& message)
   {
     std::vector<uint8_t> rv;

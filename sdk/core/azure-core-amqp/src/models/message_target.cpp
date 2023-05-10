@@ -174,13 +174,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return address;
   }
-  void MessageTarget::SetAddress(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (target_set_address(m_target.get(), value))
-    {
-      throw std::runtime_error("Could not set value."); // LCOV_EXCL_LINE
-    }
-  }
 
   TerminusDurability MessageTarget::GetTerminusDurability() const
   {
@@ -199,28 +192,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         return TerminusDurability::UnsettledState;
       default:
         throw std::logic_error("Unknown terminus durability.");
-    }
-  }
-  void MessageTarget::SetTerminusDurability(TerminusDurability value)
-  {
-    terminus_durability durability;
-    switch (value)
-    {
-      case TerminusDurability::None:
-        durability = terminus_durability_none;
-        break;
-      case TerminusDurability::Configuration:
-        durability = terminus_durability_configuration;
-        break;
-      case TerminusDurability::UnsettledState:
-        durability = terminus_durability_unsettled_state;
-        break;
-      default: // LCOV_EXCL_LINE
-        throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
-    }
-    if (target_set_durable(m_target.get(), durability))
-    {
-      throw std::runtime_error("Could not set durable."); // LCOV_EXCL_LINE
     }
   }
 
@@ -250,31 +221,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     throw std::logic_error(
         std::string("Unknown terminus expiry policy: ") + value); // LCOV_EXCL_LINE
   }
-  void MessageTarget::SetExpiryPolicy(TerminusExpiryPolicy value)
-  {
-    terminus_expiry_policy policy;
-    switch (value)
-    {
-      case TerminusExpiryPolicy::LinkDetach:
-        policy = terminus_expiry_policy_link_detach;
-        break;
-      case TerminusExpiryPolicy::SessionEnd:
-        policy = terminus_expiry_policy_session_end;
-        break;
-      case TerminusExpiryPolicy::ConnectionClose:
-        policy = terminus_expiry_policy_connection_close;
-        break;
-      case TerminusExpiryPolicy::Never:
-        policy = terminus_expiry_policy_never;
-        break;
-      default: // LCOV_EXCL_LINE
-        throw std::logic_error("Unknown terminus expiry policy."); // LCOV_EXCL_LINE
-    }
-    if (target_set_expiry_policy(m_target.get(), policy))
-    {
-      throw std::runtime_error("Could not set expiry policy."); // LCOV_EXCL_LINE
-    }
-  }
 
   std::chrono::system_clock::time_point MessageTarget::GetTimeout() const
   {
@@ -284,17 +230,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not get timeout from source.");
     }
     return std::chrono::system_clock::from_time_t(value);
-  }
-  void MessageTarget::SetTimeout(std::chrono::system_clock::time_point const& value)
-  {
-    if (target_set_timeout(
-            m_target.get(),
-            static_cast<uint32_t>(
-                std::chrono::duration_cast<std::chrono::seconds>(value.time_since_epoch())
-                    .count())))
-    {
-      throw std::runtime_error("Could not set timeout."); // LCOV_EXCL_LINE
-    }
   }
 
   bool MessageTarget::GetDynamic() const
@@ -327,24 +262,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  // Set a single capability.
-  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (target_set_capabilities(m_target.get(), value))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
-  }
-  // Set multiple capabilities.
-  void MessageTarget::SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& value)
-  {
-    if (target_set_capabilities(m_target.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
-  }
   extern const char* StringFromTerminusDurability(TerminusDurability);
-  extern const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy);
 
   std::ostream& operator<<(std::ostream& os, MessageTarget const& target)
   {

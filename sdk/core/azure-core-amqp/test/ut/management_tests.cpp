@@ -23,15 +23,9 @@ using namespace Azure::Core::Amqp::_internal;
 TEST_F(TestManagement, BasicTests)
 {
   {
-    Management management;
-    EXPECT_FALSE(management);
-  }
-
-  {
     Connection connection("amqps://localhost:5151", {});
     Session session(connection);
     Management management(session, "Test", {});
-    EXPECT_TRUE(management);
   }
 }
 #if !defined(AZ_PLATFORM_MAC)

@@ -158,15 +158,6 @@ private:
     (void)connection;
   };
 
-  virtual void OnEndpointFrameReceived(
-      Connection const& connection,
-      Azure::Core::Amqp::Models::AmqpValue const& value,
-      uint32_t framePayloadSize,
-      uint8_t* payloadBytes) override
-  {
-    (void)connection;
-    (void)value, (void)framePayloadSize, (void)payloadBytes;
-  }
   virtual bool OnLinkAttached(
       Session const& sessionForLink,
       LinkEndpoint& newLink,

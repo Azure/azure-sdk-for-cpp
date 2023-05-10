@@ -31,10 +31,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   {
   }
 
-  Transport::Transport(XIO_HANDLE xio, TransportEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::TransportImpl>(xio, eventHandler)}
-  {
-  }
   Transport::~Transport() {}
 
   bool Transport::Open() { return m_impl->Open(); }

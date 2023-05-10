@@ -6,8 +6,6 @@
 #include "transport.hpp"
 #include <exception>
 
-struct XIO_INSTANCE_TAG;
-
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
   /** A transport that detects the AMQP header on an incoming message. Used when listening for

@@ -11,7 +11,6 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <cuchar>
 #include <exception>
 #include <functional>
 #include <list>
@@ -90,8 +89,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpTimestamp;
   class AmqpComposite;
   class AmqpDescribed;
-
-  using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
 
   class AmqpValue {
   public:
@@ -611,8 +608,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
        * @remarks This is an internal accessor and should never be used by code outside the AMQP
        * implementation.
        *
-       * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
-       * by the caller.
        */
       operator UniqueAmqpValueHandle() const;
     };

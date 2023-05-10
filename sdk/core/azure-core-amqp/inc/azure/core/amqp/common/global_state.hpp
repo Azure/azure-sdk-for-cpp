@@ -3,12 +3,6 @@
 
 #pragma once
 
-#include <atomic>
-#include <functional>
-#include <list>
-#include <mutex>
-#include <thread>
-
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
   /**

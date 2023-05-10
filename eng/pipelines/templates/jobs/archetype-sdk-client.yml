@@ -191,7 +191,6 @@ jobs:
               -DBUILD_TESTING=OFF
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
-              -DENABLE_AZURE_CORE_AMQP=ON
 
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com

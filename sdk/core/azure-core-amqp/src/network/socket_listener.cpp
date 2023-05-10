@@ -46,7 +46,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       void* ioParameters)
   {
     SocketListener* listener = static_cast<SocketListener*>(context);
-    XIO_HANDLE xio = xio_create(interfaceDescription, ioParameters);
     if (listener->m_eventHandler)
     {
       auto transport{std::make_shared<Transport>(std::make_shared<_detail::TransportImpl>(

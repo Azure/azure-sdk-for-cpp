@@ -427,14 +427,6 @@ protected:
     return true;
   }
 
-  virtual void OnEndpointFrameReceived(
-      Azure::Core::Amqp::_internal::Connection const&,
-      Azure::Core::Amqp::Models::AmqpValue const&,
-      uint32_t,
-      uint8_t*) override
-  {
-  }
-
   // Inherited via MessageReceiverEvents
   void OnMessageReceiverStateChanged(
       Azure::Core::Amqp::_internal::MessageReceiver const&,

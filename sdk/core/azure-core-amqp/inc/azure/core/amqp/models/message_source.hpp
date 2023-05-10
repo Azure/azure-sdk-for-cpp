@@ -41,12 +41,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Deletes a message target. */
     ~MessageSource() = default;
 
-    MessageSource(MessageSource const&);
-    MessageSource& operator=(MessageSource const&);
-    MessageSource(MessageSource&&) noexcept;
-    MessageSource& operator=(MessageSource&&) noexcept;
-
-    MessageSource(SOURCE_INSTANCE_TAG* message);
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
     MessageSource(Azure::Core::Amqp::Models::AmqpValue const& value);
 

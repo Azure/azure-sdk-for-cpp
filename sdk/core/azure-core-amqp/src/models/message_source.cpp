@@ -22,8 +22,6 @@ void Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessag
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  MessageSource::MessageSource(SOURCE_HANDLE handle) : m_source{handle} {}
-
   MessageSource::MessageSource(Azure::Core::Amqp::Models::AmqpValue const& source)
   {
     if (source.IsNull())
@@ -261,17 +259,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return std::chrono::system_clock::from_time_t(value);
   }
-  void MessageSource::SetTimeout(std::chrono::system_clock::time_point const& value)
-  {
-    if (source_set_timeout(
-            m_source.get(),
-            static_cast<uint32_t>(
-                std::chrono::duration_cast<std::chrono::seconds>(value.time_since_epoch())
-                    .count())))
-    {
-      throw std::runtime_error("Could not set value.");
-    }
-  }
 
   bool MessageSource::GetDynamic() const
   {
@@ -281,13 +268,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not get dynamic.");
     }
     return value;
-  }
-  void MessageSource::SetDynamic(bool value)
-  {
-    if (source_set_dynamic(m_source.get(), value))
-    {
-      throw std::runtime_error("Could not set dynamic.");
-    }
   }
 
   Azure::Core::Amqp::Models::AmqpMap MessageSource::GetDynamicNodeProperties() const
@@ -299,14 +279,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  void MessageSource::SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpMap const& value)
-  {
-    if (source_set_dynamic_node_properties(
-            m_source.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
-    {
-      throw std::runtime_error("Could not set dynamic node properties.");
-    }
-  }
 
   std::string MessageSource::GetDistributionMode() const
   {
@@ -316,13 +288,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not get distribution mode.");
     }
     return value;
-  }
-  void MessageSource::SetDistributionMode(std::string const& value)
-  {
-    if (source_set_distribution_mode(m_source.get(), value.c_str()))
-    {
-      throw std::runtime_error("Could not set dynamic node properties.");
-    }
   }
 
   Azure::Core::Amqp::Models::AmqpMap MessageSource::GetFilter() const
@@ -334,13 +299,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  void MessageSource::SetFilter(Azure::Core::Amqp::Models::AmqpMap const& value)
-  {
-    if (source_set_filter(m_source.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
-    {
-      throw std::runtime_error("Could not set filter set.");
-    }
-  }
 
   Azure::Core::Amqp::Models::AmqpValue MessageSource::GetDefaultOutcome() const
   {
@@ -350,13 +308,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not get default outcome.");
     }
     return value;
-  }
-  void MessageSource::SetDefaultOutcome(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (source_set_default_outcome(m_source.get(), value))
-    {
-      throw std::runtime_error("Could not set default outcome.");
-    }
   }
 
   Azure::Core::Amqp::Models::AmqpArray MessageSource::GetOutcomes() const
@@ -368,13 +319,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  void MessageSource::SetOutcomes(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (source_set_outcomes(m_source.get(), value))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
-  }
 
   Azure::Core::Amqp::Models::AmqpArray MessageSource::GetCapabilities() const
   {
@@ -384,20 +328,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not get capabilities.");
     }
     return value;
-  }
-  void MessageSource::SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (source_set_capabilities(m_source.get(), value))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
-  }
-  void MessageSource::SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& value)
-  {
-    if (source_set_capabilities(m_source.get(), static_cast<UniqueAmqpValueHandle>(value).get()))
-    {
-      throw std::runtime_error("Could not set outcomes.");
-    }
   }
 
   const char* StringFromTerminusDurability(TerminusDurability durability)

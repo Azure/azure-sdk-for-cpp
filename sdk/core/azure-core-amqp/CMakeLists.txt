@@ -100,11 +100,6 @@ create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;sample
 
 target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c PUBLIC Azure::azure-core)
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET azure-core-amqp PROPERTY CXX_STANDARD 14)
-endif()
-
-
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
 

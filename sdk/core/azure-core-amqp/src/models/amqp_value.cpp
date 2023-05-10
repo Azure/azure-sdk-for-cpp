@@ -190,6 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     int64_t value;
     if (amqpvalue_get_long(m_value.get(), &value) != 0)
     {
+      throw std::runtime_error("Could not retrieve long value");
     }
     return value;
   }

@@ -204,13 +204,6 @@ private:
     return true;
   }
   virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
-  virtual void OnEndpointFrameReceived(
-      Connection const&,
-      Azure::Core::Amqp::Models::AmqpValue const&,
-      uint32_t,
-      uint8_t*) override
-  {
-  }
 
   // Inherited via SessionEvents
   virtual bool OnLinkAttached(
@@ -618,7 +611,6 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
   MessageSender sender(session, tokenCredential, endpoint, senderOptions, nullptr);
-  EXPECT_TRUE(sender);
   sender.Open();
 
   Azure::Core::Amqp::Models::AmqpMessage message;

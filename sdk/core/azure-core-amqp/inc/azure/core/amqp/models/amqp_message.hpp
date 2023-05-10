@@ -232,12 +232,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     std::vector<AmqpBinaryData> GetBodyAsBinary() const;
 
-    /** @brief Returns the serialized size of the message.
-     *
-     * @remarks This API will fail if BodyType is not set.
-     */
-    static size_t GetSerializedSize(AmqpMessage const& message);
-
     /** @brief Serialize the message into a buffer.
      *
      * @remarks This API will fail if BodyType is not set.

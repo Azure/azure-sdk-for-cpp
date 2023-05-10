@@ -334,7 +334,6 @@ namespace Azure { namespace Core { namespace Amqp {
       {
         Azure::Core::Credentials::TokenRequestContext requestContext;
         requestContext.Scopes = m_options.AuthenticationScopes;
-        Azure::Core::Context context;
 
         Authenticate(
             CredentialType::BearerToken,

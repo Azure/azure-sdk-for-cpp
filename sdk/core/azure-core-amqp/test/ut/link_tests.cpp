@@ -208,13 +208,6 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
 
     return true;
   }
-  virtual void OnEndpointFrameReceived(
-      Connection const&,
-      Azure::Core::Amqp::Models::AmqpValue const&,
-      uint32_t,
-      uint8_t*) override
-  {
-  }
 
 public:
   LinkSocketListenerEvents() {}
