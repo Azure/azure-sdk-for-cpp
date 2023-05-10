@@ -13,14 +13,14 @@
 #include <iostream>
 #include <set>
 
-namespace Azure { namespace Core { namespace _internal {
-  void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
-  {
-    message_destroy(value);
-  }
-}}} // namespace Azure::Core::_internal
+void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(
+    MESSAGE_HANDLE value)
+{
+  message_destroy(value);
+}
 
 using namespace Azure::Core::Amqp::_detail;
+using namespace Azure::Core::Amqp::Models::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
@@ -215,9 +215,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             rv.BodyType = MessageBodyType::Value;
           }
           break;
-          case MESSAGE_BODY_TYPE_INVALID:
-          default:
-            throw std::runtime_error("Unknown body type.");
+          case MESSAGE_BODY_TYPE_INVALID: // LCOV_EXCL_LINE
+            throw std::runtime_error("Invalid message body type."); // LCOV_EXCL_LINE
+          default: // LCOV_EXCL_LINE
+            throw std::runtime_error("Unknown body type."); // LCOV_EXCL_LINE
         }
       }
     }
@@ -296,7 +297,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case MessageBodyType::Data:
         for (auto const& binaryVal : message.m_binaryDataBody)
         {
-          BINARY_DATA valueData;
+          BINARY_DATA valueData{};
           valueData.bytes = binaryVal.data();
           valueData.length = static_cast<uint32_t>(binaryVal.size());
           if (message_add_body_amqp_data(rv.get(), valueData))

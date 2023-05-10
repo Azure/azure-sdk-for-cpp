@@ -18,9 +18,27 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TA
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
+  struct MessageSourceOptions
+  {
+    Azure::Core::Amqp::Models::AmqpValue Address;
+    Azure::Nullable<TerminusDurability> SourceTerminusDurability;
+    Azure::Nullable<TerminusExpiryPolicy> SourceTerminusExpiryPolicy;
+    Azure::Nullable<std::chrono::system_clock::time_point> Timeout;
+    Azure::Nullable<bool> Dynamic;
+    Azure::Core::Amqp::Models::AmqpMap DynamicNodeProperties;
+    Azure::Nullable<std::string> DistributionMode;
+    Azure::Core::Amqp::Models::AmqpMap Filter;
+    Azure::Core::Amqp::Models::AmqpValue DefaultOutcome;
+    Azure::Core::Amqp::Models::AmqpArray Outcomes;
+    Azure::Core::Amqp::Models::AmqpArray Capabilities;
+  };
+
   class MessageSource final {
   public:
+    /** @brief Creates a default message target.
+     */
     MessageSource();
+    /** @brief Deletes a message target. */
     ~MessageSource() = default;
 
     MessageSource(MessageSource const&);
@@ -32,49 +50,152 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
     MessageSource(Azure::Core::Amqp::Models::AmqpValue const& value);
 
-    MessageSource(std::string const& value);
-    MessageSource(char const* value);
+    /** @brief Creates a message source with detailed options.
+     *
+     * @param options Options used constructing the message source.
+     */
 
-    operator SOURCE_INSTANCE_TAG*() const { return m_source.get(); }
+    MessageSource(MessageSourceOptions const& options);
+
+    /** @brief Creates a message source with the given address.
+     *
+     * @param address The address of the source.
+     */
+    MessageSource(std::string const& address);
+
+    /** @brief Creates a message source with the given address.
+     *
+     * @param address The address of the source.
+     */
+    MessageSource(char const* address);
+
+    /** @brief Creates an AMQP value from a message source.
+     *
+     * @remarks Creates an AMQP Described value with the descriptor being the message source (0x29).
+     */
     operator const Azure::Core::Amqp::Models::AmqpValue() const;
 
+    /** @brief Gets the address of the source.
+     *
+     * @return The address of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
-    void SetAddress(Azure::Core::Amqp::Models::AmqpValue const& address);
 
+    /** @brief Gets the durability of the source.
+     *
+     * @return The durability of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     TerminusDurability GetTerminusDurability() const;
-    void SetTerminusDurability(TerminusDurability terminusDurability);
 
+    /** @brief Gets the expiry policy of the source.
+     *
+     * @return The expiry policy of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     TerminusExpiryPolicy GetExpiryPolicy() const;
-    void SetExpiryPolicy(TerminusExpiryPolicy expiryPolicy);
 
+    /** @brief Duration that an expiring source will be retained.
+     *
+     * @return The timeout of the source.
+     *
+     * @remarks The source starts expiring as indicated by the expiry-policy.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     std::chrono::system_clock::time_point GetTimeout() const;
-    void SetTimeout(std::chrono::system_clock::time_point const& timeout);
 
+    /** @brief Requests dynamic creation of a remote node.
+     *
+     * @return Whether the source is dynamic.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     bool GetDynamic() const;
-    void SetDynamic(bool dynamic);
 
+    /** @brief Retrieve the dynamic node properties on this message source.
+     * @remarks See
+     * http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-node-properties
+     * for more information.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
-    void SetDynamicNodeProperties(Azure::Core::Amqp::Models::AmqpMap const& dynamicNodeProperties);
 
+    /** @brief Gets the distribution mode of the source.
+     *
+     * @return The distribution mode of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     std::string GetDistributionMode() const;
-    void SetDistributionMode(std::string const& distributionMode);
 
+    /** @brief Gets the filter of the source.
+     *
+     * @return The filter of the source.
+     *
+     * @remarks See [filter
+     * set](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-filter-set)
+     * for more information.
+     */
     Azure::Core::Amqp::Models::AmqpMap GetFilter() const;
-    void SetFilter(Azure::Core::Amqp::Models::AmqpMap const& filter);
 
+    /** @brief Gets the default outcome of the source.
+     *
+     * @return The default outcome of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     *
+     */
     Azure::Core::Amqp::Models::AmqpValue GetDefaultOutcome() const;
-    void SetDefaultOutcome(Azure::Core::Amqp::Models::AmqpValue const& defaultOutcome);
 
+    /** @brief Gets the outcomes of the source.
+     *
+     * @return The outcomes of the source.
+     *
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     */
     Azure::Core::Amqp::Models::AmqpArray GetOutcomes() const;
-    void SetOutcomes(Azure::Core::Amqp::Models::AmqpValue const& outcomes);
-    void SetOutcomes(Azure::Core::Amqp::Models::AmqpArray const& outcomes);
 
+    /** @brief Gets the capabilities of the source.
+     *
+     * @return The capabilities of the source.
+     *
+     * @remarks See
+     * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
+     * for more information about the fields in a message source.
+     *
+     */
     Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
-    void SetCapabilities(Azure::Core::Amqp::Models::AmqpValue const& capabilities);
-    void SetCapabilities(Azure::Core::Amqp::Models::AmqpArray const& capabilities);
 
   private:
+    operator SOURCE_INSTANCE_TAG*() const { return m_source.get(); }
     Azure::Core::_internal::UniqueHandle<SOURCE_INSTANCE_TAG> m_source;
+
+    // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
+    friend std::ostream& operator<<(std::ostream&, MessageSource const&);
   };
-  std::ostream& operator<<(std::ostream&, MessageSource const&);
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

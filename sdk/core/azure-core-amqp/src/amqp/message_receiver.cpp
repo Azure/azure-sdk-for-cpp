@@ -7,13 +7,18 @@
 #include "azure/core/amqp/link.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
-#include "azure/core/amqp/private/message_receiver_impl.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "private/message_receiver_impl.hpp"
 #include <azure/core/credentials/credentials.hpp>
-// #include <azure_uamqp_c/link.h>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure_uamqp_c/message_receiver.h>
 #include <iostream>
 #include <memory>
+#include <sstream>
+
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp {
   using namespace Azure::Core::Amqp::_internal;
@@ -82,7 +87,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     MessageReceiver::operator bool() const { return m_impl.operator bool(); }
 
-    void MessageReceiver::Open() { m_impl->Open(); }
+    void MessageReceiver::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
     void MessageReceiver::Close() { m_impl->Close(); }
     void MessageReceiver::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
     std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
@@ -213,8 +218,9 @@ namespace Azure { namespace Core { namespace Amqp {
       {
         m_eventHandler = nullptr;
       }
-      if (m_claimsBasedSecurity)
+      if (m_claimsBasedSecurity && m_cbsOpen)
       {
+        Log::Write(Logger::Level::Verbose, "Close CBS object.");
         m_claimsBasedSecurity->Close();
       }
       if (m_messageReceiver)
@@ -270,32 +276,46 @@ namespace Azure { namespace Core { namespace Amqp {
       }
       else
       {
-        std::cout << "Message receiver changed state. New: "
-                  << MESSAGE_RECEIVER_STATEStrings[newState]
-                  << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
+        std::stringstream ss;
+        ss << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
+           << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
+        Log::Write(Logger::Level::Verbose, ss.str());
       }
     }
 
     void MessageReceiverImpl::Authenticate(
         CredentialType type,
         std::string const& audience,
-        std::string const& token)
+        std::string const& token,
+        Azure::Core::Context const& context)
     {
-      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurity>(m_session);
-      if (m_claimsBasedSecurity->Open() == CbsOpenResult::Ok)
+      Log::Write(Logger::Level::Verbose, "Authenticate token with audience " + audience);
+      m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurityImpl>(m_session);
+      // Propagate our SetTrace settings to the CBS instance.
+      m_claimsBasedSecurity->SetTrace(m_options.EnableTrace);
+      auto openResult = m_claimsBasedSecurity->Open(context);
+      if (openResult == CbsOpenResult::Ok)
       {
+        m_cbsOpen = true;
+        Log::Write(Logger::Level::Verbose, "CBS is open, put the token");
+
         auto result = m_claimsBasedSecurity->PutToken(
             (type == CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
             audience,
-            token);
+            token,
+            context);
       }
       else
       {
+        Log::Write(
+            Logger::Level::Error,
+            "Could not open Claims Based Security object. OpenResult: "
+                + std::to_string(static_cast<int>(openResult)));
         throw std::runtime_error("Could not open Claims Based Security."); // LCOV_EXCL_LINE
       }
     }
 
-    void MessageReceiverImpl::Open()
+    void MessageReceiverImpl::Open(Azure::Core::Context const& context)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do it.
       if (m_connectionCredential)
@@ -307,7 +327,8 @@ namespace Azure { namespace Core { namespace Amqp {
             CredentialType::ServiceBusSas,
             sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
             sasCredential->GenerateSasToken(
-                std::chrono::system_clock::now() + std::chrono::minutes(60)));
+                std::chrono::system_clock::now() + std::chrono::minutes(60)),
+            context);
       }
       else if (m_tokenCredential)
       {
@@ -318,7 +339,8 @@ namespace Azure { namespace Core { namespace Amqp {
         Authenticate(
             CredentialType::BearerToken,
             m_source,
-            m_tokenCredential->GetToken(requestContext, context).Token);
+            m_tokenCredential->GetToken(requestContext, context).Token,
+            context);
       }
 
       // Once we've authenticated the connection, establish the link and receiver.

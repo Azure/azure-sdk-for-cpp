@@ -3,9 +3,9 @@
 
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/private/claims_based_security_impl.hpp"
-#include "azure/core/amqp/private/connection_impl.hpp"
-#include "azure/core/amqp/private/session_impl.hpp"
+#include "private/claims_based_security_impl.hpp"
+#include "private/connection_impl.hpp"
+#include "private/session_impl.hpp"
 #include <iostream>
 
 void Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(CBS_HANDLE value)
@@ -16,6 +16,8 @@ void Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(C
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using namespace Azure::Core::Amqp::_internal;
 
+  // The non-Impl types for CBS exist only for testing purposes.
+#if defined(TESTING_BUILD)
   ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session)
       : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(session.GetImpl())}
   {
@@ -40,6 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   void ClaimsBasedSecurity::SetTrace(bool traceOn) { m_impl->SetTrace(traceOn); }
+#endif // TESTING_BUILD
 
   ClaimsBasedSecurityImpl::ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session)
       : m_cbs(cbs_create(*session)), m_session{session}

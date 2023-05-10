@@ -4,6 +4,7 @@
 // LCOV_EXCL_START
 #include "azure/core/amqp/network/sasl_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
+#include "private/transport_impl.hpp"
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
 #include <azure_c_shared_utility/tlsio.h>
@@ -44,7 +45,7 @@ Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
   SASLCLIENTIO_CONFIG saslConfig;
   saslConfig.underlying_io = underlying_io;
   saslConfig.sasl_mechanism = saslMechanism;
-  SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
+  m_impl->SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
 }
 
 Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
@@ -75,6 +76,6 @@ Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
   SASLCLIENTIO_CONFIG saslConfig;
   saslConfig.underlying_io = underlying_io;
   saslConfig.sasl_mechanism = saslMechanism;
-  SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
+  m_impl->SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
 }
 // LCOV_EXCL_STOP

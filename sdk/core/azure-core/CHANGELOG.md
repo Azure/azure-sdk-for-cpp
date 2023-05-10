@@ -1,19 +1,44 @@
 # Release History
 
-## 1.9.0-beta.2 (Unreleased)
+## 1.10.0-beta.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.10.0-beta.1 (2023-05-04)
 
 ### Features Added
 
 - Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::CreateFromArray()` to enable reading or writing from an existing UUID.
 This is useful when the UUID was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
 
-### Breaking Changes
+## 1.9.0 (2023-05-04)
+
+### Features Added
+
+- Added the ability to ignore invalid certificate common name for TLS connections in WinHTTP transport.
+- Added `DisableTlsCertificateValidation` in `TransportOptions`.
+- Added `TokenCredential::GetCredentialName()` to be utilized in diagnostic messages. If you have any custom implementations of `TokenCredential`, it is recommended to pass the name of your credential to `TokenCredential` constructor. The old parameterless constructor is deprecated.
+- Added support for challenge-based and multi-tenant authentication.
 
 ### Bugs Fixed
 
 - Fixed the UUID generation so the variant is RFC 4122 conforming.
 
 ### Other Changes
+
+- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/4352) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jorgen Lind _([GitHub](https://github.com/jorgen))_
 
 ## 1.8.2 (2023-04-24)
 

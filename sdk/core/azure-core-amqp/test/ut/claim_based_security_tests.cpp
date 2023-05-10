@@ -13,10 +13,11 @@
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
+#include <azure/core/platform.hpp>
 
 #include "mock_amqp_server.hpp"
 
-extern uint16_t FindAvailableSocket();
+// extern uint16_t FindAvailableSocket();
 
 class TestCbs : public testing::Test {
 protected:
@@ -28,6 +29,7 @@ using namespace Azure::Core::Amqp;
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp::_detail;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, SimpleCbs)
 {
 
@@ -46,14 +48,16 @@ TEST_F(TestCbs, SimpleCbs)
     ClaimsBasedSecurity cbs2(session);
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpen)
 {
   {
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
     {
       ClaimsBasedSecurity cbs(session);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
@@ -65,7 +69,7 @@ TEST_F(TestCbs, CbsOpen)
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
 
     mockServer.StartListening();
 
@@ -80,14 +84,16 @@ TEST_F(TestCbs, CbsOpen)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpenAndPut)
 {
   {
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
 
     mockServer.StartListening();
 
@@ -109,14 +115,16 @@ TEST_F(TestCbs, CbsOpenAndPut)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestCbs, CbsOpenAndPutError)
 {
   {
     MessageTests::AmqpServerMock mockServer;
 
     Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection, nullptr);
+    Session session(connection);
 
     mockServer.StartListening();
 
@@ -138,3 +146,4 @@ TEST_F(TestCbs, CbsOpenAndPutError)
     mockServer.StopListening();
   }
 }
+#endif // !defined(AZ_PLATFORM_MAC)

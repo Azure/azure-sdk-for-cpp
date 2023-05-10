@@ -69,6 +69,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     std::uint32_t DeliveryCount{0};
 
+    /** @brief Returns true if this MessageHeader should be serialized into an AMQP message.
+     *
+     * Message headers can be serialize if their values are different from the defined default
+     * values as specified in the AMQP spec.
+     */
     bool ShouldSerialize() const noexcept;
     static size_t GetSerializedSize(MessageHeader const& messageHeader);
     static std::vector<uint8_t> Serialize(MessageHeader const& messageHeader);

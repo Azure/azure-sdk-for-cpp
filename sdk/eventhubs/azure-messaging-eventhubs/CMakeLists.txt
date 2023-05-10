@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
 project(azure-messaging-eventhubs LANGUAGES CXX)
 
 # Compile Options
@@ -79,7 +79,6 @@ az_vcpkg_export(
   )
 
 az_rtti_setup(
-  azure-security-keyvault-keys
   MESSAGING_EVENTHUBS
   "azure/messaging/eventhubs/rtti.hpp"
 )

@@ -44,26 +44,150 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
     if (m_source == nullptr)
     {
-      throw std::runtime_error("Could not create source.");
+      throw std::runtime_error("Could not create source."); // LCOV_EXCL_LINE
     }
-    if (source_set_address(m_source.get(), amqpvalue_create_string(address.c_str())))
+    if (source_set_address(m_source.get(), AmqpValue{address}))
     {
-      throw std::runtime_error("Could not set address.");
+      throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
     }
   }
   MessageSource::MessageSource(char const* address) : m_source(source_create())
   {
     if (m_source == nullptr)
     {
-      throw std::runtime_error("Could not create source.");
+      throw std::runtime_error("Could not create source."); // LCOV_EXCL_LINE
     }
-    if (source_set_address(m_source.get(), amqpvalue_create_string(address)))
+    if (source_set_address(m_source.get(), AmqpValue{address}))
     {
-      throw std::runtime_error("Could not set address.");
+      throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
     }
   }
 
   MessageSource::MessageSource() : m_source(source_create()) {}
+
+  MessageSource::MessageSource(MessageSourceOptions const& options) : m_source(source_create())
+  {
+    if (!options.Address.IsNull())
+    {
+      if (source_set_address(m_source.get(), options.Address))
+      {
+        throw std::runtime_error("Could not set source address."); // LCOV_EXCL_LINE
+      }
+    }
+    if (options.SourceTerminusDurability.HasValue())
+    {
+      terminus_durability durability;
+      switch (options.SourceTerminusDurability.Value())
+      {
+        case TerminusDurability::None:
+          durability = terminus_durability_none;
+          break;
+        case TerminusDurability::Configuration:
+          durability = terminus_durability_configuration;
+          break;
+        case TerminusDurability::UnsettledState:
+          durability = terminus_durability_unsettled_state;
+          break;
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
+      }
+      if (source_set_durable(m_source.get(), durability))
+      {
+        throw std::runtime_error("Could not set durable."); // LCOV_EXCL_LINE
+      }
+    }
+    if (options.SourceTerminusExpiryPolicy.HasValue())
+    {
+      terminus_expiry_policy policy;
+      switch (options.SourceTerminusExpiryPolicy.Value())
+      {
+        case TerminusExpiryPolicy::LinkDetach:
+          policy = terminus_expiry_policy_link_detach;
+          break;
+        case TerminusExpiryPolicy::SessionEnd:
+          policy = terminus_expiry_policy_session_end;
+          break;
+        case TerminusExpiryPolicy::ConnectionClose:
+          policy = terminus_expiry_policy_connection_close;
+          break;
+        case TerminusExpiryPolicy::Never:
+          policy = terminus_expiry_policy_never;
+          break;
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown terminus durability."); // LCOV_EXCL_LINE
+      }
+      if (source_set_expiry_policy(m_source.get(), policy))
+      {
+        throw std::runtime_error("Could not set durable."); // LCOV_EXCL_LINE
+      }
+    }
+    if (options.Timeout.HasValue())
+    {
+      if (source_set_timeout(
+              m_source.get(),
+              static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
+                                        options.Timeout.Value().time_since_epoch())
+                                        .count())))
+      {
+        throw std::runtime_error("Could not set value.");
+      }
+    }
+    if (options.Dynamic.HasValue())
+    {
+      if (source_set_dynamic(m_source.get(), *options.Dynamic))
+      {
+        throw std::runtime_error("Could not set dynamic."); // LCOV_EXCL_LINE
+      }
+    }
+    if (!options.DynamicNodeProperties.empty())
+    {
+      if (source_set_dynamic_node_properties(
+              m_source.get(),
+              static_cast<_detail::UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
+      {
+        throw std::runtime_error("Could not set dynamic node properties."); // LCOV_EXCL_LINE
+      }
+    }
+    if (options.DistributionMode.HasValue())
+    {
+      if (source_set_distribution_mode(m_source.get(), options.DistributionMode.Value().c_str()))
+      {
+        throw std::runtime_error("Could not set distribution mode.");
+      }
+    }
+    if (!options.Filter.empty())
+    {
+      if (source_set_filter(
+              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Filter).get()))
+      {
+        throw std::runtime_error("Could not set filter set."); // LCOV_EXCL_LINE
+      }
+    }
+    if (!options.DefaultOutcome.IsNull())
+    {
+      if (source_set_default_outcome(m_source.get(), options.DefaultOutcome))
+      {
+        throw std::runtime_error("Could not set default outcome.");
+      }
+    }
+    if (!options.Outcomes.empty())
+    {
+      if (source_set_outcomes(
+              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Outcomes).get()))
+      {
+        throw std::runtime_error("Could not set outcomes."); // LCOV_EXCL_LINE
+      }
+    }
+    if (!options.Capabilities.empty())
+    {
+      if (source_set_capabilities(
+              m_source.get(),
+              static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
+      {
+        throw std::runtime_error("Could not set capabilities.");
+      }
+    }
+  }
 
   // Convert the MessageSource into a Value.
   MessageSource::operator const Azure::Core::Amqp::Models::AmqpValue() const
@@ -80,20 +204,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return address;
   }
-  void MessageSource::SetAddress(Azure::Core::Amqp::Models::AmqpValue const& value)
-  {
-    if (source_set_address(m_source.get(), value))
-    {
-      throw std::runtime_error("Could not set value.");
-    }
-  }
 
   TerminusDurability MessageSource::GetTerminusDurability() const
   {
     terminus_durability value;
     if (source_get_durable(m_source.get(), &value))
     {
-      throw std::runtime_error("Could not get durable from source.");
+      throw std::runtime_error("Could not get durable from source."); // LCOV_EXCL_LINE
     }
     switch (value)
     {
@@ -107,78 +224,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         throw std::logic_error("Unknown terminus durability.");
     }
   }
-  void MessageSource::SetTerminusDurability(TerminusDurability value)
-  {
-    terminus_durability durability;
-    switch (value)
-    {
-      case TerminusDurability::None:
-        durability = terminus_durability_none;
-        break;
-      case TerminusDurability::Configuration:
-        durability = terminus_durability_configuration;
-        break;
-      case TerminusDurability::UnsettledState:
-        durability = terminus_durability_unsettled_state;
-        break;
-      default:
-        throw std::logic_error("Unknown terminus durability.");
-    }
-    if (source_set_durable(m_source.get(), durability))
-    {
-      throw std::runtime_error("Could not set durable.");
-    }
-  }
 
   TerminusExpiryPolicy MessageSource::GetExpiryPolicy() const
   {
     terminus_expiry_policy value;
     if (source_get_expiry_policy(m_source.get(), &value))
     {
-      throw std::runtime_error("Could not get durable from source.");
+      throw std::runtime_error("Could not get expiry policy from source."); // LCOV_EXCL_LINE
     }
-    if (strcmp(value, terminus_expiry_policy_connection_close) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_connection_close) == 0)
     {
       return TerminusExpiryPolicy::ConnectionClose;
     }
-    if (strcmp(value, terminus_expiry_policy_link_detach) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_link_detach) == 0)
     {
       return TerminusExpiryPolicy::LinkDetach;
     }
-    if (strcmp(value, terminus_expiry_policy_never) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_never) == 0)
     {
       return TerminusExpiryPolicy::Never;
     }
-    if (strcmp(value, terminus_expiry_policy_session_end) == 0)
+    if (std::strcmp(value, terminus_expiry_policy_session_end) == 0)
     {
       return TerminusExpiryPolicy::SessionEnd;
     }
-    throw std::logic_error(std::string("Unknown terminus expiry policy: ") + value);
-  }
-  void MessageSource::SetExpiryPolicy(TerminusExpiryPolicy value)
-  {
-    terminus_expiry_policy policy;
-    switch (value)
-    {
-      case TerminusExpiryPolicy::LinkDetach:
-        policy = terminus_expiry_policy_link_detach;
-        break;
-      case TerminusExpiryPolicy::SessionEnd:
-        policy = terminus_expiry_policy_session_end;
-        break;
-      case TerminusExpiryPolicy::ConnectionClose:
-        policy = terminus_expiry_policy_connection_close;
-        break;
-      case TerminusExpiryPolicy::Never:
-        policy = terminus_expiry_policy_never;
-        break;
-      default:
-        throw std::logic_error("Unknown terminus durability.");
-    }
-    if (source_set_expiry_policy(m_source.get(), policy))
-    {
-      throw std::runtime_error("Could not set durable.");
-    }
+    throw std::logic_error( // LCOV_EXCL_LINE
+        std::string("Unknown terminus expiry policy: ") + value); // LCOV_EXCL_LINE
   }
 
   std::chrono::system_clock::time_point MessageSource::GetTimeout() const
@@ -340,7 +411,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       case TerminusDurability::UnsettledState:
         return "Unsettled State";
     }
-    throw std::runtime_error("Unknown terminus durability");
+    throw std::runtime_error("Unknown terminus durability"); // LCOV_EXCL_LINE
   }
 
   const char* StringFromTerminusExpiryPolicy(TerminusExpiryPolicy policy)
@@ -361,7 +432,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   std::ostream& operator<<(std::ostream& os, MessageSource const& source)
   {
-    os << "Source{ " << std::endl;
+    os << "Source{ ";
     {
       AMQP_VALUE value;
       if (!source_get_address(source, &value))
@@ -380,7 +451,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       terminus_expiry_policy policy;
       if (!source_get_expiry_policy(source, &policy))
       {
-        os << ", Expiry Policy: " << StringFromTerminusExpiryPolicy(source.GetExpiryPolicy());
+        os << ", Expiry Policy: " << policy;
       }
     }
     {
@@ -428,14 +499,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       AMQP_VALUE outcome;
       if (!source_get_default_outcome(source, &outcome))
       {
-        os << ", Default Outcome: " << source.GetDefaultOutcome();
+        os << ", Default Outcome: " << AmqpValue{outcome};
       }
     }
     {
-      AMQP_VALUE outcome;
-      if (!source_get_outcomes(source, &outcome))
+      AMQP_VALUE outcomes;
+      if (!source_get_outcomes(source, &outcomes))
       {
-        os << ", Outcome: " << source.GetOutcomes();
+        os << ", Outcomes: " << AmqpValue{outcomes};
       }
     }
     os << "}";

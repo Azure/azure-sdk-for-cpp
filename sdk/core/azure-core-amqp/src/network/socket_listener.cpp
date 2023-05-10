@@ -3,7 +3,7 @@
 
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
-
+#include "private/transport_impl.hpp"
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xio.h>
 #include <azure_uamqp_c/header_detect_io.h>
@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     void EnsureGlobalStateInitialized()
     {
       // Force the global instance to exist. This is required to ensure that uAMQP and
-      // azure-c-shared-utility is
+      // azure-c-shared-utility is properly initialized.
       auto globalInstance
           = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
       (void)globalInstance;
@@ -49,7 +49,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     XIO_HANDLE xio = xio_create(interfaceDescription, ioParameters);
     if (listener->m_eventHandler)
     {
-      listener->m_eventHandler->OnSocketAccepted(xio);
+      auto transport{std::make_shared<Transport>(std::make_shared<_detail::TransportImpl>(
+          xio_create(interfaceDescription, ioParameters), nullptr))};
+      listener->m_eventHandler->OnSocketAccepted(transport);
     }
   }
 
@@ -74,8 +76,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   {
     if (m_started)
     {
-      m_started = false;
+      if (socketlistener_stop(m_socket))
+      {
+        auto err = errno;
+        throw std::runtime_error(
+            "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+            + "\".");
+      }
     }
+    else
+    {
+      throw std::runtime_error("Socket listener not started.");
+    }
+    m_started = false;
   }
 
   void SocketListener::Poll() const { socketlistener_dowork(m_socket); }

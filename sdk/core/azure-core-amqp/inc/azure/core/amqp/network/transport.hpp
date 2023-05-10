@@ -11,15 +11,11 @@
 #include <stdexcept>
 #include <string>
 
-extern "C"
-{
-  struct XIO_INSTANCE_TAG;
-}
+namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
+  struct TransportImpl;
+}}}}} // namespace Azure::Core::Amqp::Network::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
-  namespace _detail {
-    struct TransportImpl;
-  }
   enum class TransportState
   {
     Closed,
@@ -59,7 +55,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   };
 
   class Transport {
-    using TransportOpenCompleteFn = std::function<void(TransportOpenResult)>;
+
+  public:
     using TransportCloseCompleteFn = std::function<void()>;
     using TransportSendCompleteFn = std::function<void(TransportSendResult)>;
     using TransportBytesReceivedCompleteFn
@@ -76,6 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     virtual bool Send(uint8_t*, size_t, TransportSendCompleteFn) const;
     void Poll() const;
     virtual std::shared_ptr<_detail::TransportImpl> GetImpl() const { return m_impl; }
+    void SetEventHandler(TransportEvents* events);
 
   protected:
     Transport(TransportEvents* events);

@@ -15,6 +15,7 @@
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
+#include <gtest/gtest.h>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {
@@ -121,9 +122,11 @@ public:
       Azure::Core::Amqp::Network::_internal::SocketListener listener(GetPort(), this);
       GTEST_LOG_(INFO) << "Start test listener on port " << GetPort();
       listener.Start();
+      GTEST_LOG_(INFO) << "listener started";
       running = true;
       threadStarted.notify_one();
 
+      GTEST_LOG_(INFO) << "Wait for connection on listener.";
       if (!WaitForConnection(listener, m_listenerContext))
       {
         GTEST_LOG_(INFO) << "Cancelling thread.";
@@ -161,9 +164,12 @@ public:
     });
 
     // Wait until our running thread is actually listening before we return.
-    GTEST_LOG_(INFO) << "Wait for listener to start.";
+    GTEST_LOG_(INFO) << "Wait 10 seconds for listener to start.";
     std::unique_lock<std::mutex> waitForThreadStart(threadRunningMutex);
-    threadStarted.wait(waitForThreadStart, [&running]() { return running == true; });
+    threadStarted.wait_until(
+        waitForThreadStart,
+        std::chrono::system_clock::now() + std::chrono::seconds(10),
+        [&running]() { return running == true; });
     GTEST_LOG_(INFO) << "Listener running.";
   }
 
@@ -219,8 +225,9 @@ protected:
   {
     if (!message.ApplicationProperties.empty())
     {
-      auto operation = message.ApplicationProperties.at("operation");
-      auto type = message.ApplicationProperties.at("type");
+      Azure::Core::Amqp::Models::AmqpValue operation
+          = message.ApplicationProperties.at("operation");
+      Azure::Core::Amqp::Models::AmqpValue type = message.ApplicationProperties.at("type");
 
       // If we're processing a put-token message, then we should get a "type" and "name"
       // value.
@@ -241,9 +248,9 @@ protected:
       MessageLinkComponents const& linkComponents,
       Azure::Core::Amqp::Models::AmqpMessage const& message)
   {
-    auto operation = message.ApplicationProperties.at("operation");
-    auto type = message.ApplicationProperties.at("type");
-    auto name = message.ApplicationProperties.at("name");
+    Azure::Core::Amqp::Models::AmqpValue operation = message.ApplicationProperties.at("operation");
+    Azure::Core::Amqp::Models::AmqpValue type = message.ApplicationProperties.at("type");
+    Azure::Core::Amqp::Models::AmqpValue name = message.ApplicationProperties.at("name");
     // If we're processing a put-token message, then we should get a "type" and "name"
     // value.
     EXPECT_EQ(operation.GetType(), Azure::Core::Amqp::Models::AmqpValueType::String);
@@ -327,11 +334,13 @@ protected:
     }
   }
 
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;

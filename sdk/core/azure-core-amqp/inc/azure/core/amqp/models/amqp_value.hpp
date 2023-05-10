@@ -28,26 +28,30 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TA
   using type = Azure::Core::_internal::BasicUniqueHandle<AMQP_VALUE_DATA_TAG, FreeAmqpValue>;
 };
 
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
+  using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
+}}}}} // namespace Azure::Core::Amqp::Models::_detail
+
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+
+  enum class TerminusDurability : std::uint32_t
+  {
+    None = 0,
+    Configuration = 1,
+    UnsettledState = 2
+  };
+
+  // Note : Should be an extendable Enumeration.
+  enum class TerminusExpiryPolicy
+  {
+    LinkDetach,
+    SessionEnd,
+    ConnectionClose,
+    Never
+  };
+}}}}} // namespace Azure::Core::Amqp::Models::_internal
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-
-  namespace _internal {
-
-    enum class TerminusDurability : std::uint32_t
-    {
-      None = 0,
-      Configuration = 1,
-      UnsettledState = 2
-    };
-
-    // Note : Should be an extendable Enumeration.
-    enum class TerminusExpiryPolicy
-    {
-      LinkDetach,
-      SessionEnd,
-      ConnectionClose,
-      Never
-    };
-  } // namespace _internal
 
   enum class AmqpValueType
   {
@@ -75,7 +79,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Array,
     Described,
     Composite,
-    Unknown
+    Unknown,
   };
 
   class AmqpArray;
@@ -95,7 +99,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * Defined in [AMQP Core Types
      * section 1.6.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-null).
-).
+  ).
      *
      */
     AmqpValue() noexcept;
@@ -159,6 +163,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpValue(std::int8_t value);
+
+    /** @brief Construct an AMQP byte value, an 8 bit signed integer.
+     *
+     * Defined in [AMQP Core Types
+     * section 1.6.7](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-byte).
+     *
+     * @param value value to be set.
+     *
+     * @remarks This field is a convenience overload to allow clients to declare an AmqpValue with a
+     * C++ character.
+     *
+     */
     AmqpValue(char value);
 
     /** @brief Construct an AMQP short value, a 16 bit signed integer.
@@ -318,8 +334,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Less Than comparison operator.
      * @param that - Value to compare to this value.
      * @returns true if the that is less than this.
+     *
+     * @remark When comparing AMQP values, if the two values are not the same type, this returns if
+     * the numeric value of this.GetType() is less than that.GetType().
+     * If the two values are of the same type, this returns if the value of this is less than the
+     * value of that.
      */
     bool operator<(AmqpValue const& that) const;
+
+    /** @brief Returns the underlying type of the AMQP value.
+     *
+     * @returns AmqpValueType of the AMQP value.
+     */
     AmqpValueType GetType() const;
 
     /** @brief Returns 'true' if the AMQP value is "null".
@@ -497,22 +523,52 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpSymbol AsSymbol() const;
 
-    // Composite values - A composite value is functionally a list with a fixed size.
+    /** @brief convert the current AMQP Value to an AMQP Composite value.
+     *
+     * An AMQP Composite value is functionally a list with a defined structure. The structure
+     * definition can be found via the GetDescriptor method.
+     *
+     * @returns the value as an AmqpComposite.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a Composite value.
+     */
     AmqpComposite AsComposite() const;
 
+    /** @brief convert the current AMQP Value to an AMQP Described value.
+     *
+     * An AMQP Described value is a tuple consisting of a Descriptor and Value.
+     *
+     * @returns the value as an AmqpDescribed.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a Described value.
+     */
     AmqpDescribed AsDescribed() const;
 
+    /** @brief Serialize this AMQP value as an array of bytes. */
     static std::vector<uint8_t> Serialize(AmqpValue const& value);
+
+    /** @brief Returns the size (in bytes) of the serialized form of this value */
     static size_t GetSerializedSize(AmqpValue const& value);
+
+    /** @brief Deserialize an AMQP value from an array of bytes.
+     *
+     * @param[in] data The serialized form of the AMQP value to deserialize.
+     * @param[in] size The size of the data parameter to deserialize.
+     */
     static AmqpValue Deserialize(uint8_t const* data, size_t size);
 
   protected:
-    UniqueAmqpValueHandle m_value;
+    _detail::UniqueAmqpValueHandle m_value;
   };
   std::ostream& operator<<(std::ostream& os, AmqpValue const& value);
 
   namespace _detail {
 
+    /** @brief Base type for AMQP collection types.
+     *
+     * Provides convenient conversions for STL collection types to enable classes derived from
+     * AmqpCollectionBase to be used as STL containers.
+     */
     template <typename T, typename ThisType> class AmqpCollectionBase {
     protected:
       T m_value;
@@ -524,8 +580,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AmqpCollectionBase() {}
 
     public:
+      /** @brief Convert this collection type to an AMQP value.*/
       operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
+
+      /** @brief Returns the size of the underlying value.*/
       inline typename T::size_type size() const { return m_value.size(); }
+
       const typename T::value_type& operator[](const typename T::size_type pos) const noexcept
       {
         return m_value.operator[](pos);
@@ -542,10 +602,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       bool operator<(ThisType const& that) const { return m_value < that.m_value; }
       bool operator==(ThisType const& that) const { return m_value == that.m_value; }
       bool operator!=(ThisType const& that) const { return m_value != that.m_value; }
+      /** @brief Returns true if the underlying value is empty.*/
       bool empty() const noexcept { return m_value.empty(); }
 
       /**
-       * @brief Convert an AmqpArray instance to a uAMQP AMQP_VALUE.
+       * @brief Convert an AmqpCollectionBase instance to a uAMQP AMQP_VALUE.
        *
        * @remarks This is an internal accessor and should never be used by code outside the AMQP
        * implementation.
@@ -557,6 +618,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     };
   } // namespace _detail
 
+  /** @brief Represents an AMQP array.
+   *
+   * An AMQP array is an aggregate of value types, all of which are of the same type.
+   */
   class AmqpArray final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray> {
   public:
     /** @brief Construct a new AmqpArray object. */
@@ -737,9 +802,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
      * by the caller.
      */
-    operator UniqueAmqpValueHandle() const;
+    operator _detail::UniqueAmqpValueHandle() const;
 
-    operator std::chrono::milliseconds const() const { return m_value; }
+    operator std::chrono::milliseconds() const { return m_value; }
 
     bool operator<(AmqpTimestamp const& that) { return m_value < that.m_value; }
   };
@@ -793,11 +858,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
      * by the caller.
      */
-    operator UniqueAmqpValueHandle() const;
+    operator _detail::UniqueAmqpValueHandle() const;
     /**
      * @brief Convert an existing AmqpComposite to an AmqpValue.
      */
-    operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
+    operator AmqpValue() const { return static_cast<_detail::UniqueAmqpValueHandle>(*this).get(); }
 
   private:
     AmqpValue m_descriptor;
@@ -870,7 +935,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks Note that this returns a newly allocated AMQP_VALUE object which must be freed
      * by the caller.
      */
-    operator UniqueAmqpValueHandle() const;
+    operator _detail::UniqueAmqpValueHandle() const;
 
     bool operator<(AmqpDescribed const& that) const
     {

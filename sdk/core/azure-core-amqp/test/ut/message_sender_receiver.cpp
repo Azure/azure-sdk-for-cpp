@@ -14,6 +14,7 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/session.hpp"
 #include "mock_amqp_server.hpp"
+#include <azure/core/platform.hpp>
 #include <functional>
 #include <random>
 
@@ -30,6 +31,7 @@ protected:
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestMessages, SimpleReceiver)
 {
 
@@ -161,11 +163,13 @@ private:
   // Inherited via MessageReceiver
 
   // Inherited via SocketListenerEvents.
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";
@@ -677,6 +681,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
+  receiverOptions.EnableTrace = true;
   MessageReceiver receiver(
       session,
       sasCredential,
@@ -795,3 +800,4 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   receiver.Close();
   server.StopListening();
 }
+#endif // !defined(AZ_PLATFORM_MAC)

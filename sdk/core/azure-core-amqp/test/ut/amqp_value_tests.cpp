@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+#include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include <algorithm>
 #include <cuchar>
@@ -12,7 +13,13 @@ using namespace Azure::Core::Amqp::Models;
 
 class TestValues : public testing::Test {
 protected:
-  void SetUp() override {}
+  void SetUp() override
+  {
+    // Ensure that our logger is hooked up to global state.
+    auto globalInstance
+        = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+    (void)globalInstance;
+  }
   void TearDown() override {}
 };
 
@@ -32,6 +39,8 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
     EXPECT_FALSE(value);
     EXPECT_TRUE(AmqpValue() < value);
+    EXPECT_ANY_THROW((void)static_cast<char>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::int8_t>(value));
   }
   {
     EXPECT_LT(AmqpValue(false), AmqpValue(true));
@@ -48,6 +57,17 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_LT(AmqpValue{static_cast<int8_t>(-18)}, value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<unsigned char>(value));
+    EXPECT_ANY_THROW((void)static_cast<uint16_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<int16_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<uint32_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<int32_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<uint64_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<int64_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<float>(value));
+    EXPECT_ANY_THROW((void)static_cast<double>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::string>(value));
+    EXPECT_ANY_THROW((void)static_cast<Azure::Core::Uuid>(value));
   }
 
   {
@@ -192,11 +212,18 @@ TEST_F(TestValues, TestBinary)
     AmqpBinaryData binaryData;
     binaryData.push_back('a');
     binaryData.push_back(3);
-    AmqpValue value(static_cast<UniqueAmqpValueHandle>(binaryData).get());
+    AmqpValue value(static_cast<_detail::UniqueAmqpValueHandle>(binaryData).get());
+
+    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(binaryData).get()));
 
     AmqpBinaryData data2(value);
     EXPECT_EQ(2, data2.size());
     EXPECT_TRUE(AmqpValue() < value);
+
+    AmqpBinaryData data3(std::vector<uint8_t>(50));
+
+    GTEST_LOG_(INFO) << "data3.size()=" << data3.size();
+    GTEST_LOG_(INFO) << "data3:" << data3;
   }
 }
 
@@ -221,8 +248,10 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValueType::Byte, list1[3].GetType());
     EXPECT_EQ(AmqpValue('a'), list1[3]);
 
-    AmqpValue value(static_cast<UniqueAmqpValueHandle>(list1).get());
+    AmqpValue value(static_cast<_detail::UniqueAmqpValueHandle>(list1).get());
     const AmqpList list2(value);
+
+    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(list1).get()));
 
     EXPECT_EQ(4, list2.size());
 
@@ -262,8 +291,10 @@ TEST_F(TestValues, TestMap)
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
 
     // Now round-trip the map through an AMQP value and confirm that the values persist.
-    AmqpValue valueOfMap = static_cast<UniqueAmqpValueHandle>(map1).get();
+    AmqpValue valueOfMap = static_cast<_detail::UniqueAmqpValueHandle>(map1).get();
     AmqpMap map2(valueOfMap);
+    EXPECT_FALSE(valueOfMap < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(map1).get()));
+
     EXPECT_EQ(5, static_cast<int32_t>(map2["ABC"]));
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map2[AmqpValue(3)]));
     EXPECT_FALSE(map1 < map2);
@@ -286,6 +317,7 @@ TEST_F(TestValues, TestArray)
     EXPECT_EQ(3, static_cast<std::int32_t>(array2.at(1)));
     EXPECT_EQ(5, static_cast<std::int32_t>(array2.at(2)));
     EXPECT_FALSE(array1 < array2);
+    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(array2).get()));
   }
   {
     // Because EXPECT_ANY_THROW is a macro, the commas in the lambda below confuse the
@@ -334,6 +366,7 @@ TEST_F(TestValues, TestSymbol)
     AmqpSymbol value("timeNow");
     EXPECT_EQ(value, "timeNow");
     EXPECT_FALSE(value < AmqpSymbol("timeNow"));
+    GTEST_LOG_(INFO) << "Symbol value: " << value;
   }
   {
     AmqpValue boolValue{false};

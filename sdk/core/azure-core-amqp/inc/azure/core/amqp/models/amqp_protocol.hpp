@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <azure/core/internal/unique_handle.hpp>
 #include <cstdint>
 
 struct AMQPVALUE_DECODER_HANDLE_DATA_TAG;
@@ -19,6 +20,10 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_
 };
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+
+  constexpr uint16_t AmqpPort = 5672;
+  constexpr uint16_t AmqpsPort = 5671;
+
   using UniqueAmqpDecoderHandle
       = Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::type;
 

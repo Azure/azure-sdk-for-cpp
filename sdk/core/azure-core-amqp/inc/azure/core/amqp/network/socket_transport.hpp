@@ -4,9 +4,8 @@
 #pragma once
 
 #include "transport.hpp"
+#include <azure/core/platform.hpp>
 #include <exception>
-
-struct XIO_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 

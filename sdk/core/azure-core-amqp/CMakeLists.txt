@@ -6,8 +6,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
-# Azure core is compatible with CMake 3.12
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
 project(azure-core-amqp LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -59,31 +58,32 @@ set (AZURE_CORE_AMQP_HEADER
 )
 
 set(AZURE_CORE_AMQP_SOURCE
-	src/amqp/cancellable.cpp
-	src/amqp/claim_based_security.cpp
-	src/amqp/connection.cpp
-	src/amqp/connection_string_credential.cpp
-	src/amqp/link.cpp
-	src/amqp/message_receiver.cpp
-	src/amqp/message_sender.cpp
-	src/amqp/session.cpp
-	src/common/global_state.cpp
-	src/models/amqp_header.cpp
-	src/models/amqp_message.cpp
-	src/models/amqp_properties.cpp
-	src/models/amqp_value.cpp
-	src/models/message_source.cpp
-	src/models/message_target.cpp
-	src/models/messaging_values.cpp
-	src/network/amqp_header_transport.cpp
-	src/network/sasl_transport.cpp
-	src/network/socket_listener.cpp
-	src/network/socket_transport.cpp
-	src/network/tls_transport.cpp
-	src/network/transport.cpp 
+    src/amqp/cancellable.cpp
+    src/amqp/claim_based_security.cpp
+    src/amqp/connection.cpp
+    src/amqp/connection_string_credential.cpp
+    src/amqp/link.cpp
+    src/amqp/management.cpp
+    src/amqp/message_receiver.cpp
+    src/amqp/message_sender.cpp
+    src/amqp/session.cpp
+    src/common/global_state.cpp
+    src/models/amqp_header.cpp
+    src/models/amqp_message.cpp
+    src/models/amqp_properties.cpp
+    src/models/amqp_value.cpp
+    src/models/message_source.cpp
+    src/models/message_target.cpp
+    src/models/messaging_values.cpp
+    src/network/amqp_header_transport.cpp
+    src/network/sasl_transport.cpp
+    src/network/socket_listener.cpp
+    src/network/socket_transport.cpp
+    src/network/tls_transport.cpp
+    src/network/transport.cpp 
 )
 
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} "src/amqp/management.cpp")
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
 
 target_include_directories(
   azure-core-amqp
@@ -133,5 +133,5 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_SAMPLES)
-add_subdirectory ("samples")
+  add_subdirectory (samples)
 endif()
