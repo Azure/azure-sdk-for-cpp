@@ -288,6 +288,11 @@ TEST_F(TestSocketTransport, SimpleListener)
     listener.Start();
     EXPECT_ANY_THROW(listener.Start());
   }
+  {
+    SocketListener listener(8008, nullptr);
+
+    EXPECT_ANY_THROW(listener.Stop());
+  }
 
   {
     SocketListener listener1(8008, nullptr);
