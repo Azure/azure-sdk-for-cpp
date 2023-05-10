@@ -270,9 +270,9 @@ TEST(Etag, Assignable) {
 }
 
 TEST(Etag, Constructible) {
-    EXPECT_TRUE(ClassTraits<ETag>::is_constructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_trivially_constructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_constructible);
+    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_constructible));
+    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_trivially_constructible));
+    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_nothrow_constructible));
     EXPECT_TRUE(ClassTraits<ETag>::is_default_constructible);
     EXPECT_TRUE(ClassTraits<ETag>::is_trivially_default_constructible);
     EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_default_constructible);

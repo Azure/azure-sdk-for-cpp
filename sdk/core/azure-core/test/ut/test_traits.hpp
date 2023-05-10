@@ -1,17 +1,17 @@
 #include <type_traits>
 
-template<typename T>
+template<typename T, typename... Args>
 struct ClassTraits {
     static_assert(std::is_class<T>::value, "ClassTraits can only be used with class types");
 
-    // Check if T is constructible
-    static constexpr bool is_constructible = std::is_constructible<T>::value;
+    // Check if T is constructible from Args
+    static constexpr bool is_constructible = std::is_constructible<T, Args...>::value;
 
-    // Check if T is trivially constructible
-    static constexpr bool is_trivially_constructible = std::is_trivially_constructible<T>::value;
+    // Check if T is trivially constructible from Args
+    static constexpr bool is_trivially_constructible = std::is_trivially_constructible<T, Args...>::value;
 
-    // Check if T is nothrow constructible
-    static constexpr bool is_nothrow_constructible = std::is_nothrow_constructible<T>::value;
+    // Check if T is nothrow constructible from Args
+    static constexpr bool is_nothrow_constructible = std::is_nothrow_constructible<T, Args...>::value;
 
     // Check if T has a default constructor
     static constexpr bool is_default_constructible = std::is_default_constructible<T>::value;
