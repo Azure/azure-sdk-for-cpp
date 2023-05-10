@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       {
         auto err = errno;
         throw std::runtime_error(
-            "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+            "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
             + "\".");
       }
     }
