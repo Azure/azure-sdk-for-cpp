@@ -19,7 +19,6 @@ int main()
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
-  connectOptions.HostName = credentials->GetHostName();
   connectOptions.SaslCredentials = credentials;
   Azure::Core::Amqp::_internal::Connection connection(targetUrl, connectOptions);
 

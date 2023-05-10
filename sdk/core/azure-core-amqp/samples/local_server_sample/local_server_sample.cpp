@@ -131,7 +131,6 @@ private:
         std::make_shared<Network::_internal::AmqpHeaderDetectTransport>(transport, nullptr)};
     ConnectionOptions options;
     options.ContainerId = "some";
-    options.HostName = "localhost";
     auto newConnection{std::make_unique<Connection>(amqpTransport, options, this)};
     m_connection = newConnection.get();
     m_connectionQueue.CompleteOperation(std::move(newConnection));

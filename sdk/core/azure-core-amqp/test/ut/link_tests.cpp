@@ -153,7 +153,6 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;
-    options.Transport = amqpTransport;
     m_connection
         = std::make_shared<Azure::Core::Amqp::_internal::Connection>(amqpTransport, options, this);
     m_connection->Listen();

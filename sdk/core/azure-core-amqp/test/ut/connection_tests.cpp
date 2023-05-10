@@ -182,12 +182,6 @@ TEST_F(TestConnections, ConnectionOpenClose)
 
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    options.HostName = "localhost";
-    options.Port = Azure::Core::Amqp::_detail::AmqpsPort;
-    //    std::shared_ptr<Azure::Core::Amqp::_internal::Network::SocketTransport> sockets
-    //        =
-    //        std::make_shared<Azure::Core::Amqp::_internal::Network::SocketTransport>("localhost",
-    //        AmqpsPort);
     Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5671", options);
   }
 }
@@ -220,7 +214,6 @@ private:
             transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "containerId";
-    options.HostName = "localhost";
     auto newConnection{
         std::make_unique<Azure::Core::Amqp::_internal::Connection>(amqpTransport, options, this)};
     newConnection->SetTrace(true);
@@ -319,8 +312,6 @@ TEST_F(TestConnections, ConnectionListenClose)
 
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    options.HostName = "localhost";
-    options.Port = Azure::Core::Amqp::_detail::AmqpsPort;
     Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
   }
 

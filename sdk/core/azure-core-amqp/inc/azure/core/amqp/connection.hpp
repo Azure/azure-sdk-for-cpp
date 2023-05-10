@@ -20,37 +20,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class Session;
 
-  struct ConnectionOptions
-  {
-    //    std::chrono::seconds IdleTimeout{std::chrono::seconds(1)};
-    uint32_t MaxFrameSize{512};
-    uint16_t MaxSessions{65535};
-
-    Azure::Core::Amqp::Models::AmqpValue Properties;
-
-    std::chrono::seconds Timeout{0};
-
-    /** Enable tracing from the uAMQP stack.
-     */
-    bool EnableTrace{false};
-
-    /** Defines the ID of the container for this connection. If empty, a unique 128 bit value will
-     * be used.
-     */
-    std::string ContainerId;
-
-    std::string HostName;
-    uint16_t Port{_detail::AmqpsPort}; // Assume TLS port by default.
-
-    // Default transport to be used. Normally only needed for socket listeners which need to
-    // specify the listening socket characteristics.
-    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> Transport{};
-
-    // Optional SASL plain credentials.
-    std::shared_ptr<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>
-        SaslCredentials{};
-  };
-
   class Error;
 
   enum class ConnectionState
@@ -114,6 +83,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     virtual void OnIoError(Connection const& connection) = 0;
   };
 
+  struct ConnectionOptions
+  {
+    std::chrono::seconds IdleTimeout{std::chrono::seconds(1)};
+    uint32_t MaxFrameSize{512};
+    uint16_t MaxChannel{65535};
+    Azure::Core::Amqp::Models::AmqpValue Properties;
+
+    /** @brief Enable tracing from the uAMQP stack.
+     */
+    bool EnableTrace{false};
+
+    /** @brief Defines the ID of the container for this connection. If empty, a unique 128 bit value will
+     * be used.
+     */
+    std::string ContainerId;
+
+    // Optional SASL plain credentials.
+    std::shared_ptr<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>
+        SaslCredentials{};
+  };
+
   class Connection final {
   public:
     Connection(
@@ -148,23 +138,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     uint32_t GetMaxFrameSize() const;
     uint32_t GetRemoteMaxFrameSize() const;
-    void SetMaxFrameSize(uint32_t frameSize);
     uint16_t GetMaxChannel() const;
-    void SetMaxChannel(uint16_t frameSize);
     std::chrono::milliseconds GetIdleTimeout() const;
+
+    void SetMaxFrameSize(uint32_t frameSize);
+    void SetMaxChannel(uint16_t frameSize);
     void SetIdleTimeout(std::chrono::milliseconds timeout);
     void SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio);
-
     void SetProperties(Azure::Core::Amqp::Models::AmqpValue properties);
-    Azure::Core::Amqp::Models::AmqpValue GetProperties() const;
-    uint64_t HandleDeadlines(); // ???
-    Endpoint CreateEndpoint();
-    void StartEndpoint(Endpoint const& endpoint);
-
-    uint16_t GetEndpointIncomingChannel(Endpoint endpoint);
-    void DestroyEndpoint(Endpoint endpoint);
-
     void SetTrace(bool enableTrace);
+
+    Azure::Core::Amqp::Models::AmqpValue GetProperties() const;
+    //    uint64_t HandleDeadlines(); // ???
+    //    Endpoint CreateEndpoint();
+    //    void StartEndpoint(Endpoint const& endpoint);
+
+    //    uint16_t GetEndpointIncomingChannel(Endpoint endpoint);
+    //    void DestroyEndpoint(Endpoint endpoint);
 
   private:
     std::shared_ptr<Azure::Core::Amqp::_detail::ConnectionImpl> m_impl;

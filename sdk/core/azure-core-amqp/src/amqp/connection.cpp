@@ -107,7 +107,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<Network::_detail::TransportImpl> transport,
       _internal::ConnectionOptions const& options,
       _internal::ConnectionEvents* eventHandler)
-      : m_hostName{options.HostName}, m_options{options}, m_eventHandler{eventHandler}
+      : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler}
   {
     if (options.SaslCredentials)
     {
@@ -188,9 +188,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     //    SetMaxFrameSize(options.MaxFrameSize);
     //    SetMaxChannel(options.MaxSessions);
     //    SetProperties(options.Properties);
-
-    //    std::string SASLType; // Not a string - fill in later.
-    //    std::chrono::seconds Timeout{0};
   }
 
   void ConnectionImpl::Poll() const

@@ -537,8 +537,6 @@ TEST_F(TestMessages, AuthenticatedSender)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  connectionOptions.HostName = sasCredential->GetHostName();
-  connectionOptions.Port = sasCredential->GetPort();
   Connection connection(sasCredential->GetTransport(), connectionOptions);
   Session session(connection, nullptr);
 
@@ -598,8 +596,6 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  connectionOptions.HostName = hostName;
-  connectionOptions.Port = port;
   Connection connection(endpoint, connectionOptions);
   Session session(connection, nullptr);
 
@@ -659,8 +655,6 @@ TEST_F(TestMessages, AuthenticatedReceiver)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  connectionOptions.HostName = sasCredential->GetHostName();
-  connectionOptions.Port = sasCredential->GetPort();
   Connection connection(sasCredential->GetTransport(), connectionOptions);
   Session session(connection, nullptr);
 
@@ -755,10 +749,8 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
 
   ConnectionOptions connectionOptions;
 
-  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  connectionOptions.HostName = hostName;
-  connectionOptions.Port = port;
   Connection connection(endpoint, connectionOptions);
   Session session(connection, nullptr);
 
