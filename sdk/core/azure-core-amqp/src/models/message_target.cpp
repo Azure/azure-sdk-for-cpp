@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       if (target_set_dynamic_node_properties(
               m_target.get(),
-              static_cast<UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
+              static_cast<_detail::UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
@@ -151,7 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Capabilities.empty())
     {
       if (target_set_capabilities(
-              m_target.get(), static_cast<UniqueAmqpValueHandle>(options.Capabilities).get()))
+              m_target.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
       {
         throw std::runtime_error("Could not set capabilities.");
       }

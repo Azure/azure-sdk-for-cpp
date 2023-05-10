@@ -211,9 +211,9 @@ TEST_F(TestValues, TestBinary)
     AmqpBinaryData binaryData;
     binaryData.push_back('a');
     binaryData.push_back(3);
-    AmqpValue value(static_cast<UniqueAmqpValueHandle>(binaryData).get());
+    AmqpValue value(static_cast<_detail::UniqueAmqpValueHandle>(binaryData).get());
 
-    EXPECT_FALSE(value < AmqpValue(static_cast<UniqueAmqpValueHandle>(binaryData).get()));
+    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(binaryData).get()));
 
     AmqpBinaryData data2(value);
     EXPECT_EQ(2, data2.size());
@@ -247,10 +247,10 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValueType::Byte, list1[3].GetType());
     EXPECT_EQ(AmqpValue('a'), list1[3]);
 
-    AmqpValue value(static_cast<UniqueAmqpValueHandle>(list1).get());
+    AmqpValue value(static_cast<_detail::UniqueAmqpValueHandle>(list1).get());
     const AmqpList list2(value);
 
-    EXPECT_FALSE(value < AmqpValue(static_cast<UniqueAmqpValueHandle>(list1).get()));
+    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(list1).get()));
 
     EXPECT_EQ(4, list2.size());
 
@@ -290,9 +290,9 @@ TEST_F(TestValues, TestMap)
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map1[AmqpValue(3)]));
 
     // Now round-trip the map through an AMQP value and confirm that the values persist.
-    AmqpValue valueOfMap = static_cast<UniqueAmqpValueHandle>(map1).get();
+    AmqpValue valueOfMap = static_cast<_detail::UniqueAmqpValueHandle>(map1).get();
     AmqpMap map2(valueOfMap);
-    EXPECT_FALSE(valueOfMap < AmqpValue(static_cast<UniqueAmqpValueHandle>(map1).get()));
+    EXPECT_FALSE(valueOfMap < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(map1).get()));
 
     EXPECT_EQ(5, static_cast<int32_t>(map2["ABC"]));
     EXPECT_EQ(std::string("ABC"), static_cast<std::string>(map2[AmqpValue(3)]));
@@ -316,7 +316,7 @@ TEST_F(TestValues, TestArray)
     EXPECT_EQ(3, static_cast<std::int32_t>(array2.at(1)));
     EXPECT_EQ(5, static_cast<std::int32_t>(array2.at(2)));
     EXPECT_FALSE(array1 < array2);
-    EXPECT_FALSE(value < AmqpValue(static_cast<UniqueAmqpValueHandle>(array2).get()));
+    EXPECT_FALSE(value < AmqpValue(static_cast<_detail::UniqueAmqpValueHandle>(array2).get()));
   }
   {
     // Because EXPECT_ANY_THROW is a macro, the commas in the lambda below confuse the

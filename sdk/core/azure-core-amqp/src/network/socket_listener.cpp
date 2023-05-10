@@ -76,6 +76,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     {
       m_started = false;
     }
+    if (socketlistener_stop(m_socket))
+    {
+      auto err = errno;
+      throw std::runtime_error(
+          "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+          + "\".");
+    }
   }
 
   void SocketListener::Poll() const { socketlistener_dowork(m_socket); }

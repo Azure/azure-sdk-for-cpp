@@ -18,6 +18,8 @@
 #include <iostream>
 #include <sstream>
 
+using namespace Azure::Core::Amqp::Models::_detail;
+
 void Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(
     AMQP_VALUE value)
 {

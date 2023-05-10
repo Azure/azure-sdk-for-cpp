@@ -20,6 +20,7 @@ void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpM
 }
 
 using namespace Azure::Core::Amqp::_detail;
+using namespace Azure::Core::Amqp::Models::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

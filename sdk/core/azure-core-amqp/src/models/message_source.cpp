@@ -141,7 +141,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       if (source_set_dynamic_node_properties(
               m_source.get(),
-              static_cast<UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
+              static_cast<_detail::UniqueAmqpValueHandle>(options.DynamicNodeProperties).get()))
       {
         throw std::runtime_error("Could not set dynamic node properties."); // LCOV_EXCL_LINE
       }
@@ -156,7 +156,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Filter.empty())
     {
       if (source_set_filter(
-              m_source.get(), static_cast<UniqueAmqpValueHandle>(options.Filter).get()))
+              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Filter).get()))
       {
         throw std::runtime_error("Could not set filter set."); // LCOV_EXCL_LINE
       }
@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Outcomes.empty())
     {
       if (source_set_outcomes(
-              m_source.get(), static_cast<UniqueAmqpValueHandle>(options.Outcomes).get()))
+              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Outcomes).get()))
       {
         throw std::runtime_error("Could not set outcomes."); // LCOV_EXCL_LINE
       }
@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Capabilities.empty())
     {
       if (source_set_capabilities(
-              m_source.get(), static_cast<UniqueAmqpValueHandle>(options.Capabilities).get()))
+              m_source.get(), static_cast<_detail::UniqueAmqpValueHandle>(options.Capabilities).get()))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
