@@ -160,7 +160,7 @@ jobs:
               Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
             ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
               Directory: sdk/${{ parameters.ServiceDirectory }}
-              CheckLinkGuidance: $true
+            CheckLinkGuidance: $true
 
         - ${{ each artifact in parameters.Artifacts }}:
           - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
