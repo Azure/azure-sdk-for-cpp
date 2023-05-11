@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "private/administration_constants.hpp"
-#include "private/keyvault_settings_common_request.hpp"
-#include "private/package_version.hpp"
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
@@ -12,6 +9,11 @@
 #include <azure/keyvault/administration/settings_client.hpp>
 #include <azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
+
+#include "private/administration_constants.hpp"
+#include "private/keyvault_settings_common_request.hpp"
+#include "private/package_version.hpp"
+
 #include <memory>
 
 using namespace Azure::Core::Http;

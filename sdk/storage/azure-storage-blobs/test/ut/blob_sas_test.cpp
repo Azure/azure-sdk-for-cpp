@@ -4,9 +4,9 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 
-#include <chrono>
-
 #include "blob_container_client_test.hpp"
+
+#include <chrono>
 
 namespace Azure { namespace Storage { namespace Test {
 

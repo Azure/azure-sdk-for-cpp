@@ -14,7 +14,6 @@
 #include <azure/storage/common/storage_credential.hpp>
 
 #include "azure/storage/files/shares/share_client.hpp"
-
 #include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {

@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "private/tenant_id_resolver.hpp"
-
 #include "credential_test_helper.hpp"
+#include "private/tenant_id_resolver.hpp"
 
 #include <gtest/gtest.h>
 

@@ -6,6 +6,7 @@
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/session_impl.hpp"
+
 #include <iostream>
 
 void Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(CBS_HANDLE value)

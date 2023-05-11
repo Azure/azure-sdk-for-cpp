@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
 #include "azure/storage/files/shares/rest_client.hpp"
+
+#include <memory>
+#include <string>
+#include <vector>
 
 /* cSpell:ignore dacl */
 

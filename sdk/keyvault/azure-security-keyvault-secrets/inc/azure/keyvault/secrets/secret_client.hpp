@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+
 #include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
@@ -15,9 +19,7 @@
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "dll_import_export.hpp"
-#include <azure/core/http/http.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/response.hpp>
+
 #include <stdint.h>
 #include <string>
 

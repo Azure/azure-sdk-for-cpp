@@ -3,10 +3,10 @@
 
 #include "azure/storage/files/shares/share_responses.hpp"
 
-#include <thread>
-
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
+
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

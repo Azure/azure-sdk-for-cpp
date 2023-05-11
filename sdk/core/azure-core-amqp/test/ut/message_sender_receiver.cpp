@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
+#include <azure/core/platform.hpp>
 
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/connection.hpp"
@@ -14,11 +14,11 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/session.hpp"
 #include "mock_amqp_server.hpp"
-#include <azure/core/platform.hpp>
+
 #include <functional>
 #include <random>
 
-#include "mock_amqp_server.hpp"
+#include <gtest/gtest.h>
 
 extern uint16_t FindAvailableSocket();
 

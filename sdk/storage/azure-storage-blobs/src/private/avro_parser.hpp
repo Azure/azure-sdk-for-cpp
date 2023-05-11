@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <map>
-#include <memory>
-#include <type_traits>
-
 #include <azure/core/io/body_stream.hpp>
 
 #include "azure/storage/blobs/blob_options.hpp"
+
+#include <map>
+#include <memory>
+#include <type_traits>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   enum class AvroDatumType

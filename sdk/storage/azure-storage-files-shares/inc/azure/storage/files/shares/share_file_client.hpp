@@ -3,9 +3,6 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
@@ -14,6 +11,9 @@
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
+
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

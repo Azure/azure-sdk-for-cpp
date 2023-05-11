@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
-
 #include "azure/core/internal/cryptography/sha_hash.hpp"
+#include "gtest/gtest.h"
 
 using namespace Azure::Core::Cryptography::_internal;
 

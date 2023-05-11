@@ -11,6 +11,7 @@
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/nullable.hpp"
+
 #include <memory> // for unique_ptr
 #include <stdexcept>
 #include <utility> // for move

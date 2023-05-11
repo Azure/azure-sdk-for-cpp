@@ -3,15 +3,15 @@
 
 #include "datalake_file_client_test.hpp"
 
+#include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/blobs.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+
 #include <algorithm>
 #include <future>
 #include <random>
 #include <thread>
 #include <vector>
-
-#include <azure/identity/client_secret_credential.hpp>
-#include <azure/storage/blobs.hpp>
-#include <azure/storage/common/internal/shared_key_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

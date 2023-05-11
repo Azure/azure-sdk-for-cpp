@@ -3,13 +3,13 @@
 
 #include "azure/storage/common/storage_exception.hpp"
 
-#include <type_traits>
-
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/json/json.hpp>
 
 #include "azure/storage/common/internal/constants.hpp"
 #include "azure/storage/common/internal/xml_wrapper.hpp"
+
+#include <type_traits>
 
 namespace Azure { namespace Storage {
   StorageException StorageException::CreateFromResponse(

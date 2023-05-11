@@ -3,12 +3,12 @@
 
 #include "get_env.hpp"
 
+#include <azure/storage/queues.hpp>
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
 #include <thread>
-
-#include <azure/storage/queues.hpp>
 
 std::string GetConnectionString()
 {

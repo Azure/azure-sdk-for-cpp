@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "azure/identity/detail/client_credential_core.hpp"
-#include "azure/identity/detail/token_cache.hpp"
-
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
+
+#include "azure/identity/detail/client_credential_core.hpp"
+#include "azure/identity/detail/token_cache.hpp"
 
 #include <memory>
 #include <string>

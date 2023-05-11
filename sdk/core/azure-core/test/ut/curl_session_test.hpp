@@ -19,10 +19,11 @@
 #endif // _MSC_VER
 
 #include <azure/core/http/curl_transport.hpp>
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+
 #include <string>
 
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <http/curl/curl_connection_pool_private.hpp>
 
 namespace Azure { namespace Core { namespace Test {

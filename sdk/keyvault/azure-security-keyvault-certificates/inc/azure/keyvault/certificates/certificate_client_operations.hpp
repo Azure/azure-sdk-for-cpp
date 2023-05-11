@@ -10,12 +10,12 @@
 
 #pragma once
 
-#include "azure/keyvault/certificates/certificate_client_models.hpp"
-#include "azure/keyvault/certificates/dll_import_export.hpp"
-
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
+
+#include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "azure/keyvault/certificates/dll_import_export.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
   class CertificateClient;

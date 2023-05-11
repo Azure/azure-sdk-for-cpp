@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_protocol.hpp"
-#include "private/key_constants.hpp"
-#include "private/keyvault_constants.hpp"
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
+
+#include "private/key_constants.hpp"
+#include "private/keyvault_constants.hpp"
 
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;

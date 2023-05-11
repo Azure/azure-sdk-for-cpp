@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/amqp/models/message_source.hpp>
 #include <azure/core/amqp/models/message_target.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
+
+#include <gtest/gtest.h>
 
 class TestSourceTarget : public testing::Test {
 protected:

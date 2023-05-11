@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "private/key_request_parameters.hpp"
+
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
 #include "private/key_constants.hpp"
-#include "private/key_request_parameters.hpp"
 #include "private/key_serializers.hpp"
 
 #include <string>

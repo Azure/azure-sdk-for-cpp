@@ -3,8 +3,9 @@
 
 #include "key_client_test_hsm_live.hpp"
 
-#include "gtest/gtest.h"
 #include <azure/keyvault/keys.hpp>
+
+#include "gtest/gtest.h"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;

@@ -3,17 +3,17 @@
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <azure/core/nullable.hpp>
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
 #include "azure/storage/blobs/rest_client.hpp"
 #include "azure/storage/files/datalake/rest_client.hpp"
+
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

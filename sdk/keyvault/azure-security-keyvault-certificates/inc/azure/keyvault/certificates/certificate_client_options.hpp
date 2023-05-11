@@ -13,6 +13,7 @@
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/dll_import_export.hpp"
+
 #include <memory>
 #include <string>
 

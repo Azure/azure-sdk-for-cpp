@@ -25,9 +25,10 @@
 
 #include <get_env.hpp>
 
-#include "cryptohelpers.hpp"
 #include <azure/attestation.hpp>
 #include <azure/identity.hpp>
+
+#include "cryptohelpers.hpp"
 
 #include <chrono>
 #include <iomanip>

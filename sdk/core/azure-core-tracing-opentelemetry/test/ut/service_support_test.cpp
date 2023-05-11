@@ -1,11 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
-#include <chrono>
-#include <regex>
-
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/tracing/service_tracing.hpp>
@@ -13,6 +8,11 @@
 #include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
 
 #include "test_exporter.hpp" // Span Exporter used for OpenTelemetry tests.
+
+#include <chrono>
+#include <regex>
+
+#include <gtest/gtest.h>
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
 // the warnings across the includes.

@@ -8,9 +8,12 @@
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
+
 #include <memory>
 #include <string>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Test {
 

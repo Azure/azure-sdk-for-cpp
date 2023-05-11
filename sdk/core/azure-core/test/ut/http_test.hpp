@@ -7,9 +7,9 @@
  *
  */
 
-#include <gtest/gtest.h>
-
 #include <azure/core/http/http.hpp>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Test {
 

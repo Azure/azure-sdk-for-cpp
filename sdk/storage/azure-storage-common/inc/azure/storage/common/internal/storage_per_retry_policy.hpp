@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <memory>
-
 #include <azure/core/http/policies/policy.hpp>
+
+#include <memory>
 
 namespace Azure { namespace Storage { namespace _internal {
 

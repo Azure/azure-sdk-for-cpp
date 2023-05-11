@@ -1,14 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "../src/private/crypto/inc/crypto.hpp"
-#include "attestation_collateral.hpp"
-#include "azure/attestation/attestation_client.hpp"
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <gtest/gtest.h>
+
+#include "../src/private/crypto/inc/crypto.hpp"
+#include "attestation_collateral.hpp"
+#include "azure/attestation/attestation_client.hpp"
+
 #include <tuple>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;

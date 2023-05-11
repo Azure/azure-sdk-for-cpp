@@ -9,22 +9,26 @@
  */
 
 #include "opensslkeys.hpp"
+
+#include <azure/core/azure_assert.hpp>
+
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
-#include <azure/core/azure_assert.hpp>
+
 #include <cassert>
 #include <cstring>
 #include <memory>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 

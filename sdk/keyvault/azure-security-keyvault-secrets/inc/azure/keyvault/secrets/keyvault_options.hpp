@@ -6,8 +6,9 @@
  * @brief Keyvault Secret actions options
  */
 #pragma once
-#include "dll_import_export.hpp"
 #include <azure/core/internal/client_options.hpp>
+
+#include "dll_import_export.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 

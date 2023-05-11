@@ -3,14 +3,14 @@
 
 #include "azure/identity/azure_cli_credential.hpp"
 
-#include "private/identity_log.hpp"
-#include "private/tenant_id_resolver.hpp"
-#include "private/token_credential_impl.hpp"
-
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
+
+#include "private/identity_log.hpp"
+#include "private/tenant_id_resolver.hpp"
+#include "private/token_credential_impl.hpp"
 
 #include <cstdio>
 #include <stdexcept>
@@ -32,8 +32,9 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <spawn.h>
-#include <sys/wait.h>
 #include <unistd.h>
+
+#include <sys/wait.h>
 #endif
 
 using Azure::Identity::AzureCliCredential;

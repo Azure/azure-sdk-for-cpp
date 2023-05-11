@@ -3,10 +3,6 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
@@ -15,6 +11,10 @@
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
+
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

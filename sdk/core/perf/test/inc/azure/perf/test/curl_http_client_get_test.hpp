@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "azure/perf/test/http_client_get_test.hpp"
-
 #include <azure/core/http/curl_transport.hpp>
+
+#include "azure/perf/test/http_client_get_test.hpp"
 
 namespace Azure { namespace Perf { namespace Test {
   /**

@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/keyvault/keys/key_client.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -8,7 +10,6 @@
 #include <azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
-#include "azure/keyvault/keys/key_client.hpp"
 #include "private/cryptography_internal_access.hpp"
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"

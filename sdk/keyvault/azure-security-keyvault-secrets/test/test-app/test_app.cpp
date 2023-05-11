@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/secrets.hpp"
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
+
+#include "azure/keyvault/secrets.hpp"
 
 using namespace Azure::Security::KeyVault::Secrets;
 

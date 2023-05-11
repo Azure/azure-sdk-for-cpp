@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
-
-#include "key_client_base_test.hpp"
-#include "private/key_serializers.hpp"
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
-#include <private/key_constants.hpp>
+
+#include "gtest/gtest.h"
+#include "key_client_base_test.hpp"
+#include "private/key_serializers.hpp"
 
 #include <string>
+
+#include <private/key_constants.hpp>
 
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure;

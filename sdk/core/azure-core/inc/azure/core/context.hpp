@@ -12,6 +12,7 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/rtti.hpp"
+
 #include <atomic>
 #include <chrono>
 #include <memory>

@@ -7,6 +7,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+
 #include <chrono>
 #include <iostream>
 #include <limits>

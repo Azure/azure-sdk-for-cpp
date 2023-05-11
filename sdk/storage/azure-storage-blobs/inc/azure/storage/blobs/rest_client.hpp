@@ -6,13 +6,6 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 #pragma once
 
-#include <cstdint>
-#include <map>
-#include <memory>
-#include <string>
-#include <type_traits>
-#include <vector>
-
 #include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
@@ -25,6 +18,13 @@
 #include <azure/core/url.hpp>
 #include <azure/storage/blobs/dll_import_export.hpp>
 #include <azure/storage/common/storage_common.hpp>
+
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <string>
+#include <type_traits>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
   namespace _detail {

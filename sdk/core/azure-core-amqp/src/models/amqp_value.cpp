@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/models/amqp_value.hpp"
+
 #include "azure/core/amqp/models/amqp_properties.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 
@@ -14,6 +15,7 @@
 #include <azure_uamqp_c/amqp_definitions_properties.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #include <azure_uamqp_c/amqpvalue_to_string.h>
+
 #include <iomanip>
 #include <iostream>
 #include <sstream>

@@ -3,8 +3,10 @@
 
 #pragma once
 
-#include "transport.hpp"
 #include <azure/core/platform.hpp>
+
+#include "transport.hpp"
+
 #include <exception>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {

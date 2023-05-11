@@ -2,10 +2,12 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/tls_transport.hpp"
+
 #include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/tlsio.h>
+
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {

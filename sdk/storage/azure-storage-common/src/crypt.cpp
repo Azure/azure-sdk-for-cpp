@@ -21,13 +21,13 @@
 #include <openssl/sha.h>
 #endif
 
-#include <algorithm>
-#include <stdexcept>
-#include <vector>
-
 #include <azure/core/http/http.hpp>
 
 #include "azure/storage/common/storage_common.hpp"
+
+#include <algorithm>
+#include <stdexcept>
+#include <vector>
 
 namespace Azure { namespace Storage {
 

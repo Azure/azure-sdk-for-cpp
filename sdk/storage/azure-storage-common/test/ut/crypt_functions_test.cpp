@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <cstring>
-
 #include <azure/storage/common/crypt.hpp>
 
 #include "test_base.hpp"
+
+#include <cstring>
 
 namespace Azure { namespace Storage { namespace Test {
 

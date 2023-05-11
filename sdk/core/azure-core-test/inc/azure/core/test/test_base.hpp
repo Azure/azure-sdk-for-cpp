@@ -5,11 +5,6 @@
  * Base class for running live and playback tests using the interceptor manager
  */
 
-#include <gtest/gtest.h>
-
-#include "azure/core/test/network_models.hpp"
-#include "azure/core/test/test_context_manager.hpp"
-#include "azure/core/test/test_proxy_manager.hpp"
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
@@ -17,10 +12,16 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 
+#include "azure/core/test/network_models.hpp"
+#include "azure/core/test/test_context_manager.hpp"
+#include "azure/core/test/test_proxy_manager.hpp"
+
 #include <chrono>
 #include <memory>
 #include <regex>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 using namespace std::chrono_literals;
 

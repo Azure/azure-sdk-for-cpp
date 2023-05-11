@@ -3,12 +3,6 @@
 
 #include "azure/storage/blobs/blob_batch.hpp"
 
-#include <algorithm>
-#include <cstring>
-#include <functional>
-#include <future>
-#include <stdexcept>
-
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -18,6 +12,12 @@
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 
 #include "private/package_version.hpp"
+
+#include <algorithm>
+#include <cstring>
+#include <functional>
+#include <future>
+#include <stdexcept>
 
 namespace Azure { namespace Storage { namespace Blobs {
 

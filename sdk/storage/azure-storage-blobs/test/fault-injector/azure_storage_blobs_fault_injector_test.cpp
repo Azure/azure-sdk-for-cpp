@@ -11,7 +11,6 @@
  */
 
 #include <azure/core/internal/environment.hpp>
-
 #include <azure/storage/blobs.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)

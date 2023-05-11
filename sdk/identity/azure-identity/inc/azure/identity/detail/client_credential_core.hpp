@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "azure/identity/dll_import_export.hpp"
-
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/url.hpp>
+
+#include "azure/identity/dll_import_export.hpp"
 
 #include <string>
 #include <vector>

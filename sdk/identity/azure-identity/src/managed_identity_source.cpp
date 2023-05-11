@@ -3,9 +3,9 @@
 
 #include "private/managed_identity_source.hpp"
 
-#include "private/identity_log.hpp"
-
 #include <azure/core/internal/environment.hpp>
+
+#include "private/identity_log.hpp"
 
 #include <fstream>
 #include <iterator>

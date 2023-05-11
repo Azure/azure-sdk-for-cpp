@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <string>
-
 #include <azure/storage/common/account_sas_builder.hpp>
 
 #include "azure/storage/blobs/blob_responses.hpp"
+
+#include <string>
 
 namespace Azure { namespace Storage { namespace Sas {
 

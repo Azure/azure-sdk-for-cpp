@@ -11,6 +11,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/url.hpp>
+
 #include <unordered_map>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {

@@ -9,11 +9,12 @@
 
 #pragma once
 
-#include "azure/perf/options.hpp"
-#include "azure/perf/test_options.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/url.hpp>
+
+#include "azure/perf/options.hpp"
+#include "azure/perf/test_options.hpp"
 
 #include <string>
 #include <vector>

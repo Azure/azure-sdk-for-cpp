@@ -4,6 +4,7 @@
 #pragma once
 
 #include <memory>
+
 #include <opentelemetry/sdk/trace/exporter.h>
 
 class RecordedSpan : public opentelemetry::sdk::trace::Recordable {

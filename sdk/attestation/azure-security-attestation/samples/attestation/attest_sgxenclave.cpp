@@ -23,9 +23,11 @@
 
 #include <get_env.hpp>
 
-#include "attestation_collateral.hpp"
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
+
+#include "attestation_collateral.hpp"
+
 #include <chrono>
 #include <iostream>
 #include <thread>

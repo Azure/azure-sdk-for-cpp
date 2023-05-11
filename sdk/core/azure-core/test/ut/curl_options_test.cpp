@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -10,18 +8,20 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
+#include <gtest/gtest.h>
+
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
 #endif
-
-#include <http/curl/curl_connection_pool_private.hpp>
-#include <http/curl/curl_connection_private.hpp>
-#include <http/curl/curl_session_private.hpp>
 
 #include "transport_adapter_base_test.hpp"
 
 #include <string>
 #include <vector>
+
+#include <http/curl/curl_connection_pool_private.hpp>
+#include <http/curl/curl_connection_private.hpp>
+#include <http/curl/curl_session_private.hpp>
 
 namespace Azure { namespace Core { namespace Test {
 

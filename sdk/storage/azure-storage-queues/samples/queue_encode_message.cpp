@@ -3,13 +3,13 @@
 
 #include "get_env.hpp"
 
+#include <azure/core/base64.hpp>
+#include <azure/storage/queues.hpp>
+
 #include <cassert>
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
-
-#include <azure/core/base64.hpp>
-#include <azure/storage/queues.hpp>
 
 std::string GetConnectionString()
 {

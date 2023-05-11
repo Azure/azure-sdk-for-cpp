@@ -7,18 +7,18 @@
  *
  */
 
-#include <gtest/gtest.h>
+#include <azure/core.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/keyvault/keys.hpp>
 
 #include "./../../src/private/key_serializers.hpp"
 #include "./../../src/private/keyvault_protocol.hpp"
 #include "./../../src/private/package_version.hpp"
 
-#include <azure/core.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
-#include <azure/keyvault/keys.hpp>
-
 #include <cstdio>
 #include <string>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 

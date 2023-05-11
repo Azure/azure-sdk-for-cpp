@@ -17,9 +17,9 @@
 #include <windows.h>
 #endif
 
-#include <gtest/gtest.h>
-
 #include <azure/core/io/body_stream.hpp>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core::IO;
 using namespace Azure::Core;

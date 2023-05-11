@@ -8,16 +8,16 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-
-#include "azure/core/test/network_models.hpp"
-#include "azure/core/test/test_proxy_manager.hpp"
-
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
+
+#include "azure/core/test/network_models.hpp"
+#include "azure/core/test/test_proxy_manager.hpp"
+
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Core { namespace Test {
 

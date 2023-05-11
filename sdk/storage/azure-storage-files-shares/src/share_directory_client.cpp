@@ -14,7 +14,6 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 #include "azure/storage/files/shares/share_file_client.hpp"
-
 #include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {

@@ -4,6 +4,7 @@
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/message_sender.hpp>
+
 #include <chrono>
 #include <iostream>
 #include <limits>

@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/extendable_enumeration.hpp>
-#include <gtest/gtest.h>
+
 #include <string>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

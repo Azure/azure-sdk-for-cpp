@@ -7,11 +7,13 @@
  */
 
 #include "private/secret_serializers.hpp"
-#include "private/secret_constants.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
+
+#include "private/secret_constants.hpp"
 
 using namespace Azure::Core::_internal;
 using namespace Azure::Core::Json::_internal;

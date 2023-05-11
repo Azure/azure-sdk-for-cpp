@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/internal/tracing/tracing_impl.hpp"
 #include <azure/core/internal/tracing/service_tracing.hpp>
+
+#include "azure/core/internal/tracing/tracing_impl.hpp"
+
 #include <gtest/gtest.h>
 
 using namespace Azure::Core;
@@ -39,6 +41,7 @@ TEST(TracingContextFactory, ServiceTraceEnums)
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+
 #include <gtest/gtest.h>
 
 using namespace Azure::Core;

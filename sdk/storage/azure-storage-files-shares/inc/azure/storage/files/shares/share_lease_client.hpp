@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/storage/files/shares/share_client.hpp"
+#include "azure/storage/files/shares/share_file_client.hpp"
+
 #include <chrono>
 #include <mutex>
 #include <string>
-
-#include "azure/storage/files/shares/share_client.hpp"
-#include "azure/storage/files/shares/share_file_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

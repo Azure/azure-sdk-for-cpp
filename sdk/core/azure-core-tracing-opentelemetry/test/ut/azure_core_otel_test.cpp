@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #define USE_MEMORY_EXPORTER 1
+#include <azure/core/test/test_base.hpp>
+
 #include "../src/opentelemetry_private.hpp"
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
-#include <azure/core/test/test_base.hpp>
 
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
@@ -27,6 +28,7 @@
 #endif
 
 #include <chrono>
+
 #include <gtest/gtest.h>
 
 class OpenTelemetryTests : public Azure::Core::Test::TestBase {

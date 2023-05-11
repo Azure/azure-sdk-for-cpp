@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/perf/random_stream.hpp>
+
 #include <vector>
+
+#include <gtest/gtest.h>
 
 TEST(circular_stream, basic)
 {

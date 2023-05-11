@@ -9,13 +9,13 @@
 
 #pragma once
 
+#include <azure/core/http/curl_transport.hpp>
+
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
-
 #include "curl_connection_private.hpp"
 
 #include <atomic>
-#include <azure/core/http/curl_transport.hpp>
 #include <condition_variable>
 #include <list>
 #include <memory>

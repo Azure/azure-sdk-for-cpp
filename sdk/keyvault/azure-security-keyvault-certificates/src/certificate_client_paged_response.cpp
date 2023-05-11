@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-#include "azure/keyvault/certificates/certificate_client.hpp"
-#include "azure/keyvault/certificates/certificate_client_models.hpp"
-#include "private/certificate_constants.hpp"
-#include "private/certificate_serializers.hpp"
-
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/url.hpp>
+
+#include "azure/keyvault/certificates/certificate_client.hpp"
+#include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "private/certificate_constants.hpp"
+#include "private/certificate_serializers.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
 

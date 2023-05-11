@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <type_traits>
-
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/account_sas_builder.hpp>
 
 #include "azure/storage/files/datalake/datalake_responses.hpp"
+
+#include <cstdint>
+#include <string>
+#include <type_traits>
 
 namespace Azure { namespace Storage { namespace Sas {
 

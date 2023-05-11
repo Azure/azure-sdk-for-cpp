@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/test/test_proxy_policy.hpp"
-#include "azure/core/test/network_models.hpp"
-#include "azure/core/test/test_context_manager.hpp"
 
 #include <azure/core/internal/strings.hpp>
+
+#include "azure/core/test/network_models.hpp"
+#include "azure/core/test/test_context_manager.hpp"
 
 #include <string>
 #include <vector>

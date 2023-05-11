@@ -19,12 +19,14 @@
 
 #include <get_env.hpp>
 
-#include "cryptohelpers.hpp"
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/identity.hpp>
+
+#include "cryptohelpers.hpp"
+
 #include <chrono>
 #include <iomanip>
 #include <iostream>

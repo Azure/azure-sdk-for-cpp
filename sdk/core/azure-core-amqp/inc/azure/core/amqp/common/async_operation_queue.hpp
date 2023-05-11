@@ -4,6 +4,7 @@
 #pragma once
 
 #include <azure/core/context.hpp>
+
 #include <condition_variable>
 #include <list>
 #include <mutex>

@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "azure/keyvault/keys/dll_import_export.hpp"
-
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
@@ -20,6 +18,8 @@
 #include <azure/core/operation_status.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
+
+#include "azure/keyvault/keys/dll_import_export.hpp"
 
 #include <memory>
 #include <stdexcept>

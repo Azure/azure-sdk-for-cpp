@@ -8,15 +8,15 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
 #include "azure/storage/queues/queue_client.hpp"
 #include "azure/storage/queues/queue_options.hpp"
 #include "azure/storage/queues/queue_responses.hpp"
+
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Storage { namespace Queues {
 

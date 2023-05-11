@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include <gtest/gtest.h>
+#include "azure/core/test/network_models.hpp"
+
 #include <string>
 
-#include "azure/core/test/network_models.hpp"
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Test {
   /**

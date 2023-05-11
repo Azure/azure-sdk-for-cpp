@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include <azure/core/internal/unique_handle.hpp>
+#include <azure/core/uuid.hpp>
+
 #include "amqp_header.hpp"
 
 #include <array>
-#include <azure/core/internal/unique_handle.hpp>
-#include <azure/core/uuid.hpp>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>

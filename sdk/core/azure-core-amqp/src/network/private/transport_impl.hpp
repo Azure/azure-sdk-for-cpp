@@ -3,7 +3,9 @@
 
 #pragma once
 #include "azure/core/internal/unique_handle.hpp"
+
 #include <azure_c_shared_utility/xio.h>
+
 #include <exception>
 #include <functional>
 #include <stdexcept>

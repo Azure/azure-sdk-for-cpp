@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/nullable.hpp>
+
 #include "claims_based_security.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
@@ -10,8 +13,7 @@
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
 #include "session.hpp"
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/core/nullable.hpp>
+
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp {

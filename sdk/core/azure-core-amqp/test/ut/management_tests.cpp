@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include "mock_amqp_server.hpp"
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/management.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
 #include <azure/core/amqp/session.hpp>
 #include <azure/core/platform.hpp>
+
+#include "mock_amqp_server.hpp"
+
 #include <gtest/gtest.h>
 
 class TestManagement : public testing::Test {

@@ -9,13 +9,21 @@
  */
 
 #include "opensslcert.hpp"
+
+#include <azure/core/platform.hpp>
+
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
 #include "opensslkeys.hpp"
-#include <azure/core/platform.hpp>
+
 #include <cstring>
 #include <ctime>
 #include <memory>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 #include <openssl/asn1.h>
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
@@ -24,10 +32,6 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509v3.h>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 // cspell::words OpenSSL X509 OpenSSLX509
 

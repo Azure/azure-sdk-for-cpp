@@ -5,8 +5,10 @@
 #include "azure/core/internal/http/pipeline.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/tracing/tracing.hpp"
-#include <gtest/gtest.h>
+
 #include <list>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;

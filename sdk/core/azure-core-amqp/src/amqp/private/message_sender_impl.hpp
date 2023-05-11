@@ -5,7 +5,9 @@
 
 #include "azure/core/amqp/message_sender.hpp"
 #include "claims_based_security_impl.hpp"
+
 #include <azure_uamqp_c/message_sender.h>
+
 #include <tuple>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

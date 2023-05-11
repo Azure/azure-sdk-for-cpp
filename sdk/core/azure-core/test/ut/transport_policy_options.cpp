@@ -13,10 +13,12 @@
 #include "azure/core/internal/json/json.hpp"
 #include "azure/core/platform.hpp"
 #include "azure/core/response.hpp"
-#include <gtest/gtest.h>
+
 #include <iostream>
 #include <string>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 using namespace std::chrono_literals;
 

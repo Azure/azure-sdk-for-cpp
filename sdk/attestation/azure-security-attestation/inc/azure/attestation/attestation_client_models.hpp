@@ -9,13 +9,15 @@
 
 #pragma once
 
-#include "azure/attestation/dll_import_export.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
+
+#include "azure/attestation/dll_import_export.hpp"
+
 #include <iostream>
 #include <memory>
 #include <string>
