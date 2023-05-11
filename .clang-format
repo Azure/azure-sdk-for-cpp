@@ -33,10 +33,25 @@ CompactNamespaces: true
 Cpp11BracedListStyle: true
 FixNamespaceComments: true
 IndentWidth: 2
-IncludeBlocks: Preserve
+IncludeBlocks: Regroup
 IndentCaseLabels: true
 NamespaceIndentation: Inner
 PointerAlignment: Left
 PenaltyReturnTypeOnItsOwnLine: 300
 TabWidth: 2
 UseTab: Never
+IncludeCategories:
+ - Regex: '^<windows.h>$'
+   Priority: 3
+ - Regex: '^["<]get_env.hpp'
+   Priority: 1
+ - Regex: '<[[:alnum:]_.]+>'
+   Priority: 9
+ - Regex: '<Azure/.*>'
+   Priority: 2
+ - Regex: '^<azure_uamqp_c.*/(amqp_definitions_sequence_no|amqp_definitions_milliseconds|amqp_definitions_terminus_expiry_policy|amqp_definitions_terminus_durability).h>$'
+   Priority: 4
+ - Regex: '<azure_.*>'
+   Priority: 5
+ - Regex: '^".+'
+   Priority: 3
