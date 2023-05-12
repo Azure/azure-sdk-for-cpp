@@ -100,3 +100,27 @@ bool const Azure::Messaging::EventHubs::ProducerClient::
     return std::get<0>(result) == Azure::Core::Amqp::_internal::MessageSendResult::Ok;
   });
 }
+
+void Azure::Messaging::EventHubs::ProducerClient::CreateManagement(std::string name, bool eventHub)
+{
+  (void)eventHub;
+  std::string manageUrl = 
+       "amqps://" + m_credentials.FullyQualifiedNamespace + "/" + m_credentials.EventHub;
+
+  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+  connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
+  connectOptions.EnableTrace = m_producerClientOptions.SenderOptions.EnableTrace;
+  connectOptions.HostName = m_credentials.FullyQualifiedNamespace;
+   
+
+  Azure::Core::Amqp::_internal::Connection connection(manageUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Session session(connection);
+  session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
+  session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
+
+  Azure::Core::Amqp::_internal::ManagementOptions manageOptions;
+  manageOptions.EnableTrace = m_producerClientOptions.SenderOptions.EnableTrace;
+
+  Azure::Core::Amqp::_internal::Management managementClient(session, name, manageOptions);
+  m_management = managementClient; 
+}

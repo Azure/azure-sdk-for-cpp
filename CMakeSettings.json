@@ -56,7 +56,8 @@
           "value": "True",
           "type": "BOOL"
         }
-      ]
+      ],
+      "cmakeToolchain": "D:/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "x64-DebugWithTests-OpenSSL111",

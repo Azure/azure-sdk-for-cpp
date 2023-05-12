@@ -39,10 +39,10 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.5.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.9.0" CONFIG QUIET)
   find_package(azure-storage-blobs-cpp "12.7.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.5.0" REQUIRED)
+    find_package(azure-core-cpp "1.9.0" REQUIRED)
     find_package(azure-storage-blobs-cpp "12.7.0" REQUIRED)
   endif()
 endif()
@@ -56,6 +56,9 @@ set(
     inc/azure/messaging/eventhubs/retry_operation.hpp
     inc/azure/messaging/eventhubs/consumer_client.hpp
     inc/azure/messaging/eventhubs/partition_client.hpp
+    inc/azure/messaging/eventhubs/processor_load_balancer.hpp
+    inc/azure/messaging/eventhubs/processor_partition_client.hpp
+    inc/azure/messaging/eventhubs/checkpoint_store.hpp
 )
 
 set(
@@ -66,6 +69,7 @@ set(
     src/consumer_client.cpp
     src/partition_client.cpp
     src/checkpoint_store.cpp
+    src/processor_load_balancer.cpp
 )
 add_library(
   azure-messaging-eventhubs

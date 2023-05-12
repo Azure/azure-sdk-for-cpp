@@ -8,6 +8,14 @@
 namespace Azure { namespace Messaging { namespace EventHubs {
   class ConsumerClient;
 
+  struct ConsumerClientDetails
+  {
+    std::string FullyQualifiedNamespace;
+    std::string ConsumerGroup;
+    std::string EventHubName;
+    std::string ClientID;
+  };
+
   /**@brief StartPosition indicates the position to start receiving events within a partition.
    * The default position is Latest.
    *
@@ -114,29 +122,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const uint32_t defaultMaxCreditSize = 5000;
 
   public:
-    void ReceiveEvents(
+    std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
         int const& maxMessages,
-
         Azure::Core::Context ctx = Azure::Core::Context(),
         ReceiveEventsOptions options = ReceiveEventsOptions())
     {
       (void)options;
-      int messageReceived = 0;
-      while (messageReceived < maxMessages && !ctx.IsCancelled())
+      std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages;
+      while (messages.size() < maxMessages && !ctx.IsCancelled())
       {
-        // auto receiver = GetConsumer(partitionId);
-        // auto message = receiver.WaitForIncomingMessage(ctx);
-        // if (message)
-        //{
-        // messageReceived++;
-
-        // auto processor
-        //    = m_processors.at(partitionId.empty() ? m_credentials.ConsumerGroup : partitionId);
-        // if (processor != nullptr)
-        //{
-        //  processor(message);
-        //}
+        auto message = m_receivers[0].WaitForIncomingMessage(ctx);
+        if (message)
+        {
+          messages.push_back(message);
+        }
       }
+
+      return messages;
     }
 
     void Close()

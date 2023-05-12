@@ -58,10 +58,11 @@ class ConsumerClient {
 #endif // TESTING_BUILD_AMQP
 
 protected:
+  const uint32_t defaultMaxSize = 5000;
+  const std::string defaultConsumerGroup = "$Default";
   std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
   ConsumerClientCreds m_credentials;
   ConsumerClientOptions m_consumerClientOptions;
-  //std::map<std::string, std::function<void(Azure::Core::Amqp::Models::AmqpMessage)>> m_processors;
 
 public:
   /** @brief Getter for event hub name

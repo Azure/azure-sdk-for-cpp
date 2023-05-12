@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+#pragma once
 #include "event_data_batch.hpp"
 #include "retry_operation.hpp"
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/management.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -53,11 +55,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClientCreds m_credentials{};
     ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+    Azure::Core::Amqp::_internal::Management m_management;
 
   public:
     std::string const& GetEventHubName() { return m_credentials.EventHub; }
 
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() { return m_producerClientOptions.RetryOptions; }
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions()
+    {
+      return m_producerClientOptions.RetryOptions;
+    }
 
     /**@brief Constructs a new ProducerClient instance
      *
@@ -77,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param options Additional options for creating the client
      */
     ProducerClient(
-        std::string const&fullyQualifiedNamespace,
+        std::string const& fullyQualifiedNamespace,
         std::string const& eventHub,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = ProducerClientOptions());
@@ -99,9 +105,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     bool const SendEventDataBatch(
         EventDataBatch& eventDataBatch,
         Azure::Core::Context ctx = Azure::Core::Context());
+    
 
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
     void CreateSender(std::string const& partitionId = "");
+    void CreateManagement(std::string name, bool eventHub = false);
   };
 }}} // namespace Azure::Messaging::EventHubs
