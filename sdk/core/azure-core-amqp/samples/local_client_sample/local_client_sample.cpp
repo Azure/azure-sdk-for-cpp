@@ -21,7 +21,7 @@ int main()
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
-  senderOptions.SourceAddress = "ingress";
+  senderOptions.MessageSource = "ingress";
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   Azure::Core::Amqp::_internal::MessageSender sender(
       session, "localhost/ingress", senderOptions, nullptr);

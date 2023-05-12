@@ -63,6 +63,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTarget::MessageTarget() : m_target{target_create()} {}
 
+  MessageTarget::MessageTarget(MessageTarget const& that) : m_target{target_clone(that)} {}
+
+  MessageTarget& MessageTarget::operator=(MessageTarget const& that)
+  {
+    m_target.reset(target_clone(that.m_target.get()));
+    return *this;
+  }
+
   MessageTarget::MessageTarget(MessageTargetOptions const& options) : m_target{target_create()}
   {
     if (!options.Address.IsNull())

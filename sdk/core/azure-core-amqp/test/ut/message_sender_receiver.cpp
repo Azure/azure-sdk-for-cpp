@@ -92,8 +92,9 @@ TEST_F(TestMessages, SenderProperties)
   Session session(connection);
 
   {
-    MessageSender sender(session, "MySource", {}, nullptr);
-    sender.SetTrace(true);
+    MessageSenderOptions options;
+    options.EnableTrace = true;
+    MessageSender sender(session, "MySource", options, nullptr);
   }
 }
 
@@ -220,7 +221,7 @@ private:
     MessageReceiverOptions receiverOptions;
     Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);
     Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
-    receiverOptions.TargetAddress = static_cast<std::string>(messageTarget.GetAddress());
+    receiverOptions.MessageTarget = messageTarget;
     receiverOptions.Name = name;
     receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     receiverOptions.DynamicAddress = messageSource.GetDynamic();
@@ -346,7 +347,7 @@ TEST_F(TestMessages, SenderOpenClose)
   EXPECT_NO_THROW(listener.Start());
   {
     MessageSenderOptions options;
-    options.SourceAddress = "MySource";
+    options.MessageSource = "MySource";
 
     MessageSender sender(session, "MyTarget", options, nullptr);
     sender.Open();
@@ -422,7 +423,7 @@ TEST_F(TestMessages, SenderSendAsync)
     SenderEvents senderEvents;
     MessageSenderOptions options;
     options.Name = "sender-link";
-    options.SourceAddress = "ingress";
+    options.MessageSource = "ingress";
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
     MessageSender sender(session, "localhost/ingress", options, &senderEvents);
@@ -433,16 +434,16 @@ TEST_F(TestMessages, SenderSendAsync)
 
     Azure::Core::Context context;
     Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue>
+        AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
             sendCompleteQueue;
     sender.QueueSend(
         message,
-        [&](MessageSendResult sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
+        [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
           GTEST_LOG_(INFO) << "Send Complete!";
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         });
     auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
-    EXPECT_EQ(std::get<0>(*result), MessageSendResult::Ok);
+    EXPECT_EQ(std::get<0>(*result), MessageSendStatus::Ok);
 
     sender.Close();
   }
@@ -506,7 +507,7 @@ TEST_F(TestMessages, SenderSendSync)
     MessageSenderOptions options;
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
-    options.SourceAddress = "ingress";
+    options.MessageSource = "ingress";
     options.Name = "sender-link";
     MessageSender sender(session, "localhost/ingress", options, nullptr);
     EXPECT_NO_THROW(sender.Open());
@@ -515,10 +516,10 @@ TEST_F(TestMessages, SenderSendSync)
     message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
     Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue>
+        AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
             sendCompleteQueue;
     auto result = sender.Send(message);
-    EXPECT_EQ(std::get<0>(result), MessageSendResult::Ok);
+    EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
 
     sender.Close();
   }
@@ -545,7 +546,7 @@ TEST_F(TestMessages, AuthenticatedSender)
 
   MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
-  senderOptions.SourceAddress = "ingress";
+  senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
@@ -603,7 +604,7 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   server.StartListening();
   MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
-  senderOptions.SourceAddress = "ingress";
+  senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
@@ -664,7 +665,7 @@ TEST_F(TestMessages, AuthenticatedReceiver)
 
   MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
-  receiverOptions.TargetAddress = "egress";
+  receiverOptions.MessageTarget = "egress";
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
@@ -760,7 +761,7 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
 
   MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
-  receiverOptions.TargetAddress = "egress";
+  receiverOptions.MessageTarget = "egress";
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";

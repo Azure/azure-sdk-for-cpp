@@ -44,7 +44,7 @@ int main()
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-  senderOptions.SourceAddress = "ingress";
+  senderOptions.MessageSource = "ingress";
   senderOptions.Name = "sender-link";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;

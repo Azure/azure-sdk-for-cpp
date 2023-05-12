@@ -125,8 +125,8 @@ TEST_F(TestLinks, LinkProperties)
     EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
     EXPECT_EQ(link.GetInitialDeliveryCount(), link3.GetInitialDeliveryCount());
 
-    EXPECT_EQ("MySource", link.GetSource());
-    EXPECT_EQ("MyTarget", link.GetTarget());
+    EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MySource"}, link.GetSource().GetAddress());
+    EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MyTarget"}, link.GetTarget().GetAddress());
   }
 }
 
@@ -173,8 +173,8 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
     Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-    auto listeningSession
-        = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, sessionOptions, this);
+    auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
+        connection, endpoint, sessionOptions, this);
     listeningSession->SetIncomingWindow(10000);
     listeningSession->Begin();
 

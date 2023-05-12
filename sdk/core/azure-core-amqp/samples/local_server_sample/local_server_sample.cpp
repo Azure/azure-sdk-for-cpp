@@ -176,7 +176,7 @@ private:
     options.SettleMode = ReceiverSettleMode::First;
     options.EnableTrace = true;
     options.Name = name;
-    options.TargetAddress = static_cast<std::string>(messageTarget.GetAddress());
+    options.MessageTarget = messageTarget;
     auto newMessageReceiver = std::make_unique<MessageReceiver>(
         sessionForLink,
         newLink,

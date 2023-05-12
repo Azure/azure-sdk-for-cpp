@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   MessageSender::MessageSender(
       Session const& session,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{
@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   MessageSender::MessageSender(
       Session const& session,
       LinkEndpoint& endpoint,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   MessageSender::MessageSender(
       Session const& session,
       std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   MessageSender::MessageSender(
       Session const& session,
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   void MessageSender::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
   void MessageSender::Close() { m_impl->Close(); }
-  std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> MessageSender::Send(
+  std::tuple<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> MessageSender::Send(
       Azure::Core::Amqp::Models::AmqpMessage const& message,
       Azure::Core::Context context)
   {
@@ -85,7 +85,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     return m_impl->QueueSend(message, onSendComplete, context);
   }
-  void MessageSender::SetTrace(bool traceEnabled) { m_impl->SetTrace(traceEnabled); }
 
   MessageSender::~MessageSender() noexcept {}
 }}}} // namespace Azure::Core::Amqp::_internal
@@ -94,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<SessionImpl> session,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,
       _internal::MessageSenderEvents* events)
       : m_events{events}, m_session{session}, m_target{target}, m_options{options}
@@ -104,7 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<SessionImpl> session,
       _internal::LinkEndpoint& endpoint,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,
       _internal::MessageSenderEvents* events)
       : m_events{events}, m_session{session}, m_target{target}, m_options{options}
@@ -119,7 +118,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<SessionImpl> session,
       std::shared_ptr<_internal::ServiceBusSasConnectionStringCredential> credential,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,
       _internal::MessageSenderEvents* events)
       : m_events{events}, m_session{session},
@@ -131,7 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<SessionImpl> session,
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      std::string const& target,
+      Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,
       _internal::MessageSenderEvents* events)
       : m_events{events}, m_session{session},
@@ -168,7 +167,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         endpoint,
         m_options.Name,
         _internal::SessionRole::Receiver, // This is the role of the link, not the endpoint.
-        m_options.SourceAddress,
+        m_options.MessageSource,
         m_target);
     PopulateLinkProperties();
   }
@@ -178,7 +177,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_session,
         m_options.Name,
         _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.
-        m_options.SourceAddress,
+        m_options.MessageSource,
         m_target);
     PopulateLinkProperties();
   }
@@ -288,7 +287,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       Authenticate(
           _internal::CredentialType::BearerToken,
-          m_target,
+          static_cast<std::string>(m_target.GetAddress()),
           m_tokenCredential->GetToken(requestContext, context).Token,
           context);
     }
@@ -327,23 +326,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         MESSAGE_SEND_RESULT sendResult,
         AMQP_VALUE disposition)
     {
-      _internal::MessageSendResult result{_internal::MessageSendResult::Ok};
+      _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
       switch (sendResult)
       {
         case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
-          result = _internal::MessageSendResult::Invalid; // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Invalid; // LCOV_EXCL_LINE
           break; // LCOV_EXCL_LINE
         case MESSAGE_SEND_OK:
-          result = _internal::MessageSendResult::Ok;
+          result = _internal::MessageSendStatus::Ok;
           break;
         case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
-          result = _internal::MessageSendResult::Cancelled; // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
           break; // LCOV_EXCL_LINE
         case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
-          result = _internal::MessageSendResult::Error; // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
           break; // LCOV_EXCL_LINE
         case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
-          result = _internal::MessageSendResult::Timeout; // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Timeout; // LCOV_EXCL_LINE
           break; // LCOV_EXCL_LINE
       }
       onComplete(result, disposition);
@@ -371,17 +370,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     (void)context;
   }
 
-  std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> MessageSenderImpl::
+  std::tuple<_internal::MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> MessageSenderImpl::
       Send(Azure::Core::Amqp::Models::AmqpMessage const& message, Azure::Core::Context context)
   {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::_internal::MessageSendResult,
+        Azure::Core::Amqp::_internal::MessageSendStatus,
         Azure::Core::Amqp::Models::AmqpValue>
         sendCompleteQueue;
 
     QueueSend(
         message,
-        [&](Azure::Core::Amqp::_internal::MessageSendResult sendResult,
+        [&](Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
             Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         },

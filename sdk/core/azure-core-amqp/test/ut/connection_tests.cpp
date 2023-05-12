@@ -249,7 +249,7 @@ private:
   {
     Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
     receiverOptions.Name = name;
-    receiverOptions.TargetAddress = static_cast<std::string>(target);
+    receiverOptions.MessageTarget = static_cast<std::string>(target);
     receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
 
     m_messageReceiver = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(

@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Amqp {
       std::string Name;
       std::vector<std::string> AuthenticationScopes;
       ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
-      std::string TargetAddress;
+      Models::_internal::MessageTarget MessageTarget;
       bool EnableTrace{false};
       Azure::Nullable<uint32_t> InitialDeliveryCount;
       Azure::Nullable<uint64_t> MaxMessageSize;
@@ -82,25 +82,25 @@ namespace Azure { namespace Core { namespace Amqp {
     public:
       MessageReceiver(
           Session& session,
-          std::string const& receiverSource,
+          Models::_internal::MessageSource const& receiverSource,
           MessageReceiverOptions const& options,
           MessageReceiverEvents* receiverEvents = nullptr);
       MessageReceiver(
           Session& session,
           std::shared_ptr<ConnectionStringCredential> credentials,
-          std::string const& receiverSource,
+          Models::_internal::MessageSource const& receiverSource,
           MessageReceiverOptions const& options,
           MessageReceiverEvents* receiverEvents = nullptr);
       MessageReceiver(
           Session& session,
           std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
-          std::string const& receiverSource,
+          Models::_internal::MessageSource const& receiverSource,
           MessageReceiverOptions const& options,
           MessageReceiverEvents* receiverEvents = nullptr);
       MessageReceiver(
           Session const& session,
           LinkEndpoint& linkEndpoint,
-          std::string const& receiverSource,
+          Models::_internal::MessageSource const& receiverSource,
           MessageReceiverOptions const& options,
           MessageReceiverEvents* receiverEvents = nullptr);
 

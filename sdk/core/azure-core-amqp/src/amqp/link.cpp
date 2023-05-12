@@ -19,8 +19,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::Session const& session,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
       : m_impl{std::make_shared<LinkImpl>(session.GetImpl(), name, role, source, target)}
   {
   }
@@ -30,8 +30,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
       _internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
       : m_impl{
           std::make_shared<LinkImpl>(session.GetImpl(), linkEndpoint, name, role, source, target)}
   {
@@ -39,9 +39,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   Link::~Link() noexcept {}
 
-  Link::operator LINK_HANDLE() const { return m_impl->operator LINK_HANDLE(); }
-  std::string const& Link::GetSource() const { return m_impl->GetSource(); }
-  std::string const& Link::GetTarget() const { return m_impl->GetTarget(); }
+  Models::_internal::MessageSource const& Link::GetSource() const { return m_impl->GetSource(); }
+  Models::_internal::MessageTarget const& Link::GetTarget() const { return m_impl->GetTarget(); }
   _internal::SenderSettleMode Link::GetSenderSettleMode() const
   {
     return m_impl->GetSenderSettleMode();
@@ -97,16 +96,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       std::string const& name,
       _internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
     m_link = link_create(
         *session,
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
+        Models::AmqpValue{source},
+        Models::AmqpValue{target});
   }
 
   LinkImpl::LinkImpl(
@@ -114,8 +113,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
       _internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
     m_link = link_create_from_endpoint(
@@ -123,8 +122,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         linkEndpoint.Release(),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
+        Models::AmqpValue{source},
+        Models::AmqpValue{target});
   }
 
   LinkImpl::~LinkImpl() noexcept
@@ -136,8 +135,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  std::string const& LinkImpl::GetSource() const { return m_source; }
-  std::string const& LinkImpl::GetTarget() const { return m_target; }
+  Models::_internal::MessageSource const& LinkImpl::GetSource() const { return m_source; }
+  Models::_internal::MessageTarget const& LinkImpl::GetTarget() const { return m_target; }
 
   void LinkImpl::SetMaxMessageSize(uint64_t size)
   {

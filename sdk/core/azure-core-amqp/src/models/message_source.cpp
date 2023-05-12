@@ -38,6 +38,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
+  /* Note: This constructor should NOT be marked as explicit, because we want to enable the implicit
+   * construction of the MessageSource from a string - this allows callers to construct Link,
+   * MessageSender, and MessageReceiver objects without forcing the creation of a MessageSource
+   * object. */
   MessageSource::MessageSource(std::string const& address) : m_source(source_create())
   {
     if (m_source == nullptr)
@@ -49,6 +53,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
     }
   }
+
+  /* Note: This constructor should NOT be marked as explicit, because we want to enable the implicit
+   * construction of the MessageSource from a string - this allows callers to construct Link,
+   * MessageSender, and MessageReceiver objects without forcing the creation of a MessageSource
+   * object. */
   MessageSource::MessageSource(char const* address) : m_source(source_create())
   {
     if (m_source == nullptr)
@@ -59,6 +68,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not set address."); // LCOV_EXCL_LINE
     }
+  }
+
+  MessageSource::MessageSource(MessageSource const& that)
+      : m_source{source_clone(that.m_source.get())}
+  {
+  }
+
+  MessageSource& MessageSource::operator=(MessageSource const& that)
+  {
+    m_source.reset(source_clone(that.m_source.get()));
+    return *this;
   }
 
   MessageSource::MessageSource() : m_source(source_create()) {}

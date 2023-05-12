@@ -44,6 +44,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
     MessageSource(Azure::Core::Amqp::Models::AmqpValue const& value);
 
+    /** @brief Copies a MessageSource */
+    MessageSource(MessageSource const& that);
+
+    /** Assigns a message source from another.
+     */
+    MessageSource& operator=(MessageSource const& other);
+
     /** @brief Creates a message source with detailed options.
      *
      * @param options Options used constructing the message source.

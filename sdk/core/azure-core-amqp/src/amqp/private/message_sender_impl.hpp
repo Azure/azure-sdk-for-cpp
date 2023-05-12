@@ -15,25 +15,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   public:
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
-        std::string const& target,
+        Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& endpoint,
-        std::string const& target,
+        Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<_internal::ServiceBusSasConnectionStringCredential> credential,
-        std::string const& target,
+        Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        std::string const& target,
+        Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
     virtual ~MessageSenderImpl() noexcept;
@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Open(Azure::Core::Context const& context);
     void Close();
-    std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
+    std::tuple<_internal::MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> Send(
         Azure::Core::Amqp::Models::AmqpMessage const& message,
         Azure::Core::Context context);
     void QueueSend(
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
-    std::string m_target;
+    Models::_internal::MessageTarget m_target;
     _internal::MessageSenderOptions m_options;
     bool m_cbsOpen{false};
   };

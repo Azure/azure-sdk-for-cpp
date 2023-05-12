@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp {
     MessageReceiver::MessageReceiver(
         Session& session,
         std::shared_ptr<ConnectionStringCredential> credential,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Amqp {
     MessageReceiver::MessageReceiver(
         Session& session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp {
     }
     MessageReceiver::MessageReceiver(
         Session& session,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Amqp {
     MessageReceiver::MessageReceiver(
         Session const& session,
         LinkEndpoint& linkEndpoint,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Amqp {
     MessageReceiverImpl::MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<ConnectionStringCredential> credential,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_options{options}, m_source{source}, m_session{session},
@@ -115,7 +115,7 @@ namespace Azure { namespace Core { namespace Amqp {
     MessageReceiverImpl::MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_options{options}, m_source{source}, m_session{session}, m_tokenCredential{credential},
@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Amqp {
     }
     MessageReceiverImpl::MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
@@ -136,7 +136,7 @@ namespace Azure { namespace Core { namespace Amqp {
     MessageReceiverImpl::MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         LinkEndpoint& linkEndpoint,
-        std::string const& source,
+        Models::_internal::MessageSource const& source,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* eventHandler)
         : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
@@ -157,14 +157,14 @@ namespace Azure { namespace Core { namespace Amqp {
           m_options.Name,
           SessionRole::Sender, // This is the role of the link, not the endpoint.
           m_source,
-          m_options.TargetAddress);
+          m_options.MessageTarget);
       PopulateLinkProperties();
     }
 
     void MessageReceiverImpl::CreateLink()
     {
       m_link = std::make_shared<_detail::LinkImpl>(
-          m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.TargetAddress);
+          m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.MessageTarget);
       PopulateLinkProperties();
     }
 
@@ -337,7 +337,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
         Authenticate(
             CredentialType::BearerToken,
-            m_source,
+            static_cast<std::string>(m_source.GetAddress()),
             m_tokenCredential->GetToken(requestContext, context).Token,
             context);
       }

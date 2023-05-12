@@ -22,25 +22,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   public:
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
-        std::string const& receiverSource,
+        Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<_internal::ConnectionStringCredential> credentials,
-        std::string const& receiverSource,
+        Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
-        std::string const& receiverSource,
+        Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& linkEndpoint,
-        std::string const& receiverSource,
+        Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
     ~MessageReceiverImpl() noexcept;
@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Open(Azure::Core::Context const& context);
     void Close();
     std::string GetLinkName() const;
-    std::string GetSourceName() const { return m_source; }
+    std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
     uint32_t GetReceivedMessageId();
     void SendMessageDisposition(
         const char* linkName,
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MESSAGE_RECEIVER_HANDLE m_messageReceiver{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
-    std::string m_source;
+    Models::_internal::MessageSource m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
     std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;

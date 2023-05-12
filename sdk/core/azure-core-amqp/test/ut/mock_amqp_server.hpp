@@ -394,10 +394,11 @@ protected:
       Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
       senderOptions.EnableTrace = true;
       senderOptions.Name = name;
-      senderOptions.SourceAddress = static_cast<std::string>(msgSource.GetAddress());
+      senderOptions.MessageSource = msgSource;
       senderOptions.InitialDeliveryCount = 0;
       std::string targetAddress = static_cast<std::string>(msgTarget.GetAddress());
-      MessageLinkComponents& linkComponents = m_linkMessageQueues[senderOptions.SourceAddress];
+      MessageLinkComponents& linkComponents
+          = m_linkMessageQueues[static_cast<std::string>(senderOptions.MessageSource.GetAddress())];
 
       if (!linkComponents.LinkSender)
       {
@@ -412,10 +413,11 @@ protected:
       Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
       receiverOptions.EnableTrace = true;
       receiverOptions.Name = name;
-      receiverOptions.TargetAddress = static_cast<std::string>(msgTarget.GetAddress());
+      receiverOptions.MessageTarget = msgTarget;
       receiverOptions.InitialDeliveryCount = 0;
       std::string sourceAddress = static_cast<std::string>(msgSource.GetAddress());
-      MessageLinkComponents& linkComponents = m_linkMessageQueues[receiverOptions.TargetAddress];
+      MessageLinkComponents& linkComponents = m_linkMessageQueues[static_cast<std::string>(
+          receiverOptions.MessageTarget.GetAddress())];
       if (!linkComponents.LinkReceiver)
       {
         linkComponents.LinkReceiver

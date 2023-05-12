@@ -27,7 +27,7 @@ int main()
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
-  receiverOptions.TargetAddress = "ingress-rx";
+  receiverOptions.MessageTarget = "ingress-rx";
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 

@@ -38,6 +38,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Deletes a message target. */
     ~MessageTarget() = default;
 
+    /** @brief Copies a MessageTarget */
+    MessageTarget(MessageTarget const& that);
+
     /** @brief Creates a message target with the given address.
      *
      * @param address The address of the target.
@@ -63,6 +66,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * @remarks Normally used in the OnLinkAttached callback.
      */
     MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
+
+    MessageTarget& operator=(MessageTarget const& that);
 
     /** @brief Creates an AMQP value from a message target.
      *
