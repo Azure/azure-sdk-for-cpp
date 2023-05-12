@@ -31,6 +31,22 @@ add_executable(azure-core-amqp-tests
 )
 add_dependencies(azure-core-amqp-tests azure-core-amqp)
 
+if (MSVC)
+  # Disable warnings:
+  # - C26495: Variable
+  #             - 'testing::internal::Mutex::critical_section_'
+  #             - 'testing::internal::Mutex::critical_section_init_phase_'
+  #             - 'testing::internal::Mutex::owner_thread_id_'
+  #             - 'testing::internal::Mutex::type_'
+  #           is uninitialized. Always initialize member variables (type.6).
+  # - C26812: The enum type
+  #             - 'testing::internal::Mutex::StaticConstructorSelector'
+  #             - 'testing::TestPartResult::Type'
+  #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
+  # - C6326: Google comparisons
+  target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
+endif()
+
 target_include_directories(azure-core-amqp-tests PRIVATE ${azure-core-amqp_SOURCE_DIR})
 
 # Link test executable against gtest & gtest_main
