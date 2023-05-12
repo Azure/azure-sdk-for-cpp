@@ -45,13 +45,13 @@ TEST_F(TestSessions, SimpleSession)
   Connection connection("amqp://localhost:5672", {});
   {
     // Create a session
-    Session session(connection, nullptr);
+    Session session(connection);
   }
 
   {
     // Create two sessions
-    Session session1(connection, nullptr);
-    Session session2(connection, nullptr);
+    Session session1(connection);
+    Session session2(connection);
 
     session1.End("", "");
   }
@@ -82,7 +82,7 @@ TEST_F(TestSessions, SessionProperties)
   Connection connection("amqp://localhost:5672", {});
 
   {
-    Session session(connection, nullptr);
+    Session session(connection);
 
     // Verify defaults are something "reasonable".
     EXPECT_EQ(1, session.GetIncomingWindow());
@@ -91,17 +91,30 @@ TEST_F(TestSessions, SessionProperties)
   }
 
   {
-    Session session(connection, nullptr);
-    EXPECT_NO_THROW(session.SetHandleMax(37));
+    SessionOptions options;
+    options.MaximumLinkCount = 37;
+    Session session(connection, options);
     EXPECT_EQ(37, session.GetHandleMax());
   }
   {
-    Session session(connection, nullptr);
+    SessionOptions options;
+    options.InitialIncomingWindowSize = 1909119;
+    Session session(connection, options);
+    EXPECT_EQ(1909119, session.GetIncomingWindow());
+  }
+  {
+    Session session(connection);
     EXPECT_NO_THROW(session.SetIncomingWindow(9278789));
     EXPECT_EQ(9278789, session.GetIncomingWindow());
   }
   {
-    Session session(connection, nullptr);
+    SessionOptions options;
+    options.InitialOutgoingWindowSize = 1909119;
+    Session session(connection, options);
+    EXPECT_EQ(1909119, session.GetOutgoingWindow());
+  }
+  {
+    Session session(connection);
     EXPECT_NO_THROW(session.SetOutgoingWindow(32798));
     EXPECT_EQ(32798, session.GetOutgoingWindow());
   }
@@ -205,13 +218,13 @@ TEST_F(TestSessions, SessionBeginEnd)
   Connection connection("amqp://localhost:" + std::to_string(testPort), {});
 
   {
-    Session session(connection, nullptr);
+    Session session(connection);
 
     session.Begin();
   }
 
   {
-    Session session(connection, nullptr);
+    Session session(connection);
 
     session.Begin();
     session.End("", "");

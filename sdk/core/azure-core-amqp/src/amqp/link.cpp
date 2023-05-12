@@ -14,7 +14,7 @@
 #include <azure_uamqp_c/session.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-
+#if defined(TESTING_BUILD)
   Link::Link(
       _internal::Session const& session,
       std::string const& name,
@@ -88,6 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     return m_impl->Detach(close, errorCondition, errorDescription, info);
   }
+#endif
 
   /****/
   /* LINK Implementation */

@@ -23,7 +23,7 @@ int main()
   connectOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
 
-  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
+  Azure::Core::Amqp::_internal::Session session(connection);
   session.SetIncomingWindow(100);
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;

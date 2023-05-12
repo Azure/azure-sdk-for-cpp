@@ -88,39 +88,56 @@ TEST_F(TestConnections, SimpleConnection)
 
 TEST_F(TestConnections, ConnectionAttributes)
 {
-  Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", {});
-
   {
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+    options.IdleTimeout = std::chrono::milliseconds(1532);
+
+    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+
     auto idleTimeout = connection.GetIdleTimeout();
     (void)idleTimeout;
-    EXPECT_NO_THROW(connection.SetIdleTimeout(std::chrono::milliseconds(1532)));
     EXPECT_EQ(std::chrono::milliseconds(1532), connection.GetIdleTimeout());
   }
   {
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+    options.MaxFrameSize = 1024 * 64;
+    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+
     auto maxFrameSize = connection.GetMaxFrameSize();
-    EXPECT_NO_THROW(connection.SetMaxFrameSize(1024 * 64));
-    EXPECT_EQ(1024 * 64, connection.GetMaxFrameSize());
     (void)maxFrameSize;
+    EXPECT_EQ(1024 * 64, connection.GetMaxFrameSize());
 
     EXPECT_NO_THROW(
         connection.GetRemoteMaxFrameSize()); // Likely doesn't work unless there's a remote.
   }
 
   {
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+    options.MaxChannelCount = 128;
+
+    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+
     auto maxChannel = connection.GetMaxChannel();
-    EXPECT_NO_THROW(connection.SetMaxChannel(128));
     EXPECT_EQ(128, connection.GetMaxChannel());
     (void)maxChannel;
   }
 
   {
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+    options.MaxChannelCount = 128;
+
+    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
     // Ratio must be a number between 0 and 1.
-    EXPECT_NO_THROW(connection.SetRemoteIdleTimeoutEmptyFrameSendRatio(0.5));
+    EXPECT_NO_THROW(connection.SetIdleEmptyFrameSendPercentage(0.5));
   }
 
   {
-    EXPECT_NO_THROW(connection.SetProperties("32.95"));
-    EXPECT_EQ(std::string("32.95"), static_cast<std::string>(connection.GetProperties()));
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+    options.MaxChannelCount = 128;
+    options.Properties["test"] = "test";
+
+    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"test"}, connection.GetProperties()["test"]);
   }
 }
 
@@ -214,9 +231,9 @@ private:
             transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "containerId";
+    options.EnableTrace = true;
     auto newConnection{
         std::make_unique<Azure::Core::Amqp::_internal::Connection>(amqpTransport, options, this)};
-    newConnection->SetTrace(true);
     newConnection->Listen();
     m_listeningQueue.CompleteOperation(std::move(newConnection));
   }
@@ -255,8 +272,9 @@ private:
       Azure::Core::Amqp::_internal::Connection const& connection,
       Azure::Core::Amqp::_internal::Endpoint& endpoint) override
   {
-    m_listeningSession
-        = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, this);
+    Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+    m_listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
+        connection, endpoint, sessionOptions, this);
     m_listeningSession->SetIncomingWindow(10000);
     m_listeningSession->Begin();
 

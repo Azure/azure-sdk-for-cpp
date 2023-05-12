@@ -15,6 +15,7 @@
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
 #include <gtest/gtest.h>
+#include <memory>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {
@@ -362,7 +363,9 @@ protected:
       Azure::Core::Amqp::_internal::Endpoint& endpoint) override
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
-    m_session = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, this);
+    Azure::Core::Amqp::_internal::SessionOptions options;
+    m_session = std::make_shared<Azure::Core::Amqp::_internal::Session>(
+        connection, endpoint, options, this);
     m_session->SetIncomingWindow(10000);
     m_session->Begin();
     return true;

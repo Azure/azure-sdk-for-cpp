@@ -27,9 +27,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::Endpoint& newEndpoint,
+        _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
+        _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
 
@@ -41,12 +43,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::shared_ptr<ConnectionImpl> GetConnectionToPoll() const { return m_connectionToPoll; }
 
-    void SetIncomingWindow(uint32_t incomingWindow);
     uint32_t GetIncomingWindow();
-    void SetOutgoingWindow(uint32_t outgoingWindow);
     uint32_t GetOutgoingWindow();
-    void SetHandleMax(uint32_t handleMax);
     uint32_t GetHandleMax();
+
+    void SetIncomingWindow(uint32_t incomingWindow);
+    void SetOutgoingWindow(uint32_t outgoingWindow);
+    // void SetHandleMax(uint32_t handleMax);
 
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
@@ -56,6 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     UniqueAmqpSession m_session;
     _internal::SessionEvents* m_eventHandler{};
+    _internal::SessionOptions m_options;
 
     //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;
 

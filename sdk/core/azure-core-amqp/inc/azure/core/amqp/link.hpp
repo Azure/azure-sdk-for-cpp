@@ -58,9 +58,8 @@ namespace Azure { namespace Core { namespace Amqp {
       Cancelled,
     };
 
-    class Error;
-    class Link;
 
+#if defined(TESTING_BUILD)
     class Link final {
     public:
       Link(
@@ -122,5 +121,6 @@ namespace Azure { namespace Core { namespace Amqp {
     private:
       std::shared_ptr<Azure::Core::Amqp::_detail::LinkImpl> m_impl;
     };
+#endif // defined(TESTING_BUILD)
   } // namespace _detail
 }}} // namespace Azure::Core::Amqp

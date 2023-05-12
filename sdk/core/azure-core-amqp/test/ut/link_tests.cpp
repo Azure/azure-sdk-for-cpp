@@ -34,7 +34,7 @@ TEST_F(TestLinks, SimpleLink)
   // Create a connection
   Connection connection("amqp://localhost:5672", {});
   // Create a session
-  Session session(connection, nullptr);
+  Session session(connection);
 
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -70,7 +70,7 @@ TEST_F(TestLinks, SimpleLink)
 TEST_F(TestLinks, LinkProperties)
 { // Create a connection
   Connection connection("amqp://localhost:5672", {});
-  Session session(connection, nullptr);
+  Session session(connection);
 
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -172,8 +172,9 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
       Azure::Core::Amqp::_internal::Endpoint& endpoint) override
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
+    Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
     auto listeningSession
-        = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, this);
+        = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, sessionOptions, this);
     listeningSession->SetIncomingWindow(10000);
     listeningSession->Begin();
 
@@ -235,7 +236,7 @@ TEST_F(TestLinks, LinkAttachDetach)
   GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
   Connection connection("amqp://localhost:" + std::to_string(testPort), {}, &events);
-  Session session(connection, nullptr);
+  Session session(connection);
 
   Network::_internal::SocketListener listener(testPort, &events);
 

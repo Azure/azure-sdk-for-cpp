@@ -36,7 +36,7 @@ TEST_F(TestCbs, SimpleCbs)
   // Create a connection
   Connection connection("amqp://localhost:5672", {});
   // Create a session
-  Session session(connection, nullptr);
+  Session session(connection);
 
   {
     ClaimsBasedSecurity cbs(session);

@@ -16,7 +16,7 @@ int main()
   connectOptions.ContainerId = "some";
   Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", connectOptions);
 
-  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
+  Azure::Core::Amqp::_internal::Session session(connection);
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
 

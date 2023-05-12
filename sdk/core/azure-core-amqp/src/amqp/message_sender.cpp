@@ -163,7 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::CreateLink(_internal::LinkEndpoint& endpoint)
   {
-    m_link = std::make_unique<_detail::Link>(
+    m_link = std::make_shared<_detail::LinkImpl>(
         m_session,
         endpoint,
         m_options.Name,
@@ -174,7 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void MessageSenderImpl::CreateLink()
   {
-    m_link = std::make_unique<_detail::Link>(
+    m_link = std::make_shared<_detail::LinkImpl>(
         m_session,
         m_options.Name,
         _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.

@@ -131,6 +131,7 @@ private:
         std::make_shared<Network::_internal::AmqpHeaderDetectTransport>(transport, nullptr)};
     ConnectionOptions options;
     options.ContainerId = "some";
+    options.EnableTrace = true;
     auto newConnection{std::make_unique<Connection>(amqpTransport, options, this)};
     m_connection = newConnection.get();
     m_connectionQueue.CompleteOperation(std::move(newConnection));
@@ -138,7 +139,9 @@ private:
 
   virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) override
   {
-    std::unique_ptr<Session> newSession = std::make_unique<Session>(connection, endpoint, this);
+    SessionOptions options;
+    std::unique_ptr<Session> newSession
+        = std::make_unique<Session>(connection, endpoint, options, this);
 
     // The new session *must* call `Begin` before returning from the OnNewEndpoint callback.
     newSession->SetIncomingWindow(10000);
@@ -218,7 +221,6 @@ int main()
 
   listener.Start();
   auto connection = sampleEvents.WaitForIncomingConnection(listener);
-  connection->SetTrace(true);
   connection->Listen();
 
   auto session = sampleEvents.WaitForNewSession();

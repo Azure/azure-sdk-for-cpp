@@ -5,6 +5,7 @@
 
 #include "azure/core/amqp/message_sender.hpp"
 #include "claims_based_security_impl.hpp"
+#include "link_impl.hpp"
 #include <azure_uamqp_c/message_sender.h>
 #include <tuple>
 
@@ -69,7 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void PopulateLinkProperties();
 
     MESSAGE_SENDER_HANDLE m_messageSender{};
-    std::unique_ptr<_detail::Link> m_link;
+    std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<

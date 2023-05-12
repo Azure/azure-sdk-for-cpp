@@ -132,7 +132,6 @@
       "displayName": "Windows x64 Debug",
       "description": "Windows x64 Debug",
       "inherits": "x64-static",
-      "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }

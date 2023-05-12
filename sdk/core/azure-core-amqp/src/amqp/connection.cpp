@@ -4,6 +4,7 @@
 #include "azure/core/amqp/connection.hpp"
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include "private/connection_impl.hpp"
@@ -56,7 +57,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   void Connection::Poll() const { m_impl->Poll(); }
 
   void Connection::Listen() { m_impl->Listen(); }
-  void Connection::SetTrace(bool enableTrace) { m_impl->SetTrace(enableTrace); }
   void Connection::Open() { m_impl->Open(); }
   void Connection::Close(
       std::string const& condition,
@@ -66,27 +66,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     m_impl->Close(condition, description, value);
   }
   uint32_t Connection::GetMaxFrameSize() const { return m_impl->GetMaxFrameSize(); }
-  void Connection::SetMaxFrameSize(uint32_t maxFrameSize) { m_impl->SetMaxFrameSize(maxFrameSize); }
   uint32_t Connection::GetRemoteMaxFrameSize() const { return m_impl->GetRemoteMaxFrameSize(); }
   uint16_t Connection::GetMaxChannel() const { return m_impl->GetMaxChannel(); }
-  void Connection::SetMaxChannel(uint16_t channel) { m_impl->SetMaxChannel(channel); }
   std::chrono::milliseconds Connection::GetIdleTimeout() const { return m_impl->GetIdleTimeout(); }
-  void Connection::SetIdleTimeout(std::chrono::milliseconds timeout)
-  {
-    m_impl->SetIdleTimeout(timeout);
-  }
-  void Connection::SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio)
-  {
-    return m_impl->SetRemoteIdleTimeoutEmptyFrameSendRatio(idleTimeoutEmptyFrameSendRatio);
-  }
-
-  void Connection::SetProperties(Azure::Core::Amqp::Models::AmqpValue properties)
-  {
-    m_impl->SetProperties(properties);
-  }
-  Azure::Core::Amqp::Models::AmqpValue Connection::GetProperties() const
+  Azure::Core::Amqp::Models::AmqpMap Connection::GetProperties() const
   {
     return m_impl->GetProperties();
+  }
+  void Connection::SetIdleEmptyFrameSendPercentage(double ratio)
+  {
+    m_impl->SetIdleEmptyFrameSendPercentage(ratio);
   }
 }}}} // namespace Azure::Core::Amqp::_internal
 
@@ -182,12 +171,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         this,
         OnIoErrorFn,
         this));
-    SetTrace(m_options.EnableTrace);
-    //    SetIdleTimeout(options.IdleTimeout);
-
-    //    SetMaxFrameSize(options.MaxFrameSize);
-    //    SetMaxChannel(options.MaxSessions);
-    //    SetProperties(options.Properties);
+    if (m_options.EnableTrace)
+    {
+      connection_set_trace(m_connection.get(), m_options.EnableTrace);
+    }
+    if (connection_set_idle_timeout(
+            m_connection.get(), static_cast<milliseconds>(m_options.IdleTimeout.count())))
+    {
+      throw std::runtime_error("Failed to set idle timeout.");
+    }
+    if (connection_set_channel_max(m_connection.get(), m_options.MaxChannelCount))
+    {
+      throw std::runtime_error("Failed to set max channel count.");
+    }
+    if (connection_set_max_frame_size(m_connection.get(), m_options.MaxFrameSize))
+    {
+      throw std::runtime_error("Failed to set max frame size.");
+    }
+    if (connection_set_properties(
+            m_connection.get(),
+            static_cast<Azure::Core::Amqp::Models::_detail::UniqueAmqpValueHandle>(
+                m_options.Properties)
+                .get()))
+    {
+      throw std::runtime_error("Failed to set connection properties.");
+    }
   }
 
   void ConnectionImpl::Poll() const
@@ -282,11 +290,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::SetTrace(bool setTrace)
-  {
-    connection_set_trace(m_connection.get(), setTrace);
-  }
-
   void ConnectionImpl::Close(
       const std::string& condition,
       const std::string& description,
@@ -307,13 +310,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::SetMaxFrameSize(uint32_t maxSize)
-  {
-    if (connection_set_max_frame_size(m_connection.get(), maxSize))
-    {
-      throw std::runtime_error("COuld not set max frame size."); // LCOV_EXCL_LINE
-    }
-  }
   uint32_t ConnectionImpl::GetMaxFrameSize() const
   {
     uint32_t maxSize;
@@ -324,13 +320,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return maxSize;
   }
 
-  void ConnectionImpl::SetMaxChannel(uint16_t maxChannel)
-  {
-    if (connection_set_channel_max(m_connection.get(), maxChannel))
-    {
-      throw std::runtime_error("COuld not set channel max."); // LCOV_EXCL_LINE
-    }
-  }
   uint16_t ConnectionImpl::GetMaxChannel() const
   {
     uint16_t maxChannel;
@@ -341,14 +330,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return maxChannel;
   }
 
-  void ConnectionImpl::SetIdleTimeout(std::chrono::milliseconds idleTimeout)
-  {
-    if (connection_set_idle_timeout(
-            m_connection.get(), static_cast<milliseconds>(idleTimeout.count())))
-    {
-      throw std::runtime_error("COuld not set idle timeout."); // LCOV_EXCL_LINE
-    }
-  }
   std::chrono::milliseconds ConnectionImpl::GetIdleTimeout() const
   {
     milliseconds ms;
@@ -360,21 +341,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return std::chrono::milliseconds(ms);
   }
 
-  void ConnectionImpl::SetProperties(Azure::Core::Amqp::Models::AmqpValue value)
-  {
-    if (connection_set_properties(m_connection.get(), value))
-    {
-      throw std::runtime_error("COuld not set properties."); // LCOV_EXCL_LINE
-    }
-  }
-  Azure::Core::Amqp::Models::AmqpValue ConnectionImpl::GetProperties() const
+  Azure::Core::Amqp::Models::AmqpMap ConnectionImpl::GetProperties() const
   {
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
       throw std::runtime_error("COuld not get properties."); // LCOV_EXCL_LINE
     }
-    return value;
+    return Azure::Core::Amqp::Models::AmqpValue{value}.AsMap();
   }
 
   uint32_t ConnectionImpl::GetRemoteMaxFrameSize() const
@@ -386,7 +360,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     return maxFrameSize;
   }
-  void ConnectionImpl::SetRemoteIdleTimeoutEmptyFrameSendRatio(double ratio)
+
+  void ConnectionImpl::SetIdleEmptyFrameSendPercentage(double ratio)
   {
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {

@@ -69,23 +69,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     uint32_t GetMaxFrameSize() const;
     uint32_t GetRemoteMaxFrameSize() const;
-    void SetMaxFrameSize(uint32_t frameSize);
     uint16_t GetMaxChannel() const;
-    void SetMaxChannel(uint16_t frameSize);
     std::chrono::milliseconds GetIdleTimeout() const;
-    void SetIdleTimeout(std::chrono::milliseconds timeout);
-    void SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio);
+    void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
 
     void SetProperties(Azure::Core::Amqp::Models::AmqpValue properties);
-    Azure::Core::Amqp::Models::AmqpValue GetProperties() const;
-    uint64_t HandleDeadlines(); // ???
-    _internal::Endpoint CreateEndpoint();
-    void StartEndpoint(_internal::Endpoint const& endpoint);
-
-    uint16_t GetEndpointIncomingChannel(_internal::Endpoint endpoint);
-    void DestroyEndpoint(_internal::Endpoint endpoint);
-
-    void SetTrace(bool enableTrace);
+    Azure::Core::Amqp::Models::AmqpMap GetProperties() const;
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;

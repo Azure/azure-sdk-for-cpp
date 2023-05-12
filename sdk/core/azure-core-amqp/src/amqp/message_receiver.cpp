@@ -151,7 +151,7 @@ namespace Azure { namespace Core { namespace Amqp {
     {
       // The endpoint version of CreateLink is creating a message receiver for a sender, not for a
       // receiver.
-      m_link = std::make_unique<_detail::Link>(
+      m_link = std::make_shared<_detail::LinkImpl>(
           m_session,
           endpoint,
           m_options.Name,
@@ -163,7 +163,7 @@ namespace Azure { namespace Core { namespace Amqp {
 
     void MessageReceiverImpl::CreateLink()
     {
-      m_link = std::make_unique<_detail::Link>(
+      m_link = std::make_shared<_detail::LinkImpl>(
           m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.TargetAddress);
       PopulateLinkProperties();
     }

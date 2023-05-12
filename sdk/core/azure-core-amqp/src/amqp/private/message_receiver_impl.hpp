@@ -6,6 +6,7 @@
 #include "azure/core/amqp/message_receiver.hpp"
 #include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
+#include "link_impl.hpp"
 #include "message_receiver_impl.hpp"
 #include "session_impl.hpp"
 
@@ -78,7 +79,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     MESSAGE_RECEIVER_HANDLE m_messageReceiver{};
-    std::unique_ptr<_detail::Link> m_link;
+    std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
     std::string m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
