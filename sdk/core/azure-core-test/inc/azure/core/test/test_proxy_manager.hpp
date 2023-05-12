@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
-
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 #include "azure/core/test/test_proxy_policy.hpp"
+
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
 #include <string>

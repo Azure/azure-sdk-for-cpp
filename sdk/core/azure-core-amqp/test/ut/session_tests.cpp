@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <azure/core/context.hpp>
-#include <azure/core/platform.hpp>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
@@ -13,6 +10,9 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+
+#include <azure/core/context.hpp>
+#include <azure/core/platform.hpp>
 
 #include <functional>
 #include <random>

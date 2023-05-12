@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <azure/core/paged_response.hpp>
-
 #include "azure/storage/queues/queue_options.hpp"
 #include "azure/storage/queues/rest_client.hpp"
+
+#include <azure/core/paged_response.hpp>
 
 #include <memory>
 #include <string>

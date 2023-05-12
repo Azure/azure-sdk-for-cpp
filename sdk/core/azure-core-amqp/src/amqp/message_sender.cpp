@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <azure/core/credentials/credentials.hpp>
-
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
@@ -11,6 +9,8 @@
 #include "private/connection_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
+
+#include <azure/core/credentials/credentials.hpp>
 
 #include <azure_uamqp_c/message_sender.h>
 

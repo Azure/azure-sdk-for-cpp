@@ -3,10 +3,10 @@
 
 #include "../private/key_verify_parameters.hpp"
 
-#include <azure/core/base64.hpp>
-
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_constants.hpp"
+
+#include <azure/core/base64.hpp>
 
 #include <string>
 #include <vector>

@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <azure/storage/common/storage_exception.hpp>
-
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/blob_batch.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
@@ -24,3 +22,5 @@
 #include "azure/storage/blobs/page_blob_client.hpp"
 #include "azure/storage/blobs/rest_client.hpp"
 #include "azure/storage/blobs/rtti.hpp"
+
+#include <azure/storage/common/storage_exception.hpp>

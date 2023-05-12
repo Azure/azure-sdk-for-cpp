@@ -10,11 +10,11 @@
 
 #include "opensslcert.hpp"
 
-#include <azure/core/platform.hpp>
-
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
 #include "opensslkeys.hpp"
+
+#include <azure/core/platform.hpp>
 
 #include <cstring>
 #include <ctime>

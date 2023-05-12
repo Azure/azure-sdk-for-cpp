@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include "azure/storage/queues/queue_options.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-
-#include "azure/storage/queues/queue_options.hpp"
 
 #include <memory>
 #include <string>

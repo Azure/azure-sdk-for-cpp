@@ -31,9 +31,9 @@ SOFTWARE.
 // Only compile these tests if 'float' and 'double' are IEEE-754 single- and
 // double-precision numbers, resp.
 
-#include <azure/core/internal/json/json.hpp>
-
 #include "doctest_compatibility.h"
+
+#include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::detail::dtoa_impl::reinterpret_bits;
 
 namespace {

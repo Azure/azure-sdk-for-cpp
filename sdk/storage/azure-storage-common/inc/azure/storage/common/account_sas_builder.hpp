@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <azure/core/datetime.hpp>
-#include <azure/core/nullable.hpp>
-
 #include "azure/storage/common/internal/constants.hpp"
 #include "azure/storage/common/storage_credential.hpp"
+
+#include <azure/core/datetime.hpp>
+#include <azure/core/nullable.hpp>
 
 #include <string>
 #include <type_traits>

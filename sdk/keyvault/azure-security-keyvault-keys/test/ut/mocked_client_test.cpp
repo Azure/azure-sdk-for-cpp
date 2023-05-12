@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/internal/strings.hpp>
-#include <azure/keyvault/keys.hpp>
-
 #include "gtest/gtest.h"
 #include "mocked_transport_adapter_test.hpp"
+
+#include <azure/core/internal/strings.hpp>
+#include <azure/keyvault/keys.hpp>
 
 #include <string>
 using namespace Azure::Security::KeyVault::Keys;

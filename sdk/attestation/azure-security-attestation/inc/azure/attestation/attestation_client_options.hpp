@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <azure/core/internal/client_options.hpp>
-#include <azure/core/internal/extendable_enumeration.hpp>
-
 #include "azure/attestation/attestation_client_models.hpp"
 #include "dll_import_export.hpp"
+
+#include <azure/core/internal/client_options.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 
 namespace Azure { namespace Security { namespace Attestation {
 

@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "azure/storage/blobs/blob_options.hpp"
+
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/paged_response.hpp>
-
-#include "azure/storage/blobs/blob_options.hpp"
 
 #include <cstdint>
 #include <string>

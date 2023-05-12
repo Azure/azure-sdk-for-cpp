@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/perf.hpp>
-
 #include "azure/identity/test/secret_credential_test.hpp"
+
+#include <azure/perf.hpp>
 
 int main(int argc, char** argv)
 {

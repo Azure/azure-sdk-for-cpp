@@ -13,11 +13,11 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json.hpp>
-
 #include "attestation_client_models_private.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
+
+#include <azure/core/internal/json/json.hpp>
 
 #include <memory>
 #include <string>

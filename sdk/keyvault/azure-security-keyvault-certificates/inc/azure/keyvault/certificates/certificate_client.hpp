@@ -9,14 +9,14 @@
 
 #pragma once
 
+#include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "azure/keyvault/certificates/certificate_client_operations.hpp"
+#include "azure/keyvault/certificates/certificate_client_options.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
-
-#include "azure/keyvault/certificates/certificate_client_models.hpp"
-#include "azure/keyvault/certificates/certificate_client_operations.hpp"
-#include "azure/keyvault/certificates/certificate_client_options.hpp"
 
 #include <memory>
 #include <string>

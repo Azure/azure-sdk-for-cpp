@@ -27,9 +27,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <azure/core/internal/json/json.hpp>
-
 #include "doctest_compatibility.h"
+
+#include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
 
 #include <iomanip>

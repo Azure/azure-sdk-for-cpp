@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/storage/common/storage_credential.hpp>
-
 #include "azure/storage/queues/queue_client.hpp"
 #include "azure/storage/queues/queue_options.hpp"
 #include "azure/storage/queues/queue_responses.hpp"
+
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/storage/common/storage_credential.hpp>
 
 #include <memory>
 #include <string>

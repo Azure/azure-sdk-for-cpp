@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <azure/core/credentials/credentials.hpp>
-
 #include "azure/core/amqp/message_receiver.hpp"
 #include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
 #include "message_receiver_impl.hpp"
 #include "session_impl.hpp"
+
+#include <azure/core/credentials/credentials.hpp>
 
 #include <azure_uamqp_c/amqpvalue.h>
 #include <azure_uamqp_c/message.h>

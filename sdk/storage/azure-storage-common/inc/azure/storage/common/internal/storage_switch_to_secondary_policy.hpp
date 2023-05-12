@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/core/http/policies/policy.hpp>
-
 #include "azure/storage/common/dll_import_export.hpp"
+
+#include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
 #include <string>

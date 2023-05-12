@@ -3,6 +3,12 @@
 
 #include "azure/storage/blobs/blob_container_client.hpp"
 
+#include "azure/storage/blobs/append_blob_client.hpp"
+#include "azure/storage/blobs/blob_batch.hpp"
+#include "azure/storage/blobs/block_blob_client.hpp"
+#include "azure/storage/blobs/page_blob_client.hpp"
+#include "private/package_version.hpp"
+
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -12,12 +18,6 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-
-#include "azure/storage/blobs/append_blob_client.hpp"
-#include "azure/storage/blobs/blob_batch.hpp"
-#include "azure/storage/blobs/block_blob_client.hpp"
-#include "azure/storage/blobs/page_blob_client.hpp"
-#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

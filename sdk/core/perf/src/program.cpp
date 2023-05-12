@@ -3,12 +3,12 @@
 
 #include "azure/perf/program.hpp"
 
+#include "azure/perf/argagg.hpp"
+
 #include <azure/core/internal/diagnostics/global_exception.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/platform.hpp>
-
-#include "azure/perf/argagg.hpp"
 
 #include <chrono>
 #include <csignal>

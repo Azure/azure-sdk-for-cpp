@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/identity/detail/token_cache.hpp"
+#include "token_credential_impl.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
-
-#include "azure/identity/detail/token_cache.hpp"
-#include "token_credential_impl.hpp"
 
 #include <memory>
 #include <string>

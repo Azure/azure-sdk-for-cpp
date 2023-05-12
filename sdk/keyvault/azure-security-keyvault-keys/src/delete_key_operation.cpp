@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/exception.hpp>
-
 #include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
+
+#include <azure/core/exception.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault;

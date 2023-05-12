@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "curl_session_test.hpp"
+
 #include <azure/core/http/curl_transport.hpp>
 #include <azure/core/http/http.hpp>
-
-#include "curl_session_test.hpp"
 
 #include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>

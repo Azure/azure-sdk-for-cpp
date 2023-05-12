@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/core/io/body_stream.hpp>
-
 #include "azure/storage/blobs/blob_options.hpp"
+
+#include <azure/core/io/body_stream.hpp>
 
 #include <map>
 #include <memory>

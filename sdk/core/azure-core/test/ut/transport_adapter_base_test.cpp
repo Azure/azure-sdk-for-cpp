@@ -16,10 +16,10 @@
 #include <windows.h>
 #endif
 
+#include "transport_adapter_base_test.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/response.hpp>
-
-#include "transport_adapter_base_test.hpp"
 
 #include <iostream>
 #include <string>

@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <azure/core/internal/unique_handle.hpp>
-#include <azure/core/nullable.hpp>
-
 #include "amqp_header.hpp"
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
+
+#include <azure/core/internal/unique_handle.hpp>
+#include <azure/core/nullable.hpp>
 
 #include <map>
 #include <vector>

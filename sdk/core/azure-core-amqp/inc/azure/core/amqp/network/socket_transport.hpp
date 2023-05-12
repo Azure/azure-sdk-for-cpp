@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/core/platform.hpp>
-
 #include "transport.hpp"
+
+#include <azure/core/platform.hpp>
 
 #include <exception>
 

@@ -5,16 +5,16 @@
  * Base class for running live and playback tests using the interceptor manager
  */
 
+#include "azure/core/test/network_models.hpp"
+#include "azure/core/test/test_context_manager.hpp"
+#include "azure/core/test/test_proxy_manager.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-
-#include "azure/core/test/network_models.hpp"
-#include "azure/core/test/test_context_manager.hpp"
-#include "azure/core/test/test_proxy_manager.hpp"
 
 #include <chrono>
 #include <memory>

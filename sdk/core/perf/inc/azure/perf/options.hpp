@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json.hpp>
-
 #include "azure/core/nullable.hpp"
 #include "azure/perf/argagg.hpp"
 #include "azure/perf/dynamic_test_options.hpp"
 #include "azure/perf/test_options.hpp"
+
+#include <azure/core/internal/json/json.hpp>
 
 #include <iostream>
 #include <string>

@@ -3,6 +3,8 @@
 
 #include "azure/storage/queues/queue_service_client.hpp"
 
+#include "private/package_version.hpp"
+
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
@@ -10,8 +12,6 @@
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-
-#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Queues {
 

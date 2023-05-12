@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/attestation/attestation_client_models.hpp"
+#include "azure/attestation/attestation_client_options.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/url.hpp>
-
-#include "azure/attestation/attestation_client_models.hpp"
-#include "azure/attestation/attestation_client_options.hpp"
 
 #include <string>
 

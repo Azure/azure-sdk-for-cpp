@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/core/http/policies/policy.hpp>
-
 #include "azure/storage/common/storage_credential.hpp"
+
+#include <azure/core/http/policies/policy.hpp>
 
 #include <memory>
 #include <string>

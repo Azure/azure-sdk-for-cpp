@@ -3,10 +3,10 @@
 
 #include "azure/storage/common/internal/shared_key_policy.hpp"
 
+#include "azure/storage/common/crypt.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/strings.hpp>
-
-#include "azure/storage/common/crypt.hpp"
 
 #include <algorithm>
 

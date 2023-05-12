@@ -7,10 +7,10 @@
  * This file contains private classes used to support public model types.
  *
  */
-#include <azure/core/internal/json/json.hpp>
-
 #include "attestation_client_models_private.hpp"
 #include "crypto/inc/crypto.hpp"
+
+#include <azure/core/internal/json/json.hpp>
 
 #include <chrono>
 #include <memory>

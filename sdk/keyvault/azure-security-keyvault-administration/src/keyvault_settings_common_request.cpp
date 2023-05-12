@@ -3,10 +3,10 @@
 
 #include "private/keyvault_settings_common_request.hpp"
 
+#include "private/administration_constants.hpp"
+
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
-
-#include "private/administration_constants.hpp"
 
 #include <memory>
 

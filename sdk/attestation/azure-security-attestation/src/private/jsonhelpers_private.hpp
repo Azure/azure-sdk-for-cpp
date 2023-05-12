@@ -13,11 +13,11 @@
 
 #pragma once
 
+#include "azure/attestation/attestation_client.hpp"
+
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/nullable.hpp>
-
-#include "azure/attestation/attestation_client.hpp"
 
 #include <memory>
 #include <string>

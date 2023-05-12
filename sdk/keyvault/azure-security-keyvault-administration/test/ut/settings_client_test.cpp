@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/keyvault/administration/settings_client.hpp"
+#include "settings_client_base_test.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/administration/rest_client_models.hpp>
-
-#include "azure/keyvault/administration/settings_client.hpp"
-#include "settings_client_base_test.hpp"
 
 #include <cstddef>
 #include <string>

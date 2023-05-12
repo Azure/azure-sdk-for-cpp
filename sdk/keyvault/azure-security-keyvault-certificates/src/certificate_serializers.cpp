@@ -3,15 +3,15 @@
 
 #include "private/certificate_serializers.hpp"
 
+#include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "private/certificate_constants.hpp"
+#include "private/certificate_key_usage.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/url.hpp>
-
-#include "azure/keyvault/certificates/certificate_client_models.hpp"
-#include "private/certificate_constants.hpp"
-#include "private/certificate_key_usage.hpp"
 
 using namespace Azure::Security::KeyVault::Certificates::_detail;
 using namespace Azure::Security::KeyVault::Certificates;

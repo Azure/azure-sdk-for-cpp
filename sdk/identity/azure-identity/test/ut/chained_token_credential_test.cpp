@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/diagnostics/logger.hpp>
-
 #include "azure/identity/chained_token_credential.hpp"
+
+#include <azure/core/diagnostics/logger.hpp>
 
 #include <string>
 #include <utility>

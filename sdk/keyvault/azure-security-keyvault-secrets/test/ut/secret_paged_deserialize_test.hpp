@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/json/json_optional.hpp>
-#include <azure/core/internal/json/json_serializable.hpp>
-
 #include "../src/private/secret_serializers.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
+
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
+#include <azure/core/internal/json/json_serializable.hpp>
 
 #include <cstddef>
 #include <string>

@@ -3,10 +3,10 @@
 
 #include "azure/storage/files/shares/share_sas_builder.hpp"
 
+#include "azure/storage/files/shares/rest_client.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
-
-#include "azure/storage/files/shares/rest_client.hpp"
 
 /* cSpell:ignore rscc, rscd, rsce, rscl, rsct */
 

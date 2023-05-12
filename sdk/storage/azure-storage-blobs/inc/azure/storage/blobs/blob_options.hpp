@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include "azure/storage/blobs/rest_client.hpp"
+
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/match_conditions.hpp>
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 #include <azure/storage/common/crypt.hpp>
-
-#include "azure/storage/blobs/rest_client.hpp"
 
 #include <chrono>
 #include <cstdint>

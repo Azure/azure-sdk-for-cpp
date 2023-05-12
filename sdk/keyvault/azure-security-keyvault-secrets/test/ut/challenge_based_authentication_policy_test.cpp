@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/internal/http/pipeline.hpp>
-#include <azure/identity/client_secret_credential.hpp>
-
 #include "azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp"
 #include "azure/keyvault/shared/keyvault_shared.hpp"
+
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/identity/client_secret_credential.hpp>
 
 #include <utility>
 #include <vector>

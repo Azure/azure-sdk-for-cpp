@@ -3,11 +3,11 @@
 
 #include "azure/storage/common/storage_exception.hpp"
 
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/json/json.hpp>
-
 #include "azure/storage/common/internal/constants.hpp"
 #include "azure/storage/common/internal/xml_wrapper.hpp"
+
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 #include <type_traits>
 

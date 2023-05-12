@@ -12,6 +12,7 @@
 
 #include "azure/core/http/win_http_transport.hpp"
 #include "azure/core/url.hpp"
+
 #include <Windows.h>
 
 #include <memory>

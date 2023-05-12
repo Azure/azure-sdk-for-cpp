@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/internal/tracing/service_tracing.hpp>
-
 #include "azure/core/internal/tracing/tracing_impl.hpp"
+
+#include <azure/core/internal/tracing/service_tracing.hpp>
 
 #include <gtest/gtest.h>
 

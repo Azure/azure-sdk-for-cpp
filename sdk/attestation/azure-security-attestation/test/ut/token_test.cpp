@@ -1,16 +1,16 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/datetime.hpp>
-#include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/json/json_optional.hpp>
-#include <azure/core/test/test_base.hpp>
-
 #include "../../src/private/attestation_client_models_private.hpp"
 #include "../../src/private/attestation_client_private.hpp"
 #include "../../src/private/attestation_deserializers_private.hpp"
 #include "../../src/private/crypto/inc/crypto.hpp"
 #include "azure/attestation/attestation_client.hpp"
+
+#include <azure/core/datetime.hpp>
+#include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
+#include <azure/core/test/test_base.hpp>
 
 #include <gtest/gtest.h>
 

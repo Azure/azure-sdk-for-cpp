@@ -3,11 +3,11 @@
 
 #include "azure/core/amqp/connection_string_credential.hpp"
 
-#include <azure/core/base64.hpp>
-#include <azure/core/url.hpp>
-
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
+
+#include <azure/core/base64.hpp>
+#include <azure/core/url.hpp>
 
 #include <azure_c_shared_utility/azure_base64.h>
 #include <azure_c_shared_utility/buffer_.h>

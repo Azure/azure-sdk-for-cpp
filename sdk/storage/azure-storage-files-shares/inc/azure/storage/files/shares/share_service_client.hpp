@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/storage/files/shares/share_options.hpp"
+#include "azure/storage/files/shares/share_responses.hpp"
+
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-
-#include "azure/storage/files/shares/share_options.hpp"
-#include "azure/storage/files/shares/share_responses.hpp"
 
 #include <memory>
 #include <string>

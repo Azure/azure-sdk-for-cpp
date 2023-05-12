@@ -42,16 +42,17 @@ TabWidth: 2
 UseTab: Never
 IncludeCategories:
  - Regex: '^<windows.h>$'
-   Priority: 3
+   Priority: 80
+# Note: get_env.hpp must be included before any other Azure SDK headers.
  - Regex: '^["<]get_env.hpp'
-   Priority: 1
+   Priority: 10
  - Regex: '<[[:alnum:]_.]+>'
-   Priority: 9
+   Priority: 90
  - Regex: '<Azure/.*>'
-   Priority: 2
+   Priority: 50
  - Regex: '^<azure_uamqp_c.*/(amqp_definitions_sequence_no|amqp_definitions_milliseconds|amqp_definitions_terminus_expiry_policy|amqp_definitions_terminus_durability).h>$'
-   Priority: 4
+   Priority: 60
  - Regex: '<azure_.*>'
-   Priority: 5
+   Priority: 70
  - Regex: '^".+'
-   Priority: 3
+   Priority: 20

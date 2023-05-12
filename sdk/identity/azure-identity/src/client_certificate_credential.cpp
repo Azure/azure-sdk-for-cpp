@@ -3,12 +3,12 @@
 
 #include "azure/identity/client_certificate_credential.hpp"
 
+#include "private/tenant_id_resolver.hpp"
+#include "private/token_credential_impl.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/uuid.hpp>
-
-#include "private/tenant_id_resolver.hpp"
-#include "private/token_credential_impl.hpp"
 
 #include <chrono>
 #include <iomanip>

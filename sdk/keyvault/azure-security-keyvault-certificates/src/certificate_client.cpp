@@ -3,18 +3,18 @@
 
 #include "azure/keyvault/certificates/certificate_client.hpp"
 
-#include <azure/core/base64.hpp>
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
-
 #include "azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp"
 #include "azure/keyvault/shared/keyvault_shared.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
+
+#include <azure/core/base64.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include <memory>
 #include <string>

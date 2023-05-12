@@ -21,9 +21,9 @@
 #include <openssl/sha.h>
 #endif
 
-#include <azure/core/http/http.hpp>
-
 #include "azure/storage/common/storage_common.hpp"
+
+#include <azure/core/http/http.hpp>
 
 #include <algorithm>
 #include <stdexcept>

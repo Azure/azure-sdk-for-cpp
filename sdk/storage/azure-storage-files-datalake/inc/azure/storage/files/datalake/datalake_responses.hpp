@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <azure/storage/blobs/blob_responses.hpp>
-
 #include "azure/storage/files/datalake/datalake_options.hpp"
+
+#include <azure/storage/blobs/blob_responses.hpp>
 
 #include <cstdint>
 #include <string>

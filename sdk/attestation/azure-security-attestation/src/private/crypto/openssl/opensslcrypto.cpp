@@ -8,11 +8,11 @@
  *
  */
 
-#include <azure/core/platform.hpp>
-
 #include "../inc/crypto.hpp"
 #include "opensslcert.hpp"
 #include "opensslkeys.hpp"
+
+#include <azure/core/platform.hpp>
 
 #include <memory>
 #include <string>

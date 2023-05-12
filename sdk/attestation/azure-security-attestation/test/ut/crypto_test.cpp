@@ -1,10 +1,10 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/test/test_base.hpp>
-
 #include "../../src/private/crypto/inc/crypto.hpp"
 #include "crypto_test_collateral.hpp"
+
+#include <azure/core/test/test_base.hpp>
 
 #include <random>
 

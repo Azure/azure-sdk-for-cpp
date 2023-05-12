@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include "azure/identity/detail/token_cache.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/datetime.hpp>
-
-#include "azure/identity/detail/token_cache.hpp"
 
 #include <chrono>
 #include <string>

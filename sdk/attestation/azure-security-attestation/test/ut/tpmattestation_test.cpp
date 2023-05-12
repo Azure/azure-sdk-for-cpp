@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/internal/json/json.hpp>
-#include <azure/core/test/test_base.hpp>
-#include <azure/identity/client_secret_credential.hpp>
-
 #include "attestation_collateral.hpp"
 #include "azure/attestation/attestation_administration_client.hpp"
 #include "azure/attestation/attestation_client.hpp"
+
+#include <azure/core/internal/json/json.hpp>
+#include <azure/core/test/test_base.hpp>
+#include <azure/identity/client_secret_credential.hpp>
 
 #include <tuple>
 

@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/attestation/attestation_client_models.hpp>
-#include <azure/core/internal/cryptography/sha_hash.hpp>
-#include <azure/core/test/test_base.hpp>
-
 #include "../src/private/crypto/inc/crypto.hpp"
 #include "attestation_collateral.hpp"
 #include "azure/attestation/attestation_administration_client.hpp"
 #include "azure/identity/client_secret_credential.hpp"
+
+#include <azure/attestation/attestation_client_models.hpp>
+#include <azure/core/internal/cryptography/sha_hash.hpp>
+#include <azure/core/test/test_base.hpp>
 
 #include <cstdlib>
 #include <string>

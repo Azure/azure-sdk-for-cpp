@@ -3,10 +3,6 @@
 
 #include "azure/core/amqp/message_receiver.hpp"
 
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/core/diagnostics/logger.hpp>
-#include <azure/core/internal/diagnostics/log.hpp>
-
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/connection_string_credential.hpp"
 #include "azure/core/amqp/link.hpp"
@@ -14,6 +10,10 @@
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "azure/core/amqp/session.hpp"
 #include "private/message_receiver_impl.hpp"
+
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <azure_uamqp_c/message_receiver.h>
 
