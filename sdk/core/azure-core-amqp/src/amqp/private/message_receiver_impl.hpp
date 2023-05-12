@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         return std::move(std::get<0>(*result));
       }
-      return nullptr;
+      throw Azure::Core::OperationCancelledException("Operation was cancelled.");
     }
 
   private:

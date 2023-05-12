@@ -44,28 +44,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   class AmqpMessage final {
   public:
-    /** @brief Construct a new AMQP Message object. */
-    AmqpMessage() = default;
 
-    /** @brief Destroy an instance of an AMQP Message object. */
-    ~AmqpMessage() = default;
-
-    /** @brief Construct a new AMQP message object from an existing object. */
-    AmqpMessage(AmqpMessage const&) = default;
-
-    /** @brief Copy an AMQP message object to another object. @returns A reference to this.*/
-    AmqpMessage& operator=(AmqpMessage const&) = default;
-
-    /** @brief Create a new AMQP Message from an existing message moving the contents. */
-    AmqpMessage(AmqpMessage&&) noexcept = default;
-
-    /** @brief Move an AMQP message object to another object. @returns A reference to this.*/
-    AmqpMessage& operator=(AmqpMessage&&) noexcept = default;
 
     bool operator==(AmqpMessage const& other) const noexcept;
     bool operator!=(AmqpMessage const& other) const noexcept { return !(*this == other); }
 
-    AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
+//    AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
     operator bool() const noexcept { return m_hasValue; }
 
     /** @brief The header for the message.
