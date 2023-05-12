@@ -1,0 +1,141 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+#pragma once
+#include "gtest/gtest.h"
+
+#include <azure/core/context.hpp>
+#include <azure/core/internal/environment.hpp>
+#include <azure/identity.hpp>
+#include <azure/messaging/eventhubs.hpp>
+
+namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+  class TestCheckpointStore : public Azure::Messaging::EventHubs::CheckpointStore {
+    std::map<std::string, Azure::Messaging::EventHubs::Checkpoint> m_checkpoints;
+    std::map<std::string, Azure::Messaging::EventHubs::Ownership> m_ownerships;
+
+  public:
+    TestCheckpointStore()
+    {
+      m_checkpoints = std::map<std::string, Azure::Messaging::EventHubs::Checkpoint>();
+      m_ownerships = std::map<std::string, Azure::Messaging::EventHubs::Ownership>();
+    }
+
+    std::vector<Azure::Messaging::EventHubs::Checkpoint> ListCheckpoints(
+        std::string const& fullyQualifiedNamespace,
+        std::string const& eventHubName,
+        std::string const& consumerGroup,
+        Azure::Core::Context ctx = Azure::Core::Context(),
+        ListCheckpointsOptions options = ListCheckpointsOptions()) override
+    {
+      (void)fullyQualifiedNamespace;
+      (void)eventHubName;
+      (void)consumerGroup;
+      (void)ctx;
+      (void)options;
+      std::vector<Azure::Messaging::EventHubs::Checkpoint> checkpoints;
+      for (auto const& checkpoint : m_checkpoints)
+      {
+        checkpoints.push_back(checkpoint.second);
+      }
+      return checkpoints;
+    }
+
+    std::vector<Azure::Messaging::EventHubs::Ownership> ListOwnership(
+        std::string const& fullyQualifiedNamespace,
+        std::string const& eventHubName,
+        std::string const& consumerGroup,
+        Azure::Core::Context ctx = Azure::Core::Context(),
+        ListOwnershipOptions options = ListOwnershipOptions()) override
+    {
+      (void)fullyQualifiedNamespace;
+      (void)eventHubName;
+      (void)consumerGroup;
+      (void)ctx;
+      (void)options;
+      std::vector<Azure::Messaging::EventHubs::Ownership> ownerships;
+      for (auto const& ownership : m_ownerships)
+      {
+        ownerships.push_back(ownership.second);
+      }
+      return ownerships;
+    }
+
+    std::vector<Azure::Messaging::EventHubs::Ownership> ClaimOwnership(
+        std::vector<Ownership> partitionOwnership,
+        Azure::Core::Context ctx = Azure::Core::Context(),
+        ClaimOwnershipOptions const& options = ClaimOwnershipOptions()) override
+    {
+      (void)ctx;
+      (void)options;
+      std::vector<Ownership> owned;
+      for (auto& ownership : partitionOwnership)
+      {
+        Azure::Messaging::EventHubs::Ownership newOwnership = UpdateOwnership(ownership);
+        if (newOwnership.ETag.HasValue())
+        {
+          owned.push_back(newOwnership);
+        }
+      }
+      return owned;
+    }
+
+    Azure::Messaging::EventHubs::Ownership UpdateOwnership(
+        Azure::Messaging::EventHubs::Ownership ownership)
+    {
+      if (ownership.ConsumerGroup.empty() || ownership.EventHubName.empty()
+          || ownership.FullyQualifiedNamespace.empty() || ownership.PartitionID.empty())
+      {
+        throw std::runtime_error("Invalid ownership");
+      }
+
+      std::string key = ownership.FullyQualifiedNamespace + "/" + ownership.EventHubName + "/"
+          + ownership.ConsumerGroup + "/" + ownership.PartitionID;
+
+      if (m_ownerships.find(key) != m_ownerships.end())
+      {
+        if (ownership.ETag.HasValue() == false)
+        {
+          throw std::runtime_error("ETag is required for claiming ownership");
+        }
+
+        if (ownership.ETag.Value() != m_ownerships[key].ETag.Value())
+        {
+          return Ownership{};
+        }
+      }
+      Azure::Messaging::EventHubs::Ownership newOwnership = ownership;
+      newOwnership.ETag = Azure::ETag(Azure::Core::Uuid::CreateUuid().ToString());
+      newOwnership.LastModifiedTime = std::chrono::system_clock::now();
+
+      m_ownerships[key] = Ownership(newOwnership);
+      return newOwnership;
+    }
+
+    void ExpireOwnership(Azure::Messaging::EventHubs::Ownership& o)
+    {
+      Ownership temp = o;
+      temp.LastModifiedTime = temp.LastModifiedTime.Value() - std::chrono::hours(6);
+      std::string key = temp.FullyQualifiedNamespace + "/" + temp.EventHubName + "/"
+          + temp.ConsumerGroup + "/" + temp.PartitionID;
+      m_ownerships[key] = temp;
+    }
+
+    void UpdateCheckpoint(
+        Azure::Messaging::EventHubs::Checkpoint const& checkpoint,
+        Azure::Core::Context ctx = Azure::Core::Context(),
+        UpdateCheckpointOptions options = UpdateCheckpointOptions()) override
+    {
+      (void)ctx;
+      (void)options;
+      if (checkpoint.ConsumerGroup.empty() || checkpoint.EventHubName.empty()
+          || checkpoint.FullyQualifiedNamespace.empty() || checkpoint.PartitionID.empty())
+      {
+        throw std::runtime_error("Invalid checkpoint");
+      }
+      std::string key = checkpoint.FullyQualifiedNamespace + "/" + checkpoint.EventHubName + "/"
+          + checkpoint.ConsumerGroup + "/" + checkpoint.PartitionID;
+      m_checkpoints[key] = checkpoint;
+    }
+  };
+
+}}}} // namespace Azure::Messaging::EventHubs::Test

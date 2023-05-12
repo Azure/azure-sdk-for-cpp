@@ -21,7 +21,9 @@ add_executable (
     retry_operation_test.cpp
     amqp_message_test.cpp
     consumer_client_test.cpp    
-    checkpoint_store_test.cpp)
+    checkpoint_store_test.cpp 
+    processor_load_balancer_test.cpp
+    test_checkpoint_store.hpp)
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
