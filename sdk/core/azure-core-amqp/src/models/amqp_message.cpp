@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message == nullptr)
     {
-      throw std::runtime_error("Invalid message handle.");
+      return nullptr;
     }
     AmqpMessage rv;
     rv.Header = _internal::MessageHeaderFactory::FromUamqp(GetHeaderFromMessage(message));

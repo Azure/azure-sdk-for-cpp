@@ -144,7 +144,7 @@ public:
     {
       return std::move(std::get<0>(*result));
     }
-    throw Azure::Core::OperationCancelledException("Operation cancelled.");
+    return nullptr;
   }
 
 private:
