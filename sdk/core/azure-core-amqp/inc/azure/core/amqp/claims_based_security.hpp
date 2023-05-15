@@ -32,6 +32,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Sas,
     Jwt
   };
+
 #if defined(TESTING_BUILD)
   /** @brief Implementation of AMQP 1.0 Claims-based Security (CBS) protocol.
    *
