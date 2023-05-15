@@ -156,7 +156,7 @@ For more information about the Microsoft Azure Attestation service, please see o
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a [Contributor License Agreement (CLA)][cla] declaring that you have the right to, and actually do, grant us the rights to use your contribution.
 
-If you'd like to contribute to this library, please read the [contributing guide] [contributing_guide] to learn more about how to build and test the code.
+If you'd like to contribute to this library, please read the [contributing guide][contributing_guide] to learn more about how to build and test the code.
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
