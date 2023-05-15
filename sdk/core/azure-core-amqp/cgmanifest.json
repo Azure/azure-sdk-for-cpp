@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/Azure/azure-uamqp-c",
+          "CommitHash": "b7bdf307a0db8840156d9f6e40f704c1d5924306"
+        }
+      }
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/google/googletest",
+          "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
+        }
+      },
+      "DevelopmentDependency": true
+    }
+  ]
+}
