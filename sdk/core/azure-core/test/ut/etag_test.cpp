@@ -261,46 +261,46 @@ TEST(ETag, EqualsWeak)
 
 
 TEST(Etag, Assignable) {
-    EXPECT_TRUE((ClassTraits<ETag>::is_assignable<ETag>));
-    EXPECT_TRUE((ClassTraits<ETag>::is_assignable<const ETag>));
-    EXPECT_FALSE((ClassTraits<ETag>::is_trivially_assignable<ETag>));
-    EXPECT_FALSE((ClassTraits<ETag>::is_trivially_assignable<const ETag>));
-    EXPECT_FALSE((ClassTraits<ETag>::is_nothrow_assignable<ETag>));
-    EXPECT_FALSE((ClassTraits<ETag>::is_nothrow_assignable<const ETag>));
+    EXPECT_TRUE(ClassTraits<ETag>::is_assignable<ETag>());
+    EXPECT_TRUE(ClassTraits<ETag>::is_assignable<const ETag>());
+    EXPECT_FALSE(ClassTraits<ETag>::is_trivially_assignable<ETag>());
+    EXPECT_FALSE(ClassTraits<ETag>::is_trivially_assignable<const ETag>());
+    EXPECT_FALSE(ClassTraits<ETag>::is_nothrow_assignable<ETag>());
+    EXPECT_FALSE(ClassTraits<ETag>::is_nothrow_assignable<const ETag>());
 }
 
 TEST(Etag, Constructible) {
-    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_constructible));
-    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_trivially_constructible));
-    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_nothrow_constructible));
-    EXPECT_TRUE(ClassTraits<ETag>::is_default_constructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_trivially_default_constructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_default_constructible);
+    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_constructible()));
+    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_trivially_constructible()));
+    EXPECT_TRUE((ClassTraits<ETag, const ETag&>::is_nothrow_constructible()));
+    EXPECT_TRUE(ClassTraits<ETag>::is_default_constructible());
+    EXPECT_TRUE(ClassTraits<ETag>::is_trivially_default_constructible());
+    EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_default_constructible());
 }
 
 TEST(Etag, CopyAndMoveConstructible) {
-    EXPECT_TRUE(ClassTraits<ETag>::is_copy_constructible);
-    EXPECT_FALSE(ClassTraits<ETag>::is_trivially_copy_constructible);
-    EXPECT_FALSE(ClassTraits<ETag>::is_nothrow_copy_constructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_move_constructible);
-    EXPECT_FALSE(ClassTraits<ETag>::is_trivially_move_constructible);
-    EXPECT_FALSE(ClassTraits<ETag>::is_nothrow_move_constructible);
+    EXPECT_TRUE(ClassTraits<ETag>::is_copy_constructible());
+    EXPECT_FALSE(ClassTraits<ETag>::is_trivially_copy_constructible());
+    EXPECT_FALSE(ClassTraits<ETag>::is_nothrow_copy_constructible());
+    EXPECT_TRUE(ClassTraits<ETag>::is_move_constructible());
+    EXPECT_FALSE(ClassTraits<ETag>::is_trivially_move_constructible());
+    EXPECT_FALSE(ClassTraits<ETag>::is_nothrow_move_constructible());
 }
 
 TEST(Etag, CopyAndMoveAssignable) {
-    EXPECT_TRUE(ClassTraits<ETag>::is_copy_assignable);
-    EXPECT_TRUE(ClassTraits<ETag>::is_trivially_copy_assignable);
-    EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_copy_assignable);
-    EXPECT_TRUE(ClassTraits<ETag>::is_move_assignable);
-    EXPECT_TRUE(ClassTraits<ETag>::is_trivially_move_assignable);
-    EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_move_assignable);
+  EXPECT_TRUE(ClassTraits<ETag>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<ETag>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<ETag>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<ETag>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_move_assignable());
 }
 
 TEST(Etag, Destructible) {
-    EXPECT_TRUE(ClassTraits<ETag>::is_destructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_trivially_destructible);
-    EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_destructible);
-    EXPECT_FALSE(ClassTraits<ETag>::has_virtual_destructor);
+  EXPECT_TRUE(ClassTraits<ETag>::is_destructible());
+  EXPECT_TRUE(ClassTraits<ETag>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<ETag>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<ETag>::has_virtual_destructor());
 }
 
 
