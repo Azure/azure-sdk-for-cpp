@@ -51,6 +51,7 @@ set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
     inc/azure/messaging/eventhubs.hpp
     inc/azure/messaging/eventhubs/amqp_message.hpp
+    inc/azure/messaging/eventhubs/dll_import_export.hpp
     inc/azure/messaging/eventhubs/producer_client.hpp
     inc/azure/messaging/eventhubs/event_data_batch.hpp
     inc/azure/messaging/eventhubs/retry_operation.hpp
@@ -59,6 +60,7 @@ set(
     inc/azure/messaging/eventhubs/processor_load_balancer.hpp
     inc/azure/messaging/eventhubs/processor_partition_client.hpp
     inc/azure/messaging/eventhubs/checkpoint_store.hpp
+    inc/azure/messaging/eventhubs/rtti.hpp
 )
 
 set(

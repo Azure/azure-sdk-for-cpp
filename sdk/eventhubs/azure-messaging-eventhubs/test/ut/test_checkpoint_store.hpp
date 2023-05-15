@@ -114,7 +114,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     void ExpireOwnership(Azure::Messaging::EventHubs::Ownership& o)
     {
       Ownership temp = o;
-      temp.LastModifiedTime = temp.LastModifiedTime.Value() - std::chrono::hours(6);
+      temp.LastModifiedTime
+          = temp.LastModifiedTime.ValueOr(std::chrono::system_clock::now()) - std::chrono::hours(6);
       std::string key = temp.FullyQualifiedNamespace + "/" + temp.EventHubName + "/"
           + temp.ConsumerGroup + "/" + temp.PartitionID;
       m_ownerships[key] = temp;
