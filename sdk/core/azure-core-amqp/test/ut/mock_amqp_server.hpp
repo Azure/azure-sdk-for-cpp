@@ -364,9 +364,10 @@ protected:
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
     Azure::Core::Amqp::_internal::SessionOptions options;
+    options.InitialIncomingWindowSize = 10000;
+
     m_session = std::make_shared<Azure::Core::Amqp::_internal::Session>(
         connection, endpoint, options, this);
-    m_session->SetIncomingWindow(10000);
     m_session->Begin();
     return true;
   }

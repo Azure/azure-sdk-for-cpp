@@ -67,6 +67,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Poll() const;
 
+    std::string GetHost() const { return m_hostName; }
+    uint16_t GetPort() const { return m_port; }
+
     uint32_t GetMaxFrameSize() const;
     uint32_t GetRemoteMaxFrameSize() const;
     uint16_t GetMaxChannel() const;
@@ -80,6 +83,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
     UniqueAmqpConnection m_connection{};
     std::string m_hostName;
+    uint16_t m_port;
     std::string m_containerId;
     _internal::ConnectionOptions m_options;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>

@@ -51,17 +51,16 @@ namespace Azure { namespace Core { namespace Amqp {
 
       Session::~Session() noexcept {}
 
+      uint32_t Session::GetIncomingWindow() const { return m_impl->GetIncomingWindow(); }
       void Session::SetIncomingWindow(uint32_t incomingWindow)
       {
         m_impl->SetIncomingWindow(incomingWindow);
       }
-      uint32_t Session::GetIncomingWindow() const { return m_impl->GetIncomingWindow(); }
       void Session::SetOutgoingWindow(uint32_t outgoingWindow)
       {
         m_impl->SetOutgoingWindow(outgoingWindow);
       }
       uint32_t Session::GetOutgoingWindow() const { return m_impl->GetOutgoingWindow(); }
-      //      void Session::SetHandleMax(uint32_t handleMax) { m_impl->SetHandleMax(handleMax); }
       uint32_t Session::GetHandleMax() const { return m_impl->GetHandleMax(); }
 
       void Session::Begin() { m_impl->Begin(); }

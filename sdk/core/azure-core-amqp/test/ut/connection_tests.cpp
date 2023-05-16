@@ -94,6 +94,9 @@ TEST_F(TestConnections, ConnectionAttributes)
 
     Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
 
+    EXPECT_EQ(connection.GetPort(), 5672);
+    EXPECT_EQ(connection.GetHost(), "localhost");
+
     auto idleTimeout = connection.GetIdleTimeout();
     (void)idleTimeout;
     EXPECT_EQ(std::chrono::milliseconds(1532), connection.GetIdleTimeout());
@@ -101,7 +104,9 @@ TEST_F(TestConnections, ConnectionAttributes)
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxFrameSize = 1024 * 64;
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost", options);
+    EXPECT_EQ(connection.GetPort(), 5672);
+    EXPECT_EQ(connection.GetHost(), "localhost");
 
     auto maxFrameSize = connection.GetMaxFrameSize();
     (void)maxFrameSize;
@@ -115,11 +120,18 @@ TEST_F(TestConnections, ConnectionAttributes)
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxChannelCount = 128;
 
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    Azure::Core::Amqp::_internal::Connection connection("amqps://localhost", options);
+    EXPECT_EQ(connection.GetPort(), 5671);
+    EXPECT_EQ(connection.GetHost(), "localhost");
 
     auto maxChannel = connection.GetMaxChannel();
     EXPECT_EQ(128, connection.GetMaxChannel());
     (void)maxChannel;
+  }
+
+  // Expect a throw for non amqp connections.
+  {
+    EXPECT_ANY_THROW(Azure::Core::Amqp::_internal::Connection connection("https://localhost", {}));
   }
 
   {
@@ -273,9 +285,10 @@ private:
       Azure::Core::Amqp::_internal::Endpoint& endpoint) override
   {
     Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+    sessionOptions.InitialIncomingWindowSize = 10000;
     m_listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
         connection, endpoint, sessionOptions, this);
-    m_listeningSession->SetIncomingWindow(10000);
+
     m_listeningSession->Begin();
 
     return true;

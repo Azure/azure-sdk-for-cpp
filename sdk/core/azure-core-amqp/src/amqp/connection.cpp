@@ -68,6 +68,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   uint32_t Connection::GetMaxFrameSize() const { return m_impl->GetMaxFrameSize(); }
   uint32_t Connection::GetRemoteMaxFrameSize() const { return m_impl->GetRemoteMaxFrameSize(); }
   uint16_t Connection::GetMaxChannel() const { return m_impl->GetMaxChannel(); }
+  std::string Connection::GetHost() const { return m_impl->GetHost(); }
+  uint16_t Connection::GetPort() const { return m_impl->GetPort(); }
   std::chrono::milliseconds Connection::GetIdleTimeout() const { return m_impl->GetIdleTimeout(); }
   Azure::Core::Amqp::Models::AmqpMap Connection::GetProperties() const
   {
@@ -79,17 +81,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 }}}} // namespace Azure::Core::Amqp::_internal
 
+namespace {
+void EnsureGlobalStateInitialized()
+{
+  // Force the global instance to exist. This is required to ensure that uAMQP and
+  // azure-c-shared-utility is
+  auto globalInstance
+      = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+  (void)globalInstance;
+}
+} // namespace
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  namespace {
-    void EnsureGlobalStateInitialized()
-    {
-      // Force the global instance to exist. This is required to ensure that uAMQP and
-      // azure-c-shared-utility is
-      auto globalInstance
-          = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
-      (void)globalInstance;
-    }
-  } // namespace
 
   // Create a connection with an existing networking Transport.
   ConnectionImpl::ConnectionImpl(
@@ -120,28 +123,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Sasl Credentials should not be provided with a request URI.");
     }
     Azure::Core::Url requestUrl(requestUri);
-    std::shared_ptr<Network::_internal::Transport> requestTransport;
-    if (requestUrl.GetScheme() == "amqp")
+
+    m_hostName = requestUrl.GetHost();
+
+    // Determine the port to be used for the request.
+    if (requestUrl.GetPort() != 0)
     {
-      Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
-      Azure::Core::Amqp::Network::_internal::SocketTransport transport{
-          requestUrl.GetHost(),
-          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(AmqpPort)};
-      m_transport = transport.GetImpl();
+      m_port = requestUrl.GetPort();
+    }
+    else if (requestUrl.GetScheme() == "amqp")
+    {
+      m_port = static_cast<std::uint16_t>(AmqpPort);
     }
     else if (requestUrl.GetScheme() == "amqps")
     {
-      Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
-      Azure::Core::Amqp::Network::_internal::TlsTransport transport{
-          requestUrl.GetHost(),
-          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(AmqpsPort)};
-      m_transport = transport.GetImpl();
+      m_port = static_cast<std::uint16_t>(AmqpsPort);
     }
     else
     {
       throw std::runtime_error("Unknown connection scheme: " + requestUrl.GetScheme() + ".");
     }
-    m_hostName = requestUrl.GetHost();
+
+    if (requestUrl.GetScheme() == "amqp")
+    {
+      Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
+      Azure::Core::Amqp::Network::_internal::SocketTransport transport{m_hostName, m_port};
+      m_transport = transport.GetImpl();
+    }
+    else if (requestUrl.GetScheme() == "amqps")
+    {
+      Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
+      Azure::Core::Amqp::Network::_internal::TlsTransport transport{m_hostName, m_port};
+      m_transport = transport.GetImpl();
+    }
   }
 
   ConnectionImpl::~ConnectionImpl()
@@ -369,5 +383,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not set remote idle timeout send frame ratio."); // LCOV_EXCL_LINE
     }
   }
-
 }}}} // namespace Azure::Core::Amqp::_detail

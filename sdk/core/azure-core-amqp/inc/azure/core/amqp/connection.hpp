@@ -288,6 +288,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     void Poll() const;
 
+    /** @brief Gets host configured by the connection.
+     *
+     * @return The host used in the connection.
+     */
+    std::string GetHost() const;
+
+    /** @brief Gets the port configured by the connection.
+     *
+     * @return The port used in the connection.
+     */
+    uint16_t GetPort() const;
+
     /** @brief Gets the max frame size configured for the connection.
      *
      * @return The configured maximum frame size for the connection.

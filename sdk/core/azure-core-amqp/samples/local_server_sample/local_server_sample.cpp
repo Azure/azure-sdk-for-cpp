@@ -139,12 +139,13 @@ private:
 
   virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) override
   {
-    SessionOptions options;
+    SessionOptions sessionOptions;
+    sessionOptions.InitialIncomingWindowSize = 10000;
+
     std::unique_ptr<Session> newSession
-        = std::make_unique<Session>(connection, endpoint, options, this);
+        = std::make_unique<Session>(connection, endpoint, sessionOptions, this);
 
     // The new session *must* call `Begin` before returning from the OnNewEndpoint callback.
-    newSession->SetIncomingWindow(10000);
     newSession->Begin();
     m_sessionQueue.CompleteOperation(std::move(newSession));
     return true;

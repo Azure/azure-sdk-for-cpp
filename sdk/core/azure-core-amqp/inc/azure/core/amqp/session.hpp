@@ -20,14 +20,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Connection;
-  class Cbs;
-
-  // Dummy operations for operations that should never be used.
-  class Flow;
-  class Attach;
-  class Disposition;
-  class Detach;
-  class Transfer;
   enum class SessionRole;
 
   enum class ExpiryPolicy

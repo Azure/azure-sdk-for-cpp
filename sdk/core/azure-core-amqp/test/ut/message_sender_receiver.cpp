@@ -196,9 +196,9 @@ private:
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
     Azure::Core::Amqp::_internal::SessionOptions options;
+    options.InitialIncomingWindowSize = 10000;
     auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
         connection, endpoint, options, this);
-    listeningSession->SetIncomingWindow(10000);
     listeningSession->Begin();
 
     m_listeningSessionQueue.CompleteOperation(std::move(listeningSession));

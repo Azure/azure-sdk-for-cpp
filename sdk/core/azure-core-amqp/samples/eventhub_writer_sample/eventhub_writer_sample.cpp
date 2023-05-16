@@ -23,9 +23,11 @@ int main()
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
 
-  Azure::Core::Amqp::_internal::Session session(connection);
-  session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
-  session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
+  Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+  sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
+  sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+
+  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 

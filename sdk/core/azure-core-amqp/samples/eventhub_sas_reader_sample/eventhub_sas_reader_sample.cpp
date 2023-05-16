@@ -23,8 +23,9 @@ int main()
   connectOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
 
-  Azure::Core::Amqp::_internal::Session session(connection);
-  session.SetIncomingWindow(100);
+  Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+  sessionOptions.InitialIncomingWindowSize = 100;
+  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
