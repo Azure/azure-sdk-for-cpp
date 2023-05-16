@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/core/amqp/message_sender.hpp"
+#include "claims_based_security_impl.hpp"
 #include <azure_uamqp_c/message_sender.h>
 #include <tuple>
 
@@ -41,9 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl(MessageSenderImpl&&) noexcept = delete;
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
-    operator bool() const { return (m_messageSender != nullptr); }
-
-    void Open();
+    void Open(Azure::Core::Context const& context);
     void Close();
     std::tuple<_internal::MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
         Azure::Core::Amqp::Models::AmqpMessage const& message,
@@ -63,7 +62,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Authenticate(
         _internal::CredentialType type,
         std::string const& audience,
-        std::string const& token);
+        std::string const& token,
+        Azure::Core::Context const& context);
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
@@ -79,8 +79,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_detail::SessionImpl> m_session;
     std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<ClaimsBasedSecurity> m_claimsBasedSecurity;
+    std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
     std::string m_target;
     _internal::MessageSenderOptions m_options;
+    bool m_cbsOpen{false};
   };
 }}}} // namespace Azure::Core::Amqp::_detail

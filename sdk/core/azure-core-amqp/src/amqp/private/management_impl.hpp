@@ -5,10 +5,10 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/management.hpp"
-#include "azure/core/amqp/private/connection_impl.hpp"
-#include "azure/core/amqp/private/message_receiver_impl.hpp"
-#include "azure/core/amqp/private/session_impl.hpp"
 #include "azure/core/amqp/session.hpp"
+#include "connection_impl.hpp"
+#include "message_receiver_impl.hpp"
+#include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure_uamqp_c/amqp_management.h>
@@ -36,9 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ManagementOptions const& options,
         _internal::ManagementEvents* managementEvents);
 
-    ManagementImpl() = default;
     ~ManagementImpl() noexcept;
-    operator bool() const;
 
     /**
      * @brief Open the management instance.
@@ -46,21 +44,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      * @returns A tuple consisting of the status code for the open and the description of the
      * status.
      */
-    _internal::ManagementOpenResult Open(Azure::Core::Context const& context = {});
+    _internal::ManagementOpenStatus Open(Azure::Core::Context const& context = {});
 
     /**
      * @brief Close the management instance.
      */
     void Close();
 
-    std::
-        tuple<_internal::ManagementOperationResult, std::uint32_t, std::string, Models::AmqpMessage>
-        ExecuteOperation(
-            std::string const& operationToPerform,
-            std::string const& typeOfOperation,
-            std::string const& locales,
-            Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
-            Azure::Core::Context context);
+    _internal::ManagementOperationResult ExecuteOperation(
+        std::string const& operationToPerform,
+        std::string const& typeOfOperation,
+        std::string const& locales,
+        Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
+        Azure::Core::Context context);
 
   private:
     UniqueAmqpManagementHandle m_management{};
@@ -71,7 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_openCompleteQueue;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        _internal::ManagementOperationResult,
+        _internal::ManagementOperationStatus,
         std::uint32_t,
         std::string,
         Models::AmqpMessage>

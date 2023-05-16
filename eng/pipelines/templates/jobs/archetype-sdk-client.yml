@@ -109,7 +109,9 @@ jobs:
             condition: >-
                 and(
                   succeeded(),
-                  ne(variables['Skip.CreateApiReview'], 'true'),eq(variables['System.TeamProject'], 'internal')
+                  ne(variables['Skip.CreateApiReview'], 'true'),
+                  ne(variables['Build.Reason'],'PullRequest'),
+                  eq(variables['System.TeamProject'], 'internal')
                 )
 
           - task: Powershell@2
@@ -155,7 +157,11 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/verify-links.yml
           parameters:
-            Directory: ''
+            ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+              Directory: ''
+              Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+            ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+              Directory: sdk/${{ parameters.ServiceDirectory }}
             CheckLinkGuidance: $true
 
         - ${{ each artifact in parameters.Artifacts }}:
@@ -189,7 +195,6 @@ jobs:
               -DBUILD_TESTING=OFF
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
-              -DENABLE_AZURE_CORE_AMQP=ON
 
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com

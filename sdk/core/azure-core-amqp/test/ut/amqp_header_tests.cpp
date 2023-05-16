@@ -32,7 +32,6 @@ TEST_F(TestHeaders, SimpleCreate)
 TEST_F(TestHeaders, TestTtl)
 {
   MessageHeader header;
-  //  EXPECT_EQ(0, header.GetTimeToLive().count());
   header.TimeToLive = std::chrono::milliseconds(100);
 
   auto handle = _internal::MessageHeaderFactory::ToUamqp(header);
@@ -173,6 +172,7 @@ TEST_F(HeaderSerialization, SerializeHeaderPriority)
     EXPECT_EQ(false, deserialized.Durable);
     EXPECT_EQ(false, deserialized.IsFirstAcquirer);
     EXPECT_FALSE(deserialized.TimeToLive.HasValue());
+    EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
   }
 }
 
@@ -216,6 +216,7 @@ TEST_F(HeaderSerialization, SerializeHeaderTtl)
     EXPECT_EQ(false, deserialized.Durable);
     EXPECT_EQ(false, deserialized.IsFirstAcquirer);
     EXPECT_EQ(deserialized.TimeToLive.Value(), std::chrono::milliseconds(12345));
+    EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
   }
 }
 
@@ -256,6 +257,7 @@ TEST_F(HeaderSerialization, SerializeHeaderFirstAcquirer)
     EXPECT_EQ(false, deserialized.Durable);
     EXPECT_EQ(true, deserialized.IsFirstAcquirer);
     EXPECT_FALSE(deserialized.TimeToLive.HasValue());
+    EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
   }
 }
 

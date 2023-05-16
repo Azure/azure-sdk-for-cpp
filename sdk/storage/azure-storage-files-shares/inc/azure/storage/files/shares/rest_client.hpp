@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2022-11-02";
+    constexpr static const char* ApiVersion = "2023-01-03";
   } // namespace _detail
   namespace Models {
     /**
@@ -1092,6 +1092,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> DirectoryId;
       };
       /**
+       * @brief Access rights of the access policy.
+       */
+      class AccessRight final {
+      public:
+        AccessRight() = default;
+        explicit AccessRight(std::string value) : m_value(std::move(value)) {}
+        bool operator==(const AccessRight& other) const { return m_value == other.m_value; }
+        bool operator!=(const AccessRight& other) const { return !(*this == other); }
+        const std::string& ToString() const { return m_value; }
+        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
+        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
+        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
+
+      private:
+        std::string m_value;
+      };
+      /**
        * @brief A listed Azure Storage handle item.
        */
       struct HandleItem final
@@ -1128,6 +1145,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Time handle was last connected to (UTC).
          */
         DateTime LastReconnectedOn;
+        /**
+         * Array of AccessRight.
+         */
+        std::vector<AccessRight> AccessRightList;
       };
       /**
        * @brief Response type for

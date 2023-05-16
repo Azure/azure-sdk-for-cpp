@@ -21,7 +21,6 @@ int main()
   connectOptions.ContainerId = "some";
   connectOptions.HostName = credentials->GetHostName();
   connectOptions.SaslCredentials = credentials;
-  //  connectOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::Connection connection(targetUrl, connectOptions);
 
   Azure::Core::Amqp::_internal::Session session(connection, nullptr);
@@ -30,7 +29,6 @@ int main()
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";
-
   senderOptions.SourceAddress = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();

@@ -439,6 +439,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * A boolean indicates if the path is in its current version.
        */
       Azure::Nullable<bool> IsCurrentVersion;
+
+      /**
+       * The owner of the path.
+       */
+      Azure::Nullable<std::string> Owner;
+
+      /**
+       * The owning group of the path.
+       */
+      Azure::Nullable<std::string> Group;
+
+      /**
+       * The permissions of the path.
+       */
+      Azure::Nullable<std::string> Permissions;
     };
 
     /**
@@ -688,6 +703,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * Not applicable for directories.
        */
       Nullable<std::string> EncryptionContext;
+
+      /**
+       * The owner of the file.
+       */
+      Azure::Nullable<std::string> Owner;
+
+      /**
+       * The owning group of the file.
+       */
+      Azure::Nullable<std::string> Group;
+
+      /**
+       * The permissions of the file.
+       */
+      Azure::Nullable<std::string> Permissions;
     };
 
     /**

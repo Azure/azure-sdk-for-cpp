@@ -20,7 +20,6 @@ TEST(TracingContextFactory, ServiceTraceEnums)
     spanKind = Azure::Core::Tracing::_internal::SpanKind::Server;
     int i = static_cast<int>(spanKind);
     i += 1;
-    (void)i;
   }
   {
     SpanStatus spanStatus = SpanStatus::Unset;
@@ -28,7 +27,6 @@ TEST(TracingContextFactory, ServiceTraceEnums)
     spanStatus = SpanStatus::Ok;
     int i = static_cast<int>(spanStatus);
     i += 1;
-    (void)i;
   }
   Azure::Core::Tracing::_internal::CreateSpanOptions options;
   options.Kind = SpanKind::Internal;

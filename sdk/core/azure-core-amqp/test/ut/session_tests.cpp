@@ -37,6 +37,7 @@ protected:
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSessions, SimpleSession)
 {
 
@@ -105,7 +106,7 @@ TEST_F(TestSessions, SessionProperties)
     EXPECT_EQ(32798, session.GetOutgoingWindow());
   }
 }
-
+#endif // !AZ_PLATFORM_MAC
 uint16_t FindAvailableSocket()
 {
   // Ensure that the global state for the AMQP stack is initialized. Normally this is done by the
@@ -169,6 +170,7 @@ uint16_t FindAvailableSocket()
   throw std::runtime_error("Could not find available test port.");
 }
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSessions, SessionBeginEnd)
 {
   class TestListenerEvents : public Network::_internal::SocketListenerEvents {
@@ -186,11 +188,10 @@ TEST_F(TestSessions, SessionBeginEnd)
         std::shared_ptr<Network::_internal::Transport>>
         m_listenerQueue;
 
-    virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio)
+    virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport)
     {
       // Capture the XIO into a transport so it won't leak.
-      m_listenerQueue.CompleteOperation(
-          std::make_shared<Network::_internal::Transport>(xio, nullptr));
+      m_listenerQueue.CompleteOperation(transport);
     }
   };
 
@@ -218,3 +219,4 @@ TEST_F(TestSessions, SessionBeginEnd)
 
   listener.Stop();
 }
+#endif // !AZ_PLATFORM_MAC

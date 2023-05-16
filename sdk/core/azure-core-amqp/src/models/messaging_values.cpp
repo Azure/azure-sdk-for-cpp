@@ -9,41 +9,76 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryAccepted()
   {
-    return messaging_delivery_accepted();
+    auto rv = messaging_delivery_accepted();
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate delivery accepted described value.");
+    }
+    return rv;
   }
   Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryReleased()
   {
-    return messaging_delivery_released();
+    auto rv = messaging_delivery_released();
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate delivery released described value.");
+    }
+    return rv;
   }
   Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryReceived(
       uint32_t sectionNumber,
       uint64_t sectionOffset)
   {
-    return messaging_delivery_received(sectionNumber, sectionOffset);
+    auto rv = messaging_delivery_received(sectionNumber, sectionOffset);
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate delivery received described value.");
+    }
+    return rv;
   }
   Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryRejected(
       std::string const& errorCondition,
       std::string const& errorDescription)
   {
-    return messaging_delivery_rejected(
+    auto rv = messaging_delivery_rejected(
         errorCondition.empty() ? nullptr : errorCondition.c_str(),
         errorDescription.empty() ? nullptr : errorDescription.c_str());
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate delivery rejected described value.");
+    }
+    return rv;
   }
   Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryModified(
       bool deliveryFailed,
       bool undeliverableHere,
       Azure::Core::Amqp::Models::AmqpValue annotations)
   {
-    return messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations);
+    auto rv = messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations);
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate delivery modified described value.");
+    }
+    return rv;
   }
 
   Azure::Core::Amqp::Models::AmqpValue Messaging::CreateSource(std::string const& address)
   {
-    return messaging_create_source(address.c_str());
+    auto rv = messaging_create_source(address.c_str());
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate source described value.");
+    }
+    return rv;
   }
   Azure::Core::Amqp::Models::AmqpValue Messaging::CreateTarget(std::string const& address)
   {
-    return messaging_create_target(address.c_str());
+    auto rv = messaging_create_target(address.c_str());
+    if (!rv)
+    {
+      throw std::runtime_error("Could not allocate target described value.");
+    }
+    return rv;
   }
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

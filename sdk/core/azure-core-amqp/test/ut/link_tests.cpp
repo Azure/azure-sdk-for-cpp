@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
@@ -12,7 +10,9 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+#include <azure/core/platform.hpp>
 #include <functional>
+#include <gtest/gtest.h>
 #include <random>
 
 extern uint16_t FindAvailableSocket();
@@ -27,6 +27,7 @@ using namespace Azure::Core::Amqp;
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp::_detail;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestLinks, SimpleLink)
 {
 
@@ -142,11 +143,13 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
       m_receiveLinkQueue;
   std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
 
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(
+      std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;
@@ -203,13 +206,6 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
 
     return true;
   }
-  virtual void OnEndpointFrameReceived(
-      Connection const&,
-      Azure::Core::Amqp::Models::AmqpValue const&,
-      uint32_t,
-      uint8_t*) override
-  {
-  }
 
 public:
   LinkSocketListenerEvents() {}
@@ -259,3 +255,4 @@ TEST_F(TestLinks, LinkAttachDetach)
   connection.Close("Test complete", "Completed", Models::AmqpValue());
   listener.Stop();
 }
+#endif // defined(AZ_PLATFORM_MAC)

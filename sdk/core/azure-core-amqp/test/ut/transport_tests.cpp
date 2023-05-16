@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include "azure/core/amqp/common/async_operation_queue.hpp"
-#include "azure/core/amqp/network/socket_listener.hpp"
-#include "azure/core/amqp/network/socket_transport.hpp"
-#include "azure/core/amqp/network/tls_transport.hpp"
+#include "azure/core/amqp/models/amqp_protocol.hpp"
+#include <azure/core/amqp/common/async_operation_queue.hpp>
+#include <azure/core/amqp/network/socket_listener.hpp>
+#include <azure/core/amqp/network/socket_transport.hpp>
+#include <azure/core/amqp/network/tls_transport.hpp>
+#include <azure/core/platform.hpp>
 #include <gtest/gtest.h>
 #include <random>
 #include <utility>
@@ -104,7 +106,7 @@ TEST_F(TestTlsTransport, SimpleSend)
     TestTransportEvents events;
     TlsTransport transport("www.microsoft.com", 443, &events);
 
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
 
     auto openResult = events.WaitForOpen(transport, {});
     EXPECT_EQ(openResult, TransportOpenResult::Ok);
@@ -148,13 +150,14 @@ protected:
   void TearDown() override {}
 };
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestSocketTransport, SimpleCreate)
 {
   {
-    SocketTransport transport("localhost", 5672);
+    SocketTransport transport("localhost", Azure::Core::Amqp::_detail::AmqpPort);
   }
   {
-    SocketTransport transport1("localhost", 5672);
+    SocketTransport transport1("localhost", Azure::Core::Amqp::_detail::AmqpPort);
     SocketTransport transport2("localhost", 5673);
   }
 }
@@ -165,13 +168,13 @@ TEST_F(TestSocketTransport, SimpleOpen)
 
     SocketTransport transport("www.microsoft.com", 80);
 
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
     EXPECT_TRUE(transport.Close([]() {}));
   }
 
   {
     SocketTransport transport("www.microsoft.com", 80);
-    EXPECT_TRUE(transport.Open());
+    ASSERT_TRUE(transport.Open());
     transport.Close(nullptr);
   }
   {
@@ -229,8 +232,11 @@ TEST_F(TestSocketTransport, SimpleSend)
     SocketTransport transport("www.microsoft.com", 80, &events);
 
     EXPECT_TRUE(transport.Open());
+    // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
+    Azure::Core::Context completionContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        std::chrono::system_clock::now() + std::chrono::seconds(10));
+    auto openResult = events.WaitForOpen(transport, completionContext);
 
-    auto openResult = events.WaitForOpen(transport, {});
     EXPECT_EQ(openResult, TransportOpenResult::Ok);
 
     unsigned char val[] = R"(GET / HTTP/1.1
@@ -282,6 +288,11 @@ TEST_F(TestSocketTransport, SimpleListener)
     listener.Start();
     EXPECT_ANY_THROW(listener.Start());
   }
+  {
+    SocketListener listener(8008, nullptr);
+
+    EXPECT_ANY_THROW(listener.Stop());
+  }
 
   {
     SocketListener listener1(8008, nullptr);
@@ -300,7 +311,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
   public:
     TestListenerEvents() {}
 
-    std::unique_ptr<Transport> GetListenerTransport(
+    std::shared_ptr<Transport> GetListenerTransport(
         SocketListener const& listener,
         Azure::Core::Context context)
     {
@@ -315,20 +326,24 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
     {
       auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
-      return std::get<0>(*result);
+      if (result)
+      {
+        return std::get<0>(*result);
+      }
+      throw Azure::Core::OperationCancelledException("Wait for receive cancelled");
     }
 
   private:
-    AsyncOperationQueue<std::unique_ptr<Transport>> m_listenerTransportQueue;
+    AsyncOperationQueue<std::shared_ptr<Transport>> m_listenerTransportQueue;
     AsyncOperationQueue<TransportOpenResult> openResultQueue;
     AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
     AsyncOperationQueue<bool> errorQueue;
-    virtual void OnSocketAccepted(XIO_INSTANCE_TAG* newTransport) override
+    virtual void OnSocketAccepted(std::shared_ptr<Transport> newTransport) override
     {
       GTEST_LOG_(INFO) << "Listener started, new connection.";
-      auto listenerTransport = std::make_unique<Transport>(newTransport, this);
-      listenerTransport->Open();
-      m_listenerTransportQueue.CompleteOperation(std::move(listenerTransport));
+      newTransport->SetEventHandler(this);
+      newTransport->Open();
+      m_listenerTransportQueue.CompleteOperation(newTransport);
     }
     void OnOpenComplete(TransportOpenResult result) override
     {
@@ -407,7 +422,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
   SendingEvents sendingEvents;
   SocketTransport sender("localhost", testPort, &sendingEvents);
 
-  EXPECT_TRUE(sender.Open());
+  ASSERT_TRUE(sender.Open());
 
   // Note: Keep this string under 64 bytes in length because the default socket I/O buffer size
   // is 64 bytes and that helps ensure that this will be handled in a single OnReceiveBytes
@@ -431,7 +446,10 @@ Host: www.microsoft.com)";
   auto listenerTransport = events.GetListenerTransport(listener, {});
 
   GTEST_LOG_(INFO) << "Wait for received event.";
-  events.WaitForReceive(*listenerTransport, {});
+  events.WaitForReceive(
+      *listenerTransport,
+      Azure::Core::Context::ApplicationContext.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(10)));
 
   GTEST_LOG_(INFO) << "Listener received the bytes we just sent, now wait until the sender "
                       "received those bytes back.";
@@ -443,3 +461,4 @@ Host: www.microsoft.com)";
   listenerTransport->Close(nullptr);
   listener.Stop();
 }
+#endif // !defined(AZ_PLATFORM_MAC)

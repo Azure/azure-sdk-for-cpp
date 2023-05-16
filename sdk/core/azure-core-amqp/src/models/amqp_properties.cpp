@@ -270,13 +270,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         || GroupId.HasValue() || GroupSequence.HasValue() || ReplyToGroupId.HasValue());
   }
 
-  size_t MessageProperties::GetSerializedSize(MessageProperties const& properties)
-  {
-    auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);
-    AmqpValue propertiesAsValue{amqpvalue_create_properties(handle.get())};
-    return AmqpValue::GetSerializedSize(propertiesAsValue);
-  }
-
   std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
   {
     auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);

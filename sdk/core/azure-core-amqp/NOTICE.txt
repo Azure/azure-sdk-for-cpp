@@ -1,4 +1,4 @@
-azure-core-tracing-opentelemetry
+azure-core-amqp
 
 NOTICES AND INFORMATION
 Do Not Translate or Localize

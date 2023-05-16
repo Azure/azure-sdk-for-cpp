@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+#include "azure/core/amqp/connection_string_credential.hpp"
+#include <azure/core/platform.hpp>
 #include <gtest/gtest.h>
 #include <utility>
-
-#include "azure/core/amqp/connection_string_credential.hpp"
 
 class ConnectionStringTest : public testing::Test {
 protected:
@@ -49,7 +49,9 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
     EXPECT_EQ("{ACCESS_KEY_NAME}=", credential.GetSharedAccessKeyName());
     EXPECT_EQ("{ACCESS_KEY}=", credential.GetSharedAccessKey());
     {
+#if !defined(AZ_PLATFORM_MAC)
       auto xport = credential.GetTransport();
+#endif // !defined(AZ_PLATFORM_MAC)
       EXPECT_EQ(
           credential.GetCredentialType(),
           Azure::Core::Amqp::_internal::CredentialType::ServiceBusSas);

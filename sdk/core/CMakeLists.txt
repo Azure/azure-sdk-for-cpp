@@ -9,13 +9,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-core)
-if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
-  add_subdirectory(azure-core-tracing-opentelemetry)
+
+if (NOT BUILD_WINDOWS_UWP)
+  message(STATUS "Including AMQP library")
+  add_subdirectory(azure-core-amqp)
 endif()
 
-# AMQP is an optional feature, don't include it unless explicitly enabled.
-if (ENABLE_AZURE_CORE_AMQP)
-  add_subdirectory(azure-core-amqp)
+if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
+  add_subdirectory(azure-core-tracing-opentelemetry)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS) 

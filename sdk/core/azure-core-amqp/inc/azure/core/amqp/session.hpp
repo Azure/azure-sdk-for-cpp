@@ -14,7 +14,6 @@
 
 extern "C"
 {
-  struct SESSION_INSTANCE_TAG;
   struct ENDPOINT_INSTANCE_TAG;
   struct LINK_ENDPOINT_INSTANCE_TAG;
 }
@@ -136,9 +135,6 @@ namespace Azure { namespace Core { namespace Amqp {
 
     class Session final {
     public:
-      using OnEndpointFrameReceivedCallback = std::function<
-          void(AMQP_VALUE_DATA_TAG* performative, uint32_t framePayloadSize, uint8_t* payload)>;
-
       Session(
           Connection const& parentConnection,
           Endpoint& newEndpoint,
@@ -151,7 +147,6 @@ namespace Azure { namespace Core { namespace Amqp {
       Session& operator=(Session const&) = delete;
       Session(Session&&) noexcept = delete;
       Session& operator=(Session&&) noexcept = delete;
-      //    operator SESSION_INSTANCE_TAG*() const { return m_session; }
       std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> GetImpl() const { return m_impl; }
       void SetIncomingWindow(uint32_t incomingWindow);
       uint32_t GetIncomingWindow() const;
@@ -162,21 +157,6 @@ namespace Azure { namespace Core { namespace Amqp {
 
       void Begin();
       void End(std::string const& condition_value, std::string const& description);
-      Endpoint CreateLinkEndpoint(std::string const& name);
-      void DestroyLinkEndpoint(Endpoint& endpoint);
-      void SetLinkEndpointCallback(Endpoint& endpoint, OnEndpointFrameReceivedCallback callback);
-      void StartLinkEndpoint(Endpoint& endpoint, OnEndpointFrameReceivedCallback callback);
-      void SendFlow(Endpoint& endpoint, Flow& flow);
-      void SendAttach(Endpoint& endpoint, Attach& attach);
-      void SendDisposition(Endpoint& endpoint, Disposition& disposition);
-      void SendDetach(Endpoint& endpoint, Detach& detach);
-      // SessionSendTransferResult SendTransfer(
-      //     Endpoint& endpoint,
-      //     Transfer& transfer,
-      //     std::vector<Azure::Core::Amqp::Models::BinaryData> payloads,
-      //     uint32_t* deliveryNumber,
-      //     Azure::Core::Amqp::_internal::Network::Transport::TransportSendCompleteFn
-      //     sendComplete);
 
     private:
       std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> m_impl;

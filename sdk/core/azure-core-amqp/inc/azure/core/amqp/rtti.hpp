@@ -5,7 +5,7 @@
  * @file
  * @brief Run-time type info enable or disable.
  *
- * @details When RTTI is enabled, defines a macro `AZ_CORE_RTTI`. When
+ * @details When RTTI is enabled, defines a macro `AZ_CORE_AMQP_RTTI`. When
  * the macro is not defined, RTTI is disabled.
  *
  * @details Each library has this header file. These headers are being configured by
@@ -16,7 +16,7 @@
 #pragma once
 
 /**
- * @def AZ_CORE_RTTI
+ * @def AZ_CORE_AMQP_RTTI
  * @brief A macro indicating whether the code is built with RTTI or not.
  *
  * @details `AZ_RTTI` could be defined while building the Azure SDK with CMake, however, after
@@ -32,5 +32,5 @@
  */
 
 #if defined(AZ_RTTI) || (0 /*@AZ_CORE_RTTI@*/)
-#define AZ_CORE_RTTI
+#define AZ_CORE_AMQP_RTTI
 #endif

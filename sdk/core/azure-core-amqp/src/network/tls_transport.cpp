@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/tls_transport.hpp"
+#include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/tlsio.h>
@@ -18,7 +19,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
     auto tlsio_interface = platform_get_default_tlsio();
 
-    SetInstance(xio_create(tlsio_interface, &tlsConfig));
+    m_impl->SetInstance(xio_create(tlsio_interface, &tlsConfig));
   }
 
   TlsTransport::TlsTransport(TransportEvents* eventHandler) : Transport(eventHandler) {}

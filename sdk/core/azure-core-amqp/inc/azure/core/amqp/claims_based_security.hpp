@@ -17,6 +17,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Failed,
     InstanceClosed
   };
+
   enum class CbsOpenResult
   {
     Invalid,
@@ -32,6 +33,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Jwt
   };
 
+#if defined(TESTING_BUILD)
   /** @brief Implementation of AMQP 1.0 Claims-based Security (CBS) protocol.
    *
    * This class allows AMQP clients to implement the CBS protocol for authentication and
@@ -48,9 +50,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      *
      * @param session - Session on which to authenticate the client.
      *
-     * @remarks Note that this method takes a reference to the session and connectionToPoll objects
-     * so it is critical that the lifetime of the ClaimsBasedSecurity object be scoped shorter than
-     * the lifetime of the session and connectionToPoll object.
      */
     ClaimsBasedSecurity(Azure::Core::Amqp::_internal::Session const& session);
     ~ClaimsBasedSecurity() noexcept;
@@ -72,4 +71,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     std::shared_ptr<ClaimsBasedSecurityImpl> m_impl;
   };
+#endif // TESTING_BUILD
 }}}} // namespace Azure::Core::Amqp::_detail

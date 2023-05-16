@@ -121,16 +121,15 @@ private:
   Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
   Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::AmqpMessage> m_messageQueue;
 
-  virtual void OnSocketAccepted(XIO_INSTANCE_TAG* xio) override
+  virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport) override
   {
     std::cout << "OnSocketAccepted - Socket connection received." << std::endl;
 
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
     std::shared_ptr<Network::_internal::Transport> amqpTransport{
-        std::make_shared<Network::_internal::AmqpHeaderTransport>(xio, nullptr)};
+        std::make_shared<Network::_internal::AmqpHeaderDetectTransport>(transport, nullptr)};
     ConnectionOptions options;
-    //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";
     options.HostName = "localhost";
     auto newConnection{std::make_unique<Connection>(amqpTransport, options, this)};
@@ -159,15 +158,6 @@ private:
     (void)connection;
   };
 
-  virtual void OnEndpointFrameReceived(
-      Connection const& connection,
-      Azure::Core::Amqp::Models::AmqpValue const& value,
-      uint32_t framePayloadSize,
-      uint8_t* payloadBytes) override
-  {
-    (void)connection;
-    (void)value, (void)framePayloadSize, (void)payloadBytes;
-  }
   virtual bool OnLinkAttached(
       Session const& sessionForLink,
       LinkEndpoint& newLink,
@@ -224,6 +214,7 @@ private:
 int main()
 {
   SampleEvents sampleEvents;
+  // Configure a socket listener on the AMQP port (5672).
   Network::_internal::SocketListener listener(5672, &sampleEvents);
 
   listener.Start();

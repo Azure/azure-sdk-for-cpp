@@ -191,6 +191,45 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
+     * @brief Access rights of the handle.
+     */
+    class ShareFileHandleAccessRights final {
+    public:
+      ShareFileHandleAccessRights() = default;
+      explicit ShareFileHandleAccessRights(const std::string& value);
+      bool operator==(const ShareFileHandleAccessRights& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const ShareFileHandleAccessRights& other) const { return !(*this == other); }
+      const std::set<std::string>& GetValues() const { return m_value; }
+      ShareFileHandleAccessRights operator|(const ShareFileHandleAccessRights& other) const;
+      ShareFileHandleAccessRights operator&(const ShareFileHandleAccessRights& other) const;
+      ShareFileHandleAccessRights operator^(const ShareFileHandleAccessRights& other) const;
+      ShareFileHandleAccessRights& operator|=(const ShareFileHandleAccessRights& other)
+      {
+        *this = *this | other;
+        return *this;
+      }
+      ShareFileHandleAccessRights& operator&=(const ShareFileHandleAccessRights& other)
+      {
+        *this = *this & other;
+        return *this;
+      }
+      ShareFileHandleAccessRights& operator^=(const ShareFileHandleAccessRights& other)
+      {
+        *this = *this ^ other;
+        return *this;
+      }
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Read;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Write;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Delete;
+
+    private:
+      std::set<std::string> m_value;
+    };
+
+    /**
      * @brief A listed directory item.
      */
     struct DirectoryItem final
@@ -251,6 +290,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Time handle was last connected to (UTC).
        */
       DateTime LastReconnectedOn;
+      /**
+       * Access rights of the handle.
+       */
+      Azure::Nullable<ShareFileHandleAccessRights> AccessRights;
     };
   } // namespace Models
 

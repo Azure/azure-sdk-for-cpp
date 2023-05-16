@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 13,
@@ -20,6 +20,11 @@
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "hostOS": [ "Windows" ]
         }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     },
     {
@@ -188,7 +193,7 @@
     },
     {
       "name": "x64-debug-tests",
-      "displayName": "X64 Debug With Tests, static, winhttp",
+      "displayName": "X64 Debug With Tests, winhttp+curl",
       "description": "Windows X64 Debug build with Tests configured",
       "inherits": "x64-debug",
       "cacheVariables": {
@@ -202,33 +207,14 @@
     },
     {
       "name": "x64-static-debug-tests",
-      "displayName": "X64 Debug With Tests, static, winhttp",
+      "displayName": "X64 Debug With Tests, static",
       "description": "Windows X64 Debug build with Tests configured",
       "inherits": "x64-static-debug",
       "cacheVariables": {
         "BUILD_TESTING": true,
         "ENABLE_PROXY_TESTS": false,
         "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_TRANSPORT_WINHTTP": true
-      }
-    },
-    {
-      "name": "x64-static-debug-amqp-tests",
-      "displayName": "X64 Debug With Tests, static, AMQP",
-      "description": "Windows X64 Debug build with Tests and AMQP configured",
-      "inherits": "x64-static-debug-tests",
-      "cacheVariables": {
-        "ENABLE_AZURE_CORE_AMQP": true
-      }
-    },
-    {
-      "name": "x64-debug-amqp-tests",
-      "displayName": "X64 Debug With Tests, AMQP",
-      "description": "Windows X64 Debug build with Tests and AMQP configured",
-      "inherits": "x64-debug-tests",
-      "cacheVariables": {
-        "ENABLE_AZURE_CORE_AMQP": true
+        "BUILD_PERFORMANCE_TESTS": true
       }
     },
     {
@@ -316,6 +302,40 @@
         "BUILD_TRANSPORT_WINHTTP": true,
         "BUILD_PERFORMANCE_TESTS": true,
         "BUILD_SAMPLES": true
+      }
+    },
+
+    {
+      "name": "linux-basic-gcc9",
+      "displayName": "Linux GCC 9 ",
+      "description": "Using compilers: C = /usr/bin/gcc-9, CXX = /usr/bin/g++-9",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc-9",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++-9"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-gcc9-debug",
+      "displayName": "Linux GCC 9 Debug",
+      "inherits": "linux-basic-gcc9",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-gcc9-debug-tests",
+      "inherits": "linux-gcc9-debug",
+      "displayName": "Linux GCC 9 Debug+Tests",
+      "cacheVariables": {
+        "BUILD_TESTING": "true"
       }
     }
   ]
