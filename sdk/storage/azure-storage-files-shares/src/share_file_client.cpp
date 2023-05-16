@@ -696,6 +696,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       fileHandle.OpenedOn = std::move(handle.OpenedOn);
       fileHandle.ParentId = std::move(handle.ParentId);
       fileHandle.SessionId = std::move(handle.SessionId);
+      if (!handle.AccessRightList.empty())
+      {
+        Models::ShareFileHandleAccessRights accessRights;
+        for (auto& accessRight : handle.AccessRightList)
+        {
+          accessRights |= Models::ShareFileHandleAccessRights(accessRight.ToString());
+        }
+        fileHandle.AccessRights = std::move(accessRights);
+      }
 
       pagedResponse.FileHandles.push_back(std::move(fileHandle));
     }

@@ -217,6 +217,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       ret.Details.EncryptionContext = encryptionContext->second;
     }
+    auto owner = headers.find(_detail::OwnerHeaderName);
+    if (owner != headers.end())
+    {
+      ret.Details.Owner = owner->second;
+    }
+    auto group = headers.find(_detail::GroupHeaderName);
+    if (group != headers.end())
+    {
+      ret.Details.Group = group->second;
+    }
+    auto permissions = headers.find(_detail::PermissionsHeaderName);
+    if (permissions != headers.end())
+    {
+      ret.Details.Permissions = permissions->second;
+    }
     return Azure::Response<Models::DownloadFileResult>(
         std::move(ret), std::move(response.RawResponse));
   }
