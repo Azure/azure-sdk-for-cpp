@@ -85,7 +85,7 @@ TEST(ProducerClientTest, SendMessage)
   auto client = Azure::Messaging::EventHubs::ProducerClient(
       connStringEntityPath, "eventhub", producerOptions);
   for (int i = 0; i < 5; i++)
-  { 
+  {
     auto result = client.SendEventDataBatch(eventBatch);
     EXPECT_TRUE(result);
   }

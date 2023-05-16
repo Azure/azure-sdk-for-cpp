@@ -11,8 +11,8 @@ namespace LocalTest {
 int i = 0;
 void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 {
-  (void) message;
-  std::cout << "Message Id: " << i++<< std::endl;
+  (void)message;
+  std::cout << "Message Id: " << i++ << std::endl;
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
@@ -70,12 +70,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     options.ReceiverOptions.TargetAddress = "ingress";
     options.ReceiverOptions.EnableTrace = true;
-    
+
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
-    Azure::Messaging::EventHubs::PartitionClient partitionClient = client.NewPartitionClient("1",partitionOptions);
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client.NewPartitionClient("1", partitionOptions);
     auto events = partitionClient.ReceiveEvents(1);
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test
