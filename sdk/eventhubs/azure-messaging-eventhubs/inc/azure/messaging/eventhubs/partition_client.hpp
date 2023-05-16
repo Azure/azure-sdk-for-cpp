@@ -108,8 +108,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_offsetExpression;
     uint64_t m_ownerLevel;
     uint32_t m_prefetchCount;
-    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
     PartitionClientOptions m_partitionOptions;
+    std::string m_partitionId;
+    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+
     /*@brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
      * service.
      */

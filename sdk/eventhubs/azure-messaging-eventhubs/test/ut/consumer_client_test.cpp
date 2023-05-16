@@ -76,9 +76,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     partitionOptions.StartPosition.Inclusive = true;
 
     Azure::Messaging::EventHubs::PartitionClient partitionClient = client.NewPartitionClient("1",partitionOptions);
-
-
-   // client.SetConsumer(LocalTest::ProcesMessageSuccess, "1");
-   // client.StartConsuming(5, "1");
+    auto events = partitionClient.ReceiveEvents(1);
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test

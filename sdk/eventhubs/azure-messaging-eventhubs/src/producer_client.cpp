@@ -65,7 +65,6 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   session.SetIncomingWindow(std::numeric_limits<int32_t>::max());
   session.SetOutgoingWindow(std::numeric_limits<uint16_t>::max());
     
-  Azure::Core::Amqp::_internal::MessageSender sender;
   if (m_credentials.SasCredential == nullptr)
   {
     auto senderOptions = m_producerClientOptions.SenderOptions;
@@ -73,17 +72,20 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
     {
       senderOptions.AuthenticationScopes = {m_defaultAuthScope};
     }
-    sender = Azure::Core::Amqp::_internal::MessageSender(
+    Azure::Core::Amqp::_internal::MessageSender sender
+        = Azure::Core::Amqp::_internal::MessageSender(
         session, m_credentials.Credential, targetUrl, senderOptions, nullptr);
+    sender.Open();
+    m_senders.insert_or_assign(partitionId, sender);
   }
   else
   {
-    sender = Azure::Core::Amqp::_internal::MessageSender(
+    Azure::Core::Amqp::_internal::MessageSender sender
+        = Azure::Core::Amqp::_internal::MessageSender(
         session, m_credentials.SasCredential, targetUrl, m_producerClientOptions.SenderOptions, nullptr); 
+    sender.Open();
+    m_senders.insert_or_assign(partitionId, sender);
   }
-
-  sender.Open();
-  m_senders.insert_or_assign(partitionId, sender);
 }
 
 bool const Azure::Messaging::EventHubs::ProducerClient::
@@ -122,5 +124,5 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateManagement(std::string n
   manageOptions.EnableTrace = m_producerClientOptions.SenderOptions.EnableTrace;
 
   Azure::Core::Amqp::_internal::Management managementClient(session, name, manageOptions);
-  m_management = managementClient; 
+ // m_management = managementClient; 
 }

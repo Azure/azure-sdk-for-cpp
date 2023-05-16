@@ -19,6 +19,9 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
              ? m_credentials.EventHub
              : m_credentials.SasCredential->GetEntityPath());
   m_credentials.FullyQualifiedNamespace = m_credentials.SasCredential->GetHostName();
+
+  m_credentials.HostUrl = "amqps://" + m_credentials.FullyQualifiedNamespace + "/"
+      + m_credentials.EventHub + "/ConsumerGroups/" + m_credentials.ConsumerGroup;
 }
 
 Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
@@ -30,9 +33,12 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     : m_credentials{"", fullyQualifiedNamespace, eventHub, consumerGroup, credential},
       m_consumerClientOptions(options)
 {
+  m_credentials.HostUrl = "amqps://" + m_credentials.FullyQualifiedNamespace + "/"
+      + m_credentials.EventHub + "/ConsumerGroups/" + m_credentials.ConsumerGroup;
 }
 
-Azure::Messaging::EventHubs::PartitionClient Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
+Azure::Messaging::EventHubs::PartitionClient
+Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
     std::string partitionId,
     Azure::Messaging::EventHubs::PartitionClientOptions const& options)
 {
@@ -41,8 +47,7 @@ Azure::Messaging::EventHubs::PartitionClient Azure::Messaging::EventHubs::Consum
   partitionClient.RetryOptions = m_consumerClientOptions.RetryOptions;
 
   std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
-  std::string hostUrl = "amqps://" + m_credentials.FullyQualifiedNamespace + "/"
-      + m_credentials.EventHub + "/ConsumerGroups/" + m_credentials.ConsumerGroup + suffix;
+  std::string hostUrl = m_credentials.HostUrl + suffix;
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
@@ -59,18 +64,12 @@ Azure::Messaging::EventHubs::PartitionClient Azure::Messaging::EventHubs::Consum
   if (m_credentials.SasCredential == nullptr)
   {
     receiver = Azure::Core::Amqp::_internal::MessageReceiver(
-        session,
-        m_credentials.Credential,
-        m_credentials.HostUrl,
-        m_consumerClientOptions.ReceiverOptions);
+        session, m_credentials.Credential, hostUrl, m_consumerClientOptions.ReceiverOptions);
   }
   else
   {
     receiver = Azure::Core::Amqp::_internal::MessageReceiver(
-        session,
-        m_credentials.SasCredential,
-        m_credentials.HostUrl,
-        m_consumerClientOptions.ReceiverOptions);
+        session, m_credentials.SasCredential, hostUrl, m_consumerClientOptions.ReceiverOptions);
   }
 
   // Open the connection to the remote.

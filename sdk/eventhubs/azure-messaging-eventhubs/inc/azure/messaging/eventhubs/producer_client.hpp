@@ -55,7 +55,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClientCreds m_credentials{};
     ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
-    Azure::Core::Amqp::_internal::Management m_management;
+   
 
   public:
     std::string const& GetEventHubName() { return m_credentials.EventHub; }
