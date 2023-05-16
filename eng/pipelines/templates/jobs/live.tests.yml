@@ -103,6 +103,7 @@ jobs:
 
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
+    retryCountOnTaskFailure: 10
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
