@@ -338,4 +338,15 @@ namespace Azure { namespace Storage { namespace Test {
         appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
   }
 
+  TEST_F(AppendBlobClientTest, DISABLED_LIVEONLY_HighThroughputAppendBlob)
+  {
+    auto appendBlobClient = m_blobContainerClient->GetAppendBlobClient(RandomString());
+    appendBlobClient.Create();
+    auto blockContent = RandomBuffer(static_cast<size_t>(5_MB));
+    auto blockStream = Azure::Core::IO::MemoryBodyStream(blockContent.data(), blockContent.size());
+    appendBlobClient.AppendBlock(blockStream);
+
+    EXPECT_EQ(ReadBodyStream(appendBlobClient.Download().Value.BodyStream), blockContent);
+  }
+
 }}} // namespace Azure::Storage::Test

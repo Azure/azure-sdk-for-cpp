@@ -20,6 +20,9 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_T
   using type = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
 };
 
+namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+  class AmqpMessageFactory;
+}}}}} // namespace Azure::Core::Amqp::Models::_internal
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   /**
@@ -36,10 +39,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   };
   using UniqueMessageHandle = Azure::Core::_internal::UniqueHandle<MESSAGE_INSTANCE_TAG>;
 
-  namespace _internal {
-    class AmqpMessageFactory;
-  }
-
   constexpr int AmqpMessageFormatValue = 0; // Specifies the message format for an AMQP message.
 
   class AmqpMessage final {
@@ -50,17 +49,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Destroy an instance of an AMQP Message object. */
     ~AmqpMessage() = default;
 
+    /** @brief Create a new AMQP Message from an existing message moving the contents. */
+    AmqpMessage(AmqpMessage&&) = default;
+
     /** @brief Construct a new AMQP message object from an existing object. */
     AmqpMessage(AmqpMessage const&) = default;
 
-    /** @brief Copy an AMQP message object to another object. @returns A reference to this.*/
+    /** @brief Copy an AMQP message object to another object.
+     * @returns A reference to this.
+     */
     AmqpMessage& operator=(AmqpMessage const&) = default;
 
-    /** @brief Create a new AMQP Message from an existing message moving the contents. */
-    AmqpMessage(AmqpMessage&&) noexcept = default;
-
-    /** @brief Move an AMQP message object to another object. @returns A reference to this.*/
-    AmqpMessage& operator=(AmqpMessage&&) noexcept = default;
+    /** @brief Move an AMQP message object to another object.
+     * @returns A reference to this.
+     */
+    AmqpMessage& operator=(AmqpMessage&&) = default;
 
     bool operator==(AmqpMessage const& other) const noexcept;
     bool operator!=(AmqpMessage const& other) const noexcept { return !(*this == other); }

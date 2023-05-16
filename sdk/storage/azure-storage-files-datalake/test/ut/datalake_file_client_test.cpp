@@ -609,6 +609,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(ReadFile(testName), std::runtime_error);
   }
 
+  TEST_F(DataLakeFileClientTest, FileDownloadOwnerGroupPermissions)
+  {
+    auto downloadResult = m_fileClient->Download().Value;
+    ASSERT_TRUE(downloadResult.Details.Owner.HasValue());
+    ASSERT_TRUE(downloadResult.Details.Group.HasValue());
+    ASSERT_TRUE(downloadResult.Details.Permissions.HasValue());
+  }
+
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
   {
     {
