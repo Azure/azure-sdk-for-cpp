@@ -307,7 +307,6 @@ TEST(Etag, Destructible)
   EXPECT_FALSE(ClassTraits<ETag>::has_virtual_destructor());
 }
 
-
 #if GTEST_HAS_DEATH_TEST
 TEST(ETag, PreCondition)
 {
