@@ -101,12 +101,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
+    Models::AmqpValue sourceValue(static_cast<Models::AmqpValue>(source));
+    Models::AmqpValue targetValue(static_cast<Models::AmqpValue>(target));
     m_link = link_create(
         *session,
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Models::AmqpValue{source},
-        Models::AmqpValue{target});
+        sourceValue,
+        targetValue);
   }
 
   LinkImpl::LinkImpl(
@@ -118,13 +120,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
+    Models::AmqpValue sourceValue(static_cast<Models::AmqpValue>(source));
+    Models::AmqpValue targetValue(static_cast<Models::AmqpValue>(target));
     m_link = link_create_from_endpoint(
         *session,
         linkEndpoint.Release(),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Models::AmqpValue{source},
-        Models::AmqpValue{target});
+        sourceValue,
+        targetValue);
   }
 
   LinkImpl::~LinkImpl() noexcept

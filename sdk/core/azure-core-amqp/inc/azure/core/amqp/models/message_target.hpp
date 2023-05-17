@@ -69,11 +69,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     MessageTarget& operator=(MessageTarget const& that);
 
+    ///** @brief Creates an AMQP value from a message target.
+    // *
+    // * @remarks Creates an AMQP Described value with the descriptor being the message target (0x29).
+    // */
+    //operator Azure::Core::Amqp::Models::AmqpValue() const;
+
     /** @brief Creates an AMQP value from a message target.
      *
      * @remarks Creates an AMQP Described value with the descriptor being the message target (0x29).
      */
     operator const Azure::Core::Amqp::Models::AmqpValue() const;
+
 
     /** @brief The address of the target.
      *
