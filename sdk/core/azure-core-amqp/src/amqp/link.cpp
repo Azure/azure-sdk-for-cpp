@@ -101,8 +101,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
-    Models::AmqpValue sourceValue(static_cast<Models::AmqpValue>(source));
-    Models::AmqpValue targetValue(static_cast<Models::AmqpValue>(target));
+    Models::AmqpValue sourceValue(static_cast<const Models::AmqpValue>(source));
+    Models::AmqpValue targetValue(static_cast<const Models::AmqpValue>(target));
     m_link = link_create(
         *session,
         name.c_str(),
