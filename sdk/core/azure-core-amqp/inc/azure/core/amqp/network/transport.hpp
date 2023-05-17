@@ -121,7 +121,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     /** @brief Set the event handler for the transport.
      *
      * @param events The event handler to be set.
-     * @return void
      *
      * @remarks Normally a client will not have to register for these events via this method, but
      * there may be circumstances where it is necessary (if, for instance the transport was created
