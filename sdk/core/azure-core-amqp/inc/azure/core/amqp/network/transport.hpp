@@ -113,8 +113,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     bool Send(uint8_t* buffer, size_t size, TransportSendCompleteFn callback) const;
 
     /** @brief Poll the transport for events.
-     *
-     * @return void
      */
     void Poll() const;
 
