@@ -17,7 +17,8 @@
 namespace Azure { namespace Core { namespace Amqp {
   namespace _detail {
     class MessageReceiverImpl;
-  }
+    class MessageReceiverFactory;
+  } // namespace _detail
   namespace _internal {
     enum class MessageReceiverState
     {
@@ -105,10 +106,6 @@ namespace Azure { namespace Core { namespace Amqp {
           MessageReceiverEvents* receiverEvents = nullptr);
 
       MessageReceiver() = default;
-      MessageReceiver(std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> impl)
-          : m_impl{impl}
-      {
-      }
       ~MessageReceiver() noexcept;
 
       MessageReceiver(MessageReceiver const&) = default;
@@ -127,12 +124,17 @@ namespace Azure { namespace Core { namespace Amqp {
           const char* linkName,
           uint32_t messageNumber,
           Azure::Core::Amqp::Models::AmqpValue deliveryState);
-      void SetTrace(bool traceEnabled);
+      //      void SetTrace(bool traceEnabled);
 
       Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
           Azure::Core::Context context = {});
 
     private:
+      MessageReceiver(std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> impl)
+          : m_impl{impl}
+      {
+      }
+      friend class Azure::Core::Amqp::_detail::MessageReceiverFactory;
       std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> m_impl;
     };
   } // namespace _internal

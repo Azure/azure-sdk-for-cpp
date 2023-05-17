@@ -338,9 +338,9 @@ protected:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
-            transport, nullptr)};
+    auto amqpTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+        Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
+            transport, nullptr))};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;

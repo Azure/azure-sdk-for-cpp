@@ -103,20 +103,10 @@ TEST_F(TestSessions, SessionProperties)
     EXPECT_EQ(1909119, session.GetIncomingWindow());
   }
   {
-    Session session(connection);
-    EXPECT_NO_THROW(session.SetIncomingWindow(9278789));
-    EXPECT_EQ(9278789, session.GetIncomingWindow());
-  }
-  {
     SessionOptions options;
     options.InitialOutgoingWindowSize = 1909119;
     Session session(connection, options);
     EXPECT_EQ(1909119, session.GetOutgoingWindow());
-  }
-  {
-    Session session(connection);
-    EXPECT_NO_THROW(session.SetOutgoingWindow(32798));
-    EXPECT_EQ(32798, session.GetOutgoingWindow());
   }
 }
 #endif // !AZ_PLATFORM_MAC

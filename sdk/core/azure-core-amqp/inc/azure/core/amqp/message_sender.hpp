@@ -15,6 +15,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class MessageSenderImpl;
+  class MessageSenderFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -207,6 +208,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSendCompleteCallback onSendComplete,
         Azure::Core::Context context = {});
 
+  private:
     /** @brief Construct a MessageSender from a low level message sender implementation.
      *
      * @remarks This function should never be called by a user. It is used internally by the SDK.
@@ -216,7 +218,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     {
     }
 
-  private:
+    friend class Azure::Core::Amqp::_detail::MessageSenderFactory;
     std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> m_impl;
   };
 }}}} // namespace Azure::Core::Amqp::_internal

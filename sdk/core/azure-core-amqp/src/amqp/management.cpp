@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       ManagementOptions const& options,
       ManagementEvents* managementEvents)
       : m_impl{std::make_shared<_detail::ManagementImpl>(
-          session.GetImpl(),
+          _detail::SessionFactory::GetImpl(session),
           managementNodeName,
           options,
           managementEvents)}

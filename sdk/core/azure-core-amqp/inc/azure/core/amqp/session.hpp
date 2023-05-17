@@ -15,6 +15,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class SessionImpl;
+  class SessionFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -129,16 +130,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     uint32_t GetHandleMax() const;
 
-    void SetIncomingWindow(uint32_t incomingWindow);
-    void SetOutgoingWindow(uint32_t outgoingWindow);
-
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
 
-    Session(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> impl) : m_impl{impl} {}
-    std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> GetImpl() const { return m_impl; }
+    friend class Azure::Core::Amqp::_detail::SessionFactory;
 
   private:
+    /** @brief Construct a new Session object from an existing implementation instance.
+     *
+     * @param impl - Implementation object
+     *
+     * @remarks This function is used internally by the library and is not intended for use by any
+     * client.
+     */
+    Session(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> impl) : m_impl{impl} {}
+
     std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> m_impl;
   };
+
 }}}} // namespace Azure::Core::Amqp::_internal

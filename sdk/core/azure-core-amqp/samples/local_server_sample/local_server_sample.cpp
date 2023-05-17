@@ -127,8 +127,8 @@ private:
 
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
-    std::shared_ptr<Network::_internal::Transport> amqpTransport{
-        std::make_shared<Network::_internal::AmqpHeaderDetectTransport>(transport, nullptr)};
+    auto amqpTransport{std::make_shared<Network::_internal::Transport>(
+        Network::_internal::AmqpHeaderDetectTransportFactory::Create(transport, nullptr))};
     ConnectionOptions options;
     options.ContainerId = "some";
     options.EnableTrace = true;
@@ -184,7 +184,6 @@ private:
         static_cast<std::string>(messageSource.GetAddress()),
         options,
         this);
-    newMessageReceiver->SetTrace(true);
     newMessageReceiver->Open();
     m_messageReceiverQueue.CompleteOperation(std::move(newMessageReceiver));
     return true;

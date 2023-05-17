@@ -75,15 +75,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
         Models::_internal::MessageTarget const& target);
-    Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
     ~Link() noexcept;
 
     Link(Link const&) = default;
     Link& operator=(Link const&) = default;
     Link(Link&&) noexcept = default;
     Link& operator=(Link&&) noexcept = default;
-
-    std::shared_ptr<_detail::LinkImpl> GetImpl() const { return m_impl; }
 
     void SetSenderSettleMode(_internal::SenderSettleMode senderSettleMode);
     _internal::SenderSettleMode GetSenderSettleMode() const;
@@ -118,6 +115,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Models::AmqpValue& info);
 
   private:
+    Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
+
     std::shared_ptr<Azure::Core::Amqp::_detail::LinkImpl> m_impl;
   };
 #endif // defined(TESTING_BUILD)

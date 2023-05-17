@@ -21,7 +21,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::Amqp::_internal::SessionRole role,
       Models::_internal::MessageSource const& source,
       Models::_internal::MessageTarget const& target)
-      : m_impl{std::make_shared<LinkImpl>(session.GetImpl(), name, role, source, target)}
+      : m_impl{
+          std::make_shared<LinkImpl>(SessionFactory::GetImpl(session), name, role, source, target)}
   {
   }
 
@@ -32,8 +33,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
       Models::_internal::MessageTarget const& target)
-      : m_impl{
-          std::make_shared<LinkImpl>(session.GetImpl(), linkEndpoint, name, role, source, target)}
+      : m_impl{std::make_shared<
+          LinkImpl>(SessionFactory::GetImpl(session), linkEndpoint, name, role, source, target)}
   {
   }
 

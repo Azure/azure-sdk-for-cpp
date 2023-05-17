@@ -16,6 +16,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionImpl;
+  class ConnectionFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -348,6 +349,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
 
+  private:
     /** @brief Create an AMQP Connection from an existing connection implementation.
      *
      * @remarks This constructor is an implementation detail of the AMQP stack and should never be
@@ -356,17 +358,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Connection(std::shared_ptr<Azure::Core::Amqp::_detail::ConnectionImpl> impl) : m_impl{impl} {}
 
-    /** @brief Returns the connection implementation associated with this AMQP Connection.
-     *
-     * @returns The connection implementation associated with this AMQP Connection.
-     *
-     * @remarks This method is an implementation detail of the AMQP stack and should never be
-     * called by clients.
-     *
-     */
-    std::shared_ptr<Azure::Core::Amqp::_detail::ConnectionImpl> GetImpl() const { return m_impl; }
-
-  private:
     std::shared_ptr<Azure::Core::Amqp::_detail::ConnectionImpl> m_impl;
+    friend class _detail::ConnectionFactory;
   };
 }}}} // namespace Azure::Core::Amqp::_internal

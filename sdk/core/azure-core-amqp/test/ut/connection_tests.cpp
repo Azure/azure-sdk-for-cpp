@@ -45,15 +45,17 @@ TEST_F(TestConnections, SimpleConnection)
   }
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::SocketTransport>(
-        "localhost", Azure::Core::Amqp::_detail::AmqpPort)};
+    auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+        Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
+            "localhost", Azure::Core::Amqp::_detail::AmqpPort))};
 
     Azure::Core::Amqp::_internal::Connection connection(socketTransport, options);
   }
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::SocketTransport>(
-        "localhost", Azure::Core::Amqp::_detail::AmqpPort)};
+    auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+        Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
+            "localhost", Azure::Core::Amqp::_detail::AmqpPort))};
     options.SaslCredentials
         = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
             "Endpoint=sb://testHost.net/"
@@ -175,7 +177,6 @@ TEST_F(TestConnections, ConnectionOpenClose)
         std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport)
     {
       GTEST_LOG_(INFO) << "Socket for listener accepted connection.";
-      // Capture the XIO into a transport so it won't leak.
       m_listenerQueue.CompleteOperation(transport);
     }
   };
@@ -238,9 +239,9 @@ private:
   virtual void OnSocketAccepted(
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
-    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
-            transport, nullptr)};
+    auto amqpTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+        Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
+            transport, nullptr))};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "containerId";
     options.EnableTrace = true;

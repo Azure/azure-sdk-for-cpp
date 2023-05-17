@@ -9,7 +9,25 @@
 #include <azure_uamqp_c/message_sender.h>
 #include <tuple>
 
+template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
+{
+  static void FreeMessageSender(MESSAGE_SENDER_HANDLE obj);
+
+  using type
+      = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
+};
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueMessageSender = Azure::Core::_internal::UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;
+
+  class MessageSenderFactory {
+  public:
+    static Azure::Core::Amqp::_internal::MessageSender CreateFromInternal(
+        std::shared_ptr<MessageSenderImpl> senderImpl)
+    {
+      return Azure::Core::Amqp::_internal::MessageSender(senderImpl);
+    }
+  };
 
   class MessageSenderImpl : public std::enable_shared_from_this<MessageSenderImpl> {
   public:
@@ -52,7 +70,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Models::AmqpMessage const& message,
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Azure::Core::Context context);
-    void SetTrace(bool traceEnabled);
 
   private:
     static void OnMessageSenderStateChangedFn(
@@ -69,7 +86,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
 
-    MESSAGE_SENDER_HANDLE m_messageSender{};
+    UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
 

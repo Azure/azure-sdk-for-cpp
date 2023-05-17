@@ -55,9 +55,10 @@ TEST_F(TestMessages, ReceiverProperties)
   Session session(connection);
 
   {
-    MessageReceiver receiver(session, "MyTarget", {});
+    MessageReceiverOptions options;
+    options.EnableTrace = true;
+    MessageReceiver receiver(session, "MyTarget", options);
     EXPECT_ANY_THROW(receiver.GetLinkName());
-    receiver.SetTrace(true);
   }
 
   {
@@ -168,9 +169,9 @@ private:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
-            transport, nullptr)};
+    auto amqpTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+        Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
+            transport, nullptr))};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";
@@ -225,13 +226,13 @@ private:
     receiverOptions.Name = name;
     receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     receiverOptions.DynamicAddress = messageSource.GetDynamic();
+    receiverOptions.EnableTrace = true;
     auto receiver = std::make_unique<MessageReceiver>(
         session,
         newLinkInstance,
         static_cast<std::string>(messageSource.GetAddress()),
         receiverOptions,
         this);
-    receiver->SetTrace(true);
     GTEST_LOG_(INFO) << "Opening the message receiver.";
     receiver->Open();
     m_messageReceiverQueue.CompleteOperation(std::move(receiver));

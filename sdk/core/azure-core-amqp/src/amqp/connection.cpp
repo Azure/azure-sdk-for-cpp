@@ -147,14 +147,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (requestUrl.GetScheme() == "amqp")
     {
       Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
-      Azure::Core::Amqp::Network::_internal::SocketTransport transport{m_hostName, m_port};
-      m_transport = transport.GetImpl();
+      m_transport = Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
+                        m_hostName, m_port)
+                        .GetImpl();
     }
     else if (requestUrl.GetScheme() == "amqps")
     {
       Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
-      Azure::Core::Amqp::Network::_internal::TlsTransport transport{m_hostName, m_port};
-      m_transport = transport.GetImpl();
+      m_transport
+          = Azure::Core::Amqp::Network::_internal::TlsTransportFactory::Create(m_hostName, m_port)
+                .GetImpl();
     }
   }
 
@@ -262,7 +264,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (connection->m_eventHandler)
     {
       connection->m_eventHandler->OnConnectionStateChanged(
-          connection->shared_from_this(),
+          ConnectionFactory::CreateFromInternal(connection->shared_from_this()),
           ConnectionStateFromCONNECTION_STATE(newState),
           ConnectionStateFromCONNECTION_STATE(oldState));
     }
@@ -274,19 +276,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::Endpoint endpoint(newEndpoint);
     if (cn->m_eventHandler)
     {
-      return cn->m_eventHandler->OnNewEndpoint(cn->shared_from_this(), endpoint);
+      return cn->m_eventHandler->OnNewEndpoint(
+          ConnectionFactory::CreateFromInternal(cn->shared_from_this()), endpoint);
     }
     return false; // LCOV_EXCL_LINE
   }
 
-  void ConnectionImpl::OnIoErrorFn(void* context) // LCOV_EXCL_LINE
-  { // LCOV_EXCL_LINE
-    ConnectionImpl* cn = static_cast<ConnectionImpl*>(context); // LCOV_EXCL_LINE
-    if (cn->m_eventHandler) // LCOV_EXCL_LINE
-    { // LCOV_EXCL_LINE
-      return cn->m_eventHandler->OnIoError(cn->shared_from_this()); // LCOV_EXCL_LINE
-    } // LCOV_EXCL_LINE
-  } // LCOV_EXCL_LINE
+  // LCOV_EXCL_START
+  void ConnectionImpl::OnIoErrorFn(void* context)
+  {
+    ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
+    if (cn->m_eventHandler)
+    {
+      return cn->m_eventHandler->OnIoError(
+          ConnectionFactory::CreateFromInternal(cn->shared_from_this()));
+    }
+  }
+  // LCOV_EXCL_STOP
 
   void ConnectionImpl::Open()
   {

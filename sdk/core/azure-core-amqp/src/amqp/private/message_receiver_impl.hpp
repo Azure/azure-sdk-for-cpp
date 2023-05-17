@@ -17,7 +17,27 @@
 #include <memory>
 #include <vector>
 
+template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
+{
+  static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
+
+  using type = Azure::Core::_internal::
+      BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
+};
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+
+  using UniqueMessageReceiver = Azure::Core::_internal::UniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG>;
+
+  class MessageReceiverFactory {
+  public:
+    static Azure::Core::Amqp::_internal::MessageReceiver CreateFromInternal(
+        std::shared_ptr<MessageReceiverImpl> receiverImpl)
+    {
+      return Azure::Core::Amqp::_internal::MessageReceiver(receiverImpl);
+    }
+  };
+
   class MessageReceiverImpl final : public std::enable_shared_from_this<MessageReceiverImpl> {
   public:
     MessageReceiverImpl(
@@ -61,7 +81,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         const char* linkName,
         uint32_t messageNumber,
         Azure::Core::Amqp::Models::AmqpValue deliveryState);
-    void SetTrace(bool traceEnabled);
 
     template <class... Waiters>
     Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
@@ -78,7 +97,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
   private:
-    MESSAGE_RECEIVER_HANDLE m_messageReceiver{};
+    UniqueMessageReceiver m_messageReceiver{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;

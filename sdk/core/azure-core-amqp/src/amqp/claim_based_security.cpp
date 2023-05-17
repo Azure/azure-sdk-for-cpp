@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // The non-Impl types for CBS exist only for testing purposes.
 #if defined(TESTING_BUILD)
   ClaimsBasedSecurity::ClaimsBasedSecurity(Session const& session)
-      : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(session.GetImpl())}
+      : m_impl{std::make_shared<_detail::ClaimsBasedSecurityImpl>(SessionFactory::GetImpl(session))}
   {
   }
 

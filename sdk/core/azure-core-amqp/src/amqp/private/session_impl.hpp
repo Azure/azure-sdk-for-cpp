@@ -22,6 +22,21 @@ using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  class SessionFactory {
+  public:
+    static Azure::Core::Amqp::_internal::Session CreateFromInternal(
+        std::shared_ptr<SessionImpl> sessionImpl)
+    {
+      return Azure::Core::Amqp::_internal::Session(sessionImpl);
+    }
+
+    static std::shared_ptr<SessionImpl> GetImpl(
+        Azure::Core::Amqp::_internal::Session const& session)
+    {
+      return session.m_impl;
+    }
+  };
+
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
   public:
     SessionImpl(
@@ -46,10 +61,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t GetIncomingWindow();
     uint32_t GetOutgoingWindow();
     uint32_t GetHandleMax();
-
-    void SetIncomingWindow(uint32_t incomingWindow);
-    void SetOutgoingWindow(uint32_t outgoingWindow);
-    // void SetHandleMax(uint32_t handleMax);
 
     void Begin();
     void End(std::string const& condition_value, std::string const& description);

@@ -14,6 +14,12 @@
 #include <azure_uamqp_c/message_sender.h>
 #include <memory>
 
+void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::FreeMessageSender(
+    MESSAGE_SENDER_HANDLE value)
+{
+  messagesender_destroy(value);
+}
+
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   MessageSender::MessageSender(
@@ -21,8 +27,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
-      : m_impl{
-          std::make_shared<_detail::MessageSenderImpl>(session.GetImpl(), target, options, events)}
+      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
+          _detail::SessionFactory::GetImpl(session),
+          target,
+          options,
+          events)}
   {
   }
   MessageSender::MessageSender(
@@ -32,7 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          session.GetImpl(),
+          _detail::SessionFactory::GetImpl(session),
           endpoint,
           target,
           options,
@@ -47,7 +56,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          session.GetImpl(),
+          _detail::SessionFactory::GetImpl(session),
           credential,
           target,
           options,
@@ -62,7 +71,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       MessageSenderOptions const& options,
       MessageSenderEvents* events)
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          session.GetImpl(),
+          _detail::SessionFactory::GetImpl(session),
           credential,
           target,
           options,
@@ -109,10 +118,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       : m_events{events}, m_session{session}, m_target{target}, m_options{options}
   {
     CreateLink(endpoint);
-    m_messageSender
-        = messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this);
+    m_messageSender.reset(
+        messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
 
-    SetTrace(options.EnableTrace);
+    messagesender_set_trace(m_messageSender.get(), m_options.EnableTrace);
   }
 
   MessageSenderImpl::MessageSenderImpl(
@@ -152,11 +161,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         m_claimsBasedSecurity->Close();
       }
-    }
-    if (m_messageSender)
-    {
-      messagesender_destroy(m_messageSender);
-      m_messageSender = nullptr;
     }
   }
 
@@ -201,11 +205,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_link->SetSenderSettleMode(m_options.SettleMode);
   }
 
-  void MessageSenderImpl::SetTrace(bool traceEnabled)
-  {
-    messagesender_set_trace(m_messageSender, traceEnabled);
-  }
-
   _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
   {
     switch (lowLevel)
@@ -236,7 +235,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (sender->m_events)
     {
       sender->m_events->OnMessageSenderStateChanged(
-          sender->shared_from_this(),
+          MessageSenderFactory::CreateFromInternal(sender->shared_from_this()),
           MessageSenderStateFromLowLevel(newState),
           MessageSenderStateFromLowLevel(oldState));
     }
@@ -299,10 +298,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_messageSender == nullptr)
     {
-      m_messageSender
-          = messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this);
+      m_messageSender.reset(
+          messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
     }
-    if (messagesender_open(m_messageSender))
+    if (messagesender_open(m_messageSender.get()))
     {
       auto err = errno; // LCOV_EXCL_LINE
       throw std::runtime_error( // LCOV_EXCL_LINE
@@ -313,7 +312,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void MessageSenderImpl::Close()
   {
-    if (messagesender_close(m_messageSender))
+    if (messagesender_close(m_messageSender.get()))
     {
       throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
     }
@@ -358,7 +357,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                        decltype(onSendComplete),
                        RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
     auto result = messagesender_send_async(
-        m_messageSender,
+        m_messageSender.get(),
         Azure::Core::Amqp::Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
         std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
         operation.release(),

@@ -23,6 +23,21 @@ using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INS
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  class ConnectionFactory {
+  public:
+    static Azure::Core::Amqp::_internal::Connection CreateFromInternal(
+        std::shared_ptr<ConnectionImpl> connectionImpl)
+    {
+      return Azure::Core::Amqp::_internal::Connection(connectionImpl);
+    }
+
+    static std::shared_ptr<ConnectionImpl> GetImpl(
+        Azure::Core::Amqp::_internal::Connection const& connection)
+    {
+      return connection.m_impl;
+    }
+  };
+
   class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
   public:
     ConnectionImpl(

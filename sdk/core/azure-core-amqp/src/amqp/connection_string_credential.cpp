@@ -52,8 +52,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   std::shared_ptr<Network::_internal::Transport> SaslPlainConnectionStringCredential::GetTransport()
       const
   {
-    return std::make_shared<Network::_internal::SaslTransport>(
-        GetSharedAccessKeyName(), GetSharedAccessKey(), GetHostName(), GetPort());
+    return std::make_shared<Network::_internal::Transport>(
+        Network::_internal::SaslTransportFactory::Create(
+            GetSharedAccessKeyName(), GetSharedAccessKey(), GetHostName(), GetPort()));
   }
 
   std::shared_ptr<Network::_internal::Transport>
@@ -61,7 +62,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     //    // Construct a SASL Anonymous transport
     //    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
-    return std::make_shared<Network::_internal::SocketTransport>(GetHostName(), GetPort());
+    return std::make_shared<Network::_internal::Transport>(
+        Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
   }
   //
   // A ServiceBus connection string has the following format:

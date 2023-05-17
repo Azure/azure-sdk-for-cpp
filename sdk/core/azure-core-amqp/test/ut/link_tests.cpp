@@ -114,16 +114,12 @@ TEST_F(TestLinks, LinkProperties)
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
     Link link2(link);
 
-    Link link3(link.GetImpl());
-
     EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
-    EXPECT_EQ(link.GetInitialDeliveryCount(), link3.GetInitialDeliveryCount());
 
     // If I set the initial delivery count on one link, it should affect all the copies of that
     // link.
     link.SetInitialDeliveryCount(32767);
     EXPECT_EQ(link.GetInitialDeliveryCount(), link2.GetInitialDeliveryCount());
-    EXPECT_EQ(link.GetInitialDeliveryCount(), link3.GetInitialDeliveryCount());
 
     EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MySource"}, link.GetSource().GetAddress());
     EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"MyTarget"}, link.GetTarget().GetAddress());
@@ -147,9 +143,9 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
-            transport, nullptr)};
+    auto amqpTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+        Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
+            transport, nullptr))};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;
