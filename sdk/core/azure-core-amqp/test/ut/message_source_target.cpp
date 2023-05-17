@@ -197,7 +197,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 
   {
     MessageTarget target("address1");
-    const AmqpValue v = target;
+    const AmqpValue v = target.AsAmqpValue();
     AmqpValue value(v);
 
     MessageTarget target2(value);
@@ -208,7 +208,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 TEST_F(TestSourceTarget, TargetThroughValue)
 {
   MessageTarget target("address1");
-  const AmqpValue v = target;
+  const AmqpValue v = target.AsAmqpValue();
   AmqpValue value(v);
 
   MessageTarget target2(value);
@@ -388,7 +388,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSource source("address1");
-    const AmqpValue v = source;
+    const AmqpValue v = source.AsAmqpValue();
     AmqpValue value(v);
 
     MessageSource source2(value);

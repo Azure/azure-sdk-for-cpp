@@ -208,7 +208,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   // Convert the MessageSource into a Value.
-  MessageSource::operator const Azure::Core::Amqp::Models::AmqpValue() const
+  Azure::Core::Amqp::Models::AmqpValue MessageSource::AsAmqpValue() const
   {
     return amqpvalue_create_source(m_source.get());
   }

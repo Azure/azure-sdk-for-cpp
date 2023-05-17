@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @remarks Creates an AMQP Described value with the descriptor being the message source (0x29).
      */
-    operator const Azure::Core::Amqp::Models::AmqpValue() const;
+    Azure::Core::Amqp::Models::AmqpValue AsAmqpValue() const;
 
     /** @brief Gets the address of the source.
      *
