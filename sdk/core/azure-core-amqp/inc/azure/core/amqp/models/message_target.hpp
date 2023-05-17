@@ -75,7 +75,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     Azure::Core::Amqp::Models::AmqpValue AsAmqpValue() const;
 
-
     /** @brief The address of the target.
      *
      * @returns The address of the target.

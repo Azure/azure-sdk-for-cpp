@@ -62,23 +62,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return rv;
   }
 
-  Azure::Core::Amqp::Models::AmqpValue Messaging::CreateSource(std::string const& address)
-  {
-    auto rv = messaging_create_source(address.c_str());
-    if (!rv)
-    {
-      throw std::runtime_error("Could not allocate source described value.");
-    }
-    return rv;
-  }
-  Azure::Core::Amqp::Models::AmqpValue Messaging::CreateTarget(std::string const& address)
-  {
-    auto rv = messaging_create_target(address.c_str());
-    if (!rv)
-    {
-      throw std::runtime_error("Could not allocate target described value.");
-    }
-    return rv;
-  }
-
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

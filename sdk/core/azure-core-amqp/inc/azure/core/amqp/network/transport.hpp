@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
      * @param callback The callback to be called when the send operation is completed.
      * @return bool
      */
-    bool Send(uint8_t*, size_t, TransportSendCompleteFn) const;
+    bool Send(uint8_t* buffer, size_t size, TransportSendCompleteFn callback) const;
 
     /** @brief Poll the transport for events.
      *

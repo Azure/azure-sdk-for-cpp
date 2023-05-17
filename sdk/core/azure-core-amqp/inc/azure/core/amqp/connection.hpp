@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief The maximum number of channels supported.
      *
-     * A single connection may have multiple independant sessions active simultaneously up to the
+     * A single connection may have multiple independent sessions active simultaneously up to the
      * negotiated maximum channel count.
      */
     uint16_t MaxChannelCount{65535};

@@ -30,10 +30,6 @@ TEST_F(TestSourceTarget, SimpleSourceTarget)
     MessageSource source(std::string("test"));
     MessageTarget target(std::string("test"));
   }
-  {
-    MessageSource source(Messaging::CreateSource("test1"));
-    MessageTarget target(Messaging::CreateTarget("test1"));
-  }
 
   {
     EXPECT_ANY_THROW(MessageSource source(AmqpValue{}));

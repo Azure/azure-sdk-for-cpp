@@ -7,8 +7,6 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   struct Messaging
   {
-    static Azure::Core::Amqp::Models::AmqpValue CreateSource(std::string const& address);
-    static Azure::Core::Amqp::Models::AmqpValue CreateTarget(std::string const& address);
     static Azure::Core::Amqp::Models::AmqpValue DeliveryReceived(
         uint32_t sectionNumber,
         uint64_t sectionOffset);
