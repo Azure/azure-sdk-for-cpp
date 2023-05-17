@@ -4,6 +4,8 @@
 #include "azure/core/amqp/link.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/message_sender.hpp"
+#include "azure/core/amqp/models/message_source.hpp"
+#include "azure/core/amqp/models/message_target.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "private/link_impl.hpp"
 #include "private/session_impl.hpp"
