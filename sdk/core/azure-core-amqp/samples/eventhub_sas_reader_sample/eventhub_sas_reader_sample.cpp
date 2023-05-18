@@ -4,18 +4,20 @@
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/network/sasl_transport.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <chrono>
 #include <iostream>
 #include <limits>
 #include <string>
 
-#define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
-
 int main()
 {
+  std::string eventhubConnectionString
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
+
   auto credential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          EH_CONNECTION_STRING);
+          eventhubConnectionString);
   std::string hostUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
       + "/ConsumerGroups/$Default/Partitions/0";
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;

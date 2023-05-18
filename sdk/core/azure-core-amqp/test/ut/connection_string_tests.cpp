@@ -57,8 +57,8 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
           Azure::Core::Amqp::_internal::CredentialType::ServiceBusSas);
 
       // Generate a SAS token which expires in 60 seconds.
-      auto token = credential.GenerateSasToken(
-          std::chrono::system_clock::now() + std::chrono::seconds(60));
+      Azure::Core::Credentials::TokenRequestContext trc;
+      auto token = credential.GetToken(trc, {});
     }
   }
   EXPECT_NO_THROW([]() {

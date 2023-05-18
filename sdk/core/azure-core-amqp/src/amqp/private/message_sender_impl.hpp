@@ -44,12 +44,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::MessageSenderEvents* events);
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
-        std::shared_ptr<_internal::ServiceBusSasConnectionStringCredential> credential,
-        Models::_internal::MessageTarget const& target,
-        _internal::MessageSenderOptions const& options,
-        _internal::MessageSenderEvents* events);
-    MessageSenderImpl(
-        std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
@@ -95,7 +89,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_messageQueue;
 
     std::shared_ptr<_detail::SessionImpl> m_session;
-    std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
     Models::_internal::MessageTarget m_target;

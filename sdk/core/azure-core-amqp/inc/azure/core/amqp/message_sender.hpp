@@ -121,23 +121,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderOptions const& options,
         MessageSenderEvents* events);
 
-    /** @brief Construct an authenticated message sender using a SAS connection string for
-     * authentication.
-     *
-     * @param session The AMQP session.
-     * @param credential The SAS connection string to authorize the sender.
-     * @param target The target to which messages will be sent.
-     * @param options The options to use when sending messages.
-     * @param events The events handler for the message sender.
-     *
-     */
-    MessageSender(
-        Session const& session,
-        std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
-        Models::_internal::MessageTarget const& target,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
-
     /** @brief Construct an authenticated message sender using an Azure bearer token for
      * authentication.
      *

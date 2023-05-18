@@ -88,12 +88,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageReceiverEvents* receiverEvents = nullptr);
     MessageReceiver(
         Session& session,
-        std::shared_ptr<ConnectionStringCredential> credentials,
-        Models::_internal::MessageSource const& receiverSource,
-        MessageReceiverOptions const& options,
-        MessageReceiverEvents* receiverEvents = nullptr);
-    MessageReceiver(
-        Session& session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
         Models::_internal::MessageSource const& receiverSource,
         MessageReceiverOptions const& options,

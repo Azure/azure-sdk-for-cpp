@@ -4,8 +4,10 @@
 #pragma once
 
 #include "network/sasl_transport.hpp"
+#include <azure/core/credentials/credentials.hpp>
 #include <chrono>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -35,7 +37,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     ConnectionStringCredential(ConnectionStringCredential const&) = delete;
     ConnectionStringCredential& operator=(ConnectionStringCredential const&) = delete;
 
-    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const = 0;
+    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const
+    {
+      throw std::runtime_error("Not implemented.");
+    }
+
     CredentialType GetCredentialType() const { return m_credentialType; }
     std::string const& GetEndpoint() const { return m_endpoint; }
     std::string const& GetSharedAccessKeyName() const { return m_sharedAccessKeyName; }
@@ -58,24 +64,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string m_entityPath;
   };
 
-  /** @brief A connection string based credential used for AMQP Connection Based Security using an
-   * SAS token.
+  /** @brief A connection string based credential used for AMQP Connection Based Security
+   * using an SAS token.
    */
-  class ServiceBusSasConnectionStringCredential final : public ConnectionStringCredential {
+  class ServiceBusSasConnectionStringCredential final
+      : public ConnectionStringCredential,
+        public Azure::Core::Credentials::TokenCredential {
   public:
     /** @brief Create an instance of the ServiceBusSasConnectionStringCredential.
      *
      * @param connectionString The connection string for the Service Bus namespace.
      * @param entityPath The name of the entity to connect to.
      *
-     * @remark If the connectionString contains an EntityPath element, and the entityPath parameter
-     * is provided, this constructor will throw an exception if the two values do not match.
+     * @remark If the connectionString contains an EntityPath element, and the entityPath
+     * parameter is provided, this constructor will throw an exception if the two values do
+     * not match.
      *
      */
     ServiceBusSasConnectionStringCredential(
         const std::string& connectionString,
         const std::string& entityPath = {})
-        : ConnectionStringCredential(connectionString, CredentialType::ServiceBusSas)
+        : ConnectionStringCredential(connectionString, CredentialType::ServiceBusSas),
+          TokenCredential("ServiceBusSasConnectionStringCredential")
     {
       // If we weren't able to determine the entity path from the ConnectionStringCredential
       // constructor, use the entity path passed in by the user.
@@ -94,13 +104,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Destroy a SAS connection string credential. */
     ~ServiceBusSasConnectionStringCredential() override = default;
 
-    /** @brief Generate an SAS token with the specified expiration time for this connection string
-     * credential.
-     *
-     * @param expiresOn The expiration time for the SAS token.
-     */
-    std::string GenerateSasToken(std::chrono::system_clock::time_point const& expiresOn) const;
-
     /** @brief Returns the expected audience for this credential.
      */
     std::string GetAudience();
@@ -111,6 +114,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @return A SASL transport configured for SASL Anonymous.
      */
     virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const override;
+
+    /**
+     * @brief Gets an authentication token.
+     *
+     * @param tokenRequestContext A context to get the token in.
+     * @param context A context to control the request lifetime.
+     *
+     * @return Authentication token.
+     *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     */
+    virtual Azure::Core::Credentials::AccessToken GetToken(
+        Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Context const& context) const override;
+
+  private:
+    ///** @brief Generate an SAS token with the specified expiration time for this connection
+    /// string
+    // * credential.
+    // *
+    // * @param expiresOn The expiration time for the SAS token.
+    // */
+    std::string GenerateSasToken(std::chrono::system_clock::time_point const& expiresOn) const;
   };
 
   /** A SASL PLAIN connection string credential.

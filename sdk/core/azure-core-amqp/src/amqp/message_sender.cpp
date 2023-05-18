@@ -10,9 +10,14 @@
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <azure_uamqp_c/message_sender.h>
 #include <memory>
+
+using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::Diagnostics::_internal;
 
 void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::FreeMessageSender(
     MESSAGE_SENDER_HANDLE value)
@@ -43,21 +48,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       : m_impl{std::make_shared<_detail::MessageSenderImpl>(
           _detail::SessionFactory::GetImpl(session),
           endpoint,
-          target,
-          options,
-          events)}
-  {
-  }
-
-  MessageSender::MessageSender(
-      Session const& session,
-      std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
-      Models::_internal::MessageTarget const& target,
-      MessageSenderOptions const& options,
-      MessageSenderEvents* events)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          credential,
           target,
           options,
           events)}
@@ -122,18 +112,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
 
     messagesender_set_trace(m_messageSender.get(), m_options.EnableTrace);
-  }
-
-  MessageSenderImpl::MessageSenderImpl(
-      std::shared_ptr<SessionImpl> session,
-      std::shared_ptr<_internal::ServiceBusSasConnectionStringCredential> credential,
-      Models::_internal::MessageTarget const& target,
-      _internal::MessageSenderOptions const& options,
-      _internal::MessageSenderEvents* events)
-      : m_events{events}, m_session{session},
-        m_connectionCredential{credential}, m_target{target}, m_options{options}
-
-  {
   }
 
   MessageSenderImpl::MessageSenderImpl(
@@ -248,6 +226,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::Context const& context)
   {
     m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurityImpl>(m_session);
+    Log::Write(
+        Logger::Level::Informational,
+        "Authenticate with audience: " + audience + ", token: " + token + ".");
     if (m_claimsBasedSecurity->Open(context) == CbsOpenResult::Ok)
     {
       m_cbsOpen = true;
@@ -267,25 +248,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
     // it.
-    if (m_connectionCredential)
+    if (m_tokenCredential)
     {
-      auto sasCredential{std::static_pointer_cast<
-          Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          m_connectionCredential)};
-      Authenticate(
-          sasCredential->GetCredentialType(),
-          sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
-          sasCredential->GenerateSasToken(
-              std::chrono::system_clock::now() + std::chrono::minutes(60)),
-          context);
-    }
-    else if (m_tokenCredential)
-    {
+      bool isSasToken
+          = m_tokenCredential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
       Azure::Core::Credentials::TokenRequestContext requestContext;
+      if (isSasToken)
+      {
+        requestContext.MinimumExpiration = std::chrono::minutes(60);
+      }
       requestContext.Scopes = m_options.AuthenticationScopes;
 
       Authenticate(
-          _internal::CredentialType::BearerToken,
+          (isSasToken ? _internal::CredentialType::ServiceBusSas
+                      : _internal::CredentialType::BearerToken),
           static_cast<std::string>(m_target.GetAddress()),
           m_tokenCredential->GetToken(requestContext, context).Token,
           context);

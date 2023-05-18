@@ -137,6 +137,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
 
+  /**
+   * @brief Gets an authentication token.
+   *
+   * @param tokenRequestContext A context to get the token in.
+   * @param context A context to control the request lifetime.
+   *
+   * @return Authentication token.
+   *
+   * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+   */
+  Azure::Core::Credentials::AccessToken ServiceBusSasConnectionStringCredential::GetToken(
+      Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+      Context const& context) const
+  {
+    Azure::Core::Credentials::AccessToken rv;
+    rv.ExpiresOn = std::chrono::system_clock::now() + tokenRequestContext.MinimumExpiration;
+    rv.Token = GenerateSasToken(static_cast<std::chrono::system_clock::time_point>(rv.ExpiresOn));
+    (void)context;
+    return rv;
+  }
+
   // Generate a Shared Access Signature token for a ServiceBus client.
   //
   // The spec for a SharedAccessSignature is here:

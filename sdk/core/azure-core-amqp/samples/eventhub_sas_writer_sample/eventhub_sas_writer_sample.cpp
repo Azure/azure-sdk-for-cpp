@@ -4,21 +4,26 @@
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/message_sender.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <chrono>
 #include <iostream>
 #include <limits>
 #include <string>
 
-// Note: The connection string provided must either have an "EntityPath" entry or the constructor
-// for the SasConnectionStringCredential has to have an entity path provided.
-#define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
-
 int main()
 {
+  std::string eventhubConnectionString
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
+
   auto credential{
       std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          EH_CONNECTION_STRING)};
-  std::string eventUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath();
+          eventhubConnectionString)};
+  std::string entityPath = credential->GetEntityPath();
+  if (entityPath.empty())
+  {
+    entityPath = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+  }
+  std::string eventUrl = "amqps://" + credential->GetHostName() + "/" + entityPath;
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;

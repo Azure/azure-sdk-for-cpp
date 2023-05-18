@@ -32,20 +32,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   MessageReceiver::MessageReceiver(
       Session& session,
-      std::shared_ptr<ConnectionStringCredential> credential,
-      Models::_internal::MessageSource const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          credential,
-          source,
-          options,
-          eventHandler)}
-  {
-  }
-  MessageReceiver::MessageReceiver(
-      Session& session,
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       Models::_internal::MessageSource const& source,
       MessageReceiverOptions const& options,
@@ -107,16 +93,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   /** Configure the MessageReceiver for receiving messages from a service instance.
    */
-  MessageReceiverImpl::MessageReceiverImpl(
-      std::shared_ptr<_detail::SessionImpl> session,
-      std::shared_ptr<ConnectionStringCredential> credential,
-      Models::_internal::MessageSource const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_options{options}, m_source{source}, m_session{session},
-        m_connectionCredential{credential}, m_eventHandler(eventHandler)
-  {
-  }
   MessageReceiverImpl::MessageReceiverImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
@@ -322,25 +298,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
     // it.
-    if (m_connectionCredential)
+    // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
+    // it.
+    if (m_tokenCredential)
     {
-      auto sasCredential{std::static_pointer_cast<
-          Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          m_connectionCredential)};
-      Authenticate(
-          CredentialType::ServiceBusSas,
-          sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
-          sasCredential->GenerateSasToken(
-              std::chrono::system_clock::now() + std::chrono::minutes(60)),
-          context);
-    }
-    else if (m_tokenCredential)
-    {
+      bool isSasToken
+          = m_tokenCredential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
       Azure::Core::Credentials::TokenRequestContext requestContext;
+      if (isSasToken)
+      {
+        requestContext.MinimumExpiration = std::chrono::minutes(60);
+      }
       requestContext.Scopes = m_options.AuthenticationScopes;
 
       Authenticate(
-          CredentialType::BearerToken,
+          (isSasToken ? _internal::CredentialType::ServiceBusSas
+                      : _internal::CredentialType::BearerToken),
           static_cast<std::string>(m_source.GetAddress()),
           m_tokenCredential->GetToken(requestContext, context).Token,
           context);

@@ -47,12 +47,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
-        std::shared_ptr<_internal::ConnectionStringCredential> credentials,
-        Models::_internal::MessageSource const& receiverSource,
-        _internal::MessageReceiverOptions const& options,
-        _internal::MessageReceiverEvents* receiverEvents = nullptr);
-    MessageReceiverImpl(
-        std::shared_ptr<_detail::SessionImpl> session,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
         Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
@@ -102,7 +96,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
-    std::shared_ptr<_internal::ConnectionStringCredential> m_connectionCredential;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
     std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
     bool m_cbsOpen{false};
