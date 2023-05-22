@@ -32,9 +32,11 @@ TEST_F(TestLinks, SimpleLink)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+
+  Connection connection("localhost", {});
+
   // Create a session
-  Session session(connection);
+  Session session(connection, nullptr);
 
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -69,8 +71,8 @@ TEST_F(TestLinks, SimpleLink)
 
 TEST_F(TestLinks, LinkProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", {});
-  Session session(connection);
+  Connection connection("localhost", {});
+  Session session(connection, nullptr);
 
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -231,8 +233,10 @@ TEST_F(TestLinks, LinkAttachDetach)
   uint16_t testPort = FindAvailableSocket();
   GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
-  Connection connection("amqp://localhost:" + std::to_string(testPort), {}, &events);
-  Session session(connection);
+  ConnectionOptions connectOptions;
+  connectOptions.Port = testPort;
+  Connection connection("localhost", connectOptions, &events);
+  Session session(connection, nullptr);
 
   Network::_internal::SocketListener listener(testPort, &events);
 

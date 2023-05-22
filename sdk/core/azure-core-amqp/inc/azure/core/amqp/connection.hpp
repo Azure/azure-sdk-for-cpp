@@ -24,6 +24,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Error;
 
+  /** @brief The default port used to connect to an AMQP server that does NOT use TLS. */
+  constexpr uint16_t AmqpPort = 5672;
+
+  /** @brief The default port to use to connect to an AMQP server using TLS. */
+  constexpr uint16_t AmqpTlsPort = 5671;
+
   /**
    * @brief The state of the connection.
    *
@@ -197,6 +203,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Azure::Core::Amqp::Models::AmqpMap Properties;
 
+    /** @brief Port used to communicate with server.
+     *
+     * @remarks The default port is the AMQP TLS Port (5671). Ports other than the default will not
+     * use TLS to communicate with the service.
+     */
+    uint16_t Port{AmqpTlsPort};
+
     /**
      * Note that the AMQP specification defines the following fields in the open performative which
      * are not supported by the underlying uAMQP stack:
@@ -208,32 +221,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
 
-    /** @brief Enable tracing from the uAMQP stack.
-     */
-    bool EnableTrace{false};
-
     /** @brief Defines the ID of the container for this connection. If empty, a unique 128 bit value
      * will be used.
      */
     std::string ContainerId;
 
-    // Optional SASL plain credentials.
-    std::shared_ptr<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>
-        SaslCredentials{};
+    /** @brief Enable tracing from the uAMQP stack.
+     */
+    bool EnableTrace{false};
   };
 
   class Connection final {
   public:
     /** @brief Construct a new AMQP Connection.
      *
-     * @param requestUri The URI to connect to.
+     * @param hostName The name of the host to connect to.
      * @param options The options to use when creating the connection.
      * @param eventHandler The event handler for the connection.
      *
      * @remarks The requestUri must be a valid AMQP URI.
      */
     Connection(
-        std::string const& requestUri,
+        std::string const& hostName,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 

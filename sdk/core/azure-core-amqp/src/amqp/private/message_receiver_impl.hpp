@@ -47,12 +47,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
-        Models::_internal::MessageSource const& receiverSource,
-        _internal::MessageReceiverOptions const& options,
-        _internal::MessageReceiverEvents* receiverEvents = nullptr);
-    MessageReceiverImpl(
-        std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& linkEndpoint,
         Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
@@ -82,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Waiters&... waiters)
     {
       auto result = m_messageQueue.WaitForPolledResult(
-          context, *m_session->GetConnectionToPoll(), waiters...);
+          context, *m_session->GetConnection(), waiters...);
       if (result)
       {
         return std::move(std::get<0>(*result));
@@ -96,9 +90,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
-    bool m_cbsOpen{false};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         Azure::Core::Amqp::Models::AmqpMessage>
@@ -119,11 +110,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
-
-    void Authenticate(
-        _internal::CredentialType type,
-        std::string const& audience,
-        std::string const& token,
-        Azure::Core::Context const& context);
   };
 }}}} // namespace Azure::Core::Amqp::_detail

@@ -42,16 +42,16 @@ TEST_F(TestSessions, SimpleSession)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Azure::Core::Amqp::_internal::Connection connection("localhost", {});
   {
     // Create a session
-    Session session(connection);
+    Session session(connection, nullptr);
   }
 
   {
     // Create two sessions
-    Session session1(connection);
-    Session session2(connection);
+    Session session1(connection, nullptr);
+    Session session2(connection, nullptr);
 
     session1.End("", "");
   }
@@ -79,10 +79,10 @@ TEST_F(TestSessions, SimpleSession)
 
 TEST_F(TestSessions, SessionProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Azure::Core::Amqp::_internal::Connection connection("localhost", {});
 
   {
-    Session session(connection);
+    Session session(connection, nullptr);
 
     // Verify defaults are something "reasonable".
     EXPECT_EQ(1, session.GetIncomingWindow());
@@ -93,19 +93,19 @@ TEST_F(TestSessions, SessionProperties)
   {
     SessionOptions options;
     options.MaximumLinkCount = 37;
-    Session session(connection, options);
+    Session session(connection, nullptr, options);
     EXPECT_EQ(37, session.GetHandleMax());
   }
   {
     SessionOptions options;
     options.InitialIncomingWindowSize = 1909119;
-    Session session(connection, options);
+    Session session(connection, nullptr, options);
     EXPECT_EQ(1909119, session.GetIncomingWindow());
   }
   {
     SessionOptions options;
     options.InitialOutgoingWindowSize = 1909119;
-    Session session(connection, options);
+    Session session(connection, nullptr, options);
     EXPECT_EQ(1909119, session.GetOutgoingWindow());
   }
 }
@@ -205,16 +205,18 @@ TEST_F(TestSessions, SessionBeginEnd)
   listener.Start();
 
   // Create a connection
-  Connection connection("amqp://localhost:" + std::to_string(testPort), {});
+  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+  connectOptions.Port = testPort;
+  Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
 
   {
-    Session session(connection);
+    Session session(connection, nullptr);
 
     session.Begin();
   }
 
   {
-    Session session(connection);
+    Session session(connection, nullptr);
 
     session.Begin();
     session.End("", "");

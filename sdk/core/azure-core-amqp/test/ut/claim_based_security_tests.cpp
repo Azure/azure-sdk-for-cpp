@@ -34,9 +34,9 @@ TEST_F(TestCbs, SimpleCbs)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Connection connection("localhost", {});
   // Create a session
-  Session session(connection);
+  Session session(connection, {});
 
   {
     ClaimsBasedSecurity cbs(session);
@@ -55,9 +55,10 @@ TEST_F(TestCbs, CbsOpen)
 {
   {
     MessageTests::AmqpServerMock mockServer;
-
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions options;
+    options.Port = mockServer.GetPort();
+    Connection connection("localhost", options);
+    Session session(connection, nullptr);
     {
       ClaimsBasedSecurity cbs(session);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
@@ -68,8 +69,10 @@ TEST_F(TestCbs, CbsOpen)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions options;
+    options.Port = mockServer.GetPort();
+    Connection connection("localhost", options);
+    Session session(connection, nullptr);
 
     mockServer.StartListening();
 
@@ -92,8 +95,10 @@ TEST_F(TestCbs, CbsOpenAndPut)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions options;
+    options.Port = mockServer.GetPort();
+    Connection connection("localhost", options);
+    Session session(connection, nullptr);
 
     mockServer.StartListening();
 
@@ -123,8 +128,10 @@ TEST_F(TestCbs, CbsOpenAndPutError)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions options;
+    options.Port = mockServer.GetPort();
+    Connection connection("localhost", options);
+    Session session(connection, nullptr);
 
     mockServer.StartListening();
 

@@ -36,9 +36,9 @@ TEST_F(TestMessages, SimpleReceiver)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Connection connection("localhost", {});
   // Create a session
-  Session session(connection);
+  Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
 
   {
@@ -51,8 +51,8 @@ TEST_F(TestMessages, SimpleReceiver)
 }
 TEST_F(TestMessages, ReceiverProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", {});
-  Session session(connection);
+  Connection connection("localhost", {});
+  Session session(connection, nullptr);
 
   {
     MessageReceiverOptions options;
@@ -74,9 +74,9 @@ TEST_F(TestMessages, SimpleSender)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Connection connection("localhost", {});
   // Create a session
-  Session session(connection);
+  Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
 
   {
@@ -89,8 +89,8 @@ TEST_F(TestMessages, SimpleSender)
 }
 TEST_F(TestMessages, SenderProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", {});
-  Session session(connection);
+  Connection connection("localhost", {});
+  Session session(connection, nullptr);
 
   {
     MessageSenderOptions options;
@@ -272,8 +272,9 @@ TEST_F(TestMessages, ReceiverOpenClose)
   ConnectionOptions connectionOptions;
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.EnableTrace = true;
-  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions, &events);
-  Session session(connection);
+  connectionOptions.Port = testPort;
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, nullptr);
 
   Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
 
@@ -338,10 +339,11 @@ TEST_F(TestMessages, SenderOpenClose)
   uint16_t testPort = FindAvailableSocket();
   GTEST_LOG_(INFO) << "Test port: " << testPort;
   ConnectionOptions connectionOptions;
-  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.Port = testPort;
 
-  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions);
-  Session session(connection);
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, nullptr);
   //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
 
   Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, nullptr);
@@ -368,8 +370,9 @@ TEST_F(TestMessages, SenderSendAsync)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   //  connectionOptions.EnableTrace = true;
-  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions);
-  Session session(connection);
+  connectionOptions.Port = testPort;
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, nullptr);
 
   Azure::Core::Context receiveContext;
 
@@ -462,8 +465,9 @@ TEST_F(TestMessages, SenderSendSync)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection("amqp://localhost:" + std::to_string(testPort), connectionOptions);
-  Session session(connection);
+  connectionOptions.Port = testPort;
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, nullptr);
 
   Azure::Core::Context receiveContext;
 
@@ -540,8 +544,9 @@ TEST_F(TestMessages, AuthenticatedSender)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection(sasCredential->GetTransport(), connectionOptions);
-  Session session(connection);
+  connectionOptions.Port = server.GetPort();
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, sasCredential);
 
   server.StartListening();
 
@@ -553,7 +558,6 @@ TEST_F(TestMessages, AuthenticatedSender)
   senderOptions.Name = "sender-link";
   MessageSender sender(
       session,
-      sasCredential,
       sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
       senderOptions,
       nullptr);
@@ -599,8 +603,9 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection(endpoint, connectionOptions);
-  Session session(connection);
+  connectionOptions.Port = server.GetPort();
+  Connection connection(hostName, connectionOptions);
+  Session session(connection, tokenCredential);
 
   server.StartListening();
   MessageSenderOptions senderOptions;
@@ -609,7 +614,7 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
-  MessageSender sender(session, tokenCredential, endpoint, senderOptions, nullptr);
+  MessageSender sender(session, endpoint, senderOptions, nullptr);
   sender.Open();
 
   Azure::Core::Amqp::Models::AmqpMessage message;
@@ -658,8 +663,9 @@ TEST_F(TestMessages, AuthenticatedReceiver)
 
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection(sasCredential->GetTransport(), connectionOptions);
-  Session session(connection);
+  connectionOptions.Port = server.GetPort();
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, sasCredential);
 
   server.SetSenderNodeName(sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
   server.StartListening();
@@ -673,7 +679,6 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   receiverOptions.EnableTrace = true;
   MessageReceiver receiver(
       session,
-      sasCredential,
       sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
       receiverOptions,
       nullptr);
@@ -754,8 +759,9 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
 
   connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
-  Connection connection(endpoint, connectionOptions);
-  Session session(connection);
+  connectionOptions.Port = port;
+  Connection connection(hostName, connectionOptions);
+  Session session(connection, tokenCredential);
 
   server.SetSenderNodeName(endpoint);
   server.StartListening();
@@ -766,7 +772,7 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
-  MessageReceiver receiver(session, tokenCredential, endpoint, receiverOptions, nullptr);
+  MessageReceiver receiver(session, endpoint, receiverOptions, nullptr);
 
   receiver.Open();
 

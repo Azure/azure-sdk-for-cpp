@@ -21,13 +21,14 @@ int main()
   connectOptions.EnableTrace = true;
   std::string hostUrl
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
-  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
+  connectOptions.Port = credentials->GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(credentials->GetHostName(), connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection, credentials, sessionOptions);
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 
@@ -41,8 +42,7 @@ int main()
   senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-  Azure::Core::Amqp::_internal::MessageSender sender(
-      session, credentials, hostUrl, senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender(session, hostUrl, senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

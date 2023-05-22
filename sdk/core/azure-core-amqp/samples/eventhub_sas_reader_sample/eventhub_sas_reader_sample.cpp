@@ -18,16 +18,21 @@ int main()
   auto credential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
           eventhubConnectionString);
-  std::string hostUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
-      + "/ConsumerGroups/$Default/Partitions/0";
+  std::string entityPath = credential->GetEntityPath();
+  if (entityPath.empty())
+  {
+	entityPath = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+  }
+
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "whatever";
   connectOptions.EnableTrace = true;
-  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
+  connectOptions.Port = credential->GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(credential->GetHostName(), connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = 100;
-  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
@@ -36,9 +41,7 @@ int main()
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   receiverOptions.EnableTrace = true;
 
-  Azure::Core::Amqp::_internal::MessageReceiver receiver(
-      session, credential, hostUrl, receiverOptions);
-
+  Azure::Core::Amqp::_internal::MessageReceiver receiver(session, entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions);
   // Open the connection to the remote.
   receiver.Open();
 

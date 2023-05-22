@@ -66,6 +66,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::string ExpectedStatusDescriptionKeyName = "statusDescription";
 
+    /** @brief The name of the management node.
+     *
+     * By default, the name of the management node is "$management", but under certain
+     * circumstances, management operations can be performed on a different node (for instance,
+     * $cbs for claims based authentication)
+     */
+    std::string ManagementNodeName = "$management";
+
     /**
      * @brief Enable trace logging for the management operations.
      */
@@ -121,13 +129,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @brief Create a new Management object instance.
      *
      * @param session - the session on which to create the instance.
+     * @param managementEntityPath - the entity path of the management object.
      * @param managementNodeName - the name of the message source and target.
      * @param options - additional options for the Management object.
      * @param managementEvents - events associated with the management object.
      */
     Management(
         Session const& session,
-        std::string const& managementNodeName,
+        std::string const& managementEntityPath,
         ManagementOptions const& options,
         ManagementEvents* managementEvents = nullptr);
 
@@ -164,7 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
+        Azure::Core::Amqp::Models::AmqpMessage messageToSend,
         Azure::Core::Context context = {});
 
   private:

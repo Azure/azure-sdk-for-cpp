@@ -42,12 +42,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
-    MessageSenderImpl(
-        std::shared_ptr<_detail::SessionImpl> session,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        Models::_internal::MessageTarget const& target,
-        _internal::MessageSenderOptions const& options,
-        _internal::MessageSenderEvents* events);
     virtual ~MessageSenderImpl() noexcept;
 
     MessageSenderImpl(MessageSenderImpl const&) = delete;
@@ -71,11 +65,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         MESSAGE_SENDER_STATE newState,
         MESSAGE_SENDER_STATE oldState);
 
-    void Authenticate(
-        _internal::CredentialType type,
-        std::string const& audience,
-        std::string const& token,
-        Azure::Core::Context const& context);
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
@@ -89,10 +78,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_messageQueue;
 
     std::shared_ptr<_detail::SessionImpl> m_session;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential;
-    std::unique_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity;
     Models::_internal::MessageTarget m_target;
     _internal::MessageSenderOptions m_options;
-    bool m_cbsOpen{false};
   };
 }}}} // namespace Azure::Core::Amqp::_detail

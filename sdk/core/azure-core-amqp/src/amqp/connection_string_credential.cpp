@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include <algorithm>
@@ -42,29 +43,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return result;
   }
 
-  SaslPlainConnectionStringCredential::SaslPlainConnectionStringCredential(
-      const std::string& connectionString)
-      : ConnectionStringCredential(connectionString, CredentialType::SaslPlain)
-  {
-    Azure::Core::Url endpointUrl{GetEndpoint()};
-  }
-
-  std::shared_ptr<Network::_internal::Transport> SaslPlainConnectionStringCredential::GetTransport()
-      const
-  {
-    return std::make_shared<Network::_internal::Transport>(
-        Network::_internal::SaslTransportFactory::Create(
-            GetSharedAccessKeyName(), GetSharedAccessKey(), GetHostName(), GetPort()));
-  }
-
-  std::shared_ptr<Network::_internal::Transport>
-  ServiceBusSasConnectionStringCredential::GetTransport() const
-  {
-    //    // Construct a SASL Anonymous transport
-    //    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
-    return std::make_shared<Network::_internal::Transport>(
-        Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
-  }
   //
   // A ServiceBus connection string has the following format:
   // "Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;EntityPath=<entity>"
@@ -74,7 +52,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   // access key name and shared access key are required if the endpoint is not a local endpoint.
   // The endpoint is formatted as a URL, extract the host and port from the endpoint and use them
   // when constructing the SaslAnonymous transport.
-  void ConnectionStringCredential::ParseConnectionString(const std::string& connectionString)
+  void ConnectionStringParser::ParseConnectionString(const std::string& connectionString)
   {
     std::unordered_map<std::string, std::string> elements;
     // Split the connection string into separate components.
@@ -107,7 +85,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Azure::Core::Url endpointUrl{m_endpoint};
         m_hostName = endpointUrl.GetHost();
         m_port = endpointUrl.GetPort() != 0 ? endpointUrl.GetPort()
-                                            : static_cast<uint16_t>(_detail::AmqpsPort);
+                                            : Azure::Core::Amqp::_internal::AmqpTlsPort;
       }
       else
       {
@@ -135,6 +113,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         m_entityPath = ep->second;
       }
     }
+  }
+
+  std::shared_ptr<Network::_internal::Transport>
+  ServiceBusSasConnectionStringCredential::GetTransport() const
+  {
+    //    // Construct a SASL Anonymous transport
+    //    return std::make_shared<Network::SaslTransport>(GetHostName(), GetPort());
+    return std::make_shared<Network::_internal::Transport>(
+        Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
   }
 
   /**

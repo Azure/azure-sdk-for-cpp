@@ -54,21 +54,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
   }
 
-  MessageSender::MessageSender(
-      Session const& session,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      Models::_internal::MessageTarget const& target,
-      MessageSenderOptions const& options,
-      MessageSenderEvents* events)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          credential,
-          target,
-          options,
-          events)}
-  {
-  }
-
   void MessageSender::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
   void MessageSender::Close() { m_impl->Close(); }
   std::tuple<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> MessageSender::Send(
@@ -114,17 +99,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     messagesender_set_trace(m_messageSender.get(), m_options.EnableTrace);
   }
 
-  MessageSenderImpl::MessageSenderImpl(
-      std::shared_ptr<SessionImpl> session,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      Models::_internal::MessageTarget const& target,
-      _internal::MessageSenderOptions const& options,
-      _internal::MessageSenderEvents* events)
-      : m_events{events}, m_session{session},
-        m_tokenCredential{credential}, m_target{target}, m_options{options}
-  {
-  }
-
   MessageSenderImpl::~MessageSenderImpl() noexcept
   {
     // Clear the event callback before calling messagesender_destroy to short-circuit any
@@ -132,13 +106,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (m_events)
     {
       m_events = nullptr;
-    }
-    if (m_claimsBasedSecurity)
-    {
-      if (m_cbsOpen)
-      {
-        m_claimsBasedSecurity->Close();
-      }
     }
   }
 
@@ -219,53 +186,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void MessageSenderImpl::Authenticate(
-      _internal::CredentialType type,
-      std::string const& audience,
-      std::string const& token,
-      Azure::Core::Context const& context)
-  {
-    m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurityImpl>(m_session);
-    Log::Write(
-        Logger::Level::Informational,
-        "Authenticate with audience: " + audience + ", token: " + token + ".");
-    if (m_claimsBasedSecurity->Open(context) == CbsOpenResult::Ok)
-    {
-      m_cbsOpen = true;
-      auto result = m_claimsBasedSecurity->PutToken(
-          (type == _internal::CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
-          audience,
-          token,
-          context);
-    }
-    else
-    {
-      throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
-    }
-  }
-
   void MessageSenderImpl::Open(Azure::Core::Context const& context)
   {
     // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
     // it.
-    if (m_tokenCredential)
-    {
-      bool isSasToken
-          = m_tokenCredential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
-      Azure::Core::Credentials::TokenRequestContext requestContext;
-      if (isSasToken)
-      {
-        requestContext.MinimumExpiration = std::chrono::minutes(60);
-      }
-      requestContext.Scopes = m_options.AuthenticationScopes;
-
-      Authenticate(
-          (isSasToken ? _internal::CredentialType::ServiceBusSas
-                      : _internal::CredentialType::BearerToken),
-          static_cast<std::string>(m_target.GetAddress()),
-          m_tokenCredential->GetToken(requestContext, context).Token,
-          context);
-    }
+    m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
 
     if (m_link == nullptr)
     {
@@ -360,7 +285,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         },
         context);
-    auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
+    auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
     if (result)
     {
       return std::move(*result);

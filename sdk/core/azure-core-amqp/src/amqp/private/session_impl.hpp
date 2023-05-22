@@ -46,6 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionEvents* eventHandler);
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential> tokenCredential,
         _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
@@ -56,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl& operator=(SessionImpl&&) noexcept = delete;
     operator SESSION_HANDLE() const { return m_session.get(); }
 
-    std::shared_ptr<ConnectionImpl> GetConnectionToPoll() const { return m_connectionToPoll; }
+    std::shared_ptr<ConnectionImpl> GetConnection() const { return m_connectionToPoll; }
 
     uint32_t GetIncomingWindow();
     uint32_t GetOutgoingWindow();
@@ -65,14 +66,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
 
+    void AuthenticateIfNeeded(std::string const& audience, Azure::Core::Context const& context);
+    std::string GetSecurityToken(std::string const& audience) const;
+
   private:
     SessionImpl();
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
+    std::map<std::string, Azure::Core::Credentials::AccessToken> m_tokenStore;
+    bool m_cbsOpen{false};
 
-    //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;
+    void Authenticate(
+        bool isSasToken,
+        Azure::Core::Credentials::TokenRequestContext const& requestContext,
+        std::string const& audience,
+        Azure::Core::Context const& context);
 
     static bool OnLinkAttachedFn(
         void* context,

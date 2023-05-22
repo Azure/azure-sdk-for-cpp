@@ -32,20 +32,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   MessageReceiver::MessageReceiver(
       Session& session,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      Models::_internal::MessageSource const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          credential,
-          source,
-          options,
-          eventHandler)}
-  {
-  }
-  MessageReceiver::MessageReceiver(
-      Session& session,
       Models::_internal::MessageSource const& source,
       MessageReceiverOptions const& options,
       MessageReceiverEvents* eventHandler)
@@ -93,16 +79,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   /** Configure the MessageReceiver for receiving messages from a service instance.
    */
-  MessageReceiverImpl::MessageReceiverImpl(
-      std::shared_ptr<_detail::SessionImpl> session,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-      Models::_internal::MessageSource const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_options{options}, m_source{source}, m_session{session}, m_tokenCredential{credential},
-        m_eventHandler(eventHandler)
-  {
-  }
   MessageReceiverImpl::MessageReceiverImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageSource const& source,
@@ -202,11 +178,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_eventHandler = nullptr;
     }
-    if (m_claimsBasedSecurity && m_cbsOpen)
-    {
-      Log::Write(Logger::Level::Verbose, "Close CBS object.");
-      m_claimsBasedSecurity->Close();
-    }
   }
 
   MessageReceiverState MessageReceiverStateFromLowLevel(MESSAGE_RECEIVER_STATE lowLevel)
@@ -262,62 +233,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void MessageReceiverImpl::Authenticate(
-      CredentialType type,
-      std::string const& audience,
-      std::string const& token,
-      Azure::Core::Context const& context)
-  {
-    Log::Write(Logger::Level::Verbose, "Authenticate token with audience " + audience);
-    m_claimsBasedSecurity = std::make_unique<ClaimsBasedSecurityImpl>(m_session);
-    // Propagate our SetTrace settings to the CBS instance.
-    m_claimsBasedSecurity->SetTrace(m_options.EnableTrace);
-    auto openResult = m_claimsBasedSecurity->Open(context);
-    if (openResult == CbsOpenResult::Ok)
-    {
-      m_cbsOpen = true;
-      Log::Write(Logger::Level::Verbose, "CBS is open, put the token");
-
-      auto result = m_claimsBasedSecurity->PutToken(
-          (type == CredentialType::BearerToken ? CbsTokenType::Jwt : CbsTokenType::Sas),
-          audience,
-          token,
-          context);
-    }
-    else
-    {
-      Log::Write(
-          Logger::Level::Error,
-          "Could not open Claims Based Security object. OpenResult: "
-              + std::to_string(static_cast<int>(openResult)));
-      throw std::runtime_error("Could not open Claims Based Security."); // LCOV_EXCL_LINE
-    }
-  }
-
   void MessageReceiverImpl::Open(Azure::Core::Context const& context)
   {
-    // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
-    // it.
-    // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
-    // it.
-    if (m_tokenCredential)
-    {
-      bool isSasToken
-          = m_tokenCredential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
-      Azure::Core::Credentials::TokenRequestContext requestContext;
-      if (isSasToken)
-      {
-        requestContext.MinimumExpiration = std::chrono::minutes(60);
-      }
-      requestContext.Scopes = m_options.AuthenticationScopes;
-
-      Authenticate(
-          (isSasToken ? _internal::CredentialType::ServiceBusSas
-                      : _internal::CredentialType::BearerToken),
-          static_cast<std::string>(m_source.GetAddress()),
-          m_tokenCredential->GetToken(requestContext, context).Token,
-          context);
-    }
+    m_session->AuthenticateIfNeeded(static_cast<std::string>(m_source.GetAddress()), context);
 
     // Once we've authenticated the connection, establish the link and receiver.
     // We cannot do this before authenticating the client.

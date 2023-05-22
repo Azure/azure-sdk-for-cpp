@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       return CbsOpenResult::Error;
     }
-    auto result = m_openResultQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
+    auto result = m_openResultQueue.WaitForPolledResult(context, *m_session->GetConnection());
     return std::get<0>(*result);
   }
 
@@ -173,8 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not put CBS token."); // LCOV_EXCL_LINE
     }
-    auto result
-        = m_operationResultQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
+    auto result = m_operationResultQueue.WaitForPolledResult(context, *m_session->GetConnection());
 
     // Throw an error if we failed to authenticate with the server.
     if (std::get<0>(*result) != CbsOperationResult::Ok)

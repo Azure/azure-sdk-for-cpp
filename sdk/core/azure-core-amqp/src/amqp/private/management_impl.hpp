@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   public:
     ManagementImpl(
         std::shared_ptr<SessionImpl> session,
-        std::string const& managementNodeName,
+        std::string const& managementEntityName,
         _internal::ManagementOptions const& options,
         _internal::ManagementEvents* managementEvents);
 
@@ -55,11 +55,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
+        Azure::Core::Amqp::Models::AmqpMessage messageToSend,
         Azure::Core::Context context);
 
   private:
     UniqueAmqpManagementHandle m_management{};
+    std::string m_managementNodeName;
     _internal::ManagementOptions m_options;
     std::string m_source;
     std::shared_ptr<SessionImpl> m_session;

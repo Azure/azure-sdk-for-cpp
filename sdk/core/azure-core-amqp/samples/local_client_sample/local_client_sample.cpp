@@ -13,13 +13,13 @@ int main()
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.EnableTrace = false;
   connectOptions.ContainerId = "some";
-  Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection, nullptr, sessionOptions);
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.Name = "sender-link";

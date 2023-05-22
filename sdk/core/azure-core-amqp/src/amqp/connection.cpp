@@ -7,6 +7,7 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
+#include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
@@ -41,11 +42,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   // Create a connection with a request URI and options.
   Connection::Connection(
-      std::string const& requestUri,
+      std::string const& hostName,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
       : m_impl{std::make_shared<Azure::Core::Amqp::_detail::ConnectionImpl>(
-          requestUri,
+          hostName,
           options,
           eventHandler)}
   {
@@ -101,62 +102,41 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::ConnectionEvents* eventHandler)
       : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler}
   {
-    if (options.SaslCredentials)
-    {
-      throw std::runtime_error("Sasl Credentials should not be provided with a transport.");
-    }
     EnsureGlobalStateInitialized();
     m_transport = transport;
   }
 
   // Create a connection with a request URI and options.
   ConnectionImpl::ConnectionImpl(
-      std::string const& requestUri,
+      std::string const& hostName,
       _internal::ConnectionOptions const& options,
       _internal::ConnectionEvents* eventHandler)
-      : m_options{options}, m_eventHandler{eventHandler}
+      : m_hostName{hostName}, m_port{options.Port}, m_options{options}, m_eventHandler{eventHandler}
   {
     EnsureGlobalStateInitialized();
 
-    if (options.SaslCredentials)
-    {
-      throw std::runtime_error("Sasl Credentials should not be provided with a request URI.");
-    }
-    Azure::Core::Url requestUrl(requestUri);
-
-    m_hostName = requestUrl.GetHost();
-
-    // Determine the port to be used for the request.
-    if (requestUrl.GetPort() != 0)
-    {
-      m_port = requestUrl.GetPort();
-    }
-    else if (requestUrl.GetScheme() == "amqp")
-    {
-      m_port = static_cast<std::uint16_t>(AmqpPort);
-    }
-    else if (requestUrl.GetScheme() == "amqps")
-    {
-      m_port = static_cast<std::uint16_t>(AmqpsPort);
-    }
-    else
-    {
-      throw std::runtime_error("Unknown connection scheme: " + requestUrl.GetScheme() + ".");
-    }
-
-    if (requestUrl.GetScheme() == "amqp")
+    if (options.Port == _internal::AmqpPort)
     {
       Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
       m_transport = Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
                         m_hostName, m_port)
                         .GetImpl();
     }
-    else if (requestUrl.GetScheme() == "amqps")
+    else if (options.Port == _internal::AmqpTlsPort)
     {
       Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
       m_transport
           = Azure::Core::Amqp::Network::_internal::TlsTransportFactory::Create(m_hostName, m_port)
                 .GetImpl();
+    }
+    else
+    {
+      Log::Write(
+          Logger::Level::Informational,
+          "Unknown port specified, assuming socket connection transport.");
+      m_transport = Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
+                        m_hostName, m_port)
+                        .GetImpl();
     }
   }
 

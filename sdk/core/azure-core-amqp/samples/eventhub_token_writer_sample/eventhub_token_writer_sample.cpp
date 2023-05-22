@@ -12,58 +12,57 @@
 #include <limits>
 #include <string>
 
-// #define EH_HOST "<<<Replace with the eventhubs host name>>>"
-// #define EH_ENTITY "<<<Replace with the eventhub name>>>"
-
 #define EH_AUTHENTICATION_SCOPE "https://eventhubs.azure.net/.default"
-
-// #define EH_ENTITY_URL "amqps://" EH_HOST "/" EH_ENTITY
 
 int main()
 {
-  // Retrieve the eventhub connection string so we can extract the host name and entity name.
+  // Retrieve the eventhub connection string so we can extract the host name and entity name. We are
+  // NOT using the connection string to connect to the eventhub.
   std::string eventhubConnectionString
       = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
-  Azure::Core::Amqp::_internal::ConnectionStringCredential connectionStringCredential(
-      eventhubConnectionString, Azure::Core::Amqp::_internal::CredentialType::ServiceBusSas);
+  Azure::Core::Amqp::_internal::ConnectionStringParser connectionStringCredential(
+      eventhubConnectionString);
   std::string eventhubsHost = connectionStringCredential.GetHostName();
   std::string eventhubsEntity = connectionStringCredential.GetEntityPath();
+
+  // If the connection string does not specify an entity path, then look for the eventhub name in an
+  // environment variable.
   if (eventhubsEntity.empty())
   {
     eventhubsEntity = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
   }
-  std::string eventhubsEntityUrl = "amqps://" + eventhubsHost + "/" + eventhubsEntity;
+
+  // Establish credentials for the eventhub client.
+  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
+      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_TENANT_ID"),
+      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_CLIENT_ID"),
+      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_CLIENT_SECRET"))};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
-  Azure::Core::Amqp::_internal::Connection connection(eventhubsEntityUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(eventhubsHost, connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
+  sessionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
 
-  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
 
   constexpr int maxMessageSendCount = 1000;
 
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
-  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_TENANT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_CLIENT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_CLIENT_SECRET"))};
-
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
-  senderOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   senderOptions.MessageSource = "ingress";
   senderOptions.Name = "sender-link";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::MessageSender sender(
-      session, credential, eventhubsEntityUrl, senderOptions, nullptr);
+      session, eventhubsEntity, senderOptions, nullptr);
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
   sender.Open();

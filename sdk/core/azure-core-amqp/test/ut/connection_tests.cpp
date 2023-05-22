@@ -29,39 +29,26 @@ TEST_F(TestConnections, SimpleConnection)
 {
   {
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", {});
+    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+    connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
-    Azure::Core::Amqp::_internal::ConnectionOptions options;
-    options.SaslCredentials
-        = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
-            "Endpoint=sb://testHost.net/"
-            ";SharedAccessKeyName=SomeName;SharedAccessKey=SomeKey;EntityPath=testhub");
-    EXPECT_ANY_THROW(
-        Azure::Core::Amqp::_internal::Connection connection2("amqp://localhost:5672", options));
+    Azure::Core::Amqp::_internal::Connection connection("localhost", {});
+
   }
   {
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("amqps://localhost:5671", {});
+    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+    connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
+
+    Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
   }
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
         Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
-            "localhost", Azure::Core::Amqp::_detail::AmqpPort))};
+            "localhost", Azure::Core::Amqp::_internal::AmqpPort))};
 
     Azure::Core::Amqp::_internal::Connection connection(socketTransport, options);
-  }
-  {
-    Azure::Core::Amqp::_internal::ConnectionOptions options;
-    auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
-        Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
-            "localhost", Azure::Core::Amqp::_detail::AmqpPort))};
-    options.SaslCredentials
-        = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
-            "Endpoint=sb://testHost.net/"
-            ";SharedAccessKeyName=SomeName;SharedAccessKey=SomeKey;EntityPath=testhub");
-
-    EXPECT_ANY_THROW(Azure::Core::Amqp::_internal::Connection connection(socketTransport, options));
   }
 
 #if 0
@@ -94,9 +81,9 @@ TEST_F(TestConnections, ConnectionAttributes)
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.IdleTimeout = std::chrono::milliseconds(1532);
 
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
 
-    EXPECT_EQ(connection.GetPort(), 5672);
+    EXPECT_EQ(connection.GetPort(), 5671);
     EXPECT_EQ(connection.GetHost(), "localhost");
 
     auto idleTimeout = connection.GetIdleTimeout();
@@ -106,7 +93,8 @@ TEST_F(TestConnections, ConnectionAttributes)
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxFrameSize = 1024 * 64;
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost", options);
+    options.Port = Azure::Core::Amqp::_internal::AmqpPort;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
     EXPECT_EQ(connection.GetPort(), 5672);
     EXPECT_EQ(connection.GetHost(), "localhost");
 
@@ -121,9 +109,10 @@ TEST_F(TestConnections, ConnectionAttributes)
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxChannelCount = 128;
+    options.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
-    Azure::Core::Amqp::_internal::Connection connection("amqps://localhost", options);
-    EXPECT_EQ(connection.GetPort(), 5671);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    EXPECT_EQ(connection.GetPort(), 5672);
     EXPECT_EQ(connection.GetHost(), "localhost");
 
     auto maxChannel = connection.GetMaxChannel();
@@ -131,16 +120,11 @@ TEST_F(TestConnections, ConnectionAttributes)
     (void)maxChannel;
   }
 
-  // Expect a throw for non amqp connections.
-  {
-    EXPECT_ANY_THROW(Azure::Core::Amqp::_internal::Connection connection("https://localhost", {}));
-  }
-
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxChannelCount = 128;
 
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
     // Ratio must be a number between 0 and 1.
     EXPECT_NO_THROW(connection.SetIdleEmptyFrameSendPercentage(0.5));
   }
@@ -150,7 +134,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     options.MaxChannelCount = 128;
     options.Properties["test"] = "test";
 
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
     EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"test"}, connection.GetProperties()["test"]);
   }
 }
@@ -193,8 +177,9 @@ TEST_F(TestConnections, ConnectionOpenClose)
     EXPECT_NO_THROW(listener.Start());
 
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection(
-        "amqp://localhost:" + std::to_string(testPort), {});
+    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+    connectOptions.Port = testPort;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
 
     // Open the connection
     connection.Open();
@@ -212,7 +197,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
 
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5671", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
   }
 }
 
@@ -322,14 +307,15 @@ TEST_F(TestConnections, ConnectionListenClose)
   // Ensure someone is listening on the connection for when we call connection.Open.
   TestSocketListenerEvents listenerEvents;
   Azure::Core::Amqp::Network::_internal::SocketListener listener(
-      Azure::Core::Amqp::_detail::AmqpPort, &listenerEvents);
+      Azure::Core::Amqp::_internal::AmqpPort, &listenerEvents);
 
   listener.Start();
 
   {
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", {});
-
+    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
+    connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
     // Open the connection
     connection.Open();
 
@@ -344,7 +330,8 @@ TEST_F(TestConnections, ConnectionListenClose)
 
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    Azure::Core::Amqp::_internal::Connection connection("amqp://localhost:5672", options);
+    options.Port = Azure::Core::Amqp::_internal::AmqpPort;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
   }
 
   listener.Stop();

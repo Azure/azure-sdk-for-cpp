@@ -23,17 +23,17 @@ int main()
   {
     entityPath = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
   }
-  std::string eventUrl = "amqps://" + credential->GetHostName() + "/" + entityPath;
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.EnableTrace = true;
-  Azure::Core::Amqp::_internal::Connection connection(eventUrl, connectOptions);
+  connectOptions.Port = credential->GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(credential->GetHostName(), connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::Amqp::_internal::Session session(connection, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
 
   constexpr int maxMessageSendCount = 1000;
   Azure::Core::Amqp::Models::AmqpMessage message;
@@ -45,9 +45,7 @@ int main()
   senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-
-  Azure::Core::Amqp::_internal::MessageSender sender(
-      session, credential, eventUrl, senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender(session, entityPath, senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

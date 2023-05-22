@@ -80,10 +80,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief The source for the link associated with the message sender. */
     Models::_internal::MessageSource MessageSource;
 
-    /** @brief The Audience to which an authentication operation applies when using Claims Based
-     * Authentication. */
-    std::vector<std::string> AuthenticationScopes;
-
     /** @brief The Maximum message size for the link associated with the message sender. */
     Azure::Nullable<uint64_t> MaxMessageSize;
 
@@ -107,7 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSendStatus sendResult,
         Azure::Core::Amqp::Models::AmqpValue const& deliveryState)>;
 
-    /** @brief Construct an unauthenticated message sender.
+    /** @brief Construct a message sender.
      *
      * @param session The AMQP session.
      * @param target The target to which messages will be sent.
@@ -117,23 +113,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     MessageSender(
         Session const& session,
-        Models::_internal::MessageTarget const& target,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
-
-    /** @brief Construct an authenticated message sender using an Azure bearer token for
-     * authentication.
-     *
-     * @param session The AMQP session.
-     * @param credential The Azure bearer token credential.
-     * @param target The target to which messages will be sent.
-     * @param options The options to use when sending messages.
-     * @param events The events handler for the message sender.
-     *
-     */
-    MessageSender(
-        Session const& session,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         Models::_internal::MessageTarget const& target,
         MessageSenderOptions const& options,
         MessageSenderEvents* events);

@@ -23,6 +23,8 @@ using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INS
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  class ClaimsBasedSecurity;
+
   class ConnectionFactory {
   public:
     static Azure::Core::Amqp::_internal::Connection CreateFromInternal(
@@ -46,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ConnectionEvents* eventHandler);
 
     ConnectionImpl(
-        std::string const& requestUri,
+        std::string const& hostName,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
@@ -104,13 +106,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
         m_newSessionQueue;
     _internal::ConnectionEvents* m_eventHandler{};
-    _internal::CredentialType m_credentialType;
-    std::shared_ptr<_internal::ConnectionStringCredential> m_credential{};
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential{};
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,
-        _internal::CredentialType credentialType,
         _internal::ConnectionOptions const& options);
 
     static void OnEndpointFrameReceivedFn(

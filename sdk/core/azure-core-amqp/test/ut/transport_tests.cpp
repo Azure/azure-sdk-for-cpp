@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include "azure/core/amqp/models/amqp_protocol.hpp"
+#include "azure/core/amqp/connection.hpp"
 #include <azure/core/amqp/common/async_operation_queue.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/network/socket_transport.hpp>
@@ -130,11 +130,11 @@ TEST_F(TestSocketTransport, SimpleCreate)
 {
   {
     Transport transport{
-        SocketTransportFactory::Create("localhost", Azure::Core::Amqp::_detail::AmqpPort)};
+        SocketTransportFactory::Create("localhost", Azure::Core::Amqp::_internal::AmqpPort)};
   }
   {
     Transport transport1{
-        SocketTransportFactory::Create("localhost", Azure::Core::Amqp::_detail::AmqpPort)};
+        SocketTransportFactory::Create("localhost", Azure::Core::Amqp::_internal::AmqpPort)};
     Transport transport2{SocketTransportFactory::Create("localhost", 5673)};
   }
 }

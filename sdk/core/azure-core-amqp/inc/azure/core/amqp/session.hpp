@@ -66,6 +66,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   struct SessionOptions
   {
+    /** @brief The Audience to which an authentication operation applies when using Claims Based
+     * Authentication. */
+    std::vector<std::string> AuthenticationScopes;
+
     /** @brief Represents the initial incoming window size for the sender. See [AMQP Session Flow
      * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
      * for more information.*/
@@ -87,10 +91,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Create a new AMQP Session object on the specified parent connection.
      *
      * @param parentConnection - Connection upon which to create the session.
+     * @param credential - Credential to use for authentication.
+     * @param options - Options to use when creating the session.
      * @param eventHandler - Event handler for session events.
      */
     Session(
         Connection const& parentConnection,
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         SessionOptions const& options = {},
         SessionEvents* eventHandler = nullptr);
 

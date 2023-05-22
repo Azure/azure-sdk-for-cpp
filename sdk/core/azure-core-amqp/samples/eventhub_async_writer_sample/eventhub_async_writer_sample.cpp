@@ -3,6 +3,7 @@
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_sender.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <chrono>
 #include <iostream>
 #include <limits>
@@ -14,13 +15,20 @@ int main()
 {
   auto credentials{
       std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
-          EH_CONNECTION_STRING)};
+          Azure::Core::_internal::Environment::GetVariable(EVENTHUB_CONNECTION_STRING))};
   std::string targetUrl
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
+  std::string targetEntity = credentials->GetEntityPath();
+  if (targetEntity.empty())
+  {
+    targetEntity = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+  }
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
   connectOptions.SaslCredentials = credentials;
-  Azure::Core::Amqp::_internal::Connection connection(targetUrl, connectOptions);
+
+  Azure::Core::Amqp::_internal::Connection connection(
+      credentials->GetHostName(), credentials->GetPort(), credentials, connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

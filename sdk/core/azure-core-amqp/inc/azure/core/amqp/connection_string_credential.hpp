@@ -16,33 +16,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   // "Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;EntityPath=<entity>"
   //
 
-  enum class CredentialType
-  {
-    None,
-    SaslPlain,
-    ServiceBusSas,
-    BearerToken,
-  };
-
-  class ConnectionStringCredential {
+  class ConnectionStringParser {
   public:
-    ConnectionStringCredential(const std::string& connectionString, CredentialType credentialType)
-        : m_credentialType{credentialType}
+    ConnectionStringParser(const std::string& connectionString)
     {
       ParseConnectionString(connectionString);
     }
-    virtual ~ConnectionStringCredential() = default;
+    virtual ~ConnectionStringParser() = default;
 
-    // Prevent tearing of the ConnectionStringCredential.
-    ConnectionStringCredential(ConnectionStringCredential const&) = delete;
-    ConnectionStringCredential& operator=(ConnectionStringCredential const&) = delete;
-
-    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const
-    {
-      throw std::runtime_error("Not implemented.");
-    }
-
-    CredentialType GetCredentialType() const { return m_credentialType; }
     std::string const& GetEndpoint() const { return m_endpoint; }
     std::string const& GetSharedAccessKeyName() const { return m_sharedAccessKeyName; }
     std::string const& GetSharedAccessKey() const { return m_sharedAccessKey; }
@@ -52,15 +33,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   private:
     void ParseConnectionString(const std::string& connectionString);
-    const CredentialType m_credentialType;
     std::string m_endpoint;
     std::string m_sharedAccessKeyName;
     std::string m_sharedAccessKey;
     std::string m_uri;
     std::string m_hostName;
     uint16_t m_port;
-
-  protected:
     std::string m_entityPath;
   };
 
@@ -68,8 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    * using an SAS token.
    */
   class ServiceBusSasConnectionStringCredential final
-      : public ConnectionStringCredential,
-        public Azure::Core::Credentials::TokenCredential {
+      : public Azure::Core::Credentials::TokenCredential {
   public:
     /** @brief Create an instance of the ServiceBusSasConnectionStringCredential.
      *
@@ -84,20 +61,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     ServiceBusSasConnectionStringCredential(
         const std::string& connectionString,
         const std::string& entityPath = {})
-        : ConnectionStringCredential(connectionString, CredentialType::ServiceBusSas),
-          TokenCredential("ServiceBusSasConnectionStringCredential")
+        : TokenCredential("ServiceBusSasConnectionStringCredential"),
+          m_connectionParser(connectionString)
     {
       // If we weren't able to determine the entity path from the ConnectionStringCredential
       // constructor, use the entity path passed in by the user.
-      if (m_entityPath.empty())
+      if (m_connectionParser.GetEntityPath().empty())
       {
         m_entityPath = entityPath;
       }
-      else if (!entityPath.empty() && m_entityPath != entityPath)
+      else if (!entityPath.empty() && m_connectionParser.GetEntityPath() != entityPath)
       {
         // If the user provided an entity path, but it doesn't match the one in the connection
         // string, throw.
-        throw std::invalid_argument("Unable to determine entityPath.");
+        throw std::invalid_argument(
+            "Entity Path provided: " + entityPath
+            + " does not match connection string entity path: "
+            + m_connectionParser.GetEntityPath());
       }
     }
 
@@ -113,7 +93,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A SASL transport configured for SASL Anonymous.
      */
-    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const override;
+    virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const;
+
+    std::string const& GetEndpoint() const { return m_connectionParser.GetEndpoint(); }
+    std::string const& GetSharedAccessKeyName() const
+    {
+      return m_connectionParser.GetSharedAccessKeyName();
+    }
+    std::string const& GetSharedAccessKey() const
+    {
+      return m_connectionParser.GetSharedAccessKey();
+    }
+    std::string const& GetEntityPath() const { return m_connectionParser.GetEntityPath(); }
+    std::string const& GetHostName() const { return m_connectionParser.GetHostName(); }
+    uint16_t GetPort() const { return m_connectionParser.GetPort(); }
 
     /**
      * @brief Gets an authentication token.
@@ -130,6 +123,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Context const& context) const override;
 
   private:
+    ConnectionStringParser m_connectionParser;
+    std::string m_entityPath;
+
     ///** @brief Generate an SAS token with the specified expiration time for this connection
     /// string
     // * credential.
@@ -139,17 +135,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string GenerateSasToken(std::chrono::system_clock::time_point const& expiresOn) const;
   };
 
-  /** A SASL PLAIN connection string credential.
-   *
-   * @note This credential type is not supported for Service Bus.
-   *
-   */
-  class SaslPlainConnectionStringCredential final : public ConnectionStringCredential {
-  public:
-    SaslPlainConnectionStringCredential(const std::string& connectionString);
-
-    std::shared_ptr<Network::_internal::Transport> GetTransport() const override;
-
-  private:
-  };
 }}}} // namespace Azure::Core::Amqp::_internal

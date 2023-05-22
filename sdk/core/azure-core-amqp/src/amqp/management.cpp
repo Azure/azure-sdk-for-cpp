@@ -37,12 +37,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   Management::Management(
       Session const& session,
-      std::string const& managementNodeName,
+      std::string const& managementEntityPath,
       ManagementOptions const& options,
       ManagementEvents* managementEvents)
       : m_impl{std::make_shared<_detail::ManagementImpl>(
           _detail::SessionFactory::GetImpl(session),
-          managementNodeName,
+          managementEntityPath,
           options,
           managementEvents)}
   {
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       std::string const& operationToPerform,
       std::string const& typeOfOperation,
       std::string const& locales,
-      Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
+      Azure::Core::Amqp::Models::AmqpMessage messageToSend,
       Azure::Core::Context context)
   {
     return m_impl->ExecuteOperation(
@@ -79,12 +79,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   ManagementImpl::ManagementImpl(
       std::shared_ptr<SessionImpl> session,
-      std::string const& managementNodeName,
+      std::string const& managementEntityPath,
       Azure::Core::Amqp::_internal::ManagementOptions const& options,
       Azure::Core::Amqp::_internal::ManagementEvents* managementEvents)
-      : m_management{amqp_management_create(*session, managementNodeName.c_str())},
-        m_options{options}, m_session{session}, m_eventHandler{managementEvents}
+      : m_options{options}, m_session{session}, m_eventHandler{managementEvents}
   {
+    /** Authentication needs to happen *before* the management object is created. */
+    m_session->AuthenticateIfNeeded(managementEntityPath + "/" + m_options.ManagementNodeName, {});
+
+    m_management.reset(amqp_management_create(*session, m_options.ManagementNodeName.c_str()));
     if (options.EnableTrace)
     {
       amqp_management_set_trace(m_management.get(), options.EnableTrace);
@@ -113,8 +116,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not open management object.");
     }
-    auto result
-        = m_openCompleteQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
+    auto result = m_openCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
     if (result)
     {
       switch (std::get<0>(*result))
@@ -136,14 +138,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& operationToPerform,
       std::string const& typeOfOperation,
       std::string const& locales,
-      Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
+      Azure::Core::Amqp::Models::AmqpMessage messageToSend,
       Azure::Core::Context context)
   {
+    auto token = m_session->GetSecurityToken(m_managementNodeName);
+    if (!token.empty())
+    {
+      messageToSend.ApplicationProperties["security_token"]
+          = Azure::Core::Amqp::Models::AmqpValue{token};
+    }
     if (!amqp_management_execute_operation_async(
             m_management.get(),
             operationToPerform.c_str(),
             typeOfOperation.c_str(),
-            locales.c_str(),
+            (locales.empty() ? nullptr : locales.c_str()),
             Models::_internal::AmqpMessageFactory::ToUamqp(messageToSend).get(),
             ManagementImpl::OnExecuteOperationCompleteFn,
             this))
@@ -151,7 +159,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Could not execute operation."); // LCOV_EXCL_LINE
     }
 
-    auto result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnectionToPoll());
+    auto result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection());
     if (result)
     {
       _internal::ManagementOperationResult rv;
