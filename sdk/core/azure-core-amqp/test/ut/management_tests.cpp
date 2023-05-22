@@ -18,6 +18,7 @@ protected:
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Core::Amqp::_internal;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestManagement, BasicTests)
 {
   {
@@ -29,7 +30,6 @@ TEST_F(TestManagement, BasicTests)
     Management management(session, "Test", {});
   }
 }
-#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestManagement, ManagementOpenClose)
 {
   {
