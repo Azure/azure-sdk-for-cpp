@@ -21,7 +21,7 @@ int main()
   std::string entityPath = credential->GetEntityPath();
   if (entityPath.empty())
   {
-	entityPath = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+    entityPath = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
   }
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
@@ -41,7 +41,8 @@ int main()
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   receiverOptions.EnableTrace = true;
 
-  Azure::Core::Amqp::_internal::MessageReceiver receiver(session, entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions);
+  Azure::Core::Amqp::_internal::MessageReceiver receiver(
+      session, entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions);
   // Open the connection to the remote.
   receiver.Open();
 

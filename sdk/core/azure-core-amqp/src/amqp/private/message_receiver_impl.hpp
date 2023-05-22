@@ -75,8 +75,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Context context,
         Waiters&... waiters)
     {
-      auto result = m_messageQueue.WaitForPolledResult(
-          context, *m_session->GetConnection(), waiters...);
+      auto result
+          = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection(), waiters...);
       if (result)
       {
         return std::move(std::get<0>(*result));

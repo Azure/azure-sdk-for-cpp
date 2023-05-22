@@ -33,7 +33,6 @@ TEST_F(TestConnections, SimpleConnection)
     connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
     Azure::Core::Amqp::_internal::Connection connection("localhost", {});
-
   }
   {
     // Create a connection
