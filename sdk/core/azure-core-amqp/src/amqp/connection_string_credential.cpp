@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       Context const& context) const
   {
     Azure::Core::Credentials::AccessToken rv;
-    rv.ExpiresOn = std::chrono::system_clock::now() + tokenRequestContext.MinimumExpiration;
+    rv.ExpiresOn = Azure::DateTime::clock::now() + tokenRequestContext.MinimumExpiration;
     rv.Token = GenerateSasToken(static_cast<std::chrono::system_clock::time_point>(rv.ExpiresOn));
     (void)context;
     return rv;

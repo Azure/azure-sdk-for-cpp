@@ -40,6 +40,17 @@ Azure EventHubs instance has been created and the following environment variable
 - `EVENTHUBS_CLIENT_SECRET`: The client secret for the EventHubs instance.
 - `EVENTHUBS_TENANT_ID`: The tenant ID for the EventHubs instance.
 
+If you have cloned the azure-sdk-for-cpp repo, this can be done using the [Azure SDK Live Test Resource Management tools](https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/TestResources/README.md).
+
+
+```pwsh
+Connect-AzAccount -Subscription 'YOUR SUBSCRIPTION ID'
+eng\common\TestResources\New-TestResources.ps1 eventhubs	
+```
+
+This will establish a connection to your Azure account and create a resource group and an EventHubs instance. The connection string and other information will be displayed in the console.
+
+
 ## Building and Running the Samples
 To build the samples, create a build directory and use CMake to generate the build files. For example:
 

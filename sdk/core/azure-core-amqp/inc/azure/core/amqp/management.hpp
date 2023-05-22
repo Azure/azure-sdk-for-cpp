@@ -130,7 +130,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @param session - the session on which to create the instance.
      * @param managementEntityPath - the entity path of the management object.
-     * @param managementNodeName - the name of the message source and target.
      * @param options - additional options for the Management object.
      * @param managementEvents - events associated with the management object.
      */
