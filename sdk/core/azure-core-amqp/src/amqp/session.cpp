@@ -115,7 +115,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionEvents* eventHandler)
       : m_connectionToPoll(connection),
         m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
-        m_options{options}, m_credential{tokenCredential}, m_eventHandler{eventHandler}
+        m_options{options}, m_eventHandler{eventHandler}, m_credential{tokenCredential}
 
   {
     if (options.MaximumLinkCount.HasValue())

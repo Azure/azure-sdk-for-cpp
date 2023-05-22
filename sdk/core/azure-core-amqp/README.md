@@ -1,15 +1,16 @@
 # Azure SDK AMQP Library for C++
 
 Azure::Core::Amqp (`azure-core-amqp`) provides an implementation
-to enable developers to create Azure SDKs which consume the AMQP protocol.
+to enable developers to create Azure SDKs which consume the AMQP protocol. Note that this is *NOT* a general purpose AMQP library, it is intended solely for the purposes of 
+building C++ SDK clients which communicate with Azure services over AMQP.
 
 ## Getting started
 
 ### Include the package
 
-The easiest way to acquire the OpenTelemetry library is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
+The easiest way to acquire the AMQP library is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
-To install Azure Core OpenTelemetry package via vcpkg:
+To install Azure Core AMQP package via vcpkg:
 
 ```cmd
 > vcpkg install azure-core-amqp-cpp
@@ -24,6 +25,7 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-core-amqp)
 
 ## Key concepts
 
+The AMQP Protocol is a relatively complicated 
 
 
 ## Examples

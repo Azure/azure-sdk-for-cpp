@@ -31,11 +31,31 @@ The samples are compatible with C++ 14 and later.
 
 ## Sample Overview
 
-### eventhub_async_writer_sample
-Demonstrates writing messages to the Azure Event Hubs service using the AMQP protocol using queued send operations.
+All samples are standalone console applications that can be built and run independently. Each sample has similar dependencies: They assume that an existing 
+Azure EventHubs instance has been created and the following environment variables are set:
 
-### eventhub_reader_sample
-Demonstrates reading messages from the Azure Event Hubs service using the AMQP protocol.
+- `EVENTHUB_CONNECTION_STRING`: The connection string for the EventHubs instance.
+- `EVENTHUB_NAME`: The name of the EventHubs instance.
+- `EVENTHUBS_CLIENT_ID`: The client ID for the EventHubs instance.
+- `EVENTHUBS_CLIENT_SECRET`: The client secret for the EventHubs instance.
+- `EVENTHUBS_TENANT_ID`: The tenant ID for the EventHubs instance.
+
+## Building and Running the Samples
+To build the samples, create a build directory and use CMake to generate the build files. For example:
+
+```bash
+mkdir build
+cd build
+cmake ..
+```
+
+Then use CMake to build the samples:
+
+```bash
+cmake --build .
+```
+
+Each sample is built into its own directory. For example, the `eventhub_sas_reader_sample` is built into the `eventhub_sas_reader_sample` directory.
 
 ### eventhub_sas_reader_sample
 Demonstrates reading messages from the Azure Event Hubs service using the AMQP protocol with SAS authentication.
@@ -46,9 +66,6 @@ Demonstrates writing messages to the Azure Event Hubs service using the AMQP pro
 ### eventhub_token_writer_sample
 Demonstrates writing messages to the Azure Event Hubs service using the AMQP protocol with an Azure bearer token authentication.
 
-### eventhub_writer_sample
-Demonstrates writing messages to the Azure Event Hubs service using the AMQP protocol.
-
 ### local_client_async_sample
 Demonstrates sending messages to a local AMQP server using the AMQP protocol using queued send operations.
 
@@ -58,3 +75,5 @@ Demonstrates sending messages to a local AMQP server using the AMQP protocol.
 ### local_server_sample
 Demonstrates receiving messages from a local AMQP server using the AMQP protocol.
 
+### eventhub_get_eventhub_properties_sample
+Demonstrates receiving messages from the Azure Event Hubs service using an AMQP Management API.
