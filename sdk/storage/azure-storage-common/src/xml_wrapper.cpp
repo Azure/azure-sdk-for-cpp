@@ -6,8 +6,8 @@
 #include <cstring>
 #include <limits>
 #include <memory>
-#include <stdexcept>
 #include <mutex>
+#include <stdexcept>
 
 #include <azure/core/platform.hpp>
 
@@ -81,7 +81,12 @@ namespace Azure { namespace Storage { namespace _internal {
     textEncoding.encoding.encodingType = WS_XML_READER_ENCODING_TYPE_TEXT;
     textEncoding.charSet = WS_CHARSET_AUTO;
     HRESULT ret = WsSetInput(
-        m_context->reader, &textEncoding.encoding, &bufferInput.input, nullptr, 0, m_context->error);
+        m_context->reader,
+        &textEncoding.encoding,
+        &bufferInput.input,
+        nullptr,
+        0,
+        m_context->error);
     if (ret != S_OK)
     {
       throw std::runtime_error("Failed to initialize xml reader.");
@@ -89,7 +94,11 @@ namespace Azure { namespace Storage { namespace _internal {
 
     WS_CHARSET charSet;
     ret = WsGetReaderProperty(
-        m_context->reader, WS_XML_READER_PROPERTY_CHARSET, &charSet, sizeof(charSet), m_context->error);
+        m_context->reader,
+        WS_XML_READER_PROPERTY_CHARSET,
+        &charSet,
+        sizeof(charSet),
+        m_context->error);
     if (ret != S_OK)
     {
       throw std::runtime_error("Failed to get xml encoding.");
@@ -98,7 +107,6 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       throw std::runtime_error("Unsupported xml encoding.");
     }
-
   }
 
   XmlReader::~XmlReader() = default;
@@ -255,7 +263,8 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     m_context = std::make_unique<XmlWriterContext>();
 
-    HRESULT ret = WsCreateXmlBuffer(m_context->heap, nullptr, 0, &m_context->buffer, m_context->error);
+    HRESULT ret
+        = WsCreateXmlBuffer(m_context->heap, nullptr, 0, &m_context->buffer, m_context->error);
     if (ret != NO_ERROR)
     {
       throw std::runtime_error("Failed to initialize xml writer.");
@@ -394,9 +403,7 @@ namespace Azure { namespace Storage { namespace _internal {
   using ReaderPtr = std::unique_ptr<xmlTextReader, decltype(&xmlFreeTextReader)>;
   struct XmlReader::XmlReaderContext
   {
-    explicit XmlReaderContext(ReaderPtr && reader_)
-      : reader(std::move(reader_))
-    {}
+    explicit XmlReaderContext(ReaderPtr&& reader_) : reader(std::move(reader_)) {}
     ReaderPtr reader;
     bool readingAttributes = false;
     bool readingEmptyTag = false;
@@ -411,8 +418,8 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Xml data too big.");
     }
 
-    auto reader
-        = ReaderPtr(xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0), xmlFreeTextReader);
+    auto reader = ReaderPtr(
+        xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0), xmlFreeTextReader);
 
     if (!reader)
     {
@@ -432,8 +439,10 @@ namespace Azure { namespace Storage { namespace _internal {
       int ret = xmlTextReaderMoveToNextAttribute(context->reader.get());
       if (ret == 1)
       {
-        const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader.get()));
-        const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader.get()));
+        const char* name
+            = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader.get()));
+        const char* value
+            = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader.get()));
         return XmlNode{XmlNodeType::Attribute, name, value};
       }
       else if (ret == 0)
@@ -467,7 +476,8 @@ namespace Azure { namespace Storage { namespace _internal {
     bool has_attributes = xmlTextReaderHasAttributes(context->reader.get()) == 1;
 
     const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(context->reader.get()));
-    const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader.get()));
+    const char* value
+        = reinterpret_cast<const char*>(xmlTextReaderConstValue(context->reader.get()));
 
     if (has_attributes)
     {
@@ -510,10 +520,10 @@ namespace Azure { namespace Storage { namespace _internal {
   using WriterPtr = std::unique_ptr<xmlTextWriter, decltype(&xmlFreeTextWriter)>;
   struct XmlWriter::XmlWriterContext
   {
-    XmlWriterContext(BufferPtr && buffer_, WriterPtr && writer_)
-      : buffer(std::move(buffer_))
-      , writer(std::move(writer_))
-    {}
+    XmlWriterContext(BufferPtr&& buffer_, WriterPtr&& writer_)
+        : buffer(std::move(buffer_)), writer(std::move(writer_))
+    {
+    }
     BufferPtr buffer;
     WriterPtr writer;
   };
@@ -596,7 +606,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string XmlWriter::GetDocument()
   {
-    return std::string(reinterpret_cast<const char*>(m_context->buffer->content), m_context->buffer->use);
+    return std::string(
+        reinterpret_cast<const char*>(m_context->buffer->content), m_context->buffer->use);
   }
 
 #endif
