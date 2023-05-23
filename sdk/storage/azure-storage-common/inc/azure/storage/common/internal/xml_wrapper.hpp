@@ -47,7 +47,6 @@ namespace Azure { namespace Storage { namespace _internal {
   private:
     struct XmlReaderContext;
     std::unique_ptr<XmlReaderContext> m_context;
-
   };
 
   class XmlWriter final {
