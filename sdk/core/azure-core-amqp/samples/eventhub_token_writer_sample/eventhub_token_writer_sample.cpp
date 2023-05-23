@@ -34,9 +34,9 @@ int main()
 
   // Establish credentials for the eventhub client.
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_TENANT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_CLIENT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_CLIENT_SECRET"))};
+      Azure::Core::_internal::Environment::GetVariable("SAMPLES_TENANT_ID"),
+      Azure::Core::_internal::Environment::GetVariable("SAMPLES_CLIENT_ID"),
+      Azure::Core::_internal::Environment::GetVariable("SAMPLES_CLIENT_SECRET"))};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
