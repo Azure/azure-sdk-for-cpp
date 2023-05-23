@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace _internal {
   void XmlGlobalInitialize() {}
   void XmlGlobalDeinitialize() {}
 
-  struct XmlReaderContext
+  struct XmlReader::XmlReaderContext
   {
     XmlReaderContext()
     {
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Xml data too big.");
     }
 
-    auto context = std::make_unique<XmlReaderContext>();
+    m_context = std::make_unique<XmlReaderContext>();
 
     WS_XML_READER_BUFFER_INPUT bufferInput;
     ZeroMemory(&bufferInput, sizeof(bufferInput));
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace _internal {
     textEncoding.encoding.encodingType = WS_XML_READER_ENCODING_TYPE_TEXT;
     textEncoding.charSet = WS_CHARSET_AUTO;
     HRESULT ret = WsSetInput(
-        context->reader, &textEncoding.encoding, &bufferInput.input, nullptr, 0, context->error);
+        m_context->reader, &textEncoding.encoding, &bufferInput.input, nullptr, 0, m_context->error);
     if (ret != S_OK)
     {
       throw std::runtime_error("Failed to initialize xml reader.");
@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
     WS_CHARSET charSet;
     ret = WsGetReaderProperty(
-        context->reader, WS_XML_READER_PROPERTY_CHARSET, &charSet, sizeof(charSet), context->error);
+        m_context->reader, WS_XML_READER_PROPERTY_CHARSET, &charSet, sizeof(charSet), m_context->error);
     if (ret != S_OK)
     {
       throw std::runtime_error("Failed to get xml encoding.");
@@ -99,33 +99,24 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Unsupported xml encoding.");
     }
 
-    m_context = context.release();
   }
 
-  XmlReader::~XmlReader()
-  {
-    if (m_context)
-    {
-      delete static_cast<XmlReaderContext*>(m_context);
-    }
-  }
+  XmlReader::~XmlReader() = default;
 
   XmlNode XmlReader::Read()
   {
-    auto context = static_cast<XmlReaderContext*>(m_context);
-
     auto moveToNext = [&]() {
-      HRESULT ret = WsReadNode(context->reader, context->error);
+      HRESULT ret = WsReadNode(m_context->reader, m_context->error);
       if (!SUCCEEDED(ret))
       {
         throw std::runtime_error("Failed to parse xml.");
       }
     };
 
-    if (context->readingAttributes)
+    if (m_context->readingAttributes)
     {
       const WS_XML_ATTRIBUTE* attribute
-          = context->attributeElementNode->attributes[context->attributeIndex];
+          = m_context->attributeElementNode->attributes[m_context->attributeIndex];
 
       std::string name(
           reinterpret_cast<const char*>(attribute->localName->bytes), attribute->localName->length);
@@ -140,19 +131,19 @@ namespace Azure { namespace Storage { namespace _internal {
       std::string value(
           reinterpret_cast<const char*>(utf8Text->value.bytes), utf8Text->value.length);
 
-      if (++context->attributeIndex == context->attributeElementNode->attributeCount)
+      if (++m_context->attributeIndex == m_context->attributeElementNode->attributeCount)
       {
         moveToNext();
-        context->readingAttributes = false;
-        context->attributeElementNode = nullptr;
-        context->attributeIndex = 0;
+        m_context->readingAttributes = false;
+        m_context->attributeElementNode = nullptr;
+        m_context->attributeIndex = 0;
       }
 
       return XmlNode{XmlNodeType::Attribute, std::move(name), std::move(value)};
     }
 
     const WS_XML_NODE* node;
-    HRESULT ret = WsGetReaderNode(context->reader, &node, context->error);
+    HRESULT ret = WsGetReaderNode(m_context->reader, &node, m_context->error);
     if (!SUCCEEDED(ret))
     {
       throw std::runtime_error("Failed to parse xml.");
@@ -167,9 +158,9 @@ namespace Azure { namespace Storage { namespace _internal {
 
         if (elementNode->attributeCount != 0)
         {
-          context->readingAttributes = true;
-          context->attributeElementNode = elementNode;
-          context->attributeIndex = 0;
+          m_context->readingAttributes = true;
+          m_context->attributeElementNode = elementNode;
+          m_context->attributeIndex = 0;
         }
         else
         {
@@ -193,7 +184,7 @@ namespace Azure { namespace Storage { namespace _internal {
               reinterpret_cast<const char*>(utf8Text->value.bytes), utf8Text->value.length);
 
           moveToNext();
-          ret = WsGetReaderNode(context->reader, &node, context->error);
+          ret = WsGetReaderNode(m_context->reader, &node, m_context->error);
           if (!SUCCEEDED(ret))
           {
             throw std::runtime_error("Failed to parse xml.");
@@ -222,7 +213,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
   }
 
-  struct XmlWriterContext
+  struct XmlWriter::XmlWriterContext
   {
     XmlWriterContext()
     {
@@ -262,34 +253,25 @@ namespace Azure { namespace Storage { namespace _internal {
 
   XmlWriter::XmlWriter()
   {
-    auto context = std::make_unique<XmlWriterContext>();
+    m_context = std::make_unique<XmlWriterContext>();
 
-    HRESULT ret = WsCreateXmlBuffer(context->heap, nullptr, 0, &context->buffer, context->error);
+    HRESULT ret = WsCreateXmlBuffer(m_context->heap, nullptr, 0, &m_context->buffer, m_context->error);
     if (ret != NO_ERROR)
     {
       throw std::runtime_error("Failed to initialize xml writer.");
     }
 
-    ret = WsSetOutputToBuffer(context->writer, context->buffer, nullptr, 0, context->error);
+    ret = WsSetOutputToBuffer(m_context->writer, m_context->buffer, nullptr, 0, m_context->error);
     if (ret != NO_ERROR)
     {
       throw std::runtime_error("Failed to initialize xml writer.");
     }
-
-    m_context = context.release();
   }
 
-  XmlWriter::~XmlWriter()
-  {
-    if (m_context)
-    {
-      delete static_cast<XmlWriterContext*>(m_context);
-    }
-  }
+  XmlWriter::~XmlWriter() = default;
 
   void XmlWriter::Write(XmlNode node)
   {
-    auto context = static_cast<XmlWriterContext*>(m_context);
     if (node.Type == XmlNodeType::StartTag)
     {
       if (!node.Value.empty())
@@ -304,7 +286,7 @@ namespace Azure { namespace Storage { namespace _internal {
       name.length = static_cast<ULONG>(node.Name.length());
       name.dictionary = nullptr;
       WS_XML_STRING ns = WS_XML_STRING_NULL;
-      HRESULT ret = WsWriteStartElement(context->writer, nullptr, &name, &ns, context->error);
+      HRESULT ret = WsWriteStartElement(m_context->writer, nullptr, &name, &ns, m_context->error);
       if (!SUCCEEDED(ret))
       {
         throw std::runtime_error("Failed to write xml.");
@@ -312,7 +294,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else if (node.Type == XmlNodeType::EndTag)
     {
-      HRESULT ret = WsWriteEndElement(context->writer, context->error);
+      HRESULT ret = WsWriteEndElement(m_context->writer, m_context->error);
       if (!SUCCEEDED(ret))
       {
         throw std::runtime_error("Failed to write xml.");
@@ -321,10 +303,10 @@ namespace Azure { namespace Storage { namespace _internal {
     else if (node.Type == XmlNodeType::Text)
     {
       HRESULT ret = WsWriteCharsUtf8(
-          context->writer,
+          m_context->writer,
           reinterpret_cast<const BYTE*>(node.Value.data()),
           static_cast<ULONG>(node.Value.size()),
-          context->error);
+          m_context->error);
       if (!SUCCEEDED(ret))
       {
         throw std::runtime_error("Failed to write xml.");
@@ -338,13 +320,13 @@ namespace Azure { namespace Storage { namespace _internal {
       name.dictionary = nullptr;
       WS_XML_STRING ns = WS_XML_STRING_NULL;
       HRESULT ret
-          = WsWriteStartAttribute(context->writer, nullptr, &name, &ns, FALSE, context->error);
+          = WsWriteStartAttribute(m_context->writer, nullptr, &name, &ns, FALSE, m_context->error);
       if (!SUCCEEDED(ret))
       {
         throw std::runtime_error("Failed to write xml.");
       }
       Write(XmlNode{XmlNodeType::Text, std::string(), std::move(node.Value)});
-      ret = WsWriteEndAttribute(context->writer, context->error);
+      ret = WsWriteEndAttribute(m_context->writer, m_context->error);
       if (!SUCCEEDED(ret))
       {
         throw std::runtime_error("Failed to write xml.");
@@ -363,8 +345,6 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string XmlWriter::GetDocument()
   {
-    auto context = static_cast<XmlWriterContext*>(m_context);
-
     BOOL boolValueTrue = TRUE;
     WS_XML_WRITER_PROPERTY writerProperty;
     writerProperty.id = WS_XML_WRITER_PROPERTY_WRITE_DECLARATION;
@@ -373,15 +353,15 @@ namespace Azure { namespace Storage { namespace _internal {
     void* xml = nullptr;
     ULONG xmlLength = 0;
     HRESULT ret = WsWriteXmlBufferToBytes(
-        context->writer,
-        context->buffer,
+        m_context->writer,
+        m_context->buffer,
         nullptr,
         &writerProperty,
         1,
-        context->heap,
+        m_context->heap,
         &xml,
         &xmlLength,
-        context->error);
+        m_context->error);
     if (!SUCCEEDED(ret))
     {
       throw std::runtime_error("Failed to write xml.");
