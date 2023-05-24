@@ -20,17 +20,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   struct MessageSourceOptions
   {
-    Azure::Core::Amqp::Models::AmqpValue Address;
-    Azure::Nullable<TerminusDurability> SourceTerminusDurability;
-    Azure::Nullable<TerminusExpiryPolicy> SourceTerminusExpiryPolicy;
-    Azure::Nullable<std::chrono::system_clock::time_point> Timeout;
-    Azure::Nullable<bool> Dynamic;
-    Azure::Core::Amqp::Models::AmqpMap DynamicNodeProperties;
-    Azure::Nullable<std::string> DistributionMode;
-    Azure::Core::Amqp::Models::AmqpMap Filter;
-    Azure::Core::Amqp::Models::AmqpValue DefaultOutcome;
-    Azure::Core::Amqp::Models::AmqpArray Outcomes;
-    Azure::Core::Amqp::Models::AmqpArray Capabilities;
+    AmqpValue Address;
+    Nullable<TerminusDurability> SourceTerminusDurability;
+    Nullable<TerminusExpiryPolicy> SourceTerminusExpiryPolicy;
+    Nullable<std::chrono::system_clock::time_point> Timeout;
+    Nullable<bool> Dynamic;
+    AmqpMap DynamicNodeProperties;
+    Nullable<std::string> DistributionMode;
+    AmqpMap Filter;
+    AmqpValue DefaultOutcome;
+    AmqpArray Outcomes;
+    AmqpArray Capabilities;
   };
 
   class MessageSource final {
@@ -42,14 +42,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     ~MessageSource() = default;
 
     // Create a described source from an AMQP Value - used in the OnLinkAttached.
-    MessageSource(Azure::Core::Amqp::Models::AmqpValue const& value);
+    MessageSource(AmqpValue const& value);
 
     /** @brief Copies a MessageSource */
     MessageSource(MessageSource const& that);
 
     /** Assigns a message source from another.
      */
-    MessageSource& operator=(MessageSource const& other);
+    MessageSource& operator=(MessageSource const& that);
 
     /** @brief Creates a message source with detailed options.
      *
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @remarks Creates an AMQP Described value with the descriptor being the message source (0x29).
      */
-    Azure::Core::Amqp::Models::AmqpValue AsAmqpValue() const;
+    AmqpValue AsAmqpValue() const;
 
     /** @brief Gets the address of the source.
      *
@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
+    AmqpValue GetAddress() const;
 
     /** @brief Gets the durability of the source.
      *
@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
+    AmqpMap GetDynamicNodeProperties() const;
 
     /** @brief Gets the distribution mode of the source.
      *
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * set](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-filter-set)
      * for more information.
      */
-    Azure::Core::Amqp::Models::AmqpMap GetFilter() const;
+    AmqpMap GetFilter() const;
 
     /** @brief Gets the default outcome of the source.
      *
@@ -168,7 +168,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message source.
      *
      */
-    Azure::Core::Amqp::Models::AmqpValue GetDefaultOutcome() const;
+    AmqpValue GetDefaultOutcome() const;
 
     /** @brief Gets the outcomes of the source.
      *
@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    Azure::Core::Amqp::Models::AmqpArray GetOutcomes() const;
+    AmqpArray GetOutcomes() const;
 
     /** @brief Gets the capabilities of the source.
      *
@@ -190,7 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message source.
      *
      */
-    Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
+    AmqpArray GetCapabilities() const;
 
   private:
     operator SOURCE_INSTANCE_TAG*() const { return m_source.get(); }

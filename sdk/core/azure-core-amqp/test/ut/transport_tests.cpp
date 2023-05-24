@@ -69,7 +69,7 @@ TEST_F(TestTlsTransport, SimpleSend)
         memcpy(val.get(), bytes, size);
         receiveBytesQueue.CompleteOperation(size, std::move(val));
       }
-      void OnIoError() override
+      void OnIOError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
@@ -180,7 +180,7 @@ TEST_F(TestSocketTransport, SimpleSend)
         memcpy(val.get(), bytes, size);
         receiveBytesQueue.CompleteOperation(size, std::move(val));
       }
-      void OnIoError() override
+      void OnIOError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
@@ -317,7 +317,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
         GTEST_LOG_(INFO) << "OnListener Send Bytes Complete..." << StringFromSendResult(sendResult);
       });
     }
-    void OnIoError() override
+    void OnIOError() override
     {
       GTEST_LOG_(INFO) << "On I/O Error";
       errorQueue.CompleteOperation(true);
@@ -345,7 +345,7 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
       receiveBytesQueue.CompleteOperation(echoedBytes);
     }
-    void OnIoError() override
+    void OnIOError() override
     {
       GTEST_LOG_(INFO) << "On I/O Error";
       errorQueue.CompleteOperation(true);

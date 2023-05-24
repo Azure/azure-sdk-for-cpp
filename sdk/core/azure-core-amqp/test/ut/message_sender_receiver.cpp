@@ -214,9 +214,9 @@ private:
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::AmqpValue source,
-      Azure::Core::Amqp::Models::AmqpValue target,
-      Azure::Core::Amqp::Models::AmqpValue properties) override
+      Azure::Core::Amqp::Models::AmqpValue const& source,
+      Azure::Core::Amqp::Models::AmqpValue const& target,
+      Azure::Core::Amqp::Models::AmqpValue const& properties) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     MessageReceiverOptions receiverOptions;
@@ -375,7 +375,8 @@ TEST_F(TestMessages, SenderSendAsync)
   Session session(connection, nullptr);
 
   // Set up a 30 second deadline on the receiver.
-  Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(Azure::DateTime::clock::now()+std::chrono::seconds(30));
+  Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+      Azure::DateTime::clock::now() + std::chrono::seconds(30));
 
   // Ensure that the thread is started before we start using the message sender.
   std::mutex threadRunningMutex;

@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionEvents* eventHandler)
       : m_connectionToPoll(connection), m_session{session_create_from_endpoint(
                                             *connection,
-                                            endpoint.Release(),
+                                            EndpointFactory::Release(endpoint),
                                             SessionImpl::OnLinkAttachedFn,
                                             this)},
         m_options{options}, m_eventHandler{eventHandler}
@@ -279,7 +279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       AMQP_VALUE_DATA_TAG* properties)
   {
     SessionImpl* session = static_cast<SessionImpl*>(context);
-    _internal::LinkEndpoint linkEndpoint(newLinkEndpoint);
+    _internal::LinkEndpoint linkEndpoint(LinkEndpointFactory::CreateLinkEndpoint(newLinkEndpoint));
     if (session->m_eventHandler)
     {
       return session->m_eventHandler->OnLinkAttached(
@@ -301,4 +301,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     static_cast<void>(role);
   }
+
+  _internal::Endpoint EndpointFactory::CreateEndpoint(ENDPOINT_HANDLE endpoint)
+  {
+    return _internal::Endpoint(endpoint);
+  }
+  _internal::LinkEndpoint LinkEndpointFactory::CreateLinkEndpoint(LINK_ENDPOINT_HANDLE endpoint)
+  {
+    return _internal::LinkEndpoint(endpoint);
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail

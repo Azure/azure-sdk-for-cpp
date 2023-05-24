@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& description,
         Azure::Core::Amqp::Models::AmqpValue info);
 
-    void Poll() const;
+    void Poll();
 
     std::string GetHost() const { return m_hostName; }
     uint16_t GetPort() const { return m_port; }

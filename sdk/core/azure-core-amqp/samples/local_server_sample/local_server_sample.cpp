@@ -166,9 +166,9 @@ private:
       LinkEndpoint& newLink,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::AmqpValue source,
-      Azure::Core::Amqp::Models::AmqpValue target,
-      Azure::Core::Amqp::Models::AmqpValue) override
+      Azure::Core::Amqp::Models::AmqpValue const&source,
+      Azure::Core::Amqp::Models::AmqpValue const&target,
+      Azure::Core::Amqp::Models::AmqpValue const&) override
   {
     Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);
     Azure::Core::Amqp::Models::_internal::MessageTarget messageTarget(target);

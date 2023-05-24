@@ -65,8 +65,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpMessage& operator=(AmqpMessage&&) = default;
 
-    bool operator==(AmqpMessage const& other) const noexcept;
-    bool operator!=(AmqpMessage const& other) const noexcept { return !(*this == other); }
+    bool operator==(AmqpMessage const& that) const noexcept;
+    bool operator!=(AmqpMessage const& that) const noexcept { return !(*this == that); }
 
     AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
     operator bool() const noexcept { return m_hasValue; }

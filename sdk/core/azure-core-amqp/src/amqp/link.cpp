@@ -126,7 +126,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Models::AmqpValue targetValue(target.AsAmqpValue());
     m_link = link_create_from_endpoint(
         *session,
-        linkEndpoint.Release(),
+        LinkEndpointFactory::Release(linkEndpoint),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
         sourceValue,

@@ -187,9 +187,9 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::AmqpValue source,
-      Azure::Core::Amqp::Models::AmqpValue target,
-      Azure::Core::Amqp::Models::AmqpValue) override
+      Azure::Core::Amqp::Models::AmqpValue const& source,
+      Azure::Core::Amqp::Models::AmqpValue const& target,
+      Azure::Core::Amqp::Models::AmqpValue const&) override
   {
     GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
     auto newLink = std::make_unique<Azure::Core::Amqp::_detail::Link>(

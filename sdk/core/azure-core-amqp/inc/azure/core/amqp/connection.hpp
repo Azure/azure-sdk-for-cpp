@@ -123,7 +123,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * In this state an error has occurred on the connection. It is illegal for either endpoint to
      * write anything more onto the connection. The connection can be safely closed and discarded.
      */
-    Error
+    Error,
   };
 
   class Connection;
@@ -296,7 +296,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& description,
         Azure::Core::Amqp::Models::AmqpValue info);
 
-    void Poll() const;
+    void Poll();
 
     /** @brief Gets host configured by the connection.
      *

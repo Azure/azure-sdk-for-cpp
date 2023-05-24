@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Ok,
     Error,
     Failed,
-    InstanceClosed
+    InstanceClosed,
   };
 
   enum class CbsOpenResult
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Invalid,
     Sas,
-    Jwt
+    Jwt,
   };
 
 #if defined(TESTING_BUILD)

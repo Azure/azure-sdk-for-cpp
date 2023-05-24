@@ -134,13 +134,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   }
 
   // LCOV_EXCL_START
-  void TransportImpl::OnIoErrorFn(void* context)
+  void TransportImpl::OnIOErrorFn(void* context)
   {
     TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
     if (transport->m_eventHandler)
     {
 
-      transport->m_eventHandler->OnIoError();
+      transport->m_eventHandler->OnIOError();
     }
   }
   // LCOV_EXCL_STOP
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
             this,
             OnBytesReceivedFn,
             this,
-            OnIoErrorFn,
+            OnIOErrorFn,
             this))
     {
       return _internal::TransportOpenStatus::Error;

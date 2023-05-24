@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Ok,
     Error,
     FailedBadStatus,
-    InstanceClosed
+    InstanceClosed,
   };
 
   enum class ManagementOpenStatus
@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         ManagementOptions const& options,
         ManagementEvents* managementEvents = nullptr);
 
-    Management(std::shared_ptr<Azure::Core::Amqp::_detail::ManagementImpl> impl) : m_impl{impl} {}
+    Management(std::shared_ptr<_detail::ManagementImpl> impl) : m_impl{impl} {}
     ~Management() noexcept = default;
 
     /**
@@ -167,12 +167,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @returns a ManagementOperationResult which includes the high level result of the operation,
      * the HTTP response status code, the status description, and the response message.
+     *
+     * @remark The messageToSend is intentionally passed by value because the ExecuteOperation needs
+     * to modify the message to add the required properties for the management operation.
      */
     ManagementOperationResult ExecuteOperation(
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage messageToSend,
+        Models::AmqpMessage messageToSend,
         Azure::Core::Context context = {});
 
   private:

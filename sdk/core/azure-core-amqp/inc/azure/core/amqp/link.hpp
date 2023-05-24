@@ -14,7 +14,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class Session;
-  struct LinkEndpoint;
+  class LinkEndpoint;
   enum class SenderSettleMode;
   enum class ReceiverSettleMode;
 
@@ -22,13 +22,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     None,
     Configuration,
-    UnsettledState
+    UnsettledState,
   };
 
   enum class SessionRole
   {
     Sender,
-    Receiver
+    Receiver,
   };
 }}}} // namespace Azure::Core::Amqp::_internal
 
@@ -44,10 +44,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Attached,
     Error,
   };
+
   enum class LinkTransferResult
   {
     Error,
-    Busy
+    Busy,
   };
 
   enum class LinkDeliverySettleReason
@@ -112,12 +113,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         bool close,
         std::string const& errorCondition,
         std::string const& errorDescription,
-        Azure::Core::Amqp::Models::AmqpValue& info);
+        Models::AmqpValue& info);
 
   private:
     Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
 
-    std::shared_ptr<Azure::Core::Amqp::_detail::LinkImpl> m_impl;
+    std::shared_ptr<LinkImpl> m_impl;
   };
 #endif // defined(TESTING_BUILD)
 }}}} // namespace Azure::Core::Amqp::_detail

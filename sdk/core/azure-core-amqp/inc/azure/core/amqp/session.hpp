@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     LinkDetach,
     SessionEnd,
     ConnectionClose,
-    Never
+    Never,
   };
 
   enum class SessionState
@@ -58,9 +58,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         LinkEndpoint& newLink,
         std::string const& name,
         SessionRole role,
-        Azure::Core::Amqp::Models::AmqpValue source,
-        Azure::Core::Amqp::Models::AmqpValue target,
-        Azure::Core::Amqp::Models::AmqpValue properties)
+        Models::AmqpValue const& source,
+        Models::AmqpValue const& target,
+        Models::AmqpValue const& properties)
         = 0;
   };
 
@@ -73,17 +73,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Represents the initial incoming window size for the sender. See [AMQP Session Flow
      * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
      * for more information.*/
-    Azure::Nullable<uint32_t> InitialIncomingWindowSize;
+    Nullable<uint32_t> InitialIncomingWindowSize;
     /** @brief Represents the initial outgoing window size for the sender. See [AMQP Session Flow
      * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
      * for more information.*/
-    Azure::Nullable<uint32_t> InitialOutgoingWindowSize;
+    Nullable<uint32_t> InitialOutgoingWindowSize;
 
     /** @brief Represents the maximum number of link handles which can be used on the session. See
      * [AMQP Session Flow
      * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
      * for more information.*/
-    Azure::Nullable<uint32_t> MaximumLinkCount;
+    Nullable<uint32_t> MaximumLinkCount;
   };
 
   class Session final {
@@ -140,7 +140,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
 
-    friend class Azure::Core::Amqp::_detail::SessionFactory;
+    friend class _detail::SessionFactory;
 
   private:
     /** @brief Construct a new Session object from an existing implementation instance.
@@ -150,9 +150,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks This function is used internally by the library and is not intended for use by any
      * client.
      */
-    Session(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> impl) : m_impl{impl} {}
+    Session(std::shared_ptr<_detail::SessionImpl> impl) : m_impl{impl} {}
 
-    std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> m_impl;
+    std::shared_ptr<_detail::SessionImpl> m_impl;
   };
 
 }}}} // namespace Azure::Core::Amqp::_internal

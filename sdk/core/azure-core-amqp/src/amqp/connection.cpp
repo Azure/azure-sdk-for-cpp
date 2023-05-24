@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   Connection::~Connection() {}
 
-  void Connection::Poll() const { m_impl->Poll(); }
+  void Connection::Poll()  { m_impl->Poll(); }
 
   void Connection::Listen() { m_impl->Listen(); }
   void Connection::Open() { m_impl->Open(); }
@@ -194,7 +194,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::Poll() const
+  void ConnectionImpl::Poll() 
   {
     if (m_connection)
     {
@@ -253,7 +253,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   bool ConnectionImpl::OnNewEndpointFn(void* context, ENDPOINT_HANDLE newEndpoint)
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
-    _internal::Endpoint endpoint(newEndpoint);
+    _internal::Endpoint endpoint(EndpointFactory::CreateEndpoint(newEndpoint));
     if (cn->m_eventHandler)
     {
       return cn->m_eventHandler->OnNewEndpoint(

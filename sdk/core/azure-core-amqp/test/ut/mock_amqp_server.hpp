@@ -379,9 +379,9 @@ protected:
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
-      Azure::Core::Amqp::Models::AmqpValue source,
-      Azure::Core::Amqp::Models::AmqpValue target,
-      Azure::Core::Amqp::Models::AmqpValue) override
+      Azure::Core::Amqp::Models::AmqpValue const& source,
+      Azure::Core::Amqp::Models::AmqpValue const& target,
+      Azure::Core::Amqp::Models::AmqpValue const&) override
   {
     Azure::Core::Amqp::Models::_internal::MessageSource msgSource(source);
     Azure::Core::Amqp::Models::_internal::MessageTarget msgTarget(target);

@@ -27,13 +27,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Opening,
     Open,
     Closing,
-    Error
+    Error,
   };
 
   enum class ReceiverSettleMode
   {
     First,
-    Second
+    Second,
   };
 
   class MessageReceiver;
@@ -45,8 +45,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
     Models::_internal::MessageTarget MessageTarget;
     bool EnableTrace{false};
-    Azure::Nullable<uint32_t> InitialDeliveryCount;
-    Azure::Nullable<uint64_t> MaxMessageSize;
+    Nullable<uint32_t> InitialDeliveryCount;
+    Nullable<uint64_t> MaxMessageSize;
 
     bool Batching{false};
     std::chrono::seconds BatchMaxAge{std::chrono::seconds(5)};
@@ -111,17 +111,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     void SendMessageDisposition(
         const char* linkName,
         uint32_t messageNumber,
-        Azure::Core::Amqp::Models::AmqpValue deliveryState);
+        Models::AmqpValue deliveryState);
 
-    Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
-        Azure::Core::Context context = {});
+    Models::AmqpMessage WaitForIncomingMessage(Azure::Core::Context context = {});
 
   private:
     MessageReceiver(std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> impl)
         : m_impl{impl}
     {
     }
-    friend class Azure::Core::Amqp::_detail::MessageReceiverFactory;
-    std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> m_impl;
+    friend class _detail::MessageReceiverFactory;
+    std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
   };
 }}}} // namespace Azure::Core::Amqp::_internal

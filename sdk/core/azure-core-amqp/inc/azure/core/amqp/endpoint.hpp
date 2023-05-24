@@ -17,22 +17,27 @@ extern "C"
   struct ENDPOINT_INSTANCE_TAG;
   struct LINK_ENDPOINT_INSTANCE_TAG;
 }
-
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  class EndpointFactory;
+  class LinkEndpointFactory;
+}}}} // namespace Azure::Core::Amqp::_detail
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   // An "Endpoint" is an intermediate type used to create sessions in an OnNewSession callback.
-  struct Endpoint
-  {
+  class Endpoint final {
+  public:
+    ~Endpoint();
+    Endpoint(Endpoint&& that) noexcept : m_endpoint{that.m_endpoint}
+    {
+      that.m_endpoint = nullptr;
+    }
+
+  private:
     ENDPOINT_INSTANCE_TAG* m_endpoint;
     Endpoint(ENDPOINT_INSTANCE_TAG* endpoint) : m_endpoint{endpoint} {};
-    ~Endpoint();
+
     Endpoint(Endpoint const&) = delete;
     Endpoint& operator=(Endpoint const&) = delete;
-
-    Endpoint(Endpoint&& other) noexcept : m_endpoint{other.m_endpoint}
-    {
-      other.m_endpoint = nullptr;
-    }
     Endpoint& operator=(Endpoint&& other);
     ENDPOINT_INSTANCE_TAG* Release()
     {
@@ -40,6 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       m_endpoint = nullptr;
       return rv;
     }
+    friend class Azure::Core::Amqp::_detail::EndpointFactory;
   };
 
   // A "Link Endpoint" is an intermediate type used to create new Links in an OnLinkAttached
@@ -47,26 +53,51 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   // retrieve the underlying LINK_ENDPOINT_INSTANCE_TAG is to call Release(). That is because
   // the primary use scenario for a LinkEndpoint is to call link_create_from_endpoint, and
   // link_create_from_endpoint takes ownership of the underlying LINK_ENDPOINT object.
-  struct LinkEndpoint
-  {
-    LINK_ENDPOINT_INSTANCE_TAG* m_endpoint;
-    LinkEndpoint(LINK_ENDPOINT_INSTANCE_TAG* endpoint) : m_endpoint{endpoint} {};
-    /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As
-     * such, we are not allowed to free it.*/
-    ~LinkEndpoint(){};
-    LinkEndpoint(Endpoint const&) = delete;
-    LinkEndpoint& operator=(LinkEndpoint const&) = delete;
-
-    LinkEndpoint(LinkEndpoint&& other) noexcept : m_endpoint{other.m_endpoint}
+  class LinkEndpoint final {
+  public:
+    LinkEndpoint(LinkEndpoint&& that) noexcept : m_endpoint{that.m_endpoint}
     {
-      other.m_endpoint = nullptr;
+      that.m_endpoint = nullptr;
     }
-    LinkEndpoint& operator=(Endpoint&& other);
+    ~LinkEndpoint(){};
+
+  private:
+    LINK_ENDPOINT_INSTANCE_TAG* m_endpoint;
+
+    LinkEndpoint(LINK_ENDPOINT_INSTANCE_TAG* endpoint) : m_endpoint{endpoint} {};
     LINK_ENDPOINT_INSTANCE_TAG* Release()
     {
       LINK_ENDPOINT_INSTANCE_TAG* rv = m_endpoint;
       m_endpoint = nullptr;
       return rv;
     }
+
+    /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As
+     * such, we are not allowed to free it.*/
+    LinkEndpoint(Endpoint const&) = delete;
+    LinkEndpoint& operator=(LinkEndpoint const&) = delete;
+
+    LinkEndpoint& operator=(Endpoint&& other);
+    friend class Azure::Core::Amqp::_detail::LinkEndpointFactory;
   };
 }}}} // namespace Azure::Core::Amqp::_internal
+
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  class EndpointFactory final {
+  public:
+    static _internal::Endpoint CreateEndpoint(ENDPOINT_INSTANCE_TAG* endpoint);
+    static ENDPOINT_INSTANCE_TAG* Release(_internal::Endpoint& endpoint)
+    {
+      return endpoint.Release();
+    }
+  };
+  class LinkEndpointFactory final {
+  public:
+    static _internal::LinkEndpoint CreateLinkEndpoint(LINK_ENDPOINT_INSTANCE_TAG* endpoint);
+    static LINK_ENDPOINT_INSTANCE_TAG* Release(_internal::LinkEndpoint& linkEndpoint)
+    {
+      return linkEndpoint.Release();
+    }
+  };
+
+}}}} // namespace Azure::Core::Amqp::_detail

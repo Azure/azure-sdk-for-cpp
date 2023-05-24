@@ -64,6 +64,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     static void OnOpenCompleteFn(void* context, IO_OPEN_RESULT_TAG openResult);
     static void OnCloseCompleteFn(void* context);
     static void OnBytesReceivedFn(void* context, const unsigned char* buffer, size_t size);
-    static void OnIoErrorFn(void* context);
+    static void OnIOErrorFn(void* context);
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_detail

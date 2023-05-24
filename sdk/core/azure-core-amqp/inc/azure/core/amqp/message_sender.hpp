@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Ok,
     Error,
     Timeout,
-    Cancelled
+    Cancelled,
   };
   enum class MessageSenderState
   {
@@ -34,14 +34,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Opening,
     Open,
     Closing,
-    Error
+    Error,
   };
 
   enum class SenderSettleMode
   {
     Unsettled,
     Settled,
-    Mixed
+    Mixed,
   };
 
   class MessageSender;
@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         = 0;
   };
 
-  struct MessageSenderOptions
+  struct MessageSenderOptions final
   {
     /** @brief The name of the link associated with the message sender.
      *
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Models::_internal::MessageSource MessageSource;
 
     /** @brief The Maximum message size for the link associated with the message sender. */
-    Azure::Nullable<uint64_t> MaxMessageSize;
+    Nullable<uint64_t> MaxMessageSize;
 
     /** @brief The initial delivery count for the link associated with the message.
      *
@@ -91,13 +91,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * indicates that the peer's value for the delivery-count is ahead of the sender's value.
      *
      */
-    Azure::Nullable<uint32_t> InitialDeliveryCount;
+    Nullable<uint32_t> InitialDeliveryCount;
 
     /** @brief If true, the message sender will log trace events. */
     bool EnableTrace{false};
   };
 
-  class MessageSender {
+  class MessageSender final {
   public:
     using MessageSendCompleteCallback = std::function<void(
         MessageSendStatus sendResult,
@@ -134,7 +134,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderOptions const& options,
         MessageSenderEvents* events);
 
-    virtual ~MessageSender() noexcept;
+    ~MessageSender() noexcept;
 
     MessageSender(MessageSender const&) = default;
     MessageSender& operator=(MessageSender const&) = default;
