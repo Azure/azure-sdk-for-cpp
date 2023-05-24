@@ -169,7 +169,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   };
 
   /** @brief Options used to create a connection. */
-  struct ConnectionOptions
+  struct ConnectionOptions final
   {
     /** @brief The idle timeout for the connection.
      *
@@ -338,7 +338,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return The properties for the connection.
      */
-    Azure::Core::Amqp::Models::AmqpMap GetProperties() const;
+    Models::AmqpMap GetProperties() const;
 
     /** @brief Sets the percentage of the idle timeout before an empty frame is sent to the remote
      * node.

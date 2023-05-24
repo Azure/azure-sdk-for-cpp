@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         = 0;
   };
 
-  struct SessionOptions
+  struct SessionOptions final
   {
     /** @brief The Audience to which an authentication operation applies when using Claims Based
      * Authentication. */

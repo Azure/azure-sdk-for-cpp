@@ -25,7 +25,16 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-core-amqp)
 
 ## Key concepts
 
-The AMQP Protocol is a relatively complicated 
+The AMQP Protocol is a relatively complicated protocol which is used by Azure services to communicate with clients. This library provides a
+set of classes which can be used to build Azure SDK clients which communicate with Azure services over AMQP.
+
+The AMQP library provides the following classes:
+
+- AmqpClient - The basic client used to communicate with the AMQP server.
+- MessageSender - A class which is used to send messages to an AMQP server.
+- MessageReceiver - A class which is used to receive messages from an AMQP server.
+
+
 
 
 ## Examples

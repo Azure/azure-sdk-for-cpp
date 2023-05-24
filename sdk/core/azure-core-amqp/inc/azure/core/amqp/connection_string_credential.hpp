@@ -16,13 +16,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   // "Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;EntityPath=<entity>"
   //
 
-  class ConnectionStringParser {
+  class ConnectionStringParser final {
   public:
     ConnectionStringParser(const std::string& connectionString)
     {
       ParseConnectionString(connectionString);
     }
-    virtual ~ConnectionStringParser() = default;
+    ~ConnectionStringParser() = default;
 
     std::string const& GetEndpoint() const { return m_endpoint; }
     std::string const& GetSharedAccessKeyName() const { return m_sharedAccessKeyName; }
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   };
 
   /** @brief A connection string based credential used for AMQP Connection Based Security
-   * using an SAS token.
+   * using a SAS token.
    */
   class ServiceBusSasConnectionStringCredential final
       : public Azure::Core::Credentials::TokenCredential {
@@ -75,9 +75,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         // If the user provided an entity path, but it doesn't match the one in the connection
         // string, throw.
         throw std::invalid_argument(
-            "Entity Path provided: " + entityPath
-            + " does not match connection string entity path: "
-            + m_connectionParser.GetEntityPath());
+            "Entity Path provided: '" + entityPath
+            + "' does not match connection string entity path: '"
+            + m_connectionParser.GetEntityPath() + "'.");
       }
     }
 
