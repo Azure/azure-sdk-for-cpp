@@ -14,4 +14,4 @@ add_dependencies(eventhub_sas_reader_sample Azure::azure-core-amqp)
 
 target_include_directories(eventhub_sas_reader_sample PRIVATE ${azure-core-amqp_SOURCE_DIR})
 
-target_link_libraries(eventhub_sas_reader_sample PRIVATE Azure::azure-core-amqp)
+target_link_libraries(eventhub_sas_reader_sample PRIVATE Azure::azure-core-amqp get-env-helper)

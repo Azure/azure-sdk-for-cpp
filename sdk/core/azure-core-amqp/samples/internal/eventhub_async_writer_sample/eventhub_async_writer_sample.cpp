@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
+#undef _CRT_SECURE_NO_WARNINGS
+#include <get_env.hpp>
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_sender.hpp>
@@ -15,13 +17,13 @@ int main()
 {
   auto credentials{
       std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
-          Azure::Core::_internal::Environment::GetVariable(EVENTHUB_CONNECTION_STRING))};
+          EH_CONNECTION_STRING)};
   std::string targetUrl
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   std::string targetEntity = credentials->GetEntityPath();
   if (targetEntity.empty())
   {
-    targetEntity = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+    targetEntity = GetEnvHelper::GetEnv("EVENTHUB_NAME");
   }
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";

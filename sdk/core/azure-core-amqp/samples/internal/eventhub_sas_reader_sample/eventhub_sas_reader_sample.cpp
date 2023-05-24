@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+#undef _CRT_SECURE_NO_WARNINGS
+#include <get_env.hpp>
+
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/network/sasl_transport.hpp>
@@ -13,7 +16,7 @@
 int main()
 {
   std::string eventhubConnectionString
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
+      = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
 
   auto credential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
@@ -21,7 +24,7 @@ int main()
   std::string entityPath = credential->GetEntityPath();
   if (entityPath.empty())
   {
-    entityPath = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+    entityPath = GetEnvHelper::GetEnv("EVENTHUB_NAME");
   }
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;

@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
+#undef _CRT_SECURE_NO_WARNINGS
+#include <get_env.hpp>
+
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
@@ -19,7 +22,7 @@ int main()
   // Retrieve the eventhub connection string so we can extract the host name and entity name. We are
   // NOT using the connection string to connect to the eventhub.
   std::string eventhubConnectionString
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
+      = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
   Azure::Core::Amqp::_internal::ConnectionStringParser connectionStringCredential(
       eventhubConnectionString);
   std::string eventhubsHost = connectionStringCredential.GetHostName();
@@ -29,14 +32,14 @@ int main()
   // environment variable.
   if (eventhubsEntity.empty())
   {
-    eventhubsEntity = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME");
+    eventhubsEntity = GetEnvHelper::GetEnv("EVENTHUB_NAME");
   }
 
   // Establish credentials for the eventhub client.
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      Azure::Core::_internal::Environment::GetVariable("SAMPLES_TENANT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("SAMPLES_CLIENT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("SAMPLES_CLIENT_SECRET"))};
+      GetEnvHelper::GetEnv("SAMPLES_TENANT_ID"),
+      GetEnvHelper::GetEnv("SAMPLES_CLIENT_ID"),
+      GetEnvHelper::GetEnv("SAMPLES_CLIENT_SECRET"))};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = "some";
