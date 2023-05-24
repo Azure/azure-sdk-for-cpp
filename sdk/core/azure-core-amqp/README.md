@@ -2,7 +2,7 @@
 
 Azure::Core::Amqp (`azure-core-amqp`) provides an implementation
 to enable developers to create Azure SDKs which consume the AMQP protocol. Note that this is *NOT* a general purpose AMQP library, it is intended solely for the purposes of 
-building C++ SDK clients which communicate with Azure services over AMQP.
+building Azure C++ SDK clients which communicate with Azure services over AMQP.
 
 ## Getting started
 
