@@ -180,15 +180,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void ManagementImpl::OnOpenCompleteFn(void* context, AMQP_MANAGEMENT_OPEN_RESULT openResult)
   {
     ManagementImpl* management = static_cast<ManagementImpl*>(context);
-    Log::Write(
-        Logger::Level::Informational, "OnManagementOpenComplete: " + std::to_string(openResult));
+    if (management->m_options.EnableTrace)
+    {
+      Log::Write(
+          Logger::Level::Informational, "OnManagementOpenComplete: " + std::to_string(openResult));
+    }
     management->m_openCompleteQueue.CompleteOperation(openResult);
   }
 
   void ManagementImpl::OnManagementErrorFn(void* context)
   {
-    Log::Write(Logger::Level::Error, "Error processing management operation.");
     ManagementImpl* management = static_cast<ManagementImpl*>(context);
+    if (management->m_options.EnableTrace)
+    {
+      Log::Write(Logger::Level::Error, "Error processing management operation.");
+    }
     if (management->m_eventHandler)
     {
       management->m_eventHandler->OnError();

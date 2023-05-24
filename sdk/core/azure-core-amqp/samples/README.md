@@ -73,6 +73,9 @@ Demonstrates reading messages from the Azure Event Hubs service using the AMQP p
 ### eventhub_sas_writer_sample
 Demonstrates writing messages to the Azure Event Hubs service using the AMQP protocol with SAS authentication.
 
+### eventhub_token_reader_sample
+Demonstrates reading messages from the Azure Event Hubs service using the AMQP protocol with an Azure bearer token authentication.
+
 ### eventhub_token_writer_sample
 Demonstrates writing messages to the Azure Event Hubs service using the AMQP protocol with an Azure bearer token authentication.
 

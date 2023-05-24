@@ -374,7 +374,8 @@ TEST_F(TestMessages, SenderSendAsync)
   Connection connection("localhost", connectionOptions);
   Session session(connection, nullptr);
 
-  Azure::Core::Context receiveContext;
+  // Set up a 30 second deadline on the receiver.
+  Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(Azure::DateTime::clock::now()+std::chrono::seconds(30));
 
   // Ensure that the thread is started before we start using the message sender.
   std::mutex threadRunningMutex;
@@ -387,7 +388,7 @@ TEST_F(TestMessages, SenderSendAsync)
 
       MessageTests::MessageListenerEvents events;
       Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
-      EXPECT_NO_THROW(listener.Start());
+      ASSERT_NO_THROW(listener.Start());
 
       running = true;
       threadStarted.notify_one();
