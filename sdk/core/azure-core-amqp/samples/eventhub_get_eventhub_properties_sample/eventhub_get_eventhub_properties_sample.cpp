@@ -12,9 +12,9 @@
 #include <limits>
 #include <string>
 
-#define EH_AUTHENTICATION_SCOPE "https://eventhubs.azure.net/.default"
+constexpr const char* EH_AUTHENTICATION_SCOPE = "https://eventhubs.azure.net/.default";
 
-struct EventHubProperties
+struct EventHubProperties final
 {
   std::string Name;
   std::vector<std::string> PartitionIds;
@@ -45,14 +45,15 @@ EventHubProperties GetEventHubProperties(
       "com.microsoft:eventhub" /* type of operation */,
       "" /* locales */,
       message);
+
   EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cout << "Error: " << result.Message.ApplicationProperties["status-description"];
+    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
   }
   else
   {
-    //    std::cout << "Management endpoint properties: " << result.Message;
+    std::cout << "Management endpoint properties message: " << result.Message;
     if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
     {
       throw std::runtime_error("Unexpected body type");
@@ -78,15 +79,15 @@ EventHubProperties GetEventHubProperties(
   return properties;
 }
 
-struct EventHubPartitionProperties
+struct EventHubPartitionProperties final
 {
   std::string Name;
   std::string PartitionId;
-  int64_t BeginningSequenceNumber;
-  int64_t LastEnqueuedSequenceNumber;
+  int64_t BeginningSequenceNumber{};
+  int64_t LastEnqueuedSequenceNumber{};
   std::string LastEnqueuedOffset;
   Azure::DateTime LastEnqueuedTimeUtc;
-  bool IsEmpty;
+  bool IsEmpty{};
 };
 
 EventHubPartitionProperties GetPartitionProperties(
@@ -115,14 +116,15 @@ EventHubPartitionProperties GetPartitionProperties(
       "com.microsoft:partition" /* type of operation */,
       "" /* locales */,
       message);
+
   EventHubPartitionProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cout << "Error: " << result.Message.ApplicationProperties["status-description"];
+    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
   }
   else
   {
-    //    std::cout << "Partition properties: " << result.Message;
+    std::cout << "Partition properties message: " << result.Message;
     if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
     {
       throw std::runtime_error("Unexpected body type");

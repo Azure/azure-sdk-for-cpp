@@ -256,7 +256,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * use in a client.
      */
     Connection(
-        std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport,
+        Azure::Core::Amqp::Network::_internal::Transport const&transport,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 

@@ -29,11 +29,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   // Create a connection with an existing networking Transport.
   Connection::Connection(
-      std::shared_ptr<Network::_internal::Transport> transport,
+      Network::_internal::Transport const& transport,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
       : m_impl{std::make_shared<Azure::Core::Amqp::_detail::ConnectionImpl>(
-          transport->GetImpl(),
+          transport.GetImpl(),
           options,
           eventHandler)}
   {

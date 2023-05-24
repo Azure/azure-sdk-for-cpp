@@ -127,8 +127,7 @@ private:
 
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
-    auto amqpTransport{std::make_shared<Network::_internal::Transport>(
-        Network::_internal::AmqpHeaderDetectTransportFactory::Create(transport, nullptr))};
+    auto amqpTransport{Network::_internal::AmqpHeaderDetectTransportFactory::Create(transport, nullptr)};
     ConnectionOptions options;
     options.ContainerId = "some";
     options.EnableTrace = true;
@@ -166,8 +165,8 @@ private:
       LinkEndpoint& newLink,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::AmqpValue const&source,
-      Azure::Core::Amqp::Models::AmqpValue const&target,
+      Azure::Core::Amqp::Models::AmqpValue const& source,
+      Azure::Core::Amqp::Models::AmqpValue const& target,
       Azure::Core::Amqp::Models::AmqpValue const&) override
   {
     Azure::Core::Amqp::Models::_internal::MessageSource messageSource(source);

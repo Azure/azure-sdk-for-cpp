@@ -12,7 +12,7 @@
 #include <limits>
 #include <string>
 
-#define EH_AUTHENTICATION_SCOPE "https://eventhubs.azure.net/.default"
+constexpr const char* EH_AUTHENTICATION_SCOPE = "https://eventhubs.azure.net/.default";
 
 int main()
 {

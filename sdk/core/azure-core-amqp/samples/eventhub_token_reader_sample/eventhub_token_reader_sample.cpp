@@ -63,12 +63,11 @@ int main()
 
   std::cout << "Received " << messageReceiveCount << " in "
             << std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()
-            << " milliseconds. "
+            << " milliseconds ("
             << (static_cast<float>(messageReceiveCount)
                 / static_cast<float>(
-                    std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()))
-          * 1000
-            << " msgs/sec" << std::endl;
+                    std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count()))
+            << " msgs/sec)." << std::endl;
 
   receiver.Close();
 }

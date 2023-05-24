@@ -29,7 +29,7 @@ add_executable(azure-core-amqp-tests
   session_tests.cpp
   transport_tests.cpp 
 )
-add_dependencies(azure-core-amqp-tests azure-core-amqp)
+add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 
 if (MSVC)
   # Disable warnings:
@@ -50,7 +50,7 @@ endif()
 target_include_directories(azure-core-amqp-tests PRIVATE ${azure-core-amqp_SOURCE_DIR})
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(azure-core-amqp-tests PRIVATE GTest::gtest_main azure-core-amqp)
+target_link_libraries(azure-core-amqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp)
 gtest_discover_tests( azure-core-amqp-tests )
 
 create_per_service_target_build(core azure-core-amqp-tests)

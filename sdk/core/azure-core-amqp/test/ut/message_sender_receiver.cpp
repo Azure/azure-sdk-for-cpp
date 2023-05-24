@@ -169,9 +169,9 @@ private:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    auto amqpTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+    auto amqpTransport{
         Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
-            transport, nullptr))};
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     //    options.IdleTimeout = std::chrono::minutes(5);
     options.ContainerId = "some";

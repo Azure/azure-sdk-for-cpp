@@ -43,9 +43,8 @@ TEST_F(TestConnections, SimpleConnection)
   }
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    auto socketTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
-        Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
-            "localhost", Azure::Core::Amqp::_internal::AmqpPort))};
+    auto socketTransport{Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
+        "localhost", Azure::Core::Amqp::_internal::AmqpPort)};
 
     Azure::Core::Amqp::_internal::Connection connection(socketTransport, options);
   }
@@ -223,9 +222,9 @@ private:
   virtual void OnSocketAccepted(
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
-    auto amqpTransport{std::make_shared<Azure::Core::Amqp::Network::_internal::Transport>(
+    auto amqpTransport{
         Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
-            transport, nullptr))};
+            transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "containerId";
     options.EnableTrace = true;
@@ -240,8 +239,8 @@ private:
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole,
-      Azure::Core::Amqp::Models::AmqpValue const&source,
-      Azure::Core::Amqp::Models::AmqpValue const&target,
+      Azure::Core::Amqp::Models::AmqpValue const& source,
+      Azure::Core::Amqp::Models::AmqpValue const& target,
       Azure::Core::Amqp::Models::AmqpValue const&) override
   {
     Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;

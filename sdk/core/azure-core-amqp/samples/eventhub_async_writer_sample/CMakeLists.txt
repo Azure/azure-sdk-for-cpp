@@ -10,9 +10,9 @@ project(eventhub_writer_async_sample)
 add_executable(eventhub_writer_async_sample
     eventhub_async_writer_sample.cpp
 )
-add_dependencies(eventhub_writer_async_sample azure-core-amqp)
+add_dependencies(eventhub_writer_async_sample Azure::azure-core-amqp)
 
 target_include_directories(eventhub_writer_async_sample PRIVATE ${azure-core-amqp_SOURCE_DIR})
 
 # Link test executable against the prototype.
-target_link_libraries(eventhub_writer_async_sample PRIVATE azure-core-amqp)
+target_link_libraries(eventhub_writer_async_sample PRIVATE Azure::azure-core-amqp)

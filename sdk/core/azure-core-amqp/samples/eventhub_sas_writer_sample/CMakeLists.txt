@@ -10,8 +10,8 @@ project(eventhub_sas_writer_sample)
 add_executable(eventhub_sas_writer_sample
     eventhub_sas_writer_sample.cpp
 )
-add_dependencies(eventhub_sas_writer_sample azure-core-amqp)
+add_dependencies(eventhub_sas_writer_sample Azure::azure-core-amqp)
 
 target_include_directories(eventhub_sas_writer_sample PRIVATE ${azure-core-amqp_SOURCE_DIR})
 
-target_link_libraries(eventhub_sas_writer_sample PRIVATE azure-core-amqp)
+target_link_libraries(eventhub_sas_writer_sample PRIVATE Azure::azure-core-amqp)
