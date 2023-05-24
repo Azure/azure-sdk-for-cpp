@@ -425,7 +425,7 @@ TEST_F(TestMessages, TestLocalhostVsTls)
     catch (std::runtime_error const& ex)
     {
       // The WaitForPolledResult call can throw an exception if the connection enters the "End"
-      // state. 
+      // state.
       GTEST_LOG_(INFO) << "Exception: " << ex.what();
     }
     sender.Close();

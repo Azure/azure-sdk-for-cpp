@@ -366,7 +366,7 @@ protected:
     if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
         || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
     {
-        // If the connection is closed, then we should close the connection.
+      // If the connection is closed, then we should close the connection.
       m_connectionValid = false;
       m_listenerContext.Cancel();
     }
