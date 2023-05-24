@@ -41,6 +41,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     UniqueAmqpCbsHandle m_cbs;
     std::shared_ptr<_detail::SessionImpl> m_session;
+    bool m_cbsOpen{false};
+    bool m_traceEnabled{false};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
     Azure::Core::Amqp::Common::_internal::

@@ -79,10 +79,13 @@ TEST_F(TestCbs, CbsOpen)
     {
       ClaimsBasedSecurity cbs(session);
       cbs.SetTrace(true);
-      EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
+      CbsOpenResult openResult;
+      EXPECT_EQ(CbsOpenResult::Ok, openResult = cbs.Open());
       GTEST_LOG_(INFO) << "Open Completed.";
-
-      cbs.Close();
+      if (openResult == CbsOpenResult::Ok)
+      {
+        cbs.Close();
+      }
     }
     mockServer.StopListening();
   }
