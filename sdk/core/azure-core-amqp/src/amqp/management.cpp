@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       std::string const& typeOfOperation,
       std::string const& locales,
       Azure::Core::Amqp::Models::AmqpMessage messageToSend,
-      Azure::Core::Context context)
+      Azure::Core::Context const& context)
   {
     return m_impl->ExecuteOperation(
         operationToPerform, typeOfOperation, locales, messageToSend, context);
@@ -139,7 +139,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& typeOfOperation,
       std::string const& locales,
       Azure::Core::Amqp::Models::AmqpMessage messageToSend,
-      Azure::Core::Context context)
+      Azure::Core::Context const& context)
   {
     auto token = m_session->GetSecurityToken(m_managementNodeName);
     if (!token.empty())

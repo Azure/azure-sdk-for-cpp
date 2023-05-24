@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     void Poll() {}
 
-    template <class PT, class... Ts> void Poll(PT & first, Ts &... rest)
+    template <class PT, class... Ts> void Poll(PT& first, Ts&... rest)
     {
       first.Poll();
       Poll(rest...);

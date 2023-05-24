@@ -51,8 +51,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   };
 
   class Session;
-  struct SessionEvents
-  {
+  class SessionEvents {
+  protected:
+    ~SessionEvents() {}
+
+  public:
     virtual bool OnLinkAttached(
         Session const& session,
         LinkEndpoint& newLink,

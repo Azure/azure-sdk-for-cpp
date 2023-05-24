@@ -23,6 +23,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     static Transport Create(
         std::shared_ptr<Transport> parentTransport,
         TransportEvents* eventHandler);
+    AmqpHeaderDetectTransportFactory() = delete;
   };
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

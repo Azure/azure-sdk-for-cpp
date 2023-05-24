@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   Connection::~Connection() {}
 
-  void Connection::Poll()  { m_impl->Poll(); }
+  void Connection::Poll() { m_impl->Poll(); }
 
   void Connection::Listen() { m_impl->Listen(); }
   void Connection::Open() { m_impl->Open(); }
@@ -194,8 +194,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::Poll() 
+  void ConnectionImpl::Poll()
   {
+    if (m_connectionState == _internal::ConnectionState::Error
+        || m_connectionState == _internal::ConnectionState::End)
+    {
+      throw std::runtime_error("Connection cannot be polled in the current state.");
+    }
     if (m_connection)
     {
       connection_dowork(m_connection.get());
@@ -248,6 +253,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           ConnectionStateFromCONNECTION_STATE(newState),
           ConnectionStateFromCONNECTION_STATE(oldState));
     }
+    connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
   }
 
   bool ConnectionImpl::OnNewEndpointFn(void* context, ENDPOINT_HANDLE newEndpoint)

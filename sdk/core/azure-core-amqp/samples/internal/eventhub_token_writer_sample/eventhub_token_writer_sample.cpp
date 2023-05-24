@@ -3,7 +3,6 @@
 #undef _CRT_SECURE_NO_WARNINGS
 #include <get_env.hpp>
 
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/message_sender.hpp>
@@ -21,8 +20,7 @@ int main()
 {
   // Retrieve the eventhub connection string so we can extract the host name and entity name. We are
   // NOT using the connection string to connect to the eventhub.
-  std::string eventhubConnectionString
-      = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
+  std::string eventhubConnectionString = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
   Azure::Core::Amqp::_internal::ConnectionStringParser connectionStringCredential(
       eventhubConnectionString);
   std::string eventhubsHost = connectionStringCredential.GetHostName();
@@ -93,7 +91,7 @@ int main()
                 / static_cast<float>(
                     std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()))
           * 1000.0
-            << " msgs/sec" << std::endl;
+            << " msg/sec" << std::endl;
 
   sender.Close();
 }

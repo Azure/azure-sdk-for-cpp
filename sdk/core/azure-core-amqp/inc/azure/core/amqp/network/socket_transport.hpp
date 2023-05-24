@@ -26,6 +26,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         std::string const& hostName,
         uint16_t hostPort,
         TransportEvents* eventHandler = nullptr);
+
+    SocketTransportFactory() = delete;
   };
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

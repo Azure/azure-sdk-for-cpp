@@ -127,7 +127,8 @@ private:
 
     // Create an AMQP filter transport - this will filter out all incoming messages that don't have
     // an AMQP header.
-    auto amqpTransport{Network::_internal::AmqpHeaderDetectTransportFactory::Create(transport, nullptr)};
+    auto amqpTransport{
+        Network::_internal::AmqpHeaderDetectTransportFactory::Create(transport, nullptr)};
     ConnectionOptions options;
     options.ContainerId = "some";
     options.EnableTrace = true;

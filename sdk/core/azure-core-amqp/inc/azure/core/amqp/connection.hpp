@@ -131,8 +131,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /** @brief The ConnectionEvents interface defines a series of events triggered on a connection
    * object.
    */
-  struct ConnectionEvents
-  {
+  class ConnectionEvents {
+  protected:
+    ~ConnectionEvents(){};
+
+  public:
     /** @brief Called when the connection state changes.
      *
      * @param connection The connection object whose state changed.
@@ -256,7 +259,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * use in a client.
      */
     Connection(
-        Azure::Core::Amqp::Network::_internal::Transport const&transport,
+        Azure::Core::Amqp::Network::_internal::Transport const& transport,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 

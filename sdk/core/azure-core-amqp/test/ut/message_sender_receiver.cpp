@@ -360,6 +360,80 @@ TEST_F(TestMessages, SenderOpenClose)
   listener.Stop();
 }
 
+TEST_F(TestMessages, TestLocalhostVsTls)
+{
+  MessageTests::AmqpServerMock mockServer(5671);
+
+  mockServer.StartListening();
+
+  ConnectionOptions connectionOptions;
+  //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+  connectionOptions.ContainerId = "some";
+  //  connectionOptions.EnableTrace = true;
+  connectionOptions.Port = mockServer.GetPort();
+  Connection connection("localhost", connectionOptions);
+  Session session(connection, nullptr);
+
+  {
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. OldState: "
+                         << std::to_string(static_cast<uint32_t>(oldState))
+                         << " NewState: " << std::to_string(static_cast<uint32_t>(newState));
+        (void)sender;
+      }
+    };
+
+    SenderEvents senderEvents;
+    MessageSenderOptions options;
+    options.Name = "sender-link";
+    options.MessageSource = "ingress";
+    options.SettleMode = SenderSettleMode::Settled;
+    options.MaxMessageSize = 65536;
+    MessageSender sender(session, "localhost/ingress", options, &senderEvents);
+    EXPECT_NO_THROW(sender.Open());
+
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
+
+    Azure::Core::Context context;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
+            sendCompleteQueue;
+    sender.QueueSend(
+        message,
+        [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
+          GTEST_LOG_(INFO) << "Send Complete!";
+          sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
+        });
+    try
+    {
+
+      auto result = sendCompleteQueue.WaitForPolledResult(context, connection);
+      // Because we're trying to use TLS to connect to a non-TLS port, we should get an error
+      // sending the message.
+      EXPECT_EQ(std::get<0>(*result), MessageSendStatus::Error);
+    }
+    catch (Azure::Core::OperationCancelledException const&)
+    {
+      GTEST_LOG_(INFO) << "Operation cancelled.";
+    }
+    catch (std::runtime_error const& ex)
+    {
+      // The WaitForPolledResult call can throw an exception if the connection enters the "End"
+      // state. 
+      GTEST_LOG_(INFO) << "Exception: " << ex.what();
+    }
+    sender.Close();
+  }
+  connection.Close("", "", Models::AmqpValue());
+  mockServer.StopListening();
+}
+
 TEST_F(TestMessages, SenderSendAsync)
 {
   uint16_t testPort = FindAvailableSocket();
@@ -376,7 +450,7 @@ TEST_F(TestMessages, SenderSendAsync)
 
   // Set up a 30 second deadline on the receiver.
   Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
-      Azure::DateTime::clock::now() + std::chrono::seconds(30));
+      Azure::DateTime::clock::now() + std::chrono::seconds(15));
 
   // Ensure that the thread is started before we start using the message sender.
   std::mutex threadRunningMutex;

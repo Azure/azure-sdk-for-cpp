@@ -126,7 +126,12 @@ uint16_t FindAvailableSocket()
   int count = 0;
   while (count < 20)
   {
-    uint16_t testPort = dev() % 1000 + 5000;
+    uint16_t testPort;
+    // Make absolutely sure that we don't accidentally use the TLS port.
+    do
+    {
+      testPort = dev() % 1000 + 5000;
+    } while (testPort == AmqpTlsPort);
 
     GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
 

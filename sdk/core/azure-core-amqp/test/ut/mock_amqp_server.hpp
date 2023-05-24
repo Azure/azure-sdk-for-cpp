@@ -38,6 +38,7 @@ public:
   };
 
   AmqpServerMock() { m_testPort = FindAvailableSocket(); }
+  AmqpServerMock(uint16_t listeningPort) : m_testPort{listeningPort} {}
   virtual void Poll() const {}
 
   bool WaitForConnection(
@@ -45,6 +46,10 @@ public:
       Azure::Core::Context context = {})
   {
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
+    if (result)
+    {
+      m_connectionValid = true;
+    }
     return result != nullptr;
   }
   bool WaitForMessageReceiver(std::string const& nodeName, Azure::Core::Context context = {})
@@ -205,6 +210,7 @@ public:
 
 private:
   std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
+  bool m_connectionValid{false};
   std::shared_ptr<Azure::Core::Amqp::_internal::Session> m_session;
 
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_connectionQueue;
@@ -357,6 +363,13 @@ protected:
   {
     GTEST_LOG_(INFO) << "Connection State changed. Old state: " << ConnectionStateToString(oldState)
                      << " New state: " << ConnectionStateToString(newState);
+    if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
+        || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
+    {
+        // If the connection is closed, then we should close the connection.
+      m_connectionValid = false;
+      m_listenerContext.Cancel();
+    }
   }
   virtual bool OnNewEndpoint(
       Azure::Core::Amqp::_internal::Connection const& connection,

@@ -66,8 +66,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::chrono::seconds SenderExpiryTimeout{std::chrono::seconds(0)};
   };
 
-  struct MessageReceiverEvents
-  {
+  class MessageReceiverEvents {
+  protected:
+    ~MessageReceiverEvents() = default;
+
+  public:
     virtual void OnMessageReceiverStateChanged(
         MessageReceiver const& receiver,
         MessageReceiverState newState,

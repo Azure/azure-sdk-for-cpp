@@ -45,8 +45,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   };
 
   class MessageSender;
-  struct MessageSenderEvents
-  {
+  class MessageSenderEvents {
+  protected:
+    ~MessageSenderEvents() {}
+
+  public:
     virtual void OnMessageSenderStateChanged(
         MessageSender const& sender,
         MessageSenderState newState,

@@ -15,8 +15,7 @@
 
 int main()
 {
-  std::string eventhubConnectionString
-      = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
+  std::string eventhubConnectionString = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
 
   auto credential{
       std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
@@ -76,7 +75,7 @@ int main()
                 / static_cast<float>(
                     std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()))
           * 1000.0
-            << " msgs/sec" << std::endl;
+            << " msg/sec" << std::endl;
 
   sender.Close();
 }

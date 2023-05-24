@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& typeOfOperation,
         std::string const& locales,
         Azure::Core::Amqp::Models::AmqpMessage messageToSend,
-        Azure::Core::Context context);
+        Azure::Core::Context const& context);
 
   private:
     UniqueAmqpManagementHandle m_management{};

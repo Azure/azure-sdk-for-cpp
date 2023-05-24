@@ -62,8 +62,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
    * Normally a client will not have to register for these events, but they are available for
    * clients if necessary.
    */
-  struct TransportEvents
-  {
+  class TransportEvents {
+  protected:
+    ~TransportEvents() {}
+
+  public:
     /** @brief Called when bytes are received on the transport.
      *
      * @param transport The transport on which bytes are received.

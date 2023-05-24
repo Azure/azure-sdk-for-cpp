@@ -83,8 +83,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /**
    * @brief Callback event handler for management events such as error.
    */
-  struct ManagementEvents
-  {
+  class ManagementEvents {
+  protected:
+    ~ManagementEvents() {}
+
+  public:
     /** @brief Called when an error occurs.
      */
     virtual void OnError() = 0;
@@ -176,7 +179,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& typeOfOperation,
         std::string const& locales,
         Models::AmqpMessage messageToSend,
-        Azure::Core::Context context = {});
+        Azure::Core::Context const& context = {});
 
   private:
     std::shared_ptr<Azure::Core::Amqp::_detail::ManagementImpl> m_impl;

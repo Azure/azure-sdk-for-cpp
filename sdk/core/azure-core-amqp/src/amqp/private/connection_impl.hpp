@@ -106,10 +106,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
         m_newSessionQueue;
     _internal::ConnectionEvents* m_eventHandler{};
+    _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,
         _internal::ConnectionOptions const& options);
+
+    void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
 
     static void OnEndpointFrameReceivedFn(
         void* context,

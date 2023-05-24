@@ -27,10 +27,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class Endpoint final {
   public:
     ~Endpoint();
-    Endpoint(Endpoint&& that) noexcept : m_endpoint{that.m_endpoint}
-    {
-      that.m_endpoint = nullptr;
-    }
+    Endpoint(Endpoint&& that) noexcept : m_endpoint{that.m_endpoint} { that.m_endpoint = nullptr; }
 
   private:
     ENDPOINT_INSTANCE_TAG* m_endpoint;
@@ -45,7 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       m_endpoint = nullptr;
       return rv;
     }
-    friend class Azure::Core::Amqp::_detail::EndpointFactory;
+    friend class _detail::EndpointFactory;
   };
 
   // A "Link Endpoint" is an intermediate type used to create new Links in an OnLinkAttached
@@ -78,7 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     LinkEndpoint& operator=(LinkEndpoint const&) = delete;
 
     LinkEndpoint& operator=(Endpoint&& other);
-    friend class Azure::Core::Amqp::_detail::LinkEndpointFactory;
+    friend class _detail::LinkEndpointFactory;
   };
 }}}} // namespace Azure::Core::Amqp::_internal
 
