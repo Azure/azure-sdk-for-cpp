@@ -7,18 +7,16 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   struct Messaging
   {
-    static Azure::Core::Amqp::Models::AmqpValue DeliveryReceived(
-        uint32_t sectionNumber,
-        uint64_t sectionOffset);
-    static Azure::Core::Amqp::Models::AmqpValue DeliveryAccepted();
-    static Azure::Core::Amqp::Models::AmqpValue DeliveryRejected(
+    static Models::AmqpValue DeliveryReceived(uint32_t sectionNumber, uint64_t sectionOffset);
+    static Models::AmqpValue DeliveryAccepted();
+    static Models::AmqpValue DeliveryRejected(
         std::string const& errorCondition,
         std::string const& errorDescription);
-    static Azure::Core::Amqp::Models::AmqpValue DeliveryReleased();
-    static Azure::Core::Amqp::Models::AmqpValue DeliveryModified(
+    static Models::AmqpValue DeliveryReleased();
+    static Models::AmqpValue DeliveryModified(
         bool deliveryFailed,
         bool undeliverableHere,
-        Azure::Core::Amqp::Models::AmqpValue annotations);
+        Models::AmqpValue annotations);
   };
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

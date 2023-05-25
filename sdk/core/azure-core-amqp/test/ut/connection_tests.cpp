@@ -143,7 +143,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
   public:
     std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> WaitForResult(
         Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-        Azure::Core::Context context = {})
+        Azure::Core::Context const& context = {})
     {
       GTEST_LOG_(INFO) << "Waiting for listener to accept connection.";
       auto result = m_listenerQueue.WaitForPolledResult(context, listener);
@@ -206,7 +206,7 @@ class TestSocketListenerEvents : public Azure::Core::Amqp::_internal::SessionEve
 public:
   std::unique_ptr<Azure::Core::Amqp::_internal::Connection> WaitForListener(
       Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-      Azure::Core::Context context = {})
+      Azure::Core::Context const& context = {})
   {
     auto result = m_listeningQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));

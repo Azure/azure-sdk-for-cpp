@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionEvents* eventHandler);
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> tokenCredential,
+        std::shared_ptr<Credentials::TokenCredential> tokenCredential,
         _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
 
-    void AuthenticateIfNeeded(std::string const& audience, Azure::Core::Context const& context);
+    void AuthenticateIfNeeded(std::string const& audience, Context const& context);
     std::string GetSecurityToken(std::string const& audience) const;
 
   private:
@@ -75,16 +75,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<Credentials::TokenCredential> m_credential{};
     std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
-    std::map<std::string, Azure::Core::Credentials::AccessToken> m_tokenStore;
+    std::map<std::string, Credentials::AccessToken> m_tokenStore;
     bool m_cbsOpen{false};
 
     void Authenticate(
         bool isSasToken,
-        Azure::Core::Credentials::TokenRequestContext const& requestContext,
+        Credentials::TokenRequestContext const& requestContext,
         std::string const& audience,
-        Azure::Core::Context const& context);
+        Context const& context);
 
     static bool OnLinkAttachedFn(
         void* context,

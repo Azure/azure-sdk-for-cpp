@@ -32,10 +32,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       Network::_internal::Transport const& transport,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
-      : m_impl{std::make_shared<Azure::Core::Amqp::_detail::ConnectionImpl>(
-          transport.GetImpl(),
-          options,
-          eventHandler)}
+      : m_impl{
+          std::make_shared<_detail::ConnectionImpl>(transport.GetImpl(), options, eventHandler)}
   {
     m_impl->FinishConstruction();
   }
@@ -45,10 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       std::string const& hostName,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
-      : m_impl{std::make_shared<Azure::Core::Amqp::_detail::ConnectionImpl>(
-          hostName,
-          options,
-          eventHandler)}
+      : m_impl{std::make_shared<_detail::ConnectionImpl>(hostName, options, eventHandler)}
   {
     m_impl->FinishConstruction();
   }
@@ -62,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   void Connection::Close(
       std::string const& condition,
       std::string const& description,
-      Azure::Core::Amqp::Models::AmqpValue value)
+      Models::AmqpValue value)
   {
     m_impl->Close(condition, description, value);
   }
@@ -72,10 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   std::string Connection::GetHost() const { return m_impl->GetHost(); }
   uint16_t Connection::GetPort() const { return m_impl->GetPort(); }
   std::chrono::milliseconds Connection::GetIdleTimeout() const { return m_impl->GetIdleTimeout(); }
-  Azure::Core::Amqp::Models::AmqpMap Connection::GetProperties() const
-  {
-    return m_impl->GetProperties();
-  }
+  Models::AmqpMap Connection::GetProperties() const { return m_impl->GetProperties(); }
   void Connection::SetIdleEmptyFrameSendPercentage(double ratio)
   {
     m_impl->SetIdleEmptyFrameSendPercentage(ratio);
@@ -118,25 +110,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (options.Port == _internal::AmqpPort)
     {
       Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
-      m_transport = Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
-                        m_hostName, m_port)
-                        .GetImpl();
+      m_transport
+          = Network::_internal::SocketTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
     else if (options.Port == _internal::AmqpTlsPort)
     {
       Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
-      m_transport
-          = Azure::Core::Amqp::Network::_internal::TlsTransportFactory::Create(m_hostName, m_port)
-                .GetImpl();
+      m_transport = Network::_internal::TlsTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
     else
     {
       Log::Write(
           Logger::Level::Informational,
           "Unknown port specified, assuming socket connection transport.");
-      m_transport = Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
-                        m_hostName, m_port)
-                        .GetImpl();
+      m_transport
+          = Network::_internal::SocketTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
   }
 
@@ -186,9 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (connection_set_properties(
             m_connection.get(),
-            static_cast<Azure::Core::Amqp::Models::_detail::UniqueAmqpValueHandle>(
-                m_options.Properties)
-                .get()))
+            static_cast<Models::_detail::UniqueAmqpValueHandle>(m_options.Properties).get()))
     {
       throw std::runtime_error("Failed to set connection properties.");
     }
@@ -299,7 +285,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void ConnectionImpl::Close(
       const std::string& condition,
       const std::string& description,
-      Azure::Core::Amqp::Models::AmqpValue info)
+      Models::AmqpValue info)
   {
     if (!m_connection)
     {
@@ -347,14 +333,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return std::chrono::milliseconds(ms);
   }
 
-  Azure::Core::Amqp::Models::AmqpMap ConnectionImpl::GetProperties() const
+  Models::AmqpMap ConnectionImpl::GetProperties() const
   {
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
       throw std::runtime_error("COuld not get properties."); // LCOV_EXCL_LINE
     }
-    return Azure::Core::Amqp::Models::AmqpValue{value}.AsMap();
+    return Models::AmqpValue{value}.AsMap();
   }
 
   uint32_t ConnectionImpl::GetRemoteMaxFrameSize() const

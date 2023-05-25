@@ -66,8 +66,7 @@ int main()
             << " messages/millisecond. "
             << (static_cast<float>(messageSendCount)
                 / static_cast<float>(
-                    std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()))
-          * 1000
+                    std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count()))
             << " msg/sec" << std::endl;
 
   sender.Close();

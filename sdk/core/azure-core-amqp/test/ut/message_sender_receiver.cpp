@@ -111,7 +111,7 @@ public:
 
   std::shared_ptr<Azure::Core::Amqp::_internal::Connection> WaitForConnection(
       Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-      Azure::Core::Context context)
+      Azure::Core::Context const& context)
   {
     auto result = m_listeningQueue.WaitForPolledResult(context, listener);
     if (result)
@@ -121,7 +121,7 @@ public:
     return nullptr;
   }
   std::unique_ptr<Azure::Core::Amqp::_internal::Session> WaitForSession(
-      Azure::Core::Context context)
+      Azure::Core::Context const& context)
   {
     auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connectionToPoll);
     if (result)
@@ -130,7 +130,7 @@ public:
     }
     return nullptr;
   }
-  std::unique_ptr<MessageReceiver> WaitForReceiver(Azure::Core::Context context)
+  std::unique_ptr<MessageReceiver> WaitForReceiver(Azure::Core::Context const& context)
   {
     auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connectionToPoll);
     if (result)
@@ -139,7 +139,7 @@ public:
     }
     return nullptr;
   }
-  Azure::Core::Amqp::Models::AmqpMessage WaitForMessage(Azure::Core::Context context)
+  Azure::Core::Amqp::Models::AmqpMessage WaitForMessage(Azure::Core::Context const& context)
   {
     auto result = m_messageQueue.WaitForPolledResult(context, *m_connectionToPoll);
     if (result)

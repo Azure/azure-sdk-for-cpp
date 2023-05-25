@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
   public:
     ConnectionImpl(
-        std::shared_ptr<Azure::Core::Amqp::Network::_detail::TransportImpl> transport,
+        std::shared_ptr<Network::_detail::TransportImpl> transport,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Close(
         std::string const& condition,
         std::string const& description,
-        Azure::Core::Amqp::Models::AmqpValue info);
+        Models::AmqpValue info);
 
     void Poll();
 
@@ -93,8 +93,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::chrono::milliseconds GetIdleTimeout() const;
     void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
 
-    void SetProperties(Azure::Core::Amqp::Models::AmqpValue properties);
-    Azure::Core::Amqp::Models::AmqpMap GetProperties() const;
+    void SetProperties(Models::AmqpValue properties);
+    Models::AmqpMap GetProperties() const;
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;

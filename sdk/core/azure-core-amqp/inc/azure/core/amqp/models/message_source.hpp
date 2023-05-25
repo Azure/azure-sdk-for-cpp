@@ -18,7 +18,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TA
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  struct MessageSourceOptions
+  struct MessageSourceOptions final
   {
     AmqpValue Address;
     Nullable<TerminusDurability> SourceTerminusDurability;

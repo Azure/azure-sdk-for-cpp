@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @returns The result of the open operation.
      */
-    ManagementOpenStatus Open(Azure::Core::Context const& context = {});
+    ManagementOpenStatus Open(Context const& context = {});
 
     /**
      * @brief Close the management instance.
@@ -179,10 +179,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& typeOfOperation,
         std::string const& locales,
         Models::AmqpMessage messageToSend,
-        Azure::Core::Context const& context = {});
+        Context const& context = {});
 
   private:
-    std::shared_ptr<Azure::Core::Amqp::_detail::ManagementImpl> m_impl;
+    std::shared_ptr<_detail::ManagementImpl> m_impl;
   };
 
 }}}} // namespace Azure::Core::Amqp::_internal

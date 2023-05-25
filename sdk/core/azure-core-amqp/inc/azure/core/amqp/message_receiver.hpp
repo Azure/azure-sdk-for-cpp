@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
     // LinkFilter
     bool ManualCredits{};
-    Azure::Core::Amqp::Models::AmqpValue Properties;
+    Models::AmqpValue Properties;
 
     std::vector<std::string> SenderCapabilities;
     LinkDurability SenderDurability{};
@@ -76,9 +76,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageReceiverState newState,
         MessageReceiverState oldState)
         = 0;
-    virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+    virtual Models::AmqpValue OnMessageReceived(
         MessageReceiver const& receiver,
-        Azure::Core::Amqp::Models::AmqpMessage const& message)
+        Models::AmqpMessage const& message)
         = 0;
   };
 
@@ -106,7 +106,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     operator bool() const;
 
-    void Open(Azure::Core::Context const& context = {});
+    void Open(Context const& context = {});
     void Close();
     std::string GetLinkName() const;
     std::string GetSourceName() const;
@@ -116,13 +116,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         uint32_t messageNumber,
         Models::AmqpValue deliveryState);
 
-    Models::AmqpMessage WaitForIncomingMessage(Azure::Core::Context context = {});
+    Models::AmqpMessage WaitForIncomingMessage(Context const& context = {});
 
   private:
-    MessageReceiver(std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> impl)
-        : m_impl{impl}
-    {
-    }
+    MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}
     friend class _detail::MessageReceiverFactory;
     std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
   };

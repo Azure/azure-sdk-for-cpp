@@ -30,23 +30,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     TransportImpl(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler);
 
     virtual ~TransportImpl();
-    virtual _internal::TransportOpenStatus Open(Azure::Core::Context const& context);
-    virtual void Close(Azure::Core::Context const& context);
-    virtual bool Send(
-        uint8_t*,
-        size_t,
-        Azure::Core::Amqp::Network::_internal::Transport::TransportSendCompleteFn) const;
+    virtual _internal::TransportOpenStatus Open(Context const& context);
+    virtual void Close(Context const& context);
+    virtual bool Send(uint8_t*, size_t, Network::_internal::Transport::TransportSendCompleteFn)
+        const;
     void Poll() const;
     operator XIO_HANDLE() { return m_xioInstance.get(); }
     XIO_HANDLE Release() { return m_xioInstance.release(); }
-    void SetEventHandler(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler)
+    void SetEventHandler(Network::_internal::TransportEvents* eventHandler)
     {
       m_eventHandler = eventHandler;
     }
 
     static std::shared_ptr<TransportImpl> CreateFromXioHandle(
         XIO_HANDLE instance,
-        Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler)
+        Network::_internal::TransportEvents* eventHandler)
     {
       return std::shared_ptr<TransportImpl>(
           new TransportImpl(instance, eventHandler), [](TransportImpl* p) { delete p; });
@@ -57,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::TransportOpenStatus>
         m_openCompleteQueue;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_closeCompleteQueue;
-    Azure::Core::Amqp::Network::_internal::TransportEvents* m_eventHandler;
+    Network::_internal::TransportEvents* m_eventHandler;
 
     bool m_isOpen{false};
 

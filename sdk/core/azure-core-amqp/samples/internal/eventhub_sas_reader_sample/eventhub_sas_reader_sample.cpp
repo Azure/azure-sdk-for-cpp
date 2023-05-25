@@ -7,7 +7,6 @@
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/network/sasl_transport.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <chrono>
 #include <iostream>
 #include <limits>
@@ -68,8 +67,7 @@ int main()
             << " milliseconds. "
             << (static_cast<float>(messageReceiveCount)
                 / static_cast<float>(
-                    std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()))
-          * 1000
+                    std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count()))
             << " msg/sec" << std::endl;
 
   receiver.Close();

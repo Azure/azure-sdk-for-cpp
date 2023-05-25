@@ -54,10 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    * @returns A tuple consisting of the status code for the open and the description of the
    * status.
    */
-  ManagementOpenStatus Management::Open(Azure::Core::Context const& context)
-  {
-    return m_impl->Open(context);
-  }
+  ManagementOpenStatus Management::Open(Context const& context) { return m_impl->Open(context); }
 
   /**
    * @brief Close the management instance.
@@ -68,8 +65,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       std::string const& operationToPerform,
       std::string const& typeOfOperation,
       std::string const& locales,
-      Azure::Core::Amqp::Models::AmqpMessage messageToSend,
-      Azure::Core::Context const& context)
+      Models::AmqpMessage messageToSend,
+      Context const& context)
   {
     return m_impl->ExecuteOperation(
         operationToPerform, typeOfOperation, locales, messageToSend, context);
@@ -105,7 +102,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   ManagementImpl::~ManagementImpl() noexcept { m_eventHandler = nullptr; }
 
-  _internal::ManagementOpenStatus ManagementImpl::Open(Azure::Core::Context const& context)
+  _internal::ManagementOpenStatus ManagementImpl::Open(Context const& context)
   {
     if (amqp_management_open_async(
             m_management.get(),
@@ -138,14 +135,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& operationToPerform,
       std::string const& typeOfOperation,
       std::string const& locales,
-      Azure::Core::Amqp::Models::AmqpMessage messageToSend,
-      Azure::Core::Context const& context)
+      Models::AmqpMessage messageToSend,
+      Context const& context)
   {
     auto token = m_session->GetSecurityToken(m_managementNodeName);
     if (!token.empty())
     {
-      messageToSend.ApplicationProperties["security_token"]
-          = Azure::Core::Amqp::Models::AmqpValue{token};
+      messageToSend.ApplicationProperties["security_token"] = Models::AmqpValue{token};
     }
     if (!amqp_management_execute_operation_async(
             m_management.get(),

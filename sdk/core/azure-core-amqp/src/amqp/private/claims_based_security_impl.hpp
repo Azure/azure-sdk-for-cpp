@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl {
 
   public:
-    ClaimsBasedSecurityImpl(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> session);
+    ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session);
     virtual ~ClaimsBasedSecurityImpl() noexcept;
 
     // Disable copy and move because the underlying m_cbs takes a reference to this object.
@@ -29,13 +29,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurityImpl(ClaimsBasedSecurityImpl&&) noexcept = delete;
     ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl&&) noexcept = delete;
 
-    CbsOpenResult Open(Azure::Core::Context context);
+    CbsOpenResult Open(Context const& context);
     void Close();
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,
-        Azure::Core::Context context);
+        Context const& context);
     void SetTrace(bool traceEnabled);
 
   private:

@@ -47,7 +47,7 @@ if (MSVC)
   target_compile_options(azure-core-amqp-tests PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
-target_include_directories(azure-core-amqp-tests PRIVATE ${azure-core-amqp_SOURCE_DIR})
+target_include_directories(azure-core-amqp-tests PRIVATE Azure::azure-core-amqp)
 
 # Link test executable against gtest & gtest_main
 target_link_libraries(azure-core-amqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp)

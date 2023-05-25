@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class Session;
   class SessionEvents {
   protected:
-    ~SessionEvents() {}
+    ~SessionEvents() = default;
 
   public:
     virtual bool OnLinkAttached(
@@ -100,7 +100,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Session(
         Connection const& parentConnection,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Credentials::TokenCredential> credential,
         SessionOptions const& options = {},
         SessionEvents* eventHandler = nullptr);
 

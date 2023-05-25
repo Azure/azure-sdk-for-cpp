@@ -132,13 +132,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    *
    * @return Authentication token.
    *
-   * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+   * @throw Credentials::AuthenticationException Authentication error occurred.
    */
-  Azure::Core::Credentials::AccessToken ServiceBusSasConnectionStringCredential::GetToken(
-      Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+  Credentials::AccessToken ServiceBusSasConnectionStringCredential::GetToken(
+      Credentials::TokenRequestContext const& tokenRequestContext,
       Context const& context) const
   {
-    Azure::Core::Credentials::AccessToken rv;
+    Credentials::AccessToken rv;
     rv.ExpiresOn = Azure::DateTime::clock::now() + tokenRequestContext.MinimumExpiration;
     rv.Token = GenerateSasToken(static_cast<std::chrono::system_clock::time_point>(rv.ExpiresOn));
     (void)context;

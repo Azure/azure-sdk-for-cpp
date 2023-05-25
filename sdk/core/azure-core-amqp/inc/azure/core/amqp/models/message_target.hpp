@@ -19,7 +19,7 @@ using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_IN
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  struct MessageTargetOptions
+  struct MessageTargetOptions final
   {
     AmqpValue Address;
     Nullable<TerminusDurability> TerminusDurabilityValue;
@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @remarks Normally used in the OnLinkAttached callback.
      */
-    MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
+    MessageTarget(Models::AmqpValue const& value);
 
     MessageTarget& operator=(MessageTarget const& that);
 

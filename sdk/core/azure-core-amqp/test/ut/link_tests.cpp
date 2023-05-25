@@ -209,17 +209,17 @@ public:
   LinkSocketListenerEvents() {}
   std::shared_ptr<Connection> WaitForConnection(
       Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-      Azure::Core::Context context)
+      Azure::Core::Context const& context)
   {
     auto result = m_listeningQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<Session> WaitForSession(Azure::Core::Context context)
+  std::unique_ptr<Session> WaitForSession(Azure::Core::Context const& context)
   {
     auto result = m_listeningSessionQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
-  std::unique_ptr<Azure::Core::Amqp::_detail::Link> WaitForLink(Azure::Core::Context context)
+  std::unique_ptr<Azure::Core::Amqp::_detail::Link> WaitForLink(Azure::Core::Context const& context)
   {
     auto result = m_receiveLinkQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));

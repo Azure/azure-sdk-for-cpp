@@ -78,7 +78,7 @@ TEST_F(TestTlsTransport, SimpleSend)
     public:
       std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
           Transport const& transport,
-          Azure::Core::Context context)
+          Azure::Core::Context const& context)
       {
         auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
         return std::make_tuple(std::get<0>(*result), std::move(std::get<1>(*result)));
@@ -189,7 +189,7 @@ TEST_F(TestSocketTransport, SimpleSend)
     public:
       std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
           Transport const& transport,
-          Azure::Core::Context context)
+          Azure::Core::Context const& context)
       {
         auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
         return std::make_tuple(std::get<0>(*result), std::move(std::get<1>(*result)));
@@ -275,12 +275,14 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
     std::shared_ptr<Transport> GetListenerTransport(
         SocketListener const& listener,
-        Azure::Core::Context context)
+        Azure::Core::Context const& context)
     {
       auto result = m_listenerTransportQueue.WaitForPolledResult(context, listener);
       return std::move(std::get<0>(*result));
     }
-    std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
+    std::vector<uint8_t> WaitForReceive(
+        Transport const& transport,
+        Azure::Core::Context const& context)
     {
       auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
       if (result)
@@ -352,7 +354,9 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
     }
 
   public:
-    std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
+    std::vector<uint8_t> WaitForReceive(
+        Transport const& transport,
+        Azure::Core::Context const& context)
     {
       auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
       return std::get<0>(*result);

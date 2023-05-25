@@ -44,7 +44,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      * @returns A tuple consisting of the status code for the open and the description of the
      * status.
      */
-    _internal::ManagementOpenStatus Open(Azure::Core::Context const& context = {});
+    _internal::ManagementOpenStatus Open(Context const& context = {});
 
     /**
      * @brief Close the management instance.
@@ -55,8 +55,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage messageToSend,
-        Azure::Core::Context const& context);
+        Models::AmqpMessage messageToSend,
+        Context const& context);
 
   private:
     UniqueAmqpManagementHandle m_management{};

@@ -204,7 +204,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * connection and its container.
      *
      */
-    Azure::Core::Amqp::Models::AmqpMap Properties;
+    Models::AmqpMap Properties;
 
     /** @brief Port used to communicate with server.
      *
@@ -259,7 +259,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * use in a client.
      */
     Connection(
-        Azure::Core::Amqp::Network::_internal::Transport const& transport,
+        Network::_internal::Transport const& transport,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 
@@ -297,7 +297,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     void Close(
         std::string const& condition,
         std::string const& description,
-        Azure::Core::Amqp::Models::AmqpValue info);
+        Models::AmqpValue info);
 
     void Poll();
 
@@ -368,9 +368,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * called by clients.
      *
      */
-    Connection(std::shared_ptr<Azure::Core::Amqp::_detail::ConnectionImpl> impl) : m_impl{impl} {}
+    Connection(std::shared_ptr<_detail::ConnectionImpl> impl) : m_impl{impl} {}
 
-    std::shared_ptr<Azure::Core::Amqp::_detail::ConnectionImpl> m_impl;
+    std::shared_ptr<_detail::ConnectionImpl> m_impl;
     friend class _detail::ConnectionFactory;
   };
 }}}} // namespace Azure::Core::Amqp::_internal

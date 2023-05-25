@@ -85,19 +85,19 @@ public:
 
   std::unique_ptr<Connection> WaitForIncomingConnection(
       Network::_internal::SocketListener& listener,
-      Azure::Core::Context context = {})
+      Azure::Core::Context const& context = {})
   {
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
     return std::move(std::get<0>(*result));
   }
 
-  std::unique_ptr<Session> WaitForNewSession(Azure::Core::Context context = {})
+  std::unique_ptr<Session> WaitForNewSession(Azure::Core::Context const& context = {})
   {
     auto result = m_sessionQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
   }
 
-  std::unique_ptr<MessageReceiver> WaitForMessageReceiver(Azure::Core::Context context = {})
+  std::unique_ptr<MessageReceiver> WaitForMessageReceiver(Azure::Core::Context const& context = {})
   {
     auto result = m_messageReceiverQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
@@ -107,7 +107,7 @@ public:
   // needs to wait on multiple waiters (both the connection and the transport).
   template <class... Waiters>
   Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
-      Azure::Core::Context context,
+      Azure::Core::Context const& context,
       Waiters&... waiters)
   {
     auto result = m_messageQueue.WaitForPolledResult(context, waiters...);

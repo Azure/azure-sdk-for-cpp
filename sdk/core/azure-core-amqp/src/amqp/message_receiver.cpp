@@ -67,8 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   void MessageReceiver::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
   void MessageReceiver::Close() { m_impl->Close(); }
   std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
-  Azure::Core::Amqp::Models::AmqpMessage MessageReceiver::WaitForIncomingMessage(
-      Azure::Core::Context context)
+  Models::AmqpMessage MessageReceiver::WaitForIncomingMessage(Azure::Core::Context const& context)
   {
     return m_impl->WaitForIncomingMessage(context);
   }
@@ -147,9 +146,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     MessageReceiverImpl* receiver = static_cast<MessageReceiverImpl*>(const_cast<void*>(context));
 
-    auto incomingMessage(
-        Azure::Core::Amqp::Models::_internal::AmqpMessageFactory::FromUamqp(message));
-    Azure::Core::Amqp::Models::AmqpValue rv;
+    auto incomingMessage(Models::_internal::AmqpMessageFactory::FromUamqp(message));
+    Models::AmqpValue rv;
     if (receiver->m_eventHandler)
     {
       rv = receiver->m_eventHandler->OnMessageReceived(
@@ -163,11 +161,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return amqpvalue_clone(rv);
   }
 
-  Azure::Core::Amqp::Models::AmqpValue MessageReceiverImpl::OnMessageReceived(
-      Azure::Core::Amqp::Models::AmqpMessage message)
+  Models::AmqpValue MessageReceiverImpl::OnMessageReceived(Models::AmqpMessage message)
   {
     m_messageQueue.CompleteOperation(message);
-    return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+    return Models::_internal::Messaging::DeliveryAccepted();
   }
 
   MessageReceiverImpl::~MessageReceiverImpl() noexcept

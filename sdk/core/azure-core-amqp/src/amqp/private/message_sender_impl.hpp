@@ -49,15 +49,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl(MessageSenderImpl&&) noexcept = delete;
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
-    void Open(Azure::Core::Context const& context);
+    void Open(Context const& context);
     void Close();
-    std::tuple<_internal::MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> Send(
-        Azure::Core::Amqp::Models::AmqpMessage const& message,
-        Azure::Core::Context context);
+    std::tuple<_internal::MessageSendStatus, Models::AmqpValue> Send(
+        Models::AmqpMessage const& message,
+        Context const& context);
     void QueueSend(
-        Azure::Core::Amqp::Models::AmqpMessage const& message,
+        Models::AmqpMessage const& message,
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
-        Azure::Core::Context context);
+        Context const& context);
 
   private:
     static void OnMessageSenderStateChangedFn(
@@ -73,9 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
 
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::Models::AmqpMessage>
-        m_messageQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
 
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::MessageTarget m_target;

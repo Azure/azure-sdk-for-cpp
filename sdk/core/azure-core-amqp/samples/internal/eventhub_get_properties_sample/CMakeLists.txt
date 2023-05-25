@@ -12,6 +12,4 @@ add_executable(eventhub_get_eventhub_properties_sample
 )
 add_dependencies(eventhub_get_eventhub_properties_sample Azure::azure-core-amqp)
 
-target_include_directories(eventhub_get_eventhub_properties_sample PRIVATE ${azure-core-amqp_SOURCE_DIR} Azure::azure-identity)
-
 target_link_libraries(eventhub_get_eventhub_properties_sample PRIVATE Azure::azure-core-amqp Azure::azure-identity get-env-helper)

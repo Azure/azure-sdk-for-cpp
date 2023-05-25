@@ -54,18 +54,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
   }
 
-  void MessageSender::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
+  void MessageSender::Open(Context const& context) { m_impl->Open(context); }
   void MessageSender::Close() { m_impl->Close(); }
-  std::tuple<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> MessageSender::Send(
-      Azure::Core::Amqp::Models::AmqpMessage const& message,
-      Azure::Core::Context context)
+  std::tuple<MessageSendStatus, Models::AmqpValue> MessageSender::Send(
+      Models::AmqpMessage const& message,
+      Context const& context)
   {
     return m_impl->Send(message, context);
   }
   void MessageSender::QueueSend(
-      Azure::Core::Amqp::Models::AmqpMessage const& message,
+      Models::AmqpMessage const& message,
       MessageSendCompleteCallback onSendComplete,
-      Azure::Core::Context context)
+      Context const& context)
   {
     return m_impl->QueueSend(message, onSendComplete, context);
   }
@@ -186,7 +186,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void MessageSenderImpl::Open(Azure::Core::Context const& context)
+  void MessageSenderImpl::Open(Context const& context)
   {
     // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
     // it.
@@ -250,16 +250,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
   void MessageSenderImpl::QueueSend(
-      Azure::Core::Amqp::Models::AmqpMessage const& message,
+      Models::AmqpMessage const& message,
       Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
-      Azure::Core::Context context)
+      Context const& context)
   {
     auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
                        decltype(onSendComplete),
                        RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
     auto result = messagesender_send_async(
         m_messageSender.get(),
-        Azure::Core::Amqp::Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
+        Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
         std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
         operation.release(),
         0 /*timeout*/);
@@ -270,18 +270,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     (void)context;
   }
 
-  std::tuple<_internal::MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> MessageSenderImpl::
-      Send(Azure::Core::Amqp::Models::AmqpMessage const& message, Azure::Core::Context context)
+  std::tuple<_internal::MessageSendStatus, Models::AmqpValue> MessageSenderImpl::Send(
+      Models::AmqpMessage const& message,
+      Context const& context)
   {
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::_internal::MessageSendStatus,
-        Azure::Core::Amqp::Models::AmqpValue>
-        sendCompleteQueue;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<Azure::Core::Amqp::_internal::MessageSendStatus, Models::AmqpValue>
+            sendCompleteQueue;
 
     QueueSend(
         message,
         [&](Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
-            Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
+            Models::AmqpValue deliveryStatus) {
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         },
         context);

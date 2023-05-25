@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     operator bool() const { return (m_messageReceiver != nullptr); }
 
-    void Open(Azure::Core::Context const& context);
+    void Open(Context const& context);
     void Close();
     std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
@@ -68,12 +68,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SendMessageDisposition(
         const char* linkName,
         uint32_t messageNumber,
-        Azure::Core::Amqp::Models::AmqpValue deliveryState);
+        Models::AmqpValue deliveryState);
 
     template <class... Waiters>
-    Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
-        Azure::Core::Context context,
-        Waiters&... waiters)
+    Models::AmqpMessage WaitForIncomingMessage(Context const& context, Waiters&... waiters)
     {
       auto result
           = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection(), waiters...);
@@ -91,16 +89,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Models::_internal::MessageSource m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
 
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::Models::AmqpMessage>
-        m_messageQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
 
     _internal::MessageReceiverEvents* m_eventHandler{};
 
     static AMQP_VALUE OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message);
 
-    virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-        Azure::Core::Amqp::Models::AmqpMessage message);
+    virtual Models::AmqpValue OnMessageReceived(Models::AmqpMessage message);
 
     static void OnMessageReceiverStateChangedFn(
         const void* context,

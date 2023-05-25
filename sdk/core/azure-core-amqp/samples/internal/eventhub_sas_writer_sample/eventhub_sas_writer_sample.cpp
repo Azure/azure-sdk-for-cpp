@@ -7,7 +7,6 @@
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/message_sender.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <chrono>
 #include <iostream>
 #include <limits>
@@ -73,8 +72,7 @@ int main()
             << " messages/millisecond. "
             << (static_cast<float>(messageSendCount)
                 / static_cast<float>(
-                    std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()))
-          * 1000.0
+                    std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count()))
             << " msg/sec" << std::endl;
 
   sender.Close();

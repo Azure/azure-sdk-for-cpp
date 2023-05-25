@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class MessageSender;
   class MessageSenderEvents {
   protected:
-    ~MessageSenderEvents() {}
+    ~MessageSenderEvents() = default;
 
   public:
     virtual void OnMessageSenderStateChanged(
@@ -102,9 +102,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class MessageSender final {
   public:
-    using MessageSendCompleteCallback = std::function<void(
-        MessageSendStatus sendResult,
-        Azure::Core::Amqp::Models::AmqpValue const& deliveryState)>;
+    using MessageSendCompleteCallback
+        = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
 
     /** @brief Construct a message sender.
      *
@@ -148,7 +147,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @param context The context to use for the operation.
      */
-    void Open(Azure::Core::Context const& context = {});
+    void Open(Context const& context = {});
 
     /** @brief Closes a message sender.
      *
@@ -162,28 +161,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    std::tuple<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue> Send(
-        Azure::Core::Amqp::Models::AmqpMessage const& message,
-        Azure::Core::Context context = {});
+    std::tuple<MessageSendStatus, Models::AmqpValue> Send(
+        Models::AmqpMessage const& message,
+        Context const& context = {});
 
     /** @brief Queue a message to be sent to the target of the message sender.
      */
     void QueueSend(
-        Azure::Core::Amqp::Models::AmqpMessage const& message,
+        Models::AmqpMessage const& message,
         MessageSendCompleteCallback onSendComplete,
-        Azure::Core::Context context = {});
+        Context const& context = {});
 
   private:
     /** @brief Construct a MessageSender from a low level message sender implementation.
      *
      * @remarks This function should never be called by a user. It is used internally by the SDK.
      */
-    MessageSender(std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> sender)
-        : m_impl{sender}
-    {
-    }
+    MessageSender(std::shared_ptr<_detail::MessageSenderImpl> sender) : m_impl{sender} {}
 
-    friend class Azure::Core::Amqp::_detail::MessageSenderFactory;
-    std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> m_impl;
+    friend class _detail::MessageSenderFactory;
+    std::shared_ptr<_detail::MessageSenderImpl> m_impl;
   };
 }}}} // namespace Azure::Core::Amqp::_internal

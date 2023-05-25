@@ -7,7 +7,7 @@
 #include <azure_uamqp_c/messaging.h>
 /* Common Message values */
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-  Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryAccepted()
+  Models::AmqpValue Messaging::DeliveryAccepted()
   {
     auto rv = messaging_delivery_accepted();
     if (!rv)
@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return rv;
   }
-  Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryReleased()
+  Models::AmqpValue Messaging::DeliveryReleased()
   {
     auto rv = messaging_delivery_released();
     if (!rv)
@@ -25,9 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return rv;
   }
-  Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryReceived(
-      uint32_t sectionNumber,
-      uint64_t sectionOffset)
+  Models::AmqpValue Messaging::DeliveryReceived(uint32_t sectionNumber, uint64_t sectionOffset)
   {
     auto rv = messaging_delivery_received(sectionNumber, sectionOffset);
     if (!rv)
@@ -36,7 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return rv;
   }
-  Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryRejected(
+  Models::AmqpValue Messaging::DeliveryRejected(
       std::string const& errorCondition,
       std::string const& errorDescription)
   {
@@ -49,10 +47,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return rv;
   }
-  Azure::Core::Amqp::Models::AmqpValue Messaging::DeliveryModified(
+  Models::AmqpValue Messaging::DeliveryModified(
       bool deliveryFailed,
       bool undeliverableHere,
-      Azure::Core::Amqp::Models::AmqpValue annotations)
+      Models::AmqpValue annotations)
   {
     auto rv = messaging_delivery_modified(deliveryFailed, undeliverableHere, annotations);
     if (!rv)

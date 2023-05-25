@@ -28,11 +28,8 @@ void EnsureGlobalStateInitialized()
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
   Transport::~Transport() {}
 
-  TransportOpenStatus Transport::Open(Azure::Core::Context const& context)
-  {
-    return m_impl->Open(context);
-  }
-  void Transport::Close(Azure::Core::Context const& context) { return m_impl->Close(context); }
+  TransportOpenStatus Transport::Open(Context const& context) { return m_impl->Open(context); }
+  void Transport::Close(Context const& context) { return m_impl->Close(context); }
 
   bool Transport::Send(uint8_t* buffer, size_t size, TransportSendCompleteFn callback) const
   {
@@ -48,7 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
 
-  TransportImpl::TransportImpl(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler)
+  TransportImpl::TransportImpl(Network::_internal::TransportEvents* eventHandler)
       : m_xioInstance(nullptr), m_eventHandler{eventHandler}
   {
     EnsureGlobalStateInitialized();
@@ -56,9 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   // This constructor is used by the SocketTransport and TlsTransport classes to construct a
   // transport around an already constructed XIO transport.
-  TransportImpl::TransportImpl(
-      XIO_HANDLE handle,
-      Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler)
+  TransportImpl::TransportImpl(XIO_HANDLE handle, Network::_internal::TransportEvents* eventHandler)
       : m_xioInstance{handle}, m_eventHandler{eventHandler}
   {
     assert(handle != nullptr);
@@ -77,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
     transport->m_closeCompleteQueue.CompleteOperation(true);
   }
-  void TransportImpl::Close(Azure::Core::Context const& context)
+  void TransportImpl::Close(Context const& context)
   {
     if (!m_isOpen)
     {
@@ -102,23 +97,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   void TransportImpl::OnOpenCompleteFn(void* context, IO_OPEN_RESULT ioOpenResult)
   {
     TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
-    Azure::Core::Amqp::Network::_internal::TransportOpenStatus openResult{
-        Azure::Core::Amqp::Network::_internal::TransportOpenStatus::Error};
+    Network::_internal::TransportOpenStatus openResult{
+        Network::_internal::TransportOpenStatus::Error};
     switch (ioOpenResult)
     {
         // LCOV_EXCL_START
       case IO_OPEN_RESULT_INVALID:
-        openResult = Azure::Core::Amqp::Network::_internal::TransportOpenStatus::Invalid;
+        openResult = Network::_internal::TransportOpenStatus::Invalid;
         break;
       case IO_OPEN_CANCELLED:
-        openResult = Azure::Core::Amqp::Network::_internal::TransportOpenStatus::Cancelled;
+        openResult = Network::_internal::TransportOpenStatus::Cancelled;
         break;
       case IO_OPEN_ERROR:
-        openResult = Azure::Core::Amqp::Network::_internal::TransportOpenStatus::Error;
+        openResult = Network::_internal::TransportOpenStatus::Error;
         break;
         // LCOV_EXCL_STOP
       case IO_OPEN_OK:
-        openResult = Azure::Core::Amqp::Network::_internal::TransportOpenStatus::Ok;
+        openResult = Network::_internal::TransportOpenStatus::Ok;
         break;
     }
     transport->m_openCompleteQueue.CompleteOperation(openResult);
@@ -145,7 +140,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   }
   // LCOV_EXCL_STOP
 
-  _internal::TransportOpenStatus TransportImpl::Open(Azure::Core::Context const& context)
+  _internal::TransportOpenStatus TransportImpl::Open(Context const& context)
   {
     if (m_isOpen)
     {
@@ -175,23 +170,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   {
     static void OnOperation(CompleteFn onComplete, IO_SEND_RESULT sendResult)
     {
-      Azure::Core::Amqp::Network::_internal::TransportSendStatus result{
-          Azure::Core::Amqp::Network::_internal::TransportSendStatus::Ok};
+      Network::_internal::TransportSendStatus result{Network::_internal::TransportSendStatus::Ok};
       switch (sendResult)
       {
           // LCOV_EXCL_START
         case IO_SEND_RESULT_INVALID:
-          result = Azure::Core::Amqp::Network::_internal::TransportSendStatus::Invalid;
+          result = Network::_internal::TransportSendStatus::Invalid;
           break;
         case IO_SEND_CANCELLED:
-          result = Azure::Core::Amqp::Network::_internal::TransportSendStatus::Cancelled;
+          result = Network::_internal::TransportSendStatus::Cancelled;
           break;
         case IO_SEND_ERROR:
-          result = Azure::Core::Amqp::Network::_internal::TransportSendStatus::Error;
+          result = Network::_internal::TransportSendStatus::Error;
           break;
           // LCOV_EXCL_STOP
         case IO_SEND_OK:
-          result = Azure::Core::Amqp::Network::_internal::TransportSendStatus::Ok;
+          result = Network::_internal::TransportSendStatus::Ok;
           break;
       }
       onComplete(result);
@@ -201,7 +195,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   bool TransportImpl::Send(
       unsigned char* buffer,
       size_t size,
-      Azure::Core::Amqp::Network::_internal::Transport::TransportSendCompleteFn sendComplete) const
+      Network::_internal::Transport::TransportSendCompleteFn sendComplete) const
   {
     auto operation{std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
         decltype(sendComplete),

@@ -12,6 +12,4 @@ add_executable(local_client_sample
 )
 add_dependencies(local_client_sample Azure::azure-core-amqp)
 
-target_include_directories(local_client_sample PRIVATE ${azure-core-amqp_SOURCE_DIR})
-
 target_link_libraries(local_client_sample PRIVATE Azure::azure-core-amqp)

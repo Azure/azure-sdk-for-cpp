@@ -43,7 +43,7 @@ public:
 
   bool WaitForConnection(
       Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-      Azure::Core::Context context = {})
+      Azure::Core::Context const& context = {})
   {
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
     if (result)
@@ -52,13 +52,13 @@ public:
     }
     return result != nullptr;
   }
-  bool WaitForMessageReceiver(std::string const& nodeName, Azure::Core::Context context = {})
+  bool WaitForMessageReceiver(std::string const& nodeName, Azure::Core::Context const& context = {})
   {
     auto result = m_linkMessageQueues[nodeName].MessageReceiverPresentQueue.WaitForPolledResult(
         context, *this, *m_connection);
     return result != nullptr;
   }
-  bool WaitForMessageSender(std::string const& nodeName, Azure::Core::Context context = {})
+  bool WaitForMessageSender(std::string const& nodeName, Azure::Core::Context const& context = {})
   {
     auto result = m_linkMessageQueues[nodeName].MessageSenderPresentQueue.WaitForPolledResult(
         context, *this, *m_connection);

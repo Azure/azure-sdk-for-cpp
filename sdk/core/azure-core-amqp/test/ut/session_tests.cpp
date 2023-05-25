@@ -185,7 +185,7 @@ TEST_F(TestSessions, SessionBeginEnd)
   public:
     std::shared_ptr<Network::_internal::Transport> WaitForResult(
         Network::_internal::SocketListener const& listener,
-        Azure::Core::Context context = {})
+        Azure::Core::Context const& context = {})
     {
       auto result = m_listenerQueue.WaitForPolledResult(context, listener);
       return std::get<0>(*result);

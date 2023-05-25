@@ -31,17 +31,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   ClaimsBasedSecurity::~ClaimsBasedSecurity() noexcept {}
 
-  CbsOpenResult ClaimsBasedSecurity::Open(Azure::Core::Context context)
-  {
-    return m_impl->Open(context);
-  }
+  CbsOpenResult ClaimsBasedSecurity::Open(Context const& context) { return m_impl->Open(context); }
   void ClaimsBasedSecurity::Close() { m_impl->Close(); }
 
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurity::PutToken(
       CbsTokenType tokenType,
       std::string const& audience,
       std::string const& token,
-      Azure::Core::Context context)
+      Context const& context)
 
   {
     return m_impl->PutToken(tokenType, audience, token, context);
@@ -172,7 +169,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         statusDescription ? statusDescription : std::string());
   }
 
-  CbsOpenResult ClaimsBasedSecurityImpl::Open(Azure::Core::Context context)
+  CbsOpenResult ClaimsBasedSecurityImpl::Open(Context const& context)
   {
     if (cbs_open_async(
             m_cbs.get(), ClaimsBasedSecurityImpl::OnCbsOpenCompleteFn, this, OnCbsErrorFn, this))
@@ -208,7 +205,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       CbsTokenType tokenType,
       std::string const& audience,
       std::string const& token,
-      Azure::Core::Context context)
+      Context const& context)
   {
     if (cbs_put_token_async(
             m_cbs.get(),

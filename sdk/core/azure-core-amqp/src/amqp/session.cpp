@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       Endpoint& newEndpoint,
       SessionOptions const& options,
       SessionEvents* eventHandler)
-      : m_impl{std::make_shared<Azure::Core::Amqp::_detail::SessionImpl>(
+      : m_impl{std::make_shared<_detail::SessionImpl>(
           _detail::ConnectionFactory::GetImpl(parentConnection),
           newEndpoint,
           options,
@@ -45,10 +45,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   Session::Session(
       Connection const& parentConnection,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> tokenCredential,
+      std::shared_ptr<Credentials::TokenCredential> tokenCredential,
       SessionOptions const& options,
       SessionEvents* eventHandler)
-      : m_impl{std::make_shared<Azure::Core::Amqp::_detail::SessionImpl>(
+      : m_impl{std::make_shared<_detail::SessionImpl>(
           _detail::ConnectionFactory::GetImpl(parentConnection),
           tokenCredential,
           options,
@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> tokenCredential,
+      std::shared_ptr<Credentials::TokenCredential> tokenCredential,
       _internal::SessionOptions const& options,
       _internal::SessionEvents* eventHandler)
       : m_connectionToPoll(connection),
@@ -191,15 +191,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void SessionImpl::AuthenticateIfNeeded(
-      std::string const& audience,
-      Azure::Core::Context const& context)
+  void SessionImpl::AuthenticateIfNeeded(std::string const& audience, Context const& context)
   {
     if (m_credential)
     {
       bool isSasToken
           = m_credential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
-      Azure::Core::Credentials::TokenRequestContext requestContext;
+      Credentials::TokenRequestContext requestContext;
       if (isSasToken)
       {
         requestContext.MinimumExpiration = std::chrono::minutes(60);
@@ -216,9 +214,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void SessionImpl::Authenticate(
       bool isSasToken,
-      Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+      Credentials::TokenRequestContext const& tokenRequestContext,
       std::string const& audience,
-      Azure::Core::Context const& context)
+      Context const& context)
   {
     if (m_credential)
     {
@@ -254,7 +252,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       if (m_tokenStore.find(audience) == m_tokenStore.end())
       {
-        Azure::Core::Credentials::TokenRequestContext requestContext;
+        Credentials::TokenRequestContext requestContext;
         bool isSasToken
             = m_credential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
         if (isSasToken)
@@ -283,8 +281,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (session->m_eventHandler)
     {
       return session->m_eventHandler->OnLinkAttached(
-          Azure::Core::Amqp::_detail::SessionFactory::CreateFromInternal(
-              session->shared_from_this()),
+          _detail::SessionFactory::CreateFromInternal(session->shared_from_this()),
           linkEndpoint,
           name,
           role == role_receiver ? Azure::Core::Amqp::_internal::SessionRole::Receiver

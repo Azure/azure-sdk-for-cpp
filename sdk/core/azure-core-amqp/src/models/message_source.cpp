@@ -22,7 +22,7 @@ void Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessag
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  MessageSource::MessageSource(Azure::Core::Amqp::Models::AmqpValue const& source)
+  MessageSource::MessageSource(Models::AmqpValue const& source)
   {
     if (source.IsNull())
     {
@@ -208,12 +208,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   // Convert the MessageSource into a Value.
-  Azure::Core::Amqp::Models::AmqpValue MessageSource::AsAmqpValue() const
+  Models::AmqpValue MessageSource::AsAmqpValue() const
   {
     return amqpvalue_create_source(m_source.get());
   }
 
-  Azure::Core::Amqp::Models::AmqpValue MessageSource::GetAddress() const
+  Models::AmqpValue MessageSource::GetAddress() const
   {
     AMQP_VALUE address;
     if (source_get_address(m_source.get(), &address))
@@ -290,7 +290,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  Azure::Core::Amqp::Models::AmqpMap MessageSource::GetDynamicNodeProperties() const
+  Models::AmqpMap MessageSource::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
     if (source_get_dynamic_node_properties(m_source.get(), &value))
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
   }
-  Azure::Core::Amqp::Models::AmqpMap MessageSource::GetFilter() const
+  Models::AmqpMap MessageSource::GetFilter() const
   {
     AMQP_VALUE value;
     if (source_get_filter(m_source.get(), &value))
@@ -318,7 +318,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  Azure::Core::Amqp::Models::AmqpValue MessageSource::GetDefaultOutcome() const
+  Models::AmqpValue MessageSource::GetDefaultOutcome() const
   {
     AMQP_VALUE value;
     if (source_get_default_outcome(m_source.get(), &value))
@@ -328,7 +328,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  Azure::Core::Amqp::Models::AmqpArray MessageSource::GetOutcomes() const
+  Models::AmqpArray MessageSource::GetOutcomes() const
   {
     AMQP_VALUE value;
     if (source_get_outcomes(m_source.get(), &value))
@@ -338,7 +338,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  Azure::Core::Amqp::Models::AmqpArray MessageSource::GetCapabilities() const
+  Models::AmqpArray MessageSource::GetCapabilities() const
   {
     AMQP_VALUE value;
     if (source_get_capabilities(m_source.get(), &value))

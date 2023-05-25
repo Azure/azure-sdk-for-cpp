@@ -45,8 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /** @brief A connection string based credential used for AMQP Connection Based Security
    * using a SAS token.
    */
-  class ServiceBusSasConnectionStringCredential final
-      : public Azure::Core::Credentials::TokenCredential {
+  class ServiceBusSasConnectionStringCredential final : public Credentials::TokenCredential {
   public:
     /** @brief Create an instance of the ServiceBusSasConnectionStringCredential.
      *
@@ -116,10 +115,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return Authentication token.
      *
-     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     * @throw Credentials::AuthenticationException Authentication error occurred.
      */
-    virtual Azure::Core::Credentials::AccessToken GetToken(
-        Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    virtual Credentials::AccessToken GetToken(
+        Credentials::TokenRequestContext const& tokenRequestContext,
         Context const& context) const override;
 
   private:
