@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "transport_adapter_base_test.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
@@ -16,11 +17,11 @@
 
 // The next includes are from Azure Core private headers.
 // They are included to test the connection pool from the libcurl transport adapter implementation.
+#include "curl_session_test.hpp"
+
 #include <http/curl/curl_connection_pool_private.hpp>
 #include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_session_private.hpp>
-
-#include "curl_session_test.hpp"
 
 using testing::ValuesIn;
 using namespace Azure::Core::Http::_detail;

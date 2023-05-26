@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: MIT
 // cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE
 
-#include "azure/core/http/http.hpp"
-
 #include "azure/core/base64.hpp"
 #include "azure/core/diagnostics/logger.hpp"
+#include "azure/core/http/http.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/internal/unique_handle.hpp"
@@ -16,6 +15,7 @@
 #endif
 
 #include <Windows.h>
+
 #include <algorithm>
 #include <sstream>
 #include <string>

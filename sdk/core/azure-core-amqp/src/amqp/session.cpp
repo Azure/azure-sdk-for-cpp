@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/session.hpp"
+
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/link.hpp"
 #include "private/claims_based_security_impl.hpp"
@@ -10,6 +11,7 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+
 #include <azure_uamqp_c/session.h>
 
 using namespace Azure::Core::Diagnostics::_internal;

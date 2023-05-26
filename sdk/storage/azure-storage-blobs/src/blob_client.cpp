@@ -3,6 +3,11 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
+#include "azure/storage/blobs/append_blob_client.hpp"
+#include "azure/storage/blobs/block_blob_client.hpp"
+#include "azure/storage/blobs/page_blob_client.hpp"
+#include "private/package_version.hpp"
+
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -16,12 +21,6 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-
-#include "azure/storage/blobs/append_blob_client.hpp"
-#include "azure/storage/blobs/block_blob_client.hpp"
-#include "azure/storage/blobs/page_blob_client.hpp"
-
-#include "private/package_version.hpp"
 
 #include <algorithm>
 

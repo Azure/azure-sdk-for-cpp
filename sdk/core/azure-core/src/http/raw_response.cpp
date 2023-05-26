@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/raw_response.hpp"
+
 #include "azure/core/http/http.hpp"
 
 using namespace Azure::Core::IO;

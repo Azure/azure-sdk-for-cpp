@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-
-#include <azure/core/internal/cryptography/sha_hash.hpp>
-
 #include "key_client_base_test.hpp"
 
+#include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/keyvault/keys.hpp>
 
 #include <string>

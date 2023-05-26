@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_protocol.hpp"
+
 #include "private/key_constants.hpp"
 #include "private/keyvault_constants.hpp"
 

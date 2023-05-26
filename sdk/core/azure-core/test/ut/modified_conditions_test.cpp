@@ -3,9 +3,11 @@
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/modified_conditions.hpp>
-#include <gtest/gtest.h>
+
 #include <string>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 using namespace Azure;
 

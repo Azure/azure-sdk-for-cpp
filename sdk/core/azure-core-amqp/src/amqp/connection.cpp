@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection.hpp"
+
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
@@ -9,11 +10,14 @@
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
+
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/url.hpp>
 #include <azure/core/uuid.hpp>
+
 #include <azure_uamqp_c/connection.h>
+
 #include <memory>
 
 void Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(

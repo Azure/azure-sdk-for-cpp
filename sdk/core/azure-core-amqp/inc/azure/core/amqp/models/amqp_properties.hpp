@@ -4,8 +4,10 @@
 #pragma once
 
 #include "amqp_value.hpp"
+
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
+
 #include <chrono>
 #include <vector>
 

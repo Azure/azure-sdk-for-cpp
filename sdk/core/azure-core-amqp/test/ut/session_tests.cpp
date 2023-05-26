@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "azure/core/amqp/common/async_operation_queue.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
 #include "azure/core/amqp/connection.hpp"
@@ -12,14 +10,18 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+
 #include <azure/core/context.hpp>
+#include <azure/core/platform.hpp>
+
 #include <functional>
 #include <random>
 
-#include <azure/core/platform.hpp>
+#include <gtest/gtest.h>
 #if defined(AZ_PLATFORM_POSIX)
-#include <netinet/in.h> // for sockaddr_in
 #include <poll.h> // for poll()
+
+#include <netinet/in.h> // for sockaddr_in
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();

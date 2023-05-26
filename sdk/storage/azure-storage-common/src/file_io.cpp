@@ -7,9 +7,10 @@
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
+#include <unistd.h>
+
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 #endif
 
 #if defined(AZ_PLATFORM_WINDOWS)

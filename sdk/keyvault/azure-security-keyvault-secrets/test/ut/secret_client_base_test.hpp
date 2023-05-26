@@ -6,11 +6,11 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
-#include <gtest/gtest.h>
-
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/secrets.hpp>
+
+#include <gtest/gtest.h>
 
 using namespace std::chrono_literals;
 

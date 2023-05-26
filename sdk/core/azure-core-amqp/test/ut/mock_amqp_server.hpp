@@ -14,8 +14,10 @@
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/session.hpp>
-#include <gtest/gtest.h>
+
 #include <memory>
+
+#include <gtest/gtest.h>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {

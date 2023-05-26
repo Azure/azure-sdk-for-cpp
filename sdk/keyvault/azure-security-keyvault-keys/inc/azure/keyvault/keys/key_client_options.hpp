@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include <azure/core/internal/client_options.hpp>
-
 #include "azure/keyvault/keys/dll_import_export.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
+
+#include <azure/core/internal/client_options.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 

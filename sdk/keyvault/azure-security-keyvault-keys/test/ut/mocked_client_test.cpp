@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-
 #include "mocked_transport_adapter_test.hpp"
 
 #include <azure/core/internal/strings.hpp>

@@ -2,14 +2,17 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection.hpp"
+
 #include <azure/core/amqp/common/async_operation_queue.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/network/socket_transport.hpp>
 #include <azure/core/amqp/network/tls_transport.hpp>
 #include <azure/core/platform.hpp>
-#include <gtest/gtest.h>
+
 #include <random>
 #include <utility>
+
+#include <gtest/gtest.h>
 
 extern uint16_t FindAvailableSocket();
 

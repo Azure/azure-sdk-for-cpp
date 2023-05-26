@@ -11,9 +11,11 @@
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+
 #include <azure_uamqp_c/amqpvalue.h>
 #include <azure_uamqp_c/message.h>
 #include <azure_uamqp_c/message_receiver.h>
+
 #include <memory>
 #include <vector>
 

@@ -3,8 +3,10 @@
 
 #include <azure/core/etag.hpp>
 #include <azure/core/match_conditions.hpp>
-#include <gtest/gtest.h>
+
 #include <string>
+
+#include <gtest/gtest.h>
 
 using namespace Azure;
 

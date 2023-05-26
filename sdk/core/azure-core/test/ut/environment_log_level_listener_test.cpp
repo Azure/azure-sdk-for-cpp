@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <private/environment_log_level_listener.hpp>
-
 #include <azure/core/internal/environment.hpp>
 
 #include <gtest/gtest.h>
+#include <private/environment_log_level_listener.hpp>
 
 using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;

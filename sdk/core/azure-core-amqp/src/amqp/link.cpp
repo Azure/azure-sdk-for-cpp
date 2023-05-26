@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/link.hpp"
+
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/message_sender.hpp"
 #include "azure/core/amqp/models/message_source.hpp"

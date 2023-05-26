@@ -1,15 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <algorithm>
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
+
+#include <algorithm>
 #include <chrono>
-#include <gtest/gtest.h>
 #include <random>
 #include <string>
 #include <thread>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core::Cryptography;
 

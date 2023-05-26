@@ -12,6 +12,7 @@
  */
 
 #include "jsonhelpers_private.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/json/json.hpp>

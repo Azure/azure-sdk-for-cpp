@@ -3,10 +3,10 @@
 
 #include "private/token_credential_impl.hpp"
 
+#include "private/package_version.hpp"
+
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/url.hpp>
-
-#include "private/package_version.hpp"
 
 #include <chrono>
 #include <type_traits>

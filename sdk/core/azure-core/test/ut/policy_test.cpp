@@ -3,9 +3,10 @@
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <gtest/gtest.h>
 
 #include <vector>
+
+#include <gtest/gtest.h>
 
 namespace {
 class NoOpPolicy final : public Azure::Core::Http::Policies::HttpPolicy {

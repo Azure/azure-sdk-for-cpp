@@ -23,6 +23,7 @@
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/identity.hpp>
+
 #include <chrono>
 #include <iomanip>
 #include <iostream>

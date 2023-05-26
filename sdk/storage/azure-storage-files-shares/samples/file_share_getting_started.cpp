@@ -3,11 +3,11 @@
 
 #include "get_env.hpp"
 
+#include <azure/storage/files/shares.hpp>
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
-
-#include <azure/storage/files/shares.hpp>
 
 std::string GetConnectionString()
 {

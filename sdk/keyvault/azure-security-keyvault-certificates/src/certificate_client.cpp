@@ -9,8 +9,8 @@
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
-#include <azure/core/base64.hpp>
 
+#include <azure/core/base64.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>

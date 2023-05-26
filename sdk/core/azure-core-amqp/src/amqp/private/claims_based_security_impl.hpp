@@ -3,6 +3,7 @@
 
 #pragma once
 #include "azure/core/amqp/claims_based_security.hpp"
+
 #include <azure_uamqp_c/cbs.h>
 
 struct CBS_INSTANCE_TAG;

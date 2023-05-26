@@ -3,6 +3,9 @@
 
 #include "azure/storage/files/shares/share_file_client.hpp"
 
+#include "azure/storage/files/shares/share_constants.hpp"
+#include "private/package_version.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
@@ -17,10 +20,6 @@
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-
-#include "azure/storage/files/shares/share_constants.hpp"
-
-#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

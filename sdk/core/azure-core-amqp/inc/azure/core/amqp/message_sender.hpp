@@ -10,7 +10,9 @@
 #include "link.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
+
 #include <azure/core/nullable.hpp>
+
 #include <tuple>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

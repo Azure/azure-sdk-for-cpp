@@ -3,6 +3,7 @@
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+
 #include <gtest/gtest.h>
 
 using namespace Azure::Core;

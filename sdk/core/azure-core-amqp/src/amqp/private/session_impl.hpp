@@ -4,12 +4,13 @@
 #pragma once
 
 #include "azure/core/amqp/session.hpp"
+
+#include <azure_uamqp_c/session.h>
+
 #include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <azure_uamqp_c/session.h>
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
 {

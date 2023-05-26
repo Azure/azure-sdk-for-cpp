@@ -9,11 +9,11 @@
 
 #pragma once
 
+#include "azure/storage/blobs/test/blob_base_test.hpp"
+
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
-
-#include "azure/storage/blobs/test/blob_base_test.hpp"
 
 #include <memory>
 #include <string>

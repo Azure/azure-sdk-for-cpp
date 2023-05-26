@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/core/amqp/session.hpp"
+
 #include <azure/core/context.hpp>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

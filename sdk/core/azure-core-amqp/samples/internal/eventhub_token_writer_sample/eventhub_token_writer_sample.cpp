@@ -9,6 +9,7 @@
 #include <azure/core/amqp/message_sender.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+
 #include <chrono>
 #include <iostream>
 #include <limits>

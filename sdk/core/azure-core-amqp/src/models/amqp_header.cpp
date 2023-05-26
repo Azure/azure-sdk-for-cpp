@@ -2,11 +2,13 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/models/amqp_header.hpp"
+
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
+
 #include <chrono>
 #include <iostream>
 

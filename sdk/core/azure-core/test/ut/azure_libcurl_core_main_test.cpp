@@ -13,11 +13,6 @@
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
-#include <csignal>
-#include <cstdlib>
-
-#include <gtest/gtest.h>
-
 #include "azure/core/context.hpp"
 #include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/http.hpp"
@@ -28,6 +23,11 @@
 #include "http/curl/curl_connection_pool_private.hpp"
 #include "http/curl/curl_connection_private.hpp"
 #include "http/curl/curl_session_private.hpp"
+
+#include <csignal>
+#include <cstdlib>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Test {
   TEST(SdkWithLibcurl, globalCleanUp)

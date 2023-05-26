@@ -5,7 +5,9 @@
 
 #include "models/amqp_message.hpp"
 #include "session.hpp"
+
 #include <azure/core/context.hpp>
+
 #include <string>
 #include <tuple>
 #include <vector>

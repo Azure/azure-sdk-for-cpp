@@ -6,7 +6,9 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/models/message_source.hpp"
 #include "azure/core/amqp/models/message_target.hpp"
+
 #include <azure_uamqp_c/link.h>
+
 #include <chrono>
 #include <memory>
 #include <string>

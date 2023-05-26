@@ -32,8 +32,9 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <spawn.h>
-#include <sys/wait.h>
 #include <unistd.h>
+
+#include <sys/wait.h>
 #endif
 
 using Azure::Identity::AzureCliCredential;

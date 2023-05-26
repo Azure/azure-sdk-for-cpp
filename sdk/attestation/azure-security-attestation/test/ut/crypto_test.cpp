@@ -3,9 +3,12 @@
 
 #include "../../src/private/crypto/inc/crypto.hpp"
 #include "crypto_test_collateral.hpp"
+
 #include <azure/core/test/test_base.hpp>
-#include <gtest/gtest.h>
+
 #include <random>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_detail;

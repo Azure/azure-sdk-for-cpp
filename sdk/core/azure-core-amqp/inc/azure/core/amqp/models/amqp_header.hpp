@@ -5,6 +5,7 @@
 
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
+
 #include <chrono>
 #include <cstddef>
 #include <cstdint>

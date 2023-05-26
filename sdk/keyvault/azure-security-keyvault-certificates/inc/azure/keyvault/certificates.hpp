@@ -8,11 +8,9 @@
 
 #pragma once
 
-#include "azure/keyvault/certificates/dll_import_export.hpp"
-
 #include "azure/keyvault/certificates/certificate_client.hpp"
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/certificate_client_operations.hpp"
 #include "azure/keyvault/certificates/certificate_client_options.hpp"
-
+#include "azure/keyvault/certificates/dll_import_export.hpp"
 #include "azure/keyvault/certificates/rtti.hpp"

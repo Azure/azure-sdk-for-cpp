@@ -12,10 +12,11 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
-#include <gtest/gtest.h>
 
 #include <memory>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Test {
 

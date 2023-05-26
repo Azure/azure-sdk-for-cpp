@@ -5,6 +5,7 @@
 #include "azure/core/platform.hpp"
 
 #include <csignal>
+
 #include <gtest/gtest.h>
 
 int main(int argc, char** argv)

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "attestation_collateral.hpp"
+
 #include <azure/core/base64.hpp>
 
 // cspell:disable

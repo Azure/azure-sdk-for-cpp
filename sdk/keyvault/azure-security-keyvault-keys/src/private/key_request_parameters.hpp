@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json_serializable.hpp>
-#include <azure/core/nullable.hpp>
-
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
+
+#include <azure/core/internal/json/json_serializable.hpp>
+#include <azure/core/nullable.hpp>
 
 #include <functional>
 #include <memory>

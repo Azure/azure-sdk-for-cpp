@@ -2,9 +2,12 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection_string_credential.hpp"
+
 #include <azure/core/platform.hpp>
-#include <gtest/gtest.h>
+
 #include <utility>
+
+#include <gtest/gtest.h>
 
 class ConnectionStringTest : public testing::Test {
 protected:

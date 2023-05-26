@@ -8,7 +8,9 @@
 #include "connection_string_credential.hpp"
 #include "models/amqp_value.hpp"
 #include "session.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
+
 #include <chrono>
 #include <limits>
 #include <memory>

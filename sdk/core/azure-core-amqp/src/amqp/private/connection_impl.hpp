@@ -5,8 +5,11 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/network/transport.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
+
 #include <azure_uamqp_c/connection.h>
+
 #include <chrono>
 #include <memory>
 #include <string>

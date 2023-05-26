@@ -3,11 +3,11 @@
 
 #include "get_env.hpp"
 
+#include <azure/storage/files/datalake.hpp>
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
-
-#include <azure/storage/files/datalake.hpp>
 
 std::string GetConnectionString()
 {

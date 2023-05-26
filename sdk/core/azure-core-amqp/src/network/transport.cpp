@@ -2,11 +2,14 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/transport.hpp"
+
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
 #include "private/transport_impl.hpp"
+
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xio.h>
+
 #include <cassert>
 
 void Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value)

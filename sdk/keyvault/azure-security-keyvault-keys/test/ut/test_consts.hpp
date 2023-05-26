@@ -8,6 +8,7 @@
  */
 
 #include <azure/core/internal/environment.hpp>
+
 #include <string>
 
 // cspell:disable

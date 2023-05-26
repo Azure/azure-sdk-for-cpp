@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <thread>
+#include "test/ut/test_base.hpp"
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/queues.hpp>
 
-#include "test/ut/test_base.hpp"
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Queues { namespace Models {
 

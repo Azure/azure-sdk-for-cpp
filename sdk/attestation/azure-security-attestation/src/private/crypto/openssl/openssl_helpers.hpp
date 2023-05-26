@@ -3,11 +3,12 @@
 #pragma once
 
 #include <memory>
-#include <openssl/bio.h>
-#include <openssl/evp.h>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
+
+#include <openssl/bio.h>
+#include <openssl/evp.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 

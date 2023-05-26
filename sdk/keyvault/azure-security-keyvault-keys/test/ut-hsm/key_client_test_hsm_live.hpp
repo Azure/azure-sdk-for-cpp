@@ -6,10 +6,10 @@
  * @brief The base class to construct and init a Key Vault HSM client.
  *
  */
-#include <gtest/gtest.h>
-
 #include <azure/core/test/test_base.hpp>
 #include <azure/keyvault/keys.hpp>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 

@@ -6,8 +6,10 @@
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/session_impl.hpp"
+
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+
 #include <iostream>
 #include <sstream>
 

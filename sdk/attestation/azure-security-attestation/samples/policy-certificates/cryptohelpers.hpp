@@ -7,16 +7,17 @@
 #include <algorithm>
 #include <cstring>
 #include <memory>
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/x509.h>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include <openssl/bio.h>
+#include <openssl/err.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/x509.h>
 /**
  * @brief The Cryptography class provides a set of basic cryptographic primatives required
  * by the attestation samples.

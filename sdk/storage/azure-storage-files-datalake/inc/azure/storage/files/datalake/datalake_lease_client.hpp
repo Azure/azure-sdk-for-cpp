@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <chrono>
+#include "azure/storage/files/datalake/datalake_file_system_client.hpp"
+#include "azure/storage/files/datalake/datalake_path_client.hpp"
 
 #include <azure/storage/blobs/blob_lease_client.hpp>
 
-#include "azure/storage/files/datalake/datalake_file_system_client.hpp"
-#include "azure/storage/files/datalake/datalake_path_client.hpp"
+#include <chrono>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

@@ -11,7 +11,9 @@
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+
 #include <azure_uamqp_c/amqp_management.h>
+
 #include <memory>
 #include <vector>
 

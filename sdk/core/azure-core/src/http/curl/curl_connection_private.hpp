@@ -11,6 +11,7 @@
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/internal/unique_handle.hpp"
+
 #include <chrono>
 #include <string>
 

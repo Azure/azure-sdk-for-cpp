@@ -7,6 +7,7 @@
  */
 
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
+
 #include "azure/keyvault/secrets/secret_client.hpp"
 
 using namespace Azure::Security::KeyVault::Secrets;

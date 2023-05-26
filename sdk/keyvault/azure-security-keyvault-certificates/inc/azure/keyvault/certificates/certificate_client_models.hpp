@@ -16,6 +16,7 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
+
 #include <memory>
 #include <string>
 #include <unordered_map>

@@ -10,8 +10,10 @@
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
 #include "session.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/nullable.hpp>
+
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

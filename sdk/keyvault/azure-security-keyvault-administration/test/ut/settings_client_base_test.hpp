@@ -7,13 +7,14 @@
  *
  */
 
-#include <gtest/gtest.h>
-
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/administration.hpp>
+
 #include <chrono>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 namespace Azure {
   namespace Security {

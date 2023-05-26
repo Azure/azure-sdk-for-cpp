@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include <azure/core/http/http.hpp>
-
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
+
+#include <azure/core/http/http.hpp>
 
 #include <string>
 

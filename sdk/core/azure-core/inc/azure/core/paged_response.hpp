@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include <cstdlib>
-#include <string>
-
 #include "azure/core/context.hpp"
 #include "azure/core/http/raw_response.hpp"
 #include "azure/core/nullable.hpp"
+
+#include <cstdlib>
+#include <string>
 
 namespace Azure { namespace Core {
 

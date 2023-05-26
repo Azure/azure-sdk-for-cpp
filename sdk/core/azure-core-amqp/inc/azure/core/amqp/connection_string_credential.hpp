@@ -4,7 +4,9 @@
 #pragma once
 
 #include "network/sasl_transport.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
+
 #include <chrono>
 #include <memory>
 #include <stdexcept>

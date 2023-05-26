@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/datetime.hpp"
+
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/platform.hpp"
 

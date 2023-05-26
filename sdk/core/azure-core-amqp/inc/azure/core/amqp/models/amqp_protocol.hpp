@@ -7,6 +7,7 @@
 #pragma once
 
 #include <azure/core/internal/unique_handle.hpp>
+
 #include <cstdint>
 
 struct AMQPVALUE_DECODER_HANDLE_DATA_TAG;

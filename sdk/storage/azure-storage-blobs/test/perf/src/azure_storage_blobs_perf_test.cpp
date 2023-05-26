@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/perf.hpp>
-
 #include "azure/storage/blobs/test/download_blob_from_sas.hpp"
 #include "azure/storage/blobs/test/download_blob_pipeline_only.hpp"
 #include "azure/storage/blobs/test/download_blob_test.hpp"
+
+#include <azure/perf.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/storage/blobs/test/download_blob_transport_only.hpp"

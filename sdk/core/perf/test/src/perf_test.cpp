@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/perf.hpp>
-
 #include "azure/perf/test/delay_test.hpp"
 #include "azure/perf/test/extended_options_test.hpp"
 #include "azure/perf/test/http_pipeline_get_test.hpp"
+
+#include <azure/perf.hpp>
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/perf/test/curl_http_client_get_test.hpp"
 #endif

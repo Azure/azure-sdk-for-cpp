@@ -8,6 +8,7 @@
 #include <azure_c_shared_utility/socketio.h>
 #include <azure_uamqp_c/header_detect_io.h>
 #include <azure_uamqp_c/socket_listener.h>
+
 #include <exception>
 #include <memory>
 #include <stdexcept>

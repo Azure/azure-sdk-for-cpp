@@ -10,10 +10,13 @@
 #include "azure/core/amqp/network/socket_listener.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/session.hpp"
+
 #include <azure/core/platform.hpp>
+
 #include <functional>
-#include <gtest/gtest.h>
 #include <random>
+
+#include <gtest/gtest.h>
 
 extern uint16_t FindAvailableSocket();
 

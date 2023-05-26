@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/core/url.hpp"
+
 #include <string>
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {

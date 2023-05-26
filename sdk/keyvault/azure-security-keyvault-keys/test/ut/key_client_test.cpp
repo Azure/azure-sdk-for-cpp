@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keys.hpp>

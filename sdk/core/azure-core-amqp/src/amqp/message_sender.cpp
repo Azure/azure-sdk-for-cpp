@@ -9,11 +9,13 @@
 #include "private/connection_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <azure_uamqp_c/message_sender.h>
+
 #include <memory>
 
 using namespace Azure::Core::Diagnostics;

@@ -9,6 +9,7 @@
 #include <azure/core/amqp/models/messaging_values.hpp>
 #include <azure/core/amqp/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
+
 #include <iostream>
 #include <string>
 

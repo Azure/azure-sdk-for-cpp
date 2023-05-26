@@ -3,10 +3,10 @@
 
 #pragma once
 
+#include <azure/core/http/policies/policy.hpp>
+
 #include <memory>
 #include <string>
-
-#include <azure/core/http/policies/policy.hpp>
 
 namespace Azure { namespace Storage { namespace _internal {
 
