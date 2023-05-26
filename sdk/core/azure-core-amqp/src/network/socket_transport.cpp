@@ -19,18 +19,18 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  SocketTransport::SocketTransport(
+  Transport SocketTransportFactory::Create(
       std::string const& host,
       uint16_t port,
       TransportEvents* eventHandler)
-      : Transport(eventHandler)
   {
     Log::Write(
         Logger::Level::Verbose,
         "Create socket transport for host " + host + " port: " + std::to_string(port));
 
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
-    m_impl->SetInstance(xio_create(socketio_get_interface_description(), &socketConfig));
+    return _detail::TransportImpl::CreateFromXioHandle(
+        xio_create(socketio_get_interface_description(), &socketConfig), eventHandler);
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

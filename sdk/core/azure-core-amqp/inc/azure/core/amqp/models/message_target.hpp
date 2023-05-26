@@ -19,13 +19,13 @@ using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_IN
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
-  struct MessageTargetOptions
+  struct MessageTargetOptions final
   {
     AmqpValue Address;
-    Azure::Nullable<TerminusDurability> TerminusDurabilityValue;
-    Azure::Nullable<TerminusExpiryPolicy> TerminusExpiryPolicyValue;
-    Azure::Nullable<std::chrono::system_clock::time_point> Timeout;
-    Azure::Nullable<bool> Dynamic;
+    Nullable<TerminusDurability> TerminusDurabilityValue;
+    Nullable<TerminusExpiryPolicy> TerminusExpiryPolicyValue;
+    Nullable<std::chrono::system_clock::time_point> Timeout;
+    Nullable<bool> Dynamic;
     AmqpMap DynamicNodeProperties;
     AmqpArray Capabilities;
   };
@@ -37,6 +37,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessageTarget();
     /** @brief Deletes a message target. */
     ~MessageTarget() = default;
+
+    /** @brief Copies a MessageTarget */
+    MessageTarget(MessageTarget const& that);
 
     /** @brief Creates a message target with the given address.
      *
@@ -62,13 +65,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * @remarks Normally used in the OnLinkAttached callback.
      */
-    MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& value);
+    MessageTarget(Models::AmqpValue const& value);
+
+    MessageTarget& operator=(MessageTarget const& that);
 
     /** @brief Creates an AMQP value from a message target.
      *
      * @remarks Creates an AMQP Described value with the descriptor being the message target (0x29).
      */
-    operator const Azure::Core::Amqp::Models::AmqpValue() const;
+    AmqpValue AsAmqpValue() const;
 
     /** @brief The address of the target.
      *
@@ -79,7 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message target.
      *
      */
-    Azure::Core::Amqp::Models::AmqpValue GetAddress() const;
+    AmqpValue GetAddress() const;
 
     /** @brief The durability of the target.
      *
@@ -128,7 +133,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message target.
      *
      */
-    Azure::Core::Amqp::Models::AmqpMap GetDynamicNodeProperties() const;
+    AmqpMap GetDynamicNodeProperties() const;
 
     /** @brief Retrieve the capabilities on this message target.
      *
@@ -137,7 +142,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * for more information about the fields in a message target.
      *
      */
-    Azure::Core::Amqp::Models::AmqpArray GetCapabilities() const;
+    AmqpArray GetCapabilities() const;
 
   private:
     UniqueMessageTargetHandle m_target;

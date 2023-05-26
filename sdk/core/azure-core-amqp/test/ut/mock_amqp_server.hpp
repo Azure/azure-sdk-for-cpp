@@ -16,6 +16,7 @@
 #include <azure/core/amqp/session.hpp>
 
 #include <gtest/gtest.h>
+#include <memory>
 
 extern uint16_t FindAvailableSocket();
 namespace MessageTests {
@@ -38,22 +39,27 @@ public:
   };
 
   AmqpServerMock() { m_testPort = FindAvailableSocket(); }
+  AmqpServerMock(uint16_t listeningPort) : m_testPort{listeningPort} {}
   virtual void Poll() const {}
 
   bool WaitForConnection(
       Azure::Core::Amqp::Network::_internal::SocketListener const& listener,
-      Azure::Core::Context context = {})
+      Azure::Core::Context const& context = {})
   {
     auto result = m_connectionQueue.WaitForPolledResult(context, listener);
+    if (result)
+    {
+      m_connectionValid = true;
+    }
     return result != nullptr;
   }
-  bool WaitForMessageReceiver(std::string const& nodeName, Azure::Core::Context context = {})
+  bool WaitForMessageReceiver(std::string const& nodeName, Azure::Core::Context const& context = {})
   {
     auto result = m_linkMessageQueues[nodeName].MessageReceiverPresentQueue.WaitForPolledResult(
         context, *this, *m_connection);
     return result != nullptr;
   }
-  bool WaitForMessageSender(std::string const& nodeName, Azure::Core::Context context = {})
+  bool WaitForMessageSender(std::string const& nodeName, Azure::Core::Context const& context = {})
   {
     auto result = m_linkMessageQueues[nodeName].MessageSenderPresentQueue.WaitForPolledResult(
         context, *this, *m_connection);
@@ -205,6 +211,7 @@ public:
 
 private:
   std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
+  bool m_connectionValid{false};
   std::shared_ptr<Azure::Core::Amqp::_internal::Session> m_session;
 
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_connectionQueue;
@@ -338,13 +345,12 @@ protected:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
   {
     GTEST_LOG_(INFO) << "OnSocketAccepted - Socket connection received.";
-    std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> amqpTransport{
-        std::make_shared<Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransport>(
+    auto amqpTransport{
+        Azure::Core::Amqp::Network::_internal::AmqpHeaderDetectTransportFactory::Create(
             transport, nullptr)};
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.ContainerId = "connectionId";
     options.EnableTrace = true;
-    options.Transport = amqpTransport;
     m_connection
         = std::make_shared<Azure::Core::Amqp::_internal::Connection>(amqpTransport, options, this);
     m_connection->Listen();
@@ -358,18 +364,28 @@ protected:
   {
     GTEST_LOG_(INFO) << "Connection State changed. Old state: " << ConnectionStateToString(oldState)
                      << " New state: " << ConnectionStateToString(newState);
+    if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
+        || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
+    {
+      // If the connection is closed, then we should close the connection.
+      m_connectionValid = false;
+      m_listenerContext.Cancel();
+    }
   }
   virtual bool OnNewEndpoint(
       Azure::Core::Amqp::_internal::Connection const& connection,
       Azure::Core::Amqp::_internal::Endpoint& endpoint) override
   {
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
-    m_session = std::make_unique<Azure::Core::Amqp::_internal::Session>(connection, endpoint, this);
-    m_session->SetIncomingWindow(10000);
+    Azure::Core::Amqp::_internal::SessionOptions options;
+    options.InitialIncomingWindowSize = 10000;
+
+    m_session = std::make_shared<Azure::Core::Amqp::_internal::Session>(
+        connection, endpoint, options, this);
     m_session->Begin();
     return true;
   }
-  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
+  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
 
   // Inherited via Session
   virtual bool OnLinkAttached(
@@ -377,9 +393,9 @@ protected:
       Azure::Core::Amqp::_internal::LinkEndpoint& newLinkInstance,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
-      Azure::Core::Amqp::Models::AmqpValue source,
-      Azure::Core::Amqp::Models::AmqpValue target,
-      Azure::Core::Amqp::Models::AmqpValue) override
+      Azure::Core::Amqp::Models::AmqpValue const& source,
+      Azure::Core::Amqp::Models::AmqpValue const& target,
+      Azure::Core::Amqp::Models::AmqpValue const&) override
   {
     Azure::Core::Amqp::Models::_internal::MessageSource msgSource(source);
     Azure::Core::Amqp::Models::_internal::MessageTarget msgTarget(target);
@@ -393,10 +409,11 @@ protected:
       Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
       senderOptions.EnableTrace = true;
       senderOptions.Name = name;
-      senderOptions.SourceAddress = static_cast<std::string>(msgSource.GetAddress());
+      senderOptions.MessageSource = msgSource;
       senderOptions.InitialDeliveryCount = 0;
       std::string targetAddress = static_cast<std::string>(msgTarget.GetAddress());
-      MessageLinkComponents& linkComponents = m_linkMessageQueues[senderOptions.SourceAddress];
+      MessageLinkComponents& linkComponents
+          = m_linkMessageQueues[static_cast<std::string>(senderOptions.MessageSource.GetAddress())];
 
       if (!linkComponents.LinkSender)
       {
@@ -411,10 +428,11 @@ protected:
       Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
       receiverOptions.EnableTrace = true;
       receiverOptions.Name = name;
-      receiverOptions.TargetAddress = static_cast<std::string>(msgTarget.GetAddress());
+      receiverOptions.MessageTarget = msgTarget;
       receiverOptions.InitialDeliveryCount = 0;
       std::string sourceAddress = static_cast<std::string>(msgSource.GetAddress());
-      MessageLinkComponents& linkComponents = m_linkMessageQueues[receiverOptions.TargetAddress];
+      MessageLinkComponents& linkComponents = m_linkMessageQueues[static_cast<std::string>(
+          receiverOptions.MessageTarget.GetAddress())];
       if (!linkComponents.LinkReceiver)
       {
         linkComponents.LinkReceiver

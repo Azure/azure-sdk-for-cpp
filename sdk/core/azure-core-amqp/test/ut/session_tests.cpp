@@ -44,7 +44,7 @@ TEST_F(TestSessions, SimpleSession)
 {
 
   // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Azure::Core::Amqp::_internal::Connection connection("localhost", {});
   {
     // Create a session
     Session session(connection, nullptr);
@@ -81,7 +81,7 @@ TEST_F(TestSessions, SimpleSession)
 
 TEST_F(TestSessions, SessionProperties)
 { // Create a connection
-  Connection connection("amqp://localhost:5672", {});
+  Azure::Core::Amqp::_internal::Connection connection("localhost", {});
 
   {
     Session session(connection, nullptr);
@@ -93,19 +93,22 @@ TEST_F(TestSessions, SessionProperties)
   }
 
   {
-    Session session(connection, nullptr);
-    EXPECT_NO_THROW(session.SetHandleMax(37));
+    SessionOptions options;
+    options.MaximumLinkCount = 37;
+    Session session(connection, nullptr, options);
     EXPECT_EQ(37, session.GetHandleMax());
   }
   {
-    Session session(connection, nullptr);
-    EXPECT_NO_THROW(session.SetIncomingWindow(9278789));
-    EXPECT_EQ(9278789, session.GetIncomingWindow());
+    SessionOptions options;
+    options.InitialIncomingWindowSize = 1909119;
+    Session session(connection, nullptr, options);
+    EXPECT_EQ(1909119, session.GetIncomingWindow());
   }
   {
-    Session session(connection, nullptr);
-    EXPECT_NO_THROW(session.SetOutgoingWindow(32798));
-    EXPECT_EQ(32798, session.GetOutgoingWindow());
+    SessionOptions options;
+    options.InitialOutgoingWindowSize = 1909119;
+    Session session(connection, nullptr, options);
+    EXPECT_EQ(1909119, session.GetOutgoingWindow());
   }
 }
 #endif // !AZ_PLATFORM_MAC
@@ -125,7 +128,12 @@ uint16_t FindAvailableSocket()
   int count = 0;
   while (count < 20)
   {
-    uint16_t testPort = dev() % 1000 + 5000;
+    uint16_t testPort;
+    // Make absolutely sure that we don't accidentally use the TLS port.
+    do
+    {
+      testPort = dev() % 1000 + 5000;
+    } while (testPort == AmqpTlsPort);
 
     GTEST_LOG_(INFO) << "Trying Test port: " << testPort;
 
@@ -179,7 +187,7 @@ TEST_F(TestSessions, SessionBeginEnd)
   public:
     std::shared_ptr<Network::_internal::Transport> WaitForResult(
         Network::_internal::SocketListener const& listener,
-        Azure::Core::Context context = {})
+        Azure::Core::Context const& context = {})
     {
       auto result = m_listenerQueue.WaitForPolledResult(context, listener);
       return std::get<0>(*result);
@@ -204,7 +212,9 @@ TEST_F(TestSessions, SessionBeginEnd)
   listener.Start();
 
   // Create a connection
-  Connection connection("amqp://localhost:" + std::to_string(testPort), {});
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.Port = testPort;
+  Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
 
   {
     Session session(connection, nullptr);

@@ -9,22 +9,41 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  class SaslTransport final : public Transport {
+  /** @brief Factory to create a transport using SASL authentication.
+   *
+   */
+  class SaslTransportFactory final {
 
   public:
-    // Configure the transport using SASL plain.
-    SaslTransport(
+    /** @brief Create a transport using SASL Plain.
+     *
+     * @param[in] saslKeyName The SASL key name.
+     * @param[in] saslKey The SASL key.
+     * @param[in] hostName The host name.
+     * @param[in] hostPort The host port.
+     * @param[in] eventHandler The transport event handler.
+     *
+     */
+    static Transport Create(
         std::string const& saslKeyName,
         std::string const& saslKey,
         std::string const& hostName,
         uint16_t hostPort,
         TransportEvents* eventHandler = nullptr);
-    // Configure the transport using SASL Anonymous.
-    SaslTransport(
+
+    /** @brief Create a transport using SASL Anonymous
+     *
+     * @param[in] hostName The host name.
+     * @param[in] hostPort The host port.
+     * @param[in] eventHandler The transport event handler.
+     *
+     */
+    static Transport Create(
         std::string const& hostName,
         uint16_t hostPort,
         TransportEvents* eventHandler = nullptr);
-    ~SaslTransport() = default;
+
+    SaslTransportFactory() = delete;
   };
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

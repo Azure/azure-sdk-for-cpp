@@ -5,6 +5,7 @@
 
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
+#include "endpoint.hpp"
 #include "models/amqp_value.hpp"
 
 #include <chrono>
@@ -12,154 +13,149 @@
 #include <string>
 #include <vector>
 
-extern "C"
-{
-  struct ENDPOINT_INSTANCE_TAG;
-  struct LINK_ENDPOINT_INSTANCE_TAG;
-}
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  class SessionImpl;
+  class SessionFactory;
+}}}} // namespace Azure::Core::Amqp::_detail
 
-namespace Azure { namespace Core { namespace Amqp {
-  namespace _detail {
-    class SessionImpl;
-  } // namespace _detail
-  namespace _internal {
+namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
-    class Connection;
-    class Cbs;
+  class Connection;
+  enum class SessionRole;
 
-    // Dummy operations for operations that should never be used.
-    class Flow;
-    class Attach;
-    class Disposition;
-    class Detach;
-    class Transfer;
-    enum class SessionRole;
+  enum class ExpiryPolicy
+  {
+    LinkDetach,
+    SessionEnd,
+    ConnectionClose,
+    Never,
+  };
 
-    struct SessionOptions
-    {
-      uint32_t IncomingWindow;
-      uint32_t OutgoingWindow;
-      uint32_t MaxLinks;
-    };
+  enum class SessionState
+  {
+    Unmapped,
+    BeginSent,
+    BeginReceived,
+    Mapped,
+    EndSent,
+    EndReceived,
+    Discarding,
+    Error,
+  };
 
-    enum class ExpiryPolicy
-    {
-      LinkDetach,
-      SessionEnd,
-      ConnectionClose,
-      Never
-    };
+  enum class SessionSendTransferResult
+  {
+    Ok,
+    Error,
+    Busy,
+  };
 
-    // An "Endpoint" is an intermediate type used to create sessions in an OnNewSession callback.
-    struct Endpoint
-    {
-      ENDPOINT_INSTANCE_TAG* m_endpoint;
-      Endpoint(ENDPOINT_INSTANCE_TAG* endpoint) : m_endpoint{endpoint} {};
-      ~Endpoint();
-      Endpoint(Endpoint const&) = delete;
-      Endpoint& operator=(Endpoint const&) = delete;
+  class Session;
+  class SessionEvents {
+  protected:
+    ~SessionEvents() = default;
 
-      Endpoint(Endpoint&& other) noexcept : m_endpoint{other.m_endpoint}
-      {
-        other.m_endpoint = nullptr;
-      }
-      Endpoint& operator=(Endpoint&& other);
-      ENDPOINT_INSTANCE_TAG* Release()
-      {
-        ENDPOINT_INSTANCE_TAG* rv = m_endpoint;
-        m_endpoint = nullptr;
-        return rv;
-      }
-    };
+  public:
+    virtual bool OnLinkAttached(
+        Session const& session,
+        LinkEndpoint& newLink,
+        std::string const& name,
+        SessionRole role,
+        Models::AmqpValue const& source,
+        Models::AmqpValue const& target,
+        Models::AmqpValue const& properties)
+        = 0;
+  };
 
-    // A "Link Endpoint" is an intermediate type used to create new Links in an OnLinkAttached
-    // callback. Note that LinkEndpoints do not support copy semantics, and the only way to
-    // retrieve the underlying LINK_ENDPOINT_INSTANCE_TAG is to call Release(). That is because
-    // the primary use scenario for a LinkEndpoint is to call link_create_from_endpoint, and
-    // link_create_from_endpoint takes ownership of the underlying LINK_ENDPOINT object.
-    struct LinkEndpoint
-    {
-      LINK_ENDPOINT_INSTANCE_TAG* m_endpoint;
-      LinkEndpoint(LINK_ENDPOINT_INSTANCE_TAG* endpoint) : m_endpoint{endpoint} {};
-      /* NOTE: We do *NOT* own a LinkEndpoint object, it is completely controlled by uAMQP-c. As
-       * such, we are not allowed to free it.*/
-      ~LinkEndpoint(){};
-      LinkEndpoint(Endpoint const&) = delete;
-      LinkEndpoint& operator=(LinkEndpoint const&) = delete;
+  struct SessionOptions final
+  {
+    /** @brief The Audience to which an authentication operation applies when using Claims Based
+     * Authentication. */
+    std::vector<std::string> AuthenticationScopes;
 
-      LinkEndpoint(LinkEndpoint&& other) noexcept : m_endpoint{other.m_endpoint}
-      {
-        other.m_endpoint = nullptr;
-      }
-      LinkEndpoint& operator=(Endpoint&& other);
-      LINK_ENDPOINT_INSTANCE_TAG* Release()
-      {
-        LINK_ENDPOINT_INSTANCE_TAG* rv = m_endpoint;
-        m_endpoint = nullptr;
-        return rv;
-      }
-    };
+    /** @brief Represents the initial incoming window size for the sender. See [AMQP Session Flow
+     * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
+     * for more information.*/
+    Nullable<uint32_t> InitialIncomingWindowSize;
+    /** @brief Represents the initial outgoing window size for the sender. See [AMQP Session Flow
+     * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
+     * for more information.*/
+    Nullable<uint32_t> InitialOutgoingWindowSize;
 
-    enum class SessionState
-    {
-      Unmapped,
-      BeginSent,
-      BeginReceived,
-      Mapped,
-      EndSent,
-      EndReceived,
-      Discarding,
-      Error,
-    };
+    /** @brief Represents the maximum number of link handles which can be used on the session. See
+     * [AMQP Session Flow
+     * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
+     * for more information.*/
+    Nullable<uint32_t> MaximumLinkCount;
+  };
 
-    enum class SessionSendTransferResult
-    {
-      Ok,
-      Error,
-      Busy,
-    };
+  class Session final {
+  public:
+    /** @brief Create a new AMQP Session object on the specified parent connection.
+     *
+     * @param parentConnection - Connection upon which to create the session.
+     * @param credential - Credential to use for authentication.
+     * @param options - Options to use when creating the session.
+     * @param eventHandler - Event handler for session events.
+     */
+    Session(
+        Connection const& parentConnection,
+        std::shared_ptr<Credentials::TokenCredential> credential,
+        SessionOptions const& options = {},
+        SessionEvents* eventHandler = nullptr);
 
-    class Session;
-    struct SessionEvents
-    {
-      virtual bool OnLinkAttached(
-          Session const& session,
-          LinkEndpoint& newLink,
-          std::string const& name,
-          SessionRole role,
-          Azure::Core::Amqp::Models::AmqpValue source,
-          Azure::Core::Amqp::Models::AmqpValue target,
-          Azure::Core::Amqp::Models::AmqpValue properties)
-          = 0;
-    };
+    /** @brief Construct a new session associated with the specified connection over the specified
+     * endpoint.
+     *
+     * @param parentConnection - Connection upon which to create the session.
+     * @param newEndpoint - AMQP Endpoint from which to create the session.
+     * @param eventHandler - Event handler for session events.
+     *
+     * @remarks Note that this function is normally only called from a application listening for
+     * incoming connections, not from an AMQP client.
+     */
+    Session(
+        Connection const& parentConnection,
+        Endpoint& newEndpoint,
+        SessionOptions const& options = {},
+        SessionEvents* eventHandler = nullptr);
 
-    class Session final {
-    public:
-      Session(
-          Connection const& parentConnection,
-          Endpoint& newEndpoint,
-          SessionEvents* eventHandler = nullptr);
-      Session(Connection const& parentConnection, SessionEvents* eventHandler = nullptr);
-      Session(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> impl) : m_impl{impl} {}
-      ~Session() noexcept;
+    /** @brief Destroys the session object. */
+    ~Session() noexcept;
 
-      Session(Session const&) = delete;
-      Session& operator=(Session const&) = delete;
-      Session(Session&&) noexcept = delete;
-      Session& operator=(Session&&) noexcept = delete;
-      std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> GetImpl() const { return m_impl; }
-      void SetIncomingWindow(uint32_t incomingWindow);
-      uint32_t GetIncomingWindow() const;
-      void SetOutgoingWindow(uint32_t outgoingWindow);
-      uint32_t GetOutgoingWindow() const;
-      void SetHandleMax(uint32_t handleMax);
-      uint32_t GetHandleMax() const;
+    /** @brief Returns the current value of the incoming window.
+     *
+     * @returns The current incoming message window.
+     */
+    uint32_t GetIncomingWindow() const;
+    /** @brief Returns the current value of the outgoing window.
+     *
+     * @returns The current outgoing message window.
+     */
+    uint32_t GetOutgoingWindow() const;
 
-      void Begin();
-      void End(std::string const& condition_value, std::string const& description);
+    /** @brief Returns the maximum number of links currently configured.
+     *
+     * @returns The current maximum number of links configured.
+     */
+    uint32_t GetHandleMax() const;
 
-    private:
-      std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> m_impl;
-    };
-  } // namespace _internal
-}}} // namespace Azure::Core::Amqp
+    void Begin();
+    void End(std::string const& condition_value, std::string const& description);
+
+    friend class _detail::SessionFactory;
+
+  private:
+    /** @brief Construct a new Session object from an existing implementation instance.
+     *
+     * @param impl - Implementation object
+     *
+     * @remarks This function is used internally by the library and is not intended for use by any
+     * client.
+     */
+    Session(std::shared_ptr<_detail::SessionImpl> impl) : m_impl{impl} {}
+
+    std::shared_ptr<_detail::SessionImpl> m_impl;
+  };
+
+}}}} // namespace Azure::Core::Amqp::_internal

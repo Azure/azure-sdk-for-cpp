@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     if (message == nullptr)
     {
-      return AmqpMessage(nullptr);
+      return nullptr;
     }
     AmqpMessage rv;
     rv.Header = _internal::MessageHeaderFactory::FromUamqp(GetHeaderFromMessage(message));
@@ -488,7 +488,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   namespace {
-    class AmqpMessageDeserializer {
+    class AmqpMessageDeserializer final {
     public:
       AmqpMessageDeserializer()
           : m_decoder{amqpvalue_decoder_create(OnAmqpMessageFieldDecodedFn, this)}

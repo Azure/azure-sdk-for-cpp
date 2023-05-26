@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   public:
     ManagementImpl(
         std::shared_ptr<SessionImpl> session,
-        std::string const& managementNodeName,
+        std::string const& managementEntityName,
         _internal::ManagementOptions const& options,
         _internal::ManagementEvents* managementEvents);
 
@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      * @returns A tuple consisting of the status code for the open and the description of the
      * status.
      */
-    _internal::ManagementOpenStatus Open(Azure::Core::Context const& context = {});
+    _internal::ManagementOpenStatus Open(Context const& context = {});
 
     /**
      * @brief Close the management instance.
@@ -57,11 +57,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
-        Azure::Core::Context context);
+        Models::AmqpMessage messageToSend,
+        Context const& context);
 
   private:
     UniqueAmqpManagementHandle m_management{};
+    std::string m_managementNodeName;
     _internal::ManagementOptions m_options;
     std::string m_source;
     std::shared_ptr<SessionImpl> m_session;

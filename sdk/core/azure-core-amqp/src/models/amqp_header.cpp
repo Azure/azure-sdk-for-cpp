@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     auto handle = _internal::MessageHeaderFactory::ToUamqp(header);
     AmqpValue headerAsValue{amqpvalue_create_header(handle.get())};
-    return Azure::Core::Amqp::Models::AmqpValue::Serialize(headerAsValue);
+    return Models::AmqpValue::Serialize(headerAsValue);
   }
 
   MessageHeader MessageHeader::Deserialize(std::uint8_t const* data, size_t size)

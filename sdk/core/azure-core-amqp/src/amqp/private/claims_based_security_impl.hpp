@@ -18,10 +18,10 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
 using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  class ClaimsBasedSecurityImpl {
+  class ClaimsBasedSecurityImpl final {
 
   public:
-    ClaimsBasedSecurityImpl(std::shared_ptr<Azure::Core::Amqp::_detail::SessionImpl> session);
+    ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session);
     virtual ~ClaimsBasedSecurityImpl() noexcept;
 
     // Disable copy and move because the underlying m_cbs takes a reference to this object.
@@ -30,18 +30,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurityImpl(ClaimsBasedSecurityImpl&&) noexcept = delete;
     ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl&&) noexcept = delete;
 
-    CbsOpenResult Open(Azure::Core::Context context);
+    CbsOpenResult Open(Context const& context);
     void Close();
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,
-        Azure::Core::Context context);
+        Context const& context);
     void SetTrace(bool traceEnabled);
 
   private:
     UniqueAmqpCbsHandle m_cbs;
     std::shared_ptr<_detail::SessionImpl> m_session;
+    bool m_cbsOpen{false};
+    bool m_traceEnabled{false};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<CbsOpenResult> m_openResultQueue;
     Azure::Core::Amqp::Common::_internal::

@@ -276,7 +276,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     auto handle = _internal::MessagePropertiesFactory::ToUamqp(properties);
     AmqpValue propertiesAsValue{amqpvalue_create_properties(handle.get())};
-    return Azure::Core::Amqp::Models::AmqpValue::Serialize(propertiesAsValue);
+    return Models::AmqpValue::Serialize(propertiesAsValue);
   }
 
   MessageProperties MessageProperties::Deserialize(uint8_t const* data, size_t size)

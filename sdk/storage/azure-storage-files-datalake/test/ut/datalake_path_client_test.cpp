@@ -379,4 +379,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakePathClientTest, PathGetPropertiesOwnerGroupPermissions)
+  {
+    auto properties = m_pathClient->GetProperties().Value;
+    ASSERT_TRUE(properties.Owner.HasValue());
+    ASSERT_TRUE(properties.Group.HasValue());
+    ASSERT_TRUE(properties.Permissions.HasValue());
+  }
 }}} // namespace Azure::Storage::Test

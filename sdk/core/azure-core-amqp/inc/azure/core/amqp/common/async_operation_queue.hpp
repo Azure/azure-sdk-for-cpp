@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     template <class... Poller>
     std::unique_ptr<std::tuple<T...>> WaitForPolledResult(
-        Azure::Core::Context context,
+        Context const& context,
         Poller&... pollers)
     {
       do
@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     void Poll() {}
 
-    template <class PT, class... Ts> void Poll(PT const& first, Ts const&... rest)
+    template <class PT, class... Ts> void Poll(PT& first, Ts&... rest)
     {
       first.Poll();
       Poll(rest...);

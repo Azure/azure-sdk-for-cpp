@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks For more information, see [AMQP
      * Section 3.2.1](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
      */
-    Azure::Nullable<std::chrono::milliseconds> TimeToLive;
+    Nullable<std::chrono::milliseconds> TimeToLive;
 
     /** @brief If true, the message has not been acquired by any other link.
      *
