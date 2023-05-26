@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection.hpp"
+
 #include <azure/core/amqp/common/async_operation_queue.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/network/socket_transport.hpp>

@@ -6,6 +6,7 @@
 
 #pragma once
 #include <azure/core/context.hpp>
+
 #include <exception>
 #include <functional>
 #include <memory>

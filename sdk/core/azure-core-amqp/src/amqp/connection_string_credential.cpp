@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection_string_credential.hpp"
+
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"

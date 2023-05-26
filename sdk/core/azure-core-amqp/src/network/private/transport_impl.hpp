@@ -3,8 +3,11 @@
 
 #pragma once
 #include "azure/core/amqp/common/async_operation_queue.hpp"
+
 #include <azure/core/internal/unique_handle.hpp>
+
 #include <azure_c_shared_utility/xio.h>
+
 #include <exception>
 #include <functional>
 #include <stdexcept>

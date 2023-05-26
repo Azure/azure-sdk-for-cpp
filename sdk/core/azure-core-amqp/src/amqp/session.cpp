@@ -11,6 +11,7 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+
 #include <azure_uamqp_c/session.h>
 
 using namespace Azure::Core::Diagnostics::_internal;

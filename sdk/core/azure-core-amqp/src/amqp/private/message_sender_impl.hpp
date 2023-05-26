@@ -6,7 +6,9 @@
 #include "azure/core/amqp/message_sender.hpp"
 #include "claims_based_security_impl.hpp"
 #include "link_impl.hpp"
+
 #include <azure_uamqp_c/message_sender.h>
+
 #include <tuple>
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
