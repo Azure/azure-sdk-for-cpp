@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- [[#3964]](https://github.com/Azure/azure-sdk-for-cpp/issues/3964) Ensuring some Azure SDK types have the expected default operations.
+- [[#3964]](https://github.com/Azure/azure-sdk-for-cpp/issues/3964) Ensuring some Azure SDK types have the expected default operations. (A community contribution, courtesy of _[jnyfah](https://github.com/jnyfah)_)
 
 ### Acknowledgments
 
