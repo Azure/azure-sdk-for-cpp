@@ -22,7 +22,8 @@ int main()
   std::string hostUrl
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   connectionOptions.Port = credentials->GetPort();
-  Azure::Core::Amqp::_internal::Connection connection(credentials->GetHostName(), connectionOptions);
+  Azure::Core::Amqp::_internal::Connection connection(
+      credentials->GetHostName(), connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

@@ -19,7 +19,8 @@ int main()
       = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
           EH_CONNECTION_STRING);
   std::string hostUrl = "amqps://" + connectionOptions.SaslCredentials->GetHostName() + "/"
-      + connectionOptions.SaslCredentials->GetEntityPath() + "/ConsumerGroups/$Default/Partitions/0";
+      + connectionOptions.SaslCredentials->GetEntityPath()
+      + "/ConsumerGroups/$Default/Partitions/0";
 
   Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectionOptions);
 
