@@ -11,6 +11,7 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/tracing/tracing.hpp"
+
 #include <map>
 #include <memory>
 #include <string>

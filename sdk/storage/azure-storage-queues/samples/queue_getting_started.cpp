@@ -6,8 +6,6 @@
 #include <stdexcept>
 #include <thread>
 
-#include <azure/storage/queues.hpp>
-
 std::string GetConnectionString()
 {
   const static std::string ConnectionString = "";

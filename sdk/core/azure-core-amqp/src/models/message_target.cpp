@@ -3,16 +3,17 @@
 
 #include "azure/core/amqp/models/message_target.hpp"
 
+#include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
+#include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
+
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_filter_set.h>
 #include <azure_uamqp_c/amqp_definitions_node_properties.h>
 #include <azure_uamqp_c/amqp_definitions_seconds.h>
-#include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
-#include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
-#include <azure_uamqp_c/amqpvalue.h>
-#include <iostream>
-
 #include <azure_uamqp_c/amqp_definitions_target.h>
+#include <azure_uamqp_c/amqpvalue.h>
+
+#include <iostream>
 
 void Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(
     TARGET_HANDLE value)
@@ -24,7 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   //  MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}
 
-  MessageTarget::MessageTarget(Azure::Core::Amqp::Models::AmqpValue const& source)
+  MessageTarget::MessageTarget(Models::AmqpValue const& source)
   {
     if (source.IsNull())
     {
@@ -62,6 +63,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   MessageTarget::MessageTarget() : m_target{target_create()} {}
+
+  MessageTarget::MessageTarget(MessageTarget const& that) : m_target{target_clone(that)} {}
+
+  MessageTarget& MessageTarget::operator=(MessageTarget const& that)
+  {
+    m_target.reset(target_clone(that.m_target.get()));
+    return *this;
+  }
 
   MessageTarget::MessageTarget(MessageTargetOptions const& options) : m_target{target_create()}
   {
@@ -160,12 +169,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
 
   // Convert the MessageSource into a Value.
-  MessageTarget::operator const Azure::Core::Amqp::Models::AmqpValue() const
+  Models::AmqpValue MessageTarget::AsAmqpValue() const
   {
     return amqpvalue_create_target(m_target.get());
   }
 
-  Azure::Core::Amqp::Models::AmqpValue MessageTarget::GetAddress() const
+  Models::AmqpValue MessageTarget::GetAddress() const
   {
     AMQP_VALUE address;
     if (target_get_address(m_target.get(), &address))
@@ -242,7 +251,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return value;
   }
 
-  Azure::Core::Amqp::Models::AmqpMap MessageTarget::GetDynamicNodeProperties() const
+  Models::AmqpMap MessageTarget::GetDynamicNodeProperties() const
   {
     AMQP_VALUE value;
     if (target_get_dynamic_node_properties(m_target.get(), &value))
@@ -252,7 +261,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return AmqpValue{value}.AsMap();
   }
 
-  Azure::Core::Amqp::Models::AmqpArray MessageTarget::GetCapabilities() const
+  Models::AmqpArray MessageTarget::GetCapabilities() const
   {
     AMQP_VALUE value;
     if (target_get_capabilities(m_target.get(), &value))

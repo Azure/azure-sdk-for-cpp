@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/datetime.hpp>
 
 #include <chrono>
 #include <ctime>
 #include <limits>
+
+#include <gtest/gtest.h>
 
 using namespace Azure;
 

@@ -6,9 +6,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <azure/core/base64.hpp>
-#include <azure/storage/queues.hpp>
-
 std::string GetConnectionString()
 {
   const static std::string ConnectionString = "";

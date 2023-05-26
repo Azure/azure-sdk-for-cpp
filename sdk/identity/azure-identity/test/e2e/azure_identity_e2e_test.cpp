@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/identity/managed_identity_credential.hpp>
-
 #include <azure/core/internal/environment.hpp>
+#include <azure/identity/managed_identity_credential.hpp>
 
 #include <chrono>
 #include <cstdlib>

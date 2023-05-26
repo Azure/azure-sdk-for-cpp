@@ -9,6 +9,7 @@
 #pragma once
 
 #include <azure/core/context.hpp>
+
 #include <memory>
 #include <string>
 

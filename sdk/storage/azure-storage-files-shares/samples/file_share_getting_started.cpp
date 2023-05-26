@@ -5,8 +5,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <azure/storage/files/shares.hpp>
-
 std::string GetConnectionString()
 {
   const static std::string ConnectionString = "";

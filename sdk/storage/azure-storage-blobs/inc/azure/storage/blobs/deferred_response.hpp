@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <functional>
-
 #include <azure/core/response.hpp>
+
+#include <functional>
 
 namespace Azure { namespace Storage {
   namespace Blobs {

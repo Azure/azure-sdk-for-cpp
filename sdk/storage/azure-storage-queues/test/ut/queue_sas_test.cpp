@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/storage/queues/queue_sas_builder.hpp>
-
 #include "queue_client_test.hpp"
+
+#include <azure/storage/queues/queue_sas_builder.hpp>
 
 #include <chrono>
 

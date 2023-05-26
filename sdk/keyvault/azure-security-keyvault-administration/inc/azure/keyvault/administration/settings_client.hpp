@@ -14,6 +14,7 @@
 #include <azure/core/response.hpp>
 #include <azure/keyvault/administration/rest_client_models.hpp>
 #include <azure/keyvault/administration/settings_client_options.hpp>
+
 #include <memory>
 #include <string>
 

@@ -8,6 +8,7 @@
 #include <azure_c_shared_utility/socketio.h>
 #include <azure_uamqp_c/header_detect_io.h>
 #include <azure_uamqp_c/socket_listener.h>
+
 #include <exception>
 #include <memory>
 #include <stdexcept>
@@ -15,10 +16,9 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  AmqpHeaderDetectTransport::AmqpHeaderDetectTransport(
+  Transport AmqpHeaderDetectTransportFactory::Create(
       std::shared_ptr<Transport> parentTransport,
       TransportEvents* eventHandler)
-      : Transport(eventHandler)
   {
     HEADER_DETECT_IO_CONFIG detectIoConfig{};
     HEADER_DETECT_ENTRY headerDetectEntries[] = {
@@ -28,9 +28,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     detectIoConfig.underlying_io = parentTransport->GetImpl()->Release();
     detectIoConfig.header_detect_entry_count = std::extent<decltype(headerDetectEntries)>::value;
     detectIoConfig.header_detect_entries = headerDetectEntries;
-    auto xio = xio_create(header_detect_io_get_interface_description(), &detectIoConfig);
-
-    m_impl->SetInstance(xio);
+    return _detail::TransportImpl::CreateFromXioHandle(
+        xio_create(header_detect_io_get_interface_description(), &detectIoConfig), eventHandler);
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

@@ -11,6 +11,7 @@
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+
 #include <memory>
 #include <string>
 #include <vector>

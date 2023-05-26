@@ -5,6 +5,7 @@
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
+
 #include <memory>
 
 using namespace Azure::Security::KeyVault::Secrets;

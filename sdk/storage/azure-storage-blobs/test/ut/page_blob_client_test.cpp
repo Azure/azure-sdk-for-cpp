@@ -3,13 +3,13 @@
 
 #include "page_blob_client_test.hpp"
 
-#include <future>
-#include <vector>
-
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
+
+#include <future>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

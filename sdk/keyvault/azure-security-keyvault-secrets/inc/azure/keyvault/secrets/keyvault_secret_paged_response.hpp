@@ -10,7 +10,9 @@
 
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
+
 #include <azure/core/paged_response.hpp>
+
 #include <memory>
 #include <vector>
 

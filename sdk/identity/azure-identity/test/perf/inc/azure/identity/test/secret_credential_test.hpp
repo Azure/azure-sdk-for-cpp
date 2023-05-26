@@ -9,9 +9,8 @@
 
 #pragma once
 
-#include <azure/perf.hpp>
-
 #include <azure/identity.hpp>
+#include <azure/perf.hpp>
 
 #include <memory>
 #include <string>

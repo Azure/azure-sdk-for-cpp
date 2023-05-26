@@ -5,8 +5,11 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/network/transport.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
+
 #include <azure_uamqp_c/connection.h>
+
 #include <chrono>
 #include <memory>
 #include <string>
@@ -23,15 +26,32 @@ using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INS
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  class ClaimsBasedSecurity;
+
+  class ConnectionFactory final {
+  public:
+    static Azure::Core::Amqp::_internal::Connection CreateFromInternal(
+        std::shared_ptr<ConnectionImpl> connectionImpl)
+    {
+      return Azure::Core::Amqp::_internal::Connection(connectionImpl);
+    }
+
+    static std::shared_ptr<ConnectionImpl> GetImpl(
+        Azure::Core::Amqp::_internal::Connection const& connection)
+    {
+      return connection.m_impl;
+    }
+  };
+
   class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl> {
   public:
     ConnectionImpl(
-        std::shared_ptr<Azure::Core::Amqp::Network::_detail::TransportImpl> transport,
+        std::shared_ptr<Network::_detail::TransportImpl> transport,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
     ConnectionImpl(
-        std::string const& requestUri,
+        std::string const& hostName,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
@@ -63,47 +83,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void Close(
         std::string const& condition,
         std::string const& description,
-        Azure::Core::Amqp::Models::AmqpValue info);
+        Models::AmqpValue info);
 
-    void Poll() const;
+    void Poll();
+
+    std::string GetHost() const { return m_hostName; }
+    uint16_t GetPort() const { return m_port; }
 
     uint32_t GetMaxFrameSize() const;
     uint32_t GetRemoteMaxFrameSize() const;
-    void SetMaxFrameSize(uint32_t frameSize);
     uint16_t GetMaxChannel() const;
-    void SetMaxChannel(uint16_t frameSize);
     std::chrono::milliseconds GetIdleTimeout() const;
-    void SetIdleTimeout(std::chrono::milliseconds timeout);
-    void SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio);
+    void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
 
-    void SetProperties(Azure::Core::Amqp::Models::AmqpValue properties);
-    Azure::Core::Amqp::Models::AmqpValue GetProperties() const;
-    uint64_t HandleDeadlines(); // ???
-    _internal::Endpoint CreateEndpoint();
-    void StartEndpoint(_internal::Endpoint const& endpoint);
-
-    uint16_t GetEndpointIncomingChannel(_internal::Endpoint endpoint);
-    void DestroyEndpoint(_internal::Endpoint endpoint);
-
-    void SetTrace(bool enableTrace);
+    void SetProperties(Models::AmqpValue properties);
+    Models::AmqpMap GetProperties() const;
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
     UniqueAmqpConnection m_connection{};
     std::string m_hostName;
+    uint16_t m_port;
     std::string m_containerId;
     _internal::ConnectionOptions m_options;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
         m_newSessionQueue;
     _internal::ConnectionEvents* m_eventHandler{};
-    _internal::CredentialType m_credentialType;
-    std::shared_ptr<_internal::ConnectionStringCredential> m_credential{};
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_tokenCredential{};
+    _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,
-        _internal::CredentialType credentialType,
         _internal::ConnectionOptions const& options);
+
+    void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
 
     static void OnEndpointFrameReceivedFn(
         void* context,
@@ -116,6 +128,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CONNECTION_STATE oldState);
     // Note: We cannot take ownership of this instance tag.
     static bool OnNewEndpointFn(void* context, ENDPOINT_HANDLE endpoint);
-    static void OnIoErrorFn(void* context);
+    static void OnIOErrorFn(void* context);
   };
 }}}} // namespace Azure::Core::Amqp::_detail

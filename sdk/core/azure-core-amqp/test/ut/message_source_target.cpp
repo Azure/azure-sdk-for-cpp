@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/amqp/models/message_source.hpp>
 #include <azure/core/amqp/models/message_target.hpp>
 #include <azure/core/amqp/models/messaging_values.hpp>
+
+#include <gtest/gtest.h>
 
 class TestSourceTarget : public testing::Test {
 protected:
@@ -29,10 +29,6 @@ TEST_F(TestSourceTarget, SimpleSourceTarget)
   {
     MessageSource source(std::string("test"));
     MessageTarget target(std::string("test"));
-  }
-  {
-    MessageSource source(Messaging::CreateSource("test1"));
-    MessageTarget target(Messaging::CreateTarget("test1"));
   }
 
   {
@@ -197,7 +193,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 
   {
     MessageTarget target("address1");
-    const AmqpValue v = target;
+    const AmqpValue v = target.AsAmqpValue();
     AmqpValue value(v);
 
     MessageTarget target2(value);
@@ -208,7 +204,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 TEST_F(TestSourceTarget, TargetThroughValue)
 {
   MessageTarget target("address1");
-  const AmqpValue v = target;
+  const AmqpValue v = target.AsAmqpValue();
   AmqpValue value(v);
 
   MessageTarget target2(value);
@@ -388,7 +384,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSource source("address1");
-    const AmqpValue v = source;
+    const AmqpValue v = source.AsAmqpValue();
     AmqpValue value(v);
 
     MessageSource source2(value);

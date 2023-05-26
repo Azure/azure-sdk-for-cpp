@@ -3,12 +3,12 @@
 
 #include "azure/storage/common/internal/xml_wrapper.hpp"
 
+#include <azure/core/platform.hpp>
+
 #include <cstring>
 #include <limits>
 #include <memory>
 #include <stdexcept>
-
-#include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)

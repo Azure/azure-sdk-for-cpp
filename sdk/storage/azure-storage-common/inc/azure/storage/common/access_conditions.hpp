@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <string>
+#include "azure/storage/common/storage_common.hpp"
 
 #include <azure/core/etag.hpp>
 #include <azure/core/nullable.hpp>
 
-#include "azure/storage/common/storage_common.hpp"
+#include <string>
 
 namespace Azure { namespace Storage {
 

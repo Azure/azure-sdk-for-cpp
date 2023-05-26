@@ -10,134 +10,178 @@
 #include "link.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
+
 #include <azure/core/nullable.hpp>
+
 #include <tuple>
 
-namespace Azure { namespace Core { namespace Amqp {
-  namespace _detail {
-    class MessageSenderImpl;
-  }
-  namespace _internal {
-    enum class MessageSendResult
-    {
-      Invalid,
-      Ok,
-      Error,
-      Timeout,
-      Cancelled
-    };
-    enum class MessageSenderState
-    {
-      Invalid,
-      Idle,
-      Opening,
-      Open,
-      Closing,
-      Error
-    };
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  class MessageSenderImpl;
+  class MessageSenderFactory;
+}}}} // namespace Azure::Core::Amqp::_detail
 
-    enum class SenderSettleMode
-    {
-      Unsettled,
-      Settled,
-      Mixed
-    };
+namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+  enum class MessageSendStatus
+  {
+    Invalid,
+    Ok,
+    Error,
+    Timeout,
+    Cancelled,
+  };
+  enum class MessageSenderState
+  {
+    Invalid,
+    Idle,
+    Opening,
+    Open,
+    Closing,
+    Error,
+  };
 
-    class MessageSender;
-    struct MessageSenderEvents
-    {
-      virtual void OnMessageSenderStateChanged(
-          MessageSender const& sender,
-          MessageSenderState newState,
-          MessageSenderState oldState)
-          = 0;
-    };
+  enum class SenderSettleMode
+  {
+    Unsettled,
+    Settled,
+    Mixed,
+  };
 
-    struct MessageSenderOptions
-    {
-      std::string Name;
-      SenderSettleMode SettleMode{};
-      std::string SourceAddress;
-      std::vector<std::string> AuthenticationScopes;
-      Azure::Nullable<uint64_t> MaxMessageSize;
-      bool EnableTrace{false};
-      Azure::Nullable<uint32_t> InitialDeliveryCount;
+  class MessageSender;
+  class MessageSenderEvents {
+  protected:
+    ~MessageSenderEvents() = default;
 
-      // Copied from Go, not sure if they're needed.
-      std::vector<std::string> Capabilities;
-      LinkDurability Durability{};
-      bool DynamicAddress{false};
-      ExpiryPolicy SenderExpiryPolicy{};
-      std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
-      bool IgnoreDispositionErrors{false};
+  public:
+    virtual void OnMessageSenderStateChanged(
+        MessageSender const& sender,
+        MessageSenderState newState,
+        MessageSenderState oldState)
+        = 0;
+  };
 
-      Azure::Core::Amqp::Models::AmqpValue Properties;
+  struct MessageSenderOptions final
+  {
+    /** @brief The name of the link associated with the message sender.
+     *
+     * Links are named so that they can be recovered when communication is interrupted. Link names
+     * MUST uniquely identify the link amongst all links of the same direction between the two
+     * participating containers. Link names are only used when attaching a link, so they can be
+     * arbitrarily long without a significant penalty.
+     *
+     */
+    std::string Name;
 
-      ReceiverSettleMode RequestedReceiverSettleMode{};
+    /** @brief The settle mode for the link associated with the message sender.
+     *
+     * This field indicates how the deliveries sent over the link SHOULD be settled. When this
+     * field is set to "mixed", the unsettled map MUST be sent even if it is empty. When this
+     * field is set to "settled", the value of the unsettled map MUST NOT be sent. See
+     * http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transactions-v1.0-os.html#doc-idp145616
+     * for more details.
+     *
+     */
+    SenderSettleMode SettleMode{};
 
-      std::vector<std::string> TargetCapabilities;
-      LinkDurability TargetDurability{};
-      ExpiryPolicy TargetExpiryPolicy{};
-      std::chrono::seconds TargetExpiryTimeout{std::chrono::seconds(0)};
-    };
+    /** @brief The source for the link associated with the message sender. */
+    Models::_internal::MessageSource MessageSource;
 
-    class MessageSender {
-    public:
-      using MessageSendCompleteCallback = std::function<void(
-          MessageSendResult sendResult,
-          Azure::Core::Amqp::Models::AmqpValue const& deliveryState)>;
+    /** @brief The Maximum message size for the link associated with the message sender. */
+    Nullable<uint64_t> MaxMessageSize;
 
-      MessageSender(
-          Session const& session,
-          std::string const& target,
-          MessageSenderOptions const& options,
-          MessageSenderEvents* events);
+    /** @brief The initial delivery count for the link associated with the message.
+     *
+     * The delivery-count is initialized by the sender when a link endpoint is created, and is
+     * incremented whenever a message is sent. Note that the value of this field can be
+     * overwritten by the remote peer if a link endpoint is attached with a transfer-id that
+     * indicates that the peer's value for the delivery-count is ahead of the sender's value.
+     *
+     */
+    Nullable<uint32_t> InitialDeliveryCount;
 
-      /** @brief Specialization of MessageSender class intended for use in a Message receiving
-       * handler.
-       */
-      MessageSender(
-          Session const& session,
-          LinkEndpoint& newLinkEndpoint,
-          std::string const& target,
-          MessageSenderOptions const& options,
-          MessageSenderEvents* events);
-      MessageSender(
-          Session const& session,
-          std::shared_ptr<ServiceBusSasConnectionStringCredential> credential,
-          std::string const& target,
-          MessageSenderOptions const& options,
-          MessageSenderEvents* events);
-      MessageSender(
-          Session const& session,
-          std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-          std::string const& target,
-          MessageSenderOptions const& options,
-          MessageSenderEvents* events);
-      MessageSender(std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> sender)
-          : m_impl{sender}
-      {
-      }
-      virtual ~MessageSender() noexcept;
+    /** @brief If true, the message sender will log trace events. */
+    bool EnableTrace{false};
+  };
 
-      MessageSender(MessageSender const&) = default;
-      MessageSender& operator=(MessageSender const&) = default;
-      MessageSender(MessageSender&&) noexcept = default;
-      MessageSender& operator=(MessageSender&&) noexcept = default;
+  class MessageSender final {
+  public:
+    using MessageSendCompleteCallback
+        = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
 
-      void Open(Azure::Core::Context const& context = {});
-      void Close();
-      std::tuple<MessageSendResult, Azure::Core::Amqp::Models::AmqpValue> Send(
-          Azure::Core::Amqp::Models::AmqpMessage const& message,
-          Azure::Core::Context context = {});
-      void QueueSend(
-          Azure::Core::Amqp::Models::AmqpMessage const& message,
-          MessageSendCompleteCallback onSendComplete,
-          Azure::Core::Context context = {});
-      void SetTrace(bool traceEnabled);
+    /** @brief Construct a message sender.
+     *
+     * @param session The AMQP session.
+     * @param target The target to which messages will be sent.
+     * @param options The options to use when sending messages.
+     * @param events The events handler for the message sender.
+     *
+     */
+    MessageSender(
+        Session const& session,
+        Models::_internal::MessageTarget const& target,
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events);
 
-    private:
-      std::shared_ptr<Azure::Core::Amqp::_detail::MessageSenderImpl> m_impl;
-    };
-  } // namespace _internal
-}}} // namespace Azure::Core::Amqp
+    /** @brief Construct a message sender for use in a message receiving handler.
+     *
+     * @param session The AMQP session.
+     * @param newLinkEndpoint The link endpoint to use for sending messages.
+     * @param target The target to which messages will be sent.
+     * @param options The options to use when sending messages.
+     * @param events The events handler for the message sender.
+     *
+     * @remarks This constructor is primarily used for testing scenarios.
+     */
+    MessageSender(
+        Session const& session,
+        LinkEndpoint& newLinkEndpoint,
+        Models::_internal::MessageTarget const& target,
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events);
+
+    ~MessageSender() noexcept;
+
+    MessageSender(MessageSender const&) = default;
+    MessageSender& operator=(MessageSender const&) = default;
+    MessageSender(MessageSender&&) noexcept = default;
+    MessageSender& operator=(MessageSender&&) noexcept = default;
+
+    /** @brief Opens a message sender.
+     *
+     * @param context The context to use for the operation.
+     */
+    void Open(Context const& context = {});
+
+    /** @brief Closes a message sender.
+     *
+     */
+    void Close();
+
+    /** @brief Send a message synchronously to the target of the message sender.
+     *
+     * @param message The message to send.
+     * @param context The context to use for the operation.
+     *
+     * @return A tuple containing the status of the send operation and the send disposition.
+     */
+    std::tuple<MessageSendStatus, Models::AmqpValue> Send(
+        Models::AmqpMessage const& message,
+        Context const& context = {});
+
+    /** @brief Queue a message to be sent to the target of the message sender.
+     */
+    void QueueSend(
+        Models::AmqpMessage const& message,
+        MessageSendCompleteCallback onSendComplete,
+        Context const& context = {});
+
+  private:
+    /** @brief Construct a MessageSender from a low level message sender implementation.
+     *
+     * @remarks This function should never be called by a user. It is used internally by the SDK.
+     */
+    MessageSender(std::shared_ptr<_detail::MessageSenderImpl> sender) : m_impl{sender} {}
+
+    friend class _detail::MessageSenderFactory;
+    std::shared_ptr<_detail::MessageSenderImpl> m_impl;
+  };
+}}}} // namespace Azure::Core::Amqp::_internal

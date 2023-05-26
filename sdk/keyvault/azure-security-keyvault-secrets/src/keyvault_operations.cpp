@@ -7,6 +7,7 @@
  */
 
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
+
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_serializers.hpp"
 

@@ -16,6 +16,7 @@
 
 #include <azure/core.hpp>
 #include <azure/core/http/curl_transport.hpp>
+
 #include <iostream>
 
 void SendRequest(std::string target)

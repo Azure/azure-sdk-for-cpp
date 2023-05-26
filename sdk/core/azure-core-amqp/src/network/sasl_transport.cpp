@@ -3,8 +3,10 @@
 
 // LCOV_EXCL_START
 #include "azure/core/amqp/network/sasl_transport.hpp"
+
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include "private/transport_impl.hpp"
+
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
 #include <azure_c_shared_utility/tlsio.h>
@@ -12,13 +14,13 @@
 #include <azure_uamqp_c/sasl_plain.h>
 #include <azure_uamqp_c/saslclientio.h>
 
-Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
+Azure::Core::Amqp::Network::_internal::Transport
+Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     std::string const& saslKeyName,
     std::string const& saslKey,
     std::string const& hostName,
     uint16_t hostPort,
     TransportEvents* eventHandler)
-    : Transport(eventHandler)
 {
   XIO_HANDLE underlying_io;
   // We assume that localhost connections will be using raw sockets, not TLS.
@@ -45,14 +47,15 @@ Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
   SASLCLIENTIO_CONFIG saslConfig;
   saslConfig.underlying_io = underlying_io;
   saslConfig.sasl_mechanism = saslMechanism;
-  m_impl->SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
+  return _detail::TransportImpl::CreateFromXioHandle(
+      xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
 }
 
-Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
+Azure::Core::Amqp::Network::_internal::Transport
+Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     std::string const& hostName,
     uint16_t hostPort,
     TransportEvents* eventHandler)
-    : Transport(eventHandler)
 {
   XIO_HANDLE underlying_io;
   // We assume that localhost connections will be using raw sockets, not TLS.
@@ -76,6 +79,7 @@ Azure::Core::Amqp::Network::_internal::SaslTransport::SaslTransport(
   SASLCLIENTIO_CONFIG saslConfig;
   saslConfig.underlying_io = underlying_io;
   saslConfig.sasl_mechanism = saslMechanism;
-  m_impl->SetInstance(xio_create(saslclientio_get_interface_description(), &saslConfig));
+  return _detail::TransportImpl::CreateFromXioHandle(
+      xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
 }
 // LCOV_EXCL_STOP

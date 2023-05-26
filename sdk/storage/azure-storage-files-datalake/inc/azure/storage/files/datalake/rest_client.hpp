@@ -6,10 +6,6 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <vector>
-
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
@@ -20,6 +16,10 @@
 #include <azure/core/url.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/files/datalake/dll_import_export.hpp>
+
+#include <cstdint>
+#include <string>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace _detail {

@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/http/http.hpp>
 #include <azure/core/response.hpp>
 
 #include <memory>
 #include <stdexcept>
 #include <string>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;

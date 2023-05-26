@@ -12,7 +12,6 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
-
 #include <azure/storage/blobs.hpp>
 
 #include <memory>

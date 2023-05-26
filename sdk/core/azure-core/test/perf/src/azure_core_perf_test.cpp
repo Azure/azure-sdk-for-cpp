@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/perf.hpp>
-
 #include "azure/core/test/nullable_test.hpp"
 #include "azure/core/test/uuid_test.hpp"
+
+#include <azure/perf.hpp>
 
 #include <vector>
 

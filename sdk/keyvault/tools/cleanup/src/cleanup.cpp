@@ -17,6 +17,7 @@
 #include <azure/keyvault/certificates.hpp>
 #include <azure/keyvault/keys.hpp>
 #include <azure/keyvault/secrets.hpp>
+
 #include <chrono>
 #include <iostream>
 

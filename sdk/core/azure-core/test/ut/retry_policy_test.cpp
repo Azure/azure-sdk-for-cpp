@@ -5,9 +5,9 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 
-#include <gtest/gtest.h>
-
 #include <functional>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;

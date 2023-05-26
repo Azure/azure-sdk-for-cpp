@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <azure/perf.hpp>
-
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
+#include <azure/perf.hpp>
+
 #include <chrono>
 #include <memory>
 #include <string>

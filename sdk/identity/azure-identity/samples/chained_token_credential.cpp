@@ -1,15 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <iostream>
-
-#include <azure/identity/chained_token_credential.hpp>
-
 #include <azure/identity/azure_cli_credential.hpp>
+#include <azure/identity/chained_token_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 #include <azure/identity/managed_identity_credential.hpp>
-
 #include <azure/service/client.hpp>
+
+#include <iostream>
 
 int main()
 {

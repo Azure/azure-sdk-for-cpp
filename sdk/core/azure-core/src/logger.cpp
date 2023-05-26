@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/diagnostics/logger.hpp"
+
 #include "azure/core/internal/diagnostics/log.hpp"
+#include "private/environment_log_level_listener.hpp"
 
 #include <mutex>
 #include <shared_mutex>
-
-#include "private/environment_log_level_listener.hpp"
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;

@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/uuid.hpp>
-#include <gtest/gtest.h>
+
 #include <set>
 #include <string>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

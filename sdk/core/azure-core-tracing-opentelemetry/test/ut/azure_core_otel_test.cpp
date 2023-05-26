@@ -4,6 +4,7 @@
 #define USE_MEMORY_EXPORTER 1
 #include "../src/opentelemetry_private.hpp"
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+
 #include <azure/core/test/test_base.hpp>
 
 #if defined(_MSC_VER)
@@ -27,6 +28,7 @@
 #endif
 
 #include <chrono>
+
 #include <gtest/gtest.h>
 
 class OpenTelemetryTests : public Azure::Core::Test::TestBase {

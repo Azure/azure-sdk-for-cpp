@@ -5,8 +5,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <azure/storage/blobs.hpp>
-
 std::string GetConnectionString()
 {
   const static std::string ConnectionString = "";
