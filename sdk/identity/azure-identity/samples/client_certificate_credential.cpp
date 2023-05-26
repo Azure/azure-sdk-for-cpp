@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <iostream>
-
 #include <azure/identity/client_certificate_credential.hpp>
-
 #include <azure/service/client.hpp>
+
+#include <iostream>
 
 // The following environment variables must be set before running the sample.
 // * AZURE_TENANT_ID: Tenant ID for the Azure account.

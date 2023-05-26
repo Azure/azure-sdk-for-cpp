@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/base64.hpp>
+#include <azure/storage/queues.hpp>
+
 #include <cassert>
 #include <cstdio>
 #include <iostream>
