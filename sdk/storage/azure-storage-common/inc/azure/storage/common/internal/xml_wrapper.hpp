@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   class XmlReader final {
   public:
-    XmlReader(const char* data, size_t length);
+    XmlReader(uint8_t const* data, size_t length);
     XmlReader(const XmlReader& other) = delete;
     XmlReader& operator=(const XmlReader& other) = delete;
     XmlReader(XmlReader&& other) noexcept;
