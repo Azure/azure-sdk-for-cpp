@@ -29,17 +29,17 @@ TEST_F(TestConnections, SimpleConnection)
 {
   {
     // Create a connection
-    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-    connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
     Azure::Core::Amqp::_internal::Connection connection("localhost", {});
   }
   {
     // Create a connection
-    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-    connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
   }
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
@@ -48,29 +48,6 @@ TEST_F(TestConnections, SimpleConnection)
 
     Azure::Core::Amqp::_internal::Connection connection(socketTransport, options);
   }
-
-#if 0
-  // Create a session
-  Azure::Core::Amqp::_internal::Session session(connection);
-
-  // Create a sender
-  Azure::Core::Amqp::Sender sender(session, "test");
-
-  // Create a receiver
-  Azure::Core::Amqp::Receiver receiver(session, "test");
-
-  // Create a message
-  Azure::Core::Amqp::Message message;
-
-  // Send a message
-  sender.Send(message);
-
-  // Receive a message
-  receiver.Receive();
-
-  // Close the connection
-  connection.Close();
-#endif
 }
 
 TEST_F(TestConnections, ConnectionAttributes)
@@ -175,9 +152,9 @@ TEST_F(TestConnections, ConnectionOpenClose)
     EXPECT_NO_THROW(listener.Start());
 
     // Create a connection
-    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-    connectOptions.Port = testPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = testPort;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
 
     // Open the connection
     connection.Open();
@@ -277,7 +254,7 @@ private:
 
     return true;
   }
-  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
+  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
   // Inherited via MessageReceiver
   virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
       Azure::Core::Amqp::_internal::MessageReceiver const&,
@@ -311,9 +288,9 @@ TEST_F(TestConnections, ConnectionListenClose)
 
   {
     // Create a connection
-    Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-    connectOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
     // Open the connection
     connection.Open();
 

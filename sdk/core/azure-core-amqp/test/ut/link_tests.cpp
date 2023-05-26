@@ -180,7 +180,7 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
 
     return true;
   }
-  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
+  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
   // Inherited via Session
   virtual bool OnLinkAttached(
       Azure::Core::Amqp::_internal::Session const& session,
@@ -233,9 +233,9 @@ TEST_F(TestLinks, LinkAttachDetach)
   uint16_t testPort = FindAvailableSocket();
   GTEST_LOG_(INFO) << "Test port: " << testPort;
   // Create a connection
-  ConnectionOptions connectOptions;
-  connectOptions.Port = testPort;
-  Connection connection("localhost", connectOptions, &events);
+  ConnectionOptions connectionOptions;
+  connectionOptions.Port = testPort;
+  Connection connection("localhost", connectionOptions, &events);
   Session session(connection, nullptr);
 
   Network::_internal::SocketListener listener(testPort, &events);

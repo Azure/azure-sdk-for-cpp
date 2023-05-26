@@ -189,7 +189,7 @@ private:
     return true;
   }
 
-  virtual void OnIoError(Connection const&) override
+  virtual void OnIOError(Connection const&) override
   {
     std::cerr << "I/O error has occurred, connection is invalid." << std::endl;
   };

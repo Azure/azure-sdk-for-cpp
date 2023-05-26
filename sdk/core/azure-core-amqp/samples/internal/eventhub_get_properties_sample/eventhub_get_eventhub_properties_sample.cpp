@@ -170,12 +170,12 @@ int main()
   }
 
   // Establish the connection to the eventhub.
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = "some";
-  connectOptions.EnableTrace = false;
-  connectOptions.Port = connectionParser.GetPort();
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "some";
+  connectionOptions.EnableTrace = false;
+  connectionOptions.Port = connectionParser.GetPort();
   Azure::Core::Amqp::_internal::Connection connection(
-      connectionParser.GetHostName(), connectOptions);
+      connectionParser.GetHostName(), connectionOptions);
 
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
       GetEnvHelper::GetEnv("SAMPLES_TENANT_ID"),

@@ -20,7 +20,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INS
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueMessageSender = Azure::Core::_internal::UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;
 
-  class MessageSenderFactory {
+  class MessageSenderFactory final {
   public:
     static Azure::Core::Amqp::_internal::MessageSender CreateFromInternal(
         std::shared_ptr<MessageSenderImpl> senderImpl)

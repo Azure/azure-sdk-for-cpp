@@ -16,13 +16,13 @@ int main()
   auto credentials
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
           EH_CONNECTION_STRING);
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = "some";
-  connectOptions.EnableTrace = true;
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "some";
+  connectionOptions.EnableTrace = true;
   std::string hostUrl
       = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
-  connectOptions.Port = credentials->GetPort();
-  Azure::Core::Amqp::_internal::Connection connection(credentials->GetHostName(), connectOptions);
+  connectionOptions.Port = credentials->GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(credentials->GetHostName(), connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

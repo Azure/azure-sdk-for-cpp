@@ -17,7 +17,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
 using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  class ClaimsBasedSecurityImpl {
+  class ClaimsBasedSecurityImpl final {
 
   public:
     ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session);

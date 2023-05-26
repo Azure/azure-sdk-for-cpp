@@ -153,7 +153,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         this,
         OnConnectionStateChangedFn,
         this,
-        OnIoErrorFn,
+        OnIOErrorFn,
         this));
     if (m_options.EnableTrace)
     {
@@ -255,12 +255,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   // LCOV_EXCL_START
-  void ConnectionImpl::OnIoErrorFn(void* context)
+  void ConnectionImpl::OnIOErrorFn(void* context)
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
     if (cn->m_eventHandler)
     {
-      return cn->m_eventHandler->OnIoError(
+      return cn->m_eventHandler->OnIOError(
           ConnectionFactory::CreateFromInternal(cn->shared_from_this()));
     }
   }

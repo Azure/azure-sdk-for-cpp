@@ -12,16 +12,16 @@
 
 int main()
 {
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = "whatever";
-  connectOptions.EnableTrace = false;
-  connectOptions.SaslCredentials
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "whatever";
+  connectionOptions.EnableTrace = false;
+  connectionOptions.SaslCredentials
       = std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
           EH_CONNECTION_STRING);
-  std::string hostUrl = "amqps://" + connectOptions.SaslCredentials->GetHostName() + "/"
-      + connectOptions.SaslCredentials->GetEntityPath() + "/ConsumerGroups/$Default/Partitions/0";
+  std::string hostUrl = "amqps://" + connectionOptions.SaslCredentials->GetHostName() + "/"
+      + connectionOptions.SaslCredentials->GetEntityPath() + "/ConsumerGroups/$Default/Partitions/0";
 
-  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = 100;

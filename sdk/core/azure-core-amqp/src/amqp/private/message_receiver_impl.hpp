@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   using UniqueMessageReceiver = Azure::Core::_internal::UniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG>;
 
-  class MessageReceiverFactory {
+  class MessageReceiverFactory final {
   public:
     static Azure::Core::Amqp::_internal::MessageReceiver CreateFromInternal(
         std::shared_ptr<MessageReceiverImpl> receiverImpl)

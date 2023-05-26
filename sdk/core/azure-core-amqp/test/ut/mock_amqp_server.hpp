@@ -384,7 +384,7 @@ protected:
     m_session->Begin();
     return true;
   }
-  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
+  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
 
   // Inherited via Session
   virtual bool OnLinkAttached(

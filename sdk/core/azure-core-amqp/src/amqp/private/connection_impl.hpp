@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class ClaimsBasedSecurity;
 
-  class ConnectionFactory {
+  class ConnectionFactory final {
   public:
     static Azure::Core::Amqp::_internal::Connection CreateFromInternal(
         std::shared_ptr<ConnectionImpl> connectionImpl)
@@ -125,6 +125,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CONNECTION_STATE oldState);
     // Note: We cannot take ownership of this instance tag.
     static bool OnNewEndpointFn(void* context, ENDPOINT_HANDLE endpoint);
-    static void OnIoErrorFn(void* context);
+    static void OnIOErrorFn(void* context);
   };
 }}}} // namespace Azure::Core::Amqp::_detail

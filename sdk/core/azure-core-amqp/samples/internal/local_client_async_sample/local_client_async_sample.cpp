@@ -11,10 +11,10 @@
 
 int main()
 {
-  Azure::Core::Amqp::_internal ::ConnectionOptions connectOptions;
-  connectOptions.EnableTrace = true;
-  connectOptions.ContainerId = "some";
-  Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
+  Azure::Core::Amqp::_internal ::ConnectionOptions connectionOptions;
+  connectionOptions.EnableTrace = true;
+  connectionOptions.ContainerId = "some";
+  Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

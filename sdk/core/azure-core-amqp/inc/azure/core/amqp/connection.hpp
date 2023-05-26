@@ -168,7 +168,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @param connection The connection object.
      */
-    virtual void OnIoError(Connection const& connection) = 0;
+    virtual void OnIOError(Connection const& connection) = 0;
   };
 
   /** @brief Options used to create a connection. */

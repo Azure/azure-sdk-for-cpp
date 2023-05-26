@@ -22,7 +22,7 @@ using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  class SessionFactory {
+  class SessionFactory final {
   public:
     static Azure::Core::Amqp::_internal::Session CreateFromInternal(
         std::shared_ptr<SessionImpl> sessionImpl)

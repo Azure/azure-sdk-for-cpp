@@ -39,10 +39,10 @@ int main()
       GetEnvHelper::GetEnv("SAMPLES_CLIENT_ID"),
       GetEnvHelper::GetEnv("SAMPLES_CLIENT_SECRET"))};
 
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = "some";
-  connectOptions.EnableTrace = true;
-  Azure::Core::Amqp::_internal::Connection connection(eventhubsHost, connectOptions);
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "some";
+  connectionOptions.EnableTrace = true;
+  Azure::Core::Amqp::_internal::Connection connection(eventhubsHost, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

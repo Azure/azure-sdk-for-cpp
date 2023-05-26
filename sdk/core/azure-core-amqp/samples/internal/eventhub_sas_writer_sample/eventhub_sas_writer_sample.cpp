@@ -24,11 +24,11 @@ int main()
   {
     entityPath = GetEnvHelper::GetEnv("EVENTHUB_NAME");
   }
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = "some";
-  connectOptions.EnableTrace = true;
-  connectOptions.Port = credential->GetPort();
-  Azure::Core::Amqp::_internal::Connection connection(credential->GetHostName(), connectOptions);
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "some";
+  connectionOptions.EnableTrace = true;
+  connectionOptions.Port = credential->GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(credential->GetHostName(), connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

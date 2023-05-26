@@ -149,10 +149,10 @@ TEST_F(TestManagement, ManagementRequestResponse)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.Port = mockServer.GetPort();
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectOptions);
+    Connection connection("localhost", connectionOptions);
     Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = 1;
@@ -184,11 +184,11 @@ TEST_F(TestManagement, ManagementRequestResponseSimple)
   {
     ManagementReceiver mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    connectOptions.Port = mockServer.GetPort();
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectOptions);
+    Connection connection("localhost", connectionOptions);
     Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -216,11 +216,11 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
 
   {
     ManagementReceiver mockServer;
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    connectOptions.Port = mockServer.GetPort();
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectOptions);
+    Connection connection("localhost", connectionOptions);
     Session session(connection, nullptr);
 
     ManagementOptions options;
@@ -252,10 +252,10 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
   {
     ManagementReceiver mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    connectOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectOptions);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
     Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -295,11 +295,11 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
     };
     ManagementEventsHandler managementEvents;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    connectOptions.Port = mockServer.GetPort();
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectOptions);
+    Connection connection("localhost", connectionOptions);
     Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -335,10 +335,10 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
   {
     ManagementReceiver mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    connectOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectOptions);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
     Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
@@ -376,10 +376,10 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
     ManagementReceiver mockServer;
     mockServer.StartListening();
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    connectOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectOptions);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
 
     Session session(connection, nullptr);
 

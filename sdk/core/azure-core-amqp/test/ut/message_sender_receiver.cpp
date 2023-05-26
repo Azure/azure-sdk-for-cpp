@@ -206,7 +206,7 @@ private:
 
     return true;
   }
-  virtual void OnIoError(Azure::Core::Amqp::_internal::Connection const&) override {}
+  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
 
   // Inherited via SessionEvents
   virtual bool OnLinkAttached(

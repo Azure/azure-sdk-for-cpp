@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpComposite;
   class AmqpDescribed;
 
-  class AmqpValue {
+  class AmqpValue final {
   public:
     /** @brief Construct an AMQP null (empty) value.
      *

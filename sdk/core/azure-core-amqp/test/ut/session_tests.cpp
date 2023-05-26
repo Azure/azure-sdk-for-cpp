@@ -210,9 +210,9 @@ TEST_F(TestSessions, SessionBeginEnd)
   listener.Start();
 
   // Create a connection
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.Port = testPort;
-  Azure::Core::Amqp::_internal::Connection connection("localhost", connectOptions);
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.Port = testPort;
+  Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
 
   {
     Session session(connection, nullptr);
