@@ -7,6 +7,10 @@ project (azure-identity-samples LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if(MSVC)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+endif()
+
 add_executable(azure_cli_credential_sample azure_cli_credential.cpp)
 target_link_libraries(azure_cli_credential_sample PRIVATE azure-identity service)
 target_include_directories(azure_cli_credential_sample PRIVATE .)
