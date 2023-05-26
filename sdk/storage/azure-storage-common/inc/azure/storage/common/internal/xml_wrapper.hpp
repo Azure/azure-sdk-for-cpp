@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace _internal {
     explicit XmlNode(
         XmlNodeType type,
         std::string name = std::string(),
-        std::string value = std::string())
+        std::string value = {}))
         : Type(type), Name(std::move(name)), Value(std::move(value))
     {
     }
