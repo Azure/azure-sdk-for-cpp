@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 #include "test_traits.hpp"
-#include <gtest/gtest.h>
 
 #include <azure/core/etag.hpp>
+
+#include <gtest/gtest.h>
 
 #include <limits>
 
