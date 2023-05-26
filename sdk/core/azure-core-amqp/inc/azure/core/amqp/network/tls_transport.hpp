@@ -8,14 +8,23 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  class TlsTransport final : public Transport {
-
+  /** @brief Factory to create a TLS connection to a remote node.
+   */
+  class TlsTransportFactory final {
   public:
-    TlsTransport(TransportEvents* eventHandler = nullptr);
-    TlsTransport(
+    /** @brief Creates a TLS transport.
+     * 	 *
+     * 	 * @param hostName Host name to connect to.
+     * 	 * @param hostPort Port to connect to.
+     * 	 * @param eventHandler Optional event handler.
+     * 	 * @return Transport.
+     * 	 *
+     */
+    static Transport Create(
         std::string const& hostName,
         uint16_t hostPort,
         TransportEvents* eventHandler = nullptr);
-    ~TlsTransport() = default;
+
+    TlsTransportFactory() = delete;
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

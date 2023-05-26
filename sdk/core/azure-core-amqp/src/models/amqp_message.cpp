@@ -486,7 +486,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   namespace {
-    class AmqpMessageDeserializer {
+    class AmqpMessageDeserializer final {
     public:
       AmqpMessageDeserializer()
           : m_decoder{amqpvalue_decoder_create(OnAmqpMessageFieldDecodedFn, this)}

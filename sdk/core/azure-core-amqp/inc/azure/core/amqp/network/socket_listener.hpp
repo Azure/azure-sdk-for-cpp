@@ -15,10 +15,14 @@ struct IO_INTERFACE_DESCRIPTION_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
-  struct SocketListenerEvents
-  {
+  class SocketListenerEvents {
+  protected:
+    ~SocketListenerEvents() {}
+
+  public:
     virtual void OnSocketAccepted(std::shared_ptr<Transport> newTransport) = 0;
   };
+
   class SocketListener final {
   public:
     SocketListener(uint16_t port, SocketListenerEvents* eventHandler);

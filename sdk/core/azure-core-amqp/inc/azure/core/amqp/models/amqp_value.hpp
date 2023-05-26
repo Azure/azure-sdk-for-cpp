@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
     None = 0,
     Configuration = 1,
-    UnsettledState = 2
+    UnsettledState = 2,
   };
 
   // Note : Should be an extendable Enumeration.
@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     LinkDetach,
     SessionEnd,
     ConnectionClose,
-    Never
+    Never,
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
 
@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpComposite;
   class AmqpDescribed;
 
-  class AmqpValue {
+  class AmqpValue final {
   public:
     /** @brief Construct an AMQP null (empty) value.
      *

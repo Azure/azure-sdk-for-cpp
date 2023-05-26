@@ -14,126 +14,113 @@
 #include <azure/core/nullable.hpp>
 #include <vector>
 
-namespace Azure { namespace Core { namespace Amqp {
-  namespace _detail {
-    class MessageReceiverImpl;
-  }
-  namespace _internal {
-    enum class MessageReceiverState
-    {
-      Invalid,
-      Idle,
-      Opening,
-      Open,
-      Closing,
-      Error
-    };
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  class MessageReceiverImpl;
+  class MessageReceiverFactory;
+}}}} // namespace Azure::Core::Amqp::_detail
 
-    enum class ReceiverSettleMode
-    {
-      First,
-      Second
-    };
+namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+  enum class MessageReceiverState
+  {
+    Invalid,
+    Idle,
+    Opening,
+    Open,
+    Closing,
+    Error,
+  };
 
-    class MessageReceiver;
+  enum class ReceiverSettleMode
+  {
+    First,
+    Second,
+  };
 
-    struct MessageReceiverOptions
-    {
-      std::string Name;
-      std::vector<std::string> AuthenticationScopes;
-      ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
-      std::string TargetAddress;
-      bool EnableTrace{false};
-      Azure::Nullable<uint32_t> InitialDeliveryCount;
-      Azure::Nullable<uint64_t> MaxMessageSize;
+  class MessageReceiver;
 
-      bool Batching{false};
-      std::chrono::seconds BatchMaxAge{std::chrono::seconds(5)};
-      std::vector<std::string> Capabilities;
-      uint32_t Credit{1};
-      LinkDurability Durability{};
-      bool DynamicAddress{false};
-      ExpiryPolicy SenderExpiryPolicy{};
-      ExpiryPolicy ReceiverExpiryPolicy{};
-      std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
-      // LinkFilter
-      bool ManualCredits{};
-      Azure::Core::Amqp::Models::AmqpValue Properties;
+  struct MessageReceiverOptions
+  {
+    std::string Name;
+    std::vector<std::string> AuthenticationScopes;
+    ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
+    Models::_internal::MessageTarget MessageTarget;
+    bool EnableTrace{false};
+    Nullable<uint32_t> InitialDeliveryCount;
+    Nullable<uint64_t> MaxMessageSize;
 
-      std::vector<std::string> SenderCapabilities;
-      LinkDurability SenderDurability{};
-      std::chrono::seconds SenderExpiryTimeout{std::chrono::seconds(0)};
-    };
+    bool Batching{false};
+    std::chrono::seconds BatchMaxAge{std::chrono::seconds(5)};
+    std::vector<std::string> Capabilities;
+    uint32_t Credit{1};
+    LinkDurability Durability{};
+    bool DynamicAddress{false};
+    ExpiryPolicy SenderExpiryPolicy{};
+    ExpiryPolicy ReceiverExpiryPolicy{};
+    std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
+    // LinkFilter
+    bool ManualCredits{};
+    Models::AmqpValue Properties;
 
-    struct MessageReceiverEvents
-    {
-      virtual void OnMessageReceiverStateChanged(
-          MessageReceiver const& receiver,
-          MessageReceiverState newState,
-          MessageReceiverState oldState)
-          = 0;
-      virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
-          MessageReceiver const& receiver,
-          Azure::Core::Amqp::Models::AmqpMessage const& message)
-          = 0;
-    };
+    std::vector<std::string> SenderCapabilities;
+    LinkDurability SenderDurability{};
+    std::chrono::seconds SenderExpiryTimeout{std::chrono::seconds(0)};
+  };
 
-    class MessageReceiver final {
-    public:
-      MessageReceiver(
-          Session& session,
-          std::string const& receiverSource,
-          MessageReceiverOptions const& options,
-          MessageReceiverEvents* receiverEvents = nullptr);
-      MessageReceiver(
-          Session& session,
-          std::shared_ptr<ConnectionStringCredential> credentials,
-          std::string const& receiverSource,
-          MessageReceiverOptions const& options,
-          MessageReceiverEvents* receiverEvents = nullptr);
-      MessageReceiver(
-          Session& session,
-          std::shared_ptr<Azure::Core::Credentials::TokenCredential> credentials,
-          std::string const& receiverSource,
-          MessageReceiverOptions const& options,
-          MessageReceiverEvents* receiverEvents = nullptr);
-      MessageReceiver(
-          Session const& session,
-          LinkEndpoint& linkEndpoint,
-          std::string const& receiverSource,
-          MessageReceiverOptions const& options,
-          MessageReceiverEvents* receiverEvents = nullptr);
+  class MessageReceiverEvents {
+  protected:
+    ~MessageReceiverEvents() = default;
 
-      MessageReceiver() = default;
-      MessageReceiver(std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> impl)
-          : m_impl{impl}
-      {
-      }
-      ~MessageReceiver() noexcept;
+  public:
+    virtual void OnMessageReceiverStateChanged(
+        MessageReceiver const& receiver,
+        MessageReceiverState newState,
+        MessageReceiverState oldState)
+        = 0;
+    virtual Models::AmqpValue OnMessageReceived(
+        MessageReceiver const& receiver,
+        Models::AmqpMessage const& message)
+        = 0;
+  };
 
-      MessageReceiver(MessageReceiver const&) = default;
-      MessageReceiver& operator=(MessageReceiver const&) = default;
-      MessageReceiver(MessageReceiver&&) = default;
-      MessageReceiver& operator=(MessageReceiver&&) = default;
+  class MessageReceiver final {
+  public:
+    MessageReceiver(
+        Session& session,
+        Models::_internal::MessageSource const& receiverSource,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* receiverEvents = nullptr);
+    MessageReceiver(
+        Session const& session,
+        LinkEndpoint& linkEndpoint,
+        Models::_internal::MessageSource const& receiverSource,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* receiverEvents = nullptr);
 
-      operator bool() const;
+    MessageReceiver() = default;
+    ~MessageReceiver() noexcept;
 
-      void Open(Azure::Core::Context const& context = {});
-      void Close();
-      std::string GetLinkName() const;
-      std::string GetSourceName() const;
-      uint32_t GetReceivedMessageId();
-      void SendMessageDisposition(
-          const char* linkName,
-          uint32_t messageNumber,
-          Azure::Core::Amqp::Models::AmqpValue deliveryState);
-      void SetTrace(bool traceEnabled);
+    MessageReceiver(MessageReceiver const&) = default;
+    MessageReceiver& operator=(MessageReceiver const&) = default;
+    MessageReceiver(MessageReceiver&&) = default;
+    MessageReceiver& operator=(MessageReceiver&&) = default;
 
-      Azure::Core::Amqp::Models::AmqpMessage WaitForIncomingMessage(
-          Azure::Core::Context context = {});
+    operator bool() const;
 
-    private:
-      std::shared_ptr<Azure::Core::Amqp::_detail::MessageReceiverImpl> m_impl;
-    };
-  } // namespace _internal
-}}} // namespace Azure::Core::Amqp
+    void Open(Context const& context = {});
+    void Close();
+    std::string GetLinkName() const;
+    std::string GetSourceName() const;
+    uint32_t GetReceivedMessageId();
+    void SendMessageDisposition(
+        const char* linkName,
+        uint32_t messageNumber,
+        Models::AmqpValue deliveryState);
+
+    Models::AmqpMessage WaitForIncomingMessage(Context const& context = {});
+
+  private:
+    MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}
+    friend class _detail::MessageReceiverFactory;
+    std::shared_ptr<_detail::MessageReceiverImpl> m_impl;
+  };
+}}}} // namespace Azure::Core::Amqp::_internal

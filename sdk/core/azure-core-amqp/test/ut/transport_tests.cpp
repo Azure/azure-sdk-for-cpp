@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include "azure/core/amqp/models/amqp_protocol.hpp"
+#include "azure/core/amqp/connection.hpp"
 #include <azure/core/amqp/common/async_operation_queue.hpp>
 #include <azure/core/amqp/network/socket_listener.hpp>
 #include <azure/core/amqp/network/socket_transport.hpp>
@@ -22,60 +22,46 @@ protected:
   void TearDown() override {}
 };
 
-std::string StringFromSendResult(TransportSendResult ts)
+std::string StringFromSendResult(TransportSendStatus ts)
 {
   switch (ts)
   {
-    case TransportSendResult::Unknown:
+    case TransportSendStatus::Unknown:
       return "Unknown";
-    case TransportSendResult::Ok:
+    case TransportSendStatus::Ok:
       return "Ok";
-    case TransportSendResult::Error:
+    case TransportSendStatus::Error:
       return "Error";
-    case TransportSendResult::Cancelled:
+    case TransportSendStatus::Cancelled:
       return "Cancelled";
-    case TransportSendResult::Invalid:
+    case TransportSendStatus::Invalid:
       return "**INVALID**";
   }
   throw std::logic_error("??? Unknown Transport Send Result...");
 }
 
-std::string StringFromOpenResult(TransportOpenResult to)
+std::string StringFromOpenResult(TransportOpenStatus to)
 {
   switch (to)
   {
-    case TransportOpenResult::Ok:
+    case TransportOpenStatus::Ok:
       return "Ok";
-    case TransportOpenResult::Error:
+    case TransportOpenStatus::Error:
       return "Error";
-    case TransportOpenResult::Cancelled:
+    case TransportOpenStatus::Cancelled:
       return "Cancelled";
-    case TransportOpenResult::Invalid:
+    case TransportOpenStatus::Invalid:
       return "**INVALID**";
   }
   throw std::logic_error("??? Unknown Transport Open Result...");
-}
-
-TEST_F(TestTlsTransport, SimpleCreate)
-{
-  {
-    TlsTransport transport;
-  }
 }
 
 TEST_F(TestTlsTransport, SimpleSend)
 {
   {
     class TestTransportEvents : public TransportEvents {
-      AsyncOperationQueue<TransportOpenResult> openResultQueue;
       AsyncOperationQueue<size_t, std::unique_ptr<uint8_t>> receiveBytesQueue;
       AsyncOperationQueue<bool> errorQueue;
-      void OnOpenComplete(TransportOpenResult result) override
-      {
-        GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
-
-        openResultQueue.CompleteOperation(result);
-      }
       void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
       {
         GTEST_LOG_(INFO) << "On bytes received: " << size;
@@ -83,33 +69,25 @@ TEST_F(TestTlsTransport, SimpleSend)
         memcpy(val.get(), bytes, size);
         receiveBytesQueue.CompleteOperation(size, std::move(val));
       }
-      void OnIoError() override
+      void OnIOError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
       }
 
     public:
-      TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
-      {
-        auto result = openResultQueue.WaitForPolledResult(context, transport);
-        return std::get<0>(*result);
-      }
       std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
           Transport const& transport,
-          Azure::Core::Context context)
+          Azure::Core::Context const& context)
       {
         auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
         return std::make_tuple(std::get<0>(*result), std::move(std::get<1>(*result)));
       }
     };
     TestTransportEvents events;
-    TlsTransport transport("www.microsoft.com", 443, &events);
+    auto transport = TlsTransportFactory::Create("www.microsoft.com", 443, &events);
 
-    ASSERT_TRUE(transport.Open());
-
-    auto openResult = events.WaitForOpen(transport, {});
-    EXPECT_EQ(openResult, TransportOpenResult::Ok);
+    ASSERT_EQ(TransportOpenStatus::Ok, transport.Open());
 
     unsigned char val[] = R"(GET / HTTP/1.1
 Host: www.microsoft.com
@@ -120,15 +98,15 @@ Accept: */*
 
     GTEST_LOG_(INFO) << "Before send" << std::endl;
 
-    AsyncOperationQueue<TransportSendResult> sendOperation;
-    EXPECT_TRUE(transport.Send(val, sizeof(val), [&sendOperation](TransportSendResult result) {
+    AsyncOperationQueue<TransportSendStatus> sendOperation;
+    EXPECT_TRUE(transport.Send(val, sizeof(val), [&sendOperation](TransportSendStatus result) {
       std::cout << "Send complete" << StringFromSendResult(result);
       sendOperation.CompleteOperation(result);
     }));
     GTEST_LOG_(INFO) << "Wait for send" << std::endl;
 
     auto sendResult{sendOperation.WaitForPolledResult({}, transport)};
-    EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
+    EXPECT_EQ(std::get<0>(*sendResult), TransportSendStatus::Ok);
 
     // Wait until we receive data from the www.microsoft.com server.
     GTEST_LOG_(INFO) << "Wait for data from server." << std::endl;
@@ -137,10 +115,7 @@ Accept: */*
     GTEST_LOG_(INFO) << "Received data from microsoft.com server: " << std::get<0>(receiveResult)
                      << std::endl;
 
-    AsyncOperationQueue<bool> closeResult;
-    transport.Close([&closeResult] { closeResult.CompleteOperation(true); });
-    auto closeComplete = closeResult.WaitForPolledResult({}, transport);
-    EXPECT_EQ(true, std::get<0>(*closeComplete));
+    EXPECT_NO_THROW(transport.Close());
   }
 }
 
@@ -154,36 +129,40 @@ protected:
 TEST_F(TestSocketTransport, SimpleCreate)
 {
   {
-    SocketTransport transport("localhost", Azure::Core::Amqp::_detail::AmqpPort);
+    Transport transport{
+        SocketTransportFactory::Create("localhost", Azure::Core::Amqp::_internal::AmqpPort)};
   }
   {
-    SocketTransport transport1("localhost", Azure::Core::Amqp::_detail::AmqpPort);
-    SocketTransport transport2("localhost", 5673);
+    Transport transport1{
+        SocketTransportFactory::Create("localhost", Azure::Core::Amqp::_internal::AmqpPort)};
+    Transport transport2{SocketTransportFactory::Create("localhost", 5673)};
   }
 }
 
 TEST_F(TestSocketTransport, SimpleOpen)
 {
+  // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
+  Azure::Core::Context completionContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+      std::chrono::system_clock::now() + std::chrono::seconds(10));
   {
+    Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80)};
 
-    SocketTransport transport("www.microsoft.com", 80);
-
-    ASSERT_TRUE(transport.Open());
-    EXPECT_TRUE(transport.Close([]() {}));
+    ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext));
+    EXPECT_NO_THROW(transport.Close());
   }
 
   {
-    SocketTransport transport("www.microsoft.com", 80);
-    ASSERT_TRUE(transport.Open());
-    transport.Close(nullptr);
+    Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80)};
+    ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext));
+    transport.Close();
   }
   {
-    SocketTransport transport("www.microsoft.com", 80);
-    EXPECT_ANY_THROW(transport.Close(nullptr));
+    Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80)};
+    EXPECT_ANY_THROW(transport.Close());
   }
   {
-    SocketTransport transport("www.microsoft.com", 80);
-    transport.Open();
+    Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80)};
+    ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext));
     EXPECT_ANY_THROW(transport.Open());
   }
 }
@@ -192,15 +171,8 @@ TEST_F(TestSocketTransport, SimpleSend)
 {
   {
     class TestTransportEvents : public TransportEvents {
-      AsyncOperationQueue<TransportOpenResult> openResultQueue;
       AsyncOperationQueue<size_t, std::unique_ptr<uint8_t>> receiveBytesQueue;
       AsyncOperationQueue<bool> errorQueue;
-      void OnOpenComplete(TransportOpenResult result) override
-      {
-        GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
-
-        openResultQueue.CompleteOperation(result);
-      }
       void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
       {
         GTEST_LOG_(INFO) << "On bytes received: " << size;
@@ -208,36 +180,28 @@ TEST_F(TestSocketTransport, SimpleSend)
         memcpy(val.get(), bytes, size);
         receiveBytesQueue.CompleteOperation(size, std::move(val));
       }
-      void OnIoError() override
+      void OnIOError() override
       {
         GTEST_LOG_(INFO) << "On I/O Error";
         errorQueue.CompleteOperation(true);
       }
 
     public:
-      TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
-      {
-        auto result = openResultQueue.WaitForPolledResult(context, transport);
-        return std::get<0>(*result);
-      }
       std::tuple<size_t, std::unique_ptr<uint8_t>> WaitForReceive(
           Transport const& transport,
-          Azure::Core::Context context)
+          Azure::Core::Context const& context)
       {
         auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
         return std::make_tuple(std::get<0>(*result), std::move(std::get<1>(*result)));
       }
     };
     TestTransportEvents events;
-    SocketTransport transport("www.microsoft.com", 80, &events);
+    Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80, &events)};
 
-    EXPECT_TRUE(transport.Open());
     // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
     Azure::Core::Context completionContext = Azure::Core::Context::ApplicationContext.WithDeadline(
         std::chrono::system_clock::now() + std::chrono::seconds(10));
-    auto openResult = events.WaitForOpen(transport, completionContext);
-
-    EXPECT_EQ(openResult, TransportOpenResult::Ok);
+    ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext));
 
     unsigned char val[] = R"(GET / HTTP/1.1
 Host: www.microsoft.com
@@ -248,15 +212,15 @@ Accept: */*
 
     GTEST_LOG_(INFO) << "Before send" << std::endl;
 
-    AsyncOperationQueue<TransportSendResult> sendOperation;
-    EXPECT_TRUE(transport.Send(val, sizeof(val), [&sendOperation](TransportSendResult result) {
+    AsyncOperationQueue<TransportSendStatus> sendOperation;
+    EXPECT_TRUE(transport.Send(val, sizeof(val), [&sendOperation](TransportSendStatus result) {
       std::cout << "Send complete" << StringFromSendResult(result);
       sendOperation.CompleteOperation(result);
     }));
     GTEST_LOG_(INFO) << "Wait for send" << std::endl;
 
     auto sendResult{sendOperation.WaitForPolledResult({}, transport)};
-    EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
+    EXPECT_EQ(std::get<0>(*sendResult), TransportSendStatus::Ok);
 
     // Wait until we receive data from the www.microsoft.com server.
     GTEST_LOG_(INFO) << "Wait for data from server." << std::endl;
@@ -266,9 +230,7 @@ Accept: */*
                      << std::endl;
 
     AsyncOperationQueue<bool> closeResult;
-    transport.Close([&closeResult] { closeResult.CompleteOperation(true); });
-    auto closeComplete = closeResult.WaitForPolledResult({}, transport);
-    EXPECT_EQ(true, std::get<0>(*closeComplete));
+    EXPECT_NO_THROW(transport.Close());
   }
 }
 
@@ -313,17 +275,14 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
     std::shared_ptr<Transport> GetListenerTransport(
         SocketListener const& listener,
-        Azure::Core::Context context)
+        Azure::Core::Context const& context)
     {
       auto result = m_listenerTransportQueue.WaitForPolledResult(context, listener);
       return std::move(std::get<0>(*result));
     }
-    TransportOpenResult WaitForOpen(SocketListener const& listener, Azure::Core::Context context)
-    {
-      auto result = openResultQueue.WaitForPolledResult(context, listener);
-      return std::get<0>(*result);
-    }
-    std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
+    std::vector<uint8_t> WaitForReceive(
+        Transport const& transport,
+        Azure::Core::Context const& context)
     {
       auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
       if (result)
@@ -335,7 +294,6 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
   private:
     AsyncOperationQueue<std::shared_ptr<Transport>> m_listenerTransportQueue;
-    AsyncOperationQueue<TransportOpenResult> openResultQueue;
     AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
     AsyncOperationQueue<bool> errorQueue;
     virtual void OnSocketAccepted(std::shared_ptr<Transport> newTransport) override
@@ -344,11 +302,6 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       newTransport->SetEventHandler(this);
       newTransport->Open();
       m_listenerTransportQueue.CompleteOperation(newTransport);
-    }
-    void OnOpenComplete(TransportOpenResult result) override
-    {
-      GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
-      openResultQueue.CompleteOperation(result);
     }
     void OnBytesReceived(Transport const& transport, uint8_t const* bytes, size_t size) override
     {
@@ -362,11 +315,11 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
       receiveBytesQueue.CompleteOperation(echoedBytes);
 
       // Echo back the data received.
-      transport.Send(const_cast<uint8_t*>(bytes), size, [](TransportSendResult sendResult) {
+      transport.Send(const_cast<uint8_t*>(bytes), size, [](TransportSendStatus sendResult) {
         GTEST_LOG_(INFO) << "OnListener Send Bytes Complete..." << StringFromSendResult(sendResult);
       });
     }
-    void OnIoError() override
+    void OnIOError() override
     {
       GTEST_LOG_(INFO) << "On I/O Error";
       errorQueue.CompleteOperation(true);
@@ -381,15 +334,8 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
   EXPECT_NO_THROW(listener.Start());
 
   class SendingEvents : public TransportEvents {
-    AsyncOperationQueue<TransportOpenResult> openResultQueue;
     AsyncOperationQueue<std::vector<uint8_t>> receiveBytesQueue;
     AsyncOperationQueue<bool> errorQueue;
-    void OnOpenComplete(TransportOpenResult result) override
-    {
-      GTEST_LOG_(INFO) << "On open:" << static_cast<int>(result);
-
-      openResultQueue.CompleteOperation(result);
-    }
     void OnBytesReceived(Transport const&, uint8_t const* bytes, size_t size) override
     {
       GTEST_LOG_(INFO) << "On bytes received: " << size;
@@ -401,28 +347,25 @@ TEST_F(TestSocketTransport, SimpleListenerEcho)
 
       receiveBytesQueue.CompleteOperation(echoedBytes);
     }
-    void OnIoError() override
+    void OnIOError() override
     {
       GTEST_LOG_(INFO) << "On I/O Error";
       errorQueue.CompleteOperation(true);
     }
 
   public:
-    TransportOpenResult WaitForOpen(Transport const& transport, Azure::Core::Context context)
-    {
-      auto result = openResultQueue.WaitForPolledResult(context, transport);
-      return std::get<0>(*result);
-    }
-    std::vector<uint8_t> WaitForReceive(Transport const& transport, Azure::Core::Context context)
+    std::vector<uint8_t> WaitForReceive(
+        Transport const& transport,
+        Azure::Core::Context const& context)
     {
       auto result = receiveBytesQueue.WaitForPolledResult(context, transport);
       return std::get<0>(*result);
     }
   };
   SendingEvents sendingEvents;
-  SocketTransport sender("localhost", testPort, &sendingEvents);
+  Transport sender{SocketTransportFactory::Create("localhost", testPort, &sendingEvents)};
 
-  ASSERT_TRUE(sender.Open());
+  ASSERT_EQ(TransportOpenStatus::Ok, sender.Open());
 
   // Note: Keep this string under 64 bytes in length because the default socket I/O buffer size
   // is 64 bytes and that helps ensure that this will be handled in a single OnReceiveBytes
@@ -432,14 +375,14 @@ Host: www.microsoft.com)";
 
   // Synchronously send the data to the listener.
   {
-    AsyncOperationQueue<TransportSendResult> sendOperation;
+    AsyncOperationQueue<TransportSendStatus> sendOperation;
 
-    sender.Send(val, sizeof(val), [&sendOperation](TransportSendResult result) {
+    sender.Send(val, sizeof(val), [&sendOperation](TransportSendStatus result) {
       GTEST_LOG_(INFO) << "Sender send complete " << StringFromSendResult(result);
       sendOperation.CompleteOperation(result);
     });
     auto sendResult{sendOperation.WaitForPolledResult({}, sender)};
-    EXPECT_EQ(std::get<0>(*sendResult), TransportSendResult::Ok);
+    EXPECT_EQ(std::get<0>(*sendResult), TransportSendStatus::Ok);
   }
 
   GTEST_LOG_(INFO) << "Wait for listener to receive the bytes we just sent.";
@@ -458,7 +401,7 @@ Host: www.microsoft.com)";
 
   EXPECT_EQ(sizeof(val), receivedData.size());
   EXPECT_EQ(0, memcmp(val, receivedData.data(), receivedData.size()));
-  listenerTransport->Close(nullptr);
+  listenerTransport->Close();
   listener.Stop();
 }
 #endif // !defined(AZ_PLATFORM_MAC)

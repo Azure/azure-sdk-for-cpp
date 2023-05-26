@@ -375,7 +375,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return os;
   }
 
-  class AmqpValueDeserializer {
+  class AmqpValueDeserializer final {
   public:
     AmqpValueDeserializer() : m_decoder{amqpvalue_decoder_create(OnAmqpValueDecoded, this)} {}
 
@@ -404,7 +404,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return AmqpValueDeserializer{}(data, size);
   }
 
-  class AmqpValueSerializer {
+  class AmqpValueSerializer final {
   public:
     AmqpValueSerializer() = default;
 

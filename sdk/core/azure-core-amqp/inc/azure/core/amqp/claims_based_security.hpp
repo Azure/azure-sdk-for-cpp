@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Ok,
     Error,
     Failed,
-    InstanceClosed
+    InstanceClosed,
   };
 
   enum class CbsOpenResult
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Invalid,
     Sas,
-    Jwt
+    Jwt,
   };
 
 #if defined(TESTING_BUILD)
@@ -59,13 +59,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurity(ClaimsBasedSecurity&&) noexcept = default;
     ClaimsBasedSecurity& operator=(ClaimsBasedSecurity&&) noexcept = default;
 
-    CbsOpenResult Open(Azure::Core::Context = {});
+    CbsOpenResult Open(Context const& context = {});
     void Close();
     std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,
-        Azure::Core::Context = {});
+        Context const& context = {});
     void SetTrace(bool traceEnabled);
 
   private:

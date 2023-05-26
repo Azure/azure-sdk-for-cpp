@@ -4,6 +4,8 @@
 #pragma once
 
 #include "azure/core/amqp/models/amqp_value.hpp"
+#include "azure/core/amqp/models/message_source.hpp"
+#include "azure/core/amqp/models/message_target.hpp"
 #include <azure_uamqp_c/link.h>
 #include <chrono>
 #include <memory>
@@ -18,15 +20,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::shared_ptr<_detail::SessionImpl> session,
         std::string const& name,
         _internal::SessionRole role,
-        std::string const& source,
-        std::string const& target);
+        Models::_internal::MessageSource const& source,
+        Models::_internal::MessageTarget const& target);
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& linkEndpoint,
         std::string const& name,
         _internal::SessionRole role,
-        std::string const& source,
-        std::string const& target);
+        Models::_internal::MessageSource const& source,
+        Models::_internal::MessageTarget const& target);
     ~LinkImpl() noexcept;
 
     LinkImpl(LinkImpl const&) = delete;
@@ -50,13 +52,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     uint64_t GetPeerMaxMessageSize() const;
 
-    void SetAttachProperties(Azure::Core::Amqp::Models::AmqpValue attachProperties);
+    void SetAttachProperties(Models::AmqpValue attachProperties);
     void SetMaxLinkCredit(uint32_t maxLinkCredit);
 
     std::string GetName() const;
 
-    std::string const& GetTarget() const;
-    std::string const& GetSource() const;
+    Models::_internal::MessageTarget const& GetTarget() const;
+    Models::_internal::MessageSource const& GetSource() const;
 
     uint32_t GetReceivedMessageId() const;
 
@@ -68,13 +70,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         bool close,
         std::string const& errorCondition,
         std::string const& errorDescription,
-        Azure::Core::Amqp::Models::AmqpValue& info);
+        Models::AmqpValue& info);
 
   private:
     LINK_HANDLE m_link;
     std::shared_ptr<_detail::SessionImpl> m_session;
-    std::string m_source;
-    std::string m_target;
+    Models::_internal::MessageSource m_source;
+    Models::_internal::MessageTarget m_target;
 
 #if 0
 MOCKABLE_FUNCTION(, int, link_send_disposition, LINK_HANDLE, link, delivery_number, message_number, AMQP_VALUE, delivery_state);

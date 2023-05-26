@@ -18,20 +18,26 @@ protected:
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Core::Amqp::_internal;
 
+#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestManagement, BasicTests)
 {
   {
-    Connection connection("amqps://localhost:5151", {});
-    Session session(connection);
+    ConnectionOptions options;
+    options.Port = 5151;
+    Connection connection("localhost", options);
+
+    Session session(connection, nullptr);
     Management management(session, "Test", {});
   }
 }
-#if !defined(AZ_PLATFORM_MAC)
 TEST_F(TestManagement, ManagementOpenClose)
 {
   {
-    Connection connection("amqps://localhost:5151", {});
-    Session session(connection);
+    ConnectionOptions options;
+    options.Port = 5151;
+    Connection connection("localhost", options);
+
+    Session session(connection, nullptr);
     Management management(session, "Test", {});
 
     EXPECT_ANY_THROW(management.Open());
@@ -42,8 +48,11 @@ TEST_F(TestManagement, ManagementOpenClose)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
+
+    Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = 1;
     Management management(session, "Test", {});
@@ -82,13 +91,15 @@ private:
   AmqpValue OnMessageReceived(MessageReceiver const& receiver, AmqpMessage const& incomingMessage)
       override
   {
-    if (receiver.GetSourceName() != "Test" && receiver.GetSourceName() != "$cbs")
+    // We can only listen on the management or cbs nodes.
+    if (receiver.GetSourceName() != "$management" && receiver.GetSourceName() != "$cbs")
     {
       GTEST_LOG_(INFO) << "Rejecting message because it is for an unexpected node name.";
       return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
           "test:Rejected", "Unknown message source.");
     }
-    if (receiver.GetSourceName() == "Test"
+    // If this is coming on the management node, we only support the Test operation.
+    if (receiver.GetSourceName() == "$management"
         && incomingMessage.ApplicationProperties.at("operation") != "Test")
     {
       GTEST_LOG_(INFO) << "Rejecting message because is for an unknown operation.";
@@ -138,8 +149,11 @@ TEST_F(TestManagement, ManagementRequestResponse)
   {
     MessageTests::AmqpServerMock mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = mockServer.GetPort();
+
+    Connection connection("localhost", connectionOptions);
+    Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = 1;
     Management management(session, "Test", {});
@@ -170,8 +184,12 @@ TEST_F(TestManagement, ManagementRequestResponseSimple)
   {
     ManagementReceiver mockServer;
 
-    Connection connection("amqp://localhost:" + std::to_string(mockServer.GetPort()), {});
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+
+    Connection connection("localhost", connectionOptions);
+    Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
     Management management(session, "Test", options);
@@ -198,12 +216,12 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
 
   {
     ManagementReceiver mockServer;
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection(
-        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
-    Session session(connection);
+    Connection connection("localhost", connectionOptions);
+    Session session(connection, nullptr);
 
     ManagementOptions options;
     options.EnableTrace = true;
@@ -234,11 +252,11 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
   {
     ManagementReceiver mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    Connection connection(
-        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
+    Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
     Management management(session, "Test", options);
@@ -277,11 +295,12 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
     };
     ManagementEventsHandler managementEvents;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    Connection connection(
-        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+
+    Connection connection("localhost", connectionOptions);
+    Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
 
@@ -316,11 +335,11 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
   {
     ManagementReceiver mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    Connection connection(
-        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
+    Session session(connection, nullptr);
     ManagementOptions options;
     options.EnableTrace = true;
     options.ExpectedStatusCodeKeyName = "status-code";
@@ -349,54 +368,24 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
     mockServer.StopListening();
   }
 }
-TEST_F(TestManagement, ManagementRequestResponseInvalidNodeName)
-{
-  // Send a management request with an invalid node name.
-  {
-    ManagementReceiver mockServer;
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    Connection connection(
-        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
-    Session session(connection);
-    ManagementOptions options;
-    options.EnableTrace = true;
-    Management management(session, "IncorrectNodeName", options);
-
-    mockServer.StartListening();
-
-    auto openResult = management.Open();
-    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
-
-    AmqpMessage messageToSend;
-    messageToSend.SetBody(AmqpValue("Test"));
-
-    auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
-    EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
-    EXPECT_EQ(response.StatusCode, 0);
-    EXPECT_EQ(response.Description, "");
-    management.Close();
-
-    mockServer.StopListening();
-  }
-}
 TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
 {
   // Send a management request with an unknown operation name.
   {
     ManagementReceiver mockServer;
+    mockServer.StartListening();
 
-    ConnectionOptions connectOptions;
-    connectOptions.EnableTrace = true;
-    Connection connection(
-        "amqp://localhost:" + std::to_string(mockServer.GetPort()), connectOptions);
-    Session session(connection);
+    ConnectionOptions connectionOptions;
+    connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", connectionOptions);
+
+    Session session(connection, nullptr);
+
     ManagementOptions options;
     options.EnableTrace = true;
     Management management(session, "Test", options);
-
-    mockServer.StartListening();
 
     auto openResult = management.Open();
     ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
@@ -404,8 +393,13 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
     AmqpMessage messageToSend;
     messageToSend.SetBody(AmqpValue("Test"));
 
-    auto response
-        = management.ExecuteOperation("Unknown Operation", "Type", "Locales", messageToSend);
+    auto response = management.ExecuteOperation(
+        "Unknown Operation",
+        "Type",
+        "Locales",
+        messageToSend,
+        Azure::Core::Context::ApplicationContext.WithDeadline(
+            std::chrono::system_clock::now() + std::chrono::seconds(10)));
     EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
     EXPECT_EQ(response.StatusCode, 0);
     EXPECT_EQ(response.Description, "");

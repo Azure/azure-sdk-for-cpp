@@ -27,19 +27,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     MessageProperties() = default;
     ~MessageProperties() = default;
 
-    Azure::Nullable<AmqpValue> MessageId;
-    Azure::Nullable<AmqpValue> CorrelationId;
-    Azure::Nullable<std::vector<uint8_t>> UserId;
-    Azure::Nullable<AmqpValue> To;
-    Azure::Nullable<std::string> Subject;
-    Azure::Nullable<AmqpValue> ReplyTo;
-    Azure::Nullable<std::string> ContentType;
-    Azure::Nullable<std::string> ContentEncoding;
-    Azure::Nullable<std::chrono::system_clock::time_point> AbsoluteExpiryTime;
-    Azure::Nullable<std::chrono::system_clock::time_point> CreationTime;
-    Azure::Nullable<std::string> GroupId;
-    Azure::Nullable<uint32_t> GroupSequence;
-    Azure::Nullable<std::string> ReplyToGroupId;
+    Nullable<AmqpValue> MessageId;
+    Nullable<AmqpValue> CorrelationId;
+    Nullable<std::vector<uint8_t>> UserId;
+    Nullable<AmqpValue> To;
+    Nullable<std::string> Subject;
+    Nullable<AmqpValue> ReplyTo;
+    Nullable<std::string> ContentType;
+    Nullable<std::string> ContentEncoding;
+    Nullable<std::chrono::system_clock::time_point> AbsoluteExpiryTime;
+    Nullable<std::chrono::system_clock::time_point> CreationTime;
+    Nullable<std::string> GroupId;
+    Nullable<uint32_t> GroupSequence;
+    Nullable<std::string> ReplyToGroupId;
 
     bool operator==(MessageProperties const&) const noexcept;
     bool ShouldSerialize() const noexcept;
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * @remarks This class should not be used directly. It is used by the uAMQP interoperability
    * layer.
    */
-  class MessagePropertiesFactory {
+  class MessagePropertiesFactory final {
   public:
     static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
     static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
