@@ -4,7 +4,7 @@
 
 ### Features Added
 - Bumped up API version to `2023-01-03`.
-- New field `AccessRights` in `HandleItem`.
+- Added new field `AccessRights` in `HandleItem`.
 
 ## 12.5.0 (2023-05-09)
 

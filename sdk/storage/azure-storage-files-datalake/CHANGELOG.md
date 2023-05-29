@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - new fileds `Owner`, `Group` and `Permissions` in `PathProperties` and `DownloadFileDetails`.
+- Added new fields `Owner`, `Group` and `Permissions` in `PathProperties` and `DownloadFileDetails`.
 
 ## 12.6.0 (2023-05-09)
 
@@ -14,7 +14,7 @@
 
 ### Features Added
 - Added support for encryption context:
-  - new filed `EncryptionContext` in `CreatePathOptions` , `PathItem`, `PathProperties`,  `DownloadFileDetails`.
+  - new field `EncryptionContext` in `CreatePathOptions` , `PathItem`, `PathProperties`,  `DownloadFileDetails`.
 
 ## 12.5.0 (2023-01-10)
 
