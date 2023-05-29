@@ -35,13 +35,13 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string message = "message content.";
     Queues::EnqueueMessageOptions enqueueOptions;
     enqueueOptions.VisibilityTimeout = std::chrono::seconds(1);
-    enqueueOptions.TimeToLive = std::chrono::seconds(2);
+    enqueueOptions.TimeToLive = std::chrono::seconds(3);
     auto res = queueClient.EnqueueMessage(message, enqueueOptions).Value;
 
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
-    TestSleep(std::chrono::milliseconds(1200));
+    TestSleep(std::chrono::milliseconds(1100));
     EXPECT_FALSE(queueClient.PeekMessages().Value.Messages.empty());
-    TestSleep(std::chrono::milliseconds(1200));
+    TestSleep(std::chrono::milliseconds(2000));
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
 
     enqueueOptions = Queues::EnqueueMessageOptions();
