@@ -1,14 +1,10 @@
 # Release History
 
-## 12.7.0-beta.1 (Unreleased)
+## 12.7.0-beta.1 (2023-05-30)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+  - new fileds `Owner`, `Group` and `Permissions` in `PathProperties` and `DownloadFileDetails`.
 
 ## 12.6.0 (2023-05-09)
 

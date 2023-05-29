@@ -1,14 +1,10 @@
 # Release History
 
-## 12.6.0-beta.1 (Unreleased)
+## 12.6.0-beta.1 (2023-05-30)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2023-01-03`.
+- New field `AccessRights` in `HandleItem`.
 
 ## 12.5.0 (2023-05-09)
 

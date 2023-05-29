@@ -1,14 +1,11 @@
 # Release History
 
-## 12.8.0-beta.1 (Unreleased)
+## 12.8.0-beta.1 (2023-05-30)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2022-11-02`.
+- Content length limit for `AppendBlobClient::AppendBlock()` and `AppendBlobClient::AppendBlockFromUri()` raised from 4 MiB to 100 MiB.
 
 ## 12.7.0 (2023-03-07)
 
