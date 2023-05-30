@@ -13,17 +13,19 @@
 #include "../../jsonhelpers_private.hpp"
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
+
 #include <memory>
-#include <openssl/bio.h>
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/rsa.h>
-#include <openssl/x509.h>
 #include <sstream>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/rsa.h>
+#include <openssl/x509.h>
 
 // cspell::words OpenSSL X509 OpenSSLX509
 

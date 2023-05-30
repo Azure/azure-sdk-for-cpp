@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/storage/blobs/blob_client.hpp"
+#include "azure/storage/blobs/blob_container_client.hpp"
+
 #include <chrono>
 #include <mutex>
 #include <string>
-
-#include "azure/storage/blobs/blob_client.hpp"
-#include "azure/storage/blobs/blob_container_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

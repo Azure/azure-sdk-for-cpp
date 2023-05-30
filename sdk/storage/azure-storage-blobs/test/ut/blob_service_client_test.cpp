@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <thread>
+#include "blob_service_client_test.hpp"
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs.hpp>
 
-#include "blob_service_client_test.hpp"
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

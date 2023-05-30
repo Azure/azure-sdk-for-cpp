@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/base64.hpp"
+
 #include "azure/core/platform.hpp"
 
 #include <string>

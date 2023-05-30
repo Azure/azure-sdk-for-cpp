@@ -6,10 +6,11 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/core/internal/client_options.hpp>
-#include <gtest/gtest.h>
 
 #include <memory>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::_internal;

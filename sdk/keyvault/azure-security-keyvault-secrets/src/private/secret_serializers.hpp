@@ -12,8 +12,10 @@
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
+
 #include <stdint.h>
 #include <vector>
 

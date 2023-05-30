@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/case_insensitive_containers.hpp>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

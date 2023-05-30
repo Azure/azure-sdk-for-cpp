@@ -3,9 +3,9 @@
 
 #include "azure/storage/common/account_sas_builder.hpp"
 
-#include <azure/core/http/http.hpp>
-
 #include "azure/storage/common/crypt.hpp"
+
+#include <azure/core/http/http.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {

@@ -6,8 +6,10 @@
 #include "amqp_header.hpp"
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
+
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
+
 #include <map>
 #include <vector>
 
@@ -65,8 +67,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpMessage& operator=(AmqpMessage&&) = default;
 
-    bool operator==(AmqpMessage const& other) const noexcept;
-    bool operator!=(AmqpMessage const& other) const noexcept { return !(*this == other); }
+    bool operator==(AmqpMessage const& that) const noexcept;
+    bool operator!=(AmqpMessage const& that) const noexcept { return !(*this == that); }
 
     AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
     operator bool() const noexcept { return m_hasValue; }
@@ -266,7 +268,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * @remarks This class should not be used directly. It is used by the uAMQP interoperability
    * layer.
    */
-  class AmqpMessageFactory {
+  class AmqpMessageFactory final {
   public:
     static AmqpMessage FromUamqp(UniqueMessageHandle const& properties);
     static AmqpMessage FromUamqp(MESSAGE_INSTANCE_TAG* properties);

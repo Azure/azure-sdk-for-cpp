@@ -5,9 +5,11 @@
 
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/url.hpp>
+
 #include <string>
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policies/policy.hpp"
+
 #include "azure/core/http/http.hpp"
 
 using Azure::Core::Context;

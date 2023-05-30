@@ -43,6 +43,7 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/common/global_state.hpp
     inc/azure/core/amqp/connection.hpp
     inc/azure/core/amqp/connection_string_credential.hpp
+    inc/azure/core/amqp/endpoint.hpp
     inc/azure/core/amqp/link.hpp
     inc/azure/core/amqp/message_receiver.hpp
     inc/azure/core/amqp/message_sender.hpp

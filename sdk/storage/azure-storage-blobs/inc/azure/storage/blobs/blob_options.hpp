@@ -3,12 +3,7 @@
 
 #pragma once
 
-#include <chrono>
-#include <cstdint>
-#include <memory>
-#include <numeric>
-#include <string>
-#include <vector>
+#include "azure/storage/blobs/rest_client.hpp"
 
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/match_conditions.hpp>
@@ -16,7 +11,12 @@
 #include <azure/storage/common/access_conditions.hpp>
 #include <azure/storage/common/crypt.hpp>
 
-#include "azure/storage/blobs/rest_client.hpp"
+#include <chrono>
+#include <cstdint>
+#include <memory>
+#include <numeric>
+#include <string>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
 

@@ -7,6 +7,7 @@
  */
 #pragma once
 #include "dll_import_export.hpp"
+
 #include <azure/core/internal/client_options.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {

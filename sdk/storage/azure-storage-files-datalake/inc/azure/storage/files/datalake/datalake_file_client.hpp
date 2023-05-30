@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <string>
+#include "azure/storage/files/datalake/datalake_options.hpp"
+#include "azure/storage/files/datalake/datalake_path_client.hpp"
+#include "azure/storage/files/datalake/datalake_responses.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -13,9 +13,9 @@
 #include <azure/storage/blobs/block_blob_client.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
-#include "azure/storage/files/datalake/datalake_options.hpp"
-#include "azure/storage/files/datalake/datalake_path_client.hpp"
-#include "azure/storage/files/datalake/datalake_responses.hpp"
+#include <cstdint>
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

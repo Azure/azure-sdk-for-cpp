@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <string>
+#include "azure/storage/files/datalake/datalake_options.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
-#include "azure/storage/files/datalake/datalake_options.hpp"
+#include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 

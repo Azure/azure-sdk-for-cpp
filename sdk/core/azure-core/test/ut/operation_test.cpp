@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "operation_test.hpp"
 
 #include <azure/core/context.hpp>
@@ -10,6 +8,8 @@
 #include <azure/core/operation_status.hpp>
 
 #include <chrono>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Test;

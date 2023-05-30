@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/perf/program.hpp"
+
 #include "azure/perf/argagg.hpp"
 
 #include <azure/core/internal/diagnostics/global_exception.hpp>

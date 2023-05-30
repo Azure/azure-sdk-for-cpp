@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #include "azure/keyvault/certificates/certificate_client_operations.hpp"
+
 #include "azure/keyvault/certificates/certificate_client.hpp"
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
+
 #include <thread>
 
 using namespace Azure::Security::KeyVault::Certificates;

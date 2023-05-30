@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include <azure/core/base64.hpp>
+#include <azure/core/cryptography/hash.hpp>
+
 #include <cstdint>
 #include <string>
 #include <vector>
-
-#include <azure/core/base64.hpp>
-#include <azure/core/cryptography/hash.hpp>
 
 namespace Azure { namespace Storage {
 

@@ -5,7 +5,9 @@
 
 #include "models/amqp_message.hpp"
 #include "session.hpp"
+
 #include <azure/core/context.hpp>
+
 #include <string>
 #include <tuple>
 #include <vector>
@@ -21,7 +23,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Ok,
     Error,
     FailedBadStatus,
-    InstanceClosed
+    InstanceClosed,
   };
 
   enum class ManagementOpenStatus
@@ -66,6 +68,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::string ExpectedStatusDescriptionKeyName = "statusDescription";
 
+    /** @brief The name of the management node.
+     *
+     * By default, the name of the management node is "$management", but under certain
+     * circumstances, management operations can be performed on a different node (for instance,
+     * $cbs for claims based authentication)
+     */
+    std::string ManagementNodeName = "$management";
+
     /**
      * @brief Enable trace logging for the management operations.
      */
@@ -75,8 +85,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /**
    * @brief Callback event handler for management events such as error.
    */
-  struct ManagementEvents
-  {
+  class ManagementEvents {
+  protected:
+    ~ManagementEvents() {}
+
+  public:
     /** @brief Called when an error occurs.
      */
     virtual void OnError() = 0;
@@ -121,17 +134,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @brief Create a new Management object instance.
      *
      * @param session - the session on which to create the instance.
-     * @param managementNodeName - the name of the message source and target.
+     * @param managementEntityPath - the entity path of the management object.
      * @param options - additional options for the Management object.
      * @param managementEvents - events associated with the management object.
      */
     Management(
         Session const& session,
-        std::string const& managementNodeName,
+        std::string const& managementEntityPath,
         ManagementOptions const& options,
         ManagementEvents* managementEvents = nullptr);
 
-    Management(std::shared_ptr<Azure::Core::Amqp::_detail::ManagementImpl> impl) : m_impl{impl} {}
+    Management(std::shared_ptr<_detail::ManagementImpl> impl) : m_impl{impl} {}
     ~Management() noexcept = default;
 
     /**
@@ -139,7 +152,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @returns The result of the open operation.
      */
-    ManagementOpenStatus Open(Azure::Core::Context const& context = {});
+    ManagementOpenStatus Open(Context const& context = {});
 
     /**
      * @brief Close the management instance.
@@ -159,16 +172,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @returns a ManagementOperationResult which includes the high level result of the operation,
      * the HTTP response status code, the status description, and the response message.
+     *
+     * @remark The messageToSend is intentionally passed by value because the ExecuteOperation needs
+     * to modify the message to add the required properties for the management operation.
      */
     ManagementOperationResult ExecuteOperation(
         std::string const& operationToPerform,
         std::string const& typeOfOperation,
         std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage const& messageToSend,
-        Azure::Core::Context context = {});
+        Models::AmqpMessage messageToSend,
+        Context const& context = {});
 
   private:
-    std::shared_ptr<Azure::Core::Amqp::_detail::ManagementImpl> m_impl;
+    std::shared_ptr<_detail::ManagementImpl> m_impl;
   };
 
 }}}} // namespace Azure::Core::Amqp::_internal

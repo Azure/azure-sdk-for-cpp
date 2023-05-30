@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/strings.hpp>
-#include <gtest/gtest.h>
 
 #include <locale>
 #include <string>
+
+#include <gtest/gtest.h>
 
 TEST(String, invariantCompare)
 {

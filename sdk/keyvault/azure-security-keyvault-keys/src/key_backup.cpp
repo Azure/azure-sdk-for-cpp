@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "private/key_backup.hpp"
+
+#include "private/key_constants.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
-
-#include "private/key_backup.hpp"
-#include "private/key_constants.hpp"
 
 #include <string>
 

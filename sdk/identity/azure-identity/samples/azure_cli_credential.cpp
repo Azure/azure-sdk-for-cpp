@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <iostream>
-
 #include <azure/identity/azure_cli_credential.hpp>
-
 #include <azure/service/client.hpp>
+
+#include <iostream>
 
 int main()
 {

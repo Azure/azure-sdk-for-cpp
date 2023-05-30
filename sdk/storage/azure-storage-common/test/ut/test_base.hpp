@@ -3,7 +3,16 @@
 
 #pragma once
 
+#include <azure/core/base64.hpp>
+#include <azure/core/datetime.hpp>
+#include <azure/core/etag.hpp>
+#include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
+#include <azure/core/test/test_base.hpp>
+#include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/blobs.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/storage_common.hpp>
 
 #include <chrono>
 #include <cstdint>
@@ -11,15 +20,6 @@
 #include <random>
 #include <vector>
 
-#include <azure/core/base64.hpp>
-#include <azure/core/datetime.hpp>
-#include <azure/core/etag.hpp>
-#include <azure/core/io/body_stream.hpp>
-#include <azure/core/test/test_base.hpp>
-#include <azure/identity/client_secret_credential.hpp>
-#include <azure/storage/blobs.hpp>
-#include <azure/storage/common/internal/constants.hpp>
-#include <azure/storage/common/storage_common.hpp>
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Storage {

@@ -1,16 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/cryptography/hash.hpp>
-#include <azure/core/exception.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
-
-#include <azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp>
-#include <azure/keyvault/shared/keyvault_shared.hpp>
-
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
-#include "azure/keyvault/keys/key_client_models.hpp"
 
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_constants.hpp"
@@ -20,6 +11,14 @@
 #include "../private/key_wrap_parameters.hpp"
 #include "../private/keyvault_protocol.hpp"
 #include "../private/package_version.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
+
+#include <azure/core/cryptography/hash.hpp>
+#include <azure/core/exception.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/keyvault/shared/keyvault_challenge_based_authentication_policy.hpp>
+#include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include <algorithm>
 #include <memory>

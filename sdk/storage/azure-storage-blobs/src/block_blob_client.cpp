@@ -15,6 +15,8 @@
 #include <windows.h>
 #endif
 
+#include "private/avro_parser.hpp"
+
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
@@ -23,8 +25,6 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-
-#include "private/avro_parser.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

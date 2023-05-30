@@ -3,9 +3,9 @@
 
 #include "get_env.hpp"
 
-#include <iostream>
-
 #include <azure/storage/blobs.hpp>
+
+#include <iostream>
 
 std::string GetConnectionString()
 {

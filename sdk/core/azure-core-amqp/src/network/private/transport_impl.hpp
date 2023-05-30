@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
-#include "azure/core/internal/unique_handle.hpp"
+#include "azure/core/amqp/common/async_operation_queue.hpp"
+
+#include <azure/core/internal/unique_handle.hpp>
+
 #include <azure_c_shared_utility/xio.h>
+
 #include <exception>
 #include <functional>
 #include <stdexcept>
@@ -21,16 +25,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   struct TransportImpl : public std::enable_shared_from_this<TransportImpl>
   {
-
-  private:
-    UniqueXioHandle m_xioInstance{};
-    Azure::Core::Amqp::Network::_internal::TransportEvents* m_eventHandler;
-    bool m_isOpen{false};
-
-    static void OnOpenCompleteFn(void* context, IO_OPEN_RESULT_TAG openResult);
-    static void OnBytesReceivedFn(void* context, const unsigned char* buffer, size_t size);
-    static void OnIoErrorFn(void* context);
-
   public:
     TransportImpl(
         XIO_HANDLE instance,
@@ -39,19 +33,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     TransportImpl(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler);
 
     virtual ~TransportImpl();
-    virtual bool Open();
-    virtual bool Close(Azure::Core::Amqp::Network::_internal::Transport::TransportCloseCompleteFn);
-    virtual bool Send(
-        uint8_t*,
-        size_t,
-        Azure::Core::Amqp::Network::_internal::Transport::TransportSendCompleteFn) const;
+    virtual _internal::TransportOpenStatus Open(Context const& context);
+    virtual void Close(Context const& context);
+    virtual bool Send(uint8_t*, size_t, Network::_internal::Transport::TransportSendCompleteFn)
+        const;
     void Poll() const;
     operator XIO_HANDLE() { return m_xioInstance.get(); }
     XIO_HANDLE Release() { return m_xioInstance.release(); }
-    void SetEventHandler(Azure::Core::Amqp::Network::_internal::TransportEvents* eventHandler)
+    void SetEventHandler(Network::_internal::TransportEvents* eventHandler)
     {
       m_eventHandler = eventHandler;
     }
-    void SetInstance(XIO_HANDLE instance);
+
+    static std::shared_ptr<TransportImpl> CreateFromXioHandle(
+        XIO_HANDLE instance,
+        Network::_internal::TransportEvents* eventHandler)
+    {
+      return std::shared_ptr<TransportImpl>(
+          new TransportImpl(instance, eventHandler), [](TransportImpl* p) { delete p; });
+    }
+
+  private:
+    UniqueXioHandle m_xioInstance{};
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::TransportOpenStatus>
+        m_openCompleteQueue;
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<bool> m_closeCompleteQueue;
+    Network::_internal::TransportEvents* m_eventHandler;
+
+    bool m_isOpen{false};
+
+    static void OnOpenCompleteFn(void* context, IO_OPEN_RESULT_TAG openResult);
+    static void OnCloseCompleteFn(void* context);
+    static void OnBytesReceivedFn(void* context, const unsigned char* buffer, size_t size);
+    static void OnIOErrorFn(void* context);
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_detail

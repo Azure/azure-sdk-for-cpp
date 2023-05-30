@@ -3,6 +3,10 @@
 
 #include "test_base.hpp"
 
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/strings.hpp>
+#include <azure/core/platform.hpp>
+
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
@@ -14,10 +18,6 @@
 #include <random>
 #include <sstream>
 #include <string>
-
-#include <azure/core/http/http.hpp>
-#include <azure/core/internal/strings.hpp>
-#include <azure/core/platform.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

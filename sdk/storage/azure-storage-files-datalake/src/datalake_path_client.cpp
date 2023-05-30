@@ -3,6 +3,10 @@
 
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 
+#include "private/datalake_constants.hpp"
+#include "private/datalake_utilities.hpp"
+#include "private/package_version.hpp"
+
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -12,10 +16,6 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-
-#include "private/datalake_constants.hpp"
-#include "private/datalake_utilities.hpp"
-#include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

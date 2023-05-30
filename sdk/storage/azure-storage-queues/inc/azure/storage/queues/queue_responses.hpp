@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
+#include "azure/storage/queues/queue_options.hpp"
+#include "azure/storage/queues/rest_client.hpp"
 
 #include <azure/core/paged_response.hpp>
 
-#include "azure/storage/queues/queue_options.hpp"
-#include "azure/storage/queues/rest_client.hpp"
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Storage { namespace Queues {
 

@@ -3,11 +3,11 @@
 
 #include "datalake_file_system_client_test.hpp"
 
-#include <algorithm>
-
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/common/crypt.hpp>
+
+#include <algorithm>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/identity/environment_credential.hpp"
+
 #include "azure/identity/client_certificate_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
-
 #include "private/identity_log.hpp"
 
 #include <azure/core/azure_assert.hpp>

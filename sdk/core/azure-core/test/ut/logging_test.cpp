@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/diagnostics/log.hpp>
+
 #include <gtest/gtest.h>
 
 using Azure::Core::Diagnostics::Logger;

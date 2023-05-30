@@ -2,11 +2,13 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/models/amqp_header.hpp"
+
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
+
 #include <chrono>
 #include <iostream>
 
@@ -135,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     auto handle = _internal::MessageHeaderFactory::ToUamqp(header);
     AmqpValue headerAsValue{amqpvalue_create_header(handle.get())};
-    return Azure::Core::Amqp::Models::AmqpValue::Serialize(headerAsValue);
+    return Models::AmqpValue::Serialize(headerAsValue);
   }
 
   MessageHeader MessageHeader::Deserialize(std::uint8_t const* data, size_t size)

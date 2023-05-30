@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "azure/core/amqp/models/amqp_properties.hpp"
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core::Amqp::Models;
 

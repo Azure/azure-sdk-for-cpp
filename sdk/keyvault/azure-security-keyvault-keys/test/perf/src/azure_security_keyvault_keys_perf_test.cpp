@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/perf.hpp>
-
 #include "azure/keyvault/keys/test/get_key_test.hpp"
+
+#include <azure/perf.hpp>
 
 int main(int argc, char** argv)
 {

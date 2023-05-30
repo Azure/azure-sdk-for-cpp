@@ -18,9 +18,10 @@
 #endif // _MSC_VER
 
 #include <azure/core.hpp>
-#include <gtest/gtest.h>
 
 #include <vector>
+
+#include <gtest/gtest.h>
 
 class DllExportTest final {
   AZ_CORE_DLLEXPORT static const bool DllExportHIncluded;

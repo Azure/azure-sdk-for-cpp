@@ -3,10 +3,13 @@
 
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <gtest/gtest.h>
+
 #include <string>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Core::Http::_internal;

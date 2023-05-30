@@ -2,12 +2,15 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/network/socket_listener.hpp"
+
 #include "azure/core/amqp/common/global_state.hpp"
 #include "private/transport_impl.hpp"
+
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xio.h>
 #include <azure_uamqp_c/header_detect_io.h>
 #include <azure_uamqp_c/socket_listener.h>
+
 #include <cassert>
 #include <functional>
 #include <stdexcept>

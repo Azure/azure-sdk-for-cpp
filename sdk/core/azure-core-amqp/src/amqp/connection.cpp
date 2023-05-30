@@ -2,16 +2,22 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection.hpp"
+
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
+#include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
+
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/url.hpp>
 #include <azure/core/uuid.hpp>
+
 #include <azure_uamqp_c/connection.h>
+
 #include <memory>
 
 void Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(
@@ -27,132 +33,103 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   // Create a connection with an existing networking Transport.
   Connection::Connection(
-      std::shared_ptr<Network::_internal::Transport> transport,
+      Network::_internal::Transport const& transport,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
-      : m_impl{std::make_shared<Azure::Core::Amqp::_detail::ConnectionImpl>(
-          transport->GetImpl(),
-          options,
-          eventHandler)}
+      : m_impl{
+          std::make_shared<_detail::ConnectionImpl>(transport.GetImpl(), options, eventHandler)}
   {
     m_impl->FinishConstruction();
   }
 
   // Create a connection with a request URI and options.
   Connection::Connection(
-      std::string const& requestUri,
+      std::string const& hostName,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
-      : m_impl{std::make_shared<Azure::Core::Amqp::_detail::ConnectionImpl>(
-          requestUri,
-          options,
-          eventHandler)}
+      : m_impl{std::make_shared<_detail::ConnectionImpl>(hostName, options, eventHandler)}
   {
     m_impl->FinishConstruction();
   }
 
   Connection::~Connection() {}
 
-  void Connection::Poll() const { m_impl->Poll(); }
+  void Connection::Poll() { m_impl->Poll(); }
 
   void Connection::Listen() { m_impl->Listen(); }
-  void Connection::SetTrace(bool enableTrace) { m_impl->SetTrace(enableTrace); }
   void Connection::Open() { m_impl->Open(); }
   void Connection::Close(
       std::string const& condition,
       std::string const& description,
-      Azure::Core::Amqp::Models::AmqpValue value)
+      Models::AmqpValue value)
   {
     m_impl->Close(condition, description, value);
   }
   uint32_t Connection::GetMaxFrameSize() const { return m_impl->GetMaxFrameSize(); }
-  void Connection::SetMaxFrameSize(uint32_t maxFrameSize) { m_impl->SetMaxFrameSize(maxFrameSize); }
   uint32_t Connection::GetRemoteMaxFrameSize() const { return m_impl->GetRemoteMaxFrameSize(); }
   uint16_t Connection::GetMaxChannel() const { return m_impl->GetMaxChannel(); }
-  void Connection::SetMaxChannel(uint16_t channel) { m_impl->SetMaxChannel(channel); }
+  std::string Connection::GetHost() const { return m_impl->GetHost(); }
+  uint16_t Connection::GetPort() const { return m_impl->GetPort(); }
   std::chrono::milliseconds Connection::GetIdleTimeout() const { return m_impl->GetIdleTimeout(); }
-  void Connection::SetIdleTimeout(std::chrono::milliseconds timeout)
+  Models::AmqpMap Connection::GetProperties() const { return m_impl->GetProperties(); }
+  void Connection::SetIdleEmptyFrameSendPercentage(double ratio)
   {
-    m_impl->SetIdleTimeout(timeout);
-  }
-  void Connection::SetRemoteIdleTimeoutEmptyFrameSendRatio(double idleTimeoutEmptyFrameSendRatio)
-  {
-    return m_impl->SetRemoteIdleTimeoutEmptyFrameSendRatio(idleTimeoutEmptyFrameSendRatio);
-  }
-
-  void Connection::SetProperties(Azure::Core::Amqp::Models::AmqpValue properties)
-  {
-    m_impl->SetProperties(properties);
-  }
-  Azure::Core::Amqp::Models::AmqpValue Connection::GetProperties() const
-  {
-    return m_impl->GetProperties();
+    m_impl->SetIdleEmptyFrameSendPercentage(ratio);
   }
 }}}} // namespace Azure::Core::Amqp::_internal
 
+namespace {
+void EnsureGlobalStateInitialized()
+{
+  // Force the global instance to exist. This is required to ensure that uAMQP and
+  // azure-c-shared-utility is
+  auto globalInstance
+      = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
+  (void)globalInstance;
+}
+} // namespace
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  namespace {
-    void EnsureGlobalStateInitialized()
-    {
-      // Force the global instance to exist. This is required to ensure that uAMQP and
-      // azure-c-shared-utility is
-      auto globalInstance
-          = Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance();
-      (void)globalInstance;
-    }
-  } // namespace
 
   // Create a connection with an existing networking Transport.
   ConnectionImpl::ConnectionImpl(
       std::shared_ptr<Network::_detail::TransportImpl> transport,
       _internal::ConnectionOptions const& options,
       _internal::ConnectionEvents* eventHandler)
-      : m_hostName{options.HostName}, m_options{options}, m_eventHandler{eventHandler}
+      : m_hostName{"localhost"}, m_options{options}, m_eventHandler{eventHandler}
   {
-    if (options.SaslCredentials)
-    {
-      throw std::runtime_error("Sasl Credentials should not be provided with a transport.");
-    }
     EnsureGlobalStateInitialized();
     m_transport = transport;
   }
 
   // Create a connection with a request URI and options.
   ConnectionImpl::ConnectionImpl(
-      std::string const& requestUri,
+      std::string const& hostName,
       _internal::ConnectionOptions const& options,
       _internal::ConnectionEvents* eventHandler)
-      : m_options{options}, m_eventHandler{eventHandler}
+      : m_hostName{hostName}, m_port{options.Port}, m_options{options}, m_eventHandler{eventHandler}
   {
     EnsureGlobalStateInitialized();
 
-    if (options.SaslCredentials)
-    {
-      throw std::runtime_error("Sasl Credentials should not be provided with a request URI.");
-    }
-    Azure::Core::Url requestUrl(requestUri);
-    std::shared_ptr<Network::_internal::Transport> requestTransport;
-    if (requestUrl.GetScheme() == "amqp")
+    if (options.Port == _internal::AmqpPort)
     {
       Log::Write(Logger::Level::Informational, "Creating socket connection transport.");
-      Azure::Core::Amqp::Network::_internal::SocketTransport transport{
-          requestUrl.GetHost(),
-          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(AmqpPort)};
-      m_transport = transport.GetImpl();
+      m_transport
+          = Network::_internal::SocketTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
-    else if (requestUrl.GetScheme() == "amqps")
+    else if (options.Port == _internal::AmqpTlsPort)
     {
       Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
-      Azure::Core::Amqp::Network::_internal::TlsTransport transport{
-          requestUrl.GetHost(),
-          requestUrl.GetPort() ? requestUrl.GetPort() : static_cast<std::uint16_t>(AmqpsPort)};
-      m_transport = transport.GetImpl();
+      m_transport = Network::_internal::TlsTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
     else
     {
-      throw std::runtime_error("Unknown connection scheme: " + requestUrl.GetScheme() + ".");
+      Log::Write(
+          Logger::Level::Informational,
+          "Unknown port specified, assuming socket connection transport.");
+      m_transport
+          = Network::_internal::SocketTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
-    m_hostName = requestUrl.GetHost();
   }
 
   ConnectionImpl::~ConnectionImpl()
@@ -180,21 +157,40 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         this,
         OnConnectionStateChangedFn,
         this,
-        OnIoErrorFn,
+        OnIOErrorFn,
         this));
-    SetTrace(m_options.EnableTrace);
-    //    SetIdleTimeout(options.IdleTimeout);
-
-    //    SetMaxFrameSize(options.MaxFrameSize);
-    //    SetMaxChannel(options.MaxSessions);
-    //    SetProperties(options.Properties);
-
-    //    std::string SASLType; // Not a string - fill in later.
-    //    std::chrono::seconds Timeout{0};
+    if (m_options.EnableTrace)
+    {
+      connection_set_trace(m_connection.get(), m_options.EnableTrace);
+    }
+    if (connection_set_idle_timeout(
+            m_connection.get(), static_cast<milliseconds>(m_options.IdleTimeout.count())))
+    {
+      throw std::runtime_error("Failed to set idle timeout.");
+    }
+    if (connection_set_channel_max(m_connection.get(), m_options.MaxChannelCount))
+    {
+      throw std::runtime_error("Failed to set max channel count.");
+    }
+    if (connection_set_max_frame_size(m_connection.get(), m_options.MaxFrameSize))
+    {
+      throw std::runtime_error("Failed to set max frame size.");
+    }
+    if (connection_set_properties(
+            m_connection.get(),
+            static_cast<Models::_detail::UniqueAmqpValueHandle>(m_options.Properties).get()))
+    {
+      throw std::runtime_error("Failed to set connection properties.");
+    }
   }
 
-  void ConnectionImpl::Poll() const
+  void ConnectionImpl::Poll()
   {
+    if (m_connectionState == _internal::ConnectionState::Error
+        || m_connectionState == _internal::ConnectionState::End)
+    {
+      throw std::runtime_error("Connection cannot be polled in the current state.");
+    }
     if (m_connection)
     {
       connection_dowork(m_connection.get());
@@ -243,31 +239,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (connection->m_eventHandler)
     {
       connection->m_eventHandler->OnConnectionStateChanged(
-          connection->shared_from_this(),
+          ConnectionFactory::CreateFromInternal(connection->shared_from_this()),
           ConnectionStateFromCONNECTION_STATE(newState),
           ConnectionStateFromCONNECTION_STATE(oldState));
     }
+    connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
   }
 
   bool ConnectionImpl::OnNewEndpointFn(void* context, ENDPOINT_HANDLE newEndpoint)
   {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
-    _internal::Endpoint endpoint(newEndpoint);
+    _internal::Endpoint endpoint(EndpointFactory::CreateEndpoint(newEndpoint));
     if (cn->m_eventHandler)
     {
-      return cn->m_eventHandler->OnNewEndpoint(cn->shared_from_this(), endpoint);
+      return cn->m_eventHandler->OnNewEndpoint(
+          ConnectionFactory::CreateFromInternal(cn->shared_from_this()), endpoint);
     }
     return false; // LCOV_EXCL_LINE
   }
 
-  void ConnectionImpl::OnIoErrorFn(void* context) // LCOV_EXCL_LINE
-  { // LCOV_EXCL_LINE
-    ConnectionImpl* cn = static_cast<ConnectionImpl*>(context); // LCOV_EXCL_LINE
-    if (cn->m_eventHandler) // LCOV_EXCL_LINE
-    { // LCOV_EXCL_LINE
-      return cn->m_eventHandler->OnIoError(cn->shared_from_this()); // LCOV_EXCL_LINE
-    } // LCOV_EXCL_LINE
-  } // LCOV_EXCL_LINE
+  // LCOV_EXCL_START
+  void ConnectionImpl::OnIOErrorFn(void* context)
+  {
+    ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
+    if (cn->m_eventHandler)
+    {
+      return cn->m_eventHandler->OnIOError(
+          ConnectionFactory::CreateFromInternal(cn->shared_from_this()));
+    }
+  }
+  // LCOV_EXCL_STOP
 
   void ConnectionImpl::Open()
   {
@@ -285,15 +286,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::SetTrace(bool setTrace)
-  {
-    connection_set_trace(m_connection.get(), setTrace);
-  }
-
   void ConnectionImpl::Close(
       const std::string& condition,
       const std::string& description,
-      Azure::Core::Amqp::Models::AmqpValue info)
+      Models::AmqpValue info)
   {
     if (!m_connection)
     {
@@ -310,13 +306,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::SetMaxFrameSize(uint32_t maxSize)
-  {
-    if (connection_set_max_frame_size(m_connection.get(), maxSize))
-    {
-      throw std::runtime_error("COuld not set max frame size."); // LCOV_EXCL_LINE
-    }
-  }
   uint32_t ConnectionImpl::GetMaxFrameSize() const
   {
     uint32_t maxSize;
@@ -327,13 +316,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return maxSize;
   }
 
-  void ConnectionImpl::SetMaxChannel(uint16_t maxChannel)
-  {
-    if (connection_set_channel_max(m_connection.get(), maxChannel))
-    {
-      throw std::runtime_error("COuld not set channel max."); // LCOV_EXCL_LINE
-    }
-  }
   uint16_t ConnectionImpl::GetMaxChannel() const
   {
     uint16_t maxChannel;
@@ -344,14 +326,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return maxChannel;
   }
 
-  void ConnectionImpl::SetIdleTimeout(std::chrono::milliseconds idleTimeout)
-  {
-    if (connection_set_idle_timeout(
-            m_connection.get(), static_cast<milliseconds>(idleTimeout.count())))
-    {
-      throw std::runtime_error("COuld not set idle timeout."); // LCOV_EXCL_LINE
-    }
-  }
   std::chrono::milliseconds ConnectionImpl::GetIdleTimeout() const
   {
     milliseconds ms;
@@ -363,21 +337,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return std::chrono::milliseconds(ms);
   }
 
-  void ConnectionImpl::SetProperties(Azure::Core::Amqp::Models::AmqpValue value)
-  {
-    if (connection_set_properties(m_connection.get(), value))
-    {
-      throw std::runtime_error("COuld not set properties."); // LCOV_EXCL_LINE
-    }
-  }
-  Azure::Core::Amqp::Models::AmqpValue ConnectionImpl::GetProperties() const
+  Models::AmqpMap ConnectionImpl::GetProperties() const
   {
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
       throw std::runtime_error("COuld not get properties."); // LCOV_EXCL_LINE
     }
-    return value;
+    return Models::AmqpValue{value}.AsMap();
   }
 
   uint32_t ConnectionImpl::GetRemoteMaxFrameSize() const
@@ -389,7 +356,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     return maxFrameSize;
   }
-  void ConnectionImpl::SetRemoteIdleTimeoutEmptyFrameSendRatio(double ratio)
+
+  void ConnectionImpl::SetIdleEmptyFrameSendPercentage(double ratio)
   {
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {
@@ -397,5 +365,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not set remote idle timeout send frame ratio."); // LCOV_EXCL_LINE
     }
   }
-
 }}}} // namespace Azure::Core::Amqp::_detail

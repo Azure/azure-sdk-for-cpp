@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/base64.hpp>
-#include <gtest/gtest.h>
+
 #include <random>
 #include <string>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

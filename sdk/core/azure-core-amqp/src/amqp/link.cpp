@@ -2,8 +2,11 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/link.hpp"
+
 #include "azure/core/amqp/message_receiver.hpp"
 #include "azure/core/amqp/message_sender.hpp"
+#include "azure/core/amqp/models/message_source.hpp"
+#include "azure/core/amqp/models/message_target.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "private/link_impl.hpp"
 #include "private/session_impl.hpp"
@@ -14,14 +17,15 @@
 #include <azure_uamqp_c/session.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-
+#if defined(TESTING_BUILD)
   Link::Link(
       _internal::Session const& session,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
-      : m_impl{std::make_shared<LinkImpl>(session.GetImpl(), name, role, source, target)}
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
+      : m_impl{
+          std::make_shared<LinkImpl>(SessionFactory::GetImpl(session), name, role, source, target)}
   {
   }
 
@@ -30,18 +34,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
       _internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
-      : m_impl{
-          std::make_shared<LinkImpl>(session.GetImpl(), linkEndpoint, name, role, source, target)}
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
+      : m_impl{std::make_shared<
+          LinkImpl>(SessionFactory::GetImpl(session), linkEndpoint, name, role, source, target)}
   {
   }
 
   Link::~Link() noexcept {}
 
-  Link::operator LINK_HANDLE() const { return m_impl->operator LINK_HANDLE(); }
-  std::string const& Link::GetSource() const { return m_impl->GetSource(); }
-  std::string const& Link::GetTarget() const { return m_impl->GetTarget(); }
+  Models::_internal::MessageSource const& Link::GetSource() const { return m_impl->GetSource(); }
+  Models::_internal::MessageTarget const& Link::GetTarget() const { return m_impl->GetTarget(); }
   _internal::SenderSettleMode Link::GetSenderSettleMode() const
   {
     return m_impl->GetSenderSettleMode();
@@ -69,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   uint64_t Link::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
   uint64_t Link::GetPeerMaxMessageSize() const { return m_impl->GetPeerMaxMessageSize(); }
-  void Link::SetAttachProperties(Azure::Core::Amqp::Models::AmqpValue attachProperties)
+  void Link::SetAttachProperties(Models::AmqpValue attachProperties)
   {
     m_impl->SetAttachProperties(attachProperties);
   }
@@ -84,10 +87,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       bool close,
       std::string const& errorCondition,
       std::string const& errorDescription,
-      Azure::Core::Amqp::Models::AmqpValue& info)
+      Models::AmqpValue& info)
   {
     return m_impl->Detach(close, errorCondition, errorDescription, info);
   }
+#endif
 
   /****/
   /* LINK Implementation */
@@ -96,16 +100,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       std::string const& name,
       _internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
+    Models::AmqpValue sourceValue{source.AsAmqpValue()};
+    Models::AmqpValue targetValue(target.AsAmqpValue());
     m_link = link_create(
         *session,
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
+        sourceValue,
+        targetValue);
   }
 
   LinkImpl::LinkImpl(
@@ -113,17 +119,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::LinkEndpoint& linkEndpoint,
       std::string const& name,
       _internal::SessionRole role,
-      std::string const& source,
-      std::string const& target)
+      Models::_internal::MessageSource const& source,
+      Models::_internal::MessageTarget const& target)
       : m_session{session}, m_source(source), m_target(target)
   {
+    Models::AmqpValue sourceValue(source.AsAmqpValue());
+    Models::AmqpValue targetValue(target.AsAmqpValue());
     m_link = link_create_from_endpoint(
         *session,
-        linkEndpoint.Release(),
+        LinkEndpointFactory::Release(linkEndpoint),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateSource(source),
-        Azure::Core::Amqp::Models::_internal::Messaging::CreateTarget(target));
+        sourceValue,
+        targetValue);
   }
 
   LinkImpl::~LinkImpl() noexcept
@@ -135,8 +143,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  std::string const& LinkImpl::GetSource() const { return m_source; }
-  std::string const& LinkImpl::GetTarget() const { return m_target; }
+  Models::_internal::MessageSource const& LinkImpl::GetSource() const { return m_source; }
+  Models::_internal::MessageTarget const& LinkImpl::GetTarget() const { return m_target; }
 
   void LinkImpl::SetMaxMessageSize(uint64_t size)
   {
@@ -280,7 +288,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Could not set initial delivery count."); // LCOV_EXCL_LINE
     }
   }
-  void LinkImpl::SetAttachProperties(Azure::Core::Amqp::Models::AmqpValue properties)
+  void LinkImpl::SetAttachProperties(Models::AmqpValue properties)
   {
     if (link_set_attach_properties(m_link, properties))
     {
@@ -306,7 +314,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       bool close,
       std::string const& condition,
       std::string const& description,
-      Azure::Core::Amqp::Models::AmqpValue& info)
+      Models::AmqpValue& info)
   {
     if (link_detach(
             m_link,

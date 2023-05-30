@@ -10,8 +10,8 @@
 #pragma once
 
 #include <azure/core/internal/client_options.hpp>
-
 #include <azure/keyvault/administration/dll_import_export.hpp>
+
 #include <memory>
 #include <string>
 
