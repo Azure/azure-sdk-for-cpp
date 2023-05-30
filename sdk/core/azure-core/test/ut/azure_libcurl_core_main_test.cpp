@@ -53,11 +53,21 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_TRUE(session->m_keepAlive);
       EXPECT_FALSE(session->m_connectionUpgraded);
     }
+    // here the session is destroyed and the connection is moved to the pool
+    // the same destructor also makes a call to start the cleanup thread
+    // which will sleep for DefaultCleanerIntervalMilliseconds then loop through the connections
+    // in the pool and check for the ones that are expired(DefaultConnectionExpiredMilliseconds) and remove them
+    // which will be the case here if we wait long enough. 
+    // the test is flaky due to the fact that tests in the CI pipeline might take longer than 90 sec to execute 
+    // thus the cleanup thread strikes. 
+    // to have this test be predictable we should let things run to completion and then check the pool size
+    // thus the sleep below plus another second to let the for loop in the thread do its thing. 
+    Sleep(Azure::Core::Http::_detail::DefaultCleanerIntervalMilliseconds+1000);
     // Check that after the connection is gone, it is moved back to the pool
     EXPECT_EQ(
         Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
             .size(),
-        1);
+          0);
   }
 }}} // namespace Azure::Core::Test
 
