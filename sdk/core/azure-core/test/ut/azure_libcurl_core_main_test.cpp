@@ -26,6 +26,7 @@
 
 #include <csignal>
 #include <cstdlib>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -34,7 +35,12 @@ namespace Azure { namespace Core { namespace Test {
   {
     Azure::Core::Http::Request req(
         Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://httpbin.org/get"));
+    using std::chrono::duration;
+    using std::chrono::duration_cast;
+    using std::chrono::high_resolution_clock;
+    using std::chrono::milliseconds;
 
+    auto t1 = high_resolution_clock::now();
     {
       // Creating a new connection with default options
       Azure::Core::Http::CurlTransportOptions options;
@@ -52,22 +58,53 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_TRUE(session->IsEOF());
       EXPECT_TRUE(session->m_keepAlive);
       EXPECT_FALSE(session->m_connectionUpgraded);
+      t1 = high_resolution_clock::now();
     }
     // here the session is destroyed and the connection is moved to the pool
     // the same destructor also makes a call to start the cleanup thread
     // which will sleep for DefaultCleanerIntervalMilliseconds then loop through the connections
-    // in the pool and check for the ones that are expired(DefaultConnectionExpiredMilliseconds) and remove them
-    // which will be the case here if we wait long enough. 
-    // the test is flaky due to the fact that tests in the CI pipeline might take longer than 90 sec to execute 
-    // thus the cleanup thread strikes. 
-    // to have this test be predictable we should let things run to completion and then check the pool size
-    // thus the sleep below plus another second to let the for loop in the thread do its thing. 
-    Sleep(Azure::Core::Http::_detail::DefaultCleanerIntervalMilliseconds+1000);
-    // Check that after the connection is gone, it is moved back to the pool
-    EXPECT_EQ(
-        Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
-            .size(),
+    // in the pool and check for the ones that are expired(DefaultConnectionExpiredMilliseconds) and
+    // remove them which will be the case here if we wait long enough. the test is flaky due to the
+    // fact that tests in the CI pipeline might take longer than 90 sec to execute thus the cleanup
+    // thread strikes. to have this test be predictable we should let things run to completion and
+    // then check the pool size thus the sleep below plus another second to let the for loop in the
+    // thread do its thing.
+
+    auto t2 = high_resolution_clock::now();
+
+    /* Getting number of milliseconds as an integer. */
+    auto ms_int = duration_cast<milliseconds>(t2 - t1);
+
+    /* Getting number of milliseconds as a double. */
+    duration<double, std::milli> ms_double = t2 - t1;
+    if (ms_double < duration<double, std::milli>(
+            Azure::Core::Http::_detail::DefaultCleanerIntervalMilliseconds))
+    {
+      // if the destructor execution took less than the cleanup thread sleep the size should be 1
+      EXPECT_EQ(
+          Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+              .size(),
+          1);
+      // let the thread cleanup thread hit
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(
+              Azure::Core::Http::_detail::DefaultCleanerIntervalMilliseconds + 1000)
+          - ms_double);
+      // Check that after the connection is gone and cleaned up, the pool is empty
+      EXPECT_EQ(
+          Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+              .size(),
           0);
+    }
+    else
+    {
+      // we got back from the destructor and thread creation after the cleanup thread hit thus it
+      // will be empty
+      EXPECT_EQ(
+          Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+              .size(),
+          0);
+    }
   }
 }}} // namespace Azure::Core::Test
 
@@ -78,13 +115,13 @@ int main(int argc, char** argv)
 #if defined(AZ_PLATFORM_WINDOWS)
 // Ensure that all calls to abort() no longer pop up a modal dialog on Windows.
 #if defined(_DEBUG) && defined(_MSC_VER)
-  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 #endif
 
-  signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
+signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
 #endif // AZ_PLATFORM_WINDOWS
 
-  testing::InitGoogleTest(&argc, argv);
-  auto r = RUN_ALL_TESTS();
-  return r;
+testing::InitGoogleTest(&argc, argv);
+auto r = RUN_ALL_TESTS();
+return r;
 }
