@@ -5,8 +5,6 @@
 
 #include <azure/core/etag.hpp>
 
-#include <gtest/gtest.h>
-
 #include <limits>
 
 #include <gtest/gtest.h>
