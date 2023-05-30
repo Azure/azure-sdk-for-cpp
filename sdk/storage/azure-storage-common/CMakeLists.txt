@@ -69,7 +69,6 @@ set(
     src/file_io.cpp
     src/reliable_stream.cpp
     src/shared_key_policy.cpp
-    src/storage_common.cpp
     src/storage_credential.cpp
     src/storage_exception.cpp
     src/storage_per_retry_policy.cpp
