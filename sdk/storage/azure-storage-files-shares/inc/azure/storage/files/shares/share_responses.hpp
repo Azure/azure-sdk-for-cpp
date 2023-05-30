@@ -328,11 +328,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
-    const Azure::Core::Http::RawResponse& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
     std::shared_ptr<ShareFileClient> m_fileClient;
     Models::FileProperties m_pollResult;
 

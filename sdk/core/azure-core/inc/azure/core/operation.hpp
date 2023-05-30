@@ -30,7 +30,6 @@ namespace Azure { namespace Core {
     virtual std::unique_ptr<Http::RawResponse> PollInternal(Context const& context) = 0;
     virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
-    virtual Azure::Core::Http::RawResponse const& GetRawResponseInternal() const = 0;
 
   protected:
     std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse = nullptr;
