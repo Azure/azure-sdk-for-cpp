@@ -17,3 +17,4 @@
 #include "azure/messaging/eventhubs/producer_client.hpp"
 #include "azure/messaging/eventhubs/retry_operation.hpp"
 #include "azure/messaging/eventhubs/rtti.hpp"
+#include "azure/messaging/eventhubs/processor.hpp"

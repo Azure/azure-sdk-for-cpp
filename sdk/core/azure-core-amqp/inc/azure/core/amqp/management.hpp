@@ -117,6 +117,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    */
   class Management final {
   public:
+    Management() = default;
     /**
      * @brief Create a new Management object instance.
      *

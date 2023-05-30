@@ -61,6 +61,7 @@ set(
     inc/azure/messaging/eventhubs/processor_partition_client.hpp
     inc/azure/messaging/eventhubs/checkpoint_store.hpp
     inc/azure/messaging/eventhubs/rtti.hpp
+    inc/azure/messaging/eventhubs/processor.hpp
 )
 
 set(
