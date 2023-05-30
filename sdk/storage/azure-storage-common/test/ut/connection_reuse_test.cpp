@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  // If connection is reused, the requets with the same connection should hit the same sever. So
+  // If connection is reused, the requests with the same connection should hit the same sever. So
   // this test verifies whether a series of requests hit the same server.
   TEST_F(ConnectionReuseTest, IsConnectionReused_LIVEONLY_)
   {
