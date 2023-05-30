@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- [[#3964]](https://github.com/Azure/azure-sdk-for-cpp/issues/3964) Ensuring some Azure SDK types have the expected default operations. (A community contribution, courtesy of _[jnyfah](https://github.com/jnyfah)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jennifer Chukwu _([GitHub](https://github.com/jnyfah))_
+
 ## 1.10.0-beta.1 (2023-05-04)
 
 ### Features Added
