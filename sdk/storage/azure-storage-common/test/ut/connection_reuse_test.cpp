@@ -79,6 +79,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     // At least 80% requests should use the same connection.
     EXPECT_TRUE(maxSingleServerHitCount > totalHitCount * 0.8);
+
+    containerClient1.Delete();
+    containerClient2.Delete();
   }
 
 }}} // namespace Azure::Storage::Test
