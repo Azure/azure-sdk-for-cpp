@@ -49,7 +49,7 @@ TEST(ProducerClientTest, SendMessage)
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
   producerOptions.SenderOptions.EnableTrace = true;
-  producerOptions.SenderOptions.SourceAddress = "ingress";
+  producerOptions.SenderOptions.MessageSource = "ingress";
   producerOptions.SenderOptions.SettleMode
       = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
@@ -100,7 +100,7 @@ TEST(ProducerClientTest, GetEventHubProperties)
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
   producerOptions.SenderOptions.EnableTrace = true;
-  producerOptions.SenderOptions.SourceAddress = "ingress";
+  producerOptions.SenderOptions.MessageSource = "ingress";
   producerOptions.SenderOptions.SettleMode
       = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();

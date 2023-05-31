@@ -7,8 +7,6 @@
  *
  */
 
-#include <gtest/gtest.h>
-
 #include "./../../src/private/key_serializers.hpp"
 #include "./../../src/private/keyvault_protocol.hpp"
 #include "./../../src/private/package_version.hpp"
@@ -19,6 +17,8 @@
 
 #include <cstdio>
 #include <string>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 

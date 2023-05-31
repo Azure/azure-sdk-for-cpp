@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/blobs/deferred_response.hpp"
+
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
 

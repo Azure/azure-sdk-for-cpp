@@ -3,7 +3,9 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 #include "secret_client_base_test.hpp"
+
 #include <cstddef>
+
 #include <gtest/gtest.h>
 
 using namespace std::chrono_literals;

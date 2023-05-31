@@ -2,9 +2,12 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/connection_string_credential.hpp"
+
 #include <azure/core/platform.hpp>
-#include <gtest/gtest.h>
+
 #include <utility>
+
+#include <gtest/gtest.h>
 
 class ConnectionStringTest : public testing::Test {
 protected:
@@ -22,16 +25,11 @@ TEST_F(ConnectionStringTest, SaslPlainConnectionGood)
         = "Endpoint=sb://{NAMESPACE}.servicebus.windows.net/"
           "{EVENT_HUB_NAME};EntityPath={EVENT_HUB_NAME};SharedAccessKeyName={ACCESS_KEY_NAME};"
           "SharedAccessKey={ACCESS_KEY}";
-    Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential credential(connectionString);
+    Azure::Core::Amqp::_internal::ConnectionStringParser credential(connectionString);
     EXPECT_EQ("sb://{NAMESPACE}.servicebus.windows.net/{EVENT_HUB_NAME}", credential.GetEndpoint());
     EXPECT_EQ("{EVENT_HUB_NAME}", credential.GetEntityPath());
     EXPECT_EQ("{ACCESS_KEY_NAME}", credential.GetSharedAccessKeyName());
     EXPECT_EQ("{ACCESS_KEY}", credential.GetSharedAccessKey());
-    {
-      auto xport = credential.GetTransport();
-      EXPECT_EQ(
-          credential.GetCredentialType(), Azure::Core::Amqp::_internal::CredentialType::SaslPlain);
-    }
   }
 }
 
@@ -52,13 +50,10 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
 #if !defined(AZ_PLATFORM_MAC)
       auto xport = credential.GetTransport();
 #endif // !defined(AZ_PLATFORM_MAC)
-      EXPECT_EQ(
-          credential.GetCredentialType(),
-          Azure::Core::Amqp::_internal::CredentialType::ServiceBusSas);
 
       // Generate a SAS token which expires in 60 seconds.
-      auto token = credential.GenerateSasToken(
-          std::chrono::system_clock::now() + std::chrono::seconds(60));
+      Azure::Core::Credentials::TokenRequestContext trc;
+      auto token = credential.GetToken(trc, {});
     }
   }
   EXPECT_NO_THROW([]() {
@@ -72,21 +67,19 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
   }());
 }
 
-TEST_F(ConnectionStringTest, SaslPlainConnectionBad)
+TEST_F(ConnectionStringTest, ConnectionStringParserBad)
 {
   {
-    EXPECT_ANY_THROW(
-        []() { Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential xx(""); }());
+    EXPECT_ANY_THROW([]() { Azure::Core::Amqp::_internal::ConnectionStringParser xx(""); }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential yy(
-          "Foo=Bar;Boo=Eek;Yoiks=Blang!");
+      Azure::Core::Amqp::_internal::ConnectionStringParser yy("Foo=Bar;Boo=Eek;Yoiks=Blang!");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential zz(
+      Azure::Core::Amqp::_internal::ConnectionStringParser zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
     }());
     EXPECT_ANY_THROW([]() {
-      Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential zz(
+      Azure::Core::Amqp::_internal::ConnectionStringParser zz(
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey");
     }());
   }

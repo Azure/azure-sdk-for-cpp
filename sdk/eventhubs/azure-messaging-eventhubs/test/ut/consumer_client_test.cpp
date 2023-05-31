@@ -66,17 +66,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         + ";EntityPath=eventhub";
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
+    
     options.ReceiverOptions.Name = "unit-test";
     options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.ReceiverOptions.TargetAddress = "ingress";
+    options.ReceiverOptions.MessageTarget = "ingress";
     options.ReceiverOptions.EnableTrace = true;
+    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
     Azure::Messaging::EventHubs::PartitionClient partitionClient
-        = client.NewPartitionClient("1", partitionOptions);
-   // auto events = partitionClient.ReceiveEvents(1);
+        = client.NewPartitionClient("0", partitionOptions);
+    auto events = partitionClient.ReceiveEvents(1);
+    EXPECT_EQ(events.size(), 1);
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test

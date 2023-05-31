@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "http_test.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
 #include <azure/core/rtti.hpp>
@@ -11,6 +10,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

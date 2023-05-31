@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/storage/files/shares/share_constants.hpp"
+#include "azure/storage/files/shares/share_options.hpp"
+
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/paged_response.hpp>
-
-#include "azure/storage/files/shares/share_constants.hpp"
-#include "azure/storage/files/shares/share_options.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

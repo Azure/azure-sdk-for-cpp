@@ -3,12 +3,12 @@
 
 #include "get_env.hpp"
 
+#include <azure/storage/blobs.hpp>
+#include <azure/storage/common/crypt.hpp>
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
-
-#include <azure/storage/blobs.hpp>
-#include <azure/storage/common/crypt.hpp>
 
 std::string GetConnectionString()
 {

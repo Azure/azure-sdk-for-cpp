@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "azure/storage/blobs/blob_client.hpp"
+
 #include <cstdint>
 #include <string>
 #include <vector>
-
-#include "azure/storage/blobs/blob_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class FileClient;

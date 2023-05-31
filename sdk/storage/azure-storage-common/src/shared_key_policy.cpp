@@ -3,12 +3,12 @@
 
 #include "azure/storage/common/internal/shared_key_policy.hpp"
 
-#include <algorithm>
+#include "azure/storage/common/crypt.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/strings.hpp>
 
-#include "azure/storage/common/crypt.hpp"
+#include <algorithm>
 
 namespace Azure { namespace Storage { namespace _internal {
 

@@ -9,10 +9,11 @@
 
 #pragma once
 
-#include <azure/core/internal/client_options.hpp>
-
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/dll_import_export.hpp"
+
+#include <azure/core/internal/client_options.hpp>
+
 #include <memory>
 #include <string>
 

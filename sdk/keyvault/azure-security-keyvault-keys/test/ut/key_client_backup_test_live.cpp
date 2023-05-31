@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-
 #include "key_client_base_test.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keys.hpp>
-#include <private/key_constants.hpp>
 
 #include <iostream>
 #include <string>
 #include <thread>
+
+#include <private/key_constants.hpp>
 
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;

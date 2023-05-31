@@ -3,8 +3,10 @@
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
-#include <gtest/gtest.h>
+
 #include <string>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http::_internal;

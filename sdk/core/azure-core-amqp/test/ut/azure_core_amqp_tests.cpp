@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include "azure/core/internal/diagnostics/global_exception.hpp"
 #include "azure/core/platform.hpp"
+
 #include <csignal>
 #include <iostream>
+
+#include <gtest/gtest.h>
 
 int main(int argc, char** argv)
 {

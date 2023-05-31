@@ -3,9 +3,9 @@
 
 #include "private/datalake_utilities.hpp"
 
-#include <azure/storage/common/crypt.hpp>
-
 #include "private/datalake_constants.hpp"
+
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 

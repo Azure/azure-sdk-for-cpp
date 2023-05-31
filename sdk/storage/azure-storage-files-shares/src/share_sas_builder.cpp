@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/files/shares/share_sas_builder.hpp"
+
 #include "azure/storage/files/shares/rest_client.hpp"
 
 #include <azure/core/http/http.hpp>

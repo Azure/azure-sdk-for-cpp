@@ -18,6 +18,7 @@
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
+
 #include <chrono>
 #include <iostream>
 

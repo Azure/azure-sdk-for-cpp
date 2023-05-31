@@ -1,19 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "gtest/gtest.h"
 #include "key_client_base_test.hpp"
-
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 #include "test_consts.hpp"
-#include "gtest/gtest.h"
+
 #include <azure/attestation.hpp>
 #include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keys.hpp>
-#include <private/key_constants.hpp>
+
 #include <string>
+
+#include <private/key_constants.hpp>
 
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys;

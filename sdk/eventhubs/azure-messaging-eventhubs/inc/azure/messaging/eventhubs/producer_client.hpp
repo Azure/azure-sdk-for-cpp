@@ -133,16 +133,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       EventHubProperties ehp;
       if (m_management.find(m_credentials.EventHub) == m_management.end())
       {
-        auto management = CreateManagement(m_credentials.EventHub, true);
-        m_management[m_credentials.EventHub] = management;
+        //auto management = CreateManagement(m_credentials.EventHub, true);
+        //m_management[m_credentials.EventHub] = management;
       }
 
       auto management = m_management[m_credentials.EventHub];
       std::string token;
       if (m_credentials.SasCredential != nullptr)
       {
-        token = m_credentials.SasCredential->GenerateSasToken(
-            std::chrono::system_clock::now() + std::chrono::minutes(15));
+
+        Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
+        tokenRequestContext.MinimumExpiration = std::chrono::minutes(15);
+        tokenRequestContext.Scopes = {m_defaultAuthScope};
+        token = m_credentials.SasCredential->GetToken(tokenRequestContext, ctx).Token;
       }
       else
       {
@@ -176,8 +179,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
     void CreateSender(std::string const& partitionId = "");
-    Azure::Core::Amqp::_internal::Management CreateManagement(
+    /* Azure::Core::Amqp::_internal::Management CreateManagement(
         std::string name,
-        bool eventHub = false);
+        bool eventHub = false);*/
   };
 }}} // namespace Azure::Messaging::EventHubs

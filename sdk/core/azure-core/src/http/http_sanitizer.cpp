@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/internal/http/http_sanitizer.hpp"
+
 #include "azure/core/url.hpp"
+
 #include <regex>
 #include <sstream>
 

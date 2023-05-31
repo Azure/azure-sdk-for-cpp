@@ -7,6 +7,7 @@
  */
 
 #include "get_env.hpp"
+
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
 #include <azure/core/internal/json/json.hpp>
@@ -18,6 +19,7 @@
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
 #include <azure/storage/queues.hpp>
+
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Keys;

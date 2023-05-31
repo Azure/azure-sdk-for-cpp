@@ -9,10 +9,12 @@
 #pragma once
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
+
 #include <thread>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {

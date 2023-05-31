@@ -7,7 +7,9 @@
  */
 
 #include "private/secret_serializers.hpp"
+
 #include "private/secret_constants.hpp"
+
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>

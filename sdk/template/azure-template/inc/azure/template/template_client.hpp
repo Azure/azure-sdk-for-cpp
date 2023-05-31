@@ -5,6 +5,7 @@
 
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/tracing/service_tracing.hpp>
+
 #include <string>
 
 namespace Azure { namespace Template {

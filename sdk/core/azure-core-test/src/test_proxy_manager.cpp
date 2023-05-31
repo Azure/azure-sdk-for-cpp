@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/test/test_proxy_manager.hpp"
+
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
-
-#include "azure/core/test/test_proxy_manager.hpp"
 
 #include <fstream>
 #include <iostream>

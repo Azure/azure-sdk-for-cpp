@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json.hpp>
-
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
+
+#include <azure/core/internal/json/json.hpp>
 
 #include <string>
 

@@ -48,29 +48,37 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
 
   std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
   std::string hostUrl = m_credentials.HostUrl + suffix;
-
+  std::string hostName;
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
   connectOptions.EnableTrace = m_consumerClientOptions.ReceiverOptions.EnableTrace;
-  connectOptions.HostName = m_credentials.FullyQualifiedNamespace;
-  Azure::Core::Amqp::_internal::Connection connection(hostUrl, connectOptions);
-
-  Azure::Core::Amqp::_internal::Session session(connection, nullptr);
-  session.SetIncomingWindow(
-      (uint32_t)m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
-          std::numeric_limits<int32_t>::max()));
-
-  Azure::Core::Amqp::_internal::MessageReceiver receiver;
+  if (m_credentials.SasCredential != nullptr)
+  {
+	connectOptions.Port = m_credentials.SasCredential->GetPort();
+    hostName = m_credentials.SasCredential->GetHostName();
+  }
+  //TODO WHAT ABOUT TOKEN CREDENTIALS
+  
+  Azure::Core::Amqp::_internal::Connection connection(hostName, connectOptions);
+  Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+  sessionOptions.InitialIncomingWindowSize
+      = (uint32_t)m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
+          std::numeric_limits<int32_t>::max());
+  
+  Azure::Core::Amqp::_internal::Session session;
   if (m_credentials.SasCredential == nullptr)
   {
-    receiver = Azure::Core::Amqp::_internal::MessageReceiver(
-        session, m_credentials.Credential, hostUrl, m_consumerClientOptions.ReceiverOptions);
+      session = Azure::Core::Amqp::_internal::Session(
+		connection, m_credentials.Credential, sessionOptions);
   }
   else
   {
-    receiver = Azure::Core::Amqp::_internal::MessageReceiver(
-        session, m_credentials.SasCredential, hostUrl, m_consumerClientOptions.ReceiverOptions);
+      session = Azure::Core::Amqp::_internal::Session(
+		connection, m_credentials.SasCredential, sessionOptions);
   }
+  Azure::Core::Amqp::_internal::MessageReceiver receiver;
+    receiver = Azure::Core::Amqp::_internal::MessageReceiver(
+        session, hostUrl, m_consumerClientOptions.ReceiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();

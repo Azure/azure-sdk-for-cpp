@@ -21,6 +21,7 @@
 
 #include <azure/attestation.hpp>
 #include <azure/identity.hpp>
+
 #include <chrono>
 #include <iostream>
 #include <memory>

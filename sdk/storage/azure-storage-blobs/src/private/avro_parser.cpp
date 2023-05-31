@@ -3,11 +3,11 @@
 
 #include "avro_parser.hpp"
 
-#include <algorithm>
-#include <cstring>
-
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/internal/json/json.hpp>
+
+#include <algorithm>
+#include <cstring>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 

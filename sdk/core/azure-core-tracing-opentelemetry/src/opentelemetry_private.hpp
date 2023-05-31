@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+
 #include <azure/core/internal/tracing/tracing_impl.hpp>
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress

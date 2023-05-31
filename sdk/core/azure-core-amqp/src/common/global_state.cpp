@@ -4,10 +4,13 @@
 // cspell: words xlogging
 
 #include "azure/core/amqp/common/global_state.hpp"
+
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xlogging.h>
+
 #include <cassert>
 #include <iomanip>
 #include <mutex>
@@ -61,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       ss << "File: " << file << ":" << line << " Func: " << func << ": ";
     }
-    char outputBuffer[512];
+    char outputBuffer[2048];
     va_list args;
     va_start(args, format);
     vsnprintf(outputBuffer, sizeof(outputBuffer), format, args);

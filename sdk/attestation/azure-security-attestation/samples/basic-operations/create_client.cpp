@@ -16,6 +16,7 @@
 #include <get_env.hpp>
 
 #include <azure/attestation.hpp>
+
 #include <chrono>
 #include <iostream>
 #include <thread>

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/identity/managed_identity_credential.hpp"
+
 #include "private/managed_identity_source.hpp"
 
 using namespace Azure::Identity;

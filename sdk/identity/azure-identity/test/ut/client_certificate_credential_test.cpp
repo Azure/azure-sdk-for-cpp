@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/identity/client_certificate_credential.hpp"
-
 #include "credential_test_helper.hpp"
 
 #include <azure/core/base64.hpp>

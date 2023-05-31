@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/secrets.hpp"
+
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 

@@ -2176,10 +2176,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     class exception : public std::exception {
     public:
       /// returns the explanatory string
-      const char* what() const noexcept override
-      {
-        return m.what();
-      }
+      const char* what() const noexcept override { return m.what(); }
 
       /// the id of the exception
       const int id;
@@ -15737,125 +15734,141 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
 #pragma warning(disable : 28020)
 #endif
 
-    /*!
-    @brief check whether a string is UTF-8 encoded
+          /*!
+          @brief check whether a string is UTF-8 encoded
 
-    The function checks each byte of a string whether it is UTF-8 encoded. The
-    result of the check is stored in the @a state parameter. The function must
-    be called initially with state 0 (accept). State 1 means the string must
-    be rejected, because the current byte is not allowed. If the string is
-    completely processed, but the state is non-zero, the string ended
-    prematurely; that is, the last byte indicated more bytes should have
-    followed.
+          The function checks each byte of a string whether it is UTF-8 encoded. The
+          result of the check is stored in the @a state parameter. The function must
+          be called initially with state 0 (accept). State 1 means the string must
+          be rejected, because the current byte is not allowed. If the string is
+          completely processed, but the state is non-zero, the string ended
+          prematurely; that is, the last byte indicated more bytes should have
+          followed.
 
-    @param[in,out] state  the state of the decoding
-    @param[in,out] codep  codepoint (valid only if resulting state is UTF8_ACCEPT)
-    @param[in] byte       next byte to decode
-    @return               new state
+          @param[in,out] state  the state of the decoding
+          @param[in,out] codep  codepoint (valid only if resulting state is UTF8_ACCEPT)
+          @param[in] byte       next byte to decode
+          @return               new state
 
-    @note The function has been edited: a std::array is used.
+          @note The function has been edited: a std::array is used.
 
-    @copyright Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern\@hoehrmann.de>
-    @sa http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
-    */
-    static std::uint8_t decode(
-        std::uint8_t& state,
-        std::uint32_t& codep,
-        const std::uint8_t byte) noexcept
-    {
-      static const std::array<std::uint8_t, 400> utf8d = {{
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 00..1F
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 20..3F
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 40..5F
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-          0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 60..7F
-          1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
-          9,   9,   9,   9,   9,   9,   9,   9,   9,   9,   9,   9,   9,   9,   9,   9, // 80..9F
-          7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,
-          7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7, // A0..BF
-          8,   8,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,
-          2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, // C0..DF
-          0xA, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x3, // E0..EF
-          0xB, 0x6, 0x6, 0x6, 0x5, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, // F0..FF
-          0x0, 0x1, 0x2, 0x3, 0x5, 0x8, 0x7, 0x1, 0x1, 0x1, 0x4, 0x6, 0x1, 0x1, 0x1, 0x1, // s0..s0
-          1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
-          1,   0,   1,   1,   1,   1,   1,   0,   1,   0,   1,   1,   1,   1,   1,   1, // s1..s2
-          1,   2,   1,   1,   1,   1,   1,   2,   1,   2,   1,   1,   1,   1,   1,   1,
-          1,   1,   1,   1,   1,   1,   1,   2,   1,   1,   1,   1,   1,   1,   1,   1, // s3..s4
-          1,   2,   1,   1,   1,   1,   1,   1,   1,   2,   1,   1,   1,   1,   1,   1,
-          1,   1,   1,   1,   1,   1,   1,   3,   1,   3,   1,   1,   1,   1,   1,   1, // s5..s6
-          1,   3,   1,   1,   1,   1,   1,   3,   1,   3,   1,   1,   1,   1,   1,   1,
-          1,   3,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1 // s7..s8
-      }};
+          @copyright Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern\@hoehrmann.de>
+          @sa http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
+          */
+          static std::uint8_t decode(
+              std::uint8_t& state,
+              std::uint32_t& codep,
+              const std::uint8_t byte) noexcept
+          {
+            static const std::array<std::uint8_t, 400> utf8d
+                = {{
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 00..1F
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 20..3F
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 40..5F
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+                    0,   0,   0,   0,   0,   0,   0,   0,   0,   0, // 60..7F
+                    1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
+                    1,   1,   1,   1,   1,   9,   9,   9,   9,   9,   9,
+                    9,   9,   9,   9,   9,   9,   9,   9,   9,   9, // 80..9F
+                    7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,
+                    7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,
+                    7,   7,   7,   7,   7,   7,   7,   7,   7,   7, // A0..BF
+                    8,   8,   2,   2,   2,   2,   2,   2,   2,   2,   2,
+                    2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,
+                    2,   2,   2,   2,   2,   2,   2,   2,   2,   2, // C0..DF
+                    0xA, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3,
+                    0x3, 0x3, 0x4, 0x3, 0x3, // E0..EF
+                    0xB, 0x6, 0x6, 0x6, 0x5, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8,
+                    0x8, 0x8, 0x8, 0x8, 0x8, // F0..FF
+                    0x0, 0x1, 0x2, 0x3, 0x5, 0x8, 0x7, 0x1, 0x1, 0x1, 0x4,
+                    0x6, 0x1, 0x1, 0x1, 0x1, // s0..s0
+                    1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
+                    1,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,
+                    1,   0,   1,   0,   1,   1,   1,   1,   1,   1, // s1..s2
+                    1,   2,   1,   1,   1,   1,   1,   2,   1,   2,   1,
+                    1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
+                    1,   2,   1,   1,   1,   1,   1,   1,   1,   1, // s3..s4
+                    1,   2,   1,   1,   1,   1,   1,   1,   1,   2,   1,
+                    1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
+                    1,   3,   1,   3,   1,   1,   1,   1,   1,   1, // s5..s6
+                    1,   3,   1,   1,   1,   1,   1,   3,   1,   3,   1,
+                    1,   1,   1,   1,   1,   1,   3,   1,   1,   1,   1,
+                    1,   1,   1,   1,   1,   1,   1,   1,   1,   1 // s7..s8
+                }};
 
-      const std::uint8_t type = utf8d[byte];
+            const std::uint8_t type = utf8d[byte];
 
-      codep = (state != UTF8_ACCEPT) ? (byte & 0x3fu) | (codep << 6u) : (0xFFu >> type) & (byte);
+            codep = (state != UTF8_ACCEPT) ? (byte & 0x3fu) | (codep << 6u)
+                                           : (0xFFu >> type) & (byte);
 
-      std::size_t index = 256u + static_cast<size_t>(state) * 16u + static_cast<size_t>(type);
-      assert(index < 400);
-      state = utf8d[index];
-      return state;
-    }
+            std::size_t index = 256u + static_cast<size_t>(state) * 16u + static_cast<size_t>(type);
+            assert(index < 400);
+            state = utf8d[index];
+            return state;
+          }
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 
-    /*
-     * Overload to make the compiler happy while it is instantiating
-     * dump_integer for number_unsigned_t.
-     * Must never be called.
-     */
-    number_unsigned_t remove_sign(number_unsigned_t x)
-    {
-      assert(false); // LCOV_EXCL_LINE
-      return x; // LCOV_EXCL_LINE
-    }
+          /*
+           * Overload to make the compiler happy while it is instantiating
+           * dump_integer for number_unsigned_t.
+           * Must never be called.
+           */
+          number_unsigned_t remove_sign(number_unsigned_t x)
+          {
+            assert(false); // LCOV_EXCL_LINE
+            return x; // LCOV_EXCL_LINE
+          }
 
-    /*
-     * Helper function for dump_integer
-     *
-     * This function takes a negative signed integer and returns its absolute
-     * value as unsigned integer. The plus/minus shuffling is necessary as we can
-     * not directly remove the sign of an arbitrary signed integer as the
-     * absolute values of INT_MIN and INT_MAX are usually not the same. See
-     * `#1708` for details.
-     */
-    inline number_unsigned_t remove_sign(number_integer_t x) noexcept
-    {
-      assert(x < 0 && x < (std::numeric_limits<number_integer_t>::max)());
-      return static_cast<number_unsigned_t>(-(x + 1)) + 1;
-    }
+          /*
+           * Helper function for dump_integer
+           *
+           * This function takes a negative signed integer and returns its absolute
+           * value as unsigned integer. The plus/minus shuffling is necessary as we can
+           * not directly remove the sign of an arbitrary signed integer as the
+           * absolute values of INT_MIN and INT_MAX are usually not the same. See
+           * `#1708` for details.
+           */
+          inline number_unsigned_t remove_sign(number_integer_t x) noexcept
+          {
+            assert(x < 0 && x < (std::numeric_limits<number_integer_t>::max)());
+            return static_cast<number_unsigned_t>(-(x + 1)) + 1;
+          }
 
-  private:
-    /// the output of the serializer
-    output_adapter_t<char> o = nullptr;
+        private:
+          /// the output of the serializer
+          output_adapter_t<char> o = nullptr;
 
-    /// a (hopefully) large enough character buffer
-    std::array<char, 64> number_buffer{{}};
+          /// a (hopefully) large enough character buffer
+          std::array<char, 64> number_buffer{{}};
 
-    /// the locale
-    const std::lconv* loc = nullptr;
-    /// the locale's thousand separator character
-    const char thousands_sep = '\0';
-    /// the locale's decimal point character
-    const char decimal_point = '\0';
+          /// the locale
+          const std::lconv* loc = nullptr;
+          /// the locale's thousand separator character
+          const char thousands_sep = '\0';
+          /// the locale's decimal point character
+          const char decimal_point = '\0';
 
-    /// string buffer
-    std::array<char, 512> string_buffer{{}};
+          /// string buffer
+          std::array<char, 512> string_buffer{{}};
 
-    /// the indentation character
-    const char indent_char;
-    /// the indentation string
-    string_t indent_string;
+          /// the indentation character
+          const char indent_char;
+          /// the indentation string
+          string_t indent_string;
 
-    /// error_handler how to react on decoding errors
-    const error_handler_t error_handler;
-  };
+          /// error_handler how to react on decoding errors
+          const error_handler_t error_handler;
+        };
 }}}}} // namespace Azure::Core::Json::_internal::detail
 
 // #include <nlohmann/detail/value_t.hpp>

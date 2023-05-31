@@ -10,13 +10,13 @@
  *
  */
 
-#include <gtest/gtest.h>
-
 #include <azure/core/context.hpp>
 
 #include <chrono>
 #include <string>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

@@ -3,13 +3,13 @@
 
 #include "blob_container_client_test.hpp"
 
-#include <chrono>
-#include <thread>
-
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 #include <azure/storage/common/crypt.hpp>
+
+#include <chrono>
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

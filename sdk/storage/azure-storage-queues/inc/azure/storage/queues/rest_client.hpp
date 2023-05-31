@@ -6,12 +6,6 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 #pragma once
 
-#include <cstdint>
-#include <map>
-#include <string>
-#include <type_traits>
-#include <vector>
-
 #include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
@@ -20,6 +14,12 @@
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 #include <azure/storage/queues/dll_import_export.hpp>
+
+#include <cstdint>
+#include <map>
+#include <string>
+#include <type_traits>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Queues {
   namespace _detail {

@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/policies/policy.hpp"
-
 #include "azure/core/credentials/credentials.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/credentials/authorization_challenge_parser.hpp"
 
 #include <chrono>

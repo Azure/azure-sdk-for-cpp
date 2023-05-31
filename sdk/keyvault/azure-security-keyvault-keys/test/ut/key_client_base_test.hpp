@@ -6,8 +6,6 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
-#include <gtest/gtest.h>
-
 #include <azure/core/context.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/core/uuid.hpp>
@@ -19,6 +17,8 @@
 #include <cstdio>
 #include <iostream>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 

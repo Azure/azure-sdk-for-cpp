@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-
 #include <azure/core/context.hpp>
 #include <azure/core/tracing/tracing.hpp>
 
@@ -11,6 +9,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 using namespace Azure::Core;
 

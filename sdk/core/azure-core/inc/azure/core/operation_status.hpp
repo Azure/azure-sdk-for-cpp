@@ -10,11 +10,10 @@
 #pragma once
 
 #include "azure/core/dll_import_export.hpp"
+#include "azure/core/internal/strings.hpp"
 
 #include <string>
 #include <utility> // for std::move
-
-#include "azure/core/internal/strings.hpp"
 
 namespace Azure { namespace Core {
 

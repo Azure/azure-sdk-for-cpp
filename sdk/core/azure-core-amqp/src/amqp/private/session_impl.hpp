@@ -4,12 +4,13 @@
 #pragma once
 
 #include "azure/core/amqp/session.hpp"
+
+#include <azure_uamqp_c/session.h>
+
 #include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <azure_uamqp_c/session.h>
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
 {
@@ -22,14 +23,32 @@ using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  class SessionFactory final {
+  public:
+    static Azure::Core::Amqp::_internal::Session CreateFromInternal(
+        std::shared_ptr<SessionImpl> sessionImpl)
+    {
+      return Azure::Core::Amqp::_internal::Session(sessionImpl);
+    }
+
+    static std::shared_ptr<SessionImpl> GetImpl(
+        Azure::Core::Amqp::_internal::Session const& session)
+    {
+      return session.m_impl;
+    }
+  };
+
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
   public:
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::Endpoint& newEndpoint,
+        _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
+        std::shared_ptr<Credentials::TokenCredential> tokenCredential,
+        _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
 
@@ -39,25 +58,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl& operator=(SessionImpl&&) noexcept = delete;
     operator SESSION_HANDLE() const { return m_session.get(); }
 
-    std::shared_ptr<ConnectionImpl> GetConnectionToPoll() const { return m_connectionToPoll; }
+    std::shared_ptr<ConnectionImpl> GetConnection() const { return m_connectionToPoll; }
 
-    void SetIncomingWindow(uint32_t incomingWindow);
     uint32_t GetIncomingWindow();
-    void SetOutgoingWindow(uint32_t outgoingWindow);
     uint32_t GetOutgoingWindow();
-    void SetHandleMax(uint32_t handleMax);
     uint32_t GetHandleMax();
 
     void Begin();
     void End(std::string const& condition_value, std::string const& description);
 
+    void AuthenticateIfNeeded(std::string const& audience, Context const& context);
+    std::string GetSecurityToken(std::string const& audience) const;
+
   private:
     SessionImpl();
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     UniqueAmqpSession m_session;
+    _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
+    std::shared_ptr<Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
+    std::map<std::string, Credentials::AccessToken> m_tokenStore;
+    bool m_cbsOpen{false};
 
-    //    Common::AsyncOperationQueue<std::unique_ptr<Link>> m_newLinkAttachedQueue;
+    void Authenticate(
+        bool isSasToken,
+        Credentials::TokenRequestContext const& requestContext,
+        std::string const& audience,
+        Context const& context);
 
     static bool OnLinkAttachedFn(
         void* context,

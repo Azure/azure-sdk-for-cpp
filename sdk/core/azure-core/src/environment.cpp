@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/platform.hpp"
-
 #include "azure/core/internal/environment.hpp"
+
+#include "azure/core/platform.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -13,9 +13,9 @@
 #define NOMINMAX
 #endif
 
-#include <vector>
-
 #include <windows.h>
+
+#include <vector>
 #else
 #include <stdlib.h>
 #endif

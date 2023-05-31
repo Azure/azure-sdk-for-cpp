@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include <azure/core/cryptography/hash.hpp>
-
 #include "azure/keyvault/keys/dll_import_export.hpp"
+
+#include <azure/core/cryptography/hash.hpp>
 
 #include <memory>
 #include <stdexcept>
