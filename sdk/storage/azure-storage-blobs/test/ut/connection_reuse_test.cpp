@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
       blobClients.push_back(containerClient2.GetBlockBlobClient(blobName + std::to_string(i)));
     }
     std::unordered_set<std::string> distinctServers;
-    int32_t totalHitCount = 0;
+    size_t totalHitCount = 0;
     for (auto& blobClient : blobClients)
     {
       auto uploadResult = blobClient.Upload(bodyStream);
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Test {
       ++totalHitCount;
     }
 
-    int32_t distinctServersLessThan = totalHitCount / 5;
+    size_t distinctServersLessThan = totalHitCount / 5;
     EXPECT_TRUE(distinctServers.size() < distinctServersLessThan);
   }
 }}} // namespace Azure::Storage::Test
