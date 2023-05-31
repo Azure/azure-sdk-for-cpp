@@ -1,6 +1,6 @@
 # Release History
 
-## 12.6.0-beta.1 (2023-05-30)
+## 12.6.0-beta.1 (2023-05-31)
 
 ### Features Added
 - Bumped up API version to `2023-01-03`.
