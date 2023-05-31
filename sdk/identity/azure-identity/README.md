@@ -54,7 +54,7 @@ See [Credential Classes](#credential-classes) for a complete listing of availabl
 
 The `DefaultAzureCredential` attempts to authenticate via the following mechanisms, in this order, stopping when one succeeds:
 
-![DefaultAzureCredential authentication flow][[default_azure_credential_auth_flow]]
+![DefaultAzureCredential authentication flow][default_azure_credential_auth_flow]
 
 1. **Environment** - The `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables) and use it to authenticate.
 1. **Azure CLI** - If the developer has authenticated an account via the Azure CLI `az login` command, the `DefaultAzureCredential` will authenticate with that account.
