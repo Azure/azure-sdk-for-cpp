@@ -45,12 +45,10 @@ namespace Azure { namespace Storage { namespace Test {
       updateDistinctServers(uploadResult.RawResponse->GetHeaders(), distinctServers);
       ++totalHitCount;
       auto downloadResult = blobClient.Download();
+      ReadBodyStream(downloadResult.Value.BodyStream);
       updateDistinctServers(downloadResult.RawResponse->GetHeaders(), distinctServers);
       ++totalHitCount;
       auto deleteResult = blobClient.Delete();
-      updateDistinctServers(deleteResult.RawResponse->GetHeaders(), distinctServers);
-      ++totalHitCount;
-      deleteResult = blobClient.DeleteIfExists();
       updateDistinctServers(deleteResult.RawResponse->GetHeaders(), distinctServers);
       ++totalHitCount;
     }
