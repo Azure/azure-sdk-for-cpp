@@ -1,14 +1,10 @@
 # Release History
 
-## 12.7.0-beta.1 (Unreleased)
+## 12.7.0-beta.1 (2023-05-31)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new fields `Owner`, `Group` and `Permissions` in `PathProperties` and `DownloadFileDetails`.
 
 ## 12.6.0 (2023-05-09)
 
@@ -18,7 +14,7 @@
 
 ### Features Added
 - Added support for encryption context:
-  - new filed `EncryptionContext` in `CreatePathOptions` , `PathItem`, `PathProperties`,  `DownloadFileDetails`.
+  - new field `EncryptionContext` in `CreatePathOptions` , `PathItem`, `PathProperties`,  `DownloadFileDetails`.
 
 ## 12.5.0 (2023-01-10)
 
