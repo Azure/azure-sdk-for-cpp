@@ -448,6 +448,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto res = destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl());
     EXPECT_EQ(res.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_NO_THROW(res.Value());
     res.PollUntilDone(PollInterval());
     auto properties = destBlobClient.GetProperties().Value;
     EXPECT_FALSE(properties.CopyId.Value().empty());
