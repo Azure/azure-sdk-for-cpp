@@ -1,0 +1,15 @@
+parameters:
+  BuildDropPath: $(Build.ArtifactStagingDirectory)/sbom
+  BomArtifactName: release_artifact_manifest
+
+steps:
+  - ${{if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Generate BOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: ${{ parameters.BuildDropPath }}
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: ${{ parameters.BuildDropPath }}/_manifest
+      ArtifactName: ${{ parameters.BomArtifactName }}
