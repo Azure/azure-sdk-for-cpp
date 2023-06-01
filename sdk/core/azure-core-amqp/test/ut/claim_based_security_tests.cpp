@@ -79,8 +79,8 @@ TEST_F(TestCbs, CbsOpen)
     {
       ClaimsBasedSecurity cbs(session);
       cbs.SetTrace(true);
-      CbsOpenResult openResult;
-      EXPECT_EQ(CbsOpenResult::Ok, openResult = cbs.Open());
+      CbsOpenResult openResult = cbs.Open();
+      EXPECT_EQ(CbsOpenResult::Ok, openResult);
       GTEST_LOG_(INFO) << "Open Completed.";
       if (openResult == CbsOpenResult::Ok)
       {
