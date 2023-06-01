@@ -1,12 +1,10 @@
 # Release History
 
-## 1.10.0-beta.2 (Unreleased)
+## 1.10.0 (2023-06-01)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::CreateFromArray()` to enable reading or writing from an existing UUID. This is useful when the UUID was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
 
 ### Other Changes
 
