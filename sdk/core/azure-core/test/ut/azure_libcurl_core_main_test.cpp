@@ -64,17 +64,16 @@ namespace Azure { namespace Core { namespace Test {
     // the same destructor also makes a call to start the cleanup thread
     // which will sleep for DefaultCleanerIntervalMilliseconds then loop through the connections
     // in the pool and check for the ones that are expired(DefaultConnectionExpiredMilliseconds) and
-    // remove them which will be the case here if we wait long enough. 
+    // remove them which will be the case here if we wait long enough.
     // without the calculations below test is flaky due to the
     // fact that tests in the CI pipeline might take longer than 90 sec to execute thus the cleanup
-    // thread strikes. to have this test be predictable we need to be aware of when we attempt to read 
-    // pool size, also we should let things run to completion and
-    // then check the pool size thus the sleep below plus another second to let the for loop in the
-    // cleanup thread do its thing.
+    // thread strikes. to have this test be predictable we need to be aware of when we attempt to
+    // read pool size, also we should let things run to completion and then check the pool size thus
+    // the sleep below plus another second to let the for loop in the cleanup thread do its thing.
 
     auto t2 = high_resolution_clock::now();
 
-    // Getting number of milliseconds as a double. 
+    // Getting number of milliseconds as a double.
     duration<double, std::milli> ms_double = t2 - t1;
     if (ms_double < duration<double, std::milli>(
             Azure::Core::Http::_detail::DefaultCleanerIntervalMilliseconds))
