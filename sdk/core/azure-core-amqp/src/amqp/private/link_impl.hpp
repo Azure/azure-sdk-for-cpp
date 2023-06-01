@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/models/amqp_error.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/models/message_source.hpp"
 #include "azure/core/amqp/models/message_target.hpp"
@@ -17,6 +18,9 @@
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class LinkImpl final : public std::enable_shared_from_this<LinkImpl> {
+
+    using OnLinkDetachEvent = std::function<void(Models::_internal::AmqpError)>;
+
   public:
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
@@ -57,6 +61,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SetAttachProperties(Models::AmqpValue attachProperties);
     void SetMaxLinkCredit(uint32_t maxLinkCredit);
 
+    /** @brief Subscribe to link detach events. */
+    void SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetachEvent);
+    void UnsubscribeFromDetachEvent();
+
     std::string GetName() const;
 
     Models::_internal::MessageTarget const& GetTarget() const;
@@ -79,6 +87,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::MessageSource m_source;
     Models::_internal::MessageTarget m_target;
+    OnLinkDetachEvent m_onLinkDetachEvent;
+    ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE m_linkSubscriptionHandle{};
+
+    static void OnLinkDetachEventFn(void* context, ERROR_HANDLE error);
 
 #if 0
 MOCKABLE_FUNCTION(, int, link_send_disposition, LINK_HANDLE, link, delivery_number, message_number, AMQP_VALUE, delivery_state);

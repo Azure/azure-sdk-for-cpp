@@ -7,6 +7,8 @@
 #include "azure/core/amqp/link.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
+#include "private/message_receiver_impl.hpp"
+#include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
@@ -32,6 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
 
+#if 0
   Session::Session(
       Connection const& parentConnection,
       Endpoint& newEndpoint,
@@ -47,16 +50,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   Session::Session(
       Connection const& parentConnection,
-      std::shared_ptr<Credentials::TokenCredential> tokenCredential,
       SessionOptions const& options,
       SessionEvents* eventHandler)
       : m_impl{std::make_shared<_detail::SessionImpl>(
           _detail::ConnectionFactory::GetImpl(parentConnection),
-          tokenCredential,
           options,
           eventHandler)}
   {
   }
+#endif
 
   Session::~Session() noexcept {}
 
@@ -69,6 +71,44 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     m_impl->End(condition_value, description);
   }
+
+  MessageSender Session::CreateMessageSender(
+      Models::_internal::MessageTarget const& target,
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events) const
+  {
+    return _detail::MessageSenderFactory::CreateFromInternal(
+        std::make_shared<_detail::MessageSenderImpl>(m_impl, target, options, events));
+  }
+  MessageSender Session::CreateMessageSender(
+      LinkEndpoint& endpoint,
+      Models::_internal::MessageTarget const& target,
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events) const
+  {
+    return _detail::MessageSenderFactory::CreateFromInternal(
+        std::make_shared<_detail::MessageSenderImpl>(m_impl, endpoint, target, options, events));
+  }
+
+  MessageReceiver Session::CreateMessageReceiver(
+      Models::_internal::MessageSource const& receiverSource,
+      MessageReceiverOptions const& options,
+      MessageReceiverEvents* events) const
+  {
+    return _detail::MessageReceiverFactory::CreateFromInternal(
+        std::make_shared<_detail::MessageReceiverImpl>(m_impl, receiverSource, options, events));
+  }
+  MessageReceiver Session::CreateMessageReceiver(
+      LinkEndpoint& endpoint,
+      Models::_internal::MessageSource const& receiverSource,
+      MessageReceiverOptions const& options,
+      MessageReceiverEvents* events) const
+  {
+    return _detail::MessageReceiverFactory::CreateFromInternal(
+        std::make_shared<_detail::MessageReceiverImpl>(
+            m_impl, endpoint, receiverSource, options, events));
+  }
+
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -112,12 +152,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
-      std::shared_ptr<Credentials::TokenCredential> tokenCredential,
       _internal::SessionOptions const& options,
       _internal::SessionEvents* eventHandler)
       : m_connectionToPoll(connection),
         m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
-        m_options{options}, m_eventHandler{eventHandler}, m_credential{tokenCredential}
+        m_options{options}, m_eventHandler{eventHandler}
 
   {
     if (options.MaximumLinkCount.HasValue())
@@ -195,10 +234,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void SessionImpl::AuthenticateIfNeeded(std::string const& audience, Context const& context)
   {
-    if (m_credential)
+    if (GetConnection()->GetCredential())
     {
-      bool isSasToken
-          = m_credential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
+      bool isSasToken = GetConnection()->GetCredential()->GetCredentialName()
+          == "ServiceBusSasConnectionStringCredential";
       Credentials::TokenRequestContext requestContext;
       if (isSasToken)
       {
@@ -220,10 +259,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& audience,
       Context const& context)
   {
-    if (m_credential)
+    if (GetConnection()->GetCredential())
     {
       m_claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(shared_from_this());
-      auto accessToken = m_credential->GetToken(tokenRequestContext, context);
+      auto accessToken = GetConnection()->GetCredential()->GetToken(tokenRequestContext, context);
       Log::Write(
           Logger::Level::Informational,
           "Authenticate with audience: " + audience + ", token: " + accessToken.Token);
@@ -250,19 +289,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::string SessionImpl::GetSecurityToken(std::string const& audience) const
   {
-    if (m_credential)
+    if (GetConnection()->GetCredential())
     {
       if (m_tokenStore.find(audience) == m_tokenStore.end())
       {
         Credentials::TokenRequestContext requestContext;
-        bool isSasToken
-            = m_credential->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
+        bool isSasToken = GetConnection()->GetCredential()->GetCredentialName()
+            == "ServiceBusSasConnectionStringCredential";
         if (isSasToken)
         {
           requestContext.MinimumExpiration = std::chrono::minutes(60);
         }
         requestContext.Scopes = m_options.AuthenticationScopes;
-        return m_credential->GetToken(requestContext, {}).Token;
+        return GetConnection()->GetCredential()->GetToken(requestContext, {}).Token;
       }
       return m_tokenStore.at(audience).Token;
     }

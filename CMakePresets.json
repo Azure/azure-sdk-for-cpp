@@ -280,11 +280,9 @@
     },
     {
       "name": "x64-static-debug-perftests",
-      "displayName": "X64 Debug With Perf Tests, static",
-      "inherits": "x64-static-debug",
+      "displayName": "X64 Debug static With Perf Tests and samples",
+      "inherits": "x64-static-debug-tests",
       "cacheVariables": {
-        "INSTALL_GTEST": false,
-        "BUILD_TESTING": true,
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_WINHTTP": true,
         "BUILD_PERFORMANCE_TESTS": true,

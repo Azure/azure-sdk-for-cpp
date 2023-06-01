@@ -36,10 +36,10 @@ TEST_F(TestLinks, SimpleLink)
 
   // Create a connection
 
-  Connection connection("localhost", {});
+  Connection connection("localhost", nullptr, {});
 
   // Create a session
-  Session session(connection, nullptr);
+  Session session{connection.CreateSession()};
 
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -74,8 +74,8 @@ TEST_F(TestLinks, SimpleLink)
 
 TEST_F(TestLinks, LinkProperties)
 { // Create a connection
-  Connection connection("localhost", {});
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, {});
+  Session session{connection.CreateSession()};
 
   {
     Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
@@ -176,7 +176,7 @@ class LinkSocketListenerEvents : public Azure::Core::Amqp::Network::_internal::S
     Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize = 10000;
     auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
-        connection, endpoint, sessionOptions, this);
+        connection.CreateSession(endpoint, sessionOptions, this));
     listeningSession->Begin();
 
     m_listeningSessionQueue.CompleteOperation(std::move(listeningSession));
@@ -238,8 +238,8 @@ TEST_F(TestLinks, LinkAttachDetach)
   // Create a connection
   ConnectionOptions connectionOptions;
   connectionOptions.Port = testPort;
-  Connection connection("localhost", connectionOptions, &events);
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, connectionOptions, &events);
+  Session session{connection.CreateSession()};
 
   Network::_internal::SocketListener listener(testPort, &events);
 

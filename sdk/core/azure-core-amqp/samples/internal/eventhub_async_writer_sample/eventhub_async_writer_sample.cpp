@@ -16,8 +16,6 @@ int main()
   auto credentials{
       std::make_shared<Azure::Core::Amqp::_internal::SaslPlainConnectionStringCredential>(
           EH_CONNECTION_STRING)};
-  std::string targetUrl
-      = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   std::string targetEntity = credentials->GetEntityPath();
   if (targetEntity.empty())
   {
@@ -42,7 +40,8 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
-  Azure::Core::Amqp::_internal::MessageSender sender(session, targetUrl, senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender(
+      session, credentials->GetEntityPath(), senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

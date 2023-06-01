@@ -47,7 +47,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::SessionEvents* eventHandler);
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
-        std::shared_ptr<Credentials::TokenCredential> tokenCredential,
         _internal::SessionOptions const& options,
         _internal::SessionEvents* eventHandler);
     ~SessionImpl() noexcept;
@@ -76,7 +75,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
-    std::shared_ptr<Credentials::TokenCredential> m_credential{};
     std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
     bool m_cbsOpen{false};

@@ -47,6 +47,7 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/link.hpp
     inc/azure/core/amqp/message_receiver.hpp
     inc/azure/core/amqp/message_sender.hpp
+    inc/azure/core/amqp/models/amqp_error.hpp
     inc/azure/core/amqp/models/amqp_header.hpp
     inc/azure/core/amqp/models/amqp_message.hpp
     inc/azure/core/amqp/models/amqp_properties.hpp
@@ -69,6 +70,7 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/message_sender.cpp
     src/amqp/session.cpp
     src/common/global_state.cpp
+    src/models/amqp_error.cpp
     src/models/amqp_header.cpp
     src/models/amqp_message.cpp
     src/models/amqp_properties.cpp

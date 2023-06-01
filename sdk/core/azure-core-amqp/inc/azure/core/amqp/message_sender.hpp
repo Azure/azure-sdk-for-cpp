@@ -8,6 +8,7 @@
 #include "common/async_operation_queue.hpp"
 #include "connection.hpp"
 #include "link.hpp"
+#include "models/amqp_error.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
 
@@ -57,6 +58,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderState newState,
         MessageSenderState oldState)
         = 0;
+    virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) = 0;
   };
 
   struct MessageSenderOptions final
@@ -107,38 +109,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     using MessageSendCompleteCallback
         = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
 
-    /** @brief Construct a message sender.
-     *
-     * @param session The AMQP session.
-     * @param target The target to which messages will be sent.
-     * @param options The options to use when sending messages.
-     * @param events The events handler for the message sender.
-     *
-     */
-    MessageSender(
-        Session const& session,
-        Models::_internal::MessageTarget const& target,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
-
-    /** @brief Construct a message sender for use in a message receiving handler.
-     *
-     * @param session The AMQP session.
-     * @param newLinkEndpoint The link endpoint to use for sending messages.
-     * @param target The target to which messages will be sent.
-     * @param options The options to use when sending messages.
-     * @param events The events handler for the message sender.
-     *
-     * @remarks This constructor is primarily used for testing scenarios.
-     */
-    MessageSender(
-        Session const& session,
-        LinkEndpoint& newLinkEndpoint,
-        Models::_internal::MessageTarget const& target,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events);
-
     ~MessageSender() noexcept;
+    operator bool() const noexcept { return m_impl != nullptr; }
 
     MessageSender(MessageSender const&) = default;
     MessageSender& operator=(MessageSender const&) = default;
@@ -173,6 +145,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::AmqpMessage const& message,
         MessageSendCompleteCallback onSendComplete,
         Context const& context = {});
+
+
 
   private:
     /** @brief Construct a MessageSender from a low level message sender implementation.

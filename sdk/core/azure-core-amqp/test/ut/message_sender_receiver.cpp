@@ -36,28 +36,27 @@ TEST_F(TestMessages, SimpleReceiver)
 {
 
   // Create a connection
-  Connection connection("localhost", {});
+  Connection connection("localhost", nullptr, {});
   // Create a session
-  Session session(connection, nullptr);
-  //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
+  Session session{connection.CreateSession()};
 
   {
-    MessageReceiver receiver(session, "MySource", {}, nullptr);
+    MessageReceiver receiver(session.CreateMessageReceiver("MySource", {}, nullptr));
   }
   {
-    MessageReceiver receiver1(session, "MySource", {}, nullptr);
-    MessageReceiver receiver2(session, "MySource", {}, nullptr);
+    MessageReceiver receiver1(session.CreateMessageReceiver("MySource", {}, nullptr));
+    MessageReceiver receiver2(session.CreateMessageReceiver("MySource", {}, nullptr));
   }
 }
 TEST_F(TestMessages, ReceiverProperties)
 { // Create a connection
-  Connection connection("localhost", {});
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, {});
+  Session session{connection.CreateSession()};
 
   {
     MessageReceiverOptions options;
     options.EnableTrace = true;
-    MessageReceiver receiver(session, "MyTarget", options);
+    MessageReceiver receiver(session.CreateMessageReceiver("MyTarget", options));
     EXPECT_ANY_THROW(receiver.GetLinkName());
   }
 
@@ -74,28 +73,27 @@ TEST_F(TestMessages, SimpleSender)
 {
 
   // Create a connection
-  Connection connection("localhost", {});
+  Connection connection("localhost", nullptr, {});
   // Create a session
-  Session session(connection, nullptr);
-  //  Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+  Session session{connection.CreateSession()};
 
   {
-    MessageSender sender(session, "MySource", {}, nullptr);
+    MessageSender sender(session.CreateMessageSender("MySource", {}, nullptr));
   }
   {
-    MessageSender sender1(session, "MySource", {}, nullptr);
-    MessageSender sender2(session, "MySource", {}, nullptr);
+    MessageSender sender1(session.CreateMessageSender("MySource", {}, nullptr));
+    MessageSender sender2(session.CreateMessageSender("MySource", {}, nullptr));
   }
 }
 TEST_F(TestMessages, SenderProperties)
 { // Create a connection
-  Connection connection("localhost", {});
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, {});
+  Session session{connection.CreateSession()};
 
   {
     MessageSenderOptions options;
     options.EnableTrace = true;
-    MessageSender sender(session, "MySource", options, nullptr);
+    MessageSender sender(session.CreateMessageSender("MySource", options, nullptr));
   }
 }
 
@@ -198,8 +196,8 @@ private:
     GTEST_LOG_(INFO) << "OnNewEndpoint - Incoming endpoint created, create session.";
     Azure::Core::Amqp::_internal::SessionOptions options;
     options.InitialIncomingWindowSize = 10000;
-    auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
-        connection, endpoint, options, this);
+    auto listeningSession{std::make_unique<Azure::Core::Amqp::_internal::Session>(
+        connection.CreateSession(endpoint, options, this))};
     listeningSession->Begin();
 
     m_listeningSessionQueue.CompleteOperation(std::move(listeningSession));
@@ -227,12 +225,11 @@ private:
     receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     receiverOptions.DynamicAddress = messageSource.GetDynamic();
     receiverOptions.EnableTrace = true;
-    auto receiver = std::make_unique<MessageReceiver>(
-        session,
+    auto receiver = std::make_unique<MessageReceiver>(session.CreateMessageReceiver(
         newLinkInstance,
         static_cast<std::string>(messageSource.GetAddress()),
         receiverOptions,
-        this);
+        this));
     GTEST_LOG_(INFO) << "Opening the message receiver.";
     receiver->Open();
     m_messageReceiverQueue.CompleteOperation(std::move(receiver));
@@ -258,6 +255,11 @@ private:
     (void)newState;
     (void)oldState;
   }
+  void OnMessageReceiverDisconnected(
+      Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
+  {
+    GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
+  }
 };
 } // namespace MessageTests
 #endif
@@ -273,8 +275,8 @@ TEST_F(TestMessages, ReceiverOpenClose)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.EnableTrace = true;
   connectionOptions.Port = testPort;
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, connectionOptions);
+  Session session{connection.CreateSession()};
 
   Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, &events);
 
@@ -316,12 +318,17 @@ TEST_F(TestMessages, ReceiverOpenClose)
       {
         return Models::AmqpValue();
       }
+      void OnMessageReceiverDisconnected(
+          Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
+      {
+        GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
+      }
     };
 
     ReceiverEvents receiverEvents;
     MessageReceiverOptions options;
     options.Name = "Test Receiver";
-    MessageReceiver receiver(session, "MyTarget", options, &receiverEvents);
+    MessageReceiver receiver(session.CreateMessageReceiver("MyTarget", options, &receiverEvents));
 
     EXPECT_NO_THROW(receiver.Open());
     EXPECT_EQ("Test Receiver", receiver.GetLinkName());
@@ -342,9 +349,8 @@ TEST_F(TestMessages, SenderOpenClose)
   connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.Port = testPort;
 
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, nullptr);
-  //  Link link(session, "MySession", SessionRole::Receiver, "MySource", "MyTarget");
+  Connection connection("localhost", nullptr, connectionOptions);
+  Session session{connection.CreateSession()};
 
   Azure::Core::Amqp::Network::_internal::SocketListener listener(testPort, nullptr);
   EXPECT_NO_THROW(listener.Start());
@@ -352,7 +358,7 @@ TEST_F(TestMessages, SenderOpenClose)
     MessageSenderOptions options;
     options.MessageSource = "MySource";
 
-    MessageSender sender(session, "MyTarget", options, nullptr);
+    MessageSender sender(session.CreateMessageSender("MyTarget", options, nullptr));
     sender.Open();
     sender.Close();
   }
@@ -371,8 +377,8 @@ TEST_F(TestMessages, TestLocalhostVsTls)
   connectionOptions.ContainerId = "some";
   //  connectionOptions.EnableTrace = true;
   connectionOptions.Port = mockServer.GetPort();
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, connectionOptions);
+  Session session{connection.CreateSession()};
 
   {
     class SenderEvents : public MessageSenderEvents {
@@ -386,6 +392,10 @@ TEST_F(TestMessages, TestLocalhostVsTls)
                          << " NewState: " << std::to_string(static_cast<uint32_t>(newState));
         (void)sender;
       }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
     };
 
     SenderEvents senderEvents;
@@ -394,7 +404,7 @@ TEST_F(TestMessages, TestLocalhostVsTls)
     options.MessageSource = "ingress";
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
-    MessageSender sender(session, "localhost/ingress", options, &senderEvents);
+    MessageSender sender(session.CreateMessageSender("localhost/ingress", options, &senderEvents));
     EXPECT_NO_THROW(sender.Open());
 
     Azure::Core::Amqp::Models::AmqpMessage message;
@@ -445,8 +455,8 @@ TEST_F(TestMessages, SenderSendAsync)
   connectionOptions.ContainerId = "some";
   //  connectionOptions.EnableTrace = true;
   connectionOptions.Port = testPort;
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, connectionOptions);
+  Session session{connection.CreateSession()};
 
   // Set up a 30 second deadline on the receiver.
   Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
@@ -498,6 +508,10 @@ TEST_F(TestMessages, SenderSendAsync)
         (void)newState;
         (void)oldState;
       }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
     };
 
     SenderEvents senderEvents;
@@ -506,7 +520,7 @@ TEST_F(TestMessages, SenderSendAsync)
     options.MessageSource = "ingress";
     options.SettleMode = SenderSettleMode::Settled;
     options.MaxMessageSize = 65536;
-    MessageSender sender(session, "localhost/ingress", options, &senderEvents);
+    MessageSender sender(session.CreateMessageSender("localhost/ingress", options, &senderEvents));
     EXPECT_NO_THROW(sender.Open());
 
     Azure::Core::Amqp::Models::AmqpMessage message;
@@ -542,8 +556,8 @@ TEST_F(TestMessages, SenderSendSync)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   connectionOptions.Port = testPort;
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, nullptr);
+  Connection connection("localhost", nullptr, connectionOptions);
+  Session session{connection.CreateSession()};
 
   Azure::Core::Context receiveContext;
 
@@ -590,7 +604,7 @@ TEST_F(TestMessages, SenderSendSync)
     options.MaxMessageSize = 65536;
     options.MessageSource = "ingress";
     options.Name = "sender-link";
-    MessageSender sender(session, "localhost/ingress", options, nullptr);
+    MessageSender sender(session.CreateMessageSender("localhost/ingress", options, nullptr));
     EXPECT_NO_THROW(sender.Open());
 
     Azure::Core::Amqp::Models::AmqpMessage message;
@@ -621,8 +635,8 @@ TEST_F(TestMessages, AuthenticatedSender)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   connectionOptions.Port = server.GetPort();
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, sasCredential);
+  Connection connection("localhost", sasCredential, connectionOptions);
+  Session session{connection.CreateSession()};
 
   server.StartListening();
 
@@ -633,10 +647,7 @@ TEST_F(TestMessages, AuthenticatedSender)
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
   MessageSender sender(
-      session,
-      sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
-      senderOptions,
-      nullptr);
+      session.CreateMessageSender(sasCredential->GetEntityPath(), senderOptions, nullptr));
 
   sender.Open();
 
@@ -680,8 +691,8 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   connectionOptions.Port = server.GetPort();
-  Connection connection(hostName, connectionOptions);
-  Session session(connection, tokenCredential);
+  Connection connection(hostName, tokenCredential, connectionOptions);
+  Session session{connection.CreateSession()};
 
   server.StartListening();
   MessageSenderOptions senderOptions;
@@ -690,7 +701,7 @@ TEST_F(TestMessages, AuthenticatedSenderAzureToken)
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.MaxMessageSize = 65536;
   senderOptions.Name = "sender-link";
-  MessageSender sender(session, endpoint, senderOptions, nullptr);
+  MessageSender sender(session.CreateMessageSender(endpoint, senderOptions, nullptr));
   sender.Open();
 
   Azure::Core::Amqp::Models::AmqpMessage message;
@@ -740,8 +751,8 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   connectionOptions.Port = server.GetPort();
-  Connection connection("localhost", connectionOptions);
-  Session session(connection, sasCredential);
+  Connection connection("localhost", sasCredential, connectionOptions);
+  Session session{connection.CreateSession()};
 
   server.SetSenderNodeName(sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
   server.StartListening();
@@ -753,11 +764,8 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
   receiverOptions.EnableTrace = true;
-  MessageReceiver receiver(
-      session,
-      sasCredential->GetEndpoint() + sasCredential->GetEntityPath(),
-      receiverOptions,
-      nullptr);
+  MessageReceiver receiver(session.CreateMessageReceiver(
+      sasCredential->GetEndpoint() + sasCredential->GetEntityPath(), receiverOptions, nullptr));
   EXPECT_TRUE(receiver);
 
   receiver.Open();
@@ -766,14 +774,19 @@ TEST_F(TestMessages, AuthenticatedReceiver)
   {
     server.ShouldSendMessage(true);
     auto message = receiver.WaitForIncomingMessage();
-    EXPECT_EQ(static_cast<std::string>(message.GetBodyAsAmqpValue()), "This is a message body.");
+    ASSERT_TRUE(message.first.HasValue());
+    ASSERT_FALSE(message.second);
+    EXPECT_EQ(
+        static_cast<std::string>(message.first.Value().GetBodyAsAmqpValue()),
+        "This is a message body.");
   }
 
   {
     Azure::Core::Context receiveContext;
     receiveContext.Cancel();
-    auto message = receiver.WaitForIncomingMessage(receiveContext);
-    (void)message;
+    EXPECT_THROW(
+        auto message = receiver.WaitForIncomingMessage(receiveContext),
+        Azure::Core::OperationCancelledException);
   }
   receiver.Close();
   server.StopListening();
@@ -836,8 +849,8 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   connectionOptions.IdleTimeout = std::chrono::minutes(5);
   connectionOptions.ContainerId = "some";
   connectionOptions.Port = port;
-  Connection connection(hostName, connectionOptions);
-  Session session(connection, tokenCredential);
+  Connection connection(hostName, tokenCredential, connectionOptions);
+  Session session{connection.CreateSession()};
 
   server.SetSenderNodeName(endpoint);
   server.StartListening();
@@ -848,7 +861,7 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
   receiverOptions.MaxMessageSize = 65536;
   receiverOptions.Name = "receiver-link";
-  MessageReceiver receiver(session, endpoint, receiverOptions, nullptr);
+  MessageReceiver receiver(session.CreateMessageReceiver(endpoint, receiverOptions, nullptr));
 
   receiver.Open();
 
@@ -856,15 +869,19 @@ TEST_F(TestMessages, AuthenticatedReceiverAzureToken)
   {
     server.ShouldSendMessage(true);
     auto message = receiver.WaitForIncomingMessage();
-    EXPECT_EQ(static_cast<std::string>(message.GetBodyAsAmqpValue()), "This is a message body.");
+    ASSERT_TRUE(message.first.HasValue());
+    ASSERT_FALSE(message.second);
+    EXPECT_EQ(
+        static_cast<std::string>(message.first.Value().GetBodyAsAmqpValue()),
+        "This is a message body.");
   }
 
   {
     Azure::Core::Context receiveContext;
     receiveContext.Cancel();
-    auto message = receiver.WaitForIncomingMessage(receiveContext);
-    //    EXPECT_FALSE(message);
-    (void)message;
+    EXPECT_THROW(
+        auto message = receiver.WaitForIncomingMessage(receiveContext),
+        Azure::Core::OperationCancelledException);
   }
   receiver.Close();
   server.StopListening();

@@ -4,6 +4,7 @@
 #include "azure/core/amqp/models/messaging_values.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
+
 #include <azure_uamqp_c/messaging.h>
 /* Common Message values */
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {

@@ -26,9 +26,9 @@ TEST_F(TestManagement, BasicTests)
   {
     ConnectionOptions options;
     options.Port = 5151;
-    Connection connection("localhost", options);
+    Connection connection("localhost", nullptr, options);
 
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession({})};
     Management management(session, "Test", {});
   }
 }
@@ -37,9 +37,9 @@ TEST_F(TestManagement, ManagementOpenClose)
   {
     ConnectionOptions options;
     options.Port = 5151;
-    Connection connection("localhost", options);
+    Connection connection("localhost", nullptr, options);
 
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession({})};
     Management management(session, "Test", {});
 
     EXPECT_ANY_THROW(management.Open());
@@ -52,9 +52,9 @@ TEST_F(TestManagement, ManagementOpenClose)
 
     ConnectionOptions connectionOptions;
     connectionOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectionOptions);
+    Connection connection("localhost", nullptr, connectionOptions);
 
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession({})};
     ManagementOptions options;
     options.EnableTrace = 1;
     Management management(session, "Test", {});
@@ -133,8 +133,8 @@ private:
       }
       responseMessage.Properties.CorrelationId = requestCorrelationId;
 
-      // Block until the send is completed. Note: Do *not* use the listener context to ensure that
-      // the send is completed.
+      // Block until the send is completed. Note: Do *not* use the listener context to ensure
+      // that the send is completed.
       linkComponents.LinkSender->Send(responseMessage);
     }
   }
@@ -154,8 +154,8 @@ TEST_F(TestManagement, ManagementRequestResponse)
     ConnectionOptions connectionOptions;
     connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectionOptions);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession({})};
     ManagementOptions options;
     options.EnableTrace = 1;
     Management management(session, "Test", {});
@@ -190,8 +190,8 @@ TEST_F(TestManagement, ManagementRequestResponseSimple)
     connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectionOptions);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession({})};
     ManagementOptions options;
     options.EnableTrace = true;
     Management management(session, "Test", options);
@@ -222,8 +222,8 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
     connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectionOptions);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession({})};
 
     ManagementOptions options;
     options.EnableTrace = true;
@@ -257,14 +257,14 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
     ConnectionOptions connectionOptions;
     connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectionOptions);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession({})};
     ManagementOptions options;
     options.EnableTrace = true;
     Management management(session, "Test", options);
 
-    // Set the response status code to something other than an int - that will cause the response to
-    // be rejected by the management client.
+    // Set the response status code to something other than an int - that will cause the response
+    // to be rejected by the management client.
     mockServer.SetStatusCode(500u);
     mockServer.SetStatusDescription("Bad Things Happened.");
     mockServer.StartListening();
@@ -301,15 +301,15 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
     connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
 
-    Connection connection("localhost", connectionOptions);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession({})};
     ManagementOptions options;
     options.EnableTrace = true;
 
     Management management(session, "Test", options, &managementEvents);
 
-    // Set the response status code to something other than an int - that will cause the response to
-    // be rejected by the management client.
+    // Set the response status code to something other than an int - that will cause the response
+    // to be rejected by the management client.
     mockServer.SetStatusCode(500);
     mockServer.SetStatusCodeName("status-code");
     mockServer.SetStatusDescription("Bad Things Happened.");
@@ -340,16 +340,16 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
     ConnectionOptions connectionOptions;
     connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectionOptions);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession({})};
     ManagementOptions options;
     options.EnableTrace = true;
     options.ExpectedStatusCodeKeyName = "status-code";
 
     Management management(session, "Test", options);
 
-    // Set the response status code to something other than an int - that will cause the response to
-    // be rejected by the management client.
+    // Set the response status code to something other than an int - that will cause the response
+    // to be rejected by the management client.
     mockServer.SetStatusCode(235);
     mockServer.SetStatusCodeName("status-code");
     mockServer.SetStatusDescription("Bad Things Happened..");
@@ -381,9 +381,9 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
     ConnectionOptions connectionOptions;
     connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", connectionOptions);
+    Connection connection("localhost", nullptr, connectionOptions);
 
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession({})};
 
     ManagementOptions options;
     options.EnableTrace = true;

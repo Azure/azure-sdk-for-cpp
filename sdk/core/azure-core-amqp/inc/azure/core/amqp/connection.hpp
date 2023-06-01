@@ -248,6 +248,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Connection(
         std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> credential,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 
@@ -268,6 +269,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Destroy an AMQP connection */
     ~Connection();
 
+    /** @brief Create a session on the current Connection object.
+     *
+     * An AMQP Session provides a context for sending and receiving messages. A single connection
+     * may have multiple independent sessions active simultaneously up to the negotiated maximum
+     * channel count.
+     *
+     * @param options The options to use when creating the session.
+     * @param eventHandler The event handler for the session.
+     */
+    Session CreateSession(SessionOptions const& options = {}, SessionEvents* eventHandler = nullptr)
+        const;
+
+    /** @brief Construct a new session associated with the specified connection over the specified
+     * endpoint.
+     *
+     * @param newEndpoint - AMQP Endpoint from which to create the session.
+     * @param eventHandler - Event handler for session events.
+     *
+     * @remarks Note that this function is normally only called from a application listening for
+     * incoming connections, not from an AMQP client.
+     */
+    Session CreateSession(
+        Endpoint& newEndpoint,
+        SessionOptions const& options = {},
+        SessionEvents* eventHandler = nullptr) const;
+
     /** @brief Opens the current connection.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
@@ -281,6 +308,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @remarks This method should only be called on a connection that was created with a transport
      * object.
+     * 
+     * @remarks In general, a customer will not need to call this method, instead the connection
+     * will be opened implicitly by a Session object derived from the connection. It primarily
+     * exists as a test hook.
      *
      */
     void Listen();

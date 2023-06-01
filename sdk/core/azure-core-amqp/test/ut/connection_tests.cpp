@@ -35,14 +35,14 @@ TEST_F(TestConnections, SimpleConnection)
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", {});
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
   }
   {
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
   }
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
@@ -59,7 +59,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.IdleTimeout = std::chrono::milliseconds(1532);
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
 
     EXPECT_EQ(connection.GetPort(), 5671);
     EXPECT_EQ(connection.GetHost(), "localhost");
@@ -72,7 +72,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxFrameSize = 1024 * 64;
     options.Port = Azure::Core::Amqp::_internal::AmqpPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
     EXPECT_EQ(connection.GetPort(), 5672);
     EXPECT_EQ(connection.GetHost(), "localhost");
 
@@ -89,7 +89,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     options.MaxChannelCount = 128;
     options.Port = Azure::Core::Amqp::_internal::AmqpPort;
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
     EXPECT_EQ(connection.GetPort(), 5672);
     EXPECT_EQ(connection.GetHost(), "localhost");
 
@@ -102,7 +102,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.MaxChannelCount = 128;
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
     // Ratio must be a number between 0 and 1.
     EXPECT_NO_THROW(connection.SetIdleEmptyFrameSendPercentage(0.5));
   }
@@ -112,7 +112,7 @@ TEST_F(TestConnections, ConnectionAttributes)
     options.MaxChannelCount = 128;
     options.Properties["test"] = "test";
 
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
     EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"test"}, connection.GetProperties()["test"]);
   }
 }
@@ -157,7 +157,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = testPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
     // Open the connection
     connection.Open();
@@ -175,7 +175,7 @@ TEST_F(TestConnections, ConnectionOpenClose)
 
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
   }
 }
 
@@ -194,7 +194,6 @@ public:
 
 private:
   std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> m_messageReceiver;
-  //  std::unique_ptr<Azure::Core::Amqp::Link> m_link;
 
   Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
       std::unique_ptr<Azure::Core::Amqp::_internal::Connection>>
@@ -229,7 +228,8 @@ private:
     receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
 
     m_messageReceiver = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
-        session, newLinkInstance, static_cast<std::string>(source), receiverOptions);
+        session.CreateMessageReceiver(
+            newLinkInstance, static_cast<std::string>(source), receiverOptions));
 
     m_messageReceiver->Open();
 
@@ -251,8 +251,7 @@ private:
     Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize = 10000;
     m_listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
-        connection, endpoint, sessionOptions, this);
-
+        connection.CreateSession(endpoint, sessionOptions, this));
     m_listeningSession->Begin();
 
     return true;
@@ -277,6 +276,12 @@ private:
     (void)oldState;
   }
 
+  void OnMessageReceiverDisconnected(
+      Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
+  {
+    GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
+  }
+
   std::unique_ptr<Azure::Core::Amqp::_internal::Session> m_listeningSession;
 };
 
@@ -293,7 +298,7 @@ TEST_F(TestConnections, ConnectionListenClose)
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = Azure::Core::Amqp::_internal::AmqpPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
     // Open the connection
     connection.Open();
 
@@ -309,7 +314,7 @@ TEST_F(TestConnections, ConnectionListenClose)
   {
     Azure::Core::Amqp::_internal::ConnectionOptions options;
     options.Port = Azure::Core::Amqp::_internal::AmqpPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", options);
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
   }
 
   listener.Stop();

@@ -6,6 +6,7 @@
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/message_sender.hpp>
+#include <azure/core/amqp/models/amqp_error.hpp>
 #include <azure/core/amqp/models/amqp_message.hpp>
 #include <azure/core/amqp/models/amqp_protocol.hpp>
 #include <azure/core/amqp/models/message_source.hpp>
@@ -382,7 +383,7 @@ protected:
     options.InitialIncomingWindowSize = 10000;
 
     m_session = std::make_shared<Azure::Core::Amqp::_internal::Session>(
-        connection, endpoint, options, this);
+        connection.CreateSession(endpoint, options, this));
     m_session->Begin();
     return true;
   }
@@ -419,7 +420,7 @@ protected:
       if (!linkComponents.LinkSender)
       {
         linkComponents.LinkSender = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
-            session, newLinkInstance, targetAddress, senderOptions, this);
+            session.CreateMessageSender(newLinkInstance, targetAddress, senderOptions, this));
         linkComponents.LinkSender->Open();
         linkComponents.MessageSenderPresentQueue.CompleteOperation(true);
       }
@@ -438,7 +439,8 @@ protected:
       {
         linkComponents.LinkReceiver
             = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
-                session, newLinkInstance, sourceAddress, receiverOptions, this);
+                session.CreateMessageReceiver(
+                    newLinkInstance, sourceAddress, receiverOptions, this));
         linkComponents.LinkReceiver->Open();
         linkComponents.MessageReceiverPresentQueue.CompleteOperation(true);
       }
@@ -474,6 +476,17 @@ protected:
   {
     GTEST_LOG_(INFO) << "Message Sender State changed. Old state: " << SenderStateToString(oldState)
                      << " New state: " << SenderStateToString(newState);
+  }
+
+  void OnMessageSenderDisconnected(
+      Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
+  {
+    GTEST_LOG_(INFO) << "Message Sender Disconnected: Error: " << error;
+  }
+  virtual void OnMessageReceiverDisconnected(
+      Azure::Core::Amqp::Models::_internal::AmqpError const& error) override
+  {
+    GTEST_LOG_(INFO) << "Message receiver disconnected: " << error << std::endl;
   }
 
   const char* ConnectionStateToString(Azure::Core::Amqp::_internal::ConnectionState state)

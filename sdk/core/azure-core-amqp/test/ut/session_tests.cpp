@@ -44,16 +44,16 @@ TEST_F(TestSessions, SimpleSession)
 {
 
   // Create a connection
-  Azure::Core::Amqp::_internal::Connection connection("localhost", {});
+  Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
   {
     // Create a session
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession()};
   }
 
   {
     // Create two sessions
-    Session session1(connection, nullptr);
-    Session session2(connection, nullptr);
+    Session session1{connection.CreateSession({})};
+    Session session2{connection.CreateSession({})};
 
     session1.End("", "");
   }
@@ -81,10 +81,10 @@ TEST_F(TestSessions, SimpleSession)
 
 TEST_F(TestSessions, SessionProperties)
 { // Create a connection
-  Azure::Core::Amqp::_internal::Connection connection("localhost", {});
+  Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
 
   {
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession()};
 
     // Verify defaults are something "reasonable".
     EXPECT_EQ(1, session.GetIncomingWindow());
@@ -95,19 +95,19 @@ TEST_F(TestSessions, SessionProperties)
   {
     SessionOptions options;
     options.MaximumLinkCount = 37;
-    Session session(connection, nullptr, options);
+    Session session{connection.CreateSession(options)};
     EXPECT_EQ(37, session.GetHandleMax());
   }
   {
     SessionOptions options;
     options.InitialIncomingWindowSize = 1909119;
-    Session session(connection, nullptr, options);
+    Session session{connection.CreateSession(options)};
     EXPECT_EQ(1909119, session.GetIncomingWindow());
   }
   {
     SessionOptions options;
     options.InitialOutgoingWindowSize = 1909119;
-    Session session(connection, nullptr, options);
+    Session session{connection.CreateSession(options)};
     EXPECT_EQ(1909119, session.GetOutgoingWindow());
   }
 }
@@ -140,7 +140,7 @@ uint16_t FindAvailableSocket()
     auto sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock != -1)
     {
-      sockaddr_in addr;
+      sockaddr_in addr{};
       addr.sin_family = AF_INET;
       addr.sin_addr.s_addr = INADDR_ANY;
       addr.sin_port = htons(testPort);
@@ -214,16 +214,16 @@ TEST_F(TestSessions, SessionBeginEnd)
   // Create a connection
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.Port = testPort;
-  Azure::Core::Amqp::_internal::Connection connection("localhost", connectionOptions);
+  Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
   {
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession()};
 
     session.Begin();
   }
 
   {
-    Session session(connection, nullptr);
+    Session session{connection.CreateSession()};
 
     session.Begin();
     session.End("", "");

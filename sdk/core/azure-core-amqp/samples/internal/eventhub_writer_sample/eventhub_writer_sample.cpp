@@ -20,8 +20,6 @@ int main()
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";
   connectionOptions.EnableTrace = true;
-  std::string hostUrl
-      = "amqps://" + credentials->GetHostName() + "/" + credentials->GetEntityPath();
   connectionOptions.Port = credentials->GetPort();
   Azure::Core::Amqp::_internal::Connection connection(
       credentials->GetHostName(), connectionOptions);
@@ -44,7 +42,7 @@ int main()
   senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-  Azure::Core::Amqp::_internal::MessageSender sender(session, hostUrl, senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender(session, credentials->GetEntityPath(), senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

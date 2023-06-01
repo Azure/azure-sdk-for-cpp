@@ -34,9 +34,9 @@ TEST_F(TestCbs, SimpleCbs)
 {
 
   // Create a connection
-  Connection connection("localhost", {});
+  Connection connection("localhost", nullptr, {});
   // Create a session
-  Session session(connection, {});
+  Session session{connection.CreateSession()};
 
   {
     ClaimsBasedSecurity cbs(session);
@@ -57,8 +57,8 @@ TEST_F(TestCbs, CbsOpen)
     MessageTests::AmqpServerMock mockServer;
     ConnectionOptions options;
     options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
     {
       ClaimsBasedSecurity cbs(session);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
@@ -71,8 +71,8 @@ TEST_F(TestCbs, CbsOpen)
 
     ConnectionOptions options;
     options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
 
     mockServer.StartListening();
 
@@ -100,8 +100,8 @@ TEST_F(TestCbs, CbsOpenAndPut)
 
     ConnectionOptions options;
     options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
 
     mockServer.StartListening();
 
@@ -133,8 +133,8 @@ TEST_F(TestCbs, CbsOpenAndPutError)
 
     ConnectionOptions options;
     options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
+    Connection connection("localhost", nullptr, options);
+    Session session{connection.CreateSession()};
 
     mockServer.StartListening();
 

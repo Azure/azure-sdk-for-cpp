@@ -168,24 +168,25 @@ int main()
   }
 
   // Establish the connection to the eventhub.
-  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
-  connectionOptions.ContainerId = "some";
-  connectionOptions.EnableTrace = false;
-  connectionOptions.Port = connectionParser.GetPort();
-  Azure::Core::Amqp::_internal::Connection connection(
-      connectionParser.GetHostName(), connectionOptions);
 
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("SAMPLES_TENANT_ID"),
       std::getenv("SAMPLES_CLIENT_ID"),
       std::getenv("SAMPLES_CLIENT_SECRET"))};
 
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  connectionOptions.ContainerId = "some";
+  connectionOptions.EnableTrace = false;
+  connectionOptions.Port = connectionParser.GetPort();
+  Azure::Core::Amqp::_internal::Connection connection(
+      connectionParser.GetHostName(), credential, connectionOptions);
+
   // Establish a session to the eventhub.
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
   sessionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
-  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection.CreateSession(sessionOptions));
 
   auto eventHubProperties = GetEventHubProperties(session, eventhubsEntity);
   for (const auto& partition : eventHubProperties.PartitionIds)
