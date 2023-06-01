@@ -21,14 +21,13 @@
  *
  */
 
-#include <get_env.hpp>
-
 #include "attestation_collateral.hpp"
 
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
 
 #include <chrono>
+#include <get_env.hpp>
 #include <iostream>
 #include <thread>
 
@@ -89,14 +88,4 @@ issuancerules {
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

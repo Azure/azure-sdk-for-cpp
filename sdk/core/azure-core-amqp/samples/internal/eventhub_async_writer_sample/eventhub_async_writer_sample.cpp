@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#undef _CRT_SECURE_NO_WARNINGS
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_sender.hpp>
 
@@ -24,7 +21,7 @@ int main()
   std::string targetEntity = credentials->GetEntityPath();
   if (targetEntity.empty())
   {
-    targetEntity = GetEnvHelper::GetEnv("EVENTHUB_NAME");
+    targetEntity = std::getenv("EVENTHUB_NAME");
   }
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "get_env.hpp"
-
 #include <azure/storage/blobs.hpp>
 
 #include <iostream>

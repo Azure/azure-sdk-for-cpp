@@ -13,8 +13,6 @@
  *
  */
 
-#include "get_env.hpp"
-
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keys.hpp>
