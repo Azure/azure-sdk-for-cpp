@@ -110,4 +110,29 @@ TEST(ProducerClientTest, GetEventHubProperties)
       connStringEntityPath, "eventhub", producerOptions);
   
   auto result = client.GetEventHubProperties();
+  EXPECT_EQ(result.Name, "eventhub");
+  EXPECT_TRUE(result.PartitionIDs.size() > 0);
+}
+
+TEST(ProducerClientTest, GetPartitionProperties)
+{
+  std::string const connStringEntityPath
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+      + ";EntityPath=eventhub";
+
+  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  producerOptions.SenderOptions.Name = "sender-link";
+  producerOptions.SenderOptions.EnableTrace = true;
+  producerOptions.SenderOptions.MessageSource = "ingress";
+  producerOptions.SenderOptions.SettleMode
+      = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
+  producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+  producerOptions.ApplicationID = "some";
+
+  auto client = Azure::Messaging::EventHubs::ProducerClient(
+      connStringEntityPath, "eventhub", producerOptions);
+
+  auto result = client.GetPartitionProperties("0");
+  EXPECT_EQ(result.Name, "eventhub");
+  EXPECT_EQ(result.PartitionId, "0");
 }

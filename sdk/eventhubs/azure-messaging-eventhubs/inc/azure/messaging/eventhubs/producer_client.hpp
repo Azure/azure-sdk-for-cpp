@@ -3,11 +3,14 @@
 #pragma once
 #include "event_data_batch.hpp"
 #include "retry_operation.hpp"
+
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/management.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+
+#include <iostream>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
@@ -57,10 +60,31 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::vector<std::string> PartitionIDs;
   };
 
+  /**@brief EventHubPartitionProperties represents properties of an Event Hub partition
+   */
+  struct EventHubPartitionProperties final
+  {
+    std::string Name;
+    std::string PartitionId;
+    int64_t BeginningSequenceNumber{};
+    int64_t LastEnqueuedSequenceNumber{};
+    std::string LastEnqueuedOffset;
+    Azure::DateTime LastEnqueuedTimeUtc;
+    bool IsEmpty{};
+  };
+
   /**@brief GetEventHubPropertiesOptions contains optional parameters for the GetEventHubProperties
    * function
    */
   struct GetEventHubPropertiesOptions
+  {
+    // For future expansion
+  };
+
+  /**@brief GetPartitionPropertiesOptions contains optional parameters for the
+   * GetPartitionProperties function
+   */
+  struct GetPartitionPropertiesOptions
   {
     // For future expansion
   };
@@ -74,6 +98,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
     std::map<std::string, Azure::Core::Amqp::_internal::Management> m_management{};
+    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
   public:
     std::string const& GetEventHubName() { return m_credentials.EventHub; }
@@ -92,7 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClient(
         std::string const& connectionString,
         std::string const& eventHub,
-        ProducerClientOptions options = ProducerClientOptions());
+        ProducerClientOptions options = {});
 
     /**@brief Constructs a new ProducerClient instance
      *
@@ -104,7 +129,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHub,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        ProducerClientOptions options = ProducerClientOptions());
+        ProducerClientOptions options = {});
 
     ~ProducerClient()
     {
@@ -123,64 +148,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     bool const SendEventDataBatch(
         EventDataBatch& eventDataBatch,
         Azure::Core::Context ctx = Azure::Core::Context());
-
-    EventHubProperties GetEventHubProperties(
-        GetEventHubPropertiesOptions options = GetEventHubPropertiesOptions(),
-        Azure::Core::Context ctx = Azure::Core::Context())
-    {
-      (void)options;
-      (void)ctx;
-      EventHubProperties ehp;
-      if (m_management.find(m_credentials.EventHub) == m_management.end())
-      {
-        //auto management = CreateManagement(m_credentials.EventHub, true);
-        //m_management[m_credentials.EventHub] = management;
-      }
-
-      auto management = m_management[m_credentials.EventHub];
-      std::string token;
-      if (m_credentials.SasCredential != nullptr)
-      {
-
-        Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
-        tokenRequestContext.MinimumExpiration = std::chrono::minutes(15);
-        tokenRequestContext.Scopes = {m_defaultAuthScope};
-        token = m_credentials.SasCredential->GetToken(tokenRequestContext, ctx).Token;
-      }
-      else
-      {
-        Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
-        tokenRequestContext.MinimumExpiration = std::chrono::minutes(15);
-        tokenRequestContext.Scopes = {m_defaultAuthScope};
-        token = m_credentials.Credential->GetToken(tokenRequestContext, ctx).Token;
-      }
-      Azure::Core::Amqp::Models::AmqpMessage message;
-      message.ApplicationProperties.emplace("name", m_credentials.EventHub);
-      message.ApplicationProperties.emplace("type", "com.microsoft:eventhub");
-      message.ApplicationProperties.emplace("security_token", token);
-      message.ApplicationProperties.emplace("operation", "READ");
-      Azure::Core::Amqp::_internal::ManagementOpenStatus openStatus = management.Open(ctx);
-      
-      if (openStatus != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
-      {
-          throw std::runtime_error("Failed to open management link");
-      }
-
-      auto response
-          = management.ExecuteOperation("READ", "com.microsoft:eventhub", "EN-US", message, ctx);
-      management.Close();
-      if (response.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
-      {
-          
-      }
-      return ehp;
-    }
+    /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
+     * like name, and partitions.
+     *
+     * @param options Additional options for getting partition properties
+     */
+    EventHubProperties GetEventHubProperties(GetEventHubPropertiesOptions options = {});
+    /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
+     * like the last enqueued sequence number, the first sequence number and when an event was last
+     * enqueued to the partition.
+     *
+     * @param partitionID partition ID to detail.
+     * @param options Additional options for getting partition properties
+     */
+    EventHubPartitionProperties GetPartitionProperties(
+        std::string const& partitionID,
+        GetPartitionPropertiesOptions options = {});
 
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
     void CreateSender(std::string const& partitionId = "");
-    /* Azure::Core::Amqp::_internal::Management CreateManagement(
-        std::string name,
-        bool eventHub = false);*/
   };
 }}} // namespace Azure::Messaging::EventHubs
