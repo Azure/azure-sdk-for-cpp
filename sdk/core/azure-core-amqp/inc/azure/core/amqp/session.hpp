@@ -15,6 +15,26 @@
 #include <string>
 #include <vector>
 
+#if defined(TESTING_BUILD)
+// Define the test classes dependant on this class here.
+namespace MessageTests {
+class AmqpServerMock;
+class MessageListenerEvents;
+} // namespace MessageTests
+class TestSessions_SimpleSession_Test;
+class TestSessions_SessionProperties_Test;
+class TestSessions_SessionBeginEnd_Test;
+
+class TestSocketListenerEvents;
+class LinkSocketListenerEvents;
+class TestMessages_SenderSendAsync_Test;
+#endif // TESTING_BUILD
+#if defined(SAMPLES_BUILD)
+namespace LocalServerSample {
+class SampleEvents;
+} // namespace LocalServerSample
+#endif // SAMPLES_BUILD
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class SessionImpl;
   class SessionFactory;
@@ -30,6 +50,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class MessageReceiver;
   struct MessageReceiverOptions;
   class MessageReceiverEvents;
+  class ManagementClient;
+  struct ManagementClientOptions;
+  class ManagementClientEvents;
 
   enum class ExpiryPolicy
   {
@@ -102,23 +125,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Destroys the session object. */
     ~Session() noexcept;
 
-    /** @brief Returns the current value of the incoming window.
-     *
-     * @returns The current incoming message window.
-     */
-    uint32_t GetIncomingWindow() const;
-    /** @brief Returns the current value of the outgoing window.
-     *
-     * @returns The current outgoing message window.
-     */
-    uint32_t GetOutgoingWindow() const;
-
-    /** @brief Returns the maximum number of links currently configured.
-     *
-     * @returns The current maximum number of links configured.
-     */
-    uint32_t GetHandleMax() const;
-
     /** @brief Creates a MessageSender
      *
      * @param target - The target to which the message will be sent.
@@ -146,6 +152,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::_internal::MessageSource const& receiverSource,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* receiverEvents = nullptr) const;
+
+    ManagementClient CreateManagementClient(
+        std::string const& managementInstancePath,
+        ManagementClientOptions const& options,
+        ManagementClientEvents* managementEvents = nullptr) const;
+
+  private:
+    /** @brief Returns the current value of the incoming window.
+     *
+     * @returns The current incoming message window.
+     */
+    uint32_t GetIncomingWindow() const;
+    /** @brief Returns the current value of the outgoing window.
+     *
+     * @returns The current outgoing message window.
+     */
+    uint32_t GetOutgoingWindow() const;
+
+    /** @brief Returns the maximum number of links currently configured.
+     *
+     * @returns The current maximum number of links configured.
+     */
+    uint32_t GetHandleMax() const;
 
     /** @brief Begins operations on the session.
      *
@@ -199,6 +228,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     friend class _detail::SessionFactory;
 
+#if TESTING_BUILD
+    friend class MessageTests::AmqpServerMock;
+    friend class MessageTests::MessageListenerEvents;
+    friend class TestSocketListenerEvents;
+    friend class LinkSocketListenerEvents;
+    friend class TestSessions_SimpleSession_Test;
+    friend class TestSessions_SessionProperties_Test;
+    friend class TestSessions_SessionBeginEnd_Test;
+    friend class TestMessages_SenderSendAsync_Test;
+#endif // TESTING_BUILD
+#if SAMPLES_BUILD
+    friend class LocalServerSample::SampleEvents;
+#endif // SAMPLES_BUILD
   private:
     /** @brief Construct a new Session object from an existing implementation instance.
      *

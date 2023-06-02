@@ -15,6 +15,7 @@
 
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
+namespace LocalServerSample {
 
 // Convert a ConnectionState enum to a string for diagnostic purposes.
 const char* ConnectionStateToString(ConnectionState const state)
@@ -214,7 +215,9 @@ private:
   }
 };
 
-int main()
+// Because the Connection.Listen method is private, we need to put the meat of the sample in a
+// method other than "main".
+int LocalServerSampleMain()
 {
   SampleEvents sampleEvents;
   // Configure a socket listener on the AMQP port (5672).
@@ -236,3 +239,5 @@ int main()
 
   return 0;
 }
+} // namespace LocalServerSample
+int main() { LocalServerSample::LocalServerSampleMain(); }

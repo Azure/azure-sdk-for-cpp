@@ -29,7 +29,7 @@ TEST_F(TestManagement, BasicTests)
     Connection connection("localhost", nullptr, options);
 
     Session session{connection.CreateSession({})};
-    Management management(session, "Test", {});
+    ManagementClient management(session.CreateManagementClient("Test", {}));
   }
 }
 TEST_F(TestManagement, ManagementOpenClose)
@@ -40,7 +40,7 @@ TEST_F(TestManagement, ManagementOpenClose)
     Connection connection("localhost", nullptr, options);
 
     Session session{connection.CreateSession({})};
-    Management management(session, "Test", {});
+    ManagementClient management(session.CreateManagementClient("Test", {}));
 
     EXPECT_ANY_THROW(management.Open());
     //    auto openResult = management.Open();
@@ -55,9 +55,9 @@ TEST_F(TestManagement, ManagementOpenClose)
     Connection connection("localhost", nullptr, connectionOptions);
 
     Session session{connection.CreateSession({})};
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = 1;
-    Management management(session, "Test", {});
+    ManagementClient management(session.CreateManagementClient("Test", {}));
 
     mockServer.StartListening();
 
@@ -156,9 +156,9 @@ TEST_F(TestManagement, ManagementRequestResponse)
 
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession({})};
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = 1;
-    Management management(session, "Test", {});
+    ManagementClient management(session.CreateManagementClient("Test", {}));
 
     mockServer.StartListening();
 
@@ -192,9 +192,9 @@ TEST_F(TestManagement, ManagementRequestResponseSimple)
 
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession({})};
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = true;
-    Management management(session, "Test", options);
+    ManagementClient management(session.CreateManagementClient("Test", options));
 
     mockServer.StartListening();
 
@@ -225,9 +225,9 @@ TEST_F(TestManagement, ManagementRequestResponseExpect500)
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession({})};
 
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = true;
-    Management management(session, "Test", options);
+    ManagementClient management(session.CreateManagementClient("Test", options));
 
     mockServer.SetStatusCode(500);
     mockServer.SetStatusDescription("Bad Things Happened.");
@@ -259,9 +259,9 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
     connectionOptions.Port = mockServer.GetPort();
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession({})};
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = true;
-    Management management(session, "Test", options);
+    ManagementClient management(session.CreateManagementClient("Test", options));
 
     // Set the response status code to something other than an int - that will cause the response
     // to be rejected by the management client.
@@ -290,7 +290,7 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
   {
     ManagementReceiver mockServer;
 
-    struct ManagementEventsHandler : public ManagementEvents
+    struct ManagementEventsHandler : public ManagementClientEvents
     {
       void OnError() override { Error = true; }
       bool Error{false};
@@ -303,10 +303,10 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
 
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession({})};
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = true;
 
-    Management management(session, "Test", options, &managementEvents);
+    ManagementClient management(session.CreateManagementClient("Test", options, &managementEvents));
 
     // Set the response status code to something other than an int - that will cause the response
     // to be rejected by the management client.
@@ -342,11 +342,11 @@ TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
     connectionOptions.Port = mockServer.GetPort();
     Connection connection("localhost", nullptr, connectionOptions);
     Session session{connection.CreateSession({})};
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = true;
     options.ExpectedStatusCodeKeyName = "status-code";
 
-    Management management(session, "Test", options);
+    ManagementClient management(session.CreateManagementClient("Test", options));
 
     // Set the response status code to something other than an int - that will cause the response
     // to be rejected by the management client.
@@ -385,9 +385,9 @@ TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
 
     Session session{connection.CreateSession({})};
 
-    ManagementOptions options;
+    ManagementClientOptions options;
     options.EnableTrace = true;
-    Management management(session, "Test", options);
+    ManagementClient management(session.CreateManagementClient("Test", options));
 
     auto openResult = management.Open();
     ASSERT_EQ(openResult, ManagementOpenStatus::Ok);

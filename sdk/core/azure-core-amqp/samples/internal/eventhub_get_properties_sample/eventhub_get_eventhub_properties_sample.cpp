@@ -28,11 +28,11 @@ EventHubProperties GetEventHubProperties(
 
   // Create a management client off the session.
   // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementOptions managementClientOptions;
+  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::Management managementClient(
-      session, eventHubName, managementClientOptions);
+  Azure::Core::Amqp::_internal::ManagementClient managementClient(
+      session.CreateManagementClient(eventHubName, managementClientOptions));
 
   managementClient.Open();
 
@@ -98,11 +98,11 @@ EventHubPartitionProperties GetPartitionProperties(
 
   // Create a management client off the session.
   // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementOptions managementClientOptions;
+  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::Management managementClient(
-      session, eventHubName, managementClientOptions);
+  Azure::Core::Amqp::_internal::ManagementClient managementClient(
+      session.CreateManagementClient(eventHubName, managementClientOptions));
 
   managementClient.Open();
 

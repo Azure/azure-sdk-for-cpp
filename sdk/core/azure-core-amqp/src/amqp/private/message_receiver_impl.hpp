@@ -67,10 +67,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
     uint32_t GetReceivedMessageId();
-    void SendMessageDisposition(
-        const char* linkName,
-        uint32_t messageNumber,
-        Models::AmqpValue deliveryState);
 
     std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
     WaitForIncomingMessage(Context const& context);
