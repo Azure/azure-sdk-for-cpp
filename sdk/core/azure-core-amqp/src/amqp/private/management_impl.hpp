@@ -78,10 +78,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     UniqueAmqpManagementHandle m_management{};
     std::string m_managementNodeName;
-    std::string m_managementEntityPath;
     _internal::ManagementClientOptions m_options;
     std::string m_source;
     std::shared_ptr<SessionImpl> m_session;
+    _internal::ManagementClientEvents* m_eventHandler{};
+    std::string m_managementEntityPath;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<AMQP_MANAGEMENT_OPEN_RESULT>
         m_openCompleteQueue;
 
@@ -91,8 +92,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string,
         Models::AmqpMessage>
         m_messageQueue;
-
-    _internal::ManagementClientEvents* m_eventHandler{};
 
     void CreateManagementClient();
 

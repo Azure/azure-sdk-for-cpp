@@ -102,7 +102,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::string GetLinkName() const;
     std::string GetSourceName() const;
 
-    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError> WaitForIncomingMessage(Context const& context = {});
+    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    WaitForIncomingMessage(Context const& context = {});
 
   private:
     MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}

@@ -42,7 +42,8 @@ int main()
   senderOptions.MessageSource = "ingress";
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
   senderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
-  Azure::Core::Amqp::_internal::MessageSender sender(session, credentials->GetEntityPath(), senderOptions, nullptr);
+  Azure::Core::Amqp::_internal::MessageSender sender(
+      session, credentials->GetEntityPath(), senderOptions, nullptr);
 
   // Open the connection to the remote.
   sender.Open();

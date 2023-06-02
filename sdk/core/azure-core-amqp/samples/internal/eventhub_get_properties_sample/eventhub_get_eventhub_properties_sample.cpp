@@ -40,11 +40,12 @@ EventHubProperties GetEventHubProperties(
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.ApplicationProperties["name"] = Azure::Core::Amqp::Models::AmqpValue{eventHubName};
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-  auto result = managementClient.ExecuteOperation(
-      "READ" /* operation */,
-      "com.microsoft:eventhub" /* type of operation */,
-      "" /* locales */,
-      message);
+  Azure::Core::Amqp::_internal::ManagementOperationResult result
+      = managementClient.ExecuteOperation(
+          "READ" /* operation */,
+          "com.microsoft:eventhub" /* type of operation */,
+          "" /* locales */,
+          message);
 
   EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
@@ -59,16 +60,16 @@ EventHubProperties GetEventHubProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    Azure::Core::Amqp::Models::AmqpValue body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
     }
-    auto bodyMap = body.AsMap();
+    Azure::Core::Amqp::Models::AmqpMap bodyMap = body.AsMap();
     properties.Name = static_cast<std::string>(bodyMap["name"]);
     properties.CreatedAt = Azure::DateTime(std::chrono::system_clock::from_time_t(
         static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()).count()));
-    auto partitions = bodyMap["partition_ids"].AsArray();
+    Azure::Core::Amqp::Models::AmqpArray partitions = bodyMap["partition_ids"].AsArray();
     for (const auto& partition : partitions)
     {
       properties.PartitionIds.push_back(static_cast<std::string>(partition));

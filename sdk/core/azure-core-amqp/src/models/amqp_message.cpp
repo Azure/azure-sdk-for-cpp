@@ -751,7 +751,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-        os << std::endl << "    Body: [" << std::endl;
+    os << std::endl << "    Body: [" << std::endl;
     switch (message.BodyType)
     {
       case MessageBodyType::Invalid: // LCOV_EXCL_LINE

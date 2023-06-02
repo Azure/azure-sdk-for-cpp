@@ -7,9 +7,9 @@
 #include "azure/core/amqp/link.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
+#include "private/management_impl.hpp"
 #include "private/message_receiver_impl.hpp"
 #include "private/message_sender_impl.hpp"
-#include "private/management_impl.hpp"
 #include "private/session_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
@@ -91,8 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       ManagementClientEvents* events) const
   {
     return _detail::ManagementClientFactory::CreateFromInternal(
-        std::make_shared<_detail::ManagementClientImpl>(
-            m_impl, entityPath, options, events));
+        std::make_shared<_detail::ManagementClientImpl>(m_impl, entityPath, options, events));
   }
 
 }}}} // namespace Azure::Core::Amqp::_internal

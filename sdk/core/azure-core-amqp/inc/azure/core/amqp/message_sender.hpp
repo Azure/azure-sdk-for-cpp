@@ -146,8 +146,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSendCompleteCallback onSendComplete,
         Context const& context = {});
 
-
-
   private:
     /** @brief Construct a MessageSender from a low level message sender implementation.
      *

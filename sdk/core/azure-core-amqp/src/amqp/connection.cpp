@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
   Session Connection::CreateSession(
-      Endpoint &endpoint,
+      Endpoint& endpoint,
       SessionOptions const& sessionOptions,
       SessionEvents* sessionEvents) const
   {
