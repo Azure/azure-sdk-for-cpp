@@ -5,6 +5,9 @@ parameters:
 steps:
   - ${{if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
 
+    - pwsh: New-Item -ItemType Directory -Path '${{ parameters.BuildDropPath }}' -Force
+      displayName: Ensure SBOM build drop path exists
+
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
       displayName: 'Generate BOM'
       condition: succeededOrFailed()
