@@ -99,8 +99,14 @@ bool const Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
     Azure::Core::Context ctx)
 {
   auto messages = eventDataBatch.GetMessages();
+  if (messages.size() == 0)
+  {
+      throw std::runtime_error("EventDataBatch is empty.");
+  }
+
   Azure::Core::Amqp::Models::AmqpMessage message;
-  message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o', '7'});
+  
+  
 
   Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(
       m_producerClientOptions.RetryOptions);
