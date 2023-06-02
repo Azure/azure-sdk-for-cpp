@@ -200,11 +200,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (messagesender_open(m_messageSender.get()))
     {
-      auto err = errno; // LCOV_EXCL_LINE
-      throw std::runtime_error( // LCOV_EXCL_LINE
-          "Could not open message sender. errno=" + std::to_string(err) + ", \"" // LCOV_EXCL_LINE
-          + strerror(err) // LCOV_EXCL_LINE
-          + "\"."); // LCOV_EXCL_LINE
+      // LCOV_EXCL_START
+      auto err = errno;
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+      throw std::runtime_error(
+          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
+          + "\".");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+      // LCOV_EXCL_STOP
     }
   }
   void MessageSenderImpl::Close()

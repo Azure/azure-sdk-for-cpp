@@ -75,6 +75,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     return os;
   }
 
+  const AmqpErrorCondition AmqpErrorCondition::DecodeError(amqp_error_decode_error);
+  const AmqpErrorCondition AmqpErrorCondition::FrameSizeTooSmall(amqp_error_frame_size_too_small);
+  const AmqpErrorCondition AmqpErrorCondition::IllegalState(amqp_error_illegal_state);
   const AmqpErrorCondition AmqpErrorCondition::InternalError(amqp_error_internal_error);
+  const AmqpErrorCondition AmqpErrorCondition::InvalidField(amqp_error_invalid_field);
+  const AmqpErrorCondition AmqpErrorCondition::NotAllowed(amqp_error_not_allowed);
+  const AmqpErrorCondition AmqpErrorCondition::NotFound(amqp_error_not_found);
+  const AmqpErrorCondition AmqpErrorCondition::NotImplemented(amqp_error_not_implemented);
+  const AmqpErrorCondition AmqpErrorCondition::PreconditionFailed(amqp_error_precondition_failed);
+  const AmqpErrorCondition AmqpErrorCondition::ResourceDeleted(amqp_error_resource_deleted);
+  const AmqpErrorCondition AmqpErrorCondition::ResourceLimitExceeded(
+      amqp_error_resource_limit_exceeded);
+  const AmqpErrorCondition AmqpErrorCondition::ResourceLocked(amqp_error_resource_locked);
+  const AmqpErrorCondition AmqpErrorCondition::UnauthorizedAccess(amqp_error_unauthorized_access);
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

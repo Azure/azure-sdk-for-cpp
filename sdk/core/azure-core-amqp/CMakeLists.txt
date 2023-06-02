@@ -31,9 +31,7 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 find_package(uamqp CONFIG REQUIRED)
-find_package(umock_c)
-find_package(azure_macro_utils_c CONFIG REQUIRED)
-find_package(azure_c_shared_utility CONFIG REQUIRED)
+find_package(azure_c_shared_utility REQUIRED CONFIG)
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp
@@ -101,7 +99,7 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
-target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c PUBLIC Azure::azure-core)
+target_link_libraries(azure-core-amqp PRIVATE uamqp aziotsharedutil PUBLIC Azure::azure-core )
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
@@ -127,7 +125,7 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
   
-  add_subdirectory(test/ut)
+  add_subdirectory(test)
 endif()
 
 if(BUILD_SAMPLES)

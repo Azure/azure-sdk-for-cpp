@@ -311,9 +311,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // LCOV_EXCL_START
       auto err = errno;
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
       throw std::runtime_error(
           "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + strerror(err)
           + "\".");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
       // LCOV_EXCL_STOP
     }
   }

@@ -66,9 +66,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     if (socketlistener_start(m_socket, SocketListener::OnSocketAcceptedFn, this))
     {
       auto err = errno;
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
       throw std::runtime_error(
           "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
           + "\".");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
     }
     m_started = true;
   }
@@ -80,9 +89,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       if (socketlistener_stop(m_socket))
       {
         auto err = errno;
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
         throw std::runtime_error(
             "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
             + "\".");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
       }
     }
     else

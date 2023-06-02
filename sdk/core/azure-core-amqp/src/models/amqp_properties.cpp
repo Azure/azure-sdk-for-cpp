@@ -296,7 +296,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     std::string timeToString(std::chrono::system_clock::time_point t)
     {
       std::time_t time = std::chrono::system_clock::to_time_t(t);
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
       std::string time_str = std::ctime(&time);
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
       time_str.resize(time_str.size() - 1);
       return time_str;
     }
