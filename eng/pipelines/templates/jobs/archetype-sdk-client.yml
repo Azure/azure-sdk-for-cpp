@@ -309,4 +309,4 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
-        - template: /eng/pipelines/templates/steps/sbom.yml
+        - template: /eng/pipelines/templates/steps/generate-and-publish-sbom.yml

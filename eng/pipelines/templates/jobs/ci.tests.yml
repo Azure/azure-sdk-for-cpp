@@ -329,6 +329,6 @@ jobs:
         displayName: Set bom file artifact name
         condition: succeededOrFailed()
 
-      - template: /eng/pipelines/templates/steps/sbom.yml
+      - template: /eng/pipelines/templates/steps/generate-and-publish-sbom.yml
         parameters:
           BomArtifactName: $(BomArtifactName)
