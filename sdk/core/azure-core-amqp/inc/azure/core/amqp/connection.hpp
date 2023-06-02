@@ -23,19 +23,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 #if defined(TESTING_BUILD)
 // Define the test classes dependant on this class here.
-namespace MessageTests {
-class AmqpServerMock;
-class MessageListenerEvents;
-} // namespace MessageTests
-class TestConnections_ConnectionAttributes_Test;
-class TestConnections_ConnectionOpenClose_Test;
-class TestConnections_ConnectionListenClose_Test;
-class TestSocketListenerEvents;
-class LinkSocketListenerEvents;
-class TestLinks_LinkAttachDetach_Test;
-class TestMessages_SenderOpenClose_Test;
-class TestMessages_TestLocalhostVsTls_Test;
-class TestMessages_SenderSendAsync_Test;
+namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  namespace MessageTests {
+    class AmqpServerMock;
+    class MessageListenerEvents;
+  } // namespace MessageTests
+
+  class TestConnections_ConnectionAttributes_Test;
+  class TestConnections_ConnectionOpenClose_Test;
+  class TestConnections_ConnectionListenClose_Test;
+  class TestSocketListenerEvents;
+  class LinkSocketListenerEvents;
+  class TestLinks_LinkAttachDetach_Test;
+  class TestMessages_SenderOpenClose_Test;
+  class TestMessages_TestLocalhostVsTls_Test;
+  class TestMessages_SenderSendAsync_Test;
+}}}} // namespace Azure::Core::Amqp::Tests
 #endif // TESTING_BUILD
 #if defined(SAMPLES_BUILD)
 namespace LocalServerSample {
@@ -429,17 +432,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::shared_ptr<_detail::ConnectionImpl> m_impl;
     friend class _detail::ConnectionFactory;
 #if TESTING_BUILD
-    friend class MessageTests::AmqpServerMock;
-    friend class MessageTests::MessageListenerEvents;
-    friend class TestSocketListenerEvents;
-    friend class LinkSocketListenerEvents;
-    friend class TestConnections_ConnectionAttributes_Test;
-    friend class TestConnections_ConnectionOpenClose_Test;
-    friend class TestConnections_ConnectionListenClose_Test;
-    friend class TestLinks_LinkAttachDetach_Test;
-    friend class TestMessages_SenderOpenClose_Test;
-    friend class TestMessages_TestLocalhostVsTls_Test;
-    friend class TestMessages_SenderSendAsync_Test;
+    friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionAttributes_Test;
+    friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionOpenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionListenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestLinks_LinkAttachDetach_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_TestLocalhostVsTls_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
 #endif // TESTING_BUILD
 #if SAMPLES_BUILD
     friend int LocalServerSample::LocalServerSampleMain();

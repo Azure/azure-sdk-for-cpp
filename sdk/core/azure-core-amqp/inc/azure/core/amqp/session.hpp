@@ -17,17 +17,20 @@
 
 #if defined(TESTING_BUILD)
 // Define the test classes dependant on this class here.
-namespace MessageTests {
-class AmqpServerMock;
-class MessageListenerEvents;
-} // namespace MessageTests
-class TestSessions_SimpleSession_Test;
-class TestSessions_SessionProperties_Test;
-class TestSessions_SessionBeginEnd_Test;
+namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  namespace MessageTests {
+    class AmqpServerMock;
+    class MessageListenerEvents;
+  } // namespace MessageTests
 
-class TestSocketListenerEvents;
-class LinkSocketListenerEvents;
-class TestMessages_SenderSendAsync_Test;
+  class TestSessions_SimpleSession_Test;
+  class TestSessions_SessionProperties_Test;
+  class TestSessions_SessionBeginEnd_Test;
+
+  class TestSocketListenerEvents;
+  class LinkSocketListenerEvents;
+  class TestMessages_SenderSendAsync_Test;
+}}}} // namespace Azure::Core::Amqp::Tests
 #endif // TESTING_BUILD
 #if defined(SAMPLES_BUILD)
 namespace LocalServerSample {
@@ -229,14 +232,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class _detail::SessionFactory;
 
 #if TESTING_BUILD
-    friend class MessageTests::AmqpServerMock;
-    friend class MessageTests::MessageListenerEvents;
-    friend class TestSocketListenerEvents;
-    friend class LinkSocketListenerEvents;
-    friend class TestSessions_SimpleSession_Test;
-    friend class TestSessions_SessionProperties_Test;
-    friend class TestSessions_SessionBeginEnd_Test;
-    friend class TestMessages_SenderSendAsync_Test;
+    friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestSessions_SimpleSession_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_SessionProperties_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_SessionBeginEnd_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
 #endif // TESTING_BUILD
 #if SAMPLES_BUILD
     friend class LocalServerSample::SampleEvents;
