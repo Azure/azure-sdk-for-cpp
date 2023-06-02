@@ -395,7 +395,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                            << " NewState: " << std::to_string(static_cast<uint32_t>(newState));
           (void)sender;
         }
-        virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
+        virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
         {
           GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
         };
@@ -512,7 +512,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           (void)newState;
           (void)oldState;
         }
-        virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
+        virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
         {
           GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
         };
