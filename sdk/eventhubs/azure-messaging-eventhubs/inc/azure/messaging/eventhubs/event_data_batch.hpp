@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "amqp_message.hpp"
+
 #include <azure/core/amqp.hpp>
+
 #include <mutex>
 namespace Azure { namespace Messaging { namespace EventHubs {
   /** @brief EventDataBatchOptions contains optional parameters for the
@@ -40,11 +42,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class EventDataBatch {
   private:
     std::mutex m_rwMutex;
-    std::vector<Azure::Core::Amqp::Models::AmqpMessage> m_messages;
     std::string m_partitionID;
     std::string m_partitionKey;
     uint64_t m_maxBytes;
     const std::string anyPartitionId = "";
+    std::vector<std::vector<uint8_t>> m_marshalledMessages;
+    // Annotation properties
+    const std::string PartitionKeyAnnotation = "x-opt-partition-key";
+    const std::string SequenceNumberAnnotation = "x-opt-sequence-number";
+    const std::string OffsetNumberAnnotation = "x-opt-offset";
+    const std::string EnqueuedTimeAnnotation = "x-opt-enqueued-time";
+
+    Azure::Core::Amqp::Models::AmqpMessage m_batchEnvelope;
+    uint64_t m_currentSize;
 
   public:
     /** @brief Event Data Batch constructor
@@ -93,16 +103,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     void AddMessage(Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage& message)
     {
-      std::lock_guard<std::mutex> lock(m_rwMutex);
       auto amqpMessage = message.ToAMQPMessage();
 
-      if (amqpMessage.MessageAnnotations["x-opt-partition-key"] == nullptr
-          && !m_partitionKey.empty())
-      {
-        amqpMessage.MessageAnnotations["x-opt-partition-key"]
-            = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
-      }
-      m_messages.push_back(amqpMessage);
+      AddAmqpMessage(amqpMessage);
     }
 
     /** @brief Adds a message to the data batch
@@ -111,18 +114,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message)
     {
-      std::lock_guard<std::mutex> lock(m_rwMutex);
       auto amqpMessage = message.ToAMQPMessage();
 
-     
-      /*
-      if (amqpMessage.MessageAnnotations["x-opt-partition-key"] == nullptr
-          && !m_partitionKey.empty())
-      {
-        amqpMessage.MessageAnnotations["x-opt-partition-key"]
-            = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
-      }*/
-      m_messages.push_back(amqpMessage);
+      AddAmqpMessage(amqpMessage);
     }
 
     /** @brief Gets the number of messages in the batch
@@ -131,49 +125,93 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const size_t CurrentSize()
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
-      return m_messages.size();
+      return m_currentSize;
     }
 
-    /** @brief Gets the messages in the batch
-     *
-     */
-    const std::vector<Azure::Core::Amqp::Models::AmqpMessage> GetMessages()
+    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage()
+    {
+      if (m_marshalledMessages.size() == 0)
+      {
+        throw std::exception("No messages added to the batch.");
+      }
+
+     /* if (!m_partitionKey.empty())
+      {
+        m_batchEnvelope.DeliveryAnnotations.emplace(
+            PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+      }*/
+      std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
+      for (auto marshalledMessage : m_marshalledMessages)
+      {
+          Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
+        messageList.push_back(data);
+	  }
+
+      m_batchEnvelope.SetBody(messageList);
+
+      return m_batchEnvelope;
+    }
+
+  private:
+    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
-      // if (m_messages.size() == 0)
-      // {
-      //   return nullptr;
-      // }
-      //
-      // Azure::Core::Amqp::Models::Message message = m_messages[0];
 
-      // message.ClearBody();
-      // for (int i = 0; i < m_messages.size(); i++)
-      // {
-      //   if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
-      //   {
-      //     auto data = m_messages[i].GetBodyAsBinary();
-      //     for (auto oneData : data)
-      //   {
-      //   message.SetBody(oneData);
-      //}
-      //}
-      // else if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Value)
-      //{
-      // auto data = m_messages[i].GetBodyAsAmqpValue();
-      // message.SetBody(data)//.AsBinary());
-      //}
-      // else if (m_messages[i].BodyType == Azure::Core::Amqp::Models::MessageBodyType::Sequence)
-      //{
-      // auto data = m_messages[i].GetBodyAsAmqpList();
-      // message.SetBody(data); //((Azure::Core::Amqp::Models::AmqpValue)data).AsBinary());
-      // }
-      //}
+      if (!message.Properties.MessageId.HasValue())
+      {
+        message.Properties.MessageId
+            = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());
+      }
 
-      // return message;
+      /* if (!m_partitionKey.empty())
+      {
+        message.DeliveryAnnotations.emplace(
+            PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+      }*/
 
-      std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages(m_messages);
-      return messages;
+      auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
+
+      if (m_marshalledMessages.size() == 0)
+      {
+        m_batchEnvelope = CreateBatchEnvelope(message);
+        m_currentSize = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message).size();
+      }
+      auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
+      if (m_currentSize + actualPayloadSize > m_maxBytes)
+      {
+        m_currentSize = 0;
+        m_batchEnvelope = nullptr;
+
+        throw std::runtime_error("EventDataBatch size is too large.");
+      }
+
+      m_currentSize += actualPayloadSize;
+      m_marshalledMessages.push_back(serializedMessage);
+    }
+
+    uint64_t CalculateActualSizeForPayload(std::vector<uint8_t> payload)
+    {
+      const uint64_t vbin8Overhead = 5;
+      const uint64_t vbin32Overhead = 8;
+
+      if (payload.size() < 256)
+      {
+        return payload.size() + vbin8Overhead;
+      }
+      return payload.size() + vbin32Overhead;
+    }
+
+    Azure::Core::Amqp::Models::AmqpMessage CreateBatchEnvelope(
+        Azure::Core::Amqp::Models::AmqpMessage const& message)
+    {
+      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope;
+      batchEnvelope.Header = message.Header;
+      batchEnvelope.DeliveryAnnotations = message.DeliveryAnnotations;
+      batchEnvelope.MessageAnnotations = message.MessageAnnotations;
+      batchEnvelope.Properties = message.Properties;
+      batchEnvelope.ApplicationProperties = message.ApplicationProperties;
+      batchEnvelope.Footer = message.Footer;
+      return batchEnvelope;
     }
   };
 }}} // namespace Azure::Messaging::EventHubs

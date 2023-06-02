@@ -98,20 +98,12 @@ bool const Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
     EventDataBatch& eventDataBatch,
     Azure::Core::Context ctx)
 {
-  auto messages = eventDataBatch.GetMessages();
-  if (messages.size() == 0)
-  {
-      throw std::runtime_error("EventDataBatch is empty.");
-  }
-
-  Azure::Core::Amqp::Models::AmqpMessage message;
-  
-  
+  auto message = eventDataBatch.ToAmqpMessage();
 
   Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(
       m_producerClientOptions.RetryOptions);
   return retryOp.Execute([&]() -> bool {
-    auto result = GetSender(eventDataBatch.GetPartitionID()).Send(messages[0], ctx);
+    auto result = GetSender(eventDataBatch.GetPartitionID()).Send(message, ctx);
     return std::get<0>(result) == Azure::Core::Amqp::_internal::MessageSendStatus::Ok;
   });
 }
