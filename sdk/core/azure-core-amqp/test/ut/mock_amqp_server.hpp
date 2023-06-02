@@ -389,7 +389,10 @@ protected:
     m_session->Begin();
     return true;
   }
-  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override {}
+  virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override
+  {
+    GTEST_LOG_(INFO) << "On I/O Error - connection closed.";
+  }
 
   // Inherited via Session
   virtual bool OnLinkAttached(
