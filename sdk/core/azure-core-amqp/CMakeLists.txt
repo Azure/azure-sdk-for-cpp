@@ -32,13 +32,18 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-  message(STATUS "Before include packages. BUILD_TESTING='" ${BUILD_TESTING} "'")
+message(STATUS "Before include packages. BUILD_TESTING='" ${BUILD_TESTING} "'")
 find_package(uamqp CONFIG REQUIRED)
-  message(STATUS "After find uamqp. BUILD_TESTING='" ${BUILD_TESTING} "'")
+
+message(STATUS "After find uamqp. BUILD_TESTING='" ${BUILD_TESTING} "'")
+
 find_package(azure_c_shared_utility REQUIRED CONFIG)
-  message(STATUS "After find azure_c_shared_utility. BUILD_TESTING='" ${BUILD_TESTING} "'")
+
+message(STATUS "After find azure_c_shared_utility. BUILD_TESTING='" ${BUILD_TESTING} "'")
 unset(BUILD_TESTING)
-  message(STATUS "After reset of build_testing, BUILD_TESTING='" ${BUILD_TESTING} "'")
+message(STATUS "After reset of build_testing, BUILD_TESTING='" ${BUILD_TESTING} "'")
+unset(BUILD_TESTING CACHE)
+message(STATUS "After reset of build_testing 2, BUILD_TESTING='" ${BUILD_TESTING} "'")
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp
