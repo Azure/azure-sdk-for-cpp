@@ -12,6 +12,7 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}/sdk/identity/azure-identity/"
     OPTIONS
         -DWARNINGS_AS_ERRORS=OFF
+        -DBUILD_TESTING=OFF
 )
 
 vcpkg_cmake_install()
