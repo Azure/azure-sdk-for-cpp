@@ -6,6 +6,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
+  message(STATUS "Start configuring azure-core-amqp. BUILD_TESTING='" ${BUILD_TESTING} "'")
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-core-amqp LANGUAGES CXX)
 
@@ -116,7 +118,6 @@ generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
     azure/core/amqp/rtti.hpp
   )
 
-  message(STATUS "Configuring azure-core-amqp tests. BUILD_TESTING='" ${BUILD_TESTING} "'")
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
