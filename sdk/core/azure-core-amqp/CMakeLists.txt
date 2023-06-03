@@ -37,6 +37,8 @@ find_package(uamqp CONFIG REQUIRED)
   message(STATUS "After find uamqp. BUILD_TESTING='" ${BUILD_TESTING} "'")
 find_package(azure_c_shared_utility REQUIRED CONFIG)
   message(STATUS "After find azure_c_shared_utility. BUILD_TESTING='" ${BUILD_TESTING} "'")
+unset(BUILD_TESTING)
+  message(STATUS "After reset of build_testing, BUILD_TESTING='" ${BUILD_TESTING} "'")
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp
@@ -91,7 +93,6 @@ set(AZURE_CORE_AMQP_SOURCE
 
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
 
-  message(STATUS "After target include directories . BUILD_TESTING='" ${BUILD_TESTING} "'")
 target_include_directories(
   azure-core-amqp
     PUBLIC
@@ -121,14 +122,12 @@ generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
     CORE_AMQP
     azure/core/amqp/rtti.hpp
   )
-  message(STATUS "After vcpkg export. BUILD_TESTING='" ${BUILD_TESTING} "'")
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
   
   if (NOT AZ_ALL_LIBRARIES)
-  message(STATUS "Including Google Test?")
     include(AddGoogleTest)
     enable_testing ()
   endif()
