@@ -33,11 +33,7 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 find_package(uamqp CONFIG REQUIRED)
-
-set(LOCAL_BUILD_TESTING ${BUILD_TESTING})
 find_package(azure_c_shared_utility REQUIRED CONFIG)
-unset(BUILD_TESTING)
-unset(BUILD_TESTING CACHE)
 
 set(BUILD_TESTING ${LOCAL_BUILD_TESTING})
 
