@@ -116,11 +116,13 @@ generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
     azure/core/amqp/rtti.hpp
   )
 
+  message(STATUS "Configuring azure-core-amqp tests. BUILD_TESTING='" ${BUILD_TESTING} "'")
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
   
   if (NOT AZ_ALL_LIBRARIES)
+  message(STATUS "Including Google Test?")
     include(AddGoogleTest)
     enable_testing ()
   endif()
