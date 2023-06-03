@@ -93,8 +93,6 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   endif()
 endif()
 
-message(STATUS "Root Makefile. BUILD_TESTING='" ${BUILD_TESTING} "'")
-
 if(BUILD_TESTING)
   include(AddGoogleTest)
   enable_testing ()  
