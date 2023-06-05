@@ -285,32 +285,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 // instead.
 #pragma warning(disable : 4996)
 #endif
-      throw std::runtime_error(
-          "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + strerror(err)
-          + "\".");
+          throw std::runtime_error(
+              "Could not open message receiver. errno=" + std::to_string(err) + ", \""
+              + strerror(err) + "\".");
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-      // LCOV_EXCL_STOP
-    }
-  }
+          // LCOV_EXCL_STOP
+        }
+      }
 
-  void MessageReceiverImpl::Close()
-  {
-    if (messagereceiver_close(m_messageReceiver.get()))
-    {
-      throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
-    }
-  }
+      void MessageReceiverImpl::Close()
+      {
+        if (messagereceiver_close(m_messageReceiver.get()))
+        {
+          throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
+        }
+      }
 
-  std::string MessageReceiverImpl::GetLinkName() const
-  {
-    const char* linkName;
-    if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
-    {
-      throw std::runtime_error("Could not get link name");
-    }
-    return std::string(linkName);
-  }
+      std::string MessageReceiverImpl::GetLinkName() const
+      {
+        const char* linkName;
+        if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
+        {
+          throw std::runtime_error("Could not get link name");
+        }
+        return std::string(linkName);
+      }
 
 }}}} // namespace Azure::Core::Amqp::_detail

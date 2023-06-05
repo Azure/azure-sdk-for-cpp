@@ -77,9 +77,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
     bool m_cbsOpen{false};
 
-    void Authenticate(
-        std::string const& audience,
-        Context const& context);
+    void Authenticate(std::string const& audience, Context const& context);
 
     static bool OnLinkAttachedFn(
         void* context,

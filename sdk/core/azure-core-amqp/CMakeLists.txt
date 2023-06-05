@@ -31,7 +31,9 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 find_package(uamqp CONFIG REQUIRED)
-find_package(azure_c_shared_utility REQUIRED CONFIG)
+find_package(umock_c)
+find_package(azure_macro_utils_c CONFIG REQUIRED)
+find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp

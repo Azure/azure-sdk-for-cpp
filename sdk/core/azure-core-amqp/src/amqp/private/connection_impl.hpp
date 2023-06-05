@@ -102,7 +102,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
     bool EnableTrace() const { return m_options.EnableTrace; }
     bool IsSasCredential() const;
-    std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context) const;
+    std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
+        const;
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
