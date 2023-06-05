@@ -271,7 +271,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     // If we are transitioning to the error state, we want to stick a response on the incoming queue
-    // indicating that the error has occurred.
+    // indicating an error occurred.
     if (newState == MESSAGE_RECEIVER_STATE_ERROR && oldState != MESSAGE_RECEIVER_STATE_ERROR)
     {
       if (receiver->m_savedMessageError)
