@@ -95,8 +95,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     MessageReceiver(MessageReceiver&&) = default;
     MessageReceiver& operator=(MessageReceiver&&) = default;
 
-    operator bool() const;
-
     void Open(Context const& context = {});
     void Close();
     std::string GetLinkName() const;

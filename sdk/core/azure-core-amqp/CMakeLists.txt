@@ -6,8 +6,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
-  message(STATUS "Start configuring azure-core-amqp. BUILD_TESTING='" ${BUILD_TESTING} "'")
-
 cmake_minimum_required (VERSION 3.13)
 project(azure-core-amqp LANGUAGES CXX)
 
@@ -34,8 +32,6 @@ endif()
 
 find_package(uamqp CONFIG REQUIRED)
 find_package(azure_c_shared_utility REQUIRED CONFIG)
-
-set(BUILD_TESTING ${LOCAL_BUILD_TESTING})
 
 set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/cancellable.hpp
@@ -103,7 +99,7 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
-target_link_libraries(azure-core-amqp PRIVATE uamqp aziotsharedutil PUBLIC Azure::azure-core )
+target_link_libraries(azure-core-amqp PRIVATE uamqp PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})

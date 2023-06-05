@@ -110,7 +110,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
 
     ~MessageSender() noexcept;
-    operator bool() const noexcept { return m_impl != nullptr; }
 
     MessageSender(MessageSender const&) = default;
     MessageSender& operator=(MessageSender const&) = default;

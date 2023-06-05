@@ -221,76 +221,47 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (GetConnection()->GetCredential())
     {
-      bool isSasToken = GetConnection()->GetCredential()->GetCredentialName()
-          == "ServiceBusSasConnectionStringCredential";
-      Credentials::TokenRequestContext requestContext;
-      if (isSasToken)
-      {
-        requestContext.MinimumExpiration = std::chrono::minutes(60);
-      }
-      requestContext.Scopes = m_options.AuthenticationScopes;
       std::string tokenAudience = audience;
       // If the caller provided a URL, use that url, otherwise build the URL to be used.
       if ((audience.find("amqps://") != 0) && (audience.find("amqp://") != 0))
       {
         tokenAudience = "amqps://" + m_connectionToPoll->GetHost() + "/" + audience;
       }
-      Authenticate(isSasToken, requestContext, tokenAudience, context);
+      Authenticate(tokenAudience, context);
     }
   }
-  void SessionImpl::Authenticate(
-      bool isSasToken,
-      Credentials::TokenRequestContext const& tokenRequestContext,
-      std::string const& audience,
-      Context const& context)
+  void SessionImpl::Authenticate(std::string const& audience, Context const& context)
   {
-    if (GetConnection()->GetCredential())
+    if (!m_claimsBasedSecurity)
     {
       m_claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(shared_from_this());
-      auto accessToken = GetConnection()->GetCredential()->GetToken(tokenRequestContext, context);
-      Log::Write(
-          Logger::Level::Informational,
-          "Authenticate with audience: " + audience + ", token: " + accessToken.Token);
-      m_claimsBasedSecurity->SetTrace(true);
-      if (m_claimsBasedSecurity->Open(context) == CbsOpenResult::Ok)
+    }
+    auto accessToken = GetConnection()->GetSecurityToken(audience, context);
+    Log::Write(
+        Logger::Level::Informational,
+        "Authenticate with audience: " + audience + ", token: " + accessToken);
+    m_claimsBasedSecurity->SetTrace(GetConnection()->EnableTrace());
+    if (!m_cbsOpen)
+    {
+      auto cbsOpenStatus = m_claimsBasedSecurity->Open(context);
+      if (cbsOpenStatus == CbsOpenResult::Ok)
       {
         m_cbsOpen = true;
-        auto result = m_claimsBasedSecurity->PutToken(
-            (isSasToken ? CbsTokenType::Sas : CbsTokenType::Jwt),
-            audience,
-            accessToken.Token,
-            context);
-        if (std::get<0>(result) == CbsOperationResult::Ok)
-        {
-          m_tokenStore.emplace(std::make_pair(audience, accessToken));
-        }
       }
       else
       {
-        throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
+        throw std::runtime_error("Could not open Claims Based Security object."); // LCOV_EXCL_LINE
       }
     }
-  }
-
-  std::string SessionImpl::GetSecurityToken(std::string const& audience) const
-  {
-    if (GetConnection()->GetCredential())
+    auto result = m_claimsBasedSecurity->PutToken(
+        (GetConnection()->IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
+        audience,
+        accessToken,
+        context);
+    if (std::get<0>(result) != CbsOperationResult::Ok)
     {
-      if (m_tokenStore.find(audience) == m_tokenStore.end())
-      {
-        Credentials::TokenRequestContext requestContext;
-        bool isSasToken = GetConnection()->GetCredential()->GetCredentialName()
-            == "ServiceBusSasConnectionStringCredential";
-        if (isSasToken)
-        {
-          requestContext.MinimumExpiration = std::chrono::minutes(60);
-        }
-        requestContext.Scopes = m_options.AuthenticationScopes;
-        return GetConnection()->GetCredential()->GetToken(requestContext, {}).Token;
-      }
-      return m_tokenStore.at(audience).Token;
+      throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
     }
-    return "";
   }
 
   bool SessionImpl::OnLinkAttachedFn(

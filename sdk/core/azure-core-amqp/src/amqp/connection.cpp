@@ -387,4 +387,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not set remote idle timeout send frame ratio."); // LCOV_EXCL_LINE
     }
   }
+
+  bool ConnectionImpl::IsSasCredential() const
+  {
+    if (GetCredential())
+    {
+      return GetCredential()->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
+    }
+    return false;
+  }
+
+  std::string ConnectionImpl::GetSecurityToken(
+      std::string const& audience,
+      Azure::Core::Context const& context) const
+  {
+    if (GetCredential())
+    {
+      if (m_tokenStore.find(audience) == m_tokenStore.end())
+      {
+        Credentials::TokenRequestContext requestContext;
+        bool isSasToken = IsSasCredential();
+        if (isSasToken)
+        {
+          requestContext.MinimumExpiration = std::chrono::minutes(60);
+        }
+        requestContext.Scopes = m_options.AuthenticationScopes;
+        return GetCredential()->GetToken(requestContext, context).Token;
+      }
+      return m_tokenStore.at(audience).Token;
+    }
+    return "";
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail

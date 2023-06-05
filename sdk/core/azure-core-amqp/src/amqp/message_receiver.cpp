@@ -69,8 +69,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   MessageReceiver::~MessageReceiver() noexcept {}
 
-  MessageReceiver::operator bool() const { return m_impl.operator bool(); }
-
   void MessageReceiver::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
   void MessageReceiver::Close() { m_impl->Close(); }
   std::string MessageReceiver::GetSourceName() const { return m_impl->GetSourceName(); }
@@ -198,7 +196,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (result)
     {
       std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError> rv;
-      rv.first = std::move(std::get<0>(*result));
+      Models::AmqpMessage message{std::move(std::get<0>(*result))};
+      if (message)
+      {
+        rv.first = std::move(message);
+      }
       rv.second = std::move(std::get<1>(*result));
       return rv;
     }

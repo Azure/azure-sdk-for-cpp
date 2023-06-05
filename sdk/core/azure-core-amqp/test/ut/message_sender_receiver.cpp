@@ -774,7 +774,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     receiverOptions.EnableTrace = true;
     MessageReceiver receiver(session.CreateMessageReceiver(
         sasCredential->GetEndpoint() + sasCredential->GetEntityPath(), receiverOptions, nullptr));
-    EXPECT_TRUE(receiver);
 
     receiver.Open();
 

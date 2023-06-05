@@ -203,6 +203,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /** @brief Options used to create a connection. */
   struct ConnectionOptions final
   {
+    /** @brief The valid scopes for to which an authentication operation applies when using Claims
+     * Based Authentication. */
+    std::vector<std::string> AuthenticationScopes;
+
     /** @brief The idle timeout for the connection.
      *
      * If no frames are received within the timeout, the connection will be closed.
@@ -312,6 +316,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * endpoint.
      *
      * @param newEndpoint - AMQP Endpoint from which to create the session.
+     * @param options The options to use when creating the session.
      * @param eventHandler - Event handler for session events.
      *
      * @remarks Note that this function is normally only called from a application listening for

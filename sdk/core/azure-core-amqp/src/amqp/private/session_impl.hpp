@@ -67,7 +67,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void End(std::string const& condition_value, std::string const& description);
 
     void AuthenticateIfNeeded(std::string const& audience, Context const& context);
-    std::string GetSecurityToken(std::string const& audience) const;
 
   private:
     SessionImpl();
@@ -76,12 +75,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
     std::shared_ptr<ClaimsBasedSecurityImpl> m_claimsBasedSecurity{};
-    std::map<std::string, Credentials::AccessToken> m_tokenStore;
     bool m_cbsOpen{false};
 
     void Authenticate(
-        bool isSasToken,
-        Credentials::TokenRequestContext const& requestContext,
         std::string const& audience,
         Context const& context);
 

@@ -103,10 +103,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   struct SessionOptions final
   {
-    /** @brief The Audience to which an authentication operation applies when using Claims Based
-     * Authentication. */
-    std::vector<std::string> AuthenticationScopes;
-
     /** @brief Represents the initial incoming window size for the sender. See [AMQP Session Flow
      * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
      * for more information.*/
