@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "partition_client.hpp"
+#include "models/management_models.hpp"
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -61,6 +62,7 @@ protected:
   const uint32_t defaultMaxSize = 5000;
   const std::string defaultConsumerGroup = "$Default";
   std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
+  std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
   ConsumerClientCreds m_credentials;
   ConsumerClientOptions m_consumerClientOptions;
 
@@ -132,6 +134,24 @@ public:
    */
   PartitionClient NewPartitionClient(
       std::string partitionId,
-      PartitionClientOptions const& options);
+      PartitionClientOptions const& options = {});
+
+  /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
+   * like name, and partitions.
+   *
+   * @param options Additional options for getting partition properties
+   */
+  Models::EventHubProperties GetEventHubProperties(
+      Models::GetEventHubPropertiesOptions options = {});
+  /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
+   * like the last enqueued sequence number, the first sequence number and when an event was last
+   * enqueued to the partition.
+   *
+   * @param partitionID partition ID to detail.
+   * @param options Additional options for getting partition properties
+   */
+  Models::EventHubPartitionProperties GetPartitionProperties(
+      std::string const& partitionID,
+      Models::GetPartitionPropertiesOptions options = {});
 };
 }}} // namespace Azure::Messaging::EventHubs

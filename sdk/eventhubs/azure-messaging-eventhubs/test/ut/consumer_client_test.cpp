@@ -82,4 +82,57 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto events = partitionClient.ReceiveEvents(1);
     EXPECT_EQ(events.size(), 1);
   }
+
+  TEST(ConsumerClientTest, GetEventHubProperties)
+  {
+    std::string const connStringEntityPath
+        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        + ";EntityPath=eventhub";
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = "unit-test";
+
+    options.ReceiverOptions.Name = "unit-test";
+    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    options.ReceiverOptions.MessageTarget = "ingress";
+    options.ReceiverOptions.EnableTrace = true;
+    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+    auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Inclusive = true;
+
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client.NewPartitionClient("0", partitionOptions);
+
+    auto result = client.GetEventHubProperties();
+    EXPECT_EQ(result.Name, "eventhub");
+    EXPECT_TRUE(result.PartitionIDs.size() > 0);
+  }
+
+  TEST(ConsumerClientTest, GetPartitionProperties)
+  {
+    std::string const connStringEntityPath
+        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        + ";EntityPath=eventhub";
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = "unit-test";
+
+    options.ReceiverOptions.Name = "unit-test";
+    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    options.ReceiverOptions.MessageTarget = "ingress";
+    options.ReceiverOptions.EnableTrace = true;
+    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+
+    auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Inclusive = true;
+
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client.NewPartitionClient("0", partitionOptions);
+
+    auto result = client.GetPartitionProperties("0");
+    EXPECT_EQ(result.Name, "eventhub");
+    EXPECT_EQ(result.PartitionId, "0");
+  }
 }}}} // namespace Azure::Messaging::EventHubs::Test

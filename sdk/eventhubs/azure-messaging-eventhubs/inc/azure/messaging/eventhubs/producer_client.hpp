@@ -3,6 +3,7 @@
 #pragma once
 #include "event_data_batch.hpp"
 #include "retry_operation.hpp"
+#include "models/management_models.hpp"
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/management.hpp>
@@ -50,45 +51,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::_internal::MessageSenderOptions SenderOptions{};
   };
 
-  /**@brief EventHubProperties represents properties of the Event Hub, like the number of
-   * partitions.
-   */
-  struct EventHubProperties
-  {
-    Azure::DateTime CreatedOn;
-    std::string Name;
-    std::vector<std::string> PartitionIDs;
-  };
-
-  /**@brief EventHubPartitionProperties represents properties of an Event Hub partition
-   */
-  struct EventHubPartitionProperties final
-  {
-    std::string Name;
-    std::string PartitionId;
-    int64_t BeginningSequenceNumber{};
-    int64_t LastEnqueuedSequenceNumber{};
-    std::string LastEnqueuedOffset;
-    Azure::DateTime LastEnqueuedTimeUtc;
-    bool IsEmpty{};
-  };
-
-  /**@brief GetEventHubPropertiesOptions contains optional parameters for the GetEventHubProperties
-   * function
-   */
-  struct GetEventHubPropertiesOptions
-  {
-    // For future expansion
-  };
-
-  /**@brief GetPartitionPropertiesOptions contains optional parameters for the
-   * GetPartitionProperties function
-   */
-  struct GetPartitionPropertiesOptions
-  {
-    // For future expansion
-  };
-
   /**@brief  ProducerClient can be used to send events to an Event Hub.
    */
   class ProducerClient {
@@ -97,7 +59,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClientCreds m_credentials{};
     ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
-    std::map<std::string, Azure::Core::Amqp::_internal::Management> m_management{};
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
   public:
@@ -153,7 +114,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param options Additional options for getting partition properties
      */
-    EventHubProperties GetEventHubProperties(GetEventHubPropertiesOptions options = {});
+    Models::EventHubProperties GetEventHubProperties(Models::GetEventHubPropertiesOptions options = {});
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
      * enqueued to the partition.
@@ -161,9 +122,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param partitionID partition ID to detail.
      * @param options Additional options for getting partition properties
      */
-    EventHubPartitionProperties GetPartitionProperties(
+    Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,
-        GetPartitionPropertiesOptions options = {});
+        Models::GetPartitionPropertiesOptions options = {});
 
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");

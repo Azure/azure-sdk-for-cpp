@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "amqp_message.hpp"
+#include "models/amqp_message.hpp"
 
 #include <azure/core/amqp.hpp>
 

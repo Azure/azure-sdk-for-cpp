@@ -108,9 +108,9 @@ bool const Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
   });
 }
 
-Azure::Messaging::EventHubs::EventHubProperties
+Azure::Messaging::EventHubs::Models::EventHubProperties
 Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
-    GetEventHubPropertiesOptions options)
+    Models::GetEventHubPropertiesOptions options)
 {
   (void)options;
   if (m_senders.find("") == m_senders.end())
@@ -139,7 +139,7 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
       "" /* locales */,
       message);
 
-  EventHubProperties properties;
+  Models::EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
     std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
@@ -172,15 +172,15 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
   return properties;
 }
 
-Azure::Messaging::EventHubs::EventHubPartitionProperties
+Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
 Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
     std::string const& partitionID,
-    GetPartitionPropertiesOptions options)
+    Models::GetPartitionPropertiesOptions options)
 {
   (void)options;
-  if (m_senders.find("") == m_senders.end())
+  if (m_senders.find(partitionID) == m_senders.end())
   {
-    CreateSender("");
+    CreateSender(partitionID);
   }
 
   // Create a management client off the session.
@@ -189,7 +189,7 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
   Azure::Core::Amqp::_internal::Management managementClient(
-      m_sessions[""], m_credentials.EventHub, managementClientOptions);
+      m_sessions[partitionID], m_credentials.EventHub, managementClientOptions);
 
   managementClient.Open();
 
@@ -205,7 +205,7 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
       "" /* locales */,
       message);
 
-  EventHubPartitionProperties properties;
+  Models::EventHubPartitionProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
     std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
