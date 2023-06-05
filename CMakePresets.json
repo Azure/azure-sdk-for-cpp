@@ -30,7 +30,7 @@
     {
       "name": "x64-static",
       "displayName": "Windows x64 Static",
-      "description": "Ninja Generator, x64 architecture.",
+      "description": "Windows Default, x64 architecture, static CRT.",
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
@@ -45,7 +45,7 @@
     {
       "name": "x86-static",
       "displayName": "Windows x86 Static",
-      "description": "Ninja Generator, x86 architecture.",
+      "description": "Windows Default, x86 architecture.",
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
@@ -60,7 +60,7 @@
     {
       "name": "x64",
       "displayName": "Windows x64",
-      "description": "Ninja Generator, x64 architecture.",
+      "description": "x64 architecture.",
       "inherits": "windows-default",
       "hidden": true,
       "cacheVariables": {
@@ -335,6 +335,12 @@
       "cacheVariables": {
         "BUILD_TESTING": "true"
       }
+    },
+    {
+      "name": "generate-doxygen",
+      "displayName": "zz-Generate Doxygen",
+      "inherits": "x64-static",
+      "cacheVariables": { "BUILD_DOCUMENTATION": true }
     }
   ]
 }

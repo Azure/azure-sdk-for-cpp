@@ -101,7 +101,8 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
-target_link_libraries(azure-core-amqp PRIVATE uamqp PUBLIC Azure::azure-core)
+# uAMQP's headers require the manual addition of umock_c and azure_macro_utils_c to the target link libraries. 
+target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
