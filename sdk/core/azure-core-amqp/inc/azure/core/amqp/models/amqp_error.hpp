@@ -23,11 +23,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   using UniqueAmqpErrorHandle = Azure::Core::_internal::UniqueHandle<ERROR_INSTANCE_TAG>;
 
-  class AmqpErrorCondition
+  class AmqpErrorCondition final
       : public Azure::Core::_internal::ExtendableEnumeration<AmqpErrorCondition> {
   public:
-    AmqpErrorCondition() : ExtendableEnumeration(""){};
-    AmqpErrorCondition(std::string const& value) : ExtendableEnumeration(value) {}
+    AmqpErrorCondition() : ExtendableEnumeration(){};
+    explicit AmqpErrorCondition(std::string const& value) : ExtendableEnumeration(value) {}
 
     /** @brief An AMQP Internal Error
      *

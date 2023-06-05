@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(AzureBuildTargetForCI)
+include(GoogleTest)
 
 # Unit Tests
 add_executable(azure-core-amqp-tests

@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     auto token = m_session->GetConnection()->GetSecurityToken(m_managementNodeName, context);
     if (!token.empty())
     {
-      //      messageToSend.ApplicationProperties["security_token"] = Models::AmqpValue{token};
+      messageToSend.ApplicationProperties["security_token"] = Models::AmqpValue{token};
     }
     if (!amqp_management_execute_operation_async(
             m_management.get(),

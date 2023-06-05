@@ -58,26 +58,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       session1.End("", "");
     }
-
-#if 0
-  // Create a sender
-  Sender sender(session, "test");
-
-  // Create a receiver
-  Receiver receiver(session, "test");
-
-  // Create a message
-  Message message;
-
-  // Send a message
-  sender.Send(message);
-
-  // Receive a message
-  receiver.Receive();
-
-  // Close the connection
-  connection.Close();
-#endif
   }
 
   TEST_F(TestSessions, SessionProperties)

@@ -32,40 +32,6 @@ void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::
 
 using namespace Azure::Core::Amqp::_internal;
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
-#if 0
-    /** Configure the MessageReceiver for receiving messages from a service instance.
-   */
-
-  MessageReceiver::MessageReceiver(
-      Session& session,
-      Models::_internal::MessageSource const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          source,
-          options,
-          eventHandler)}
-  {
-  }
-
-  /** Configure the MessageReceiver for receiving messages from a network listener.
-   */
-  MessageReceiver::MessageReceiver(
-      Session const& session,
-      LinkEndpoint& linkEndpoint,
-      Models::_internal::MessageSource const& source,
-      MessageReceiverOptions const& options,
-      MessageReceiverEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::MessageReceiverImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          linkEndpoint,
-          source,
-          options,
-          eventHandler)}
-  {
-  }
-#endif
 
   MessageReceiver::~MessageReceiver() noexcept {}
 

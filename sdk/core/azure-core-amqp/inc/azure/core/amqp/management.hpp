@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Cancelled,
   };
 
-  struct ManagementClientOptions
+  struct ManagementClientOptions final
   {
     /**
      * @brief Expected status code key name.
@@ -99,7 +99,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /**
    * @brief Result of a management operation.
    */
-  struct ManagementOperationResult
+  struct ManagementOperationResult final
   {
     /**
      * @brief The status of the operation.

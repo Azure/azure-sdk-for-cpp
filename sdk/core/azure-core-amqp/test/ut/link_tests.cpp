@@ -50,26 +50,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link1(session, "MySession", SessionRole::Sender, "Source1", "Target1");
       Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
     }
-
-#if 0
-  // Create a sender
-  Sender sender(session, "test");
-
-  // Create a receiver
-  Receiver receiver(session, "test");
-
-  // Create a message
-  Message message;
-
-  // Send a message
-  sender.Send(message);
-
-  // Receive a message
-  receiver.Receive();
-
-  // Close the connection
-  connection.Close();
-#endif
   }
 
   TEST_F(TestLinks, LinkProperties)
