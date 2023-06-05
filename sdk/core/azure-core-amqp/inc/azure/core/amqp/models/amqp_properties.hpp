@@ -136,7 +136,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     Nullable<uint32_t> GroupSequence;
 
-    /** @brief The group the reply message blongs to.
+    /** @brief The group the reply message belongs to.
      *
      * This is a client-specific id that is used so that client can send replies to this message to
      * a specific group
