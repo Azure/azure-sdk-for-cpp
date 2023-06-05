@@ -5,17 +5,6 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  void updateDistinctServers(
-      const Azure::Core::CaseInsensitiveMap& headers,
-      std::unordered_set<std::string>& distinctServers)
-  {
-    // The third part of a storage request id means the server node id.
-    // For Example, RequestId:3bcf963b-601e-0054-1f40-910c39000000, '0054' is the server node which
-    // served this request.
-    std::string serverId = headers.find("x-ms-request-id")->second.substr(14, 4);
-    distinctServers.insert(serverId);
-  }
-
   // If connection is reused, the requests with the same connection should hit the same sever. So
   // this test verifies whether a series of requests hit the same server.
   TEST_F(BlockBlobClientTest, IsConnectionReused_LIVEONLY_)
@@ -39,17 +28,26 @@ namespace Azure { namespace Storage { namespace Test {
     }
     std::unordered_set<std::string> distinctServers;
     size_t totalHitCount = 0;
+
+    auto updateDistinctServers = [&](const Azure::Core::CaseInsensitiveMap& headers) {
+      // The third part of a storage request id means the server node id.
+      // For Example, RequestId:3bcf963b-601e-0054-1f40-910c39000000, '0054' is the server node
+      // which served this request.
+      std::string serverId = headers.find("x-ms-request-id")->second.substr(14, 4);
+      distinctServers.insert(serverId);
+    };
+
     for (auto& blobClient : blobClients)
     {
       auto uploadResult = blobClient.Upload(bodyStream);
-      updateDistinctServers(uploadResult.RawResponse->GetHeaders(), distinctServers);
+      updateDistinctServers(uploadResult.RawResponse->GetHeaders());
       ++totalHitCount;
       auto downloadResult = blobClient.Download();
       ReadBodyStream(downloadResult.Value.BodyStream);
-      updateDistinctServers(downloadResult.RawResponse->GetHeaders(), distinctServers);
+      updateDistinctServers(downloadResult.RawResponse->GetHeaders());
       ++totalHitCount;
       auto deleteResult = blobClient.Delete();
-      updateDistinctServers(deleteResult.RawResponse->GetHeaders(), distinctServers);
+      updateDistinctServers(deleteResult.RawResponse->GetHeaders());
       ++totalHitCount;
     }
 
