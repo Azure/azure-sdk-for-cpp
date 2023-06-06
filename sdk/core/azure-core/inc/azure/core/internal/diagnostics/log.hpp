@@ -27,7 +27,6 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     Log() = delete;
     ~Log() = delete;
 
-  public:
     class LoggerStringBuffer : public std::stringbuf {
     public:
       LoggerStringBuffer(Logger::Level level) : m_level{level} {}
@@ -40,6 +39,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     private:
       Logger::Level m_level;
     };
+
+  public:
 
     class LoggerStream : public std::basic_ostream<char> {
     public:
