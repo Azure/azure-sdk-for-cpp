@@ -117,9 +117,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_events->OnMessageSenderDisconnected(error);
       }
       // Log that an error occurred.
-      Log::Write(
-          Logger::Level::Error,
-          "Message sender link detached: " + error.Condition.ToString() + ": " + error.Description);
+      Log::Stream(Logger::Level::Error)
+          << "Message sender link detached: " << error.Condition.ToString() << ": "
+          << error.Description << std::endl;
 
       // Cache the error we received in the OnDetach notification so we can return it to the user on
       // the next send which fails.
@@ -208,112 +208,112 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 // instead.
 #pragma warning(disable : 4996)
 #endif
-          throw std::runtime_error(
-              "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
-              + "\".");
+      throw std::runtime_error(
+          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
+          + "\".");
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-          // LCOV_EXCL_STOP
-        }
-      }
-      void MessageSenderImpl::Close()
-      {
-        if (messagesender_close(m_messageSender.get()))
-        {
-          throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
-        }
-      }
+      // LCOV_EXCL_STOP
+    }
+  }
+  void MessageSenderImpl::Close()
+  {
+    if (messagesender_close(m_messageSender.get()))
+    {
+      throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
+    }
+  }
 
-      template <typename CompleteFn> struct RewriteSendComplete
+  template <typename CompleteFn> struct RewriteSendComplete
+  {
+    static void OnOperation(
+        CompleteFn onComplete,
+        MESSAGE_SEND_RESULT sendResult,
+        AMQP_VALUE disposition)
+    {
+      _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
+      switch (sendResult)
       {
-        static void OnOperation(
-            CompleteFn onComplete,
-            MESSAGE_SEND_RESULT sendResult,
-            AMQP_VALUE disposition)
-        {
-          _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
-          switch (sendResult)
+        case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Invalid; // LCOV_EXCL_LINE
+          break; // LCOV_EXCL_LINE
+        case MESSAGE_SEND_OK:
+          result = _internal::MessageSendStatus::Ok;
+          break;
+        case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
+          break; // LCOV_EXCL_LINE
+        case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
+          break; // LCOV_EXCL_LINE
+        case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
+          result = _internal::MessageSendStatus::Timeout; // LCOV_EXCL_LINE
+          break; // LCOV_EXCL_LINE
+      }
+      onComplete(result, disposition);
+    }
+  };
+
+  void MessageSenderImpl::QueueSend(
+      Models::AmqpMessage const& message,
+      Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
+      Context const& context)
+  {
+    auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
+                       decltype(onSendComplete),
+                       RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
+    auto result = messagesender_send_async(
+        m_messageSender.get(),
+        Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
+        std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
+        operation.release(),
+        0 /*timeout*/);
+    if (result == nullptr)
+    {
+      throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
+    }
+    (void)context;
+  }
+
+  std::tuple<_internal::MessageSendStatus, Models::AmqpValue> MessageSenderImpl::Send(
+      Models::AmqpMessage const& message,
+      Context const& context)
+  {
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<Azure::Core::Amqp::_internal::MessageSendStatus, Models::AmqpValue>
+            sendCompleteQueue;
+
+    QueueSend(
+        message,
+        [&sendCompleteQueue, this](
+            Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
+            Models::AmqpValue deliveryStatus) {
+          // If the send failed. then we need to return the error. If the send completed because
+          // of an error, it's possible that the deliveryStatus provided is null. In that case,
+          // we use the cached saved error because it is highly likely to be better than
+          // nothing.
+          if (sendResult != _internal::MessageSendStatus::Ok)
           {
-            case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
-              result = _internal::MessageSendStatus::Invalid; // LCOV_EXCL_LINE
-              break; // LCOV_EXCL_LINE
-            case MESSAGE_SEND_OK:
-              result = _internal::MessageSendStatus::Ok;
-              break;
-            case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
-              result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
-              break; // LCOV_EXCL_LINE
-            case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
-              result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
-              break; // LCOV_EXCL_LINE
-            case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
-              result = _internal::MessageSendStatus::Timeout; // LCOV_EXCL_LINE
-              break; // LCOV_EXCL_LINE
+            if (deliveryStatus.IsNull())
+            {
+              deliveryStatus = m_savedMessageError;
+            }
           }
-          onComplete(result, disposition);
-        }
-      };
-
-      void MessageSenderImpl::QueueSend(
-          Models::AmqpMessage const& message,
-          Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
-          Context const& context)
-      {
-        auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
-                           decltype(onSendComplete),
-                           RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
-        auto result = messagesender_send_async(
-            m_messageSender.get(),
-            Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
-            std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
-            operation.release(),
-            0 /*timeout*/);
-        if (result == nullptr)
-        {
-          throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
-        }
-        (void)context;
-      }
-
-      std::tuple<_internal::MessageSendStatus, Models::AmqpValue> MessageSenderImpl::Send(
-          Models::AmqpMessage const& message,
-          Context const& context)
-      {
-        Azure::Core::Amqp::Common::_internal::
-            AsyncOperationQueue<Azure::Core::Amqp::_internal::MessageSendStatus, Models::AmqpValue>
-                sendCompleteQueue;
-
-        QueueSend(
-            message,
-            [&sendCompleteQueue, this](
-                Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
-                Models::AmqpValue deliveryStatus) {
-              // If the send failed. then we need to return the error. If the send completed because
-              // of an error, it's possible that the deliveryStatus provided is null. In that case,
-              // we use the cached saved error because it is highly likely to be better than
-              // nothing.
-              if (sendResult != _internal::MessageSendStatus::Ok)
-              {
-                if (deliveryStatus.IsNull())
-                {
-                  deliveryStatus = m_savedMessageError;
-                }
-              }
-              else
-              {
-                // If we successfully sent the message, then whatever saved error should be cleared,
-                // it's no longer valid.
-                m_savedMessageError = Models::AmqpValue();
-              }
-              sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-            },
-            context);
-        auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
-        if (result)
-        {
-          return std::move(*result);
-        }
-        throw std::runtime_error("Error sending message"); // LCOV_EXCL_LINE
-      }
+          else
+          {
+            // If we successfully sent the message, then whatever saved error should be cleared,
+            // it's no longer valid.
+            m_savedMessageError = Models::AmqpValue();
+          }
+          sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
+        },
+        context);
+    auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
+    if (result)
+    {
+      return std::move(*result);
+    }
+    throw std::runtime_error("Error sending message"); // LCOV_EXCL_LINE
+  }
 }}}} // namespace Azure::Core::Amqp::_detail

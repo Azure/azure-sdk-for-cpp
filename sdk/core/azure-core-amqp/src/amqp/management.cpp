@@ -183,8 +183,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ManagementClientImpl* management = static_cast<ManagementClientImpl*>(context);
     if (management->m_options.EnableTrace)
     {
-      Log::Write(
-          Logger::Level::Informational, "OnManagementOpenComplete: " + std::to_string(openResult));
+      Log::Stream(Logger::Level::Informational)
+          << "OnManagementOpenComplete: " << std::to_string(openResult) << std::endl;
     }
     management->m_openCompleteQueue.CompleteOperation(openResult);
   }
