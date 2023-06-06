@@ -41,13 +41,9 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     };
 
   public:
-
     class LoggerStream : public std::basic_ostream<char> {
     public:
-      LoggerStream(Logger::Level level)
-          : std::ostream(&m_stringBuffer), m_stringBuffer{level}
-      {
-      }
+      LoggerStream(Logger::Level level) : std::ostream(&m_stringBuffer), m_stringBuffer{level} {}
       ~LoggerStream() override = default;
 
     private:
