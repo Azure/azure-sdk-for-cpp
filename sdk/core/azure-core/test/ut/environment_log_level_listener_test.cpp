@@ -235,7 +235,6 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithNoCrlf)
   std::cerr.rdbuf(old);
 }
 
-
 // Verify that the log listener does not insert a crlf at the end of the message if one is provided.
 TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithCrlf)
 {
