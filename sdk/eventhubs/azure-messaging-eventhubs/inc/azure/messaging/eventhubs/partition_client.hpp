@@ -107,7 +107,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
     std::string m_offsetExpression;
     uint64_t m_ownerLevel;
-    uint32_t m_prefetchCount;
+    int32_t m_prefetchCount;
     PartitionClientOptions m_partitionOptions;
     std::string m_partitionId;
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
@@ -125,12 +125,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   public:
     std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
-        int const& maxMessages,
+        uint32_t const& maxMessages,
         Azure::Core::Context ctx = Azure::Core::Context(),
         ReceiveEventsOptions options = ReceiveEventsOptions())
     {
       (void)options;
       std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages;
+      //bool prefetchDisabled = m_prefetchCount < 0;
+
       while (messages.size() < maxMessages && !ctx.IsCancelled())
       {
         auto message = m_receivers[0].WaitForIncomingMessage(ctx);
