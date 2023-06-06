@@ -16,6 +16,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/platform.hpp>
 
 #include <azure_uamqp_c/message_sender.h>
 
@@ -206,7 +207,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // LCOV_EXCL_START
       auto err = errno;
       char buf[256];
+#if defined(AZ_PLATFORM_WINDOWS)
       strerror_s(buf, sizeof(buf), err);
+#else
+      strerror_r(buf, sizeof(buf), err);
+#endif
       throw std::runtime_error(
           "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       // LCOV_EXCL_STOP
