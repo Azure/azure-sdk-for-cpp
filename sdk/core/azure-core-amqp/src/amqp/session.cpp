@@ -237,9 +237,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(shared_from_this());
     }
     auto accessToken = GetConnection()->GetSecurityToken(audience, context);
-    Log::Write(
-        Logger::Level::Informational,
-        "Authenticate with audience: " + audience + ", token: " + accessToken);
+    Log::Stream(Logger::Level::Informational)
+        << "Authenticate with audience: " << audience << ", token: " << accessToken << std::endl;
+
     m_claimsBasedSecurity->SetTrace(GetConnection()->EnableTrace());
     if (!m_cbsOpen)
     {

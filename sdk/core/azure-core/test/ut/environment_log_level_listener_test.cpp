@@ -127,16 +127,15 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerVerbose)
   SetLogLevel("verbose");
 
   std::stringstream buffer;
-  std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-  std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
   EXPECT_NE(listener, nullptr);
 
   listener(Logger::Level::Verbose, "message");
   EXPECT_NE(buffer.str().find("DEBUG : message"), std::string::npos);
-  std::cerr.rdbuf(old);
+  std::cout.rdbuf(old);
 }
 
 TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerError)
@@ -144,10 +143,10 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerError)
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("verbose");
 
+  // Error logging goes to cerr, all other logging goes to cout.
   std::stringstream buffer;
   std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
 
-  std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
   EXPECT_NE(listener, nullptr);
@@ -162,17 +161,17 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWarning)
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("verbose");
 
+  // Error logging goes to cerr, all other logging goes to cout.
   std::stringstream buffer;
-  std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-  std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
   EXPECT_NE(listener, nullptr);
 
   listener(Logger::Level::Warning, "message");
   EXPECT_NE(buffer.str().find("WARN  : message"), std::string::npos);
-  std::cerr.rdbuf(old);
+  std::cout.rdbuf(old);
 }
 
 TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerInformational)
@@ -180,17 +179,17 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerInformational)
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("verbose");
 
+  // Error logging goes to cerr, all other logging goes to cout.
   std::stringstream buffer;
-  std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-  std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
   EXPECT_NE(listener, nullptr);
 
   listener(Logger::Level::Informational, "message");
   EXPECT_NE(buffer.str().find("INFO  : message"), std::string::npos);
-  std::cerr.rdbuf(old);
+  std::cout.rdbuf(old);
 }
 
 TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerUnknown)
@@ -198,15 +197,74 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerUnknown)
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("verbose");
 
+  // Error logging goes to cerr, all other logging goes to cout.
   std::stringstream buffer;
-  std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-  std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
   EXPECT_NE(listener, nullptr);
 
   listener(static_cast<Logger::Level>(42), "message");
   EXPECT_NE(buffer.str().find("????? : message"), std::string::npos);
-  std::cerr.rdbuf(old);
+  std::cout.rdbuf(old);
+}
+
+// Verify that the log listener inserts a crlf at the end of the message if none is provided.
+TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithNoCrlf)
+{
+  EnvironmentLogLevelListener::SetInitialized(false);
+  SetLogLevel("verbose");
+
+  // Error logging goes to cerr, all other logging goes to cout.
+  std::stringstream buffer;
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+
+  auto listener = EnvironmentLogLevelListener::GetLogListener();
+
+  EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Informational, "message");
+  EXPECT_NE(buffer.str().find("INFO  : message\n"), std::string::npos);
+  std::cout.rdbuf(old);
+}
+
+// Verify that the log listener does not insert a crlf at the end of the message if one is provided.
+TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithCrlf)
+{
+  EnvironmentLogLevelListener::SetInitialized(false);
+  SetLogLevel("verbose");
+
+  // Error logging goes to cerr, all other logging goes to cout.
+  std::stringstream buffer;
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+
+  auto listener = EnvironmentLogLevelListener::GetLogListener();
+
+  EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Informational, "message\n");
+  EXPECT_NE(buffer.str().find("INFO  : message\n"), std::string::npos);
+  EXPECT_EQ(buffer.str().find("INFO  : message\n\n"), std::string::npos);
+  std::cout.rdbuf(old);
+}
+
+// Verify that the log listener handles empty strings correctly.
+TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithEmptyString)
+{
+  EnvironmentLogLevelListener::SetInitialized(false);
+  SetLogLevel("verbose");
+
+  std::stringstream buffer;
+  // Error logging goes to cerr, all other logging goes to cout.
+  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+
+  auto listener = EnvironmentLogLevelListener::GetLogListener();
+
+  EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Informational, "");
+  EXPECT_NE(buffer.str().find("INFO  : \n"), std::string::npos);
+  EXPECT_EQ(buffer.str().find("INFO  : \n\n"), std::string::npos);
+  std::cout.rdbuf(old);
 }

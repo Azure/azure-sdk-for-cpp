@@ -1487,7 +1487,7 @@ namespace Azure { namespace Core {
 
       Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCrlFromUrl(std::string const& url)
       {
-        Log::Write(Logger::Level::Informational, "Load CRL from Url: " + url);
+        Log::Stream(Logger::Level::Informational) << "Load CRL from Url: " << url << std::endl;
         Azure::Core::_internal::UniqueHandle<X509_CRL> crl;
 #if defined(USE_OPENSSL_3)
         crl = Azure::Core::_internal::MakeUniqueHandle(

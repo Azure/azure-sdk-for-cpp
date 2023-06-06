@@ -7,6 +7,8 @@
 #include "azure/core/dll_import_export.hpp"
 
 #include <atomic>
+#include <iostream>
+#include <sstream>
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
@@ -25,7 +27,29 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     Log() = delete;
     ~Log() = delete;
 
+    class LoggerStringBuffer : public std::stringbuf {
+    public:
+      LoggerStringBuffer(Logger::Level level) : m_level{level} {}
+      LoggerStringBuffer(LoggerStringBuffer&& that) = default;
+      LoggerStringBuffer& operator=(LoggerStringBuffer&& that) = default;
+      ~LoggerStringBuffer() override = default;
+
+      virtual int sync() override;
+
+    private:
+      Logger::Level m_level;
+    };
+
   public:
+    class LoggerStream : public std::basic_ostream<char> {
+    public:
+      LoggerStream(Logger::Level level) : std::ostream(&m_stringBuffer), m_stringBuffer{level} {}
+      ~LoggerStream() override = default;
+
+    private:
+      LoggerStringBuffer m_stringBuffer;
+    };
+
     static bool ShouldWrite(Logger::Level level)
     {
       return g_isLoggingEnabled && level >= g_logLevel;
@@ -35,5 +59,6 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
 
     static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
+    static LoggerStream& Stream(Logger::Level level);
   };
 }}}} // namespace Azure::Core::Diagnostics::_internal

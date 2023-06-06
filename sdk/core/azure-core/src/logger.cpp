@@ -6,8 +6,10 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "private/environment_log_level_listener.hpp"
 
+#include <iostream>
 #include <mutex>
 #include <shared_mutex>
+#include <sstream>
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
@@ -49,3 +51,35 @@ void Logger::SetListener(
 }
 
 void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
+
+int Log::LoggerStringBuffer::sync()
+{
+  Log::Write(m_level, str());
+  str(std::string());
+  return 0;
+}
+
+static Log::LoggerStream g_verboseLogger{Logger::Level::Verbose};
+static Log::LoggerStream g_informationalLogger{Logger::Level::Informational};
+static Log::LoggerStream g_warningLogger{Logger::Level::Warning};
+static Log::LoggerStream g_errorLogger{Logger::Level::Error};
+
+/** Returns a custom ostream implementation with a logger based stream buffer.
+ *  @param level The level of the log message.
+ *  @return A custom ostream implementation.
+ */
+Log::LoggerStream& Log::Stream(Logger::Level level)
+{
+  switch (level)
+  {
+    case Logger::Level::Verbose:
+      return g_verboseLogger;
+    case Logger::Level::Informational:
+      return g_informationalLogger;
+    case Logger::Level::Warning:
+      return g_warningLogger;
+    case Logger::Level::Error:
+      return g_errorLogger;
+  }
+  throw std::runtime_error("Unknown stream logger level.");
+}

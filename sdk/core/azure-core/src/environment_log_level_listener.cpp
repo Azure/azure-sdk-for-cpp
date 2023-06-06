@@ -120,11 +120,30 @@ EnvironmentLogLevelListener::GetLogListener()
 
   static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
       [](auto level, auto message) {
-        std::cerr << '['
-                  << Azure::DateTime(std::chrono::system_clock::now())
-                         .ToString(
-                             DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
+        std::ostream* os = &std::cout;
+        if (level == Logger::Level::Error)
+        {
+          os = &std::cerr;
+        }
+        *os << '['
+            << Azure::DateTime(std::chrono::system_clock::now())
+                   .ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+            << "] " << LogLevelToConsoleString(level) << " : " << message;
+
+        // If the message ends with a new line, flush the stream otherwise insert a new line to
+        // terminate the message.
+        //
+        // If the client of the logger APIs is using the stream form of the logger, then it will
+        // insert a \n character when the client uses std::endl. This check ensures that we don't
+        // insert unnecessary new lines.
+        if (!message.empty() && message.back() == '\n')
+        {
+          *os << std::flush;
+        }
+        else
+        {
+          *os << std::endl;
+        }
       };
 
   return consoleLogger;

@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+// Enable declaration of strerror_s.
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include "azure/core/amqp/message_receiver.hpp"
 
 #include "azure/core/amqp/connection.hpp"
@@ -14,6 +17,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/platform.hpp>
 
 #include <azure_uamqp_c/message_receiver.h>
 
@@ -103,10 +107,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_eventHandler->OnMessageReceiverDisconnected(error);
       }
       // Log that an error occurred.
-      Log::Write(
-          Logger::Level::Error,
-          "Message receiver link detached: " + error.Condition.ToString() + ": "
-              + error.Description);
+      Log::Stream(Logger::Level::Error)
+          << "Message receiver link detached: " + error.Condition.ToString() << ": "
+          << error.Description << std::endl;
 
       // Cache the error we received in the OnDetach notification so we can return it to the user on
       // the next send which fails.
@@ -232,10 +235,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      std::stringstream ss;
-      ss << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
-         << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
-      Log::Write(Logger::Level::Verbose, ss.str());
+      Log::Stream(Logger::Level::Verbose)
+          << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
+          << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
+      ;
     }
 
     // If we are transitioning to the error state, we want to stick a response on the incoming queue
@@ -279,38 +282,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // LCOV_EXCL_START
       auto err = errno;
-#ifdef _MSC_VER
-#pragma warning(push)
-// warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
-// instead.
-#pragma warning(disable : 4996)
+#if defined(AZ_PLATFORM_WINDOWS)
+      char buf[256];
+      strerror_s(buf, sizeof(buf), err);
+#else
+      std::string buf{strerror(err)};
 #endif
-          throw std::runtime_error(
-              "Could not open message receiver. errno=" + std::to_string(err) + ", \""
-              + strerror(err) + "\".");
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-          // LCOV_EXCL_STOP
-        }
-      }
+      throw std::runtime_error(
+          "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
+      // LCOV_EXCL_STOP
+    }
+  }
 
-      void MessageReceiverImpl::Close()
-      {
-        if (messagereceiver_close(m_messageReceiver.get()))
-        {
-          throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
-        }
-      }
+  void MessageReceiverImpl::Close()
+  {
+    if (messagereceiver_close(m_messageReceiver.get()))
+    {
+      throw std::runtime_error("Could not close message receiver"); // LCOV_EXCL_LINE
+    }
+  }
 
-      std::string MessageReceiverImpl::GetLinkName() const
-      {
-        const char* linkName;
-        if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
-        {
-          throw std::runtime_error("Could not get link name");
-        }
-        return std::string(linkName);
-      }
+  std::string MessageReceiverImpl::GetLinkName() const
+  {
+    const char* linkName;
+    if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
+    {
+      throw std::runtime_error("Could not get link name");
+    }
+    return std::string(linkName);
+  }
 
 }}}} // namespace Azure::Core::Amqp::_detail
