@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition InternalError;
 
-    /** @brief Entity Not FOund
+    /** @brief Entity Not Found
      * A peer attempted to work with a remote entity that does not
      * exist.
      *
