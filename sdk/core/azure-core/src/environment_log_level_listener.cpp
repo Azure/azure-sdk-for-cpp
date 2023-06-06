@@ -120,11 +120,23 @@ EnvironmentLogLevelListener::GetLogListener()
 
   static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
       [](auto level, auto message) {
-        std::cerr << '['
-                  << Azure::DateTime(std::chrono::system_clock::now())
-                         .ToString(
-                             DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
+        std::ostream* os = &std::cout;
+        if (level == Logger::Level::Error)
+        {
+          os = &std::cerr;
+        }
+        *os << '['
+            << Azure::DateTime(std::chrono::system_clock::now())
+                   .ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+            << "] " << LogLevelToConsoleString(level) << " : " << message;
+        if (!message.empty() && message.back() == '\n')
+        {
+          *os << std::flush;
+        }
+        else
+        {
+          *os << std::endl;
+        }
       };
 
   return consoleLogger;
