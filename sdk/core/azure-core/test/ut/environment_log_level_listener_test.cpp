@@ -196,7 +196,6 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerInformational)
   std::cerr.rdbuf(old);
 }
 
-
 TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerUnknown)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
