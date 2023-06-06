@@ -5,6 +5,10 @@ cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(MSVC)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+endif()
+
 project(eventhub_sas_writer_sample)
 
 add_executable(eventhub_token_writer_sample

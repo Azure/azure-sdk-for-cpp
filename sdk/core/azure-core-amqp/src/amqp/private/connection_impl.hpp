@@ -52,6 +52,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     ConnectionImpl(
         std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> tokenCredential,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
@@ -98,6 +99,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void SetProperties(Models::AmqpValue properties);
     Models::AmqpMap GetProperties() const;
+    std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
+    bool EnableTrace() const { return m_options.EnableTrace; }
+    bool IsSasCredential() const;
+    std::string GetSecurityToken(std::string const& audience, Azure::Core::Context const& context)
+        const;
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
@@ -110,6 +116,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_newSessionQueue;
     _internal::ConnectionEvents* m_eventHandler{};
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
+    std::shared_ptr<Credentials::TokenCredential> m_credential{};
+    std::map<std::string, Credentials::AccessToken> m_tokenStore;
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,

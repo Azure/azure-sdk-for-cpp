@@ -66,31 +66,49 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     if (socketlistener_start(m_socket, SocketListener::OnSocketAcceptedFn, this))
     {
       auto err = errno;
-      throw std::runtime_error(
-          "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
-          + "\".");
-    }
-    m_started = true;
-  }
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+            throw std::runtime_error(
+                "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+                + "\".");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+          }
+          m_started = true;
+        }
 
-  void SocketListener::Stop()
-  {
-    if (m_started)
-    {
-      if (socketlistener_stop(m_socket))
-      {
-        auto err = errno;
-        throw std::runtime_error(
-            "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
-            + "\".");
-      }
-    }
-    else
-    {
-      throw std::runtime_error("Socket listener not started.");
-    }
-    m_started = false;
-  }
+        void SocketListener::Stop()
+        {
+          if (m_started)
+          {
+            if (socketlistener_stop(m_socket))
+            {
+              auto err = errno;
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+              throw std::runtime_error(
+                  "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+                  + "\".");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+            }
+          }
+          else
+          {
+            throw std::runtime_error("Socket listener not started.");
+          }
+          m_started = false;
+        }
 
-  void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
+        void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

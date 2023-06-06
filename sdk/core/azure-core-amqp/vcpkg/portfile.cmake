@@ -12,6 +12,7 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}/sdk/core/azure-core-amqp/"
     OPTIONS
         -DWARNINGS_AS_ERRORS=OFF
+        -DBUILD_TESTING=OFF
 )
 
 vcpkg_cmake_install()

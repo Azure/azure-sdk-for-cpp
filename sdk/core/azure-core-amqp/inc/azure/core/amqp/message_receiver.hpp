@@ -7,6 +7,7 @@
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
 #include "link.hpp"
+#include "models/amqp_error.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
 #include "session.hpp"
@@ -82,23 +83,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageReceiver const& receiver,
         Models::AmqpMessage const& message)
         = 0;
+    virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) = 0;
   };
 
   class MessageReceiver final {
   public:
-    MessageReceiver(
-        Session& session,
-        Models::_internal::MessageSource const& receiverSource,
-        MessageReceiverOptions const& options,
-        MessageReceiverEvents* receiverEvents = nullptr);
-    MessageReceiver(
-        Session const& session,
-        LinkEndpoint& linkEndpoint,
-        Models::_internal::MessageSource const& receiverSource,
-        MessageReceiverOptions const& options,
-        MessageReceiverEvents* receiverEvents = nullptr);
-
-    MessageReceiver() = default;
     ~MessageReceiver() noexcept;
 
     MessageReceiver(MessageReceiver const&) = default;
@@ -106,19 +95,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     MessageReceiver(MessageReceiver&&) = default;
     MessageReceiver& operator=(MessageReceiver&&) = default;
 
-    operator bool() const;
-
     void Open(Context const& context = {});
     void Close();
     std::string GetLinkName() const;
     std::string GetSourceName() const;
-    uint32_t GetReceivedMessageId();
-    void SendMessageDisposition(
-        const char* linkName,
-        uint32_t messageNumber,
-        Models::AmqpValue deliveryState);
 
-    Models::AmqpMessage WaitForIncomingMessage(Context const& context = {});
+    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    WaitForIncomingMessage(Context const& context = {});
 
   private:
     MessageReceiver(std::shared_ptr<_detail::MessageReceiverImpl> impl) : m_impl{impl} {}

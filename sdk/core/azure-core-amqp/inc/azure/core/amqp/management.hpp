@@ -13,7 +13,8 @@
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  class ManagementImpl;
+  class ManagementClientImpl;
+  class ManagementClientFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -34,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Cancelled,
   };
 
-  struct ManagementOptions
+  struct ManagementClientOptions final
   {
     /**
      * @brief Expected status code key name.
@@ -85,9 +86,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /**
    * @brief Callback event handler for management events such as error.
    */
-  class ManagementEvents {
+  class ManagementClientEvents {
   protected:
-    ~ManagementEvents() {}
+    ~ManagementClientEvents() {}
 
   public:
     /** @brief Called when an error occurs.
@@ -98,7 +99,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /**
    * @brief Result of a management operation.
    */
-  struct ManagementOperationResult
+  struct ManagementOperationResult final
   {
     /**
      * @brief The status of the operation.
@@ -128,24 +129,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
    * for more information.
    *
    */
-  class Management final {
+  class ManagementClient final {
   public:
-    /**
-     * @brief Create a new Management object instance.
-     *
-     * @param session - the session on which to create the instance.
-     * @param managementEntityPath - the entity path of the management object.
-     * @param options - additional options for the Management object.
-     * @param managementEvents - events associated with the management object.
-     */
-    Management(
-        Session const& session,
-        std::string const& managementEntityPath,
-        ManagementOptions const& options,
-        ManagementEvents* managementEvents = nullptr);
-
-    Management(std::shared_ptr<_detail::ManagementImpl> impl) : m_impl{impl} {}
-    ~Management() noexcept = default;
+    ~ManagementClient() noexcept = default;
 
     /**
      * @brief Open the management instance.
@@ -184,7 +170,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Context const& context = {});
 
   private:
-    std::shared_ptr<_detail::ManagementImpl> m_impl;
+    friend class Azure::Core::Amqp::_detail::ManagementClientFactory;
+    ManagementClient(std::shared_ptr<_detail::ManagementClientImpl> impl) : m_impl{impl} {}
+
+    std::shared_ptr<_detail::ManagementClientImpl> m_impl;
   };
 
 }}}} // namespace Azure::Core::Amqp::_internal

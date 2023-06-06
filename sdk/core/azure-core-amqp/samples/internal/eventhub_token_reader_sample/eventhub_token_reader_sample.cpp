@@ -27,11 +27,12 @@ int main()
   connectionOptions.ContainerId = "whatever";
   connectionOptions.EnableTrace = true;
   connectionOptions.Port = credential->GetPort();
-  Azure::Core::Amqp::_internal::Connection connection(credential->GetHostName(), connectionOptions);
+  Azure::Core::Amqp::_internal::Connection connection(
+      credential->GetHostName(), credential, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = 100;
-  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
@@ -40,8 +41,8 @@ int main()
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   receiverOptions.EnableTrace = true;
 
-  Azure::Core::Amqp::_internal::MessageReceiver receiver(
-      session, entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions);
+  Azure::Core::Amqp::_internal::MessageReceiver receiver(session.CreateMessageReceiver(
+      entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions));
   // Open the connection to the remote.
   receiver.Open();
 
@@ -53,7 +54,15 @@ int main()
   while (messageReceiveCount < maxMessageReceiveCount)
   {
     auto message = receiver.WaitForIncomingMessage();
-    std::cout << "Received message: " << message << std::endl;
+    if (message.first)
+    {
+      std::cout << "Received message: " << message.first.Value() << std::endl;
+    }
+    else
+    {
+      std::cout << "Message received is in error: " << message.second << std::endl;
+      break;
+    }
     messageReceiveCount += 1;
   }
 

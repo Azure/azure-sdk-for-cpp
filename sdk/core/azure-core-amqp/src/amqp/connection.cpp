@@ -10,6 +10,7 @@
 #include "azure/core/amqp/network/tls_transport.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
+#include "private/session_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
@@ -45,14 +46,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   // Create a connection with a request URI and options.
   Connection::Connection(
       std::string const& hostName,
+      std::shared_ptr<Credentials::TokenCredential> credential,
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
-      : m_impl{std::make_shared<_detail::ConnectionImpl>(hostName, options, eventHandler)}
+      : m_impl{
+          std::make_shared<_detail::ConnectionImpl>(hostName, credential, options, eventHandler)}
   {
     m_impl->FinishConstruction();
   }
 
   Connection::~Connection() {}
+
+  Session Connection::CreateSession(
+      SessionOptions const& sessionOptions,
+      SessionEvents* sessionEvents) const
+  {
+    return Azure::Core::Amqp::_detail::SessionFactory::CreateFromInternal(
+        std::make_shared<_detail::SessionImpl>(m_impl, sessionOptions, sessionEvents));
+  }
+
+  Session Connection::CreateSession(
+      Endpoint& endpoint,
+      SessionOptions const& sessionOptions,
+      SessionEvents* sessionEvents) const
+  {
+    return Azure::Core::Amqp::_detail::SessionFactory::CreateFromInternal(
+        std::make_shared<_detail::SessionImpl>(m_impl, endpoint, sessionOptions, sessionEvents));
+  }
 
   void Connection::Poll() { m_impl->Poll(); }
 
@@ -105,9 +125,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // Create a connection with a request URI and options.
   ConnectionImpl::ConnectionImpl(
       std::string const& hostName,
+      std::shared_ptr<Credentials::TokenCredential> credential,
       _internal::ConnectionOptions const& options,
       _internal::ConnectionEvents* eventHandler)
-      : m_hostName{hostName}, m_port{options.Port}, m_options{options}, m_eventHandler{eventHandler}
+      : m_hostName{hostName}, m_port{options.Port}, m_options{options},
+        m_eventHandler{eventHandler}, m_credential{credential}
   {
     EnsureGlobalStateInitialized();
 
@@ -365,4 +387,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "Could not set remote idle timeout send frame ratio."); // LCOV_EXCL_LINE
     }
   }
+
+  bool ConnectionImpl::IsSasCredential() const
+  {
+    if (GetCredential())
+    {
+      return GetCredential()->GetCredentialName() == "ServiceBusSasConnectionStringCredential";
+    }
+    return false;
+  }
+
+  std::string ConnectionImpl::GetSecurityToken(
+      std::string const& audience,
+      Azure::Core::Context const& context) const
+  {
+    if (GetCredential())
+    {
+      if (m_tokenStore.find(audience) == m_tokenStore.end())
+      {
+        Credentials::TokenRequestContext requestContext;
+        bool isSasToken = IsSasCredential();
+        if (isSasToken)
+        {
+          requestContext.MinimumExpiration = std::chrono::minutes(60);
+        }
+        requestContext.Scopes = m_options.AuthenticationScopes;
+        return GetCredential()->GetToken(requestContext, context).Token;
+      }
+      return m_tokenStore.at(audience).Token;
+    }
+    return "";
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail

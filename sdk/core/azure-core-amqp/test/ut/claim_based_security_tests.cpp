@@ -17,143 +17,144 @@
 
 #include <gtest/gtest.h>
 
-// extern uint16_t FindAvailableSocket();
+namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  class TestCbs : public testing::Test {
+  protected:
+    void SetUp() override {}
+    void TearDown() override {}
+  };
 
-class TestCbs : public testing::Test {
-protected:
-  void SetUp() override {}
-  void TearDown() override {}
-};
-
-using namespace Azure::Core::Amqp;
-using namespace Azure::Core::Amqp::_internal;
-using namespace Azure::Core::Amqp::_detail;
+  using namespace Azure::Core::Amqp;
+  using namespace Azure::Core::Amqp::_internal;
+  using namespace Azure::Core::Amqp::_detail;
 
 #if !defined(AZ_PLATFORM_MAC)
-TEST_F(TestCbs, SimpleCbs)
-{
-
-  // Create a connection
-  Connection connection("localhost", {});
-  // Create a session
-  Session session(connection, {});
-
+  TEST_F(TestCbs, SimpleCbs)
   {
-    ClaimsBasedSecurity cbs(session);
-  }
 
-  {
-    // Create two cbs objects
-    ClaimsBasedSecurity cbs1(session);
-    ClaimsBasedSecurity cbs2(session);
+    // Create a connection
+    Connection connection("localhost", nullptr, {});
+    // Create a session
+    Session session{connection.CreateSession()};
+
+    {
+      ClaimsBasedSecurity cbs(session);
+    }
+
+    {
+      // Create two cbs objects
+      ClaimsBasedSecurity cbs1(session);
+      ClaimsBasedSecurity cbs2(session);
+    }
   }
-}
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
-TEST_F(TestCbs, CbsOpen)
-{
+  TEST_F(TestCbs, CbsOpen)
   {
-    MessageTests::AmqpServerMock mockServer;
-    ConnectionOptions options;
-    options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
     {
-      ClaimsBasedSecurity cbs(session);
-      GTEST_LOG_(INFO) << "Expected failure for Open because no listener." << mockServer.GetPort();
-
-      EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
-    }
-  }
-  {
-    MessageTests::AmqpServerMock mockServer;
-
-    ConnectionOptions options;
-    options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
-
-    mockServer.StartListening();
-
-    {
-      ClaimsBasedSecurity cbs(session);
-      cbs.SetTrace(true);
-      CbsOpenResult openResult = cbs.Open();
-      EXPECT_EQ(CbsOpenResult::Ok, openResult);
-      GTEST_LOG_(INFO) << "Open Completed.";
-      if (openResult == CbsOpenResult::Ok)
+      MessageTests::AmqpServerMock mockServer;
+      ConnectionOptions options;
+      options.Port = mockServer.GetPort();
+      Connection connection("localhost", nullptr, options);
+      Session session{connection.CreateSession()};
       {
-        cbs.Close();
+        ClaimsBasedSecurity cbs(session);
+        GTEST_LOG_(INFO) << "Expected failure for Open because no listener."
+                         << mockServer.GetPort();
+
+        EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
       }
     }
-    mockServer.StopListening();
+    {
+      MessageTests::AmqpServerMock mockServer;
+
+      ConnectionOptions options;
+      options.Port = mockServer.GetPort();
+      Connection connection("localhost", nullptr, options);
+      Session session{connection.CreateSession()};
+
+      mockServer.StartListening();
+
+      {
+        ClaimsBasedSecurity cbs(session);
+        cbs.SetTrace(true);
+        CbsOpenResult openResult = cbs.Open();
+        EXPECT_EQ(CbsOpenResult::Ok, openResult);
+        GTEST_LOG_(INFO) << "Open Completed.";
+        if (openResult == CbsOpenResult::Ok)
+        {
+          cbs.Close();
+        }
+      }
+      mockServer.StopListening();
+    }
   }
-}
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
-TEST_F(TestCbs, CbsOpenAndPut)
-{
+  TEST_F(TestCbs, CbsOpenAndPut)
   {
-    MessageTests::AmqpServerMock mockServer;
-
-    ConnectionOptions options;
-    options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
-
-    mockServer.StartListening();
-
     {
-      ClaimsBasedSecurity cbs(session);
-      cbs.SetTrace(true);
+      MessageTests::AmqpServerMock mockServer;
 
-      EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
-      GTEST_LOG_(INFO) << "Open Completed.";
+      ConnectionOptions options;
+      options.Port = mockServer.GetPort();
+      Connection connection("localhost", nullptr, options);
+      Session session{connection.CreateSession()};
 
-      auto putResult = cbs.PutToken(
-          Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken");
-      EXPECT_EQ(CbsOperationResult::Ok, std::get<0>(putResult));
-      EXPECT_EQ("OK-put", std::get<2>(putResult));
+      mockServer.StartListening();
 
-      cbs.Close();
+      {
+        ClaimsBasedSecurity cbs(session);
+        cbs.SetTrace(true);
+
+        EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
+        GTEST_LOG_(INFO) << "Open Completed.";
+
+        auto putResult = cbs.PutToken(
+            Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken");
+        EXPECT_EQ(CbsOperationResult::Ok, std::get<0>(putResult));
+        EXPECT_EQ("OK-put", std::get<2>(putResult));
+
+        cbs.Close();
+      }
+
+      mockServer.StopListening();
     }
-
-    mockServer.StopListening();
   }
-}
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
-TEST_F(TestCbs, CbsOpenAndPutError)
-{
+  TEST_F(TestCbs, CbsOpenAndPutError)
   {
-    MessageTests::AmqpServerMock mockServer;
-
-    ConnectionOptions options;
-    options.Port = mockServer.GetPort();
-    Connection connection("localhost", options);
-    Session session(connection, nullptr);
-
-    mockServer.StartListening();
-
     {
-      ClaimsBasedSecurity cbs(session);
-      cbs.SetTrace(true);
+      MessageTests::AmqpServerMock mockServer;
 
-      EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
-      GTEST_LOG_(INFO) << "Open Completed.";
+      ConnectionOptions options;
+      options.Port = mockServer.GetPort();
+      Connection connection("localhost", nullptr, options);
+      Session session{connection.CreateSession()};
 
-      mockServer.ForceCbsError(true);
-      EXPECT_ANY_THROW(
-          auto putResult = cbs.PutToken(
-              Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken"););
+      mockServer.StartListening();
 
-      cbs.Close();
+      {
+        ClaimsBasedSecurity cbs(session);
+        cbs.SetTrace(true);
+
+        EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
+        GTEST_LOG_(INFO) << "Open Completed.";
+
+        mockServer.ForceCbsError(true);
+        EXPECT_ANY_THROW(
+            auto putResult = cbs.PutToken(
+                Azure::Core::Amqp::_detail::CbsTokenType::Sas, "of one", "stringizedToken"););
+
+        cbs.Close();
+      }
+
+      mockServer.StopListening();
     }
-
-    mockServer.StopListening();
   }
-}
 #endif // !defined(AZ_PLATFORM_MAC)
+}}}} // namespace Azure::Core::Amqp::Tests

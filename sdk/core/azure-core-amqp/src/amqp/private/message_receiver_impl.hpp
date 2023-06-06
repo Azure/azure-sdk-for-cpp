@@ -67,22 +67,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
     uint32_t GetReceivedMessageId();
-    void SendMessageDisposition(
-        const char* linkName,
-        uint32_t messageNumber,
-        Models::AmqpValue deliveryState);
 
-    template <class... Waiters>
-    Models::AmqpMessage WaitForIncomingMessage(Context const& context, Waiters&... waiters)
-    {
-      auto result
-          = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection(), waiters...);
-      if (result)
-      {
-        return std::move(std::get<0>(*result));
-      }
-      return nullptr;
-    }
+    std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
+    WaitForIncomingMessage(Context const& context);
 
   private:
     UniqueMessageReceiver m_messageReceiver{};
@@ -90,8 +77,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
+    Models::_internal::AmqpError m_savedMessageError{};
 
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<Models::AmqpMessage, Models::_internal::AmqpError>
+            m_messageQueue;
 
     _internal::MessageReceiverEvents* m_eventHandler{};
 

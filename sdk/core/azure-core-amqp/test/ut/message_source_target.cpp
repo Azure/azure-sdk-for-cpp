@@ -47,9 +47,9 @@ namespace {
 std::string timeToString(std::chrono::system_clock::time_point t)
 {
   std::time_t time = std::chrono::system_clock::to_time_t(t);
-  std::string time_str = std::ctime(&time);
-  time_str.resize(time_str.size() - 1);
-  return time_str;
+  char buf[26]{};
+  std::strftime(buf, std::extent<decltype(buf)>::value, "%c", std::localtime(&time));
+  return buf;
 }
 } // namespace
 

@@ -30,15 +30,30 @@ using UniqueAmqpManagementHandle
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  class ManagementImpl final : public ::std::enable_shared_from_this<ManagementImpl> {
+  class ManagementClientFactory final {
   public:
-    ManagementImpl(
+    static Azure::Core::Amqp::_internal::ManagementClient CreateFromInternal(
+        std::shared_ptr<ManagementClientImpl> clientImpl)
+    {
+      return Azure::Core::Amqp::_internal::ManagementClient(clientImpl);
+    }
+
+    static std::shared_ptr<ManagementClientImpl> GetImpl(
+        Azure::Core::Amqp::_internal::ManagementClient const& client)
+    {
+      return client.m_impl;
+    }
+  };
+
+  class ManagementClientImpl final : public ::std::enable_shared_from_this<ManagementClientImpl> {
+  public:
+    ManagementClientImpl(
         std::shared_ptr<SessionImpl> session,
         std::string const& managementEntityName,
-        _internal::ManagementOptions const& options,
-        _internal::ManagementEvents* managementEvents);
+        _internal::ManagementClientOptions const& options,
+        _internal::ManagementClientEvents* managementEvents);
 
-    ~ManagementImpl() noexcept;
+    ~ManagementClientImpl() noexcept;
 
     /**
      * @brief Open the management instance.
@@ -63,9 +78,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     UniqueAmqpManagementHandle m_management{};
     std::string m_managementNodeName;
-    _internal::ManagementOptions m_options;
+    _internal::ManagementClientOptions m_options;
     std::string m_source;
     std::shared_ptr<SessionImpl> m_session;
+    _internal::ManagementClientEvents* m_eventHandler{};
+    std::string m_managementEntityPath;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<AMQP_MANAGEMENT_OPEN_RESULT>
         m_openCompleteQueue;
 
@@ -76,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::AmqpMessage>
         m_messageQueue;
 
-    _internal::ManagementEvents* m_eventHandler{};
+    void CreateManagementClient();
 
     static void OnExecuteOperationCompleteFn(
         void* context,
