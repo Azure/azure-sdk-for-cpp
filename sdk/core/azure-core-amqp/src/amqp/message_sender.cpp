@@ -210,7 +210,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if defined(AZ_PLATFORM_WINDOWS)
       strerror_s(buf, sizeof(buf), err);
 #else
-      strerror_r(err, buf, sizeof(buf));
+      (void)strerror_r(err, buf, sizeof(buf));
 #endif
       throw std::runtime_error(
           "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
