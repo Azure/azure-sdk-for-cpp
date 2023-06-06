@@ -282,11 +282,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // LCOV_EXCL_START
       auto err = errno;
-      char buf[256];
 #if defined(AZ_PLATFORM_WINDOWS)
+      char buf[256];
       strerror_s(buf, sizeof(buf), err);
 #else
-      (void)strerror_r(err, buf, sizeof(buf));
+      std::string buf{strerror(err)};
 #endif
       throw std::runtime_error(
           "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
