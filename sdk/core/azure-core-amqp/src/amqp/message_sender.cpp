@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+// Enable declaration of strerror_s.
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
@@ -202,18 +205,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       // LCOV_EXCL_START
       auto err = errno;
-#ifdef _MSC_VER
-#pragma warning(push)
-// warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
+      char buf[256];
+      strerror_s(buf, sizeof(buf), err);
       throw std::runtime_error(
-          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + strerror(err)
-          + "\".");
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       // LCOV_EXCL_STOP
     }
   }
