@@ -71,9 +71,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   ManagementClientImpl::~ManagementClientImpl() noexcept { m_eventHandler = nullptr; }
 
+#if UAMQP_MANAGEMENT_CLIENT
   void ManagementClientImpl::CreateManagementClient()
   {
-
     m_management.reset(amqp_management_create(*m_session, m_options.ManagementNodeName.c_str()));
     if (!m_management)
     {
@@ -100,13 +100,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
   }
+#endif
 
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
     /** Authentication needs to happen *before* the management object is created. */
     m_session->AuthenticateIfNeeded(
         m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
-
+    #if UAMQP_MANAGEMENT_CLIENT
     CreateManagementClient();
 
     if (amqp_management_open_async(
@@ -134,6 +135,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
     throw Azure::Core::OperationCancelledException("Management Open operation was cancelled.");
+    #else
+    _internal::MessageSenderOptions messageSenderOptions;
+    messageSenderOptions.EnableTrace = m_options.EnableTrace;
+    messageSenderOptions.MessageSource = m_options.ManagementNodeName;
+    messageSenderOptions.Name = m_options.ManagementNodeName + "-sender";
+
+    m_messageSender = std::make_shared<MessageSenderImpl>(
+        m_session, m_options.ManagementNodeName, messageSenderOptions, this);
+    #endif // UAMQP_MANAGEMENT_CLIENT
   }
 
   _internal::ManagementOperationResult ManagementClientImpl::ExecuteOperation(
@@ -178,6 +188,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ManagementClientImpl::Close() { amqp_management_close(m_management.get()); }
 
+#if UAMQP_MANAGEMENT_IMPLEMENTATION
   void ManagementClientImpl::OnOpenCompleteFn(void* context, AMQP_MANAGEMENT_OPEN_RESULT openResult)
   {
     ManagementClientImpl* management = static_cast<ManagementClientImpl*>(context);
@@ -188,7 +199,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     management->m_openCompleteQueue.CompleteOperation(openResult);
   }
-
   void ManagementClientImpl::OnManagementErrorFn(void* context)
   {
     ManagementClientImpl* management = static_cast<ManagementClientImpl*>(context);
@@ -249,5 +259,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error("Unknown management status."); // LCOV_EXCL_LINE
     }
   }
+#else
+
+  void ManagementClientImpl::OnMessageSenderStateChanged(
+      _internal::MessageSender const& sender,
+      _internal::MessageSenderState newState,
+      _internal::MessageSenderState oldState)
+  {
+  }
+
+  void ManagementClientImpl::OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
+  {
+  }
+
+  void ManagementClientImpl::OnMessageReceiverStateChanged(
+      _internal::MessageReceiver const& receiver,
+      _internal::MessageReceiverState newState,
+      _internal::MessageReceiverState oldState)
+  {
+  }
+
+  Models::AmqpValue ManagementClientImpl::OnMessageReceived(
+      _internal::MessageReceiver const& receiver,
+      Models::AmqpMessage const& message)
+  {
+    return Models::AmqpValue();
+  }
+
+  void ManagementClientImpl::OnMessageReceiverDisconnected(
+      Models::_internal::AmqpError const& error)
+  {
+  }
+#endif
 
 }}}} // namespace Azure::Core::Amqp::_detail

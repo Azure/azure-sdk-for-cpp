@@ -8,6 +8,7 @@
 #include "azure/core/amqp/session.hpp"
 #include "connection_impl.hpp"
 #include "message_receiver_impl.hpp"
+#include "message_sender_impl.hpp"
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -45,7 +46,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   };
 
-  class ManagementClientImpl final : public ::std::enable_shared_from_this<ManagementClientImpl> {
+  class ManagementClientImpl final : public ::std::enable_shared_from_this<ManagementClientImpl>,
+                                     _internal::MessageSenderEvents,
+                                     _internal::MessageReceiverEvents {
   public:
     ManagementClientImpl(
         std::shared_ptr<SessionImpl> session,
@@ -76,7 +79,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Context const& context);
 
   private:
+#if UAMQP_MANAGEMENT_IMPLEMENTATION
     UniqueAmqpManagementHandle m_management{};
+#else
+    std::shared_ptr<MessageSenderImpl> m_messageSender;
+    std::shared_ptr<MessageReceiverImpl> m_messageReceiver;
+#endif
     std::string m_managementNodeName;
     _internal::ManagementClientOptions m_options;
     std::string m_source;
@@ -93,8 +101,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::AmqpMessage>
         m_messageQueue;
 
+#if UAMQP_MANAGEMENT_IMPLEMENTATION
     void CreateManagementClient();
-
     static void OnExecuteOperationCompleteFn(
         void* context,
         AMQP_MANAGEMENT_EXECUTE_OPERATION_RESULT executeResult,
@@ -103,5 +111,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         MESSAGE_HANDLE messageHandle);
     static void OnManagementErrorFn(void* context);
     static void OnOpenCompleteFn(void* context, AMQP_MANAGEMENT_OPEN_RESULT openResult);
+#else
+
+    // Inherited via MessageSenderEvents
+    virtual void OnMessageSenderStateChanged(
+        _internal::MessageSender const& sender,
+        _internal::MessageSenderState newState,
+        _internal::MessageSenderState oldState) override;
+    virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override;
+
+    // Inherited via MessageReceiverEvents
+    virtual void OnMessageReceiverStateChanged(
+        _internal::MessageReceiver const& receiver,
+        _internal::MessageReceiverState newState,
+        _internal::MessageReceiverState oldState) override;
+    virtual Models::AmqpValue OnMessageReceived(
+        _internal::MessageReceiver const& receiver,
+        Models::AmqpMessage const& message) override;
+    virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override;
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail
