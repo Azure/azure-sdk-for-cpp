@@ -7,6 +7,8 @@
 #include "azure/core/dll_import_export.hpp"
 
 #include <atomic>
+#include <iostream>
+#include <sstream>
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
@@ -26,6 +28,38 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
     ~Log() = delete;
 
   public:
+    class LoggerStringBuffer : public std::stringbuf {
+    public:
+      LoggerStringBuffer(Logger::Level level) : m_level{level} {}
+      LoggerStringBuffer(LoggerStringBuffer const& that) = default;
+      LoggerStringBuffer(LoggerStringBuffer&& that) = default;
+      LoggerStringBuffer& operator=(LoggerStringBuffer const& that) = default;
+      LoggerStringBuffer& operator=(LoggerStringBuffer&& that) = default;
+      ~LoggerStringBuffer() override = default;
+
+      virtual int sync() override;
+
+    private:
+      Logger::Level m_level;
+    };
+
+    class LoggerStream : public std::basic_ostream<char> {
+    public:
+      LoggerStream(Logger::Level level)
+          : std::ostream(&m_stringBuffer), m_level{level}, m_stringBuffer{level}
+      {
+      }
+      LoggerStream(LoggerStream const& that) = default;
+      LoggerStream(LoggerStream&& that) = default;
+      LoggerStream& operator=(LoggerStream const& that) = delete;
+      LoggerStream& operator=(LoggerStream&& that) = default;
+      ~LoggerStream() override = default;
+
+    private:
+      Logger::Level m_level;
+      LoggerStringBuffer m_stringBuffer;
+    };
+
     static bool ShouldWrite(Logger::Level level)
     {
       return g_isLoggingEnabled && level >= g_logLevel;
@@ -35,5 +69,6 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
 
     static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
+    static LoggerStream& Stream(Logger::Level level);
   };
 }}}} // namespace Azure::Core::Diagnostics::_internal
