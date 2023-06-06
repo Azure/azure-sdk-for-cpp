@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-`EnvironmentLogLevelListener` (the default logger) now logs all non-error outputs to `stdout` instead of `stderr`. Log level `Error` is still logged to `stderr`.
+- The default logger now logs all non-error outputs to `stdout` instead of `stderr`. Log level `Error` is still logged to `stderr`.
 
 ## 1.10.0 (2023-06-01)
 
