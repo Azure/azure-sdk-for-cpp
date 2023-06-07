@@ -120,15 +120,12 @@ EnvironmentLogLevelListener::GetLogListener()
 
   static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
       [](auto level, auto message) {
-        std::ostream* os = &std::cout;
-        if (level == Logger::Level::Error)
-        {
-          os = &std::cerr;
-        }
-        *os << '['
-            << Azure::DateTime(std::chrono::system_clock::now())
-                   .ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-            << "] " << LogLevelToConsoleString(level) << " : " << message;
+        // Log diagnostics to cerr rather than cout.
+        std::cerr << '['
+                  << Azure::DateTime(std::chrono::system_clock::now())
+                         .ToString(
+                             DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+                  << "] " << LogLevelToConsoleString(level) << " : " << message;
 
         // If the message ends with a new line, flush the stream otherwise insert a new line to
         // terminate the message.
@@ -138,11 +135,11 @@ EnvironmentLogLevelListener::GetLogListener()
         // insert unnecessary new lines.
         if (!message.empty() && message.back() == '\n')
         {
-          *os << std::flush;
+          std::cerr << std::flush;
         }
         else
         {
-          *os << std::endl;
+          std::cerr << std::endl;
         }
       };
 

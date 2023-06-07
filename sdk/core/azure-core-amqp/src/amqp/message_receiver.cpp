@@ -109,7 +109,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Log that an error occurred.
       Log::Stream(Logger::Level::Error)
           << "Message receiver link detached: " + error.Condition.ToString() << ": "
-          << error.Description << std::endl;
+          << error.Description;
 
       // Cache the error we received in the OnDetach notification so we can return it to the user on
       // the next send which fails.
@@ -237,7 +237,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       Log::Stream(Logger::Level::Verbose)
           << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
-          << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState] << std::endl;
+          << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState];
       ;
     }
 

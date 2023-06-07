@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       TransportEvents* eventHandler)
   {
     Log::Stream(Logger::Level::Verbose)
-        << "Create socket transport for host " << host << " port: " << port << std::endl;
+        << "Create socket transport for host " << host << " port: " << port;
 
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
     return _detail::TransportImpl::CreateFromXioHandle(

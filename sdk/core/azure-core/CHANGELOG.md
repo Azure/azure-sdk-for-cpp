@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- The default logger now logs all non-error outputs to `stdout` instead of `stderr`. Log level `Error` is still logged to `stderr`.
+Empty diagnostic messages will no longer be generated.
 
 ## 1.10.0 (2023-06-01)
 

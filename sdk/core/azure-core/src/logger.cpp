@@ -32,7 +32,7 @@ inline void Log::SetLogLevel(Logger::Level logLevel) { g_logLevel = logLevel; }
 
 void Log::Write(Logger::Level level, std::string const& message)
 {
-  if (ShouldWrite(level))
+  if (ShouldWrite(level) && !message.empty())
   {
     std::shared_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
     if (g_logListener)
@@ -54,21 +54,25 @@ void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
 
 int Log::LoggerStringBuffer::sync()
 {
+  // Note that in the case of the caller inserting std::endl, the buffer will be flushed twice, once
+  // with the \n terminated string, the second time with an empty string (from the destructor of
+  // Log::Stream). This depends on the code in Log::Write which discards empty strings.
   Log::Write(m_level, str());
   str(std::string());
   return 0;
 }
-
+namespace {
 static Log::LoggerStream g_verboseLogger{Logger::Level::Verbose};
 static Log::LoggerStream g_informationalLogger{Logger::Level::Informational};
 static Log::LoggerStream g_warningLogger{Logger::Level::Warning};
 static Log::LoggerStream g_errorLogger{Logger::Level::Error};
+} // namespace
 
 /** Returns a custom ostream implementation with a logger based stream buffer.
  *  @param level The level of the log message.
  *  @return A custom ostream implementation.
  */
-Log::LoggerStream& Log::Stream(Logger::Level level)
+Log::LoggerStream& Log::GetStream(Logger::Level level)
 {
   switch (level)
   {

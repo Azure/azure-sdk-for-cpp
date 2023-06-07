@@ -215,24 +215,20 @@ TEST(Logger, LoggerStream)
 
   Logger::SetLevel(Logger::Level::Verbose);
   {
-    Log::Stream(Logger::Level::Verbose) << "Verbose" << std::endl;
-    EXPECT_EQ(message, "Verbose\n");
-    Log::Stream(Logger::Level::Informational) << "Informational" << std::endl;
-    EXPECT_EQ(message, "Informational\n");
+    Log::Stream(Logger::Level::Verbose) << "Verbose";
+    EXPECT_EQ(message, "Verbose");
+    message.clear();
+
+    Log::Stream(Logger::Level::Informational) << "Informational" << 10;
+    EXPECT_EQ(message, "Informational10");
     message.clear();
 
     Log::Stream(Logger::Level::Warning) << "Warning" << std::endl;
     EXPECT_EQ(message, "Warning\n");
     message.clear();
 
-    Log::Stream(Logger::Level::Error) << "Error" << std::endl;
-    EXPECT_EQ(message, "Error\n");
-    message.clear();
-
-    Log::Stream(Logger::Level::Verbose) << "Test";
-    // std::endl flushes the stream, so we need to manually flush the ostream.
-    Log::Stream(Logger::Level::Verbose).flush();
-    EXPECT_EQ(message, "Test");
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
     message.clear();
   }
 
@@ -242,54 +238,54 @@ TEST(Logger, LoggerStream)
     EXPECT_EQ(message, "");
     message.clear();
 
-    Log::Stream(Logger::Level::Informational) << "Informational" << std::endl;
-    EXPECT_EQ(message, "Informational\n");
+    Log::Stream(Logger::Level::Informational) << "Informational";
+    EXPECT_EQ(message, "Informational");
     message.clear();
 
-    Log::Stream(Logger::Level::Warning) << "Warning" << std::endl;
-    EXPECT_EQ(message, "Warning\n");
+    Log::Stream(Logger::Level::Warning) << "Warning";
+    EXPECT_EQ(message, "Warning");
     message.clear();
 
-    Log::Stream(Logger::Level::Error) << "Error" << std::endl;
-    EXPECT_EQ(message, "Error\n");
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
     message.clear();
   }
 
   Logger::SetLevel(Logger::Level::Warning);
   {
-    Log::Stream(Logger::Level::Verbose) << "Verbose" << std::endl;
+    Log::Stream(Logger::Level::Verbose) << "Verbose";
     EXPECT_EQ(message, "");
     message.clear();
 
-    Log::Stream(Logger::Level::Informational) << "Informational" << std::endl;
+    Log::Stream(Logger::Level::Informational) << "Informational";
     EXPECT_EQ(message, "");
     message.clear();
 
-    Log::Stream(Logger::Level::Warning) << "Warning" << std::endl;
-    EXPECT_EQ(message, "Warning\n");
+    Log::Stream(Logger::Level::Warning) << "Warning";
+    EXPECT_EQ(message, "Warning");
     message.clear();
 
-    Log::Stream(Logger::Level::Error) << "Error" << std::endl;
-    EXPECT_EQ(message, "Error\n");
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
     message.clear();
   }
 
   Logger::SetLevel(Logger::Level::Error);
   {
-    Log::Stream(Logger::Level::Verbose) << "Verbose" << std::endl;
+    Log::Stream(Logger::Level::Verbose) << "Verbose";
     EXPECT_EQ(message, "");
     message.clear();
 
-    Log::Stream(Logger::Level::Informational) << "Informational" << std::endl;
+    Log::Stream(Logger::Level::Informational) << "Informational";
     EXPECT_EQ(message, "");
     message.clear();
 
-    Log::Stream(Logger::Level::Warning) << "Warning" << std::endl;
+    Log::Stream(Logger::Level::Warning) << "Warning";
     EXPECT_EQ(message, "");
     message.clear();
 
-    Log::Stream(Logger::Level::Error) << "Error" << std::endl;
-    EXPECT_EQ(message, "Error\n");
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
     message.clear();
   }
 }

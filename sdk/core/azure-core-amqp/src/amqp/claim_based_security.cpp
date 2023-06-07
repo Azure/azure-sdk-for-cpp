@@ -121,7 +121,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (cbs->m_traceEnabled)
     {
       Log::Stream(Logger::Level::Informational)
-          << "OnCbsOpenComplete: " << OpenResultStringFromLowLevel(openCompleteResult) << std::endl;
+          << "OnCbsOpenComplete: " << OpenResultStringFromLowLevel(openCompleteResult);
     }
     cbs->m_openResultQueue.CompleteOperation(CbsOpenResultStateFromLowLevel(openCompleteResult));
   }
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           << "OnCbsOperationComplete: "
           << OperationResultStringFromLowLevel(operationCompleteResult)
           << " StatusCode: " << statusCode << " StatusDescription: "
-          << (statusDescription ? std::string(statusDescription) : "(NULL)") << std::endl;
+          << (statusDescription ? std::string(statusDescription) : "(NULL)");
     }
 
     cbs->m_operationResultQueue.CompleteOperation(
