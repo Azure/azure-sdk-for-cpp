@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+Empty diagnostic messages will no longer be generated.
+
 ## 1.10.0 (2023-06-01)
 
 ### Features Added

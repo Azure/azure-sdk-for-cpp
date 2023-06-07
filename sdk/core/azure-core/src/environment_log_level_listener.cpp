@@ -120,10 +120,6 @@ EnvironmentLogLevelListener::GetLogListener()
 
   static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
       [](auto level, auto message) {
-        if (message.empty())
-        {
-          return;
-        }
         // Log diagnostics to cerr rather than cout.
         std::cerr << '['
                   << Azure::DateTime(std::chrono::system_clock::now())

@@ -117,7 +117,8 @@ int main()
 
 Note, the listener callback is executed on the same thread as the operation that triggered the log message. 
  It is recommended implementation due the minimal amount of log message processing on the callback thread.
-Where message processing is required, consider implementing in a way that the callback pushes the message string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
+Where message processing is required, consider implementing in a way that the callback pushes the message 
+string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
 
 ## Next steps
 

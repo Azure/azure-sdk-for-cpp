@@ -32,7 +32,7 @@ inline void Log::SetLogLevel(Logger::Level logLevel) { g_logLevel = logLevel; }
 
 void Log::Write(Logger::Level level, std::string const& message)
 {
-  if (ShouldWrite(level))
+  if (ShouldWrite(level) && !message.empty())
   {
     std::shared_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
     if (g_logListener)
@@ -54,11 +54,10 @@ void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
 
 int Log::LoggerStringBuffer::sync()
 {
-  std::string val{str()};
-  if (!val.empty())
-  {
-    Log::Write(m_level, val);
-  }
+  // Note that in the case of the caller inserting std::endl, the buffer will be flushed twice, once
+  // with the \n terminated string, the second time with an empty string (from the destructor of
+  // Log::Stream). This depends on the code in Log::Write which discards empty strings.
+  Log::Write(m_level, str());
   str(std::string());
   return 0;
 }
