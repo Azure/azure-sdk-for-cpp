@@ -54,21 +54,26 @@ void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
 
 int Log::LoggerStringBuffer::sync()
 {
-  Log::Write(m_level, str());
+  std::string val{str()};
+  if (!val.empty())
+  {
+    Log::Write(m_level, val);
+  }
   str(std::string());
   return 0;
 }
-
+namespace {
 static Log::LoggerStream g_verboseLogger{Logger::Level::Verbose};
 static Log::LoggerStream g_informationalLogger{Logger::Level::Informational};
 static Log::LoggerStream g_warningLogger{Logger::Level::Warning};
 static Log::LoggerStream g_errorLogger{Logger::Level::Error};
+} // namespace
 
 /** Returns a custom ostream implementation with a logger based stream buffer.
  *  @param level The level of the log message.
  *  @return A custom ostream implementation.
  */
-Log::LoggerStream& Log::Stream(Logger::Level level)
+Log::LoggerStream& Log::GetStream(Logger::Level level)
 {
   switch (level)
   {

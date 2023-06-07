@@ -127,7 +127,7 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerVerbose)
   SetLogLevel("verbose");
 
   std::stringstream buffer;
-  std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+  std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
 
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
@@ -135,7 +135,7 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerVerbose)
 
   listener(Logger::Level::Verbose, "message");
   EXPECT_NE(buffer.str().find("DEBUG : message"), std::string::npos);
-  std::cout.rdbuf(old);
+  std::cerr.rdbuf(old);
 }
 
 TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerError)

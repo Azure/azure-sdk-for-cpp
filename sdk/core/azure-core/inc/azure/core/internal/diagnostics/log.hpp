@@ -50,6 +50,19 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
       LoggerStringBuffer m_stringBuffer;
     };
 
+    class Stream {
+    public:
+      Stream(Logger::Level level) : m_stream(GetStream(level)) {}
+      ~Stream() { m_stream.flush(); }
+      Stream(Stream const&) = delete;
+      Stream& operator=(Stream const&) = delete;
+
+      template <typename T> std::ostream& operator<<(T val) { return m_stream << val; }
+
+    private:
+      LoggerStream& m_stream;
+    };
+
     static bool ShouldWrite(Logger::Level level)
     {
       return g_isLoggingEnabled && level >= g_logLevel;
@@ -59,6 +72,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
 
     static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
-    static LoggerStream& Stream(Logger::Level level);
+
+  private:
+    static LoggerStream& GetStream(Logger::Level level);
   };
 }}}} // namespace Azure::Core::Diagnostics::_internal

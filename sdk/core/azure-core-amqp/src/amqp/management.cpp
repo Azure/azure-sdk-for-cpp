@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (management->m_options.EnableTrace)
     {
       Log::Stream(Logger::Level::Informational)
-          << "OnManagementOpenComplete: " << std::to_string(openResult) << std::endl;
+          << "OnManagementOpenComplete: " << std::to_string(openResult);
     }
     management->m_openCompleteQueue.CompleteOperation(openResult);
   }
