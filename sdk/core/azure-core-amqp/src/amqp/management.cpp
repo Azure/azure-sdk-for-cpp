@@ -23,11 +23,13 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
+#if UAMQP_MANAGEMENT_CLIENT
 void Azure::Core::_internal::UniqueHandleHelper<AMQP_MANAGEMENT_INSTANCE_TAG>::FreeAmqpManagement(
     AMQP_MANAGEMENT_HANDLE value)
 {
   amqp_management_destroy(value);
 }
+#endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
@@ -107,7 +109,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     /** Authentication needs to happen *before* the management object is created. */
     m_session->AuthenticateIfNeeded(
         m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
-    #if UAMQP_MANAGEMENT_CLIENT
+#if UAMQP_MANAGEMENT_CLIENT
     CreateManagementClient();
 
     if (amqp_management_open_async(
@@ -135,15 +137,47 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
     throw Azure::Core::OperationCancelledException("Management Open operation was cancelled.");
-    #else
-    _internal::MessageSenderOptions messageSenderOptions;
-    messageSenderOptions.EnableTrace = m_options.EnableTrace;
-    messageSenderOptions.MessageSource = m_options.ManagementNodeName;
-    messageSenderOptions.Name = m_options.ManagementNodeName + "-sender";
+#else
+    {
+      _internal::MessageSenderOptions messageSenderOptions;
+      messageSenderOptions.EnableTrace = m_options.EnableTrace;
+      messageSenderOptions.MessageSource = m_options.ManagementNodeName;
+      messageSenderOptions.Name = m_options.ManagementNodeName + "-sender";
 
-    m_messageSender = std::make_shared<MessageSenderImpl>(
-        m_session, m_options.ManagementNodeName, messageSenderOptions, this);
-    #endif // UAMQP_MANAGEMENT_CLIENT
+      m_messageSender = std::make_shared<MessageSenderImpl>(
+          m_session, m_options.ManagementNodeName, messageSenderOptions, this);
+    }
+    {
+      _internal::MessageReceiverOptions messageReceiverOptions;
+      messageReceiverOptions.EnableTrace = m_options.EnableTrace;
+      messageReceiverOptions.MessageTarget = m_options.ManagementNodeName;
+      messageReceiverOptions.Name = m_options.ManagementNodeName + "-receiver";
+
+      m_messageReceiver = std::make_shared<MessageReceiverImpl>(
+          m_session, m_options.ManagementNodeName, messageReceiverOptions, this);
+    }
+
+    // Now finally the message sender and receiver
+    SetState(ManagementState::Opening);
+    m_messageSender->Open(context);
+    m_messageReceiver->Open(context);
+
+    // Wait for the message sender and receiver to open
+    auto result = m_openCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
+    if (result)
+    {
+      // If the message sender or receiver failed to open, we need to close them
+      _internal::ManagementOpenStatus rv = std::get<0>(*result);
+      if (rv != _internal::ManagementOpenStatus::Ok)
+      {
+        m_messageSender->Close();
+        m_messageSenderOpen = false;
+        m_messageReceiver->Close();
+        m_messageReceiverOpen = false;
+      }
+    }
+    throw Azure::Core::OperationCancelledException("Management Open operation was cancelled.");
+#endif // UAMQP_MANAGEMENT_CLIENT
   }
 
   _internal::ManagementOperationResult ManagementClientImpl::ExecuteOperation(
@@ -158,6 +192,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       messageToSend.ApplicationProperties["security_token"] = Models::AmqpValue{token};
     }
+#if UAMQP_MANAGEMENT_CLIENT
     if (!amqp_management_execute_operation_async(
             m_management.get(),
             operationToPerform.c_str(),
@@ -184,9 +219,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw Azure::Core::OperationCancelledException("Management operation cancelled.");
     }
+#else
+    (void)operationToPerform;
+    (void)typeOfOperation;
+    (void)locales;
+    (void)messageToSend;
+    throw std::runtime_error("Not implemented");
+#endif
   }
 
-  void ManagementClientImpl::Close() { amqp_management_close(m_management.get()); }
+  void ManagementClientImpl::SetState(ManagementState newState) { m_state = newState; }
+
+  void ManagementClientImpl::Close()
+  {
+#if UAMQP_MANAGEMENT_CLIENT
+    amqp_management_close(m_management.get());
+#endif
+    SetState(ManagementState::Closing);
+    if (m_messageSender && m_messageSenderOpen)
+    {
+      m_messageSender->Close();
+    }
+    if (m_messageReceiver && m_messageReceiverOpen)
+    {
+      m_messageReceiver->Close();
+    }
+  }
 
 #if UAMQP_MANAGEMENT_IMPLEMENTATION
   void ManagementClientImpl::OnOpenCompleteFn(void* context, AMQP_MANAGEMENT_OPEN_RESULT openResult)
@@ -262,33 +320,227 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #else
 
   void ManagementClientImpl::OnMessageSenderStateChanged(
-      _internal::MessageSender const& sender,
+      _internal::MessageSender const&,
       _internal::MessageSenderState newState,
       _internal::MessageSenderState oldState)
   {
+    if (newState == oldState)
+    {
+      Log::Stream(Logger::Level::Error)
+          << "OnMessageSenderStateChanged: newState == oldState" << std::endl;
+      return;
+    }
+
+    switch (m_state)
+    {
+      case ManagementState::Opening:
+        switch (newState)
+        {
+            // If the message sender is opening, we don't need to do anything.
+          case _internal::MessageSenderState::Opening:
+            break;
+            // If the message sender is open, remember it. If the message receiver is also open,
+            // complete the outstanding open.
+          case _internal::MessageSenderState::Open:
+            m_messageSenderOpen = true;
+            if (m_messageReceiverOpen)
+            {
+              SetState(ManagementState::Open);
+              m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Ok);
+            }
+            break;
+            // If the message sender is transitioning to an error or state other than open, it's an
+            // error.
+          default:
+          case _internal::MessageSenderState::Idle:
+          case _internal::MessageSenderState::Closing:
+          case _internal::MessageSenderState::Error:
+            Log::Stream(Logger::Level::Error)
+                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << " while management client is opening";
+            SetState(ManagementState::Closing);
+            m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
+            break;
+        }
+        break;
+      case ManagementState::Open:
+        switch (newState)
+        {
+            // If the message sender goes to a non-open state, it's an error.
+          default:
+          case _internal::MessageSenderState::Idle:
+          case _internal::MessageSenderState::Closing:
+          case _internal::MessageSenderState::Error:
+            Log::Stream(Logger::Level::Error)
+                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << " while management client is open";
+            SetState(ManagementState::Closing);
+            if (m_eventHandler)
+            {
+              m_eventHandler->OnError(Models::_internal::AmqpError{});
+            }
+            break;
+            // Ignore message sender open changes.
+          case _internal::MessageSenderState::Open:
+            break;
+        }
+        break;
+      case ManagementState::Closing:
+        switch (newState)
+        {
+            // If the message sender goes to a non-open state, it's an error.
+          default:
+          case _internal::MessageSenderState::Open:
+          case _internal::MessageSenderState::Opening:
+          case _internal::MessageSenderState::Error:
+            Log::Stream(Logger::Level::Error)
+                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << " while management client is closing";
+            SetState(ManagementState::Closing);
+            if (m_eventHandler)
+            {
+              m_eventHandler->OnError(Models::_internal::AmqpError{});
+            }
+            break;
+            // Ignore message sender closing or idle state changes.
+          case _internal::MessageSenderState::Idle:
+          case _internal::MessageSenderState::Closing:
+            break;
+        }
+        break;
+      case ManagementState::Error:
+        Log::Stream(Logger::Level::Error)
+            << "Message sender state changed to " << static_cast<int>(newState)
+            << " when management client is in the error state, ignoring.";
+        break;
+    }
   }
 
   void ManagementClientImpl::OnMessageSenderDisconnected(Models::_internal::AmqpError const& error)
   {
+    Log::Stream(Logger::Level::Error) << "Message sender disconnected: " << error << std::endl;
+    SetState(ManagementState::Error);
+    if (m_eventHandler)
+    {
+      m_eventHandler->OnError(error);
+    }
   }
 
   void ManagementClientImpl::OnMessageReceiverStateChanged(
-      _internal::MessageReceiver const& receiver,
+      _internal::MessageReceiver const&,
       _internal::MessageReceiverState newState,
       _internal::MessageReceiverState oldState)
   {
+    if (newState == oldState)
+    {
+      Log::Stream(Logger::Level::Error)
+          << "OnMessageReceiverStateChanged: newState == oldState" << std::endl;
+      return;
+    }
+
+    switch (m_state)
+    {
+      case ManagementState::Opening:
+        switch (newState)
+        {
+            // If the message sender is opening, we don't need to do anything.
+          case _internal::MessageReceiverState::Opening:
+            break;
+            // If the message receiver is open, remember it. If the message sender is also open,
+            // complete the outstanding open.
+          case _internal::MessageReceiverState::Open:
+            m_messageReceiverOpen = true;
+            if (m_messageSenderOpen)
+            {
+              SetState(ManagementState::Open);
+              m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Ok);
+            }
+            break;
+            // If the message receiver is transitioning to an error or state other than open, it's
+            // an error.
+          default:
+          case _internal::MessageReceiverState::Idle:
+          case _internal::MessageReceiverState::Closing:
+          case _internal::MessageReceiverState::Error:
+            Log::Stream(Logger::Level::Error)
+                << "Message Receiver Changed State to " << static_cast<int>(newState)
+                << " while management client is opening";
+            SetState(ManagementState::Closing);
+            m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
+            break;
+        }
+        break;
+      case ManagementState::Open:
+        switch (newState)
+        {
+            // If the message sender goes to a non-open state, it's an error.
+          default:
+          case _internal::MessageReceiverState::Idle:
+          case _internal::MessageReceiverState::Closing:
+          case _internal::MessageReceiverState::Error:
+            Log::Stream(Logger::Level::Error)
+                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << " while management client is open";
+            SetState(ManagementState::Closing);
+            if (m_eventHandler)
+            {
+              m_eventHandler->OnError(Models::_internal::AmqpError{});
+            }
+            break;
+            // Ignore message sender open changes.
+          case _internal::MessageReceiverState::Open:
+            break;
+        }
+        break;
+      case ManagementState::Closing:
+        switch (newState)
+        {
+            // If the message sender goes to a non-open state, it's an error.
+          default:
+          case _internal::MessageReceiverState::Open:
+          case _internal::MessageReceiverState::Opening:
+          case _internal::MessageReceiverState::Error:
+            Log::Stream(Logger::Level::Error)
+                << "Message Sender Changed State to " << static_cast<int>(newState)
+                << " while management client is closing";
+            SetState(ManagementState::Closing);
+            if (m_eventHandler)
+            {
+              m_eventHandler->OnError(Models::_internal::AmqpError{});
+            }
+            break;
+            // Ignore message sender closing or idle state changes.
+          case _internal::MessageReceiverState::Idle:
+          case _internal::MessageReceiverState::Closing:
+            break;
+        }
+        break;
+      case ManagementState::Error:
+        Log::Stream(Logger::Level::Error)
+            << "Message sender state changed to " << static_cast<int>(newState)
+            << " when management client is in the error state, ignoring.";
+        break;
+    }
   }
 
   Models::AmqpValue ManagementClientImpl::OnMessageReceived(
       _internal::MessageReceiver const& receiver,
       Models::AmqpMessage const& message)
   {
+    (void)message;
+    (void)receiver;
     return Models::AmqpValue();
   }
 
   void ManagementClientImpl::OnMessageReceiverDisconnected(
       Models::_internal::AmqpError const& error)
   {
+    Log::Stream(Logger::Level::Error) << "Message receiver disconnected: " << error << std::endl;
+    SetState(ManagementState::Error);
+    if (m_eventHandler)
+    {
+      m_eventHandler->OnError(error);
+    }
   }
 #endif
 

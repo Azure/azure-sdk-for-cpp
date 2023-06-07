@@ -298,7 +298,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       struct ManagementEventsHandler : public ManagementClientEvents
       {
-        void OnError() override { Error = true; }
+        void OnError(Azure::Core::Amqp::Models::_internal::AmqpError const&) override { Error = true; }
         bool Error{false};
       };
       ManagementEventsHandler managementEvents;

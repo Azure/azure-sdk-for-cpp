@@ -17,7 +17,7 @@
 
 #include <memory>
 #include <vector>
-
+#if UAMQP_MANAGEMENT_IMPLEMENTATION
 template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_MANAGEMENT_INSTANCE_TAG>
 {
   static void FreeAmqpManagement(AMQP_MANAGEMENT_INSTANCE_TAG* obj);
@@ -28,6 +28,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_MANAGEMENT_IN
 
 using UniqueAmqpManagementHandle
     = Azure::Core::_internal::UniqueHandle<AMQP_MANAGEMENT_INSTANCE_TAG>;
+#endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
@@ -47,8 +48,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
   class ManagementClientImpl final : public ::std::enable_shared_from_this<ManagementClientImpl>,
-                                     _internal::MessageSenderEvents,
-                                     _internal::MessageReceiverEvents {
+                                     public _internal::MessageSenderEvents,
+                                     public _internal::MessageReceiverEvents {
   public:
     ManagementClientImpl(
         std::shared_ptr<SessionImpl> session,
@@ -79,11 +80,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Context const& context);
 
   private:
+    enum class ManagementState
+    {
+      Idle,
+      Opening,
+      Closing,
+      Open,
+      Error
+    };
 #if UAMQP_MANAGEMENT_IMPLEMENTATION
     UniqueAmqpManagementHandle m_management{};
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<AMQP_MANAGEMENT_OPEN_RESULT>
+        m_openCompleteQueue;
 #else
     std::shared_ptr<MessageSenderImpl> m_messageSender;
     std::shared_ptr<MessageReceiverImpl> m_messageReceiver;
+    ManagementState m_state = ManagementState::Idle;
+    bool m_messageSenderOpen{false};
+    bool m_messageReceiverOpen{false};
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::ManagementOpenStatus>
+        m_openCompleteQueue;
+
+    void SetState(ManagementState newState);
 #endif
     std::string m_managementNodeName;
     _internal::ManagementClientOptions m_options;
@@ -91,8 +109,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<SessionImpl> m_session;
     _internal::ManagementClientEvents* m_eventHandler{};
     std::string m_managementEntityPath;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<AMQP_MANAGEMENT_OPEN_RESULT>
-        m_openCompleteQueue;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         _internal::ManagementOperationStatus,
