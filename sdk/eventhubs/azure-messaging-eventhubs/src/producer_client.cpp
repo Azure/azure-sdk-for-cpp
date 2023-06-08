@@ -7,7 +7,7 @@
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     std::string const& connectionString,
     std::string const& eventHub,
-    ProducerClientOptions options)
+    Azure::Messaging::EventHubs::Models::ProducerClientOptions options)
     : m_credentials{connectionString, "", eventHub}, m_producerClientOptions(options)
 {
   m_credentials.SasCredential
@@ -24,7 +24,7 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHub,
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-    ProducerClientOptions options)
+    Azure::Messaging::EventHubs::Models::ProducerClientOptions options)
     : m_credentials{"", fullyQualifiedNamespace, eventHub, "", credential},
       m_producerClientOptions(options)
 {

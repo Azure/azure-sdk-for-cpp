@@ -15,7 +15,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     const std::string testEventHubFQDN = "fqdn";
     const std::string testConsumerGroup = "consumer-group";
     const std::string testEventHubName = "event-hub";
-    Azure::Messaging::EventHubs::Ownership TestOwnership(
+    Azure::Messaging::EventHubs::Models::Ownership TestOwnership(
         std::string partitionID,
         std::string ownerID)
     {
@@ -29,7 +29,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::DateTime(std::chrono::system_clock::now())};
     }
 
-    Azure::Messaging::EventHubs::ConsumerClientDetails TestConsumerDetails(std::string clientID)
+    Azure::Messaging::EventHubs::Models::ConsumerClientDetails TestConsumerDetails(std::string clientID)
     {
       return ConsumerClientDetails{testEventHubFQDN, testConsumerGroup, testEventHubName, clientID};
     }
@@ -100,13 +100,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
-    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Ownership>{
+    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
         TestOwnership("0", "some-client"), TestOwnership("3", "some-client")});
 
     Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
         std::make_unique<TestCheckpointStore>(checkpointStore),
         TestConsumerDetails("new-client"),
-        Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy,
+        Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy,
         std::chrono::minutes(2));
     auto ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
 
@@ -123,13 +123,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
-    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Ownership>{
+    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
         TestOwnership("0", "some-client"), TestOwnership("3", "some-client")});
 
     Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
         std::make_unique<TestCheckpointStore>(checkpointStore),
         TestConsumerDetails("new-client"),
-        Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyBalanced,
+        Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
         std::chrono::minutes(2));
 
     auto ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
@@ -151,7 +151,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
-    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Ownership>{
+    checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
         TestOwnership("0", "some-client"),
         TestOwnership("1", "some-client"),
         TestOwnership("2", "some-client"),
@@ -161,7 +161,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
         std::make_unique<TestCheckpointStore>(checkpointStore),
         TestConsumerDetails("new-client"),
-        Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy,
+        Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy,
         std::chrono::minutes(2));
 
     auto ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
@@ -177,8 +177,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ProcessorLoadBalancerTest, AnyStrategy_GetExpiredPartition)
   {
     for (auto strategy :
-         {Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyBalanced,
-          Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy})
+         {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
+          Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
       Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -216,8 +216,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ProcessorLoadBalancerTest, AnyStrategy_FullyBalancedOdd)
   {
     for (auto strategy :
-         {Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyBalanced,
-          Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy})
+         {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
+          Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
       Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -279,8 +279,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ProcessorLoadBalancerTest, AnyStrategy_FullyBalancedEven)
   {
     for (auto strategy :
-         {Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyBalanced,
-          Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy})
+         {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
+          Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
       Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -340,8 +340,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ProcessorLoadBalancerTest, AnyStrategy_GrabExtraPartitionBecauseAboveMax)
   {
     for (auto strategy :
-         {Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyBalanced,
-          Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy})
+         {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
+          Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
       Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -380,8 +380,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ProcessorLoadBalancerTest, AnyStrategy_StealsToBalance)
   {
     for (auto strategy :
-         {Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyBalanced,
-          Azure::Messaging::EventHubs::ProcessorStrategy::ProcessorStrategyGreedy})
+         {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
+          Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy})
     {
       Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 

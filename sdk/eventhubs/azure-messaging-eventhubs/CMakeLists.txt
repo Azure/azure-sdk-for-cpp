@@ -63,6 +63,13 @@ set(
     inc/azure/messaging/eventhubs/rtti.hpp
     inc/azure/messaging/eventhubs/processor.hpp
     inc/azure/messaging/eventhubs/models/management_models.hpp
+    inc/azure/messaging/eventhubs/models/checkpoint_store_models.hpp
+    inc/azure/messaging/eventhubs/models/consumer_client_models.hpp
+    inc/azure/messaging/eventhubs/models/event_data_batch_models.hpp
+    inc/azure/messaging/eventhubs/models/partition_client_models.hpp
+    inc/azure/messaging/eventhubs/models/processor_models.hpp
+    inc/azure/messaging/eventhubs/models/processor_load_balancer_models.hpp
+    inc/azure/messaging/eventhubs/models/producer_client_models.hpp
 )
 
 set(
@@ -71,7 +78,6 @@ set(
     src/producer_client.cpp
     src/retry_operation.cpp
     src/consumer_client.cpp
-    src/partition_client.cpp
     src/checkpoint_store.cpp
     src/processor_load_balancer.cpp
 )

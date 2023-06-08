@@ -64,7 +64,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=eventhub";
-    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
     
     options.ReceiverOptions.Name = "unit-test";
@@ -74,7 +74,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
-    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    Azure::Messaging::EventHubs::Models::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
     Azure::Messaging::EventHubs::PartitionClient partitionClient
@@ -89,7 +89,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=eventhub";
 
-    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
     options.ReceiverOptions.Name = "unit-test";
@@ -98,7 +98,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.EnableTrace = true;
     options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
-    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    Azure::Messaging::EventHubs::Models::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
     Azure::Messaging::EventHubs::PartitionClient partitionClient
@@ -115,7 +115,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=eventhub";
 
-    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
     options.ReceiverOptions.Name = "unit-test";
@@ -125,7 +125,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
-    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    Azure::Messaging::EventHubs::Models::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
     Azure::Messaging::EventHubs::PartitionClient partitionClient
@@ -136,3 +136,4 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(result.PartitionId, "0");
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test
+

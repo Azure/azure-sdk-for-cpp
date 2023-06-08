@@ -33,7 +33,7 @@ TEST(ProducerClientTest, TokenCredential)
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_TENANT_ID"),
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_ID"),
       Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_SECRET"))};
-  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.ApplicationID = "appId";
   auto client = Azure::Messaging::EventHubs::ProducerClient(
       "gearamaeh1.servicebus.windows.net", "eventhub", credential);
@@ -46,7 +46,7 @@ TEST(ProducerClientTest, SendMessage)
       = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
       + ";EntityPath=eventhub";
 
-  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
   producerOptions.SenderOptions.EnableTrace = true;
   producerOptions.SenderOptions.MessageSource = "ingress";
@@ -65,12 +65,12 @@ TEST(ProducerClientTest, SendMessage)
   Azure::Messaging::EventHubs::Models::EventData message3;
   message2.Body.Sequence = Azure::Core::Amqp::Models::AmqpList{'H', 'e', 'l', 'l', 'o', '3'};
 
-  Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
+  Azure::Messaging::EventHubs::Models::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
   edboptions.PartitionID = "1";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch(edboptions);
 
-  Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
+  Azure::Messaging::EventHubs::Models::EventDataBatchOptions edboptions2;
   edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
   ;
   edboptions2.PartitionID = "2";
@@ -97,7 +97,7 @@ TEST(ProducerClientTest, GetEventHubProperties)
       = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
       + ";EntityPath=eventhub";
 
-  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
   producerOptions.SenderOptions.EnableTrace = true;
   producerOptions.SenderOptions.MessageSource = "ingress";
@@ -120,7 +120,7 @@ TEST(ProducerClientTest, GetPartitionProperties)
       = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
       + ";EntityPath=eventhub";
 
-  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+  Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
   producerOptions.SenderOptions.EnableTrace = true;
   producerOptions.SenderOptions.MessageSource = "ingress";

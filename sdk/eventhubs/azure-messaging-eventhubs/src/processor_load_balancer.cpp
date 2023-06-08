@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include "azure/messaging/eventhubs.hpp"
 
-Azure::Messaging::EventHubs::LoadBalancerInfo Azure::Messaging::EventHubs::ProcessorLoadBalancer::
+Azure::Messaging::EventHubs::Models::LoadBalancerInfo Azure::Messaging::EventHubs::ProcessorLoadBalancer::
     GetAvailablePartitions(std::vector<std::string> const& partitionIDs, Azure::Core::Context& ctx)
 {
 
@@ -81,7 +81,7 @@ Azure::Messaging::EventHubs::LoadBalancerInfo Azure::Messaging::EventHubs::Proce
       ownerships};
 }
 
-std::vector<Azure::Messaging::EventHubs::Ownership>
+std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
     std::vector<Ownership> const& ownerships,
     uint64_t const& count)
@@ -101,14 +101,14 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
   return randomOwnerships;
 }
 
-Azure::Messaging::EventHubs::Ownership
+Azure::Messaging::EventHubs::Models::Ownership
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::ResetOwnership(Ownership ownership)
 {
   ownership.OwnerID = m_consumerClientDetails.ClientID;
   return ownership;
 }
 
-std::vector<Azure::Messaging::EventHubs::Ownership>
+std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
     LoadBalancerInfo const& lbinfo,
     Azure::Core::Context& ctx)
@@ -132,7 +132,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
   return ours;
 }
 
-std::vector<Azure::Messaging::EventHubs::Ownership>
+std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GreedyLoadBalancer(
     LoadBalancerInfo const& lbInfo,
     Azure::Core::Context ctx)
@@ -157,7 +157,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GreedyLoadBalancer(
   return ours;
 }
 
-std::vector<Azure::Messaging::EventHubs::Ownership>
+std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     std::vector<std::string> const& partitionIDs,
     Azure::Core::Context ctx)

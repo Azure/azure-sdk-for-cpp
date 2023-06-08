@@ -28,7 +28,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     EXPECT_EQ(0, checkpoints.size());
 
-    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Checkpoint{
+    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         "$Default",
         "event-hub-name",
         "ns.servicebus.windows.net",
@@ -47,7 +47,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(202, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(101, checkpoints[0].Offset.Value());
 
-    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Checkpoint{
+    checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         "$Default",
         "event-hub-name",
         "ns.servicebus.windows.net",
@@ -79,12 +79,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
     EXPECT_EQ(0, ownerships.size());
 
-    ownerships
-        = checkpointStore.ClaimOwnership(std::vector<Azure::Messaging::EventHubs::Ownership>{});
+    ownerships = checkpointStore.ClaimOwnership(
+        std::vector<Azure::Messaging::EventHubs::Models::Ownership>{});
     EXPECT_EQ(0, ownerships.size());   
 
     ownerships = checkpointStore.ClaimOwnership(
-        std::vector<Azure::Messaging::EventHubs::Ownership>{Azure::Messaging::EventHubs::Ownership{
+        std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
+        Azure::Messaging::EventHubs::Models::Ownership{
             "$Default",
             "event-hub-name",
             "ns.servicebus.windows.net",
@@ -102,7 +103,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::ETag validEtag = ownerships[0].ETag.Value();
     Azure::DateTime lastDatetime = ownerships[0].LastModifiedTime.Value();
     ownerships = checkpointStore.ClaimOwnership(
-        std::vector<Azure::Messaging::EventHubs::Ownership>{Azure::Messaging::EventHubs::Ownership{
+        std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
+            Azure::Messaging::EventHubs::Models::Ownership{
             "$Default",
             "event-hub-name",
             "ns.servicebus.windows.net",
@@ -113,7 +115,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(0, ownerships.size()); 
 
         ownerships = checkpointStore.ClaimOwnership(
-        std::vector<Azure::Messaging::EventHubs::Ownership>{Azure::Messaging::EventHubs::Ownership{
+        std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
+            Azure::Messaging::EventHubs::Models::Ownership{
             "$Default",
             "event-hub-name",
             "ns.servicebus.windows.net",

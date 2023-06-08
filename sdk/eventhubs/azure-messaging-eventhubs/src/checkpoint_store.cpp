@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #include "azure/messaging/eventhubs/checkpoint_store.hpp"
+using namespace Azure::Messaging::EventHubs::Models;
 
 std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipName(
-    Azure::Messaging::EventHubs::Ownership const& ownership)
+    Ownership const& ownership)
 {
   if (ownership.PartitionID.empty())
   {
@@ -15,7 +16,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipName(
 }
 
 std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipPrefixName(
-    Azure::Messaging::EventHubs::Ownership const& ownership)
+    Ownership const& ownership)
 {
   if (ownership.FullyQualifiedNamespace.empty() || ownership.EventHubName.empty()
       || ownership.ConsumerGroup.empty())
@@ -30,7 +31,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipPrefix
 }
 
 std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobPrefixName(
-    Azure::Messaging::EventHubs::Checkpoint const& checkpoint)
+    Checkpoint const& checkpoint)
 {
   if (checkpoint.FullyQualifiedNamespace.empty() || checkpoint.EventHubName.empty()
       || checkpoint.ConsumerGroup.empty())
@@ -45,7 +46,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobP
 }
 
 std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobName(
-    Azure::Messaging::EventHubs::Checkpoint const& checkpoint)
+    Checkpoint const& checkpoint)
 {
   if (checkpoint.PartitionID.empty())
   {
@@ -58,7 +59,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobN
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
     Azure::Storage::Metadata const& metadata,
-    Azure::Messaging::EventHubs::Checkpoint& checkpoint)
+    Checkpoint& checkpoint)
 {
   std::string temp = metadata.at("sequencenumber");
   if (temp.empty())
@@ -78,7 +79,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
     Azure::Storage::Blobs::Models::BlobItem const& blob,
-    Azure::Messaging::EventHubs::Ownership& ownership)
+    Ownership& ownership)
 {
   std::string temp = blob.Details.Metadata.at("ownerid");
   if (temp.empty())
@@ -92,7 +93,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
 
 Azure::Storage::Metadata
 Azure::Messaging::EventHubs::BlobCheckpointStore::NewCheckpointBlobMetadata(
-    Azure::Messaging::EventHubs::Checkpoint const& checkpoint)
+    Checkpoint const& checkpoint)
 {
   Azure::Storage::Metadata metadata;
 
@@ -108,16 +109,16 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::NewCheckpointBlobMetadata(
   return metadata;
 }
 
-std::vector<Azure::Messaging::EventHubs::Ownership>
+std::vector<Ownership>
 Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
-    std::vector<Azure::Messaging::EventHubs::Ownership> partitionOwnership,
+    std::vector<Ownership> partitionOwnership,
     Azure::Core::Context ctx,
-    Azure::Messaging::EventHubs::ClaimOwnershipOptions const& options)
+    ClaimOwnershipOptions const& options)
 {
   (void)options;
-  std::vector<Azure::Messaging::EventHubs::Ownership> newOwnerships;
+  std::vector<Ownership> newOwnerships;
 
-  for (Azure::Messaging::EventHubs::Ownership ownership : partitionOwnership)
+  for (Ownership ownership : partitionOwnership)
   {
     std::string blobName = GetOwnershipName(ownership);
     Azure::Storage::Metadata metadata;
@@ -129,7 +130,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
       if (result.second.HasValue())
       {
 
-        Azure::Messaging::EventHubs::Ownership newOwnership(ownership);
+        Ownership newOwnership(ownership);
         newOwnership.ETag = result.second;
         newOwnership.LastModifiedTime = result.first;
         newOwnerships.emplace_back(newOwnership);
@@ -146,7 +147,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
   return newOwnerships;
 }
 
-std::vector<Azure::Messaging::EventHubs::Checkpoint>
+std::vector<Checkpoint>
 Azure::Messaging::EventHubs::BlobCheckpointStore::ListCheckpoints(
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
@@ -180,7 +181,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::ListCheckpoints(
 
 /**@brief  ListOwnership lists all ownerships.
  */
-std::vector<Azure::Messaging::EventHubs::Ownership>
+std::vector<Ownership>
 Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwnership(
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,

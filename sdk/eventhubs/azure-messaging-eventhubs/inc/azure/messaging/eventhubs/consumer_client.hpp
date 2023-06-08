@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "partition_client.hpp"
+#include "partition_client.hpp"
 #include "models/management_models.hpp"
+#include "models/consumer_client_models.hpp"
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -16,42 +18,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 #endif
 
 namespace Azure { namespace Messaging { namespace EventHubs {
-/**@brief Contains options for the ConsumerClient creation
- */
-struct ConsumerClientOptions
-{
-  /**@brief ApplicationID is used as the identifier when setting the User-Agent property.
-   */
-  std::string ApplicationID = "";
-
-  /**@brief  RetryOptions controls how often operations are retried from this client and any
-   * Receivers and Senders created from this client.
-   */
-  Azure::Core::Http::Policies::RetryOptions RetryOptions{};
-
-  /**@brief  Message sender options.
-   */
-  Azure::Core::Amqp::_internal::MessageReceiverOptions ReceiverOptions{};
-};
-
-struct ConsumerClientCreds
-{
-  std::string ConnectionString;
-
-  // the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
-  std::string FullyQualifiedNamespace;
-
-  std::string EventHub;
-
-  std::string ConsumerGroup;
-
-  std::shared_ptr<Core::Credentials::TokenCredential> Credential;
-  std::shared_ptr<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>
-      SasCredential;
-
-  std::string HostUrl;
-};
-
 class ConsumerClient {
 #ifdef TESTING_BUILD_AMQP
   friend class Azure::Messaging::EventHubs::Test::

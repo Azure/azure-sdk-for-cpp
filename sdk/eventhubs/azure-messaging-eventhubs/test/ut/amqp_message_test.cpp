@@ -6,7 +6,7 @@
 
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
-TEST(AMQPMessageTest, EventData1)
+TEST(AmqpMessageTest, EventData1)
 {
   Azure::Messaging::EventHubs::Models::EventData eventData;
 
@@ -25,7 +25,7 @@ TEST(AMQPMessageTest, EventData1)
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
 }
 
-TEST(AMQPMessageTest, EventDataNew)
+TEST(AmqpMessageTest, EventDataNew)
 {
   Azure::Messaging::EventHubs::Models::EventData eventData;
 

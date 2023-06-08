@@ -40,7 +40,7 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
 Azure::Messaging::EventHubs::PartitionClient
 Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
     std::string partitionId,
-    Azure::Messaging::EventHubs::PartitionClientOptions const& options)
+    Azure::Messaging::EventHubs::Models::PartitionClientOptions const& options)
 {
   Azure::Messaging::EventHubs::PartitionClient partitionClient;
   partitionClient.m_partitionOptions = options;
