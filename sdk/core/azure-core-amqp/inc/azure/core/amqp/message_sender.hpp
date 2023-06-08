@@ -102,6 +102,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief If true, the message sender will log trace events. */
     bool EnableTrace{false};
+
+    /** @brief If true, require that the message sender be authenticated with the service. */
+    bool AuthenticationRequired{true};
   };
 
   class MessageSender final {

@@ -188,9 +188,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::Open(Context const& context)
   {
-    // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
-    // it.
-    m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
+    if (m_options.AuthenticationRequired)
+    {
+      // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
+      // it.
+      m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
+    }
 
     if (m_link == nullptr)
     {

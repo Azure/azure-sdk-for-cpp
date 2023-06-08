@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::vector<std::string> AuthenticationScopes;
     ReceiverSettleMode SettleMode{ReceiverSettleMode::First};
     Models::_internal::MessageTarget MessageTarget;
-    bool EnableTrace{false};
+
     Nullable<uint32_t> InitialDeliveryCount;
     Nullable<uint64_t> MaxMessageSize;
 
@@ -60,13 +60,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     ExpiryPolicy SenderExpiryPolicy{};
     ExpiryPolicy ReceiverExpiryPolicy{};
     std::chrono::seconds ExpiryTimeout{std::chrono::seconds(0)};
-    // LinkFilter
     bool ManualCredits{};
     Models::AmqpValue Properties;
 
     std::vector<std::string> SenderCapabilities;
     LinkDurability SenderDurability{};
     std::chrono::seconds SenderExpiryTimeout{std::chrono::seconds(0)};
+
+    bool EnableTrace{false};
+
+    /** @brief If true, require that the message sender be authenticated with the service. */
+    bool AuthenticationRequired{true};
   };
 
   class MessageReceiverEvents {

@@ -16,6 +16,7 @@
 #include <azure_uamqp_c/amqp_management.h>
 
 #include <memory>
+#include <queue>
 #include <vector>
 #if UAMQP_MANAGEMENT_IMPLEMENTATION
 template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_MANAGEMENT_INSTANCE_TAG>
@@ -101,7 +102,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::ManagementOpenStatus>
         m_openCompleteQueue;
 
+    uint64_t m_nextMessageId{0};
+
+    // What is the message ID expected for the current outstanding operation?
+    uint64_t m_expectedMessageId;
+    bool m_sendCompleted{false};
+
     void SetState(ManagementState newState);
+    // Reflect the error state to the OnError callback and return a delivery rejected status.
+    Models::AmqpValue IndicateError(
+        std::string const& errorCondition,
+        std::string const& errorDescription);
+
 #endif
     std::string m_managementNodeName;
     _internal::ManagementClientOptions m_options;

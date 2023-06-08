@@ -261,7 +261,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageReceiverImpl::Open(Azure::Core::Context const& context)
   {
-    m_session->AuthenticateIfNeeded(static_cast<std::string>(m_source.GetAddress()), context);
+    if (m_options.AuthenticationRequired)
+    {
+      m_session->AuthenticateIfNeeded(static_cast<std::string>(m_source.GetAddress()), context);
+    }
 
     // Once we've authenticated the connection, establish the link and receiver.
     // We cannot do this before authenticating the client.
