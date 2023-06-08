@@ -298,7 +298,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       struct ManagementEventsHandler : public ManagementClientEvents
       {
-        void OnError(Azure::Core::Amqp::Models::_internal::AmqpError const&) override { Error = true; }
+        void OnError(Azure::Core::Amqp::Models::_internal::AmqpError const&) override
+        {
+          Error = true;
+        }
         bool Error{false};
       };
       ManagementEventsHandler managementEvents;
@@ -331,7 +334,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
       EXPECT_EQ(response.StatusCode, 500);
-      EXPECT_EQ(response.Description, "Received message does not have a statusCode status code key.");
+      EXPECT_EQ(
+          response.Description, "Received message does not have a statusCode status code key.");
       EXPECT_TRUE(managementEvents.Error);
       management.Close();
 

@@ -201,14 +201,16 @@ int main()
       std::cout << "Partition properties: " << std::endl;
       std::cout << "  Name: " << std::get<1>(partitionProperties).Name << std::endl;
       std::cout << "  PartitionId: " << std::get<1>(partitionProperties).PartitionId << std::endl;
-      std::cout << "  BeginningSequenceNumber: " << std::get<1>(partitionProperties).BeginningSequenceNumber
-                << std::endl;
+      std::cout << "  BeginningSequenceNumber: "
+                << std::get<1>(partitionProperties).BeginningSequenceNumber << std::endl;
       std::cout << "  LastEnqueuedSequenceNumber: "
                 << std::get<1>(partitionProperties).LastEnqueuedSequenceNumber << std::endl;
-      std::cout << "  LastEnqueuedOffset: " << std::get<1>(partitionProperties).LastEnqueuedOffset << std::endl;
-      std::cout << "  LastEnqueuedTimeUtc: " << std::get<1>(partitionProperties).LastEnqueuedTimeUtc.ToString()
+      std::cout << "  LastEnqueuedOffset: " << std::get<1>(partitionProperties).LastEnqueuedOffset
                 << std::endl;
-      std::cout << "  IsEmpty: " << std::boolalpha << std::get<1>(partitionProperties).IsEmpty << std::endl;
+      std::cout << "  LastEnqueuedTimeUtc: "
+                << std::get<1>(partitionProperties).LastEnqueuedTimeUtc.ToString() << std::endl;
+      std::cout << "  IsEmpty: " << std::boolalpha << std::get<1>(partitionProperties).IsEmpty
+                << std::endl;
     }
   }
 }

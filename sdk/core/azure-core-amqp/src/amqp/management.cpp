@@ -462,6 +462,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             break;
         }
         break;
+      case ManagementState::Idle:
       case ManagementState::Error:
         Log::Stream(Logger::Level::Error)
             << "Message sender state changed to " << static_cast<int>(newState)
@@ -569,6 +570,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             break;
         }
         break;
+      case ManagementState::Idle:
       case ManagementState::Error:
         Log::Stream(Logger::Level::Error)
             << "Message sender state changed to " << static_cast<int>(newState)

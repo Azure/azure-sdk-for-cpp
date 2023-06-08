@@ -161,6 +161,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   std::pair<Azure::Nullable<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
   {
+    if (m_eventHandler)
+    {
+      throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
+    }
     auto result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection());
     if (result)
     {
