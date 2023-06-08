@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     // information gets in the way of the message.
     if (logCategory == AZ_LOG_TRACE
         && (strcmp(func, "log_outgoing_frame") == 0 || strcmp(func, "log_incoming_frame") == 0
-            || strcmp(func, "log_message_chunk") == 0))
+            || strcmp(func, "log_message_chunk") == 0 || strcmp(func, "_log_outgoing_frame") == 0))
     {
     }
     else

@@ -245,9 +245,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               << ", DeliveryState: " << deliveryState;
           if (sendStatus != _internal::MessageSendStatus::Ok)
           {
+            // [2023-06-08T21:51:40.0396593Z] INFO  : Management operation send complete. Status: 2,
+            // DeliveryState: {* {amqp:status:rejected,Unknown Request operation}}
+            // [2023-06-08T21:52:49.9607445Z] INFO  : Management operation send complete. Status: 2,
+            // DeliveryState: {* {amqp:status:rejected,Unknown Request operation}}
+
             std::string errorDescription = "Send failed.";
+            Log::Stream(Logger::Level::Informational)
+                << "Delivery State Type: " << static_cast<int32_t>(deliveryState.GetType());
             auto deliveryStateAsList{deliveryState.AsList()};
+            Log::Stream(Logger::Level::Informational)
+                << "Delivery List length: " << deliveryStateAsList.size();
             Models::AmqpValue firstState{deliveryStateAsList[0]};
+            Log::Stream(Logger::Level::Informational)
+                << "First List value type: " << static_cast<int32_t>(firstState.GetType());
             ERROR_HANDLE errorHandle;
             if (!amqpvalue_get_error(firstState, &errorHandle))
             {
