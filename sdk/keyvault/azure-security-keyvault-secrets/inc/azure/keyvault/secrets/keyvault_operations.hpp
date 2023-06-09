@@ -51,16 +51,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string resumeToken,
         std::shared_ptr<SecretClient> secretClient);
 
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
   public:
     /**
      * @brief Get the #Azure::Security::KeyVault::Secrets::Secret object.
@@ -124,16 +114,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Response<DeletedSecret> response);
 
     DeleteSecretOperation(std::string resumeToken, std::shared_ptr<SecretClient> secretClient);
-
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
 
   public:
     /**
