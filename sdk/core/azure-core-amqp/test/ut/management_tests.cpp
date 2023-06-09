@@ -113,8 +113,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             && incomingMessage.ApplicationProperties.at("operation") != "Test")
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
-          return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
+          auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
               "amqp:status:rejected", "Unknown Request operation");
+          GTEST_LOG_(INFO) << "RV=" << rv;
+          return rv;
         }
         return AmqpServerMock::OnMessageReceived(receiver, incomingMessage);
       }
