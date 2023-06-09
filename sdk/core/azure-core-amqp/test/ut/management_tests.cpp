@@ -112,6 +112,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (receiver.GetSourceName() == "$management"
             && incomingMessage.ApplicationProperties.at("operation") != "Test")
         {
+            //Bad
+//[2023-06-09T17:43:29.2002796Z] DEBUG : -> [DISPOSITION]* {true,0,0,true,* {* {amqp:status:rejected,Unknown Request operation}}}
+//[2023-06-09T17:43:29.2003003Z] DEBUG : <- [DISPOSITION]* {true,0,0,true,* {* {amqp:status:rejected,Unknown Request operation}}}
+            // Good
+//[2023-06-09T17:40:08.3782554Z] DEBUG : -> [DISPOSITION]* {true,0,0,true,* {* {amqp:status:rejected,Unknown Request operation}}}
+//[2023-06-09T17:40:08.3783968Z] DEBUG : <- [DISPOSITION]* {true,0,0,true,* {* {amqp:status:rejected,Unknown Request operation}}}
+
+
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
           auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
               "amqp:status:rejected", "Unknown Request operation");
