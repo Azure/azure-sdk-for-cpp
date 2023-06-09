@@ -103,8 +103,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (receiver.GetSourceName() != "$management" && receiver.GetSourceName() != "$cbs")
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unexpected node name.";
-          return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
+          auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
               "test:Rejected", "Unknown message source.");
+          GTEST_LOG_(INFO) << "RV=" << rv;
+          return rv;
         }
         // If this is coming on the management node, we only support the Test operation.
         if (receiver.GetSourceName() == "$management"
