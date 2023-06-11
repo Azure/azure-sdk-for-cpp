@@ -18,6 +18,7 @@
 #include "azure/messaging/eventhubs/retry_operation.hpp"
 #include "azure/messaging/eventhubs/rtti.hpp"
 #include "azure/messaging/eventhubs/processor.hpp"
+#include "azure/messaging/eventhubs/models/amqp_message.hpp"
 #include "azure/messaging/eventhubs/models/management_models.hpp"
 #include "azure/messaging/eventhubs/models/checkpoint_store_models.hpp"
 #include "azure/messaging/eventhubs/models/consumer_client_models.hpp"

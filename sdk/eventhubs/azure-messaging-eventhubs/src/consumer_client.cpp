@@ -7,7 +7,7 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::string const& connectionString,
     std::string const& eventHub,
     std::string const& consumerGroup,
-    ConsumerClientOptions const& options)
+    Azure::Messaging::EventHubs::Models::ConsumerClientOptions const& options)
     : m_credentials{connectionString, "", eventHub, consumerGroup},
       m_consumerClientOptions(std::move(options))
 {
@@ -29,7 +29,7 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::string const& eventHub,
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
     std::string const& consumerGroup,
-    ConsumerClientOptions const& options)
+    Azure::Messaging::EventHubs::Models::ConsumerClientOptions const& options)
     : m_credentials{"", fullyQualifiedNamespace, eventHub, consumerGroup, credential},
       m_consumerClientOptions(options)
 {
@@ -89,7 +89,7 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
 
 Azure::Messaging::EventHubs::Models::EventHubProperties
 Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
-    Models::GetEventHubPropertiesOptions options)
+    Azure::Messaging::EventHubs::Models::GetEventHubPropertiesOptions options)
 {
   (void)options;
   if (m_sessions.find("0") == m_sessions.end())
@@ -154,7 +154,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
 Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
 Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
     std::string const& partitionID,
-    Models::GetPartitionPropertiesOptions options)
+    Azure::Messaging::EventHubs::Models::GetPartitionPropertiesOptions options)
 {
   (void)options;
   if (m_sessions.find(partitionID) == m_sessions.end())
@@ -218,4 +218,14 @@ Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
   managementClient.Close();
 
   return properties;
+}
+
+ Azure::Messaging::EventHubs::Models::ConsumerClientDetails 
+     Azure::Messaging::EventHubs::ConsumerClient::GetDetails()
+{
+  return Models::ConsumerClientDetails{
+      m_credentials.FullyQualifiedNamespace,
+      m_credentials.ConsumerGroup,
+      m_credentials.EventHub,
+      m_consumerClientOptions.ApplicationID};
 }

@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "partition_client.hpp"
-#include "partition_client.hpp"
-#include "models/management_models.hpp"
 #include "models/consumer_client_models.hpp"
+#include "models/management_models.hpp"
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -29,8 +28,8 @@ protected:
   const std::string defaultConsumerGroup = "$Default";
   std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
   std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
-  ConsumerClientCreds m_credentials;
-  ConsumerClientOptions m_consumerClientOptions;
+  Models::ConsumerClientCreds m_credentials;
+  Models::ConsumerClientOptions m_consumerClientOptions;
 
 public:
   /** @brief Getter for event hub name
@@ -74,8 +73,7 @@ public:
       std::string const& connectionsString,
       std::string const& eventHub = "",
       std::string const& consumerGroup = "$Default",
-      ConsumerClientOptions const& optionsv = ConsumerClientOptions());
-
+      Models::ConsumerClientOptions const& optionsv = {});
   /** @brief creates a ConsumerClient from a token credential.
    *
    * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
@@ -91,16 +89,16 @@ public:
       std::string const& eventHub,
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       std::string const& consumerGroup = "$Default",
-      ConsumerClientOptions const& options = ConsumerClientOptions());
+      Models::ConsumerClientOptions const& options = {});
 
-  /** @brief Create new Partition client o
+  /** @brief Create new Partition client
    *
    * @param partitionId targeted partition
    * @param options client options
    */
   PartitionClient NewPartitionClient(
       std::string partitionId,
-      PartitionClientOptions const& options = {});
+      Models::PartitionClientOptions const& options = {});
 
   /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
    * like name, and partitions.
@@ -119,5 +117,11 @@ public:
   Models::EventHubPartitionProperties GetPartitionProperties(
       std::string const& partitionID,
       Models::GetPartitionPropertiesOptions options = {});
+
+public:
+  /** @brief Gets the consumer client details
+   *
+   */
+  Models::ConsumerClientDetails GetDetails();
 };
 }}} // namespace Azure::Messaging::EventHubs
