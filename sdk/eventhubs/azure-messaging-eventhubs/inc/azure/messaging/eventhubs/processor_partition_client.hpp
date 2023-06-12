@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "checkpoint_store.hpp"
-#include "partition_client.hpp"
+#include "consumer_client.hpp"
 
 #include <azure/core/amqp.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
@@ -25,6 +25,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const Azure::Core::Amqp::Models::AmqpValue offsetNumberAnnotation = "x-opt-offset";
 
   public:
+    ProcessorPartitionClient(
+        std::string partitionId,
+        PartitionClient partitionClient,
+        std::unique_ptr<CheckpointStore> checkpointStore,
+        ConsumerClientDetails consumerClientDetails,
+        std::function<void()> cleanupFunc)
+        : m_partitionId(std::move(partitionId)), m_partitionClient(std::move(partitionClient)),
+          m_checkpointStore(std::move(checkpointStore)), m_cleanupFunc(std::move(cleanupFunc)),
+          m_consumerClientDetails(std::move(consumerClientDetails))
+    {
+    }
+    
+
     std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
         uint32_t maxBatchSize,
         Azure::Core::Context ctx = {})
@@ -82,11 +95,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       m_partitionClient.Close();
     }
-
-    ProcessorPartitionClient() = default;
-
-    ProcessorPartitionClient(
-        const Azure::Messaging::EventHubs::ProcessorPartitionClient& processorPartitionClient)
-        = default;
   };
 }}} // namespace Azure::Messaging::EventHubs

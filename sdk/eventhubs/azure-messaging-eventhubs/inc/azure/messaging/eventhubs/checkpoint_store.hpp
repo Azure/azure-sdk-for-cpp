@@ -16,6 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class CheckpointStore {
   public:
+    CheckpointStore() = default;
     /**@brief ClaimOwnership attempts to claim ownership of the partitions in partitionOwnership and
      * returns the actual partitions that    were claimed.
      */

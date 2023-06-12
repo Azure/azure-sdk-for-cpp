@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "models/partition_client_models.hpp"
+
 #include <azure/core/amqp.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
-  class ConsumerClient;
+  
 
   /** PartitionClient is used to receive events from an Event Hub partition.
    *
@@ -15,7 +16,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * [ConsumerClient.NewPartitionClient].
    */
   class PartitionClient {
-    friend class Azure::Messaging::EventHubs::ConsumerClient;
 
   protected:
     std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
@@ -45,7 +45,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       (void)options;
       std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages;
-      //bool prefetchDisabled = m_prefetchCount < 0;
+      // bool prefetchDisabled = m_prefetchCount < 0;
 
       while (messages.size() < maxMessages && !ctx.IsCancelled())
       {
@@ -65,6 +65,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       {
         m_receivers[i].Close();
       }
+    }
+    PartitionClient(
+        Models::PartitionClientOptions options,
+        Azure::Core::Http::Policies::RetryOptions retryOptions)
+    {
+      m_partitionOptions = options;
+      RetryOptions = retryOptions;
+    }
+
+    void PushBackReceiver(Azure::Core::Amqp::_internal::MessageReceiver& receiver)
+    {
+      m_receivers.push_back(std::move(receiver));
     }
   };
 }}} // namespace Azure::Messaging::EventHubs
