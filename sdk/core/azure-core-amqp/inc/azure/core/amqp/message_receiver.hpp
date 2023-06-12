@@ -152,7 +152,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::string GetSourceName() const;
 
-    /** @brief Waits until a message has been received
+    /** @brief Waits until a message has been received.
      *
      * @param context The context for cancelling operations.
      *
