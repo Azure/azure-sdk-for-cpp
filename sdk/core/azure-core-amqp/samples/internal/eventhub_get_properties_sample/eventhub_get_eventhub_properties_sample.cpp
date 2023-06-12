@@ -91,7 +91,7 @@ struct EventHubPartitionProperties final
   bool IsEmpty{};
 };
 
-EventHubPartitionProperties GetPartitionProperties(
+std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
     Azure::Core::Amqp::_internal::Session const& session,
     std::string const& eventHubName,
     std::string const& partitionId)
@@ -119,9 +119,11 @@ EventHubPartitionProperties GetPartitionProperties(
       message);
 
   EventHubPartitionProperties properties;
+  bool error{false};
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
+    std::cerr << "Error: " << result.Description;
+    error = true;
   }
   else
   {
@@ -150,7 +152,7 @@ EventHubPartitionProperties GetPartitionProperties(
   }
   managementClient.Close();
 
-  return properties;
+  return std::make_tuple(error, properties);
 }
 
 int main()
@@ -194,16 +196,21 @@ int main()
   {
     std::cout << "Partition: " << partition << std::endl;
     auto partitionProperties = GetPartitionProperties(session, eventhubsEntity, partition);
-    std::cout << "Partition properties: " << std::endl;
-    std::cout << "  Name: " << partitionProperties.Name << std::endl;
-    std::cout << "  PartitionId: " << partitionProperties.PartitionId << std::endl;
-    std::cout << "  BeginningSequenceNumber: " << partitionProperties.BeginningSequenceNumber
-              << std::endl;
-    std::cout << "  LastEnqueuedSequenceNumber: " << partitionProperties.LastEnqueuedSequenceNumber
-              << std::endl;
-    std::cout << "  LastEnqueuedOffset: " << partitionProperties.LastEnqueuedOffset << std::endl;
-    std::cout << "  LastEnqueuedTimeUtc: " << partitionProperties.LastEnqueuedTimeUtc.ToString()
-              << std::endl;
-    std::cout << "  IsEmpty: " << std::boolalpha << partitionProperties.IsEmpty << std::endl;
+    if (!std::get<0>(partitionProperties))
+    {
+      std::cout << "Partition properties: " << std::endl;
+      std::cout << "  Name: " << std::get<1>(partitionProperties).Name << std::endl;
+      std::cout << "  PartitionId: " << std::get<1>(partitionProperties).PartitionId << std::endl;
+      std::cout << "  BeginningSequenceNumber: "
+                << std::get<1>(partitionProperties).BeginningSequenceNumber << std::endl;
+      std::cout << "  LastEnqueuedSequenceNumber: "
+                << std::get<1>(partitionProperties).LastEnqueuedSequenceNumber << std::endl;
+      std::cout << "  LastEnqueuedOffset: " << std::get<1>(partitionProperties).LastEnqueuedOffset
+                << std::endl;
+      std::cout << "  LastEnqueuedTimeUtc: "
+                << std::get<1>(partitionProperties).LastEnqueuedTimeUtc.ToString() << std::endl;
+      std::cout << "  IsEmpty: " << std::boolalpha << std::get<1>(partitionProperties).IsEmpty
+                << std::endl;
+    }
   }
 }

@@ -33,12 +33,12 @@ TEST_F(TestSourceTarget, SimpleSourceTarget)
 
   {
     EXPECT_ANY_THROW(MessageSource source(AmqpValue{}));
-    AmqpValue val = AmqpArray();
+    AmqpValue val = static_cast<AmqpValue>(AmqpArray());
     EXPECT_ANY_THROW(MessageSource source{val});
   }
   {
     EXPECT_ANY_THROW(MessageTarget target(AmqpValue{}));
-    AmqpValue val = AmqpArray();
+    AmqpValue val = static_cast<AmqpValue>(AmqpArray());
     EXPECT_ANY_THROW(MessageTarget target(val));
   }
 }
@@ -79,7 +79,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 
   {
     MessageTargetOptions options;
-    options.Capabilities.push_back(AmqpSymbol{"Test"});
+    options.Capabilities.push_back(static_cast<AmqpValue>(AmqpSymbol{"Test"}));
     MessageTarget target(options);
     EXPECT_EQ(1, target.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities()[0].GetType());
@@ -238,7 +238,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.Capabilities.push_back(AmqpSymbol{"Test"});
+    options.Capabilities.push_back(static_cast<AmqpValue>(AmqpSymbol{"Test"}));
     MessageSource source(options);
     EXPECT_EQ(1, source.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities()[0].GetType());
@@ -374,7 +374,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.Outcomes.push_back(AmqpSymbol("Test"));
+    options.Outcomes.push_back(static_cast<AmqpValue>(AmqpSymbol("Test")));
     MessageSource source(options);
     EXPECT_EQ(1, source.GetOutcomes().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());

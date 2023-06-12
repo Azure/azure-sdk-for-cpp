@@ -13,6 +13,9 @@ include(AzureBuildTargetForCI)
 include(GoogleTest)
 
 find_package(uamqp CONFIG REQUIRED)
+find_package(umock_c)
+find_package(azure_macro_utils_c CONFIG REQUIRED)
+find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 # Unit Tests
 add_executable(azure-core-amqp-tests-uamqp
@@ -39,7 +42,7 @@ endif()
 target_include_directories(azure-core-amqp-tests-uamqp PRIVATE Azure::azure-core-amqp)
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(azure-core-amqp-tests-uamqp PRIVATE GTest::gtest_main Azure::azure-core-amqp uamqp)
+target_link_libraries(azure-core-amqp-tests-uamqp PRIVATE GTest::gtest_main Azure::azure-core-amqp uamqp umock_c azure_macro_utils_c)
 gtest_discover_tests( azure-core-amqp-tests-uamqp )
 
 create_per_service_target_build(core azure-core-amqp-tests-uamqp)

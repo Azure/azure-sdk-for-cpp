@@ -226,13 +226,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         receiverOptions.MessageTarget = messageTarget;
         receiverOptions.Name = name;
         receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-        receiverOptions.DynamicAddress = messageSource.GetDynamic();
         receiverOptions.EnableTrace = true;
-        auto receiver = std::make_unique<MessageReceiver>(session.CreateMessageReceiver(
-            newLinkInstance,
-            static_cast<std::string>(messageSource.GetAddress()),
-            receiverOptions,
-            this));
+        auto receiver = std::make_unique<MessageReceiver>(
+            session.CreateMessageReceiver(newLinkInstance, messageSource, receiverOptions, this));
         GTEST_LOG_(INFO) << "Opening the message receiver.";
         receiver->Open();
         m_messageReceiverQueue.CompleteOperation(std::move(receiver));

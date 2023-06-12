@@ -2,6 +2,7 @@
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/common/global_state.hpp"
+#include "azure/core/amqp/models/amqp_error.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <algorithm>
@@ -261,6 +262,42 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValue('a'), list2.at(3));
     EXPECT_FALSE(list1 < list2);
   }
+
+  {
+    AmqpList test;
+    AmqpDescribed desc{
+        static_cast<uint64_t>(29),
+        static_cast<AmqpValue>(AmqpList{AmqpValue{"test:error"}, AmqpValue{"test description"}})};
+    test.push_back(AmqpValue{desc});
+    EXPECT_EQ(1, test.size());
+    EXPECT_EQ(AmqpValueType::Described, test[0].GetType());
+
+    AmqpList list2{test};
+    EXPECT_EQ(1, list2.size());
+    EXPECT_EQ(AmqpValueType::Described, list2[0].GetType());
+    AmqpDescribed desc2{list2[0].AsDescribed()};
+    EXPECT_EQ(desc2.GetDescriptor(), AmqpValue{static_cast<uint64_t>(29ll)});
+  }
+
+  {
+    AmqpList test;
+    _internal::AmqpError error;
+    error.Condition = _internal::AmqpErrorCondition("test:error");
+    error.Description = "test description";
+    test.push_back(_internal::AmqpErrorFactory::ToAmqp(error));
+    EXPECT_EQ(1, test.size());
+    EXPECT_EQ(AmqpValueType::Composite, test[0].GetType());
+    AmqpComposite testAsComposite{test[0].AsComposite()};
+    EXPECT_EQ(testAsComposite.GetDescriptor(), AmqpValue{static_cast<uint64_t>(29ll)});
+    {
+      AmqpValue testAsValue{test};
+      EXPECT_EQ(AmqpValueType::List, testAsValue.GetType());
+
+      auto testAsList{testAsValue.AsList()};
+      EXPECT_EQ(AmqpValueType::Composite, testAsList[0].GetType());
+      EXPECT_EQ(test[0], testAsList[0]);
+    }
+  }
 }
 
 TEST_F(TestValues, TestMap)
@@ -308,7 +345,7 @@ TEST_F(TestValues, TestArray)
 
     EXPECT_EQ(5, array1.size());
 
-    AmqpValue value = array1;
+    AmqpValue value = static_cast<AmqpValue>(array1);
     EXPECT_EQ(AmqpValueType::Array, value.GetType());
 
     const AmqpArray array2 = value.AsArray();
@@ -398,7 +435,7 @@ TEST_F(TestValues, TestCompositeValue)
   // Put some things in the map.
   {
     AmqpComposite compositeVal(static_cast<uint64_t>(116ull), {25, 25.0f});
-    AmqpValue value = compositeVal;
+    AmqpValue value = static_cast<AmqpValue>(compositeVal);
     AmqpComposite testVal(value.AsComposite());
 
     EXPECT_EQ(compositeVal.size(), testVal.size());
@@ -419,7 +456,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(AmqpSymbol("My Composite Type"), described1.GetDescriptor().AsSymbol());
     EXPECT_EQ(5, static_cast<int32_t>(described1.GetValue()));
 
-    AmqpValue value = described1;
+    AmqpValue value = static_cast<AmqpValue>(described1);
     EXPECT_EQ(AmqpValueType::Described, value.GetType());
 
     AmqpDescribed described2 = value.AsDescribed();
@@ -436,7 +473,7 @@ TEST_F(TestValues, TestDescribed)
     EXPECT_EQ(937, static_cast<uint64_t>(value.GetDescriptor()));
     EXPECT_EQ(5, static_cast<int32_t>(value.GetValue()));
 
-    AmqpValue value2 = value;
+    AmqpValue value2 = static_cast<AmqpValue>(value);
 
     AmqpDescribed described2 = value2.AsDescribed();
     EXPECT_EQ(AmqpValueType::Described, value2.GetType());

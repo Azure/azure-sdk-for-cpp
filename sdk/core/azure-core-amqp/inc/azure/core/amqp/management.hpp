@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "models/amqp_error.hpp"
 #include "models/amqp_message.hpp"
 #include "session.hpp"
 
@@ -92,8 +93,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   public:
     /** @brief Called when an error occurs.
+     *
+     * @param error - the error which occurred.
+     *
      */
-    virtual void OnError() = 0;
+    virtual void OnError(Models::_internal::AmqpError const& error) = 0;
   };
 
   /**

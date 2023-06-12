@@ -455,15 +455,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         // described body.
         AmqpDescribed describedBody(
             static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpValue), message.m_amqpValueBody);
-        auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+        auto serializedBodyValue = AmqpValue::Serialize(static_cast<AmqpValue>(describedBody));
         rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
       }
       break;
       case MessageBodyType::Data:
         for (auto const& val : message.m_binaryDataBody)
         {
-          AmqpDescribed describedBody(static_cast<std::uint64_t>(AmqpDescriptors::DataBinary), val);
-          auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+          AmqpDescribed describedBody(
+              static_cast<std::uint64_t>(AmqpDescriptors::DataBinary), static_cast<AmqpValue>(val));
+          auto serializedBodyValue = AmqpValue::Serialize(static_cast<AmqpValue>(describedBody));
           rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
         }
         break;
@@ -471,8 +472,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         for (auto const& val : message.m_amqpSequenceBody)
         {
           AmqpDescribed describedBody(
-              static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpSequence), val);
-          auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+              static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpSequence),
+              static_cast<AmqpValue>(val));
+          auto serializedBodyValue = AmqpValue::Serialize(static_cast<AmqpValue>(describedBody));
           rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
         }
       }

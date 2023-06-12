@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session{connection.CreateSession({})};
       ManagementClientOptions options;
       options.EnableTrace = 1;
-      ManagementClient management(session.CreateManagementClient("Test", {}));
+      ManagementClient management(session.CreateManagementClient("Test", options));
 
       mockServer.StartListening();
 
@@ -103,16 +103,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (receiver.GetSourceName() != "$management" && receiver.GetSourceName() != "$cbs")
         {
           GTEST_LOG_(INFO) << "Rejecting message because it is for an unexpected node name.";
-          return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
+          auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
               "test:Rejected", "Unknown message source.");
+          GTEST_LOG_(INFO) << "RV=" << rv;
+          return rv;
         }
         // If this is coming on the management node, we only support the Test operation.
         if (receiver.GetSourceName() == "$management"
             && incomingMessage.ApplicationProperties.at("operation") != "Test")
         {
-          GTEST_LOG_(INFO) << "Rejecting message because is for an unknown operation.";
-          return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
+          GTEST_LOG_(INFO) << "Rejecting message because it is for an unknown operation.";
+          auto rv = Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected(
               "amqp:status:rejected", "Unknown Request operation");
+          GTEST_LOG_(INFO) << "RV=" << rv;
+          return rv;
         }
         return AmqpServerMock::OnMessageReceived(receiver, incomingMessage);
       }
@@ -283,8 +287,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
-      EXPECT_EQ(response.StatusCode, 0);
-      EXPECT_EQ(response.Description, "Error processing management operation.");
+      EXPECT_EQ(response.StatusCode, 500);
+      EXPECT_EQ(response.Description, "Received message statusCode value is not an int.");
       management.Close();
 
       mockServer.StopListening();
@@ -298,7 +302,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       struct ManagementEventsHandler : public ManagementClientEvents
       {
-        void OnError() override { Error = true; }
+        void OnError(Azure::Core::Amqp::Models::_internal::AmqpError const&) override
+        {
+          Error = true;
+        }
         bool Error{false};
       };
       ManagementEventsHandler managementEvents;
@@ -330,8 +337,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
-      EXPECT_EQ(response.StatusCode, 0);
-      EXPECT_EQ(response.Description, "Error processing management operation.");
+      EXPECT_EQ(response.StatusCode, 500);
+      EXPECT_EQ(
+          response.Description, "Received message does not have a statusCode status code key.");
       EXPECT_TRUE(managementEvents.Error);
       management.Close();
 
@@ -410,8 +418,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Context::ApplicationContext.WithDeadline(
               std::chrono::system_clock::now() + std::chrono::seconds(10)));
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
-      EXPECT_EQ(response.StatusCode, 0);
-      EXPECT_EQ(response.Description, "");
+      EXPECT_EQ(response.StatusCode, 500);
+      EXPECT_EQ(response.Description, "Unknown Request operation");
       management.Close();
 
       mockServer.StopListening();
