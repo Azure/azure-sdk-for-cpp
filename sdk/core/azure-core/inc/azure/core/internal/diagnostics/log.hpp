@@ -13,7 +13,7 @@
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
 
-  /** @brief Internal Log class used for generating diagostic logs.
+  /** @brief Internal Log class used for generating diagnostic logs.
    *
    * When components within the Azure SDK wish to emit diagnostic log messages, they should use the
    * Azure::Core::Diagnostics::_internal::Log class to generate those messages.
