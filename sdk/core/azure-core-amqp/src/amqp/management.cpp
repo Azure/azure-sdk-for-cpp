@@ -667,6 +667,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       Log::Stream(Logger::Level::Error) << "Received message before send completed.";
     }
+
+    // AMQP management statusCode values are [RFC
+    // 2616](https://www.rfc-editor.org/rfc/rfc2616#section-6.1.1) status codes.
     if ((statusCode < 200) || (statusCode > 299))
     {
       m_messageQueue.CompleteOperation(
