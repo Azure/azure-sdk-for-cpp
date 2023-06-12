@@ -61,12 +61,11 @@ int Log::LoggerStringBuffer::sync()
   str(std::string());
   return 0;
 }
-namespace {
-static Log::LoggerStream g_verboseLogger{Logger::Level::Verbose};
-static Log::LoggerStream g_informationalLogger{Logger::Level::Informational};
-static Log::LoggerStream g_warningLogger{Logger::Level::Warning};
-static Log::LoggerStream g_errorLogger{Logger::Level::Error};
-} // namespace
+
+Log::LoggerStream Log::g_verboseLogger{Logger::Level::Verbose};
+Log::LoggerStream Log::g_informationalLogger{Logger::Level::Informational};
+Log::LoggerStream Log::g_warningLogger{Logger::Level::Warning};
+Log::LoggerStream Log::g_errorLogger{Logger::Level::Error};
 
 /** Returns a custom ostream implementation with a logger based stream buffer.
  *  @param level The level of the log message.
