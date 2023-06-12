@@ -867,7 +867,10 @@ public:
   /**
    * @brief Convert an existing AmqpComposite to an AmqpValue.
    */
-  explicit operator AmqpValue() const { return static_cast<_detail::UniqueAmqpValueHandle>(*this).get(); }
+  explicit operator AmqpValue() const
+  {
+    return static_cast<_detail::UniqueAmqpValueHandle>(*this).get();
+  }
 
 private:
   AmqpValue m_descriptor;

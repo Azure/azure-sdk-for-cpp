@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class MessageReceiver;
 
-  struct MessageReceiverOptions
+  struct MessageReceiverOptions final
   {
     /** @brief The name of the link associated with the message sender.
      *

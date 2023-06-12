@@ -246,14 +246,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           if (sendStatus != _internal::MessageSendStatus::Ok)
           {
             std::string errorDescription = "Send failed.";
-            Log::Stream(Logger::Level::Informational)
-                << "Delivery State Type: " << static_cast<int32_t>(deliveryState.GetType());
             auto deliveryStateAsList{deliveryState.AsList()};
-            Log::Stream(Logger::Level::Informational)
-                << "Delivery List length: " << deliveryStateAsList.size();
             Models::AmqpValue firstState{deliveryStateAsList[0]};
-            Log::Stream(Logger::Level::Informational)
-                << "First List value type: " << static_cast<int32_t>(firstState.GetType());
             ERROR_HANDLE errorHandle;
             if (!amqpvalue_get_error(firstState, &errorHandle))
             {
@@ -386,7 +380,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (newState == oldState)
     {
-      Log::Stream(Logger::Level::Error)
+      Log::Stream(Logger::Level::Verbose)
           << "OnMessageSenderStateChanged: newState == oldState" << std::endl;
       return;
     }
