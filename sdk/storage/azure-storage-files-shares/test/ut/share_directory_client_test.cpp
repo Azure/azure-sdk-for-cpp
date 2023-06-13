@@ -174,6 +174,7 @@ namespace Azure { namespace Storage { namespace Test {
       properties.LastWrittenOn = std::chrono::system_clock::now();
       properties.Attributes = Files::Shares::Models::FileAttributes::None;
       renameOptions.SmbProperties = properties;
+      renameOptions.ContentType = "application/x-binary";
       auto newFileClient
           = baseDirectoryClient
                 .RenameFile(oldFilename, baseDirectoryName + "/" + newFilename, renameOptions)
@@ -183,6 +184,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
       EXPECT_EQ(renameOptions.Metadata, newProperties.Metadata);
       EXPECT_EQ(properties.Attributes, newProperties.SmbProperties.Attributes);
+      EXPECT_EQ(renameOptions.ContentType.Value(), newProperties.HttpHeaders.ContentType);
     }
 
     // diff directory
