@@ -62,6 +62,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions& retryOptions)
         : m_retryOptions(std::move(retryOptions)){}
     
+    RetryOperation(RetryOperation const& other)
+        : m_retryOptions(other.m_retryOptions)
+    {
+	}
+
+    RetryOperation& operator=(RetryOperation const& other)
+    {
+        if (this != &other)
+        {
+		m_retryOptions = other.m_retryOptions;
+	  }
+	  return *this;
+	}
+
     bool Execute(std::function<bool()> operation);
   };
 }}}} // namespace Azure::Messaging::EventHubs::_internal

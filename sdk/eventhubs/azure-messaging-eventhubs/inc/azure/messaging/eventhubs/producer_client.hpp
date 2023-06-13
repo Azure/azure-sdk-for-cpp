@@ -32,6 +32,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_producerClientOptions.RetryOptions;
     }
 
+    ProducerClient(ProducerClient const& other)
+        : m_credentials(other.m_credentials), m_producerClientOptions(other.m_producerClientOptions),
+		  m_senders(other.m_senders), m_sessions(other.m_sessions)
+    {
+	}
+
+    ProducerClient& operator=(ProducerClient const& other)
+    {
+        if (&other == this)
+        {
+		return *this;
+	  }
+	  m_credentials = other.m_credentials;
+	  m_producerClientOptions = other.m_producerClientOptions;
+	  m_senders = other.m_senders;
+	  m_sessions = other.m_sessions;
+	  return *this;
+	}
+
+    ProducerClient()= default;
+
     /**@brief Constructs a new ProducerClient instance
      *
      * @param connectionString Event hubs connection string

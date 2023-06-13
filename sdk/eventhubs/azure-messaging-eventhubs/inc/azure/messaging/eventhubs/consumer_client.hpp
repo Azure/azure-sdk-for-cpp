@@ -11,7 +11,6 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   class ConsumerClient {
@@ -25,6 +24,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::ConsumerClientOptions m_consumerClientOptions;
 
   public:
+    ConsumerClient(ConsumerClient const& other)
+        : m_receivers(other.m_receivers), m_sessions(other.m_sessions),
+          m_credentials(other.m_credentials), m_consumerClientOptions(other.m_consumerClientOptions)
+    {
+    }
+
+    ConsumerClient& operator=(ConsumerClient const& other)
+    {
+      if (&other == this)
+      {
+        return *this;
+      }
+
+      m_receivers = other.m_receivers;
+      m_sessions = other.m_sessions;
+      m_credentials = other.m_credentials;
+      m_consumerClientOptions = other.m_consumerClientOptions;
+      return *this;
+    }
     /** @brief Getter for event hub name
      *
      * @returns Event hub name for client
@@ -124,7 +142,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Models::EventHubProperties GetEventHubProperties(
         Models::GetEventHubPropertiesOptions options = {});
-
 
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last

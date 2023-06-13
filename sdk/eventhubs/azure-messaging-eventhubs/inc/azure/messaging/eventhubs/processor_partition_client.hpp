@@ -18,7 +18,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ProcessorPartitionClient {
     std::string m_partitionId;
     PartitionClient m_partitionClient;
-    std::unique_ptr<CheckpointStore> m_checkpointStore;
+    std::shared_ptr<CheckpointStore> m_checkpointStore;
     std::function<void()> m_cleanupFunc;
     ConsumerClientDetails m_consumerClientDetails;
     const Azure::Core::Amqp::Models::AmqpValue sequenceNumberAnnotation = "x-opt-sequence-number";
@@ -28,15 +28,34 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProcessorPartitionClient(
         std::string partitionId,
         PartitionClient partitionClient,
-        std::unique_ptr<CheckpointStore> checkpointStore,
+        std::shared_ptr<CheckpointStore> checkpointStore,
         ConsumerClientDetails consumerClientDetails,
         std::function<void()> cleanupFunc)
-        : m_partitionId(std::move(partitionId)), m_partitionClient(std::move(partitionClient)),
-          m_checkpointStore(std::move(checkpointStore)), m_cleanupFunc(std::move(cleanupFunc)),
-          m_consumerClientDetails(std::move(consumerClientDetails))
+        : m_partitionId(partitionId), m_partitionClient(partitionClient),
+          m_checkpointStore(checkpointStore), m_cleanupFunc(cleanupFunc),
+          m_consumerClientDetails(consumerClientDetails)
     {
     }
     
+    ProcessorPartitionClient(ProcessorPartitionClient const& other)
+        : m_partitionId(other.m_partitionId), m_partitionClient(other.m_partitionClient),
+        m_checkpointStore(other.m_checkpointStore),
+        m_consumerClientDetails(other.m_consumerClientDetails),m_cleanupFunc(other.m_cleanupFunc)
+    {
+	}
+
+    ProcessorPartitionClient& operator=(ProcessorPartitionClient const& other)
+    {
+      if (this != &other)
+      {
+        m_partitionId = other.m_partitionId;
+        m_partitionClient = other.m_partitionClient;
+        m_checkpointStore = other.m_checkpointStore;
+        m_consumerClientDetails = other.m_consumerClientDetails;
+        m_cleanupFunc = other.m_cleanupFunc;
+      }
+	  return *this;
+	}
 
     std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
         uint32_t maxBatchSize,

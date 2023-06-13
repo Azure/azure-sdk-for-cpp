@@ -31,6 +31,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     uint64_t m_currentSize;
 
   public:
+    EventDataBatch(EventDataBatch const& other)
+        : m_partitionID(other.m_partitionID), m_partitionKey(other.m_partitionKey),
+          m_maxBytes(other.m_maxBytes), m_marshalledMessages(other.m_marshalledMessages),
+          m_batchEnvelope(other.m_batchEnvelope), m_currentSize(other.m_currentSize)
+    {
+    }
+
+    EventDataBatch& operator=(EventDataBatch const& other)
+    {
+        if (&other == this)
+        {
+		return *this;
+	  }
+	  m_partitionID = other.m_partitionID;
+	  m_partitionKey = other.m_partitionKey;
+	  m_maxBytes = other.m_maxBytes;
+	  m_marshalledMessages = other.m_marshalledMessages;
+	  m_batchEnvelope = other.m_batchEnvelope;
+	  m_currentSize = other.m_currentSize;
+	  return *this;
+	}
     /** @brief Event Data Batch constructor
      *
      * @param options Options settings for creating the data batch

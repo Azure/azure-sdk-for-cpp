@@ -8,7 +8,6 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
-  
 
   /** PartitionClient is used to receive events from an Event Hub partition.
    *
@@ -38,6 +37,28 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const uint32_t defaultMaxCreditSize = 5000;
 
   public:
+    PartitionClient(PartitionClient const& other)
+        : m_receivers(other.m_receivers), m_offsetExpression(other.m_offsetExpression),
+          m_ownerLevel(other.m_ownerLevel), m_prefetchCount(other.m_prefetchCount),
+          m_partitionOptions(other.m_partitionOptions), m_partitionId(other.m_partitionId),
+          RetryOptions(other.RetryOptions)
+    {
+    }
+
+    PartitionClient& operator=(PartitionClient const& other)
+    {
+      if (this != &other)
+      {
+        m_receivers = other.m_receivers;
+        m_offsetExpression = other.m_offsetExpression;
+        m_ownerLevel = other.m_ownerLevel;
+        m_prefetchCount = other.m_prefetchCount;
+        m_partitionOptions = other.m_partitionOptions;
+        m_partitionId = other.m_partitionId;
+        RetryOptions = other.RetryOptions;
+      }
+      return *this;
+    }
     std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
         uint32_t const& maxMessages,
         Azure::Core::Context ctx = Azure::Core::Context(),

@@ -19,32 +19,32 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class Processor {
     Azure::DateTime::duration m_ownershipUpdateInterval;
     StartPositions m_defaultStartPositions;
-    std::unique_ptr<CheckpointStore> m_checkpointStore;
+    std::shared_ptr<CheckpointStore> m_checkpointStore;
     int32_t m_prefetch;
-    std::unique_ptr<ConsumerClient> m_ConsumerClient;
+    std::shared_ptr<ConsumerClient> m_ConsumerClient;
     std::vector<std::shared_ptr<ProcessorPartitionClient>> m_nextPartitionClients;
     uint32_t m_currentPartitionClient;
     ConsumerClientDetails m_consumerClientDetails;
-    std::unique_ptr<ProcessorLoadBalancer> m_loadBalancer;
+    std::shared_ptr<ProcessorLoadBalancer> m_loadBalancer;
 
     typedef std::map<std::string, std::shared_ptr<ProcessorPartitionClient>> ConsumersType;
 
   public:
     Processor(
-        std::unique_ptr<ConsumerClient> consumerClient,
-        std::unique_ptr<CheckpointStore> checkpointStore,
+        std::shared_ptr<ConsumerClient> consumerClient,
+        std::shared_ptr<CheckpointStore> checkpointStore,
         Models::ProcessorOptions const& options)
-        : m_ConsumerClient(std::move(consumerClient)),
-          m_checkpointStore(std::move(checkpointStore)), m_prefetch(options.Prefetch),
-          m_defaultStartPositions(std::move(options.StartPositions))
+        : m_ConsumerClient(consumerClient),
+          m_checkpointStore(checkpointStore), m_prefetch(options.Prefetch),
+          m_defaultStartPositions(options.StartPositions)
     {
       m_ownershipUpdateInterval = options.UpdateInterval == Azure::DateTime::duration::zero()
           ? std::chrono::seconds(10)
           : options.UpdateInterval;
 
       m_consumerClientDetails = m_ConsumerClient->GetDetails();
-      m_loadBalancer = std::make_unique<ProcessorLoadBalancer>(
-          std::move(m_checkpointStore),
+      m_loadBalancer = std::make_shared<ProcessorLoadBalancer>(
+          m_checkpointStore,
           m_consumerClientDetails,
           options.LoadBalancingStrategy,
           options.PartitionExpirationDuration == Azure::DateTime::duration::zero()
@@ -52,6 +52,36 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               : std::chrono::duration_cast<std::chrono::minutes>(
                   options.PartitionExpirationDuration));
     }
+
+    Processor(Processor const& other)
+        : m_ownershipUpdateInterval(other.m_ownershipUpdateInterval),
+        m_defaultStartPositions(other.m_defaultStartPositions),
+        m_checkpointStore(other.m_checkpointStore), 
+        m_prefetch(other.m_prefetch),
+        m_ConsumerClient(other.m_ConsumerClient),
+        m_consumerClientDetails(other.m_consumerClientDetails),
+        m_loadBalancer(other.m_loadBalancer),
+        m_nextPartitionClients(other.m_nextPartitionClients), 
+        m_currentPartitionClient(other.m_currentPartitionClient)
+    {
+	}
+
+    Processor& operator=(Processor const& other)
+    {
+        if (this != &other)
+        {
+		m_ownershipUpdateInterval = other.m_ownershipUpdateInterval;
+		m_defaultStartPositions = other.m_defaultStartPositions;
+		m_checkpointStore = other.m_checkpointStore;
+		m_prefetch = other.m_prefetch;
+		m_ConsumerClient = other.m_ConsumerClient;
+		m_consumerClientDetails = other.m_consumerClientDetails;
+		m_loadBalancer = other.m_loadBalancer;
+		m_nextPartitionClients = other.m_nextPartitionClients;
+		m_currentPartitionClient = other.m_currentPartitionClient;
+	  }
+	  return *this;
+	}
 
     std::shared_ptr<ProcessorPartitionClient> NextPartitionClient()
     {

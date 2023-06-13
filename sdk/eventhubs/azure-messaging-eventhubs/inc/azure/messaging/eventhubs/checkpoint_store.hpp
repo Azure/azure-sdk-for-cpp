@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "models/checkpoint_store_models.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/storage/blobs.hpp>
+
 #include <sstream>
 #include <vector>
 using namespace Azure::Messaging::EventHubs::Models;
@@ -17,14 +19,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class CheckpointStore {
   public:
     CheckpointStore() = default;
+    CheckpointStore(CheckpointStore const& other) = default;
+    CheckpointStore& operator=(CheckpointStore const& other) = default;
     /**@brief ClaimOwnership attempts to claim ownership of the partitions in partitionOwnership and
      * returns the actual partitions that    were claimed.
      */
     virtual std::vector<Ownership> ClaimOwnership(
         std::vector<Ownership> partitionOwnership,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ClaimOwnershipOptions const& options = ClaimOwnershipOptions())
-        = 0;
+        Azure::Core::Context ctx = {},
+        ClaimOwnershipOptions const& options = {})
+    {
+      (void)partitionOwnership;
+      (void)ctx;
+      (void)options;
+      throw std::exception("Not Implemented");
+    }
 
     /**@brief  ListCheckpoints lists all the available checkpoints.
      */
@@ -32,9 +41,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ListCheckpointsOptions options = ListCheckpointsOptions())
-        = 0;
+        Azure::Core::Context ctx = {},
+        ListCheckpointsOptions options = {})
+    {
+      (void)fullyQualifiedNamespace;
+      (void)consumerGroup;
+      (void)eventHubName;
+      (void)ctx;
+      (void)options;
+      throw std::exception("Not Implemented");
+    }
 
     /**@brief  ListOwnership lists all ownerships.
      */
@@ -42,9 +58,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ListOwnershipOptions options = ListOwnershipOptions())
-        = 0;
+        Azure::Core::Context ctx = {},
+        ListOwnershipOptions options = {})
+    {
+      (void)fullyQualifiedNamespace;
+      (void)eventHubName;
+      (void)consumerGroup;
+      (void)ctx;
+      (void)options;
+      throw std::exception("Not Implemented");
+    }
 
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
      */
@@ -52,7 +75,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Checkpoint const& checkpoint,
         Azure::Core::Context ctx = Azure::Core::Context(),
         UpdateCheckpointOptions options = UpdateCheckpointOptions())
-        = 0;
+    {
+      (void)checkpoint;
+      (void)ctx;
+      (void)options;
+      throw std::exception("Not Implemented");
+    }
 
     virtual ~CheckpointStore() = default;
   };
@@ -84,13 +112,37 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Context const& context = Azure::Core::Context());
 
   public:
+    BlobCheckpointStore(BlobCheckpointStore const& other):
+        m_connectionString(other.m_connectionString), 
+        m_containerName(other.m_containerName),
+        m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+              other.m_connectionString,
+              other.m_containerName))
+    {
+        m_containerClient.CreateIfNotExists();
+    }
+
+    BlobCheckpointStore& operator=(BlobCheckpointStore const& other)
+    {
+        if (&other == this)
+        {
+          return *this;
+        }
+        m_connectionString = other.m_connectionString;
+        m_containerName = other.m_containerName;
+        m_containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+            other.m_connectionString, other.m_containerName);
+        m_containerClient.CreateIfNotExists();
+        return *this;
+    }
+
     BlobCheckpointStore(std::string const& connectionString, std::string const& containerName)
         : m_connectionString(connectionString), m_containerName(containerName),
           m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
               connectionString,
               containerName))
     {
-      m_containerClient.CreateIfNotExists();
+        m_containerClient.CreateIfNotExists();
     }
 
     std::vector<Ownership> ClaimOwnership(
