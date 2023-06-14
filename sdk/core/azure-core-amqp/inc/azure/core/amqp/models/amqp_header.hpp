@@ -14,7 +14,7 @@
 #include <vector>
 
 struct HEADER_INSTANCE_TAG;
-/// @cond INTERNAL
+/// \cond INTERNAL
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>
 {
@@ -22,7 +22,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TA
 
   using type = Azure::Core::_internal::BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
 };
-/// @endcond
+/// \endcond
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @param that - the AMQP Message Header to compare to.
      * @returns true if the two headers are equal, false otherwise.
      */
-    bool operator==(MessageHeader const&) const noexcept;
+    bool operator==(MessageHeader const& that) const noexcept;
 
     /** @brief True if the message is considered "durable"
      *
