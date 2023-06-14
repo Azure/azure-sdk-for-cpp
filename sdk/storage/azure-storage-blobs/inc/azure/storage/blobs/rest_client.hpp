@@ -1009,7 +1009,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& ToString() const { return m_value; }
       /** @brief Copy is Pending*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
-      /** @brief Copy Succeded */
+      /** @brief Copy Succeeded */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
       /** @brief Copy was Aborted */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Aborted;
@@ -1221,7 +1221,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         return m_value == other.m_value;
       }
-      /** @brief Compare a blob immutablity policy with another. */
+      /** @brief Compare a blob immutability policy with another. */
       bool operator!=(const BlobImmutabilityPolicyMode& other) const { return !(*this == other); }
       /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
@@ -2462,7 +2462,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlobQueryArrowFieldType final {
     public:
       BlobQueryArrowFieldType() = default;
-      /** Construct a new BlobQueryArrorFieldType from a string. */
+      /** Construct a new BlobQueryArrowFieldType from a string. */
       explicit BlobQueryArrowFieldType(std::string value) : m_value(std::move(value)) {}
       /** Compare two values for equality. */
       bool operator==(const BlobQueryArrowFieldType& other) const
