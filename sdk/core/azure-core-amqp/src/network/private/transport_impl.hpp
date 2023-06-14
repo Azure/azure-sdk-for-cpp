@@ -21,7 +21,6 @@
 #endif // _MSC_VER
 
 ///  @cond HIDDEN
-
 template <> struct Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>
 {
   static void FreeXio(XIO_HANDLE obj);
@@ -29,8 +28,8 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>
   using type = Azure::Core::_internal::BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
 };
 using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;
-
 /// @endcond
+
 #if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #pragma GCC diagnostic pop
 #elif defined(__clang__) // !__clang__

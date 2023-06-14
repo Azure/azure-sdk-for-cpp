@@ -21,6 +21,12 @@
 #include <sstream>
 
 using namespace Azure::Core::Amqp::Models::_detail;
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#endif // _MSC_VER
 
 ///  @cond HIDDEN
 void Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(
@@ -35,6 +41,11 @@ void Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TA
   amqpvalue_decoder_destroy(value);
 }
 /// @endcond
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic pop
+#endif // _MSC_VER
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
@@ -73,6 +84,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     that.m_value = nullptr;
   }
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#endif // _MSC_VER
+
   /// @cond HIDDEN
   AmqpValue::AmqpValue(AMQP_VALUE value)
   {
@@ -91,6 +110,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   /** @brief Internal accessor to convert an AmqpValue to a uAMQP AMQP_VALUE. */
   AmqpValue::operator AMQP_VALUE() const { return m_value.get(); }
   /// @endcond
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic pop
+#endif // _MSC_VER
 
   AmqpValue& AmqpValue::operator=(AmqpValue const& that)
   {
