@@ -16,7 +16,7 @@ struct AMQPVALUE_DECODER_HANDLE_DATA_TAG;
 #pragma GCC diagnostic push
 #elif defined(__clang__) // !__clang__
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wno-documentation-unknown-command"
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
 #endif // _MSC_VER
 
 /// @cond INTERNAL
