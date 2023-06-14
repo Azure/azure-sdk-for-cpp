@@ -285,9 +285,6 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
 
 /** @brief Construct a new Attestation Client object
  *
- * @param endpoint The URL address where the client will send the requests to.
- * @param credential The authentication method to use (required for TPM attestation).
- * @param options The options to customize the client behavior.
  */
 Azure::Security::Attestation::AttestationClient AttestationClient::Create(
     std::string const& endpoint,
@@ -302,10 +299,7 @@ Azure::Security::Attestation::AttestationClient AttestationClient::Create(
 }
 
 /** @brief Construct a new anonymous Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param options The options to customize the client behavior.
- *
+* 
  * @note TPM attestation requires an authenticated attestation client.
  */
 Azure::Security::Attestation::AttestationClient AttestationClient::Create(

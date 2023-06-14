@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @file
- * @brief HTTP pipeline is a stack of HTTP policies.
- * @remark See #policy.hpp
+ * @file user_agent.cpp
+ * @brief Contains the user agent string generator implementation.
+ * @remark See policy.hpp
  */
 
 #include "azure/core/context.hpp"

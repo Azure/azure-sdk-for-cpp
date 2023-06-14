@@ -21,11 +21,15 @@
 
 #include <memory>
 
+/// @cond INTERNAL
+
 void Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(
     CONNECTION_HANDLE value)
 {
   connection_destroy(value);
 }
+
+/// @endcond
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;

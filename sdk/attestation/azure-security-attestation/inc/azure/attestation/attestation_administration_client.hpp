@@ -55,6 +55,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param endpoint The URL address where the client will send the requests to.
      * @param credential The authentication token to use.
      * @param options The options to customize the client behavior.
+     * @param context The context for cancelling long running operations.
      * @return The newly created client.
      */
     static AttestationAdministrationClient Create(
@@ -230,7 +231,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @details When the attestation service is running in "Isolated" mode, the service maintains a
      * set of X.509 certificates which must be used to sign all policy operations. The
-     * #RemoveIsolatedModeCertificates API removes a certificate from the list of certificates
+     * #RemoveIsolatedModeCertificate API removes a certificate from the list of certificates
      * which are used for this attestation service instance.
      *
      * @note The signerForRequest certificate MUST be one of the policy management certificates

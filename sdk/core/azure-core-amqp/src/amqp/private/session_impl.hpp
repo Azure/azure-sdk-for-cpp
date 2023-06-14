@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+///  @cond HIDDEN
+
 template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
 {
   static void FreeAmqpSession(SESSION_HANDLE obj);
@@ -21,6 +23,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_T
 
 using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
 
+/// @endcond
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class SessionFactory final {

@@ -393,6 +393,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
+     * @param connection A connection from the connection pool.
+     * @param curlOptions Transport adapter options.
      */
     CurlSession(
         Request& request,

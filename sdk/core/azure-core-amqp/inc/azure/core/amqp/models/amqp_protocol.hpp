@@ -12,6 +12,7 @@
 
 struct AMQPVALUE_DECODER_HANDLE_DATA_TAG;
 
+/// @cond INTERNAL
 template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>
 {
   static void FreeAmqpDecoder(AMQPVALUE_DECODER_HANDLE_DATA_TAG* obj);
@@ -19,11 +20,11 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_
   using type = Azure::Core::_internal::
       BasicUniqueHandle<AMQPVALUE_DECODER_HANDLE_DATA_TAG, FreeAmqpDecoder>;
 };
-
+/// @endcond
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   using UniqueAmqpDecoderHandle
-      = Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::type;
+      = ::Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::type;
 
   /** @brief AMQP Descriptor values. Note that the AMQP descriptor is technically a tuple of
    * domain+id, the domain for internal-to-amqp is defined to be 0x00000000.

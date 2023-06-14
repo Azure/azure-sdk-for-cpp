@@ -12,10 +12,14 @@
 
 #include <cassert>
 
+///  @cond HIDDEN
+
 void Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value)
 {
   xio_destroy(value);
 }
+
+/// @endcond
 
 namespace {
 void EnsureGlobalStateInitialized()

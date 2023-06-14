@@ -3,7 +3,8 @@
 
 /**
  * @file
- * @brief Options that allow you to configure the #CryptographyClient for local or remote operations
+ * @brief Options that allow you to configure the
+ * #Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient for local or remote operations
  * on Key Vault.
  *
  */
@@ -21,14 +22,15 @@ namespace Azure {
         namespace Cryptography {
 
   /**
-   * @brief Options that allow you to configure the #CryptographyClient for local or remote
+   * @brief Options that allow you to configure the
+   * #Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient for local or remote
    * operations on Key Vault.
    *
    */
   struct CryptographyClientOptions final : public Azure::Core::_internal::ClientOptions
   {
     /**
-     * @brief Gets the #ServiceVersion of the service API used when making requests. For more
+     * @brief Gets the ServiceVersion of the service API used when making requests. For more
      * information, see [Key Vault
      * versions](https://docs.microsoft.com/rest/api/keyvault/key-vault-versions).
      *

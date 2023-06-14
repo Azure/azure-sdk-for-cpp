@@ -55,7 +55,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     SecretPropertiesPagedResponse() = default;
 
     /**
-     * @brief Each #SecretProperties represent a Secret in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Secrets::SecretProperties represent a Secret in the Key Vault.
      *
      */
     std::vector<SecretProperties> Items;
@@ -92,7 +92,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     DeletedSecretPagedResponse() = default;
 
     /**
-     * @brief Each #DeletedKey represent a deleted key in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Secrets::DeletedSecret represent a deleted secret in the Key Vault.
      *
      */
     std::vector<DeletedSecret> Items;

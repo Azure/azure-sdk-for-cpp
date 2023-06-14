@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/perf.hpp>
+#include "../../../core/perf/inc/azure/perf.hpp"
 
 #include <memory>
 

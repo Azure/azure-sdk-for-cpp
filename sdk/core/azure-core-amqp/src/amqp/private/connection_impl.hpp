@@ -14,6 +14,8 @@
 #include <memory>
 #include <string>
 
+/// @cond INTERNAL
+
 template <> struct Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
 {
   static void FreeAmqpConnection(CONNECTION_HANDLE obj);
@@ -23,6 +25,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANC
 };
 
 using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

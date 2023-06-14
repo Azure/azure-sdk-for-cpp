@@ -13,6 +13,8 @@
 
 struct PROPERTIES_INSTANCE_TAG;
 
+///  @cond HIDDEN
+
 template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>
 {
   static void FreeAmqpProperties(PROPERTIES_INSTANCE_TAG* obj);
@@ -20,10 +22,20 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANC
   using type
       = Azure::Core::_internal::BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
 };
+
+/// @endcond
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
 
+  /** @brief Represents the immutable properties of an AMQP message.
+   *
+   * The properties section is part of the bare message used for a range of features including
+   * reliable delivery, routing and security.
+   *
+   * @see
+   * https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties
+   */
   struct MessageProperties final
   {
     MessageProperties() = default;
@@ -181,16 +193,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 }}}} // namespace Azure::Core::Amqp::Models
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
-  /**
-   * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
-   * PROPERTIES_HANDLE and back.
-   *
-   * @remarks This class should not be used directly. It is used by the uAMQP interoperability
-   * layer.
-   */
-  class MessagePropertiesFactory final {
-  public:
-    static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
-    static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
-  };
+    /**
+     * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
+     * PROPERTIES_HANDLE and back.
+     *
+     * @remarks This class should not be used directly. It is used by the uAMQP interoperability
+     * layer.
+     */
+    class MessagePropertiesFactory final {
+    public:
+      static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
+      static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
+    };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

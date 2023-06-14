@@ -428,7 +428,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       std::function<void()> initiateAction,
       DWORD expectedCallbackStatus,
       Azure::Core::Context const& context,
-      Azure::DateTime::duration const& pollInterval)
+      Azure::DateTime::duration const& pollDuration)
   {
     // Before doing any work, check to make sure that the context hasn't already been cancelled.
     context.ThrowIfCancelled();
@@ -450,7 +450,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       waitResult = WaitForSingleObject(
           m_actionCompleteEvent.get(),
           static_cast<DWORD>(
-              std::chrono::duration_cast<std::chrono::milliseconds>(pollInterval).count()));
+              std::chrono::duration_cast<std::chrono::milliseconds>(pollDuration).count()));
       if (waitResult == WAIT_TIMEOUT)
       {
         // If the request was cancelled while we were waiting, throw an exception.

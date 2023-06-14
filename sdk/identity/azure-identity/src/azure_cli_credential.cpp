@@ -108,7 +108,7 @@ AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
 {
 }
 
-AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
+AzureCliCredential::AzureCliCredential(const Core::Credentials::TokenCredentialOptions& options)
     : AzureCliCredential(
         options,
         AzureCliCredentialOptions{}.TenantId,

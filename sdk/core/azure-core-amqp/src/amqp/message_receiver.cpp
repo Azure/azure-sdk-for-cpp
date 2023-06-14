@@ -28,11 +28,14 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
+///  @cond HIDDEN
+
 void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
     MESSAGE_RECEIVER_HANDLE value)
 {
   messagereceiver_destroy(value);
 }
+/// @endcond
 
 using namespace Azure::Core::Amqp::_internal;
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {

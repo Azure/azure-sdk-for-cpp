@@ -534,7 +534,6 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
  * @details Validating the response returned by the attestation service requires a set of
  * possible signers for the attestation token.
  *
- * @param context Client context for the request to the service.
  */
 void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
     Azure::Core::Context const& context)

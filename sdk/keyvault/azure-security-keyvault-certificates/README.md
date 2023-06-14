@@ -49,7 +49,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 For detailed samples please review the samples provided.
 
-#### Creating a CertificateClient
+### Creating a CertificateClient
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 

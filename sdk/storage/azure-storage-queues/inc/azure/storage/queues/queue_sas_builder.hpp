@@ -48,12 +48,14 @@ namespace Azure { namespace Storage { namespace Sas {
     All = ~0,
   };
 
+      /** @brief Logical OR of two values*/
   inline QueueSasPermissions operator|(QueueSasPermissions lhs, QueueSasPermissions rhs)
   {
     using type = std::underlying_type_t<QueueSasPermissions>;
     return static_cast<QueueSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
+      /** @brief Logical AND of two values*/
   inline QueueSasPermissions operator&(QueueSasPermissions lhs, QueueSasPermissions rhs)
   {
     using type = std::underlying_type_t<QueueSasPermissions>;

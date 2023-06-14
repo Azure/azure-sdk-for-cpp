@@ -19,6 +19,7 @@
 #include <memory>
 #include <vector>
 
+/// @cond INTERNAL
 template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
 {
   static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
@@ -26,6 +27,8 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_I
   using type = Azure::Core::_internal::
       BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
 };
+
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

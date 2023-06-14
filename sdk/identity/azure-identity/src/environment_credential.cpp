@@ -38,7 +38,7 @@ void PrintCredentialCreationLogMessage(
 } // namespace
 
 EnvironmentCredential::EnvironmentCredential(
-    TokenCredentialOptions const& options,
+    Core::Credentials::TokenCredentialOptions const& options,
     std::vector<std::string> const& additionallyAllowedTenants)
     : TokenCredential("EnvironmentCredential")
 {
@@ -130,7 +130,7 @@ EnvironmentCredential::EnvironmentCredential(
   }
 }
 
-EnvironmentCredential::EnvironmentCredential(TokenCredentialOptions const& options)
+EnvironmentCredential::EnvironmentCredential(Core::Credentials::TokenCredentialOptions const& options)
     : EnvironmentCredential(options, {})
 {
 }

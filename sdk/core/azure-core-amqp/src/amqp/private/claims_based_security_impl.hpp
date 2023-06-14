@@ -8,6 +8,7 @@
 
 struct CBS_INSTANCE_TAG;
 
+/// @cond INTERNAL
 template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
 {
   static void FreeAmqpCbs(CBS_HANDLE obj);
@@ -16,6 +17,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
 };
 
 using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl final {

@@ -138,16 +138,16 @@ namespace Azure { namespace Security { namespace Attestation {
   };
 
   /** @brief The AttestationDataType represents how the attestation service should interpret the
-   * {@link AttestOptions::RunTimeData} and {@link AttestOptions::InitTimeData} fields.
+   * {@link AttestationData::Data} field.
    */
   class AttestationDataType final
       : public Azure::Core::_internal::ExtendableEnumeration<AttestationDataType> {
 
   public:
     /**
-     * @brief Construct a new attestation DataType object
+     * @brief Construct a new AttestationDataType object
      *
-     * @param dataType The string version for the Key Vault keys service.
+     * @param dataType The string version for the DataType object.
      */
     explicit AttestationDataType(std::string dataType)
         : Azure::Core::_internal::ExtendableEnumeration<AttestationDataType>(std::move(dataType))

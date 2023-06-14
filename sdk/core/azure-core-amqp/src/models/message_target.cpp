@@ -15,11 +15,16 @@
 
 #include <iostream>
 
+///  @cond HIDDEN
+
 void Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(
     TARGET_HANDLE value)
 {
   target_destroy(value);
 }
+
+///  @endcond
+
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

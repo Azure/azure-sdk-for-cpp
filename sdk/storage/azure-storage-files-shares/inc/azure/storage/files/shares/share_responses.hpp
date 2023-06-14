@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::AcquireLease.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::Acquire.
      */
     struct AcquireLeaseResult final
     {
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string LeaseId;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::ReleaseLease.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::Release.
      */
     struct ReleaseLeaseResult final
     {
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::ChangeLease.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::Change.
      */
     struct ChangeLeaseResult final
     {
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string LeaseId;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::RenewLease.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::Renew.
      */
     struct RenewLeaseResult final
     {
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string LeaseId;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::BreakLease.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::Break.
      */
     struct BreakLeaseResult final
     {
@@ -196,33 +196,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     class ShareFileHandleAccessRights final {
     public:
       ShareFileHandleAccessRights() = default;
+      /**
+       * @brief Create from a string.
+       * @param value A string describing the access rights.
+       */
       explicit ShareFileHandleAccessRights(const std::string& value);
+      /** @brief Compare two values for equality */
       bool operator==(const ShareFileHandleAccessRights& other) const
       {
         return m_value == other.m_value;
       }
+      /** @brief Compare two values for inequality */
       bool operator!=(const ShareFileHandleAccessRights& other) const { return !(*this == other); }
+      /** @brief Return the values of the FileAttributes as an array. */
       const std::set<std::string>& GetValues() const { return m_value; }
+      /** @brief Logical OR of two values*/
       ShareFileHandleAccessRights operator|(const ShareFileHandleAccessRights& other) const;
+      /** @brief Logical AND of two values*/
       ShareFileHandleAccessRights operator&(const ShareFileHandleAccessRights& other) const;
+      /** @brief Logical XOR of two values*/
       ShareFileHandleAccessRights operator^(const ShareFileHandleAccessRights& other) const;
+      /** @brief Logical OR and assignment of two values*/
       ShareFileHandleAccessRights& operator|=(const ShareFileHandleAccessRights& other)
       {
         *this = *this | other;
         return *this;
       }
+      /** @brief Logical AND and assignment of two values*/
       ShareFileHandleAccessRights& operator&=(const ShareFileHandleAccessRights& other)
       {
         *this = *this & other;
         return *this;
       }
+      /** @brief Logical XOR and assignment of two values*/
       ShareFileHandleAccessRights& operator^=(const ShareFileHandleAccessRights& other)
       {
         *this = *this ^ other;
         return *this;
       }
+      /** @brief Read access rights */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Read;
+      /** @brief Write access rights */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Write;
+      /** @brief Delete access rights */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Delete;
 
     private:
@@ -234,6 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct DirectoryItem final
     {
+      /** @brief The name of the item */
       std::string Name;
       /**
        * File properties.
@@ -246,6 +263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct FileItem final
     {
+      /** @brief The name of the item */
       std::string Name;
       /**
        * File properties.
@@ -312,8 +330,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     StartFileCopyOperation() = default;
 
+    /** @brief Construct a new StartFileCopyOperation object moving from another
+     * StartFileCopyOperation object. */
     StartFileCopyOperation(StartFileCopyOperation&&) = default;
 
+    /** @brief Move a StartFileCopyOperation to another. */
     StartFileCopyOperation& operator=(StartFileCopyOperation&&) = default;
 
     ~StartFileCopyOperation() override {}

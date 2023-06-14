@@ -10,6 +10,7 @@
 
 #include <azure/core/internal/extendable_enumeration.hpp>
 
+/// @cond HIDDEN
 struct ERROR_INSTANCE_TAG;
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<ERROR_INSTANCE_TAG>
@@ -18,6 +19,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<ERROR_INSTANCE_TAG
 
   using type = Azure::Core::_internal::BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
 };
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

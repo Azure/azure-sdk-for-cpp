@@ -9,12 +9,16 @@
 
 struct SOURCE_INSTANCE_TAG;
 
+///  @cond HIDDEN
+
 template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>
 {
   static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
 
   using type = Azure::Core::_internal::BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
 };
+
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

@@ -13,7 +13,6 @@
  *
  * @brief Helper classes to enable service client distributed tracing implementations.
  *
- * @remark See #policy.hpp
  */
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 

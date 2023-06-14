@@ -10,6 +10,11 @@
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+
+  /**
+   * @brief A Secret held in KeyVault.
+   *
+   */
   struct KeyVaultSecret
   {
     /**

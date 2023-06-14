@@ -25,11 +25,15 @@
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
+///  @cond HIDDEN
+
 void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::FreeMessageSender(
     MESSAGE_SENDER_HANDLE value)
 {
   messagesender_destroy(value);
 }
+
+///  @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
@@ -55,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   MessageSenderImpl::MessageSenderImpl(
-      std::shared_ptr<SessionImpl> session,
+      std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,
       _internal::MessageSenderEvents* events)
@@ -64,7 +68,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   MessageSenderImpl::MessageSenderImpl(
-      std::shared_ptr<SessionImpl> session,
+      std::shared_ptr<_detail::SessionImpl> session,
       _internal::LinkEndpoint& endpoint,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options,

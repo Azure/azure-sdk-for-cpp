@@ -12,11 +12,13 @@
 
 #include <iostream>
 
+/// @cond HIDDEN
 void Azure::Core::_internal::UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(
     ERROR_HANDLE handle)
 {
   error_destroy(handle);
 }
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

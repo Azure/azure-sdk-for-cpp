@@ -47,15 +47,20 @@
 
 #include <cassert>
 
+/** @brief Azure specific assert macro.*/
 #define AZURE_ASSERT(exp) assert((exp))
+/** @brief Azure specific assert macro with message.*/
 #define AZURE_ASSERT_MSG(exp, msg) assert(((void)msg, (exp)))
 
 #endif
 
 namespace Azure { namespace Core { namespace _internal {
-  [[noreturn]] void AzureNoReturnPath(std::string const& msg);
+    [[noreturn]] void AzureNoReturnPath(std::string const& msg);
 }}} // namespace Azure::Core::_internal
 
+/** @brief Assert that the exp parameter is always false. */
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
+/** @brief Indicate that the code cannot be reached. */
 #define AZURE_UNREACHABLE_CODE() ::Azure::Core::_internal::AzureNoReturnPath("unreachable code!")
+/** @brief Indicate that the function is not implemented. */
 #define AZURE_NOT_IMPLEMENTED() ::Azure::Core::_internal::AzureNoReturnPath("not implemented code!")

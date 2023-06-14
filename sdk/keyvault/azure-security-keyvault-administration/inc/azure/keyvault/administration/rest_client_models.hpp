@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        */
       explicit SettingType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
-      /*
+      /**
        * @brief Specifies that this represents the Boolean Type
        */
       AZURE_SECURITY_KEYVAULT_ADMINISTRATION_DLLEXPORT const static SettingType Boolean;

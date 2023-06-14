@@ -20,6 +20,9 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
+  /** @brief The DataLakePathClient allows you to manipulate Azure Storage DataLake files.
+   *
+   */
   class DataLakePathClient {
   public:
     /**
@@ -84,6 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
+     * @param type Type of resource to create.
      * @param options Optional parameters to create the resource the path points to.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::CreatePathResult> containing the information
@@ -98,6 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Creates a file or directory. By default, the destination is not changed if it already
      * exists.
+     * @param type Type of resource to create.
      * @param options Optional parameters to create the resource the path points to.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::CreatePathResult> containing the information
@@ -171,6 +176,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Sets the properties of a resource the path points to.
+     * @param httpHeaders Sets the blob HTTP headers.
      * @param options Optional parameters to set the HTTP headers to the resource the path points
      * to.
      * @param context Context for cancelling long running operations.
@@ -292,11 +298,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   protected:
+    /** @brief Url to the resource on the service */
     Azure::Core::Url m_pathUrl;
+
+    /** @brief Blob Client for this path client. */
     Blobs::BlobClient m_blobClient;
+
+    /** @brief Http Pipeline */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    /** @brief Customer provided encryption key. */
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
 
+    /**
+     * @brief Construct a new DataLakePathClient
+     *
+     * @param pathUrl The URL of the path represented by this client.
+     * @param blobClient The BlobClient needed for blob operations performed on this path.
+     * @param pipeline The HTTP pipeline for sending and receiving REST requests and responses.
+     * @param customerProvidedKey Customer provided key to encrypt the data.
+     *
+     */
     explicit DataLakePathClient(
         Azure::Core::Url pathUrl,
         Blobs::BlobClient blobClient,

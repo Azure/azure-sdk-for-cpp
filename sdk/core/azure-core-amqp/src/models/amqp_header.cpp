@@ -12,11 +12,14 @@
 #include <chrono>
 #include <iostream>
 
+///  @cond HIDDEN
+
 void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(
     HEADER_HANDLE handle)
 {
   header_destroy(handle);
 }
+///  @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool MessageHeader::operator==(MessageHeader const& that) const noexcept

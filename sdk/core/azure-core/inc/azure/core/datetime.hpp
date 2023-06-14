@@ -202,115 +202,128 @@ public:
   std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
 };
 
+/** @brief Return the current time. */
 inline _detail::Clock::time_point _detail::Clock::now()
 {
   return DateTime(std::chrono::system_clock::now());
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator==(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return dt == DateTime(tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator<(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return dt < DateTime(tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator<=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return dt <= DateTime(tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator!=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return !(dt == tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator>(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return !(dt <= tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator>=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return !(dt < tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator==(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return dt == tp;
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator!=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return dt != tp;
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator<(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt > tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator<=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt >= tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator>(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt < tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt <= tp);
 }
 
 namespace Core { namespace _internal {
-  /**
-   * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
-   *
-   */
-  class PosixTimeConverter final {
-  public:
     /**
-     * @brief Converts POSIX time to an #Azure::DateTime.
+     * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
      *
-     * @param posixTime The number of seconds since 1970.
-     * @return Calculated #Azure::DateTime.
      */
-    static DateTime PosixTimeToDateTime(int64_t posixTime)
-    {
-      return {DateTime(1970) + std::chrono::seconds(posixTime)};
-    }
+    class PosixTimeConverter final {
+    public:
+      /**
+       * @brief Converts POSIX time to an #Azure::DateTime.
+       *
+       * @param posixTime The number of seconds since 1970.
+       * @return Calculated #Azure::DateTime.
+       */
+      static DateTime PosixTimeToDateTime(int64_t posixTime)
+      {
+        return {DateTime(1970) + std::chrono::seconds(posixTime)};
+      }
 
-    /**
-     * @brief Converts a DateTime to POSIX time.
-     *
-     * @param dateTime The `%DateTime` to convert.
-     * @return The number of seconds since 1970.
-     */
-    static int64_t DateTimeToPosixTime(DateTime const& dateTime)
-    {
-      //  This count starts at the POSIX epoch which is January 1st, 1970 UTC.
-      return std::chrono::duration_cast<std::chrono::seconds>(dateTime - DateTime(1970)).count();
-    }
+      /**
+       * @brief Converts a DateTime to POSIX time.
+       *
+       * @param dateTime The `%DateTime` to convert.
+       * @return The number of seconds since 1970.
+       */
+      static int64_t DateTimeToPosixTime(DateTime const& dateTime)
+      {
+        //  This count starts at the POSIX epoch which is January 1st, 1970 UTC.
+        return std::chrono::duration_cast<std::chrono::seconds>(dateTime - DateTime(1970)).count();
+      }
 
-  private:
-    /**
-     * @brief An instance of `%PosixTimeConverter` class cannot be created.
-     *
-     */
-    PosixTimeConverter() = delete;
+    private:
+      /**
+       * @brief An instance of `%PosixTimeConverter` class cannot be created.
+       *
+       */
+      PosixTimeConverter() = delete;
 
-    /**
-     * @brief An instance of `%PosixTimeConverter` class cannot be destructed, because no instance
-     * can be created.
-     *
-     */
-    ~PosixTimeConverter() = delete;
-  };
+      /**
+       * @brief An instance of `%PosixTimeConverter` class cannot be destructed, because no instance
+       * can be created.
+       *
+       */
+      ~PosixTimeConverter() = delete;
+    };
 }} // namespace Core::_internal
 
 } // namespace Azure

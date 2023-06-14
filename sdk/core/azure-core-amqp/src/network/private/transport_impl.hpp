@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <string>
 
+///  @cond HIDDEN
+
 template <> struct Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>
 {
   static void FreeXio(XIO_HANDLE obj);
@@ -20,6 +22,8 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>
   using type = Azure::Core::_internal::BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
 };
 using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;
+
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
 

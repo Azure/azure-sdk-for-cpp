@@ -9,6 +9,8 @@
 
 struct TARGET_INSTANCE_TAG;
 
+///  @cond HIDDEN
+
 template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>
 {
   static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
@@ -16,6 +18,8 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TA
   using type = Azure::Core::_internal::BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
 };
 using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
+
+/// @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

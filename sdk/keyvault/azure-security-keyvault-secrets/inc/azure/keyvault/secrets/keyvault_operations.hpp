@@ -53,7 +53,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::Secret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::SecretProperties object.
      *
      * @return A Secret object.
      */
@@ -75,8 +75,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
-     * @param client A #secretClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param client A #SecretClient that is used for getting status updates.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return RecoverDeletedSecretOperation
      */
     static RecoverDeletedSecretOperation CreateFromResumeToken(
@@ -142,8 +142,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
-     * @param client A #secretClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param client A #SecretClient that is used for getting status updates.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return DeleteSecretOperation
      */
     static DeleteSecretOperation CreateFromResumeToken(

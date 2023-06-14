@@ -409,9 +409,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   protected:
+    /** @brief Blob Url */
     Azure::Core::Url m_blobUrl;
+    /** @brief Http Pipeline */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    /** @brief Customer provided encryption key. */
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+	/** @brief Encryption scope. */
     Azure::Nullable<std::string> m_encryptionScope;
 
   private:

@@ -15,11 +15,15 @@
 
 #include <iostream>
 
+///  @cond HIDDEN
+
 void Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessageSource(
     SOURCE_HANDLE value)
 {
   source_destroy(value);
 }
+
+///  @endcond
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
