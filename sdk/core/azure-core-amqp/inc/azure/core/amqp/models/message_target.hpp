@@ -9,6 +9,13 @@
 
 struct TARGET_INSTANCE_TAG;
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#endif // _MSC_VER
+
 ///  @cond HIDDEN
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>
@@ -20,6 +27,11 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TA
 using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
 
 /// @endcond HIDDEN
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic pop
+#endif // _MSC_VER
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
