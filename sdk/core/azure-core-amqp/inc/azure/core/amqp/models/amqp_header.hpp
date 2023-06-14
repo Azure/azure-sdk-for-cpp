@@ -14,7 +14,15 @@
 #include <vector>
 
 struct HEADER_INSTANCE_TAG;
-/// \cond INTERNAL
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wno-documentation-unknown-command"
+#endif // _MSC_VER
+
+/// @cond INTERNAL
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>
 {
@@ -22,7 +30,14 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TA
 
   using type = Azure::Core::_internal::BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
 };
-/// \endcond
+/// @endcond
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic pop
+#endif // _MSC_VER
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniqueMessageHeaderHandle = Azure::Core::_internal::UniqueHandle<HEADER_INSTANCE_TAG>;
