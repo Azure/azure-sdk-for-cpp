@@ -14,6 +14,12 @@
 #include <vector>
 
 struct MESSAGE_INSTANCE_TAG;
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic push
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#endif // _MSC_VER
 
 /// @cond INTERNAL
 
@@ -28,6 +34,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   class AmqpMessageFactory;
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
 /// @endcond
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic pop
+#elif defined(__clang__) // !__clang__
+#pragma clang diagnostic pop
+#endif // _MSC_VER
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
