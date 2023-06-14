@@ -19,7 +19,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TA
 };
 using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
 
-/// @endcond
+/// @endcond HIDDEN
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
