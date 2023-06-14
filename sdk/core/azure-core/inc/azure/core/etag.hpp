@@ -68,7 +68,7 @@ public:
   */
 
   /** @brief Indicates whether two #Azure::ETag values are equal.
-   * 
+   *
    * @param left #Azure::ETag to compare.
    * @param right #Azure::ETag to compare.
    * @param comparisonKind Determines what #Azure::ETag::ETagComparison to perform, default

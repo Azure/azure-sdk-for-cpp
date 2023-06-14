@@ -136,9 +136,10 @@ namespace Azure {
      * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm to use.
      * @param key The key to encrypt.
      * @param context A Azure::Core::Context to cancel the operation.
-     * @return The result of the wrap operation. The returned #Azure::Security::KeyVault::Keys::Cryptography::WrapResult contains the wrapped key
-     * along with all other information needed to unwrap it. This information should be stored
-     * with the wrapped key.
+     * @return The result of the wrap operation. The returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::WrapResult contains the wrapped key along
+     * with all other information needed to unwrap it. This information should be stored with the
+     * wrapped key.
      */
     Azure::Response<WrapResult> WrapKey(
         KeyWrapAlgorithm algorithm,

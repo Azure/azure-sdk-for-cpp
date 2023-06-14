@@ -386,8 +386,9 @@ namespace Azure {
     std::vector<uint8_t> Key;
 
     /**
-     * @brief Gets the #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm used. This must be stored alongside the
-     * #WrapResult::EncryptedKey as the same algorithm must be used to unwrap it.
+     * @brief Gets the #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm used. This
+     * must be stored alongside the #WrapResult::EncryptedKey as the same algorithm must be used to
+     * unwrap it.
      *
      */
     KeyWrapAlgorithm Algorithm;
@@ -440,8 +441,8 @@ namespace Azure {
     std::vector<uint8_t> EncryptedKey;
 
     /**
-     * @brief Gets the #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm used. This must be stored
-     * alongside the #EncryptedKey as the same algorithm must be used to unwrap it.
+     * @brief Gets the #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm used. This
+     * must be stored alongside the #EncryptedKey as the same algorithm must be used to unwrap it.
      *
      */
     KeyWrapAlgorithm Algorithm;

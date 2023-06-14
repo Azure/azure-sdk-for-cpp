@@ -299,7 +299,7 @@ Azure::Security::Attestation::AttestationClient AttestationClient::Create(
 }
 
 /** @brief Construct a new anonymous Attestation Client object
-* 
+ *
  * @note TPM attestation requires an authenticated attestation client.
  */
 Azure::Security::Attestation::AttestationClient AttestationClient::Create(

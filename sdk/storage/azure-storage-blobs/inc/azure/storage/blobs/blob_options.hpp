@@ -890,7 +890,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<bool> HasLegalHold;
   };
 
-/**
+  /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::UploadFromUri.
    */
   struct UploadBlockBlobFromUriOptions final

@@ -25,7 +25,6 @@ void Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessag
 
 ///  @endcond
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   //  MessageTarget::MessageTarget(TARGET_HANDLE handle) : m_target{handle} {}

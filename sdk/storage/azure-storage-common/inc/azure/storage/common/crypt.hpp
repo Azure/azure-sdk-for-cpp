@@ -22,7 +22,8 @@ namespace Azure { namespace Storage {
      * @brief Concatenates another #Crc64 instance after this instance. This operation has the same
      * effect as if the data in the other instance was append to this instance.
      *
-     * @param other Another #Azure::Storage::Crc64Hash instance to be concatenated after this instance.
+     * @param other Another #Azure::Storage::Crc64Hash instance to be concatenated after this
+     * instance.
      */
     void Concatenate(const Crc64Hash& other);
 

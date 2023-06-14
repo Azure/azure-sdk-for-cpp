@@ -55,7 +55,7 @@
 #endif
 
 namespace Azure { namespace Core { namespace _internal {
-    [[noreturn]] void AzureNoReturnPath(std::string const& msg);
+  [[noreturn]] void AzureNoReturnPath(std::string const& msg);
 }}} // namespace Azure::Core::_internal
 
 /** @brief Assert that the exp parameter is always false. */

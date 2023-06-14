@@ -130,7 +130,8 @@ EnvironmentCredential::EnvironmentCredential(
   }
 }
 
-EnvironmentCredential::EnvironmentCredential(Core::Credentials::TokenCredentialOptions const& options)
+EnvironmentCredential::EnvironmentCredential(
+    Core::Credentials::TokenCredentialOptions const& options)
     : EnvironmentCredential(options, {})
 {
 }

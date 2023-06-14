@@ -1454,9 +1454,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     };
 
-/**
-	 * @brief Details of a downloaded file.
-	 */
+    /**
+     * @brief Details of a downloaded file.
+     */
     struct DownloadFileDetails final
     {
       /**

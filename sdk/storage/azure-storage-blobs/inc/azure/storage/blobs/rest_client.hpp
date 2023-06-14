@@ -1112,7 +1112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
       /** Compare two values for inequality. */
       bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
-/** Convert the value to a string. */      
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** @brief High priority */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
@@ -1997,7 +1997,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       /** Compare two values for inequality. */
       bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
-/** Convert the value to a string. */
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** @brief Never Expire*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;

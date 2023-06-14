@@ -503,8 +503,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       m_value.push_back(amqpvalue_get_array_item(value, i));
     }
   }
-  AmqpArray::AmqpArray(initializer_type const& initializer)
-      : AmqpCollectionBase(initializer)
+  AmqpArray::AmqpArray(initializer_type const& initializer) : AmqpCollectionBase(initializer)
   {
     if (initializer.size())
     {
