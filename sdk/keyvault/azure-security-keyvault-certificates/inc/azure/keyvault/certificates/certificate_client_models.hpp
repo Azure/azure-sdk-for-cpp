@@ -1249,7 +1249,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   /**
    * @brief The options for calling an operation
-   * #Azure::Security::KeyVault::Certificates::CertificateClient::GetDeletedCertificates
+   * #Azure::Security::KeyVault::Certificates::CertificateClient::GetDeletedCertificates.
    *
    */
   struct GetDeletedCertificatesOptions final
