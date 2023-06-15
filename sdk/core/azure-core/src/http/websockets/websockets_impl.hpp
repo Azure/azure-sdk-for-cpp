@@ -360,11 +360,11 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     PingThread m_pingThread;
     SocketMessageType m_currentMessageType{SocketMessageType::Unknown};
     std::mutex m_stateMutex;
+    std::mutex m_transportReadMutex;
+    std::mutex m_transportWriteMutex;
     std::thread::id m_stateOwner;
 
     ReceiveStatistics m_receiveStatistics{};
-
-    //std::mutex m_transportMutex;
 
     std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
     constexpr static size_t m_bufferSize = 1024;

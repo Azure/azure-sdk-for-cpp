@@ -652,10 +652,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
   WebSocketImplementation::DecodeFrame(Azure::Core::Context const& context)
   {
     // Ensure single threaded access to receive this frame.
-    // TODO FIXME web sockets should support simulatenous send and receive. Grabbing the mutex
-    // could lead to a deadlock where we are waiting to receive data from the service, and
-    // blocking the sending of data to the service that would trigger a message to be received
-    // std::unique_lock<std::mutex> lock(m_transportMutex);
+    std::unique_lock<std::mutex> lock(m_transportReadMutex);
     if (IsTransportEof())
     {
       throw std::runtime_error("Frame buffer is too small.");
@@ -777,10 +774,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       std::vector<uint8_t> const& sendFrame,
       Azure::Core::Context const& context)
   {
-    // TODO FIXME web sockets should support simulatenous send and receive. Grabbing the mutex
-    // could lead to a deadlock where we are waiting to receive data from the service, and
-    // blocking the sending of data to the service that would trigger a message to be received
-    // std::unique_lock<std::mutex> transportLock(m_transportMutex);
+    std::unique_lock<std::mutex> transportLock(m_transportWriteMutex);
     m_receiveStatistics.BytesSent += static_cast<uint32_t>(sendFrame.size());
     m_receiveStatistics.FramesSent += 1;
     m_transport->SendBuffer(sendFrame.data(), sendFrame.size(), context);
