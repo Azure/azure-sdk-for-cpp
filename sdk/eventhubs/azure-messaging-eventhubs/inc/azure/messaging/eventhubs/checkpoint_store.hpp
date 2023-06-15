@@ -73,8 +73,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     virtual void UpdateCheckpoint(
         Checkpoint const& checkpoint,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        UpdateCheckpointOptions options = UpdateCheckpointOptions())
+        Azure::Core::Context ctx = {},
+        UpdateCheckpointOptions options = {})
     {
       (void)checkpoint;
       (void)ctx;
@@ -112,28 +112,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Context const& context = Azure::Core::Context());
 
   public:
-    BlobCheckpointStore(BlobCheckpointStore const& other):
-        m_connectionString(other.m_connectionString), 
-        m_containerName(other.m_containerName),
-        m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+    BlobCheckpointStore(BlobCheckpointStore const& other)
+        : m_connectionString(other.m_connectionString), m_containerName(other.m_containerName),
+          m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
               other.m_connectionString,
               other.m_containerName))
     {
-        m_containerClient.CreateIfNotExists();
+      m_containerClient.CreateIfNotExists();
     }
 
     BlobCheckpointStore& operator=(BlobCheckpointStore const& other)
     {
-        if (&other == this)
-        {
-          return *this;
-        }
-        m_connectionString = other.m_connectionString;
-        m_containerName = other.m_containerName;
-        m_containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-            other.m_connectionString, other.m_containerName);
-        m_containerClient.CreateIfNotExists();
+      if (&other == this)
+      {
         return *this;
+      }
+      m_connectionString = other.m_connectionString;
+      m_containerName = other.m_containerName;
+      m_containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+          other.m_connectionString, other.m_containerName);
+      m_containerClient.CreateIfNotExists();
+      return *this;
     }
 
     BlobCheckpointStore(std::string const& connectionString, std::string const& containerName)
@@ -142,20 +141,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               connectionString,
               containerName))
     {
-        m_containerClient.CreateIfNotExists();
+      m_containerClient.CreateIfNotExists();
     }
 
     std::vector<Ownership> ClaimOwnership(
         std::vector<Ownership> partitionOwnership,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ClaimOwnershipOptions const& options = ClaimOwnershipOptions());
+        Azure::Core::Context ctx = {},
+        ClaimOwnershipOptions const& options = {}) override;
 
     std::vector<Checkpoint> ListCheckpoints(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ListCheckpointsOptions options = ListCheckpointsOptions());
+        Azure::Core::Context ctx = {},
+        ListCheckpointsOptions options = {}) override;
 
     /**@brief  ListOwnership lists all ownerships.
      */
@@ -163,14 +162,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ListOwnershipOptions options = ListOwnershipOptions());
+        Azure::Core::Context ctx = {},
+        ListOwnershipOptions options = {}) override;
 
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
      */
     void UpdateCheckpoint(
         Checkpoint const& checkpoint,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        UpdateCheckpointOptions options = UpdateCheckpointOptions());
+        Azure::Core::Context ctx = {},
+        UpdateCheckpointOptions options = {}) override;
   };
 }}} // namespace Azure::Messaging::EventHubs

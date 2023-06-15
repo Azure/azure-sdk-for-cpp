@@ -75,13 +75,14 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
     session = Azure::Core::Amqp::_internal::Session(
         connection, m_credentials.SasCredential, sessionOptions);
   }
-  m_sessions.emplace(partitionId, session);
+
   Azure::Core::Amqp::_internal::MessageReceiver receiver;
   receiver = Azure::Core::Amqp::_internal::MessageReceiver(
       session, hostUrl, m_consumerClientOptions.ReceiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();
+  m_sessions.emplace(partitionId, session);
   partitionClient.PushBackReceiver(receiver);
   return partitionClient;
 }
@@ -91,9 +92,10 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
     Azure::Messaging::EventHubs::Models::GetEventHubPropertiesOptions options)
 {
   (void)options;
-  if (m_sessions.find("0") == m_sessions.end())
+  std::shared_ptr<PartitionClient> client;
+  if (m_sessions.size()==0 && m_sessions.find("0") == m_sessions.end())
   {
-    NewPartitionClient("0");
+    client  =std::make_shared<PartitionClient>(NewPartitionClient("0"));
   }
 
   // Create a management client off the session.
@@ -102,7 +104,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
   Azure::Core::Amqp::_internal::Management managementClient(
-      m_sessions["0"], m_credentials.EventHub, managementClientOptions);
+      m_sessions.at("0"), m_credentials.EventHub, managementClientOptions);
 
   managementClient.Open();
 

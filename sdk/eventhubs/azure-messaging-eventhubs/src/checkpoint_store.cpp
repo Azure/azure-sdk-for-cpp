@@ -79,7 +79,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
     Azure::Storage::Blobs::Models::BlobItem const& blob,
-    Ownership& ownership)
+    Ownership& ownership) 
 {
   std::string temp = blob.Details.Metadata.at("ownerid");
   if (temp.empty())

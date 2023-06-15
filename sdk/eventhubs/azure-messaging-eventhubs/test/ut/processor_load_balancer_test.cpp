@@ -104,7 +104,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         TestOwnership("0", "some-client"), TestOwnership("3", "some-client")});
 
     Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-        std::make_unique<TestCheckpointStore>(checkpointStore),
+        std::make_shared<TestCheckpointStore>(checkpointStore),
         TestConsumerDetails("new-client"),
         Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy,
         std::chrono::minutes(2));
@@ -127,7 +127,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         TestOwnership("0", "some-client"), TestOwnership("3", "some-client")});
 
     Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-        std::make_unique<TestCheckpointStore>(checkpointStore),
+        std::make_shared<TestCheckpointStore>(checkpointStore),
         TestConsumerDetails("new-client"),
         Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
         std::chrono::minutes(2));
@@ -159,7 +159,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     });
 
     Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-        std::make_unique<TestCheckpointStore>(checkpointStore),
+        std::make_shared<TestCheckpointStore>(checkpointStore),
         TestConsumerDetails("new-client"),
         Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyGreedy,
         std::chrono::minutes(2));
@@ -197,7 +197,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       checkpointStore.ExpireOwnership(midOwner);
 
       Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-          std::make_unique<TestCheckpointStore>(checkpointStore),
+          std::make_shared<TestCheckpointStore>(checkpointStore),
           TestConsumerDetails(clientB),
           strategy,
           std::chrono::minutes(2));
@@ -234,7 +234,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
 
         Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_unique<TestCheckpointStore>(checkpointStore),
+            std::make_shared<TestCheckpointStore>(checkpointStore),
             TestConsumerDetails(clientB),
             strategy,
             std::chrono::minutes(2));
@@ -255,7 +255,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
 
         Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_unique<TestCheckpointStore>(checkpointStore),
+            std::make_shared<TestCheckpointStore>(checkpointStore),
             TestConsumerDetails(clientA),
             strategy,
             std::chrono::minutes(2));
@@ -296,7 +296,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
 
         Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_unique<TestCheckpointStore>(checkpointStore),
+            std::make_shared<TestCheckpointStore>(checkpointStore),
             TestConsumerDetails(clientB),
             strategy,
             std::chrono::minutes(2));
@@ -317,7 +317,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
 
         Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_unique<TestCheckpointStore>(checkpointStore),
+            std::make_shared<TestCheckpointStore>(checkpointStore),
             TestConsumerDetails(clientA),
             strategy,
             std::chrono::minutes(2));
@@ -356,7 +356,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
            TestOwnership("4", clientB)});
 
       Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-          std::make_unique<TestCheckpointStore>(checkpointStore),
+          std::make_shared<TestCheckpointStore>(checkpointStore),
           TestConsumerDetails(clientB),
           strategy,
           std::chrono::minutes(2));
@@ -397,7 +397,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
 
         Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_unique<TestCheckpointStore>(checkpointStore),
+            std::make_shared<TestCheckpointStore>(checkpointStore),
             TestConsumerDetails(clientA),
             strategy,
             std::chrono::minutes(2));
@@ -415,7 +415,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
 
         Azure::Messaging::EventHubs::ProcessorLoadBalancer loadBalancer(
-            std::make_unique<TestCheckpointStore>(checkpointStore),
+            std::make_shared<TestCheckpointStore>(checkpointStore),
             TestConsumerDetails(clientB),
             strategy,
             std::chrono::minutes(2));
