@@ -345,7 +345,7 @@
     },
     {
       "name": "linux-basic-g++",
-      "displayName": "Linux G++ ",
+      "displayName": "Linux G++",
       "description": "Using compilers: C = /usr/bin/cc, CXX = /usr/bin/c++",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Ninja",
