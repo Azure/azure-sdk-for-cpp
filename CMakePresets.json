@@ -304,7 +304,7 @@
     },
     {
       "name": "linux-basic-gcc9",
-      "displayName": "Linux GCC 9 ",
+      "displayName": "Linux GCC 9",
       "description": "Using compilers: C = /usr/bin/gcc-9, CXX = /usr/bin/g++-9",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Ninja",
