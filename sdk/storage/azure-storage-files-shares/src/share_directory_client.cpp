@@ -290,6 +290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileContentType = options.ContentType;
 
     auto response = _detail::FileClient::Rename(
         *m_pipeline, destinationFileUrl, protocolLayerOptions, context);
