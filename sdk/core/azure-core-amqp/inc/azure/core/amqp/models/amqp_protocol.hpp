@@ -12,7 +12,7 @@
 
 struct AMQPVALUE_DECODER_HANDLE_DATA_TAG;
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #pragma GCC diagnostic push
 #elif defined(__clang__) // !__clang__
 #pragma clang diagnostic push
