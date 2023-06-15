@@ -4,7 +4,6 @@
 /**
  * @file user_agent.cpp
  * @brief Contains the user agent string generator implementation.
- * @remark See policy.hpp
  */
 
 #include "azure/core/context.hpp"
