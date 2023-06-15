@@ -107,7 +107,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   /** An AMQP value.
    * @details An AMQP value is a polymorphic type that can be used to represent any AMQP type.
    *
-   *
    * @see https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html
    *
    */
