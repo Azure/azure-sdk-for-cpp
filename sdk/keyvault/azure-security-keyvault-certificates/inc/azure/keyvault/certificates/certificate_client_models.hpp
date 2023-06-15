@@ -1169,7 +1169,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Represents a deleted certificate in a KeyVault
+   * @brief Represents a deleted certificate in a KeyVault.
    *
    */
   class DeletedCertificate final : public KeyVaultCertificateWithPolicy {
