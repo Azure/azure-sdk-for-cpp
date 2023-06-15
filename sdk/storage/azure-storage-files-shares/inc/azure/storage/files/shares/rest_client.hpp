@@ -894,25 +894,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ToString() const;
       /** @brief Return the values of the FileAttributes as an array. */
       const std::vector<std::string>& GetValues() const { return m_value; }
-      /** @brief Logical OR of two values*/
+      /** @brief bitwise OR of two values*/
       FileAttributes operator|(const FileAttributes& other) const;
-      /** @brief Logical AND of two values*/
+      /** @brief bitwise AND of two values*/
       FileAttributes operator&(const FileAttributes& other) const;
-      /** @brief Logical XOR of two values*/
+      /** @brief bitwise XOR of two values*/
       FileAttributes operator^(const FileAttributes& other) const;
-      /** @brief Logical OR and assignment of two values*/
+      /** @brief bitwise OR and assignment of two values*/
       FileAttributes& operator|=(const FileAttributes& other)
       {
         *this = *this | other;
         return *this;
       }
-      /** @brief Logical AND and assignment of two values*/
+      /** @brief bitwise AND and assignment of two values*/
       FileAttributes& operator&=(const FileAttributes& other)
       {
         *this = *this & other;
         return *this;
       }
-      /** @brief Logical XOR and assignment of two values*/
+      /** @brief bitwise XOR and assignment of two values*/
       FileAttributes& operator^=(const FileAttributes& other)
       {
         *this = *this ^ other;

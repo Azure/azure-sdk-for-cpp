@@ -210,25 +210,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool operator!=(const ShareFileHandleAccessRights& other) const { return !(*this == other); }
       /** @brief Return the values of the FileAttributes as an array. */
       const std::set<std::string>& GetValues() const { return m_value; }
-      /** @brief Logical OR of two values*/
+      /** @brief Bitwise OR of two values*/
       ShareFileHandleAccessRights operator|(const ShareFileHandleAccessRights& other) const;
-      /** @brief Logical AND of two values*/
+      /** @brief Bitwise AND of two values*/
       ShareFileHandleAccessRights operator&(const ShareFileHandleAccessRights& other) const;
-      /** @brief Logical XOR of two values*/
+      /** @brief Bitwise XOR of two values*/
       ShareFileHandleAccessRights operator^(const ShareFileHandleAccessRights& other) const;
-      /** @brief Logical OR and assignment of two values*/
+      /** @brief Bitwise OR and assignment of two values*/
       ShareFileHandleAccessRights& operator|=(const ShareFileHandleAccessRights& other)
       {
         *this = *this | other;
         return *this;
       }
-      /** @brief Logical AND and assignment of two values*/
+      /** @brief Bitwise AND and assignment of two values*/
       ShareFileHandleAccessRights& operator&=(const ShareFileHandleAccessRights& other)
       {
         *this = *this & other;
         return *this;
       }
-      /** @brief Logical XOR and assignment of two values*/
+      /** @brief Bitwise XOR and assignment of two values*/
       ShareFileHandleAccessRights& operator^=(const ShareFileHandleAccessRights& other)
       {
         *this = *this ^ other;

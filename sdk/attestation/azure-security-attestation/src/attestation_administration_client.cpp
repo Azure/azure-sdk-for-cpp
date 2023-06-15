@@ -527,14 +527,6 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
   }
 }
 
-/**
- * @brief Retrieves the information needed to validate the response returned from the
- * attestation service.
- *
- * @details Validating the response returned by the attestation service requires a set of
- * possible signers for the attestation token.
- *
- */
 void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
     Azure::Core::Context const& context)
 {

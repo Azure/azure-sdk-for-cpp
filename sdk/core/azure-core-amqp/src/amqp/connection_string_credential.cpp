@@ -128,10 +128,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
   }
 
-  /**
-   * @brief Gets an authentication token.
-   *
-   */
   Credentials::AccessToken ServiceBusSasConnectionStringCredential::GetToken(
       Credentials::TokenRequestContext const& tokenRequestContext,
       Context const& context) const

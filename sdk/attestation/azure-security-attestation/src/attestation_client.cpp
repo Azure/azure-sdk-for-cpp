@@ -283,9 +283,6 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
   }
 }
 
-/** @brief Construct a new Attestation Client object
- *
- */
 Azure::Security::Attestation::AttestationClient AttestationClient::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
@@ -298,10 +295,6 @@ Azure::Security::Attestation::AttestationClient AttestationClient::Create(
   return returnValue;
 }
 
-/** @brief Construct a new anonymous Attestation Client object
- *
- * @note TPM attestation requires an authenticated attestation client.
- */
 Azure::Security::Attestation::AttestationClient AttestationClient::Create(
     std::string const& endpoint,
     AttestationClientOptions options,
