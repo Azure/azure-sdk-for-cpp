@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/common/queued_operation.hpp"
 #include "azure/core/amqp/message_sender.hpp"
 #include "claims_based_security_impl.hpp"
 #include "link_impl.hpp"
@@ -53,15 +54,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Open(Context const& context);
     void Close();
-    std::tuple<_internal::MessageSendStatus, Models::AmqpValue> Send(
+    _internal::MessageSender::SendResult Send(
         Models::AmqpMessage const& message,
-        Context const& context);
-    void QueueSend(
-        Models::AmqpMessage const& message,
-        Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Context const& context);
 
+    Common::_internal::QueuedOperation<_internal::MessageSender::SendResult> QueueSend(
+        Models::AmqpMessage const& message);
+
   private:
+    class MessageSenderQueuedOperation
+        : public Common::_detail::QueuedOperationImpl<_internal::MessageSender::SendResult> {
+    public:
+      MessageSenderQueuedOperation(std::shared_ptr<MessageSenderImpl> const& senderImpl)
+          : m_senderImpl(senderImpl)
+      {
+      }
+      static void OnSendCompleteFn(
+          void* context,
+          MESSAGE_SEND_RESULT sendResult,
+          AMQP_VALUE disposition);
+      void OnSendComplete(_internal::MessageSendStatus status, Models::AmqpValue disposition);
+
+    private:
+      std::shared_ptr<MessageSenderImpl> m_senderImpl;
+    };
+
     static void OnMessageSenderStateChangedFn(
         void* context,
         MESSAGE_SENDER_STATE newState,
@@ -76,6 +93,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageSenderEvents* m_events;
     Models::AmqpValue m_savedMessageError;
 
+    Models::AmqpValue GetAndResetSavedMessageError()
+    {
+      auto error = std::move(m_savedMessageError);
+      m_savedMessageError = Models::AmqpValue();
+      return error;
+    }
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
 
     std::shared_ptr<_detail::SessionImpl> m_session;

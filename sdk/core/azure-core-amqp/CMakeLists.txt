@@ -36,11 +36,11 @@ find_package(azure_macro_utils_c CONFIG REQUIRED)
 find_package(azure_c_shared_utility CONFIG REQUIRED)
 
 set (AZURE_CORE_AMQP_HEADER
-    inc/azure/core/amqp/cancellable.hpp
     inc/azure/core/amqp/claims_based_security.hpp
     inc/azure/core/amqp/common/async_operation_queue.hpp
     inc/azure/core/amqp/common/completion_operation.hpp
     inc/azure/core/amqp/common/global_state.hpp
+    inc/azure/core/amqp/common/queued_operation.hpp
     inc/azure/core/amqp/connection.hpp
     inc/azure/core/amqp/connection_string_credential.hpp
     inc/azure/core/amqp/endpoint.hpp

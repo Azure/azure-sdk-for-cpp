@@ -316,7 +316,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           }
           try
           {
-            linkComponents.LinkSender->QueueSend(response, nullptr, m_listenerContext);
+            auto rv = linkComponents.LinkSender->QueueSend(response);
+            rv.WaitForOperationResult(m_listenerContext, *m_connection);
           }
           catch (std::exception& ex)
           {
@@ -350,7 +351,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             return;
           }
 
-          linkComponents.LinkSender->QueueSend(response, nullptr, m_listenerContext);
+          auto queuedOperation = linkComponents.LinkSender->QueueSend(response);
+          queuedOperation.WaitForOperationResult(m_listenerContext, *m_connection);
         }
       }
 

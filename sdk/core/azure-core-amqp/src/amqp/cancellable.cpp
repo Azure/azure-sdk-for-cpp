@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include "azure/core/amqp/cancellable.hpp"
+#include "azure/core/amqp/common/async_operation_queue.hpp"
 
 #include <azure_uamqp_c/async_operation.h>
 

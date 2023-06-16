@@ -26,8 +26,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       // Capture the operation into a unique pointer so it will be freed even if the OnOperation
       // call throws.
-      std::unique_ptr<CompletionOperation> operation;
-      operation.reset(reinterpret_cast<CompletionOperation*>(context));
+      std::unique_ptr<CompletionOperation> operation{
+          reinterpret_cast<CompletionOperation*>(context)};
       operation->OnOperation(args...);
     }
 

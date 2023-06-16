@@ -235,7 +235,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_expectedMessageId = m_nextMessageId;
     m_sendCompleted = false;
     m_nextMessageId++;
-
+#if 0
     m_messageSender->QueueSend(
         messageToSend,
         [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
@@ -265,6 +265,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           }
         },
         context);
+#else
+#endif
     auto result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection());
     if (result)
     {

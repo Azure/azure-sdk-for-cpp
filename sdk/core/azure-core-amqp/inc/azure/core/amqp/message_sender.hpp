@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "cancellable.hpp"
+#include "common/queued_operation.hpp"
 #include "claims_based_security.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection.hpp"
@@ -112,6 +112,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     using MessageSendCompleteCallback
         = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
 
+    using SendResult = std::tuple<MessageSendStatus, Models::AmqpValue>;    
+//    using SendResult = std::string;
+
     ~MessageSender() noexcept;
 
     MessageSender(MessageSender const&) = default;
@@ -137,16 +140,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    std::tuple<MessageSendStatus, Models::AmqpValue> Send(
-        Models::AmqpMessage const& message,
-        Context const& context = {});
+    SendResult Send(Models::AmqpMessage const& message, Context const& context = {});
 
     /** @brief Queue a message to be sent to the target of the message sender.
+     *
+     * @param message The message to send.
+     * @returns A queued operation that will complete when the message is sent.
      */
-    void QueueSend(
-        Models::AmqpMessage const& message,
-        MessageSendCompleteCallback onSendComplete,
-        Context const& context = {});
+    Common::_internal::QueuedOperation<SendResult> QueueSend(Models::AmqpMessage const& message);
 
   private:
     /** @brief Construct a MessageSender from a low level message sender implementation.
