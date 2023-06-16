@@ -5,6 +5,8 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include <array>
+#include <atomic>
+#include <condition_variable>
 #include <queue>
 #include <random>
 #include <shared_mutex>
@@ -335,7 +337,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     uint16_t ReadTransportShort(Azure::Core::Context const& context);
     uint64_t ReadTransportInt64(Azure::Core::Context const& context);
     std::vector<uint8_t> ReadTransportBytes(size_t readLength, Azure::Core::Context const& context);
-    bool IsTransportEof() const { return m_eof; }
+    bool IsTransportEof() const { return m_eof.load(std::memory_order_acquire); }
     void SendPong(std::vector<uint8_t> const& pongData, Azure::Core::Context const& context);
     void SendTransportBuffer(
         std::vector<uint8_t> const& payload,
@@ -358,17 +360,17 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     PingThread m_pingThread;
     SocketMessageType m_currentMessageType{SocketMessageType::Unknown};
     std::mutex m_stateMutex;
+    std::mutex m_transportReadMutex;
+    std::mutex m_transportWriteMutex;
     std::thread::id m_stateOwner;
 
     ReceiveStatistics m_receiveStatistics{};
-
-    std::mutex m_transportMutex;
 
     std::unique_ptr<Azure::Core::IO::BodyStream> m_initialBodyStream;
     constexpr static size_t m_bufferSize = 1024;
     uint8_t m_buffer[m_bufferSize]{};
     size_t m_bufferPos = 0;
     size_t m_bufferLen = 0;
-    bool m_eof = false;
+    std::atomic<bool> m_eof{false};
   };
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail
