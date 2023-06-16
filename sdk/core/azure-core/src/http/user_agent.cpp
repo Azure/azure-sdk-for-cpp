@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @file user_agent.cpp
+ * @file
  * @brief Contains the user agent string generator implementation.
  */
 
