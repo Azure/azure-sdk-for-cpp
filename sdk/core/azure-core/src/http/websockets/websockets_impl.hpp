@@ -5,12 +5,12 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
 #include <array>
+#include <atomic>
+#include <condition_variable>
 #include <queue>
 #include <random>
 #include <shared_mutex>
 #include <thread>
-#include <condition_variable>
-#include <atomic>
 
 // Implementation of WebSocket protocol.
 namespace Azure { namespace Core { namespace Http { namespace WebSockets { namespace _detail {
@@ -371,6 +371,6 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
     uint8_t m_buffer[m_bufferSize]{};
     size_t m_bufferPos = 0;
     size_t m_bufferLen = 0;
-    std::atomic<bool> m_eof{ false };
+    std::atomic<bool> m_eof{false};
   };
 }}}}} // namespace Azure::Core::Http::WebSockets::_detail

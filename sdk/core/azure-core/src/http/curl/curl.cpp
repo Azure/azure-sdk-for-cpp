@@ -2288,8 +2288,8 @@ CurlConnection::CurlConnection(
 
   if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
   {
-    // curl_blob is defined in Curl version 7.77 or newer. Since we prefer to use the OS version of Curl
-    // some may not be up to date enough (e.g. Ubuntu 18.04 uses Curl 7.58)
+    // curl_blob is defined in Curl version 7.77 or newer. Since we prefer to use the OS version of
+    // Curl some may not be up to date enough (e.g. Ubuntu 18.04 uses Curl 7.58)
 #if LIBCURL_VERSION_MAJOR > 7 || (LIBCURL_VERSION_MAJOR == 7 && LIBCURL_VERSION_MINOR >= 77)
     curl_blob rootCertBlob
         = {const_cast<void*>(reinterpret_cast<const void*>(
@@ -2305,9 +2305,9 @@ CurlConnection::CurlConnection(
     }
 #else
     throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed to set CA cert to:" + options.CAInfo + ". "
-          + "Not supported in your version of Curl");
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed to set CA cert to:" + options.CAInfo + ". "
+        + "Not supported in your version of Curl");
 #endif
   }
 
