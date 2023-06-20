@@ -235,38 +235,58 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_expectedMessageId = m_nextMessageId;
     m_sendCompleted = false;
     m_nextMessageId++;
-#if 0
-    m_messageSender->QueueSend(
-        messageToSend,
-        [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
-          m_sendCompleted = true;
-          Log::Stream(Logger::Level::Informational)
-              << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
-              << ", DeliveryState: " << deliveryState;
-          if (sendStatus != _internal::MessageSendStatus::Ok)
-          {
-            std::string errorDescription = "Send failed.";
-            auto deliveryStateAsList{deliveryState.AsList()};
-            Models::AmqpValue firstState{deliveryStateAsList[0]};
-            ERROR_HANDLE errorHandle;
-            if (!amqpvalue_get_error(firstState, &errorHandle))
-            {
-              Models::_internal::UniqueAmqpErrorHandle uniqueError{
-                  errorHandle}; // This will free the error handle when it goes out of scope.
-              Models::_internal::AmqpError error{
-                  Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle)};
-              errorDescription = error.Description;
-            }
-            m_messageQueue.CompleteOperation(
-                _internal::ManagementOperationStatus::Error,
-                500,
-                errorDescription,
-                Models::AmqpMessage{});
-          }
-        },
-        context);
-#else
-#endif
+    auto sendOperation = m_messageSender->QueueSend(messageToSend);
+    //,
+    //    [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
+    //      m_sendCompleted = true;
+    //      Log::Stream(Logger::Level::Informational)
+    //          << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
+    //          << ", DeliveryState: " << deliveryState;
+    //      if (sendStatus != _internal::MessageSendStatus::Ok)
+    //      {
+    //        std::string errorDescription = "Send failed.";
+    //        auto deliveryStateAsList{deliveryState.AsList()};
+    //        Models::AmqpValue firstState{deliveryStateAsList[0]};
+    //        ERROR_HANDLE errorHandle;
+    //        if (!amqpvalue_get_error(firstState, &errorHandle))
+    //        {
+    //          Models::_internal::UniqueAmqpErrorHandle uniqueError{
+    //              errorHandle}; // This will free the error handle when it goes out of scope.
+    //          Models::_internal::AmqpError error{
+    //              Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle)};
+    //          errorDescription = error.Description;
+    //        }
+    //        m_messageQueue.CompleteOperation(
+    //            _internal::ManagementOperationStatus::Error,
+    //            500,
+    //            errorDescription,
+    //            Models::AmqpMessage{});
+    //      }
+    //    },
+    //    context);
+    auto sendResult = sendOperation.WaitForOperationResult(context, *m_session->GetConnection());
+    if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
+    {
+      std::string errorDescription = "Send failed.";
+      Models::AmqpList deliveryStateAsList{std::get<1>(sendResult).AsList()};
+      Models::AmqpValue firstState{deliveryStateAsList[0]};
+      ERROR_HANDLE errorHandle;
+      if (!amqpvalue_get_error(firstState, &errorHandle))
+      {
+        Models::_internal::UniqueAmqpErrorHandle uniqueError{
+            errorHandle}; // This will free the error handle when it goes out of scope.
+        Models::_internal::AmqpError error{
+            Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle)};
+        errorDescription = error.Description;
+      }
+      _internal::ManagementOperationResult rv;
+      rv.Status = _internal::ManagementOperationStatus::Error;
+      rv.StatusCode = 500;
+      rv.Description = errorDescription;
+      rv.Message = Models::AmqpMessage{};
+      return rv;
+    }
+
     auto result = m_messageQueue.WaitForPolledResult(context, *m_session->GetConnection());
     if (result)
     {

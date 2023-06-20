@@ -15,6 +15,7 @@ int main()
   Azure::Core::Amqp::_internal ::ConnectionOptions connectionOptions;
   connectionOptions.EnableTrace = true;
   connectionOptions.ContainerId = "some";
+  connectionOptions.Port = 5672;
   Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
@@ -33,17 +34,18 @@ int main()
   // Open the connection to the remote.
   sender.Open();
 
-  auto timeStart = std::chrono::high_resolution_clock::now();
-
   constexpr int maxMessageSendCount = 1000;
 
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
   int messageSendCount = 0;
+  std::vector<Azure::Core::Amqp::Common::_internal::QueuedOperation<Azure::Core::Amqp::_internal::MessageSender::SendResult>> results;
+  auto timeStart = std::chrono::high_resolution_clock::now();
+
   while (messageSendCount < maxMessageSendCount)
   {
-    auto result = sender.Send(message);
+    results.push_back(sender.QueueSend(message));
     messageSendCount += 1;
   }
 
@@ -51,6 +53,20 @@ int main()
   std::chrono::nanoseconds timeDiff = timeEnd - timeStart;
 
   std::cout << "Sent " << messageSendCount << " in "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()
+            << " milliseconds" << std::endl;
+
+  timeStart = std::chrono::high_resolution_clock::now();
+
+  for (auto& result : results)
+  {
+    result.WaitForOperationResult({}, connection);
+  }
+
+  timeEnd = std::chrono::high_resolution_clock::now();
+  timeDiff = timeEnd - timeStart;
+
+  std::cout << "Waiting for sends to complete took "
             << std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()
             << " milliseconds" << std::endl;
 
