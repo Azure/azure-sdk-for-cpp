@@ -172,11 +172,11 @@ jobs:
               TestPipeline: ${{ parameters.TestPipeline }}
 
         - pwsh: |
-            $setupFile="doxygen-1.8.18-setup.exe";
+            $setupFile='doxygen-1.9.7-setup.exe';
 
             Invoke-WebRequest `
               -MaximumRetryCount 10 `
-              -Uri "https://azuresdktooling.blob.core.windows.net/dependencies/$setupFile" `
+              -Uri "https://github.com/doxygen/doxygen/releases/download/Release_1_9_7/$setupFile" `
               -OutFile $setupFile `
             | Wait-Process;
 
