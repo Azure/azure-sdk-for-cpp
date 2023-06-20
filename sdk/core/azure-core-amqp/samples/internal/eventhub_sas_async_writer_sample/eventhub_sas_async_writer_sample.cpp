@@ -76,7 +76,6 @@ int main()
                     std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count()))
             << " msg/sec" << std::endl;
 
-
   timeStart = std::chrono::high_resolution_clock::now();
 
   for (auto& result : results)
