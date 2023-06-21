@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 #include <azure/core/amqp.hpp>
 #include <azure/messaging/eventhubs.hpp>
-
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::string const& connectionString,
     std::string const& eventHub,
@@ -84,6 +85,9 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
   receiver.Open();
   m_sessions.emplace(partitionId, session);
   partitionClient.PushBackReceiver(receiver);
+  Log::Write(
+      Logger::Level::Informational,
+      "Created new partition client");
   return partitionClient;
 }
 
@@ -122,7 +126,8 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
   Models::EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
+    std::string ss =  "Error: " + result.Message.ApplicationProperties["status-description"];
+    Log::Write(Logger::Level::Error, ss);
   }
   else
   {

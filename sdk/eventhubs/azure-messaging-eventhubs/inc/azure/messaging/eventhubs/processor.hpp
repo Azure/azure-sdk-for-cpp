@@ -9,6 +9,7 @@
 #include <azure/core/context.hpp>
 
 #include <chrono>
+
 #ifdef TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class ProcessorTest_LoadBalancing_Test;
@@ -106,13 +107,13 @@ public:
     EventHubProperties eventHubProperties = m_ConsumerClient->GetEventHubProperties();
     ConsumersType consumers;
     Dispatch(eventHubProperties, consumers, ctx);
-    time_t timeNowSeconds
-        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    time_t timeNowSeconds = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
+
     while (!ctx.IsCancelled())
     {
-        std::this_thread::sleep_for(m_ownershipUpdateInterval);
-        Dispatch(eventHubProperties, consumers, ctx);
+      std::this_thread::sleep_for(m_ownershipUpdateInterval);
+      Dispatch(eventHubProperties, consumers, ctx);
     }
   }
 
@@ -132,11 +133,11 @@ public:
     }
   }
 
-  void CloseConsumers(ConsumersType consumers)
+  void Close()
   {
-    for (auto consumer : consumers)
+    for (auto consumer : m_nextPartitionClients)
     {
-      consumer.second->Close();
+      consumer->Close();
     }
   }
 

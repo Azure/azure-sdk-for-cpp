@@ -43,14 +43,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$Default", options);
     ProcessorOptions processorOptions;
+    processorOptions.LoadBalancingStrategy = ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::hours(1);
-
+    
     Processor processor(
         std::make_shared<ConsumerClient>(client),
         std::make_shared<BlobCheckpointStore>(checkpointStore),
         processorOptions);
 
     processor.Run();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    processor.Close();
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

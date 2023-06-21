@@ -9,8 +9,9 @@
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/http/policies/policy.hpp>
-
+#include <azure/core/internal/diagnostics/log.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   class ConsumerClient {
