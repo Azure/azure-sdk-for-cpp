@@ -40,7 +40,9 @@ int main()
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
   int messageSendCount = 0;
-  std::vector<Azure::Core::Amqp::Common::_internal::QueuedOperation<Azure::Core::Amqp::_internal::MessageSender::SendResult>> results;
+  std::vector<Azure::Core::Amqp::Common::_internal::QueuedOperation<
+      Azure::Core::Amqp::_internal::MessageSender::SendResult>>
+      results;
   auto timeStart = std::chrono::high_resolution_clock::now();
 
   while (messageSendCount < maxMessageSendCount)

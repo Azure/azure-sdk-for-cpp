@@ -958,7 +958,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
-
   TEST_F(TestMessages, SenderSendSync)
   {
     ConnectionOptions connectionOptions;

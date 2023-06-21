@@ -230,92 +230,90 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
-    /*
-     * Specialization of the WaitForOperationResult function for the MessageSender.
-     */
-    template <>
-    template <>
-    Amqp::_internal::MessageSender::SendResult
-    QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::WaitForOperationResult<
-        Amqp::_detail::ConnectionImpl>(
-        Context const& context,
-        Amqp::_detail::ConnectionImpl& connection)
+  /*
+   * Specialization of the WaitForOperationResult function for the MessageSender.
+   */
+  template <>
+  template <>
+  Amqp::_internal::MessageSender::SendResult
+  QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::WaitForOperationResult<
+      Amqp::_detail::ConnectionImpl>(
+      Context const& context,
+      Amqp::_detail::ConnectionImpl& connection)
+  {
+    m_waitForOperationResultCalled = true;
+    // Remember the context so we can use it in the Poll function.
+    m_context = &context;
+    auto result = m_queue.WaitForPolledResult(context, connection, *this);
+    // Since we are no longer polling, we can clear the context.
+    m_context = nullptr;
+    if (result)
     {
-      m_waitForOperationResultCalled = true;
-      // Remember the context so we can use it in the Poll function.
-      m_context = &context;
-      auto result = m_queue.WaitForPolledResult(context, connection, *this);
-      // Since we are no longer polling, we can clear the context.
-      m_context = nullptr;
-      if (result)
-      {
-        return std::move(std::get<0>(*result));
-      }
-      throw std::runtime_error("Error sending message");
+      return std::move(std::get<0>(*result));
     }
+    throw std::runtime_error("Error sending message");
+  }
 
-    template <> void QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::Cancel() const
+  template <> void QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::Cancel() const
+  {
+    if (m_operation)
     {
-      if (m_operation)
-      {
-        async_operation_cancel(m_operation);
-      }
+      async_operation_cancel(m_operation);
     }
+  }
 
-    template <> void QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::Poll() const
+  template <> void QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::Poll() const
+  {
+    if (m_context && m_context->IsCancelled())
     {
-      if (m_context && m_context->IsCancelled())
-      {
-        this->Cancel();
-      }
+      this->Cancel();
     }
+  }
 
-    template <>
-    _internal::QueuedOperation<Amqp::_internal::MessageSender::SendResult>
-    QueuedOperationFactory::CreateQueuedOperation<Amqp::_internal::MessageSender::SendResult>(
-        std::shared_ptr<QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>> impl)
-    {
-      return Azure::Core::Amqp::Common::_internal::QueuedOperation<
-          Amqp::_internal::MessageSender::SendResult>(impl);
-    }
+  template <>
+  _internal::QueuedOperation<Amqp::_internal::MessageSender::SendResult>
+  QueuedOperationFactory::CreateQueuedOperation<Amqp::_internal::MessageSender::SendResult>(
+      std::shared_ptr<QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>> impl)
+  {
+    return Azure::Core::Amqp::Common::_internal::QueuedOperation<
+        Amqp::_internal::MessageSender::SendResult>(impl);
+  }
 
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _internal {
-    /*
-     * Called from MessageSenderImpl::Send() to send a message. This method will block until the
-     * send completes.
-     */
-    template <>
-    template <>
-    Amqp::_internal::MessageSender::SendResult
-    QueuedOperation<Amqp::_internal::MessageSender::SendResult>::WaitForOperationResult<
-        Amqp::_detail::ConnectionImpl>(
-        Context const& context,
-        Amqp::_detail::ConnectionImpl& connection)
-    {
-      return m_impl->WaitForOperationResult(context, connection);
-    }
+  /*
+   * Called from MessageSenderImpl::Send() to send a message. This method will block until the
+   * send completes.
+   */
+  template <>
+  template <>
+  Amqp::_internal::MessageSender::SendResult
+  QueuedOperation<Amqp::_internal::MessageSender::SendResult>::WaitForOperationResult<
+      Amqp::_detail::ConnectionImpl>(
+      Context const& context,
+      Amqp::_detail::ConnectionImpl& connection)
+  {
+    return m_impl->WaitForOperationResult(context, connection);
+  }
 
-    template <> void QueuedOperation<Amqp::_internal::MessageSender::SendResult>::Cancel()
-    {
-      m_impl->Cancel();
-    }
-    /*
-     * Called by callers of MessageSender::QueueSend() after the message was queued. This method
-     * will block until the send completes.
-     */
-    template <>
-    template <>
-    Amqp::_internal::MessageSender::SendResult
-    QueuedOperation<Amqp::_internal::MessageSender::SendResult>::WaitForOperationResult<
-        Amqp::_internal::Connection>(
-        Context const& context,
-        Amqp::_internal::Connection& connection)
-    {
-      return m_impl->WaitForOperationResult<Amqp::_detail::ConnectionImpl>(
-          context, *Amqp::_detail::ConnectionFactory::GetImpl(connection));
-    }
+  template <> void QueuedOperation<Amqp::_internal::MessageSender::SendResult>::Cancel()
+  {
+    m_impl->Cancel();
+  }
+  /*
+   * Called by callers of MessageSender::QueueSend() after the message was queued. This method
+   * will block until the send completes.
+   */
+  template <>
+  template <>
+  Amqp::_internal::MessageSender::SendResult
+  QueuedOperation<Amqp::_internal::MessageSender::SendResult>::WaitForOperationResult<
+      Amqp::_internal::Connection>(Context const& context, Amqp::_internal::Connection& connection)
+  {
+    return m_impl->WaitForOperationResult<Amqp::_detail::ConnectionImpl>(
+        context, *Amqp::_detail::ConnectionFactory::GetImpl(connection));
+  }
 }}}}} // namespace Azure::Core::Amqp::Common::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
