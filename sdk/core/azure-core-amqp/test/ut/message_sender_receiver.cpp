@@ -772,7 +772,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
 
-      auto timeNow = std::chrono::system_clock::now();
       {
         auto queuedOperation = sender.QueueSend(message);
       }
@@ -795,7 +794,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
 
-      auto timeNow = std::chrono::system_clock::now();
       auto queuedOperation = sender.QueueSend(message);
 
       sender.Close();
@@ -873,7 +871,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
 
-      auto timeNow = std::chrono::system_clock::now();
       {
         auto queuedOperation = sender.QueueSend(message);
       }
@@ -952,7 +949,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
 
-      auto timeNow = std::chrono::system_clock::now();
       auto queuedOperation = sender.QueueSend(message);
 
       sender.Close();
