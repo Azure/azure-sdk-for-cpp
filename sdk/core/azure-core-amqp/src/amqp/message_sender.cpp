@@ -357,7 +357,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Log::Stream(Logger::Level::Informational)
         << "OnSendComplete. Send Status: " << static_cast<int>(status)
-        << "Disposition: " << disposition << std::endl;
+        << " Disposition: " << disposition << std::endl;
 
     // If the send failed. then we need to return the error. If the send completed because
     // of an error, it's possible that the deliveryStatus provided is null. In that case,
