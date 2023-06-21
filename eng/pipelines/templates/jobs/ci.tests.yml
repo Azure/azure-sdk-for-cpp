@@ -96,7 +96,6 @@ jobs:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
 
-
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
