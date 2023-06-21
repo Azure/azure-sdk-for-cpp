@@ -31,7 +31,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     ~QueuedOperationImpl();
 
     /** Cancel a Queued Operation. */
-    void Cancel();
+    void Cancel() const;
 
     /** Wait for the operation to complete.
      *
@@ -42,14 +42,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     template <class... PArgs>
     T WaitForOperationResult(Azure::Core::Context const& context, PArgs&... arguments);
 
+    void SetAsyncOperation(ASYNC_OPERATION_INSTANCE_TAG* asyncOperation)
+    {
+      m_operation = asyncOperation;
+    }
+
+    void Poll() const;
+
   private:
-    ASYNC_OPERATION_INSTANCE_TAG* m_operation{};
+    const Azure::Core::Context* m_context{}; // Context associated with the operation, only valid
+                                             // when WaitForOperationResult is called.
 
   protected:
     QueuedOperationImpl(ASYNC_OPERATION_INSTANCE_TAG* asyncOperation) : m_operation{asyncOperation}
     {
     }
     _internal::AsyncOperationQueue<T> m_queue;
+    ASYNC_OPERATION_INSTANCE_TAG* m_operation{};
 
     friend class QueuedOperationFactory;
   };

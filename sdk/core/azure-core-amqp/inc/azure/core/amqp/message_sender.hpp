@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "common/queued_operation.hpp"
 #include "claims_based_security.hpp"
 #include "common/async_operation_queue.hpp"
+#include "common/queued_operation.hpp"
 #include "connection.hpp"
 #include "link.hpp"
 #include "models/amqp_error.hpp"
@@ -30,6 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Timeout,
     Cancelled,
   };
+
   enum class MessageSenderState
   {
     Invalid,
@@ -40,10 +41,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Error,
   };
 
+  /**
+   * @brief The sender settle mode.
+   *
+   * This field indicates how the deliveries sent over the link SHOULD be settled. When this field
+   * is set to "mixed", the unsettled map MUST be sent even if it is empty. When this field is set
+   * to "settled", the value of the unsettled map MUST NOT be sent. See
+   * http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transactions-v1.0-os.html#doc-idp145616
+   * for more details.
+   *
+   */
   enum class SenderSettleMode
   {
+    /**
+     * @brief Sender will send all deliveries initially unsettled to the receiver.
+     */
     Unsettled,
+    /**
+     * @brief Sender will send all deliveries settled to the receiver.
+     */
     Settled,
+    /**
+     * @brief Sender MAY send a mixture of settled and unsettled deliveries to the receiver.
+     */
     Mixed,
   };
 
@@ -112,8 +132,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     using MessageSendCompleteCallback
         = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
 
-    using SendResult = std::tuple<MessageSendStatus, Models::AmqpValue>;    
-//    using SendResult = std::string;
+    using SendResult = std::tuple<MessageSendStatus, Models::AmqpValue>;
 
     ~MessageSender() noexcept;
 

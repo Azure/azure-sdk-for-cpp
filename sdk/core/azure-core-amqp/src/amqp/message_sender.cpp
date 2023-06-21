@@ -241,7 +241,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         Context const& context,
         Amqp::_detail::ConnectionImpl& connection)
     {
-      auto result = m_queue.WaitForPolledResult(context, connection);
+      // Remember the context so we can use it in the Poll function.
+      m_context = &context;
+      auto result = m_queue.WaitForPolledResult(context, connection, *this);
+      // Since we are no longer polling, we can clear the context.
+      m_context = nullptr;
       if (result)
       {
         return std::move(std::get<0>(*result));
@@ -249,6 +253,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       throw std::runtime_error("Error sending message");
     }
 
+    template <> void QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::Cancel() const
+    {
+      if (m_operation)
+      {
+        async_operation_cancel(m_operation);
+      }
+    }
+
+    template <> void QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::Poll() const
+    {
+      if (m_context && m_context->IsCancelled())
+      {
+        this->Cancel();
+      }
+    }
 
     template <>
     _internal::QueuedOperation<Amqp::_internal::MessageSender::SendResult>
@@ -258,6 +277,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       return Azure::Core::Amqp::Common::_internal::QueuedOperation<
           Amqp::_internal::MessageSender::SendResult>(impl);
     }
+
     template <>
     QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::~QueuedOperationImpl()
     {
@@ -280,6 +300,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       return m_impl->WaitForOperationResult(context, connection);
     }
 
+    template <> void QueuedOperation<Amqp::_internal::MessageSender::SendResult>::Cancel()
+    {
+      m_impl->Cancel();
+    }
     /*
      * Called by callers of MessageSender::QueueSend() after the message was queued. This method
      * will block until the send completes.
@@ -298,35 +322,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 }}}}} // namespace Azure::Core::Amqp::Common::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  // template <typename CompleteFn> struct RewriteSendComplete
-  //{
-  //   static void OnOperation(
-  //       CompleteFn onComplete,
-  //       MESSAGE_SEND_RESULT sendResult,
-  //       AMQP_VALUE disposition)
-  //   {
-  //     _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
-  //     switch (sendResult)
-  //     {
-  //       case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
-  //         result = _internal::MessageSendStatus::Invalid; // LCOV_EXCL_LINE
-  //         break; // LCOV_EXCL_LINE
-  //       case MESSAGE_SEND_OK:
-  //         result = _internal::MessageSendStatus::Ok;
-  //         break;
-  //       case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
-  //         result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
-  //         break; // LCOV_EXCL_LINE
-  //       case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
-  //         result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
-  //         break; // LCOV_EXCL_LINE
-  //       case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
-  //         result = _internal::MessageSendStatus::Timeout; // LCOV_EXCL_LINE
-  //         break; // LCOV_EXCL_LINE
-  //     }
-  //     onComplete(result, disposition);
-  //   }
-  // };
 
   void MessageSenderImpl::MessageSenderQueuedOperation::OnSendCompleteFn(
       void* context,
@@ -343,8 +338,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case MESSAGE_SEND_OK:
         result = _internal::MessageSendStatus::Ok;
         break;
-      case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
-        result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
+      case MESSAGE_SEND_CANCELLED: 
+        result = _internal::MessageSendStatus::Cancelled;
         break; // LCOV_EXCL_LINE
       case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
         result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
@@ -360,6 +355,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::MessageSendStatus status,
       Models::AmqpValue disposition)
   {
+    Log::Stream(Logger::Level::Informational)
+        << "OnSendComplete. Send Status: " << static_cast<int>(status)
+        << "Disposition: " << disposition << std::endl;
+
     // If the send failed. then we need to return the error. If the send completed because
     // of an error, it's possible that the deliveryStatus provided is null. In that case,
     // we use the cached saved error because it is highly likely to be better than
@@ -377,6 +376,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // it's no longer valid.
       m_senderImpl->GetAndResetSavedMessageError();
     }
+    // At this point, the underlying operation can no longer be cancelled.
+    m_operation = nullptr;
     m_queue.CompleteOperation(std::make_tuple(status, disposition));
   }
 
@@ -396,6 +397,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
     }
+    operation->SetAsyncOperation(result);
+
     // Return a public wrapper to the queued operation for the caller to use.
     return Common::_detail::QueuedOperationFactory::CreateQueuedOperation(
         std::static_pointer_cast<
@@ -406,47 +409,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage const& message,
       Context const& context)
   {
-    Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<Azure::Core::Amqp::_internal::MessageSendStatus, Models::AmqpValue>
-            sendCompleteQueue;
-#if 0
-    QueueSend(
-        message,
-        [&sendCompleteQueue, this](
-            Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
-            Models::AmqpValue deliveryStatus) {
-          // If the send failed. then we need to return the error. If the send completed because
-          // of an error, it's possible that the deliveryStatus provided is null. In that case,
-          // we use the cached saved error because it is highly likely to be better than
-          // nothing.
-          if (sendResult != _internal::MessageSendStatus::Ok)
-          {
-            if (deliveryStatus.IsNull())
-            {
-              deliveryStatus = m_savedMessageError;
-            }
-          }
-          else
-          {
-            // If we successfully sent the message, then whatever saved error should be cleared,
-            // it's no longer valid.
-            m_savedMessageError = Models::AmqpValue();
-          }
-          sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-        },
-        context);
-    auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
-    if (result)
-    {
-      return std::move(*result);
-    }
-    throw std::runtime_error("Error sending message"); // LCOV_EXCL_LINE
-#else
     // Queue the current message for sending and then wait until the queued message completes.
     auto deferredResult = QueueSend(message);
     auto returnValue = deferredResult.WaitForOperationResult(context, *m_session->GetConnection());
     return returnValue;
-#endif
   }
 
 }}}} // namespace Azure::Core::Amqp::_detail

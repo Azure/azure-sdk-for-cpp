@@ -41,6 +41,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       do
       {
+        // Note: We need to call Poll() *outside* the lock because the poller is going to call the
+        // CompleteOperation function. We call Poll *first* to ensure that any pending operations
+        // are processed before we check the queue - this gives us the best chance of having the
+        // operation complete immediately.
+        Poll(pollers...);
+
         {
           std::unique_lock<std::mutex> lock(m_operationComplete);
           if (!m_operationQueue.empty())
@@ -50,16 +56,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
             m_operationQueue.pop_front();
             return rv;
           }
-          if (context.IsCancelled())
-          {
-            return nullptr;
-          }
+        }
+        // After we've checked and made sure there are no results to return, check to see if the
+        // caller cancelled the context, which indicates that we should stop waiting for results.
+        if (context.IsCancelled())
+        {
+          return nullptr;
         }
         std::this_thread::yield();
-
-        // Note: We need to call Poll() *outside* the lock because the poller is going to call the
-        // CompleteOperation function.
-        Poll(pollers...);
       } while (true);
     }
 

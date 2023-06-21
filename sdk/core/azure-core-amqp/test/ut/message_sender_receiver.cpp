@@ -401,7 +401,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSenderOptions options;
       options.Name = "sender-link";
       options.MessageSource = "ingress";
-      options.SettleMode = SenderSettleMode::Settled;
       options.MaxMessageSize = 65536;
       MessageSender sender(
           session.CreateMessageSender("localhost/ingress", options, &senderEvents));
@@ -411,24 +410,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
       Azure::Core::Context context;
-      //    Azure::Core::Amqp::Common::_internal::
-      //        AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-      //            sendCompleteQueue;
-      auto result = sender.QueueSend(
-          message //,
-          //          [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue
-          //          deliveryStatus) {
-          //            GTEST_LOG_(INFO) << "Send Complete!";
-          //            sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-          //          }
-      );
+      auto result = sender.QueueSend(message);
       try
       {
 
         auto value = result.WaitForOperationResult(context, connection);
         // Because we're trying to use TLS to connect to a non-TLS port, we should get an error
         // sending the message.
-//        EXPECT_EQ(std::get<0>(value), MessageSendStatus::Error);
+        EXPECT_EQ(std::get<0>(value), MessageSendStatus::Error);
       }
       catch (Azure::Core::OperationCancelledException const&)
       {
@@ -520,7 +509,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSenderOptions options;
       options.Name = "sender-link";
       options.MessageSource = "ingress";
-      options.SettleMode = SenderSettleMode::Settled;
       options.MaxMessageSize = 65536;
       MessageSender sender(
           session.CreateMessageSender("localhost/ingress", options, &senderEvents));
@@ -530,23 +518,174 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
 
       Azure::Core::Context context;
-      //      Azure::Core::Amqp::Common::_internal::
-      //          AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-      //              sendCompleteQueue;
-      auto queuedOperation = sender.QueueSend(
-          message/*,
-          [&](MessageSendStatus sendResult, Azure::Core::Amqp::Models::AmqpValue deliveryStatus) {
-            GTEST_LOG_(INFO) << "Send Complete!";
-            sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-          }*/);
+      auto queuedOperation = sender.QueueSend(message);
       auto result = queuedOperation.WaitForOperationResult(context, connection);
-//      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
 
       sender.Close();
     }
     receiveContext.Cancel();
     listenerThread.join();
     connection.Close("", "", Models::AmqpValue());
+  }
+
+  TEST_F(TestMessages, SenderCancelAsyncSend)
+  {
+    class SenderAsyncCancel : public MessageTests::AmqpServerMock {
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Azure::Core::Amqp::Models::AmqpMessage const& incomingMessage) override
+      {
+        GTEST_LOG_(INFO) << "SenderAsyncCancel::OnMessageReceived: " << incomingMessage;
+
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        // Return after 5 seconds.
+        //        return
+        //        Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected("azure::i-dont-want-you",
+        //        "Not a good idea.");
+        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+      }
+    };
+
+    SenderAsyncCancel mockServer;
+    ConnectionOptions connectionOptions;
+    //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+    connectionOptions.ContainerId = "some";
+    //  connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession()};
+
+    // Set up a 30 second deadline on the receiver.
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime::clock::now() + std::chrono::seconds(15));
+
+    // Ensure that the thread is started before we start using the message sender.
+    mockServer.StartListening();
+
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderSTateChanged.";
+        (void)sender;
+        (void)newState;
+        (void)oldState;
+      }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
+    };
+
+    // Default case: Waiting for the operation to complete takes more than 5 seconds.
+    {
+
+      SenderEvents senderEvents;
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(
+          session.CreateMessageSender("localhost/ingress", options, &senderEvents));
+      EXPECT_NO_THROW(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'h', 'e', 'l', 'l', 'o'});
+
+      Azure::Core::Context context;
+      auto timeNow = std::chrono::system_clock::now();
+      auto queuedOperation = sender.QueueSend(message);
+      auto result = queuedOperation.WaitForOperationResult(context, connection);
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
+      auto timeAfterSend = std::chrono::system_clock::now();
+      // We should have waited for at least 5 seconds, so account for some variation by saying it
+      // should be more than 4 seconds.
+      EXPECT_GE(timeAfterSend - timeNow, std::chrono::seconds(4));
+
+      sender.Close();
+    }
+
+    // Now the same case, but cancel the operation after waiting a second for the queued operation
+    // to complete.
+    {
+      SenderEvents senderEvents;
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(
+          session.CreateMessageSender("localhost/ingress", options, &senderEvents));
+      EXPECT_NO_THROW(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
+
+      Azure::Core::Context context;
+      auto timeNow = std::chrono::system_clock::now();
+      auto queuedOperation = sender.QueueSend(message);
+      // Poll for the second to ensure the state machine isn't stuck.
+      do
+      {
+        std::this_thread::yield();
+        connection.Poll();
+      } while (std::chrono::system_clock::now() < timeNow + std::chrono::seconds(1));
+      queuedOperation.Cancel();
+      auto result = queuedOperation.WaitForOperationResult(context, connection);
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Cancelled);
+      auto timeAfterSend = std::chrono::system_clock::now();
+      // We should have completed in less than 4 seconds.
+      EXPECT_LT(timeAfterSend - timeNow, std::chrono::seconds(4));
+
+      sender.Close();
+    }
+
+    // Next case: but Cancel a context on the the operation after waiting a second for the queued
+    // operation to complete.
+    {
+      SenderEvents senderEvents;
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(
+          session.CreateMessageSender("localhost/ingress", options, &senderEvents));
+      EXPECT_NO_THROW(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
+
+      auto timeNow = std::chrono::system_clock::now();
+      auto queuedOperation = sender.QueueSend(message);
+      Azure::Core::Context contextWithTimeout
+          = Azure::Core::Context::ApplicationContext.WithDeadline(
+              std::chrono::system_clock::now() + std::chrono::seconds(10));
+      // Poll for the second to ensure the state machine isn't stuck.
+      do
+      {
+        std::this_thread::yield();
+        connection.Poll();
+      } while (std::chrono::system_clock::now() < timeNow + std::chrono::seconds(1));
+      // Cancel the timeout. THis should trigger a cancellation of the queued operation, it should
+      // *not* trigger a cancellation exception.
+      contextWithTimeout.Cancel();
+      auto result = queuedOperation.WaitForOperationResult(contextWithTimeout, connection);
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Cancelled);
+      auto timeAfterSend = std::chrono::system_clock::now();
+      // We should have completed in less than 4 seconds.
+      EXPECT_LT(timeAfterSend - timeNow, std::chrono::seconds(4));
+
+      sender.Close();
+    }
+
+    mockServer.GetListenerContext().Cancel();
+    mockServer.StopListening();
   }
 
   TEST_F(TestMessages, SenderSendSync)
@@ -603,7 +742,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     {
       MessageSenderOptions options;
-      options.SettleMode = SenderSettleMode::Settled;
       options.MaxMessageSize = 65536;
       options.MessageSource = "ingress";
       options.Name = "sender-link";
@@ -617,7 +755,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
               sendCompleteQueue;
       auto result = sender.Send(message);
-//      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
+      //      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
 
       sender.Close();
     }
@@ -646,7 +784,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     MessageSenderOptions senderOptions;
     senderOptions.Name = "sender-link";
     senderOptions.MessageSource = "ingress";
-    senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
     senderOptions.MaxMessageSize = 65536;
     senderOptions.Name = "sender-link";
     MessageSender sender(
@@ -701,7 +838,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     MessageSenderOptions senderOptions;
     senderOptions.Name = "sender-link";
     senderOptions.MessageSource = "ingress";
-    senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
     senderOptions.MaxMessageSize = 65536;
     senderOptions.Name = "sender-link";
     MessageSender sender(session.CreateMessageSender(endpoint, senderOptions, nullptr));
