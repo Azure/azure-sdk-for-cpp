@@ -7,14 +7,11 @@
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
 #include "azure/core/amqp/dll_import_export.hpp"
+#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/extendable_enumeration.hpp>
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#endif // _MSC_VER
+
+BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 /// @cond HIDDEN
 struct ERROR_INSTANCE_TAG;
@@ -26,11 +23,8 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<ERROR_INSTANCE_TAG
   using type = Azure::Core::_internal::BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
 };
 /// @endcond
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic pop
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic pop
-#endif // _MSC_VER
+
+END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

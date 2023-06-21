@@ -8,6 +8,7 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/connection_string_credential.hpp"
+#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/link.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
@@ -27,13 +28,8 @@
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#endif // _MSC_VER
 
+BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 ///  @cond HIDDEN
 
 void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
@@ -42,11 +38,7 @@ void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::
   messagereceiver_destroy(value);
 }
 /// @endcond
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic pop
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic pop
-#endif // _MSC_VER
+END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 using namespace Azure::Core::Amqp::_internal;
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {

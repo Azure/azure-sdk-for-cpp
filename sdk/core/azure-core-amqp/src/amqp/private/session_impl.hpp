@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/session.hpp"
 
 #include <azure_uamqp_c/session.h>
@@ -11,13 +12,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#endif // _MSC_VER
-
+BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 ///  @cond HIDDEN
 
 template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
@@ -30,11 +25,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_T
 using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
 
 /// @endcond
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic pop
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic pop
-#endif // _MSC_VER
+END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 
+#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
@@ -15,12 +16,7 @@
 #include <iostream>
 #include <set>
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#endif // _MSC_VER
+BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 ///  @cond HIDDEN
 
 void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(
@@ -29,11 +25,7 @@ void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpM
   message_destroy(value);
 }
 /// @endcond
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic pop
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic pop
-#endif // _MSC_VER
+END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 using namespace Azure::Core::Amqp::_detail;
 using namespace Azure::Core::Amqp::Models::_detail;

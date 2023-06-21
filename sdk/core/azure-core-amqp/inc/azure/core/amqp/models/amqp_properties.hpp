@@ -4,6 +4,7 @@
 #pragma once
 
 #include "amqp_value.hpp"
+#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
@@ -12,12 +13,8 @@
 #include <vector>
 
 struct PROPERTIES_INSTANCE_TAG;
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#endif // _MSC_VER
+
+BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 ///  @cond HIDDEN
 
@@ -31,11 +28,7 @@ template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANC
 
 /// @endcond
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic pop
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic pop
-#endif // _MSC_VER
+END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

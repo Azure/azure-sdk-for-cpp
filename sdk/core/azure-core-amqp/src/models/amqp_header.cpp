@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/models/amqp_header.hpp"
 
+#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
@@ -11,13 +12,8 @@
 
 #include <chrono>
 #include <iostream>
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#endif // _MSC_VER
 
+BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 ///  @cond HIDDEN
 
 void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(
@@ -26,11 +22,7 @@ void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHe
   header_destroy(handle);
 }
 ///  @endcond
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#pragma GCC diagnostic pop
-#elif defined(__clang__) // !__clang__
-#pragma clang diagnostic pop
-#endif // _MSC_VER
+END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool MessageHeader::operator==(MessageHeader const& that) const noexcept
