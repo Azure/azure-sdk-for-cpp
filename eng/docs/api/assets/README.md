@@ -209,42 +209,42 @@ file. Here are the most obvious changes:
 Add these variables:
 
 ```css
-	--title-foreground-color: white;
+    --title-foreground-color: white;
 ```
 
 Change the title background color:
 
 ```css
-	--title-background-color: rgb(0, 113, 197);
+    --title-background-color: rgb(0, 113, 197);
 ```
 
 Change `#projectlogo`:
 
 ```css
-	#projectlogo
-	{
-		text-align: center;
-		vertical-align: bottom;
-		border-collapse: separate;
+    #projectlogo
+    {
+        text-align: center;
+        vertical-align: bottom;
+        border-collapse: separate;
         padding-left: 8px;
-	}
+    }
 ```
 
 Change `#projectname`:
 
 ```css
-	#projectname
-	{
-		font-size: 200%;
-		font-family: var(--font-family-title);
-		margin: 0px;
-		padding: 2px 0px;
-		color: var(--title-foreground-color);
+    #projectname
+    {
+        font-size: 200%;
+        font-family: var(--font-family-title);
+        margin: 0px;
+        padding: 2px 0px;
+        color: var(--title-foreground-color);
 
-		#versionSelector {
-			font-size: 24px;
-		}
-	}
+        #versionSelector {
+            font-size: 24px;
+        }
+    }
 ```
 
 ## How it's wired up
