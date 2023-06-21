@@ -529,7 +529,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     connection.Close("", "", Models::AmqpValue());
   }
 
-  TEST_F(TestMessages, SenderCancelAsyncSend)
+  TEST_F(TestMessages, SenderCancelAsyncSendWaitForTimeout)
   {
     class SenderAsyncCancel : public MessageTests::AmqpServerMock {
 
@@ -541,16 +541,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         std::this_thread::sleep_for(std::chrono::seconds(5));
         // Return after 5 seconds.
-        //        return
-        //        Azure::Core::Amqp::Models::_internal::Messaging::DeliveryRejected("azure::i-dont-want-you",
-        //        "Not a good idea.");
         return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
       }
     };
 
     SenderAsyncCancel mockServer;
     ConnectionOptions connectionOptions;
-    //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
     connectionOptions.ContainerId = "some";
     //  connectionOptions.EnableTrace = true;
     connectionOptions.Port = mockServer.GetPort();
@@ -570,10 +566,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           MessageSenderState newState,
           MessageSenderState oldState) override
       {
-        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderSTateChanged.";
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Was: "
+                         << static_cast<int>(oldState) << " now " << static_cast<int>(newState);
+        if (newState == MessageSenderState::Error)
+        {
+          GTEST_LOG_(ERROR) << "Entered Error State.";
+        }
         (void)sender;
-        (void)newState;
-        (void)oldState;
       }
       virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
       {
@@ -583,7 +582,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // Default case: Waiting for the operation to complete takes more than 5 seconds.
     {
-
+      GTEST_LOG_(INFO) << "Wait for full 5 second timeout.";
       SenderEvents senderEvents;
       MessageSenderOptions options;
       options.Name = "sender-link";
@@ -610,9 +609,65 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sender.Close();
     }
 
+    mockServer.GetListenerContext().Cancel();
+    mockServer.StopListening();
+  }
+
+  TEST_F(TestMessages, SenderCancelAsyncSendCancelSend)
+  {
+    class SenderAsyncCancel : public MessageTests::AmqpServerMock {
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Azure::Core::Amqp::Models::AmqpMessage const& incomingMessage) override
+      {
+        GTEST_LOG_(INFO) << "SenderAsyncCancel::OnMessageReceived: " << incomingMessage;
+
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        // Return after 5 seconds.
+        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+      }
+    };
+
+    SenderAsyncCancel mockServer;
+    ConnectionOptions connectionOptions;
+    connectionOptions.ContainerId = "some";
+    //  connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession()};
+
+    // Set up a 30 second deadline on the receiver.
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime::clock::now() + std::chrono::seconds(15));
+
+    // Ensure that the thread is started before we start using the message sender.
+    mockServer.StartListening();
+
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Was: "
+                         << static_cast<int>(oldState) << " now " << static_cast<int>(newState);
+        if (newState == MessageSenderState::Error)
+        {
+          GTEST_LOG_(ERROR) << "Entered Error State.";
+        }
+        (void)sender;
+      }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
+    };
+
     // Now the same case, but cancel the operation after waiting a second for the queued operation
     // to complete.
     {
+      GTEST_LOG_(INFO) << "Cancel send operation.";
       SenderEvents senderEvents;
       MessageSenderOptions options;
       options.Name = "sender-link";
@@ -645,9 +700,88 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sender.Close();
     }
 
-    // Next case: but Cancel a context on the the operation after waiting a second for the queued
-    // operation to complete.
+    mockServer.GetListenerContext().Cancel();
+    mockServer.StopListening();
+  }
+
+  TEST_F(TestMessages, SenderCancelAsyncSendCancelContext)
+  {
+    class SenderAsyncCancel : public MessageTests::AmqpServerMock {
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Azure::Core::Amqp::Models::AmqpMessage const& incomingMessage) override
+      {
+        GTEST_LOG_(INFO) << "SenderAsyncCancel::OnMessageReceived: " << incomingMessage;
+
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        // Return after 5 seconds.
+        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+      }
+    };
+
+    SenderAsyncCancel mockServer;
+    ConnectionOptions connectionOptions;
+    connectionOptions.ContainerId = "some";
+    //  connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession()};
+
+    // Set up a 30 second deadline on the receiver.
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime::clock::now() + std::chrono::seconds(15));
+
+    // Ensure that the thread is started before we start using the message sender.
+    mockServer.StartListening();
+
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Was: "
+                         << static_cast<int>(oldState) << " now " << static_cast<int>(newState);
+        if (newState == MessageSenderState::Error)
+        {
+          GTEST_LOG_(ERROR) << "Entered Error State.";
+        }
+        (void)sender;
+      }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
+    };
+
+    // Next case: Don't wait for the async operation to complete - ignore the result from
+    // WaitForOperationResult.
     {
+      GTEST_LOG_(INFO) << "sendOperation goes out of scope.";
+      SenderEvents senderEvents;
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(
+          session.CreateMessageSender("localhost/ingress", options, &senderEvents));
+      EXPECT_NO_THROW(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
+
+      auto timeNow = std::chrono::system_clock::now();
+      {
+        auto queuedOperation = sender.QueueSend(message);
+      }
+      sender.Close();
+    }
+    // Next case: Don't wait for the async operation to complete and have it go out of scope after
+    // the call to Close on the sender.
+    {
+      GTEST_LOG_(INFO) << "close before sendOperation goes out of scope.";
       SenderEvents senderEvents;
       MessageSenderOptions options;
       options.Name = "sender-link";
@@ -663,23 +797,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       auto timeNow = std::chrono::system_clock::now();
       auto queuedOperation = sender.QueueSend(message);
-      Azure::Core::Context contextWithTimeout
-          = Azure::Core::Context::ApplicationContext.WithDeadline(
-              std::chrono::system_clock::now() + std::chrono::seconds(10));
-      // Poll for the second to ensure the state machine isn't stuck.
-      do
-      {
-        std::this_thread::yield();
-        connection.Poll();
-      } while (std::chrono::system_clock::now() < timeNow + std::chrono::seconds(1));
-      // Cancel the timeout. THis should trigger a cancellation of the queued operation, it should
-      // *not* trigger a cancellation exception.
-      contextWithTimeout.Cancel();
-      auto result = queuedOperation.WaitForOperationResult(contextWithTimeout, connection);
-      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Cancelled);
-      auto timeAfterSend = std::chrono::system_clock::now();
-      // We should have completed in less than 4 seconds.
-      EXPECT_LT(timeAfterSend - timeNow, std::chrono::seconds(4));
 
       sender.Close();
     }
@@ -687,6 +804,164 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.GetListenerContext().Cancel();
     mockServer.StopListening();
   }
+
+  TEST_F(TestMessages, SenderCancelAsyncIgnoreQueuedOperation)
+  {
+    class SenderAsyncCancel : public MessageTests::AmqpServerMock {
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Azure::Core::Amqp::Models::AmqpMessage const& incomingMessage) override
+      {
+        GTEST_LOG_(INFO) << "SenderAsyncCancel::OnMessageReceived: " << incomingMessage;
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        // Return after 1 seconds.
+        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+      }
+    };
+
+    SenderAsyncCancel mockServer;
+    ConnectionOptions connectionOptions;
+    connectionOptions.ContainerId = "some";
+    //  connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession()};
+
+    // Set up a 30 second deadline on the receiver.
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime::clock::now() + std::chrono::seconds(15));
+
+    // Ensure that the thread is started before we start using the message sender.
+    mockServer.StartListening();
+
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Was: "
+                         << static_cast<int>(oldState) << " now " << static_cast<int>(newState);
+        if (newState == MessageSenderState::Error)
+        {
+          GTEST_LOG_(ERROR) << "Entered Error State.";
+        }
+        (void)sender;
+      }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
+    };
+
+    // Next case: Don't wait for the async operation to complete - ignore the result from
+    // QueueSend.
+    {
+      GTEST_LOG_(INFO) << "sendOperation goes out of scope.";
+      SenderEvents senderEvents;
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(
+          session.CreateMessageSender("localhost/ingress", options, &senderEvents));
+      EXPECT_NO_THROW(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
+
+      auto timeNow = std::chrono::system_clock::now();
+      {
+        auto queuedOperation = sender.QueueSend(message);
+      }
+      sender.Close();
+    }
+
+    mockServer.GetListenerContext().Cancel();
+    mockServer.StopListening();
+  }
+
+  TEST_F(TestMessages, SenderCancelAsyncCloseSenderBeforeIgnoringQueueSendResult)
+  {
+    class SenderAsyncCancel : public MessageTests::AmqpServerMock {
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Azure::Core::Amqp::Models::AmqpMessage const& incomingMessage) override
+      {
+        GTEST_LOG_(INFO) << "SenderAsyncCancel::OnMessageReceived: " << incomingMessage;
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        // Return after 1 seconds.
+        return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
+      }
+    };
+
+    SenderAsyncCancel mockServer;
+    ConnectionOptions connectionOptions;
+    connectionOptions.ContainerId = "some";
+    //  connectionOptions.EnableTrace = true;
+    connectionOptions.Port = mockServer.GetPort();
+    Connection connection("localhost", nullptr, connectionOptions);
+    Session session{connection.CreateSession()};
+
+    // Set up a 30 second deadline on the receiver.
+    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::DateTime::clock::now() + std::chrono::seconds(15));
+
+    // Ensure that the thread is started before we start using the message sender.
+    mockServer.StartListening();
+
+    class SenderEvents : public MessageSenderEvents {
+      virtual void OnMessageSenderStateChanged(
+          MessageSender const& sender,
+          MessageSenderState newState,
+          MessageSenderState oldState) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderStateChanged. Was: "
+                         << static_cast<int>(oldState) << " now " << static_cast<int>(newState);
+        if (newState == MessageSenderState::Error)
+        {
+          GTEST_LOG_(ERROR) << "Entered Error State.";
+        }
+        (void)sender;
+      }
+      virtual void OnMessageSenderDisconnected(Models::_internal::AmqpError const& error) override
+      {
+        GTEST_LOG_(INFO) << "MessageSenderEvents::OnMessageSenderDisconnected. Error: " << error;
+      };
+    };
+
+    // Next case: Don't wait for the async operation to complete and have it go out of scope after
+    // the call to Close on the sender.
+    {
+      GTEST_LOG_(INFO) << "close before sendOperation goes out of scope.";
+      SenderEvents senderEvents;
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(
+          session.CreateMessageSender("localhost/ingress", options, &senderEvents));
+      EXPECT_NO_THROW(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"hello world"});
+
+      auto timeNow = std::chrono::system_clock::now();
+      auto queuedOperation = sender.QueueSend(message);
+
+      sender.Close();
+    }
+
+    mockServer.GetListenerContext().Cancel();
+    mockServer.StopListening();
+  }
+
 
   TEST_F(TestMessages, SenderSendSync)
   {

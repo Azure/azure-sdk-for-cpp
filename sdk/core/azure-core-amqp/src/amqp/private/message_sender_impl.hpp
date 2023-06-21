@@ -69,6 +69,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           : m_senderImpl(senderImpl)
       {
       }
+
+      ~MessageSenderQueuedOperation();
+
       static void OnSendCompleteFn(
           void* context,
           MESSAGE_SEND_RESULT sendResult,

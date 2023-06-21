@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
      *
      * The act of destroying a queued operation will block until the operation has been completed.
      */
-    ~QueuedOperationImpl() {}
+    virtual ~QueuedOperationImpl() {}
 
     /** Cancel a Queued Operation. */
     void Cancel() const;
@@ -52,11 +52,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
   private:
     const Azure::Core::Context* m_context{}; // Context associated with the operation, only valid
                                              // when WaitForOperationResult is called.
+    bool m_waitForOperationResultCalled = false;
 
   protected:
     QueuedOperationImpl(ASYNC_OPERATION_INSTANCE_TAG* asyncOperation) : m_operation{asyncOperation}
     {
     }
+    bool HasWaited() const { return m_waitForOperationResultCalled; }
     _internal::AsyncOperationQueue<T> m_queue;
     ASYNC_OPERATION_INSTANCE_TAG* m_operation{};
 
