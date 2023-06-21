@@ -30,12 +30,7 @@ void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::Fr
 {
   messagesender_destroy(value);
 }
-namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
-  template <>
-  QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::~QueuedOperationImpl()
-  {
-  }
-}}}}} // namespace Azure::Core::Amqp::Common::_detail
+
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
 void MessageSender::Open(Context const& context) { m_impl->Open(context); }

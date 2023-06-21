@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
      *
      * The act of destroying a queued operation will block until the operation has been completed.
      */
-    ~QueuedOperationImpl();
+    ~QueuedOperationImpl() {}
 
     /** Cancel a Queued Operation. */
     void Cancel() const;
