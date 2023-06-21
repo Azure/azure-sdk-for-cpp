@@ -229,6 +229,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
+    template <>
+    QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::~QueuedOperationImpl()
+    {
+    }
 
     /*
      * Specialization of the WaitForOperationResult function for the MessageSender.
@@ -278,10 +282,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
           Amqp::_internal::MessageSender::SendResult>(impl);
     }
 
-    template <>
-    QueuedOperationImpl<Amqp::_internal::MessageSender::SendResult>::~QueuedOperationImpl()
-    {
-    }
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _internal {
@@ -338,7 +338,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       case MESSAGE_SEND_OK:
         result = _internal::MessageSendStatus::Ok;
         break;
-      case MESSAGE_SEND_CANCELLED: 
+      case MESSAGE_SEND_CANCELLED:
         result = _internal::MessageSendStatus::Cancelled;
         break; // LCOV_EXCL_LINE
       case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
