@@ -185,7 +185,7 @@ jobs:
             Write-Host "Install complete"
             .'C:\Program Files\doxygen\bin\doxygen.exe' --version
 
-            choco list --local-only
+            choco list
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
