@@ -33,6 +33,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_HTML_HEADER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/header.html)
         set(DOXYGEN_HTML_FOOTER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/footer.html)
         set(DOXYGEN_HTML_STYLESHEET ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/style.css)
+        set(DOXYGEN_PROJECT_LOGO ${CMAKE_SOURCE_DIR}/eng/common/docgeneration/assets/logo.svg)
 
         set(DOXYGEN_GENERATE_XML YES)
         set(DOXYGEN_GENERATE_LATEX NO)

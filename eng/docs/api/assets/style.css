@@ -26,7 +26,8 @@ html {
 	--citation-label-color: #334975;
 	--glow-color: cyan;
 
-	--title-background-color: white;
+	--title-background-color: rgb(0, 113, 197);
+	--title-foreground-color: white;
 	--title-separator-color: #5373B4;
 	--directory-separator-color: #9CAFD4;
 	--separator-color: #4A6AAA;
@@ -1554,8 +1555,8 @@ html {
 	#projectlogo
 	{
 		text-align: center;
-		vertical-align: bottom;
 		border-collapse: separate;
+		padding-left: 8px;
 	}
 
 	#projectlogo img
@@ -1575,6 +1576,11 @@ html {
 		font-family: var(--font-family-title);
 		margin: 0px;
 		padding: 2px 0px;
+		color: var(--title-foreground-color);
+
+		#versionSelector {
+			font-size: 24px;
+		}
 	}
 
 	#projectbrief
