@@ -180,7 +180,10 @@ jobs:
               -OutFile $setupFile `
             | Wait-Process;
 
+            Write-Host "Installing $setupFile..."
             Start-Process -Filepath .\$setupFile -ArgumentList @("/VERYSILENT") -Wait
+            Write-Host "Install complete"
+            .'C:\Program Files\doxygen\bin\doxygen.exe' --version
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
