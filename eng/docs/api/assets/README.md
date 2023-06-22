@@ -48,6 +48,8 @@ To read:
 
 In the `<head>` of the page add the following snippets:
 
+Add Google analytics tag:
+
 ```html
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-62780441-44"></script>
@@ -59,6 +61,8 @@ In the `<head>` of the page add the following snippets:
     gtag('config', 'UA-62780441-44');
 </script>
 ```
+
+Add logic that populates and handles interactions with the version dropdown:
 
 ```html
 
@@ -157,17 +161,8 @@ function getPackageUrl(language, package, version) {
 For the following look for and replace the sections bounded by
 `<!--BEGIN XXXX-->` and `<!--END XXXX-->` with the following:
 
-For the project logo section:
-
-```html
-  <!--BEGIN PROJECT_LOGO-->
-  <td id="projectlogo">
-    <img alt="Logo" src="$relpath^$projectlogo"/>
-  </td>
-  <!--END PROJECT_LOGO-->
-```
-
-In the project name section:
+In the project name section add the version selection dropdown in the
+PROJECT_NUMBER section:
 
 ```html
   <!--BEGIN PROJECT_NAME-->
