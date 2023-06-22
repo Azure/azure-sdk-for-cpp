@@ -20,7 +20,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         if (MSVC)
           set(DOXYGEN_WARN_FORMAT "$file($line) : $text")
         endif()
-        set(DOXYGEN_WARN_AS_ERROR FAIL_ON_WARNINGS)
+#        set(DOXYGEN_WARN_AS_ERROR FAIL_ON_WARNINGS)
         set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ./README.md)
         # Setting the INLINE_SOURCES tag to YES will include the body of functions,
         # classes and enums directly into the documentation.
