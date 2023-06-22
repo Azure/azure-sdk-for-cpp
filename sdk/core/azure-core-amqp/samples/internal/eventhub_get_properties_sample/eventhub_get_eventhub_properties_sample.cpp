@@ -160,7 +160,6 @@ int main()
   // Retrieve the eventhub connection string so we can extract the host name and entity name. We
   // are NOT using the connection string to authenticate with the eventhub, only to retrieve the
   // host name and entity (if present).
-
   std::string eventhubConnectionString = std::getenv("EVENTHUB_CONNECTION_STRING");
 
   Azure::Core::Amqp::_internal::ConnectionStringParser connectionParser(eventhubConnectionString);
