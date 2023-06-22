@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#undef _CRT_SECURE_NO_WARNINGS
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_sender.hpp>
 
@@ -11,7 +8,6 @@
 #include <iostream>
 #include <limits>
 #include <string>
-
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()

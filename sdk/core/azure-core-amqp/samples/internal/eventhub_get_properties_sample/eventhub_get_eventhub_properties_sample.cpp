@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/management.hpp>
@@ -10,6 +8,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <chrono>
+#include <get_env.hpp>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -163,8 +162,9 @@ int main()
   // are NOT using the connection string to authenticate with the eventhub, only to retrieve the
   // host name and entity (if present).
 
-  Azure::Core::Amqp::_internal::ConnectionStringParser connectionParser(
-      std::getenv("EVENTHUB_CONNECTION_STRING"));
+  std::string eventhubConnectionString = std::getenv("EVENTHUB_CONNECTION_STRING");
+
+  Azure::Core::Amqp::_internal::ConnectionStringParser connectionParser(eventhubConnectionString);
   std::string eventhubsHost = connectionParser.GetHostName();
   std::string eventhubsEntity = connectionParser.GetEntityPath();
   if (eventhubsEntity.empty())

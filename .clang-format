@@ -43,9 +43,6 @@ UseTab: Never
 IncludeCategories:
  - Regex: '^<windows.h>$'
    Priority: 80
-# Note: get_env.hpp must be included before any other Azure SDK headers.
- - Regex: '^["<]get_env.hpp'
-   Priority: 10
  - Regex: '<[[:alnum:]_.]+>'
    Priority: 90
  - Regex: '<Azure/.*>'

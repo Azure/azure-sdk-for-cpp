@@ -17,17 +17,8 @@ param (
 Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
 
 function CreateUpdate-TspLocation([System.Object]$tspConfig, [string]$TypeSpecProjectDirectory, [string]$CommitHash, [string]$repo, [string]$repoRoot) {
-  $serviceDir = ""
   $additionalDirs = @()
 
-  # Parse tspcofig.yaml to get service-dir, additionalDirectories, and package-dir
-  if ($tspConfig["parameters"] -and $tspConfig["parameters"]["service-dir"]) {
-    $serviceDir = $tspConfig["parameters"]["service-dir"]["default"];
-  }
-  else {
-    Write-Error "Missing service-dir in parameters section of tspconfig.yaml."
-    exit 1
-  }
   if ($tspConfig["parameters"]["dependencies"] -and $tspConfig["parameters"]["dependencies"]["additionalDirectories"]) {
     $additionalDirs = $tspConfig["parameters"]["dependencies"]["additionalDirectories"];
   }

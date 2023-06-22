@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/storage/blobs.hpp>
-#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
 #include <cstdio>

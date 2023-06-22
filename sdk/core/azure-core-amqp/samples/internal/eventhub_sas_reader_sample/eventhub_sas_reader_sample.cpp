@@ -1,13 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/network/sasl_transport.hpp>
 
 #include <chrono>
+#include <get_env.hpp>
 #include <iostream>
 #include <limits>
 #include <string>
