@@ -67,7 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void End(std::string const& condition_value, std::string const& description);
 
     void AuthenticateIfNeeded(std::string const& audience, Context const& context);
-    
+
   private:
     SessionImpl();
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;

@@ -194,6 +194,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // it.
       m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
     }
+
     if (m_link == nullptr)
     {
       CreateLink();
@@ -219,7 +220,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // LCOV_EXCL_STOP
     }
   }
-
   void MessageSenderImpl::Close()
   {
     if (messagesender_close(m_messageSender.get()))

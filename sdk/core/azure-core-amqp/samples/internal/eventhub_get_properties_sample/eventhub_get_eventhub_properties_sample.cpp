@@ -172,6 +172,7 @@ int main()
   }
 
   // Establish the connection to the eventhub.
+
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("SAMPLES_TENANT_ID"),
       std::getenv("SAMPLES_CLIENT_ID"),

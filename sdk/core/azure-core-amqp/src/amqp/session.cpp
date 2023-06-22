@@ -230,7 +230,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Authenticate(tokenAudience, context);
     }
   }
-
   void SessionImpl::Authenticate(std::string const& audience, Context const& context)
   {
     if (!m_claimsBasedSecurity)
