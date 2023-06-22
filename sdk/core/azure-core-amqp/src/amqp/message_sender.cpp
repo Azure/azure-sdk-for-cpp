@@ -6,7 +6,6 @@
 
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
 #include "azure/core/amqp/session.hpp"

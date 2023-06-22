@@ -293,6 +293,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpValue(AmqpValue&& that) noexcept;
 
     // Interoperability functions for uAMQP
+    /// @cond
 
     /** @brief Interoperability helper function which converts an AmqpValue to a uAMQP
      * AMQP_VALUE object.
@@ -311,6 +312,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks This is an internal operator which should not be called by customers.
      */
     AmqpValue(AMQP_VALUE_DATA_TAG* value);
+    /// @endcond
 
     /** @brief Copy an AMQP value to the current AMQP value.
      *

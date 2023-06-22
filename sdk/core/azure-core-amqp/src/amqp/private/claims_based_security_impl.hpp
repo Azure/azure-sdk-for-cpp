@@ -3,7 +3,6 @@
 
 #pragma once
 #include "azure/core/amqp/claims_based_security.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure_uamqp_c/cbs.h>
 

@@ -76,10 +76,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     that.m_value = nullptr;
   }
+  ///@cond
 
-  BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-  /// @cond HIDDEN
-  AmqpValue::AmqpValue(AMQP_VALUE value)
+  AmqpValue::AmqpValue(AMQP_VALUE_DATA_TAG* value)
   {
     // We shouldn't take ownership of the incoming value, so instead we clone it.
     // if no value is provided, treat it as null.
@@ -92,11 +91,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       m_value.reset(amqpvalue_create_null());
     }
   }
-
   /** @brief Internal accessor to convert an AmqpValue to a uAMQP AMQP_VALUE. */
-  AmqpValue::operator AMQP_VALUE() const { return m_value.get(); }
-  /// @endcond
-  END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+  AmqpValue::operator AMQP_VALUE_DATA_TAG*() const { return m_value.get(); }
+  ///@endcond
 
   AmqpValue& AmqpValue::operator=(AmqpValue const& that)
   {

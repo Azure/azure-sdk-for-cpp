@@ -3,7 +3,6 @@
 
 #pragma once
 #include "azure/core/amqp/common/async_operation_queue.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/unique_handle.hpp>
 

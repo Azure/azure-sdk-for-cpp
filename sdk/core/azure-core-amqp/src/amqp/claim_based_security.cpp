@@ -3,7 +3,6 @@
 
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
 #include "private/session_impl.hpp"
