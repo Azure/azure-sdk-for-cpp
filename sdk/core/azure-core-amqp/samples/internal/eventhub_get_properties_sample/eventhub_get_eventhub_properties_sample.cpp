@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#undef _CRT_SECURE_NO_WARNINGS
 #include <get_env.hpp>
 
 #include <azure/core/amqp/connection.hpp>
@@ -174,7 +173,6 @@ int main()
   }
 
   // Establish the connection to the eventhub.
-
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("SAMPLES_TENANT_ID"),
       std::getenv("SAMPLES_CLIENT_ID"),
