@@ -14,20 +14,17 @@
 #include <stdexcept>
 #include <string>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<XIO_INSTANCE_TAG>
+  {
+    static void FreeXio(XIO_HANDLE obj);
 
-///  @cond HIDDEN
-template <> struct Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>
-{
-  static void FreeXio(XIO_HANDLE obj);
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
-};
-using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
+  using UniqueXioHandle = Azure::Core::_internal::UniqueHandle<XIO_INSTANCE_TAG>;
 
   struct TransportImpl : public std::enable_shared_from_this<TransportImpl>
   {

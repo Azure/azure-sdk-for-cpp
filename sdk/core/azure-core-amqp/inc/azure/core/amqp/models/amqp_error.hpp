@@ -7,24 +7,18 @@
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
 #include "azure/core/amqp/dll_import_export.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/extendable_enumeration.hpp>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-
-/// @cond HIDDEN
 struct ERROR_INSTANCE_TAG;
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<ERROR_INSTANCE_TAG>
+  {
+    static void FreeAmqpError(ERROR_INSTANCE_TAG* obj);
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<ERROR_INSTANCE_TAG>
-{
-  static void FreeAmqpError(ERROR_INSTANCE_TAG* obj);
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
-};
-/// @endcond
-
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<ERROR_INSTANCE_TAG, FreeAmqpError>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -84,8 +78,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Not Allowed.
      *
-     * The peer tried to use a frame in a manner that is inconsistent with the semantics defined in
-     * the specification. For more information, see
+     * The peer tried to use a frame in a manner that is inconsistent with the semantics defined
+     * in the specification. For more information, see
      *
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
@@ -112,8 +106,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Resource Locked.
      *
-     * The client attempted to work with a server entity to which it has no access because another
-     * client is working with it.
+     * The client attempted to work with a server entity to which it has no access because
+     * another client is working with it.
      *
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
@@ -153,11 +147,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     /** @brief Frame Size Too Small.
      *
      * The peer cannot send a frame because the smallest encoding of the performative with the
-     * currently valid values would be too large to fit within a frame of the agreed maximum frame
-     * size. When transferring a message the message data can be sent in multiple transfer frames
-     * thereby avoiding this error. Similarly when attaching a link with a large unsettled map the
-     * endpoint MAY make use of the incomplete-unsettled flag to avoid the need for overly large
-     * frames.
+     * currently valid values would be too large to fit within a frame of the agreed maximum
+     * frame size. When transferring a message the message data can be sent in multiple transfer
+     * frames thereby avoiding this error. Similarly when attaching a link with a large
+     * unsettled map the endpoint MAY make use of the incomplete-unsettled flag to avoid the
+     * need for overly large frames.
      *
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
@@ -178,8 +172,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      */
     AmqpErrorCondition Condition;
 
-    /** @brief This text supplies any supplementary details not indicated by the condition field.
-     * This text can be logged as an aid to resolving issues.
+    /** @brief This text supplies any supplementary details not indicated by the condition
+     * field. This text can be logged as an aid to resolving issues.
      *
      * @remarks For more information, see [AMQP
      * Section 2.8.14](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error).

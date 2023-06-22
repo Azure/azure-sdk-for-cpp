@@ -17,16 +17,9 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-
-/// @cond HIDDEN
-void Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(CBS_HANDLE value)
-{
-  cbs_destroy(value);
-}
-/// @endcond
-
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<CBS_INSTANCE_TAG>::FreeAmqpCbs(CBS_HANDLE value) { cbs_destroy(value); }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using namespace Azure::Core::Amqp::_internal;

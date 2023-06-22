@@ -8,7 +8,6 @@
 
 #include "azure/core/amqp/connection.hpp"
 #include "azure/core/amqp/connection_string_credential.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/link.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/amqp/models/messaging_values.hpp"
@@ -29,16 +28,13 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
-
-void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
-    MESSAGE_RECEIVER_HANDLE value)
-{
-  messagereceiver_destroy(value);
-}
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
+      MESSAGE_RECEIVER_HANDLE value)
+  {
+    messagereceiver_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 using namespace Azure::Core::Amqp::_internal;
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -117,8 +113,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           << "Message receiver link detached: " + error.Condition.ToString() << ": "
           << error.Description;
 
-      // Cache the error we received in the OnDetach notification so we can return it to the user on
-      // the next send which fails.
+      // Cache the error we received in the OnDetach notification so we can return it to the user
+      // on the next send which fails.
       m_savedMessageError = error;
     });
   }
@@ -251,8 +247,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       ;
     }
 
-    // If we are transitioning to the error state, we want to stick a response on the incoming queue
-    // indicating an error occurred.
+    // If we are transitioning to the error state, we want to stick a response on the incoming
+    // queue indicating an error occurred.
     if (newState == MESSAGE_RECEIVER_STATE_ERROR && oldState != MESSAGE_RECEIVER_STATE_ERROR)
     {
       if (receiver->m_savedMessageError)

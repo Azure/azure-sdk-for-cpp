@@ -4,7 +4,6 @@
 #pragma once
 
 #include "amqp_value.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
@@ -14,21 +13,15 @@
 
 struct PROPERTIES_INSTANCE_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>
+  {
+    static void FreeAmqpProperties(PROPERTIES_INSTANCE_TAG* obj);
 
-///  @cond HIDDEN
+    using type = BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
+  };
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>
-{
-  static void FreeAmqpProperties(PROPERTIES_INSTANCE_TAG* obj);
-
-  using type
-      = Azure::Core::_internal::BasicUniqueHandle<PROPERTIES_INSTANCE_TAG, FreeAmqpProperties>;
-};
-
-/// @endcond
-
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
@@ -109,9 +102,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief MIME Content Encoding
      *
      * The content-encoding property is used as a modifier to the content-type. When present, its
-     * value indicates what additional content encodings have been applied to the application-data,
-     * and thus what decoding mechanisms need to be applied in order to obtain the media-type
-     * referenced by the content-type header field.
+     * value indicates what additional content encodings have been applied to the
+     * application-data, and thus what decoding mechanisms need to be applied in order to obtain
+     * the media-type referenced by the content-type header field.
      *
      * Content-encoding is primarily used to allow a document to be compressed without losing the
      * identity of its underlying content type.
@@ -156,8 +149,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief The group the reply message belongs to.
      *
-     * This is a client-specific id that is used so that client can send replies to this message to
-     * a specific group
+     * This is a client-specific id that is used so that client can send replies to this message
+     * to a specific group
      */
     Nullable<std::string> ReplyToGroupId;
 

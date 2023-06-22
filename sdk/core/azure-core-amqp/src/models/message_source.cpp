@@ -3,8 +3,6 @@
 
 #include "azure/core/amqp/models/message_source.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
-
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
@@ -17,17 +15,12 @@
 
 #include <iostream>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-
-///  @cond HIDDEN
-
-void Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessageSource(
-    SOURCE_HANDLE value)
-{
-  source_destroy(value);
-}
-///  @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<SOURCE_INSTANCE_TAG>::FreeMessageSource(SOURCE_HANDLE value)
+  {
+    source_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -47,10 +40,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  /* Note: This constructor should NOT be marked as explicit, because we want to enable the implicit
-   * construction of the MessageSource from a string - this allows callers to construct Link,
-   * MessageSender, and MessageReceiver objects without forcing the creation of a MessageSource
-   * object. */
+  /* Note: This constructor should NOT be marked as explicit, because we want to enable the
+   * implicit construction of the MessageSource from a string - this allows callers to construct
+   * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
+   * MessageSource object. */
   MessageSource::MessageSource(std::string const& address) : m_source(source_create())
   {
     if (m_source == nullptr)
@@ -63,10 +56,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
   }
 
-  /* Note: This constructor should NOT be marked as explicit, because we want to enable the implicit
-   * construction of the MessageSource from a string - this allows callers to construct Link,
-   * MessageSender, and MessageReceiver objects without forcing the creation of a MessageSource
-   * object. */
+  /* Note: This constructor should NOT be marked as explicit, because we want to enable the
+   * implicit construction of the MessageSource from a string - this allows callers to construct
+   * Link, MessageSender, and MessageReceiver objects without forcing the creation of a
+   * MessageSource object. */
   MessageSource::MessageSource(char const* address) : m_source(source_create())
   {
     if (m_source == nullptr)

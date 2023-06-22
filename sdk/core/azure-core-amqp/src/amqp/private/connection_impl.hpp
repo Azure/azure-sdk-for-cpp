@@ -4,7 +4,6 @@
 #pragma once
 
 #include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/network/transport.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -15,23 +14,17 @@
 #include <memory>
 #include <string>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
+  {
+    static void FreeAmqpConnection(CONNECTION_HANDLE obj);
 
-/// @cond INTERNAL
-
-template <> struct Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
-{
-  static void FreeAmqpConnection(CONNECTION_HANDLE obj);
-
-  using type
-      = Azure::Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
-};
-
-using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;
 
   class ClaimsBasedSecurity;
 

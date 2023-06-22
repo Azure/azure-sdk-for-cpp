@@ -5,7 +5,6 @@
 
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "azure/core/amqp/network/socket_transport.hpp"
 #include "azure/core/amqp/network/tls_transport.hpp"
@@ -21,17 +20,14 @@
 #include <azure_uamqp_c/connection.h>
 
 #include <memory>
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-/// @cond INTERNAL
 
-void Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(
-    CONNECTION_HANDLE value)
-{
-  connection_destroy(value);
-}
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(CONNECTION_HANDLE value)
+  {
+    connection_destroy(value);
+  }
 
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+}}} // namespace Azure::Core::_internal
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;

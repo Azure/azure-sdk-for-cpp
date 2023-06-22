@@ -3,7 +3,6 @@
 
 #include "azure/core/amqp/models/amqp_properties.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
@@ -16,17 +15,12 @@
 #include <stdexcept>
 #include <string>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
-
-void Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(
-    PROPERTIES_HANDLE value)
-{
-  properties_destroy(value);
-}
-
-///  @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(PROPERTIES_HANDLE value)
+  {
+    properties_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

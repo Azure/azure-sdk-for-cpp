@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/session.hpp"
 
 #include <azure_uamqp_c/session.h>
@@ -12,22 +11,18 @@
 #include <memory>
 #include <string>
 #include <vector>
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
-{
-  static void FreeAmqpSession(SESSION_HANDLE obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>
+  {
+    static void FreeAmqpSession(SESSION_HANDLE obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
-};
-
-using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
-
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
 
   class SessionFactory final {
   public:

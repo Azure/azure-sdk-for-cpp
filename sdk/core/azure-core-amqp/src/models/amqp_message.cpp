@@ -3,7 +3,6 @@
 
 #include "azure/core/amqp/models/amqp_message.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
 #include "azure/core/amqp/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
@@ -16,16 +15,12 @@
 #include <iostream>
 #include <set>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
-
-void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(
-    MESSAGE_HANDLE value)
-{
-  message_destroy(value);
-}
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
+  {
+    message_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 using namespace Azure::Core::Amqp::_detail;
 using namespace Azure::Core::Amqp::Models::_detail;

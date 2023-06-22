@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
-
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
 
@@ -17,19 +15,14 @@
 
 struct HEADER_INSTANCE_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<HEADER_INSTANCE_TAG>
+  {
+    static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
 
-/// @cond INTERNAL
-
-template <> struct Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>
-{
-  static void FreeAmqpHeader(HEADER_INSTANCE_TAG* obj);
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
-};
-/// @endcond
-
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<HEADER_INSTANCE_TAG, FreeAmqpHeader>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

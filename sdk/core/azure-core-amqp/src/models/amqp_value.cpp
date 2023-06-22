@@ -21,22 +21,23 @@
 
 using namespace Azure::Core::Amqp::Models::_detail;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(AMQP_VALUE value)
+  {
+    amqpvalue_destroy(value);
+  }
 
-///  @cond HIDDEN
-void Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>::FreeAmqpValue(
-    AMQP_VALUE value)
-{
-  amqpvalue_destroy(value);
-}
-
-void Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::FreeAmqpDecoder(
-    AMQPVALUE_DECODER_HANDLE value)
-{
-  amqpvalue_decoder_destroy(value);
-}
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+  /**
+   * Free a uAMQP Decoder object.
+   *
+   * @param value Decoder handle to free.
+   */
+  void UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>::FreeAmqpDecoder(
+      AMQPVALUE_DECODER_HANDLE value)
+  {
+    amqpvalue_decoder_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

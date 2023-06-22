@@ -6,25 +6,26 @@
 
 #pragma once
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
-
 #include <azure/core/internal/unique_handle.hpp>
 
 #include <cstdint>
 
 struct AMQPVALUE_DECODER_HANDLE_DATA_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-/// @cond INTERNAL
-template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>
-{
-  static void FreeAmqpDecoder(AMQPVALUE_DECODER_HANDLE_DATA_TAG* obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<AMQPVALUE_DECODER_HANDLE_DATA_TAG>
+  {
+    /**
+     * Free a uAMQP Decoder object.
+     *
+     * @param value Decoder handle to free.
+     */
 
-  using type = Azure::Core::_internal::
-      BasicUniqueHandle<AMQPVALUE_DECODER_HANDLE_DATA_TAG, FreeAmqpDecoder>;
-};
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    static void FreeAmqpDecoder(AMQPVALUE_DECODER_HANDLE_DATA_TAG* obj);
+
+    using type = BasicUniqueHandle<AMQPVALUE_DECODER_HANDLE_DATA_TAG, FreeAmqpDecoder>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

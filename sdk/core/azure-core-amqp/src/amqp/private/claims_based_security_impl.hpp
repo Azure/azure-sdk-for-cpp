@@ -9,21 +9,19 @@
 
 struct CBS_INSTANCE_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
 
-/// @cond INTERNAL
-template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
-{
-  static void FreeAmqpCbs(CBS_HANDLE obj);
+  template <> struct UniqueHandleHelper<CBS_INSTANCE_TAG>
+  {
+    static void FreeAmqpCbs(CBS_HANDLE obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
-};
-
-using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
+
   class ClaimsBasedSecurityImpl final {
 
   public:

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/message_receiver.hpp"
 #include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
@@ -20,19 +19,14 @@
 #include <memory>
 #include <vector>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
+  {
+    static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
 
-/// @cond INTERNAL
-template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
-{
-  static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
-
-  using type = Azure::Core::_internal::
-      BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
-};
-
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 

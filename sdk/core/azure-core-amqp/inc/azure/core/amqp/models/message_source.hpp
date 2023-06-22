@@ -6,23 +6,17 @@
 #include "amqp_header.hpp"
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 struct SOURCE_INSTANCE_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<SOURCE_INSTANCE_TAG>
+  {
+    static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
 
-///  @cond HIDDEN
-
-template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>
-{
-  static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
-};
-
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+    using type = BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -80,7 +74,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Creates an AMQP value from a message source.
      *
-     * @remarks Creates an AMQP Described value with the descriptor being the message source (0x29).
+     * @remarks Creates an AMQP Described value with the descriptor being the message source
+     * (0x29).
      */
     AmqpValue AsAmqpValue() const;
 

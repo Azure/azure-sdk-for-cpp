@@ -4,7 +4,6 @@
 #pragma once
 
 #include "amqp_header.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/uuid.hpp>
@@ -22,20 +21,18 @@
 
 struct AMQP_VALUE_DATA_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-/// @cond INTERNAL
-template <> struct Azure::Core::_internal::UniqueHandleHelper<AMQP_VALUE_DATA_TAG>
-{
-  static void FreeAmqpValue(AMQP_VALUE_DATA_TAG* obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<AMQP_VALUE_DATA_TAG>
+  {
+    static void FreeAmqpValue(AMQP_VALUE_DATA_TAG* obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<AMQP_VALUE_DATA_TAG, FreeAmqpValue>;
-};
+    using type = BasicUniqueHandle<AMQP_VALUE_DATA_TAG, FreeAmqpValue>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueAmqpValueHandle = Azure::Core::_internal::UniqueHandle<AMQP_VALUE_DATA_TAG>;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -180,8 +177,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @param value value to be set.
      *
-     * @remarks This field is a convenience overload to allow clients to declare an AmqpValue with a
-     * C++ character.
+     * @remarks This field is a convenience overload to allow clients to declare an AmqpValue with
+     * a C++ character.
      *
      */
     AmqpValue(char value);
@@ -344,10 +341,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @param that - Value to compare to this value.
      * @returns true if the that is less than this.
      *
-     * @remark When comparing AMQP values, if the two values are not the same type, this returns if
-     * the numeric value of this.GetType() is less than that.GetType().
-     * If the two values are of the same type, this returns if the value of this is less than the
-     * value of that.
+     * @remark When comparing AMQP values, if the two values are not the same type, this returns
+     * if the numeric value of this.GetType() is less than that.GetType(). If the two values are
+     * of the same type, this returns if the value of this is less than the value of that.
      */
     bool operator<(AmqpValue const& that) const;
 
@@ -693,9 +689,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     /** @brief Insert a new key/value pair into the map.
      *
-     * @return std::pair<iterator, bool> - a pair containing an iterator to the inserted element, or
-     * an iterator to the element that prevented the insertion, and a bool indicating whether the
-     * insertion took place.
+     * @return std::pair<iterator, bool> - a pair containing an iterator to the inserted element,
+     * or an iterator to the element that prevented the insertion, and a bool indicating whether
+     * the insertion took place.
      */
     template <class... ValueTypes>
     std::pair<decltype(m_value)::iterator, bool> emplace(ValueTypes&&... values)

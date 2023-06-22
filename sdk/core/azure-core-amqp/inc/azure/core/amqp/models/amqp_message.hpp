@@ -6,7 +6,6 @@
 #include "amqp_header.hpp"
 #include "amqp_properties.hpp"
 #include "amqp_value.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/nullable.hpp>
@@ -16,22 +15,18 @@
 
 struct MESSAGE_INSTANCE_TAG;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<MESSAGE_INSTANCE_TAG>
+  {
+    static void FreeAmqpMessage(MESSAGE_INSTANCE_TAG* obj);
 
-/// @cond INTERNAL
-
-template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>
-{
-  static void FreeAmqpMessage(MESSAGE_INSTANCE_TAG* obj);
-
-  using type = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
-};
+    using type = BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   class AmqpMessageFactory;
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
@@ -52,8 +47,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   constexpr int AmqpMessageFormatValue = 0; // Specifies the message format for an AMQP message.
 
   /** @brief An AmqpMessage object represents a received AMQP message.
-   * @remark An AMQP message is comprised of a header, properties, application properties, and body.
-   * The body of the message can be one of the following types:
+   * @remark An AMQP message is comprised of a header, properties, application properties, and
+   * body. The body of the message can be one of the following types:
    * - A single AMQP Value.
    * - One or more binary data sections.
    * - One or more sequence sections.

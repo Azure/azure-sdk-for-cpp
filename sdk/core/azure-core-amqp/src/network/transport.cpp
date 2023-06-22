@@ -5,7 +5,6 @@
 
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/common/global_state.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "private/transport_impl.hpp"
 
 #include <azure_c_shared_utility/platform.h>
@@ -13,14 +12,9 @@
 
 #include <cassert>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
-void Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value)
-{
-  xio_destroy(value);
-}
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value) { xio_destroy(value); }
+}}} // namespace Azure::Core::_internal
 
 namespace {
 void EnsureGlobalStateInitialized()

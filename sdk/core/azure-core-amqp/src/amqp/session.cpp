@@ -4,7 +4,6 @@
 #include "azure/core/amqp/session.hpp"
 
 #include "azure/core/amqp/connection.hpp"
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/link.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
@@ -21,17 +20,12 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
-
-void Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>::FreeAmqpSession(
-    SESSION_HANDLE value)
-{
-  session_destroy(value);
-}
-
-///  @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<SESSION_INSTANCE_TAG>::FreeAmqpSession(SESSION_HANDLE value)
+  {
+    session_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Endpoint::~Endpoint()

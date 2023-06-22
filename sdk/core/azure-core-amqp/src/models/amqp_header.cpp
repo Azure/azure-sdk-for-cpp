@@ -3,7 +3,6 @@
 
 #include "azure/core/amqp/models/amqp_header.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
@@ -13,16 +12,12 @@
 #include <chrono>
 #include <iostream>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-///  @cond HIDDEN
-
-void Azure::Core::_internal::UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(
-    HEADER_HANDLE handle)
-{
-  header_destroy(handle);
-}
-///  @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
+  {
+    header_destroy(handle);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool MessageHeader::operator==(MessageHeader const& that) const noexcept

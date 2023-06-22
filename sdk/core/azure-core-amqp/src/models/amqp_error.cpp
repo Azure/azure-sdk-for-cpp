@@ -3,7 +3,6 @@
 
 #include "azure/core/amqp/models/amqp_error.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
 #include <azure_uamqp_c/amqp_definitions_fields.h>
@@ -13,22 +12,18 @@
 
 #include <iostream>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-
-/// @cond HIDDEN
-void Azure::Core::_internal::UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(
-    ERROR_HANDLE handle)
-{
-  error_destroy(handle);
-}
-/// @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(ERROR_HANDLE handle)
+  {
+    error_destroy(handle);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
   /*
-   * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP code
-   * will NOT take ownership of the underlying ERROR_HANDLE object.
+   * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
+   * code will NOT take ownership of the underlying ERROR_HANDLE object.
    */
   AmqpError AmqpErrorFactory::FromUamqp(ERROR_HANDLE handle)
   {

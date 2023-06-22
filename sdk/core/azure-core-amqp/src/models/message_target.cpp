@@ -3,8 +3,6 @@
 
 #include "azure/core/amqp/models/message_target.hpp"
 
-#include "azure/core/amqp/doxygen_pragma.hpp"
-
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
@@ -17,16 +15,12 @@
 
 #include <iostream>
 
-BEGIN_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
-
-///  @cond HIDDEN
-void Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(
-    TARGET_HANDLE value)
-{
-  target_destroy(value);
-}
-///  @endcond
-END_UNKNOWN_DOCUMENTATION_DIAGNOSTIC_IGNORE
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(TARGET_HANDLE value)
+  {
+    target_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
