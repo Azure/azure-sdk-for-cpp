@@ -7,8 +7,6 @@
 #include "private/key_serializers.hpp"
 #include "test_consts.hpp"
 
-#include <azure/attestation.hpp>
-#include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keys.hpp>
@@ -20,7 +18,6 @@
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
-using namespace Azure::Security::Attestation;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Json::_internal;
 using namespace Azure::Security::KeyVault::Keys::Cryptography;
