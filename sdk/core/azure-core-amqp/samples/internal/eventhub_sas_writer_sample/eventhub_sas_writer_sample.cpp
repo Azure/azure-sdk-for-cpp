@@ -6,7 +6,6 @@
 #include <azure/core/amqp/message_sender.hpp>
 
 #include <chrono>
-#include <get_env.hpp>
 #include <iostream>
 #include <limits>
 #include <string>

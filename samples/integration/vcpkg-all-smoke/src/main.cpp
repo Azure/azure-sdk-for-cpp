@@ -6,7 +6,6 @@
  *
  */
 
-
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
 #include <azure/core/internal/json/json.hpp>

@@ -18,7 +18,6 @@ Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
 
 function CreateUpdate-TspLocation([System.Object]$tspConfig, [string]$TypeSpecProjectDirectory, [string]$CommitHash, [string]$repo, [string]$repoRoot) {
   $additionalDirs = @()
-
   if ($tspConfig["parameters"]["dependencies"] -and $tspConfig["parameters"]["dependencies"]["additionalDirectories"]) {
     $additionalDirs = $tspConfig["parameters"]["dependencies"]["additionalDirectories"];
   }

@@ -216,6 +216,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Could not begin session"); // LCOV_EXCL_LINE
     }
   }
+
   void SessionImpl::AuthenticateIfNeeded(std::string const& audience, Context const& context)
   {
     if (GetConnection()->GetCredential())
@@ -229,6 +230,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Authenticate(tokenAudience, context);
     }
   }
+
   void SessionImpl::Authenticate(std::string const& audience, Context const& context)
   {
     if (!m_claimsBasedSecurity)
@@ -262,6 +264,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Could not put Claims Based Security token."); // LCOV_EXCL_LINE
     }
   }
+
   bool SessionImpl::OnLinkAttachedFn(
       void* context,
       LINK_ENDPOINT_INSTANCE_TAG* newLinkEndpoint,

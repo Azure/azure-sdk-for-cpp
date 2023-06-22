@@ -8,6 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()

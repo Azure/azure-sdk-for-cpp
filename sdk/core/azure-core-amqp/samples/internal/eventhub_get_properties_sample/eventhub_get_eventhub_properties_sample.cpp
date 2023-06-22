@@ -8,7 +8,6 @@
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <chrono>
-#include <get_env.hpp>
 #include <iostream>
 #include <limits>
 #include <string>
