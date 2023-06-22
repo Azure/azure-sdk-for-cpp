@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 #endif
 
-  _internal::ManagementOpenStatus ManagementImpl::Open(Azure::Core::Context const& context)
+  _internal::ManagementOpenStatus ManagementClientImpl::Open(Azure::Core::Context const& context)
   {
     /** Authentication needs to happen *before* the management object is created. */
     m_session->AuthenticateIfNeeded(

@@ -13,10 +13,11 @@
  *
  */
 
+#include <get_env.hpp>
+
 #include <azure/attestation.hpp>
 
 #include <chrono>
-#include <get_env.hpp>
 #include <iostream>
 #include <thread>
 

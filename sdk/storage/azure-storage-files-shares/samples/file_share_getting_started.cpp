@@ -3,8 +3,6 @@
 
 #include <azure/storage/files/shares.hpp>
 
-#include <azure/storage/files/shares.hpp>
-
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>

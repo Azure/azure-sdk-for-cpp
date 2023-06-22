@@ -164,7 +164,8 @@ int main()
   // are NOT using the connection string to authenticate with the eventhub, only to retrieve the
   // host name and entity (if present).
 
-  Azure::Core::Amqp::_internal::ConnectionStringParser connectionParser(eventhubConnectionString);
+  Azure::Core::Amqp::_internal::ConnectionStringParser connectionParser(
+      std::getenv("EVENTHUB_CONNECTION_STRING"));
   std::string eventhubsHost = connectionParser.GetHostName();
   std::string eventhubsEntity = connectionParser.GetEntityPath();
   if (eventhubsEntity.empty())

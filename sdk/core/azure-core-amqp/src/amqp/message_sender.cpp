@@ -194,29 +194,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // it.
       m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
 
-    if (m_link == nullptr)
-    {
-      CreateLink();
-    }
+      if (m_link == nullptr)
+      {
+        CreateLink();
+      }
 
-    if (m_messageSender == nullptr)
-    {
-      m_messageSender.reset(
-          messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
-    }
-    if (messagesender_open(m_messageSender.get()))
-    {
-      // LCOV_EXCL_START
-      auto err = errno;
+      if (m_messageSender == nullptr)
+      {
+        m_messageSender.reset(
+            messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
+      }
+      if (messagesender_open(m_messageSender.get()))
+      {
+        // LCOV_EXCL_START
+        auto err = errno;
 #if defined(AZ_PLATFORM_WINDOWS)
-      char buf[256];
-      strerror_s(buf, sizeof(buf), err);
+        char buf[256];
+        strerror_s(buf, sizeof(buf), err);
 #else
-      std::string buf{strerror(err)};
+        std::string buf{strerror(err)};
 #endif
-      throw std::runtime_error(
-          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
-      // LCOV_EXCL_STOP
+        throw std::runtime_error(
+            "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
+        // LCOV_EXCL_STOP
+      }
     }
   }
   void MessageSenderImpl::Close()
@@ -271,7 +272,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
         operation.release(),
         0 /*timeout*/);
-    if (result == nullptr)
+    if (result)
     {
       throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
     }

@@ -16,6 +16,8 @@
  *
  */
 
+#include <get_env.hpp>
+
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
@@ -23,7 +25,6 @@
 #include <azure/identity.hpp>
 
 #include <chrono>
-#include <get_env.hpp>
 #include <iomanip>
 #include <iostream>
 #include <thread>

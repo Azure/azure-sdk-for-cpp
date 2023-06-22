@@ -3,8 +3,6 @@
 
 #include <azure/storage/files/datalake.hpp>
 
-#include <azure/storage/files/datalake.hpp>
-
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>

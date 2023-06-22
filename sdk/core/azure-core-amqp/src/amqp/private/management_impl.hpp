@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint64_t m_nextMessageId{0};
 
     // What is the message ID expected for the current outstanding operation?
-    uint64_t m_expectedMessageId;
+    uint64_t m_expectedMessageId{};
     bool m_sendCompleted{false};
 
     void SetState(ManagementState newState);

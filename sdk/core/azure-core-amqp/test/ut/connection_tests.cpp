@@ -52,6 +52,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::_internal::Connection connection(socketTransport, options);
     }
+  }
   TEST_F(TestConnections, ConnectionAttributes)
   {
     {

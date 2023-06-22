@@ -17,6 +17,8 @@
  *
  */
 
+#include <get_env.hpp>
+
 #include "cryptohelpers.hpp"
 
 #include <azure/attestation.hpp>
@@ -27,7 +29,6 @@
 
 #include <cassert>
 #include <chrono>
-#include <get_env.hpp>
 #include <iomanip>
 #include <iostream>
 #include <thread>

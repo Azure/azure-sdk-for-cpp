@@ -3,8 +3,6 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include <azure/storage/blobs.hpp>
-
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>

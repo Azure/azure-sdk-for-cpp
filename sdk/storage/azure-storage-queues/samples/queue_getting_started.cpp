@@ -3,8 +3,6 @@
 
 #include <azure/storage/queues.hpp>
 
-#include <azure/storage/queues.hpp>
-
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
