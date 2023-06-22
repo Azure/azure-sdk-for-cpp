@@ -9,7 +9,7 @@
 
 function(generate_documentation PROJECT_NAME PROJECT_VERSION)
     if(BUILD_DOCUMENTATION)
-        find_package(Doxygen REQUIRED doxygen)
+        find_package(Doxygen 1.9.7 REQUIRED doxygen)
 
         set(DOXYGEN_PROJECT_NAME ${PROJECT_NAME})
         set(DOXYGEN_PROJECT_NUMBER ${PROJECT_VERSION})
@@ -33,6 +33,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_HTML_HEADER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/header.html)
         set(DOXYGEN_HTML_FOOTER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/footer.html)
         set(DOXYGEN_HTML_STYLESHEET ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/style.css)
+        set(DOXYGEN_PROJECT_LOGO ${CMAKE_SOURCE_DIR}/eng/common/docgeneration/assets/logo.svg)
 
         set(DOXYGEN_GENERATE_XML YES)
         set(DOXYGEN_GENERATE_LATEX NO)
@@ -43,6 +44,6 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
 
         doxygen_add_docs(${PROJECT_NAME}-docs
             ALL
-            COMMENT "Generate documentation for ${PROJECT_NAME}")
+            COMMENT "Generate documentation for ${PROJECT_NAME} with Doxygen Version ${DOXYGEN_VERSION}")
     endif()
 endfunction()
