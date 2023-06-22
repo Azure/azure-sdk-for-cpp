@@ -16,8 +16,6 @@
  *
  */
 
-#include "get_env.hpp"
-
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
 

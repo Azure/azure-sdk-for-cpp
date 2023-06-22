@@ -81,11 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
     bool m_cbsOpen{false};
 
-    void Authenticate(
-        bool isSasToken,
-        Credentials::TokenRequestContext const& requestContext,
-        std::string const& audience,
-        Context const& context);
+    void Authenticate(std::string const& audience, Context const& context);
 
     static bool OnLinkAttachedFn(
         void* context,

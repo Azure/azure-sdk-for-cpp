@@ -29,6 +29,7 @@ namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
   class CurlConnectionPool_uniquePort_Test;
   class CurlConnectionPool_connectionClose_Test;
+  class SdkWithLibcurl_globalCleanUp_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -47,6 +48,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
     friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;
     friend class Azure::Core::Test::CurlConnectionPool_connectionClose_Test;
+    friend class Azure::Core::Test::SdkWithLibcurl_globalCleanUp_Test;
 #endif
 
   public:

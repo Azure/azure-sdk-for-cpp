@@ -251,6 +251,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   bool AmqpValue::operator==(AmqpValue const& that) const
   {
+    // If both values are null, they are equal.
+    if (IsNull() && that.IsNull())
+    {
+      return true;
+    }
+    // If only one of the values is null, they are not equal.
+    if (IsNull() || that.IsNull())
+    {
+      return false;
+    }
+    // If the types are not equal, they are not equal.
+    if (GetType() != that.GetType())
+    {
+      return false;
+    }
+    // The uAMQP function `amqpvalue_are_equal` does not work for all types, so we need to do some
+    // special handling for those which are not handled properly.
+    if (GetType() == AmqpValueType::Composite || GetType() == AmqpValueType::Described)
+    {
+      if (GetType() == AmqpValueType::Composite)
+      {
+        AmqpComposite thisComposite{this->AsComposite()};
+        AmqpComposite thatComposite{that.AsComposite()};
+        return (thisComposite == thatComposite);
+      }
+      else
+      {
+        AmqpDescribed thisDescribed{this->AsDescribed()};
+        AmqpDescribed thatDescribed{that.AsDescribed()};
+        return (thisDescribed == thatDescribed);
+      }
+    }
     return amqpvalue_are_equal(m_value.get(), that.m_value.get());
   }
 

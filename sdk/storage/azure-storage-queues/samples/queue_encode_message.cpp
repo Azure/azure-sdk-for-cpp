@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "get_env.hpp"
+#include <azure/core/base64.hpp>
+#include <azure/storage/queues.hpp>
 
 #include <azure/core/base64.hpp>
 #include <azure/storage/queues.hpp>

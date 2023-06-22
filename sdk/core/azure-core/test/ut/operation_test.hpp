@@ -69,11 +69,6 @@ namespace Azure { namespace Core { namespace Test {
   public:
     StringOperation() = default;
 
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
     std::string GetResumeToken() const override { return m_operationToken; }
 
     std::string Value() const override

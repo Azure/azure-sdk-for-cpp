@@ -21,14 +21,13 @@
  *
  */
 
-#include <get_env.hpp>
-
 #include "attestation_collateral.hpp"
 
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
 
 #include <chrono>
+#include <get_env.hpp>
 #include <iostream>
 #include <thread>
 #include <vector>

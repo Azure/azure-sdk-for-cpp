@@ -95,7 +95,7 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
 {
   auto request = CreateRequest(HttpMethod::Get, {_detail::SecretPath, name, options.Version});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::SecretSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
@@ -107,7 +107,7 @@ Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
 {
   auto request = CreateRequest(HttpMethod::Get, {_detail::DeletedSecretPath, name});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::DeletedSecretSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<DeletedSecret>(std::move(value), std::move(rawResponse));
@@ -132,7 +132,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   auto request = CreateRequest(HttpMethod::Put, {_detail::SecretPath, name}, &payloadStream);
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::SecretSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
@@ -150,7 +150,7 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
       HttpMethod::Patch,
       {_detail::SecretPath, properties.Name, properties.Version},
       &payloadStream);
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::SecretSerializer::Deserialize(properties.Name, *rawResponse);
   return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
@@ -162,7 +162,7 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
 {
   auto request
       = CreateRequest(HttpMethod::Post, {_detail::SecretPath, name, _detail::BackupSecretPath});
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::BackupSecretSerializer::Deserialize(*rawResponse);
   return Azure::Response<BackupSecretResult>(std::move(value), std::move(rawResponse));
@@ -178,7 +178,7 @@ Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
 
   auto request = CreateRequest(
       HttpMethod::Post, {_detail::SecretPath, _detail::RestoreSecretPath}, &payloadStream);
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::SecretSerializer::Deserialize(*rawResponse);
   return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
@@ -189,7 +189,7 @@ Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
     Azure::Core::Context const& context) const
 {
   auto request = CreateRequest(HttpMethod::Delete, {_detail::DeletedSecretPath, name});
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   PurgedSecret value;
   return Azure::Response<PurgedSecret>(std::move(value), std::move(rawResponse));
@@ -200,7 +200,7 @@ Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDel
     Azure::Core::Context const& context) const
 {
   auto request = CreateRequest(HttpMethod::Delete, {_detail::SecretPath, name});
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::DeletedSecretSerializer::Deserialize(name, *rawResponse);
   auto responseT = Azure::Response<DeletedSecret>(std::move(value), std::move(rawResponse));
@@ -212,7 +212,7 @@ Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation SecretClient::
 {
   auto request = CreateRequest(
       HttpMethod::Post, {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath});
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto parsedResponse = _detail::SecretSerializer::Deserialize(name, *rawResponse);
 
@@ -228,7 +228,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
   // Request and settings
   auto request = ContinuationTokenRequest({SecretPath}, options.NextPageToken);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::SecretPropertiesPagedResultSerializer::Deserialize(*rawResponse);
   return SecretPropertiesPagedResponse(
@@ -244,7 +244,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
   auto request = ContinuationTokenRequest(
       {_detail::SecretPath, name, _detail::VersionsName}, options.NextPageToken);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::SecretPropertiesPagedResultSerializer::Deserialize(*rawResponse);
   return SecretPropertiesPagedResponse(
@@ -258,7 +258,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
   // Request and settings
   auto request = ContinuationTokenRequest({_detail::DeletedSecretPath}, options.NextPageToken);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::DeletedSecretPagedResultSerializer::Deserialize(*rawResponse);
   return DeletedSecretPagedResponse(

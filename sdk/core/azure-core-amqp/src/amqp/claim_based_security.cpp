@@ -120,9 +120,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     auto cbs = static_cast<ClaimsBasedSecurityImpl*>(const_cast<void*>(context));
     if (cbs->m_traceEnabled)
     {
-      std::stringstream ss;
-      ss << "OnCbsOpenComplete: " << OpenResultStringFromLowLevel(openCompleteResult);
-      Log::Write(Logger::Level::Informational, ss.str());
+      Log::Stream(Logger::Level::Informational)
+          << "OnCbsOpenComplete: " << OpenResultStringFromLowLevel(openCompleteResult);
     }
     cbs->m_openResultQueue.CompleteOperation(CbsOpenResultStateFromLowLevel(openCompleteResult));
   }
@@ -158,11 +157,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     auto cbs = static_cast<ClaimsBasedSecurityImpl*>(const_cast<void*>(context));
     if (cbs->m_traceEnabled)
     {
-      std::stringstream ss;
-      ss << "OnCbsOperationComplete: " << OperationResultStringFromLowLevel(operationCompleteResult)
-         << " StatusCode: " << statusCode << " StatusDescription: "
-         << (statusDescription ? std::string(statusDescription) : "(NULL)");
-      Log::Write(Logger::Level::Informational, ss.str());
+      Log::Stream(Logger::Level::Informational)
+          << "OnCbsOperationComplete: "
+          << OperationResultStringFromLowLevel(operationCompleteResult)
+          << " StatusCode: " << statusCode << " StatusDescription: "
+          << (statusDescription ? std::string(statusDescription) : "(NULL)");
     }
 
     cbs->m_operationResultQueue.CompleteOperation(

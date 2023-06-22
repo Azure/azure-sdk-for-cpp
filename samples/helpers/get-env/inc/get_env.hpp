@@ -7,22 +7,8 @@
 
 #pragma once
 
-#if !defined(_MSC_VER)
-
-// Linux and macOS
-#include <cstdlib>
-
-#else
-#define _CRT_SECURE_NO_WARNINGS
-
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <windows.h>
-
+// The AppStore partition for the Win32 API surface does not include a definition for std::getenv,
+// so we provide our own definition here.
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
 // Win32
 #include <cstdlib>
@@ -33,7 +19,6 @@ char* getenv(const char* name);
 }
 #endif
 
-#endif
 #include <stdexcept>
 #include <string>
 
@@ -41,7 +26,14 @@ struct GetEnvHelper
 {
   static std::string GetEnv(char const* env)
   {
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
     auto const val = std::getenv(env);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
     if (val == nullptr)
     {
       throw std::runtime_error("Could not find required environment variable: " + std::string(env));

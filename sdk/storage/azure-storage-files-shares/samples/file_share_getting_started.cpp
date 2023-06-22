@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "get_env.hpp"
+#include <azure/storage/files/shares.hpp>
 
 #include <azure/storage/files/shares.hpp>
 

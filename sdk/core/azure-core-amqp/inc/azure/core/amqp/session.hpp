@@ -7,11 +7,36 @@
 #include "connection_string_credential.hpp"
 #include "endpoint.hpp"
 #include "models/amqp_value.hpp"
+#include "models/message_source.hpp"
+#include "models/message_target.hpp"
 
 #include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
+
+#if defined(TESTING_BUILD)
+// Define the test classes dependant on this class here.
+namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  namespace MessageTests {
+    class AmqpServerMock;
+    class MessageListenerEvents;
+  } // namespace MessageTests
+
+  class TestSessions_SimpleSession_Test;
+  class TestSessions_SessionProperties_Test;
+  class TestSessions_SessionBeginEnd_Test;
+
+  class TestSocketListenerEvents;
+  class LinkSocketListenerEvents;
+  class TestMessages_SenderSendAsync_Test;
+}}}} // namespace Azure::Core::Amqp::Tests
+#endif // TESTING_BUILD
+#if defined(SAMPLES_BUILD)
+namespace LocalServerSample {
+class SampleEvents;
+} // namespace LocalServerSample
+#endif // SAMPLES_BUILD
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class SessionImpl;
@@ -22,6 +47,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Connection;
   enum class SessionRole;
+  class MessageSender;
+  struct MessageSenderOptions;
+  class MessageSenderEvents;
+  class MessageReceiver;
+  struct MessageReceiverOptions;
+  class MessageReceiverEvents;
+  class ManagementClient;
+  struct ManagementClientOptions;
+  class ManagementClientEvents;
 
   enum class ExpiryPolicy
   {
@@ -91,38 +125,43 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Session final {
   public:
-    /** @brief Create a new AMQP Session object on the specified parent connection.
-     *
-     * @param parentConnection - Connection upon which to create the session.
-     * @param credential - Credential to use for authentication.
-     * @param options - Options to use when creating the session.
-     * @param eventHandler - Event handler for session events.
-     */
-    Session(
-        Connection const& parentConnection,
-        std::shared_ptr<Credentials::TokenCredential> credential,
-        SessionOptions const& options = {},
-        SessionEvents* eventHandler = nullptr);
-
-    /** @brief Construct a new session associated with the specified connection over the specified
-     * endpoint.
-     *
-     * @param parentConnection - Connection upon which to create the session.
-     * @param newEndpoint - AMQP Endpoint from which to create the session.
-     * @param eventHandler - Event handler for session events.
-     *
-     * @remarks Note that this function is normally only called from a application listening for
-     * incoming connections, not from an AMQP client.
-     */
-    Session(
-        Connection const& parentConnection,
-        Endpoint& newEndpoint,
-        SessionOptions const& options = {},
-        SessionEvents* eventHandler = nullptr);
-
     /** @brief Destroys the session object. */
     ~Session() noexcept;
 
+    /** @brief Creates a MessageSender
+     *
+     * @param target - The target to which the message will be sent.
+     * @param options - Options to configure the MessageSender.
+     * @param events - Event Handler used to capture message sender events.
+     *
+     * @returns A MessageSender object.
+     *
+     */
+    MessageSender CreateMessageSender(
+        Models::_internal::MessageTarget const& target,
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events) const;
+
+    /** @brief Creates a MessageReceiver
+     *
+     * @param receiverSource - The source from which to receive messages.
+     * @param options - Options to configure the MessageReceiver.
+     * @param receiverEvents - Event Handler used to capture message receiverevents.
+     *
+     * @returns A MessageSender object.
+     *
+     */
+    MessageReceiver CreateMessageReceiver(
+        Models::_internal::MessageSource const& receiverSource,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* receiverEvents = nullptr) const;
+
+    ManagementClient CreateManagementClient(
+        std::string const& managementInstancePath,
+        ManagementClientOptions const& options,
+        ManagementClientEvents* managementEvents = nullptr) const;
+
+  private:
     /** @brief Returns the current value of the incoming window.
      *
      * @returns The current incoming message window.
@@ -140,11 +179,71 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     uint32_t GetHandleMax() const;
 
+    /** @brief Begins operations on the session.
+     *
+     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
+     * use by AMQP listeners.
+     *
+     */
     void Begin();
+
+    /** @brief Ends operations on the session.
+     *
+     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
+     * use by AMQP listeners.
+     *
+     */
     void End(std::string const& condition_value, std::string const& description);
+
+    /** @brief Creates a MessageSender for use in a message listener.
+     *
+     * @param endpoint - Endpoint associated with this message sender.
+     * @param target - The target to which the message will be sent.
+     * @param options - Options to configure the MessageSender.
+     * @param events - Event Handler used to capture message sender events.
+     *
+     * @returns A MessageSender object.
+     *
+     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
+     * use by AMQP listeners.
+     *
+     */
+    MessageSender CreateMessageSender(
+        LinkEndpoint& endpoint,
+        Models::_internal::MessageTarget const& target,
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events) const;
+
+    /** @brief Creates a MessageReceiver for use in a message listener.
+     *
+     * @param receiverSource - The source from which to receive messages.
+     * @param options - Options to configure the MessageReceiver.
+     * @param receiverEvents - Event Handler used to capture message receiverevents.
+     *
+     * @returns A MessageSender object.
+     *
+     */
+    MessageReceiver CreateMessageReceiver(
+        LinkEndpoint& linkEndpoint,
+        Models::_internal::MessageSource const& receiverSource,
+        MessageReceiverOptions const& options,
+        MessageReceiverEvents* receiverEvents = nullptr) const;
 
     friend class _detail::SessionFactory;
 
+#if TESTING_BUILD
+    friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestSessions_SimpleSession_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_SessionProperties_Test;
+    friend class Azure::Core::Amqp::Tests::TestSessions_SessionBeginEnd_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
+#endif // TESTING_BUILD
+#if SAMPLES_BUILD
+    friend class LocalServerSample::SampleEvents;
+#endif // SAMPLES_BUILD
   private:
     /** @brief Construct a new Session object from an existing implementation instance.
      *

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.10.0-beta.2 (Unreleased)
+## 1.11.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,24 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+Empty diagnostic messages will no longer be generated.
+
+## 1.10.0 (2023-06-01)
+
+### Features Added
+
+- Added `Azure::Core::Uuid::AsArray()` and `Azure::Core::Uuid::CreateFromArray()` to enable reading or writing from an existing UUID. This is useful when the UUID was generated outside the Azure SDK, or needs to be used from a component outside the Azure SDK.
+
+### Other Changes
+
+- [[#3964]](https://github.com/Azure/azure-sdk-for-cpp/issues/3964) Ensuring some Azure SDK types have the expected default operations. (A community contribution, courtesy of _[jnyfah](https://github.com/jnyfah)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jennifer Chukwu _([GitHub](https://github.com/jnyfah))_
 
 ## 1.10.0-beta.1 (2023-05-04)
 

@@ -52,16 +52,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string resumeToken,
         std::shared_ptr<CertificateClient> certificateClient);
 
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
   public:
     /**
      * @brief Get the #Azure::Security::KeyVault::Certificates::CertificateOperationProperties
@@ -151,16 +141,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string resumeToken,
         std::shared_ptr<CertificateClient> certificateClient);
 
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
   public:
     /**
      * @brief Get the #Azure::Security::KeyVault::Certificates::DeletedCertificate object.
@@ -228,16 +208,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     RecoverDeletedCertificateOperation(
         std::string resumeToken,
         std::shared_ptr<CertificateClient> certificateClient);
-
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
 
   public:
     /**

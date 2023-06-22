@@ -21,6 +21,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ConnectionFactory;
 }}}} // namespace Azure::Core::Amqp::_detail
 
+#if defined(TESTING_BUILD)
+// Define the test classes dependant on this class here.
+namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  namespace MessageTests {
+    class AmqpServerMock;
+    class MessageListenerEvents;
+  } // namespace MessageTests
+
+  class TestConnections_ConnectionAttributes_Test;
+  class TestConnections_ConnectionOpenClose_Test;
+  class TestConnections_ConnectionListenClose_Test;
+  class TestSocketListenerEvents;
+  class LinkSocketListenerEvents;
+  class TestLinks_LinkAttachDetach_Test;
+  class TestMessages_SenderOpenClose_Test;
+  class TestMessages_TestLocalhostVsTls_Test;
+  class TestMessages_SenderSendAsync_Test;
+}}}} // namespace Azure::Core::Amqp::Tests
+#endif // TESTING_BUILD
+#if defined(SAMPLES_BUILD)
+namespace LocalServerSample {
+int LocalServerSampleMain();
+} // namespace LocalServerSample
+#endif // SAMPLES_BUILD
+
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   class Session;
 
@@ -159,12 +184,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks Note that this function should only be overriden if the application is listening
      * on the connection.
      */
+    // LCOV_EXCL_START
     virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint)
     {
       (void)connection;
       (void)endpoint;
       return false;
     }
+    // LCOV_EXCL_STOP
 
     /** @brief called when an I/O error has occurred on the connection.
      *
@@ -176,6 +203,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /** @brief Options used to create a connection. */
   struct ConnectionOptions final
   {
+    /** @brief The valid scopes for to which an authentication operation applies when using Claims
+     * Based Authentication. */
+    std::vector<std::string> AuthenticationScopes;
+
     /** @brief The idle timeout for the connection.
      *
      * If no frames are received within the timeout, the connection will be closed.
@@ -248,6 +279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Connection(
         std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> credential,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 
@@ -268,6 +300,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Destroy an AMQP connection */
     ~Connection();
 
+    /** @brief Create a session on the current Connection object.
+     *
+     * An AMQP Session provides a context for sending and receiving messages. A single connection
+     * may have multiple independent sessions active simultaneously up to the negotiated maximum
+     * channel count.
+     *
+     * @param options The options to use when creating the session.
+     * @param eventHandler The event handler for the session.
+     */
+    Session CreateSession(SessionOptions const& options = {}, SessionEvents* eventHandler = nullptr)
+        const;
+
+    /** @brief Construct a new session associated with the specified connection over the specified
+     * endpoint.
+     *
+     * @param newEndpoint - AMQP Endpoint from which to create the session.
+     * @param options The options to use when creating the session.
+     * @param eventHandler - Event handler for session events.
+     *
+     * @remarks Note that this function is normally only called from a application listening for
+     * incoming connections, not from an AMQP client.
+     */
+    Session CreateSession(
+        Endpoint& newEndpoint,
+        SessionOptions const& options = {},
+        SessionEvents* eventHandler = nullptr) const;
+
+    void Poll();
+
+  private:
     /** @brief Opens the current connection.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
@@ -281,6 +343,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @remarks This method should only be called on a connection that was created with a transport
      * object.
+     *
+     * @remarks In general, a customer will not need to call this method, instead the connection
+     * will be opened implicitly by a Session object derived from the connection. It primarily
+     * exists as a test hook.
      *
      */
     void Listen();
@@ -300,8 +366,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& condition,
         std::string const& description,
         Models::AmqpValue info);
-
-    void Poll();
 
     /** @brief Gets host configured by the connection.
      *
@@ -374,5 +438,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     std::shared_ptr<_detail::ConnectionImpl> m_impl;
     friend class _detail::ConnectionFactory;
+#if TESTING_BUILD
+    friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
+    friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
+    friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionAttributes_Test;
+    friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionOpenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionListenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestLinks_LinkAttachDetach_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_TestLocalhostVsTls_Test;
+    friend class Azure::Core::Amqp::Tests::TestMessages_SenderSendAsync_Test;
+#endif // TESTING_BUILD
+#if SAMPLES_BUILD
+    friend int LocalServerSample::LocalServerSampleMain();
+#endif // SAMPLES_BUILD
   };
 }}}} // namespace Azure::Core::Amqp::_internal

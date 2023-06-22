@@ -837,16 +837,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
     }
 
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
-    }
-
   public:
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
@@ -936,16 +926,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
           m_continuationToken(std::move(resumeToken))
     {
-    }
-
-    /**
-     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
-     * @return A reference to an #Azure::Core::Http::RawResponse.
-     * @note Does not give up ownership of the RawResponse.
-     */
-    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-    {
-      return *m_rawResponse;
     }
 
   public:

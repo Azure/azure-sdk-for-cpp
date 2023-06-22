@@ -74,6 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
+    Models::AmqpValue m_savedMessageError;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
 

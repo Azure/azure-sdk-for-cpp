@@ -21,14 +21,14 @@ TEST(TracingContextFactory, ServiceTraceEnums)
     spanKind = SpanKind::Producer;
     spanKind = Azure::Core::Tracing::_internal::SpanKind::Server;
     int i = static_cast<int>(spanKind);
-    i += 1;
+    (void)i; // silence clang 14 warning about unused variable i.
   }
   {
     SpanStatus spanStatus = SpanStatus::Unset;
     spanStatus = SpanStatus::Error;
     spanStatus = SpanStatus::Ok;
     int i = static_cast<int>(spanStatus);
-    i += 1;
+    (void)i; // silence clang 14 warning about unused variable i.
   }
   Azure::Core::Tracing::_internal::CreateSpanOptions options;
   options.Kind = SpanKind::Internal;
