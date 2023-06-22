@@ -18,9 +18,8 @@ namespace Azure { namespace Core { namespace _internal {
     /**
      * Free a uAMQP Decoder object.
      *
-     * @param value Decoder handle to free.
+     * @param obj Decoder handle to free.
      */
-
     static void FreeAmqpDecoder(AMQPVALUE_DECODER_HANDLE_DATA_TAG* obj);
 
     using type = BasicUniqueHandle<AMQPVALUE_DECODER_HANDLE_DATA_TAG, FreeAmqpDecoder>;
