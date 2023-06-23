@@ -172,7 +172,7 @@ jobs:
               TestPipeline: ${{ parameters.TestPipeline }}
 
         - pwsh: |
-            $setupFile="doxygen-1.8.18-setup.exe";
+            $setupFile="doxygen-1.9.7-setup.exe";
 
             Invoke-WebRequest `
               -MaximumRetryCount 10 `
