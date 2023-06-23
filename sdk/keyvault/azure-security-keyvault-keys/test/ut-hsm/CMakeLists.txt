@@ -33,8 +33,7 @@ target_link_libraries(
     azure-security-keyvault-keys-hsm-test 
       PRIVATE 
         azure-security-keyvault-keys 
-        azure-identity azure-core-test-fw  
-        azure-security-attestation
+        azure-identity azure-core-test-fw
         gtest 
         gtest_main 
         gmock)
