@@ -12,10 +12,9 @@
 
 #include <cassert>
 
-void Azure::Core::_internal::UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value)
-{
-  xio_destroy(value);
-}
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value) { xio_destroy(value); }
+}}} // namespace Azure::Core::_internal
 
 namespace {
 void EnsureGlobalStateInitialized()

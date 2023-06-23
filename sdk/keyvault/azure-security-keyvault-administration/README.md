@@ -93,7 +93,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 For detailed samples please review the code provided. 
 
-#### GetSettings 
+### GetSettings 
 
 To get all the available settings present on the Keyvault instance we will first create a client : 
 ```CPP
@@ -115,7 +115,7 @@ To get the settings we will call the GetSettings API
   SettingsListResult settingsList = settingsClient.GetSettings().Value;
 ```
 
-#### GetSetting
+### GetSetting
 
 To get a specific setting we will call the GetSetting API bassing the setting name as a string parameter. 
 
@@ -123,7 +123,7 @@ To get a specific setting we will call the GetSetting API bassing the setting na
   Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
 ```
 
-#### UpdateSetting
+### UpdateSetting
 
 To update the value of any of the the available settings, we will call the UpdateSettings API as follows:
 ```CPP

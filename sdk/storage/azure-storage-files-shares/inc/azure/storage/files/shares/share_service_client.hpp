@@ -17,6 +17,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class ShareClient;
 
+  /**
+   * @brief The ShareServiceClient allows you to manipulate Azure Storage shares and their
+   * directories and files.
+   */
   class ShareServiceClient final {
   public:
     /**

@@ -202,66 +202,79 @@ public:
   std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
 };
 
+/** @brief Return the current time. */
 inline _detail::Clock::time_point _detail::Clock::now()
 {
   return DateTime(std::chrono::system_clock::now());
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator==(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return dt == DateTime(tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator<(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return dt < DateTime(tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator<=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return dt <= DateTime(tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator!=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return !(dt == tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator>(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return !(dt <= tp);
 }
 
+/** @brief Compare a DateTime object with a std::chrono::system_clock::time_point object. */
 inline bool operator>=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
   return !(dt < tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator==(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return dt == tp;
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator!=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return dt != tp;
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator<(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt > tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator<=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt >= tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator>(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt < tp);
 }
 
+/** @brief Compare a std::chrono::system_clock::time_point object with an Azure::DateTime object */
 inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime const& dt)
 {
   return (dt <= tp);

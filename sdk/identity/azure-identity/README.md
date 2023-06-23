@@ -98,7 +98,8 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 
 `DefaultAzureCredential` and `EnvironmentCredential` can be configured with environment variables. Each type of authentication requires values for specific variables:
 
-#### Service principal with secret
+### Service principal with secret
+
 |Variable name|Value
 |-|-
 |`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
@@ -106,7 +107,8 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 |`AZURE_CLIENT_SECRET`|one of the application's client secrets
 |`AZURE_AUTHORITY_HOST`|(optional) [authentication authority URL](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud)
 
-#### Service principal with certificate
+### Service principal with certificate
+
 |variable name|Value
 |-|-
 |`AZURE_CLIENT_ID`|ID of an Azure AD application

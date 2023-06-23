@@ -19,6 +19,9 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
+  /** @brief The DataLakeFileClient allows you to manipulate Azure Storage DataLake files.
+   *
+   */
   class DataLakeFileClient final : public DataLakePathClient {
   public:
     /**

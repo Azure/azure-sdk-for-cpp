@@ -364,6 +364,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     Azure::Nullable<std::string> Audience;
   };
 
+  /** @brief The result of an attestation call.
+   *
+   * The AttestationResult contains the claims returned by the attestation service. It is a strongly
+   * typed representation of the contents of the attestation token returned by the service.
+   */
   struct AttestationResult final
   {
 
@@ -554,8 +559,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   struct IsolatedModeCertificateModificationResult final
   {
     /**
+     * @brief The thumbprint of the certificate which was modified.
      */
     std::string CertificateThumbprint;
+
+    /**
+     * @brief The result of the certificate modification.
+     */
     PolicyCertificateModification CertificateModification;
   };
 

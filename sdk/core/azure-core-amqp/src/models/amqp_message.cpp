@@ -15,11 +15,12 @@
 #include <iostream>
 #include <set>
 
-void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(
-    MESSAGE_HANDLE value)
-{
-  message_destroy(value);
-}
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
+  {
+    message_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 using namespace Azure::Core::Amqp::_detail;
 using namespace Azure::Core::Amqp::Models::_detail;
@@ -59,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return FromUamqp(message.get());
   }
 
-  AmqpMessage _internal::AmqpMessageFactory::FromUamqp(MESSAGE_HANDLE message)
+  AmqpMessage _internal::AmqpMessageFactory::FromUamqp(MESSAGE_INSTANCE_TAG* message)
   {
     if (message == nullptr)
     {

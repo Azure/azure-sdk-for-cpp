@@ -32,7 +32,10 @@ namespace Azure { namespace Core {
         = 0;
 
   protected:
+    /** @brief the underlying raw response for this operation. */
     std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse = nullptr;
+
+    /** @brief the current status of the operation. */
     OperationStatus m_status = OperationStatus::NotStarted;
 
     /**

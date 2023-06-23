@@ -17,29 +17,35 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   /**
-   * @brief The options for calling an operation #GetPropertiesOfKeys.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Keys::KeyClient::GetPropertiesOfKeys.
    *
    */
   struct GetPropertiesOfKeysOptions final
   {
+    /**@brief Token for the next page.  */
     Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
-   * @brief The options for calling an operation #GetPropertiesOfKeyVersions.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Keys::KeyClient::GetPropertiesOfKeyVersions.
    *
    */
   struct GetPropertiesOfKeyVersionsOptions final
   {
+    /**@brief Token for the next page.  */
     Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
-   * @brief The options for calling an operation #GetDeletedKeys.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Keys::KeyClient::GetDeletedKeys.
    *
    */
   struct GetDeletedKeysOptions final
   {
+    /**@brief Token for the next page.  */
     Azure::Nullable<std::string> NextPageToken;
   };
 
@@ -70,7 +76,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
-   * @brief Define the specific options for the #CreateKey operaion.
+   * @brief Define the specific options for the #KeyClient::CreateKey operaion.
    *
    */
   struct CreateKeyOptions
@@ -138,7 +144,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Gets or sets the elliptic curve name.
      *
-     * @remark See #KeyCurveName for possible values.
+     * @remark See #Azure::Security::KeyVault::Keys::KeyCurveName for possible values.
      *
      * @remark If null, the service default is used.
      *
@@ -355,6 +361,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Construct a new Key Vault ImportKeyOptions object.
      *
      * @param name The name of the key.
+     * @param keyMaterial The cryptographic key
      */
     ImportKeyOptions(std::string name, JsonWebKey keyMaterial)
         : Key(keyMaterial), Properties(std::move(name))

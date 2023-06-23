@@ -207,7 +207,7 @@ namespace Azure { namespace Storage {
       };
 
       /**
-       * @brief Response type for #Azure::Storage::Blobs::BlobBatchClient::SubmitBatch.
+       * @brief Response type for BlobClient::SubmitBatch.
        */
       struct SubmitBlobBatchResult final
       {
@@ -230,8 +230,13 @@ namespace Azure { namespace Storage {
 
       StartBlobCopyOperation() = default;
 
+      /**
+       * @brief Construct a StartBlobCopyOperation from a StartBlobCopyOperation.
+       *
+       */
       StartBlobCopyOperation(StartBlobCopyOperation&&) = default;
 
+      /** Move a StartBlobCopyOperation . */
       StartBlobCopyOperation& operator=(StartBlobCopyOperation&&) = default;
 
       ~StartBlobCopyOperation() override {}
@@ -350,7 +355,7 @@ namespace Azure { namespace Storage {
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ByHierarchy.
+     * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy.
      */
     class ListBlobsByHierarchyPagedResponse final
         : public Azure::Core::PagedResponse<ListBlobsByHierarchyPagedResponse> {

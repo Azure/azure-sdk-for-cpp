@@ -110,7 +110,7 @@ namespace Azure { namespace Core { namespace Http {
     // ===== Methods used to build HTTP response =====
 
     /**
-     * @brief Set an HTTP header to the #RawResponse.
+     * @brief Set an HTTP header to the #Azure::Core::Http::RawResponse.
      *
      * @remark The \p name must contain valid header name characters (RFC 7230).
      *

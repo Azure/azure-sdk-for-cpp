@@ -17,6 +17,10 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  /**
+   * @brief The ShareFileClient allows you to manipulate Azure Storage shares and their directories
+   * and files.
+   */
   class ShareFileClient final {
   public:
     /**
@@ -272,6 +276,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Uploads some data to a range of the file.
      * @param offset Specifies the starting offset for the content to be written as a range.
      * @param content A BodyStream containing the content of the range to upload.
+     * @param options Optional parameters to upload this file's range.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::UploadFileRange> containing the information of the
      * uploaded range and the file returned from the server.
@@ -286,6 +291,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Clears some range of data within the file.
      * @param offset Specifies the starting offset for the content to be cleared within the file.
      * @param length Specifies the length for the content to be cleared within the file.
+     * @param options Optional parameters to clear this file's range.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::ClearFileRangeResult> containing the information
      * of the cleared range returned from the server.
@@ -298,6 +304,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Gets the list of valid range from the file within specified range.
+     * @param options Optional parameters to get the range list of this file.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::GetFileRangeListResult> containing the valid
      * ranges within the file for the specified range.
@@ -310,6 +317,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the list of valid range from the file within specified range that have changed
      * since previousShareSnapshot was taken.
      * @param previousShareSnapshot Specifies the previous snapshot.
+     * @param options Optional parameters to get the range list of this file.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::GetFileRangeListResult> containing the valid
      * ranges within the file for the specified range.

@@ -60,6 +60,9 @@ namespace Azure { namespace Storage { namespace Queues {
     std::string m_version;
   };
 
+  /**
+   * @brief Optional parameters for constructing a new QueueClient.
+   */
   struct QueueClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
@@ -176,7 +179,7 @@ namespace Azure { namespace Storage { namespace Queues {
   };
 
   /**
-   * Optional parameters for #Azure::Storage::Queues::QueueClient::EnqueueMessages.
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::EnqueueMessage.
    */
   struct EnqueueMessageOptions final
   {

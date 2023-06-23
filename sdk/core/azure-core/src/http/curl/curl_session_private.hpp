@@ -372,7 +372,7 @@ namespace Azure { namespace Core { namespace Http {
     Azure::Nullable<std::string> m_httpProxyPassword;
 
     /**
-     * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
+     * @brief Implement Azure::Core::IO::BodyStream::OnRead. Calling this function pulls data
      * from the wire.
      *
      * @param context A context to control the request lifetime.
@@ -393,6 +393,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
+     * @param connection A connection from the connection pool.
+     * @param curlOptions Transport adapter options.
      */
     CurlSession(
         Request& request,

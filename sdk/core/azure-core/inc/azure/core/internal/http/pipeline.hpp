@@ -4,7 +4,7 @@
 /**
  * @file
  * @brief HTTP pipeline is a stack of HTTP policies.
- * @remark See #policy.hpp
+ * @remark See policy.hpp
  */
 
 #pragma once

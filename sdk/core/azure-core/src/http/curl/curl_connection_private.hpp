@@ -27,7 +27,7 @@
 #pragma warning(pop)
 #endif
 
-// Stolen from openssl/x509.h to avoid having to include openssl headers
+/// From openssl/x509.h.  Avoids needing to include openssl headers
 typedef struct x509_store_ctx_st X509_STORE_CTX;
 
 namespace Azure { namespace Core {

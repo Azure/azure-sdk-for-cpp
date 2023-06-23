@@ -376,7 +376,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Gets or sets the elliptic curve name.
      *
-     * @remark See #KeyCurveName for possible values.
+     * @remark See #Azure::Security::KeyVault::Keys::KeyCurveName for possible values.
      *
      * @remark If null, the service default is used.
      *
@@ -412,6 +412,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /// Gets the Y coordinate for the elliptic curve point.
     std::vector<uint8_t> Y;
 
+    /** @brief Returns true if the key supports the desired key operation. */
     bool SupportsOperation(KeyOperation operation) const
     {
       for (auto supportedOperation : m_keyOps)
@@ -699,7 +700,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark The constructor is private and only a key client or PagedResponse can init this.
      *
-     * @param keyProperties A previously created #KeyPropertiesPageResponse that is used to init
+     * @param keyProperties A previously created #KeyPropertiesPagedResponse that is used to init
      * this instance.
      * @param rawResponse The HTTP raw response from where the #KeyPropertiesPagedResponse was
      * parsed.
@@ -726,7 +727,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     KeyPropertiesPagedResponse() = default;
 
     /**
-     * @brief Each #KeyProperties represent a Key in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Keys::KeyProperties represent a Key in the Key Vault.
      *
      */
     std::vector<KeyProperties> Items;
@@ -773,7 +774,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     DeletedKeyPagedResponse() = default;
 
     /**
-     * @brief Each #DeletedKey represent a deleted key in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Keys::DeletedKey represent a deleted key in the Key
+     * Vault.
      *
      */
     std::vector<DeletedKey> Items;
@@ -865,7 +867,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
      * @param client A #KeyClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
      */
     static DeleteKeyOperation CreateFromResumeToken(
@@ -956,7 +958,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
      * @param client A #KeyClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
      */
     static RecoverDeletedKeyOperation CreateFromResumeToken(

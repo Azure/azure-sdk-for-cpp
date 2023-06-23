@@ -55,9 +55,16 @@ namespace Azure { namespace Identity {
 #endif
       : public Core::Credentials::TokenCredential {
   protected:
+    /** @brief The cache for the access token. */
     _detail::TokenCache m_tokenCache;
+
+    /** @brief Additional tenants which will be allowed for this credential. */
     std::vector<std::string> m_additionallyAllowedTenants;
+
+    /** @brief The ID of the tenant to which the credential will authenticate by default. */
     std::string m_tenantId;
+
+    /** @brief The CLI process timeout. */
     DateTime::duration m_cliProcessTimeout;
 
   private:

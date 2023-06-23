@@ -26,7 +26,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   };
 
   /**
-   * @brief Optional parameters for SecretClient::GetSecret
+   * @brief Optional parameters for #Azure::Security::KeyVault::Secrets::SecretClient::GetSecret
    *
    */
   struct GetSecretOptions final
@@ -39,7 +39,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   };
 
   /**
-   * @brief Optional parameters for SecretClient::UpdateSecretParameters
+   * @brief Optional parameters for
+   * #Azure::Security::KeyVault::Secrets::SecretClient::UpdateSecretProperties
    *
    */
   struct UpdateSecretPropertiesOptions final
@@ -52,29 +53,35 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   };
 
   /**
-   * @brief The options for calling an operation #GetPropertiesOfSecrets.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Secrets::SecretClient::GetPropertiesOfSecrets.
    *
    */
   struct GetPropertiesOfSecretsOptions final
   {
+    /**@brief Token for the next page.  */
     Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
-   * @brief The options for calling an operation #GetPropertiesOfSecretVersions.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Secrets::SecretClient::GetPropertiesOfSecretsVersions.
    *
    */
   struct GetPropertiesOfSecretVersionsOptions final
   {
+    /**@brief Token for the next page.  */
     Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
-   * @brief The options for calling an operation #GetDeletedSecrets.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Secrets::SecretClient::GetDeletedSecrets.
    *
    */
   struct GetDeletedSecretsOptions final
   {
+    /**@brief Token for the next page.  */
     Azure::Nullable<std::string> NextPageToken;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

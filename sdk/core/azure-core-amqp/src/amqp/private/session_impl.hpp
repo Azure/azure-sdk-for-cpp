@@ -12,16 +12,17 @@
 #include <string>
 #include <vector>
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<SESSION_INSTANCE_TAG>
-{
-  static void FreeAmqpSession(SESSION_HANDLE obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>
+  {
+    static void FreeAmqpSession(SESSION_HANDLE obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
-};
-
-using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
+    using type = BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueAmqpSession = Azure::Core::_internal::UniqueHandle<SESSION_INSTANCE_TAG>;
 
   class SessionFactory final {
   public:

@@ -42,7 +42,6 @@ namespace Azure {
    *
    */
   class CryptographyClient final {
-  protected:
     Azure::Core::Url m_keyId;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
@@ -85,12 +84,12 @@ namespace Azure {
     /**
      * @brief Initializes a new instance of the #CryptographyClient class.
      *
-     * @param keyId The key identifier of the #KeyVaultKey which will be used for cryptographic
-     * operations.
-     * @param credential A #TokenCredential used to authenticate requests to the vault, like
-     * DefaultAzureCredential.
-     * @param options #CryptographyClientOptions for the #CryptographyClient for local or remote
-     * operations on Key Vault.
+     * @param keyId The key identifier of the #Azure::Security::KeyVault::Keys::KeyVaultKey which
+     * will be used for cryptographic operations.
+     * @param credential An Azure::Core::Credentials::TokenCredential used to authenticate requests
+     * to the vault, like DefaultAzureCredential.
+     * @param options #Azure::Security::KeyVault::Keys::Cryptography::CryptographyClientOptions for
+     * the #CryptographyClient for local or remote operations on Key Vault.
      */
     explicit CryptographyClient(
         std::string const& keyId,
@@ -106,11 +105,12 @@ namespace Azure {
     /**
      * @brief Encrypts plaintext.
      *
-     * @param parameters An #EncryptParameters containing the data to encrypt and other parameters
-     * for algorithm-dependent encryption.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return An #EncryptResult containing the encrypted data along with all other information
-     * needed to decrypt it. This information should be stored with the encrypted data.
+     * @param parameters An #Azure::Security::KeyVault::Keys::Cryptography::EncryptParameters
+     * containing the data to encrypt and other parameters for algorithm-dependent encryption.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return An #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult containing the
+     * encrypted data along with all other information needed to decrypt it. This information should
+     * be stored with the encrypted data.
      */
     Azure::Response<EncryptResult> Encrypt(
         EncryptParameters const& parameters,
@@ -119,11 +119,12 @@ namespace Azure {
     /**
      * @brief Decrypts ciphertext.
      *
-     * @param parameters A #DecryptParameters containing the data to decrypt and other parameters
-     * for algorithm-dependent Decryption.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return An #DecryptResult containing the decrypted data along with all other information
-     * needed to decrypt it. This information should be stored with the Decrypted data.
+     * @param parameters A #Azure::Security::KeyVault::Keys::Cryptography::DecryptResult containing
+     * the data to decrypt and other parameters for algorithm-dependent Decryption.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return An #Azure::Security::KeyVault::Keys::Cryptography::DecryptResult containing the
+     * decrypted data along with all other information needed to decrypt it. This information should
+     * be stored with the Decrypted data.
      */
     Azure::Response<DecryptResult> Decrypt(
         DecryptParameters const& parameters,
@@ -132,12 +133,13 @@ namespace Azure {
     /**
      * @brief Encrypts the specified key.
      *
-     * @param algorithm The #KeyWrapAlgorithm to use.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm to use.
      * @param key The key to encrypt.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return The result of the wrap operation. The returned #WrapResult contains the wrapped key
-     * along with all other information needed to unwrap it. This information should be stored
-     * with the wrapped key.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return The result of the wrap operation. The returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::WrapResult contains the wrapped key along
+     * with all other information needed to unwrap it. This information should be stored with the
+     * wrapped key.
      */
     Azure::Response<WrapResult> WrapKey(
         KeyWrapAlgorithm algorithm,
@@ -147,11 +149,12 @@ namespace Azure {
     /**
      * @brief Decrypts the specified encrypted key.
      *
-     * @param algorithm The #KeyWrapAlgorithm to use.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm to use.
      * @param encryptedKey The encrypted key.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return The result of the unwrap operation. The returned #UnwrapResult contains the key
-     * along with information regarding the algorithm and key used to unwrap it.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return The result of the unwrap operation. The returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::UnwrapResult contains the key along with
+     * information regarding the algorithm and key used to unwrap it.
      */
     Azure::Response<UnwrapResult> UnwrapKey(
         KeyWrapAlgorithm algorithm,
@@ -161,13 +164,15 @@ namespace Azure {
     /**
      * @brief Signs the specified digest.
      *
-     * @param algorithm The #SignatureAlgorithm to use.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::SignatureAlgorithm to
+     * use.
      * @param digest The pre-hashed digest to sign. The hash algorithm used to compute the digest
      * must be compatable with the specified algorithm.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return The result of the sign operation. The returned #SignResult contains the signature
-     * along with all other information needed to verify it. This information should be stored
-     * with the signature.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return The result of the sign operation. The returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::SignResult contains the signature along with
+     * all other information needed to verify it. This information should be stored with the
+     * signature.
      */
     Azure::Response<SignResult> Sign(
         SignatureAlgorithm algorithm,
@@ -177,12 +182,14 @@ namespace Azure {
     /**
      * @brief Signs the specified data.
      *
-     * @param algorithm The #SignatureAlgorithm to use.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::SignatureAlgorithm to
+     * use.
      * @param data The data to sign.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return The result of the sign operation. The returned #SignResult contains the signature
-     * along with all other information needed to verify it. This information should be stored
-     * with the signature.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return The result of the sign operation. The returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::SignResult contains the signature along with
+     * all other information needed to verify it. This information should be stored with the
+     * signature.
      */
     Azure::Response<SignResult> SignData(
         SignatureAlgorithm algorithm,
@@ -192,12 +199,14 @@ namespace Azure {
     /**
      * @brief Signs the specified data.
      *
-     * @param algorithm The #SignatureAlgorithm to use.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::SignatureAlgorithm to
+     * use.
      * @param data The data to sign.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return The result of the sign operation. The returned #SignResult contains the signature
-     * along with all other information needed to verify it. This information should be stored
-     * with the signature.
+     * @param context A Azure::Core::Context to cancel the operation.
+     * @return The result of the sign operation. The returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::SignResult contains the signature along with
+     * all other information needed to verify it. This information should be stored with the
+     * signature.
      */
     Azure::Response<SignResult> SignData(
         SignatureAlgorithm algorithm,
@@ -207,14 +216,15 @@ namespace Azure {
     /**
      * @brief Verifies the specified signature.
      *
-     * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to
-     * sign the digest.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::SignatureAlgorithm to
+     * use. This must be the same algorithm used to sign the digest.
      * @param digest The pre-hashed digest corresponding to the signature. The hash algorithm used
      * to compute the digest must be compatable with the specified algorithm.
      * @param signature The signature to verify.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @param context A Azure::Core::Context to cancel the operation.
      * @return The result of the verify operation. If the signature is valid the
-     * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
+     * #VerifyResult.IsValid property of the returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> Verify(
         SignatureAlgorithm algorithm,
@@ -225,13 +235,14 @@ namespace Azure {
     /**
      * @brief Verifies the specified signature.
      *
-     * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to
-     * sign the data.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::SignatureAlgorithm to
+     * use. This must be the same algorithm used to sign the data.
      * @param data The data corresponding to the signature.
      * @param signature The signature to verify.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @param context A Azure::Core::Context to cancel the operation.
      * @return The result of the verify operation. If the signature is valid the
-     * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
+     * #VerifyResult.IsValid property of the returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> VerifyData(
         SignatureAlgorithm algorithm,
@@ -242,13 +253,14 @@ namespace Azure {
     /**
      * @brief Verifies the specified signature.
      *
-     * @param algorithm The #SignatureAlgorithm to use. This must be the same algorithm used to
-     * sign the data.
+     * @param algorithm The #Azure::Security::KeyVault::Keys::Cryptography::SignatureAlgorithm to
+     * use. This must be the same algorithm used to sign the data.
      * @param data The data corresponding to the signature.
      * @param signature The signature to verify.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @param context A Azure::Core::Context to cancel the operation.
      * @return The result of the verify operation. If the signature is valid the
-     * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
+     * #VerifyResult.IsValid property of the returned
+     * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> VerifyData(
         SignatureAlgorithm algorithm,

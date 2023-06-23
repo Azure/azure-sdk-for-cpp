@@ -22,6 +22,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakeFileClient;
   class DataLakeDirectoryClient;
 
+  /** @brief The DataLakeFileSystemClient allows you to manipulate Azure Storage DataLake files.
+   *
+   */
   class DataLakeFileSystemClient final {
   public:
     /**
@@ -255,6 +258,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param deletedPath The path of the deleted path.
      * @param deletionId The deletion ID associated with the soft deleted path. You can get soft
      * deleted paths and their associated deletion IDs with ListDeletedPaths.
+     * @param options Options to configure the restore operation.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<DataLakePathClient> The client targets the restored path.
      * @remark This request is sent to Blob endpoint.
