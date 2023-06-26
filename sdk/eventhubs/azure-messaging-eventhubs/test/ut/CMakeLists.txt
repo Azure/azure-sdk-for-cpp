@@ -37,9 +37,7 @@ target_link_libraries(
     azure-messaging-eventhubs-test
       PRIVATE 
         azure-messaging-eventhubs 
-        azure-core
-        azure-identity 
-        azure-core-test-fw  
+        azure-identity azure-core-test-fw
         gtest 
         gtest_main 
         gmock
