@@ -6,4 +6,4 @@
 #include <azure/core/context.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
-TEST(EventHubsTest1, trueTest) { EXPECT_TRUE(true); }
+TEST(EventHubsTest1, trueTest) { EXPECT_TRUE(false); }
