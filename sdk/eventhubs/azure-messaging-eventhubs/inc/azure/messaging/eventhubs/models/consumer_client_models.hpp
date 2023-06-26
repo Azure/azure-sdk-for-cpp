@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+// cspell: word myservicebus
+
 #include <azure/core/amqp.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>

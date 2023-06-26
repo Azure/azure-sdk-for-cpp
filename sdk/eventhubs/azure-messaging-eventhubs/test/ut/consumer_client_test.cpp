@@ -31,11 +31,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=hehe";
+        + ";EntityPath=haha";
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$DefaultZ");
-    EXPECT_EQ("hehe", client.GetEventHubName());
+    EXPECT_EQ("haha", client.GetEventHubName());
     EXPECT_EQ("$DefaultZ", client.GetConsumerGroup());
   }
 
@@ -43,9 +43,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=hehe";
+        + ";EntityPath=haha";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, "eventhub");
-    EXPECT_EQ("hehe", client.GetEventHubName());
+    EXPECT_EQ("haha", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 
@@ -53,9 +53,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=hehe";
+        + ";EntityPath=haha";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
-    EXPECT_EQ("hehe", client.GetEventHubName());
+    EXPECT_EQ("haha", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 

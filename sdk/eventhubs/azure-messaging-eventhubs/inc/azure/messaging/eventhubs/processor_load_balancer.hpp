@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
+// cspell: words lbinfo
 #pragma once
 #include "checkpoint_store.hpp"
 #include "models/partition_client_models.hpp"

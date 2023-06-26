@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
+// cspell: word myeventhub
+
 #pragma once
 #include "models/consumer_client_models.hpp"
 #include "models/management_models.hpp"
@@ -113,7 +116,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief creates a ConsumerClient from a token credential.
      *
      * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
-     * <MYEVENTHUB>.servicebus.windows.net)
+     * myeventhub.servicebus.windows.net)
      * @param eventHub event hub name
      * @param consumerGroup consumer group name
      * @param credential Token credential
