@@ -71,9 +71,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       while (messages.size() < maxMessages && !ctx.IsCancelled())
       {
         auto message = m_receivers[0].WaitForIncomingMessage(ctx);
-        if (message)
+        if (message.first.HasValue())
         {
-          messages.push_back(message);
+          messages.push_back(message.first.Value());
         }
       }
 

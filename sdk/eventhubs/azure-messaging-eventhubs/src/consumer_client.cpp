@@ -59,35 +59,25 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
   }
   // TODO WHAT ABOUT TOKEN CREDENTIALS
 
-  Azure::Core::Amqp::_internal::Connection connection(hostName, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(
+      hostName,
+      (m_credentials.SasCredential ? m_credentials.SasCredential : m_credentials.Credential),
+      connectOptions);
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize
       = (uint32_t)m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
           std::numeric_limits<int32_t>::max());
 
-  Azure::Core::Amqp::_internal::Session session;
-  if (m_credentials.SasCredential == nullptr)
-  {
-    session = Azure::Core::Amqp::_internal::Session(
-        connection, m_credentials.Credential, sessionOptions);
-  }
-  else
-  {
-    session = Azure::Core::Amqp::_internal::Session(
-        connection, m_credentials.SasCredential, sessionOptions);
-  }
+  Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
 
-  Azure::Core::Amqp::_internal::MessageReceiver receiver;
-  receiver = Azure::Core::Amqp::_internal::MessageReceiver(
-      session, hostUrl, m_consumerClientOptions.ReceiverOptions);
+  Azure::Core::Amqp::_internal::MessageReceiver receiver
+      = session.CreateMessageReceiver(hostUrl, m_consumerClientOptions.ReceiverOptions);
 
   // Open the connection to the remote.
   receiver.Open();
   m_sessions.emplace(partitionId, session);
   partitionClient.PushBackReceiver(receiver);
-  Log::Write(
-      Logger::Level::Informational,
-      "Created new partition client");
+  Log::Write(Logger::Level::Informational, "Created new partition client");
   return partitionClient;
 }
 
@@ -97,18 +87,18 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
 {
   (void)options;
   std::shared_ptr<PartitionClient> client;
-  if (m_sessions.size()==0 && m_sessions.find("0") == m_sessions.end())
+  if (m_sessions.size() == 0 && m_sessions.find("0") == m_sessions.end())
   {
-    client  =std::make_shared<PartitionClient>(NewPartitionClient("0"));
+    client = std::make_shared<PartitionClient>(NewPartitionClient("0"));
   }
 
   // Create a management client off the session.
   // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementOptions managementClientOptions;
+  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::Management managementClient(
-      m_sessions.at("0"), m_credentials.EventHub, managementClientOptions);
+  Azure::Core::Amqp::_internal::ManagementClient managementClient(
+      m_sessions.at("0").CreateManagementClient(m_credentials.EventHub, managementClientOptions));
 
   managementClient.Open();
 
@@ -126,7 +116,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
   Models::EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::string ss =  "Error: " + result.Message.ApplicationProperties["status-description"];
+    std::string ss = "Error: " + result.Message.ApplicationProperties["status-description"];
     Log::Write(Logger::Level::Error, ss);
   }
   else
@@ -170,11 +160,12 @@ Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
 
   // Create a management client off the session.
   // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementOptions managementClientOptions;
+  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::Management managementClient(
-      m_sessions[partitionID], m_credentials.EventHub, managementClientOptions);
+  Azure::Core::Amqp::_internal::ManagementClient managementClient{
+      m_sessions.at(partitionID).CreateManagementClient(
+          m_credentials.EventHub, managementClientOptions)};
 
   managementClient.Open();
 

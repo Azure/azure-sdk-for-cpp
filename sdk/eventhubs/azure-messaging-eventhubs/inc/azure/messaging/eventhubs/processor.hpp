@@ -155,7 +155,7 @@ private:
             ownership.PartitionID,
             m_ConsumerClient->NewPartitionClient(
                 ownership.PartitionID, {startPosition, m_processorOwnerLevel, m_prefetch}),
-            std::move(m_checkpointStore),
+            m_checkpointStore,
             m_consumerClientDetails,
             [&]() { consumers.erase(ownership.PartitionID); });
 

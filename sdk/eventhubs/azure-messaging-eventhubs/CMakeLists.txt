@@ -39,10 +39,18 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.9.0" CONFIG QUIET)
-  find_package(azure-storage-blobs-cpp "12.7.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.10.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.9.0" REQUIRED)
+    find_package(azure-core-cpp "1.10.0" REQUIRED)
+  endif()
+
+  find_package(azure-azure-core-amqp CONFIG QUIET)
+  if(NOT azure-core-amqp-cpp_FOUND)
+    find_package(azure-core-amqp-cpp REQUIRED)
+  endif()
+
+  find_package(azure-storage-blobs-cpp "12.7.0" CONFIG QUIET)
+  if(NOT azure-storage-blobs-cpp_FOUND)
     find_package(azure-storage-blobs-cpp "12.7.0" REQUIRED)
   endif()
 endif()
@@ -93,13 +101,6 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-)
-# Include shared source code
-# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
-target_include_directories(
-  azure-messaging-eventhubs
-    PRIVATE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-messaging-eventhubs/inc>
 )
 
 target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp Azure::azure-storage-blobs)
