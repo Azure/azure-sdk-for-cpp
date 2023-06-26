@@ -44,7 +44,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         connStringNoEntityPath, "eventhub", "$Default", options);
     ProcessorOptions processorOptions;
     processorOptions.LoadBalancingStrategy = ProcessorStrategy::ProcessorStrategyBalanced;
-    processorOptions.UpdateInterval = std::chrono::hours(1);
+    processorOptions.UpdateInterval = std::chrono::seconds(2);
     
     Processor processor(
         std::make_shared<ConsumerClient>(client),
@@ -53,7 +53,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     processor.Run();
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    processor.Close();
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test
