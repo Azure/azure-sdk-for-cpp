@@ -27,6 +27,7 @@ add_executable (
     blob_service_client_test.cpp
     block_blob_client_test.cpp
     block_blob_client_test.hpp
+    connection_reuse_test.cpp
     macro_guard.cpp
     page_blob_client_test.cpp
     page_blob_client_test.hpp

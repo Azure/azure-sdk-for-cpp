@@ -6,8 +6,10 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "private/environment_log_level_listener.hpp"
 
+#include <iostream>
 #include <mutex>
 #include <shared_mutex>
+#include <sstream>
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
@@ -30,7 +32,7 @@ inline void Log::SetLogLevel(Logger::Level logLevel) { g_logLevel = logLevel; }
 
 void Log::Write(Logger::Level level, std::string const& message)
 {
-  if (ShouldWrite(level))
+  if (ShouldWrite(level) && !message.empty())
   {
     std::shared_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
     if (g_logListener)
@@ -49,3 +51,38 @@ void Logger::SetListener(
 }
 
 void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
+
+int Log::LoggerStringBuffer::sync()
+{
+  // Note that in the case of the caller inserting std::endl, the buffer will be flushed twice, once
+  // with the \n terminated string, the second time with an empty string (from the destructor of
+  // Log::Stream). This depends on the code in Log::Write which discards empty strings.
+  Log::Write(m_level, str());
+  str(std::string());
+  return 0;
+}
+
+Log::LoggerStream Log::g_verboseLogger{Logger::Level::Verbose};
+Log::LoggerStream Log::g_informationalLogger{Logger::Level::Informational};
+Log::LoggerStream Log::g_warningLogger{Logger::Level::Warning};
+Log::LoggerStream Log::g_errorLogger{Logger::Level::Error};
+
+/** Returns a custom ostream implementation with a logger based stream buffer.
+ *  @param level The level of the log message.
+ *  @return A custom ostream implementation.
+ */
+Log::LoggerStream& Log::GetStream(Logger::Level level)
+{
+  switch (level)
+  {
+    case Logger::Level::Verbose:
+      return g_verboseLogger;
+    case Logger::Level::Informational:
+      return g_informationalLogger;
+    case Logger::Level::Warning:
+      return g_warningLogger;
+    case Logger::Level::Error:
+      return g_errorLogger;
+  }
+  throw std::runtime_error("Unknown stream logger level.");
+}

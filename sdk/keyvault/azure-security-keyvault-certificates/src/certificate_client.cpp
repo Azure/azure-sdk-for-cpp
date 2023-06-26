@@ -96,7 +96,7 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
 {
   auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, certificateName});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
@@ -112,7 +112,7 @@ Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
 
   auto request = CreateRequest(HttpMethod::Get, std::move(path));
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
@@ -144,7 +144,7 @@ Response<DeletedCertificate> CertificateClient::GetDeletedCertificate(
 {
   auto request = CreateRequest(HttpMethod::Get, {DeletedCertificatesPath, certificateName});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = DeletedCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<DeletedCertificate>(std::move(value), std::move(rawResponse));
@@ -211,7 +211,7 @@ Response<CertificateContactsResult> CertificateClient::GetContacts(
 {
   auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, ContactsPath});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
   return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
@@ -222,7 +222,7 @@ Response<CertificateContactsResult> CertificateClient::DeleteContacts(
 {
   auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, ContactsPath});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
   return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
@@ -292,7 +292,7 @@ Response<PurgedCertificate> CertificateClient::PurgeDeletedCertificate(
 {
   auto request = CreateRequest(HttpMethod::Delete, {DeletedCertificatesPath, certificateName});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   PurgedCertificate value;
   return Azure::Response<PurgedCertificate>(std::move(value), std::move(rawResponse));
@@ -391,7 +391,7 @@ CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificate
     request.GetUrl().AppendQueryParameter(
         IncludePendingQuery, options.IncludePending.Value() ? TrueQueryValue : FalseQueryValue);
   }
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
   return CertificatePropertiesPagedResponse(
@@ -407,7 +407,7 @@ CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificate
   auto request = ContinuationTokenRequest(
       {CertificatesPath, certificateName, VersionsPath}, options.NextPageToken);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
   return CertificatePropertiesPagedResponse(
@@ -421,7 +421,7 @@ IssuerPropertiesPagedResponse CertificateClient::GetPropertiesOfIssuers(
   // Request and settings
   auto request = ContinuationTokenRequest({CertificatesPath, IssuersPath}, options.NextPageToken);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = IssuerPropertiesPagedResponseSerializer::Deserialize(*rawResponse);
   return IssuerPropertiesPagedResponse(
@@ -435,7 +435,7 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
   // Request and settings
   auto request = ContinuationTokenRequest({DeletedCertificatesPath}, options.NextPageToken);
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = DeletedCertificatesPagedResponseSerializer::Deserialize(*rawResponse);
   return DeletedCertificatesPagedResponse(

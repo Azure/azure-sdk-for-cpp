@@ -169,7 +169,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
     /**
      * @brief Create a key vault request and send it using the Azure Core pipeline directly to avoid
-     * checking the respone code.
+     * checking the response code.
      *
      * @param context A context for cancellation.
      * @param method The HTTP method for the request.

@@ -47,6 +47,7 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/link.hpp
     inc/azure/core/amqp/message_receiver.hpp
     inc/azure/core/amqp/message_sender.hpp
+    inc/azure/core/amqp/models/amqp_error.hpp
     inc/azure/core/amqp/models/amqp_header.hpp
     inc/azure/core/amqp/models/amqp_message.hpp
     inc/azure/core/amqp/models/amqp_properties.hpp
@@ -69,6 +70,7 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/message_sender.cpp
     src/amqp/session.cpp
     src/common/global_state.cpp
+    src/models/amqp_error.cpp
     src/models/amqp_header.cpp
     src/models/amqp_message.cpp
     src/models/amqp_properties.cpp
@@ -99,6 +101,7 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 
+# uAMQP's headers require the manual addition of umock_c and azure_macro_utils_c to the target link libraries. 
 target_link_libraries(azure-core-amqp PRIVATE uamqp umock_c azure_macro_utils_c PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
@@ -125,9 +128,10 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
   
-  add_subdirectory(test/ut)
+  add_subdirectory(test)
 endif()
 
 if(BUILD_SAMPLES)
+  add_compile_definitions(SAMPLES_BUILD)
   add_subdirectory (samples)
 endif()

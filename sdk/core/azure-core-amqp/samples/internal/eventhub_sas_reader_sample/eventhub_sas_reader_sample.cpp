@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#undef _CRT_SECURE_NO_WARNINGS
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/amqp/network/sasl_transport.hpp>
@@ -15,7 +12,7 @@
 
 int main()
 {
-  std::string eventhubConnectionString = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING")+ ";EntityPath=eventhub";
+  std::string eventhubConnectionString = std::getenv("EVENTHUB_CONNECTION_STRING");
 
   auto credential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
@@ -23,18 +20,19 @@ int main()
   std::string entityPath = credential->GetEntityPath();
   if (entityPath.empty())
   {
-    entityPath = GetEnvHelper::GetEnv("EVENTHUB_NAME");
+    entityPath = std::getenv("EVENTHUB_NAME");
   }
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "whatever";
   connectionOptions.EnableTrace = true;
   connectionOptions.Port = credential->GetPort();
-  Azure::Core::Amqp::_internal::Connection connection(credential->GetHostName(), connectionOptions);
+  Azure::Core::Amqp::_internal::Connection connection(
+      credential->GetHostName(), credential, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = 100;
-  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
 
   Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
   receiverOptions.Name = "receiver-link";
@@ -43,8 +41,8 @@ int main()
   receiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   receiverOptions.EnableTrace = true;
 
-  Azure::Core::Amqp::_internal::MessageReceiver receiver(
-      session, entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions);
+  Azure::Core::Amqp::_internal::MessageReceiver receiver(session.CreateMessageReceiver(
+      entityPath + "/ConsumerGroups/$Default/Partitions/0", receiverOptions));
   // Open the connection to the remote.
   receiver.Open();
 
@@ -56,7 +54,15 @@ int main()
   while (messageReceiveCount < maxMessageReceiveCount)
   {
     auto message = receiver.WaitForIncomingMessage();
-    std::cout << "Received message: " << message << std::endl;
+    if (message.first)
+    {
+      std::cout << "Received message: " << message.first.Value() << std::endl;
+    }
+    else
+    {
+      std::cout << "Message received is in error: " << message.second << std::endl;
+      break;
+    }
     messageReceiveCount += 1;
   }
 

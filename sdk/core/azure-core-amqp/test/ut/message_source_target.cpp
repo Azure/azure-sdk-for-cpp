@@ -33,12 +33,12 @@ TEST_F(TestSourceTarget, SimpleSourceTarget)
 
   {
     EXPECT_ANY_THROW(MessageSource source(AmqpValue{}));
-    AmqpValue val = AmqpArray();
+    AmqpValue val = static_cast<AmqpValue>(AmqpArray());
     EXPECT_ANY_THROW(MessageSource source{val});
   }
   {
     EXPECT_ANY_THROW(MessageTarget target(AmqpValue{}));
-    AmqpValue val = AmqpArray();
+    AmqpValue val = static_cast<AmqpValue>(AmqpArray());
     EXPECT_ANY_THROW(MessageTarget target(val));
   }
 }
@@ -47,9 +47,9 @@ namespace {
 std::string timeToString(std::chrono::system_clock::time_point t)
 {
   std::time_t time = std::chrono::system_clock::to_time_t(t);
-  std::string time_str = std::ctime(&time);
-  time_str.resize(time_str.size() - 1);
-  return time_str;
+  char buf[26]{};
+  std::strftime(buf, std::extent<decltype(buf)>::value, "%c", std::localtime(&time));
+  return buf;
 }
 } // namespace
 
@@ -79,7 +79,7 @@ TEST_F(TestSourceTarget, TargetProperties)
 
   {
     MessageTargetOptions options;
-    options.Capabilities.push_back(AmqpSymbol{"Test"});
+    options.Capabilities.push_back(static_cast<AmqpValue>(AmqpSymbol{"Test"}));
     MessageTarget target(options);
     EXPECT_EQ(1, target.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, target.GetCapabilities()[0].GetType());
@@ -238,7 +238,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.Capabilities.push_back(AmqpSymbol{"Test"});
+    options.Capabilities.push_back(static_cast<AmqpValue>(AmqpSymbol{"Test"}));
     MessageSource source(options);
     EXPECT_EQ(1, source.GetCapabilities().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetCapabilities()[0].GetType());
@@ -374,7 +374,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
   {
     MessageSourceOptions options;
-    options.Outcomes.push_back(AmqpSymbol("Test"));
+    options.Outcomes.push_back(static_cast<AmqpValue>(AmqpSymbol("Test")));
     MessageSource source(options);
     EXPECT_EQ(1, source.GetOutcomes().size());
     EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());

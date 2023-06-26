@@ -455,15 +455,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         // described body.
         AmqpDescribed describedBody(
             static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpValue), message.m_amqpValueBody);
-        auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+        auto serializedBodyValue = AmqpValue::Serialize(static_cast<AmqpValue>(describedBody));
         rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
       }
       break;
       case MessageBodyType::Data:
         for (auto const& val : message.m_binaryDataBody)
         {
-          AmqpDescribed describedBody(static_cast<std::uint64_t>(AmqpDescriptors::DataBinary), val);
-          auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+          AmqpDescribed describedBody(
+              static_cast<std::uint64_t>(AmqpDescriptors::DataBinary), static_cast<AmqpValue>(val));
+          auto serializedBodyValue = AmqpValue::Serialize(static_cast<AmqpValue>(describedBody));
           rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
         }
         break;
@@ -471,8 +472,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         for (auto const& val : message.m_amqpSequenceBody)
         {
           AmqpDescribed describedBody(
-              static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpSequence), val);
-          auto serializedBodyValue = AmqpValue::Serialize(describedBody);
+              static_cast<std::uint64_t>(AmqpDescriptors::DataAmqpSequence),
+              static_cast<AmqpValue>(val));
+          auto serializedBodyValue = AmqpValue::Serialize(static_cast<AmqpValue>(describedBody));
           rv.insert(rv.end(), serializedBodyValue.begin(), serializedBodyValue.end());
         }
       }
@@ -713,19 +715,55 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream& os, AmqpMessage const& message)
   {
     os << "Message: " << std::endl;
-    os << "Header " << message.Header << std::endl;
-    os << "Properties: " << message.Properties;
-    os << "Body: [" << std::endl;
+    os << "    Header " << message.Header << std::endl;
+    os << "    Properties: " << message.Properties << std::endl;
+
+    {
+      if (!message.ApplicationProperties.empty())
+      {
+        os << std::endl << "    Application Properties: ";
+        for (auto const& val : message.ApplicationProperties)
+        {
+          os << "{" << val.first << ", " << val.second << "}";
+        }
+      }
+    }
+    if (!message.DeliveryAnnotations.empty())
+    {
+      os << std::endl << "    Delivery Annotations: ";
+      for (auto const& val : message.DeliveryAnnotations)
+      {
+        os << "{" << val.first << ", " << val.second << "}";
+      }
+    }
+    if (!message.MessageAnnotations.empty())
+    {
+      os << std::endl << "    Message Annotations: ";
+      for (auto const& val : message.MessageAnnotations)
+      {
+        os << "{" << val.first << ", " << val.second << "}";
+      }
+    }
+    if (!message.Footer.empty())
+    {
+      os << std::endl << "   Footer: ";
+      for (auto const& val : message.Footer)
+      {
+        os << "{" << val.first << ", " << val.second << "}";
+      }
+    }
+
+    os << std::endl << "    Body: [" << std::endl;
     switch (message.BodyType)
     {
       case MessageBodyType::Invalid: // LCOV_EXCL_LINE
-        os << "Invalid"; // LCOV_EXCL_LINE
+        os << "        Invalid"; // LCOV_EXCL_LINE
         break; // LCOV_EXCL_LINE
       case MessageBodyType::None:
-        os << "None";
+        os << "        None";
         break;
       case MessageBodyType::Data: {
-        os << "AMQP Data: [";
+        os << "        AMQP Data: [";
         auto bodyBinary = message.GetBodyAsBinary();
         uint8_t i = 0;
         for (auto const& val : bodyBinary)
@@ -737,11 +775,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           }
           i += 1;
         }
-        os << "]";
+        os << "    ]";
       }
       break;
       case MessageBodyType::Sequence: {
-        os << "AMQP Sequence: [";
+        os << "        AMQP Sequence: [";
         auto bodySequence = message.GetBodyAsAmqpList();
         uint8_t i = 0;
         for (auto const& val : bodySequence)
@@ -757,45 +795,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       break;
       case MessageBodyType::Value:
-        os << "AmqpValue: " << message.GetBodyAsAmqpValue();
+        os << "        AmqpValue: " << message.GetBodyAsAmqpValue();
         break;
     }
-    os << "]";
+    os << std::endl << "    ]";
 
-    {
-      if (!message.ApplicationProperties.empty())
-      {
-        os << std::endl << "Application Properties: ";
-        for (auto const& val : message.ApplicationProperties)
-        {
-          os << "{" << val.first << ", " << val.second << "}";
-        }
-      }
-    }
-    if (!message.DeliveryAnnotations.empty())
-    {
-      os << std::endl << "Delivery Annotations: ";
-      for (auto const& val : message.DeliveryAnnotations)
-      {
-        os << "{" << val.first << ", " << val.second << "}";
-      }
-    }
-    if (!message.MessageAnnotations.empty())
-    {
-      os << std::endl << "Message Annotations: ";
-      for (auto const& val : message.MessageAnnotations)
-      {
-        os << "{" << val.first << ", " << val.second << "}";
-      }
-    }
-    if (!message.Footer.empty())
-    {
-      os << "Footer: ";
-      for (auto const& val : message.Footer)
-      {
-        os << "{" << val.first << ", " << val.second << "}";
-      }
-    }
     return os;
   }
 }}}} // namespace Azure::Core::Amqp::Models

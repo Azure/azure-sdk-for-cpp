@@ -191,7 +191,6 @@ stages:
                           SkipCheckingForChanges: true
                           BaseBranchName: $(DefaultBranch)
                           OpenAsDraft: ${{ parameters.TestPipeline }}
-                          PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
                       - pwsh: |

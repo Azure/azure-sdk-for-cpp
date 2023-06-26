@@ -86,7 +86,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CryptographyClient::SendCryptoRe
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
 
-  // Send, parse and validate respone
+  // Send, parse and validate response
   return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::SendRequest(
       *m_pipeline, request, context);
 }
@@ -122,7 +122,7 @@ Azure::Response<EncryptResult> CryptographyClient::Encrypt(
     EncryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendCryptoRequest(
       {EncryptValue}, EncryptParametersSerializer::EncryptParametersSerialize(parameters), context);
   auto value = EncryptResultSerializer::EncryptResultDeserialize(*rawResponse);
@@ -134,7 +134,7 @@ Azure::Response<DecryptResult> CryptographyClient::Decrypt(
     DecryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendCryptoRequest(
       {DecryptValue}, DecryptParametersSerializer::DecryptParametersSerialize(parameters), context);
   auto value = DecryptResultSerializer::DecryptResultDeserialize(*rawResponse);
@@ -147,7 +147,7 @@ Azure::Response<WrapResult> CryptographyClient::WrapKey(
     std::vector<uint8_t> const& key,
     Azure::Core::Context const& context)
 {
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendCryptoRequest(
       {WrapKeyValue},
       KeyWrapParametersSerializer::KeyWrapParametersSerialize(
@@ -163,7 +163,7 @@ Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
     std::vector<uint8_t> const& encryptedKey,
     Azure::Core::Context const& context)
 {
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendCryptoRequest(
       {UnwrapKeyValue},
       KeyWrapParametersSerializer::KeyWrapParametersSerialize(
@@ -179,7 +179,7 @@ Azure::Response<SignResult> CryptographyClient::Sign(
     std::vector<uint8_t> const& digest,
     Azure::Core::Context const& context)
 {
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendCryptoRequest(
       {SignValue},
       KeySignParametersSerializer::KeySignParametersSerialize(
@@ -212,7 +212,7 @@ Azure::Response<VerifyResult> CryptographyClient::Verify(
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context)
 {
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendCryptoRequest(
       {VerifyValue},
       KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(

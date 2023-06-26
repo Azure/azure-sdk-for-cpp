@@ -5,7 +5,16 @@
 
 #include <memory>
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
+#endif
+
 #include <opentelemetry/sdk/trace/exporter.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 class RecordedSpan : public opentelemetry::sdk::trace::Recordable {
 public:

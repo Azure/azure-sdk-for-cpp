@@ -20,6 +20,7 @@ vcpkg_cmake_configure(
     OPTIONS
         ${FEATURE_OPTIONS}
         -DWARNINGS_AS_ERRORS=OFF
+        -DBUILD_TESTING=OFF
 )
 
 vcpkg_cmake_install()

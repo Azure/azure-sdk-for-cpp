@@ -42,7 +42,6 @@ endif()
 
 add_executable (
   azure-core-test
-    test_traits.hpp
     authorization_challenge_parser_test.cpp
     azure_core_test.cpp
     base64_test.cpp
@@ -84,6 +83,7 @@ add_executable (
     simplified_header_test.cpp
     string_test.cpp
     telemetry_policy_test.cpp
+    test_traits.hpp
     transport_adapter_base_test.cpp
     transport_adapter_base_test.hpp
     transport_adapter_implementation_test.cpp

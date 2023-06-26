@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
 #include <type_traits>
 
 template <typename T, typename... Args> struct ClassTraits

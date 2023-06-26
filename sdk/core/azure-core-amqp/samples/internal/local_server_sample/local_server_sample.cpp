@@ -15,6 +15,7 @@
 
 using namespace Azure::Core::Amqp::_internal;
 using namespace Azure::Core::Amqp;
+namespace LocalServerSample {
 
 // Convert a ConnectionState enum to a string for diagnostic purposes.
 const char* ConnectionStateToString(ConnectionState const state)
@@ -92,7 +93,7 @@ public:
     return std::move(std::get<0>(*result));
   }
 
-  std::unique_ptr<Session> WaitForNewSession(Azure::Core::Context const& context = {})
+  Session WaitForNewSession(Azure::Core::Context const& context = {})
   {
     auto result = m_sessionQueue.WaitForPolledResult(context, *m_connection);
     return std::move(std::get<0>(*result));
@@ -118,7 +119,7 @@ public:
 private:
   Connection* m_connection{};
   Common::_internal::AsyncOperationQueue<std::unique_ptr<Connection>> m_connectionQueue;
-  Common::_internal::AsyncOperationQueue<std::unique_ptr<Session>> m_sessionQueue;
+  Common::_internal::AsyncOperationQueue<Session> m_sessionQueue;
   Common::_internal::AsyncOperationQueue<std::unique_ptr<MessageReceiver>> m_messageReceiverQueue;
   Common::_internal::AsyncOperationQueue<Azure::Core::Amqp::Models::AmqpMessage> m_messageQueue;
 
@@ -143,11 +144,10 @@ private:
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize = 10000;
 
-    std::unique_ptr<Session> newSession
-        = std::make_unique<Session>(connection, endpoint, sessionOptions, this);
+    auto newSession = connection.CreateSession(endpoint, sessionOptions, this);
 
     // The new session *must* call `Begin` before returning from the OnNewEndpoint callback.
-    newSession->Begin();
+    newSession.Begin();
     m_sessionQueue.CompleteOperation(std::move(newSession));
     return true;
   }
@@ -179,12 +179,9 @@ private:
     options.EnableTrace = true;
     options.Name = name;
     options.MessageTarget = messageTarget;
-    auto newMessageReceiver = std::make_unique<MessageReceiver>(
-        sessionForLink,
-        newLink,
-        static_cast<std::string>(messageSource.GetAddress()),
-        options,
-        this);
+    auto newMessageReceiver
+        = std::make_unique<MessageReceiver>(sessionForLink.CreateMessageReceiver(
+            newLink, static_cast<std::string>(messageSource.GetAddress()), options, this));
     newMessageReceiver->Open();
     m_messageReceiverQueue.CompleteOperation(std::move(newMessageReceiver));
     return true;
@@ -212,9 +209,15 @@ private:
     m_messageQueue.CompleteOperation(message);
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
+  virtual void OnMessageReceiverDisconnected(Models::_internal::AmqpError const& error) override
+  {
+    std::cerr << "Message receiver error: " << error << std::endl;
+  }
 };
 
-int main()
+// Because the Connection.Listen method is private, we need to put the meat of the sample in a
+// method other than "main".
+int LocalServerSampleMain()
 {
   SampleEvents sampleEvents;
   // Configure a socket listener on the AMQP port (5672).
@@ -236,3 +239,5 @@ int main()
 
   return 0;
 }
+} // namespace LocalServerSample
+int main() { LocalServerSample::LocalServerSampleMain(); }

@@ -18,14 +18,13 @@
  *
  */
 
-#include <get_env.hpp>
-
 #include "cryptohelpers.hpp"
 
 #include <azure/attestation.hpp>
 #include <azure/identity.hpp>
 
 #include <chrono>
+#include <get_env.hpp>
 #include <iomanip>
 #include <iostream>
 #include <thread>
@@ -37,17 +36,17 @@ using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
     // create an administration client
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(
-        AttestationAdministrationClient::Create(GetEnv("ATTESTATION_ISOLATED_URL"), credential));
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(
+        GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
     Azure::Response<AttestationToken<IsolatedModeCertificateListResult>> const policyCertificates
@@ -88,14 +87,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

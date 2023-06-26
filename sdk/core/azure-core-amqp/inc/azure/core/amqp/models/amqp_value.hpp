@@ -579,7 +579,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     public:
       /** @brief Convert this collection type to an AMQP value.*/
-      operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
+      explicit operator AmqpValue() const
+      {
+        return static_cast<UniqueAmqpValueHandle>(*this).get();
+      }
 
       /** @brief Returns the size of the underlying value.*/
       inline typename T::size_type size() const { return m_value.size(); }
@@ -787,7 +790,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /**
      * @brief Convert an existing AmqpSymbol to an AmqpValue.
      */
-    operator AmqpValue() const;
+    explicit operator AmqpValue() const;
 
     /**
      * @brief Convert an AmqpSymbol instance to a uAMQP AMQP_VALUE.
@@ -839,6 +842,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpComposite(AMQP_VALUE_DATA_TAG* const value);
 
+    /** @brief Compare this AmqpComposite value with another.
+     *
+     * @param that - the AmqpComposite to compare with.
+     */
+    bool operator==(AmqpComposite const& that) const
+    {
+      if (GetDescriptor() == that.GetDescriptor())
+      {
+        return m_value == that.m_value;
+      }
+      return false;
+    }
+
     /** @brief Returns the descriptor for this composite type.
      *
      * @returns The descriptor for this composite type.
@@ -858,7 +874,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /**
      * @brief Convert an existing AmqpComposite to an AmqpValue.
      */
-    operator AmqpValue() const { return static_cast<_detail::UniqueAmqpValueHandle>(*this).get(); }
+    explicit operator AmqpValue() const
+    {
+      return static_cast<_detail::UniqueAmqpValueHandle>(*this).get();
+    }
 
   private:
     AmqpValue m_descriptor;
@@ -905,10 +924,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpDescribed(AMQP_VALUE_DATA_TAG* const value);
 
+    /** @brief Compare this AmqpDescribed value with another.
+     *
+     * @param that - the AmqpDescribed to compare with.
+     */
+    bool operator==(AmqpDescribed const& that) const
+    {
+      if (GetDescriptor() == that.GetDescriptor())
+      {
+        return GetValue() == that.GetValue();
+      }
+      return false;
+    }
+
     /**
      * @brief Convert an existing AmqpComposite to an AmqpValue.
      */
-    operator AmqpValue const() const;
+    explicit operator AmqpValue const() const;
 
     /** @brief Returns the descriptor for this composite type.
      *
@@ -944,5 +976,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpValue m_descriptor;
     AmqpValue m_value;
   };
-
 }}}} // namespace Azure::Core::Amqp::Models

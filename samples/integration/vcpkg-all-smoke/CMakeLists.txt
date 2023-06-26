@@ -16,6 +16,10 @@ project(vcpkg-all-smoke LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if(MSVC)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+endif()
+
 add_executable (
   vcpkg-all-smoke
     src/main

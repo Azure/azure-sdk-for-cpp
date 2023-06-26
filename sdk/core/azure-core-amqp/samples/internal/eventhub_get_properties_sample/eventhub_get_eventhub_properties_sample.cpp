@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#undef _CRT_SECURE_NO_WARNINGS
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/management.hpp>
@@ -31,11 +28,11 @@ EventHubProperties GetEventHubProperties(
 
   // Create a management client off the session.
   // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementOptions managementClientOptions;
+  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::Management managementClient(
-      session, eventHubName, managementClientOptions);
+  Azure::Core::Amqp::_internal::ManagementClient managementClient(
+      session.CreateManagementClient(eventHubName, managementClientOptions));
 
   managementClient.Open();
 
@@ -43,11 +40,12 @@ EventHubProperties GetEventHubProperties(
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.ApplicationProperties["name"] = Azure::Core::Amqp::Models::AmqpValue{eventHubName};
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-  auto result = managementClient.ExecuteOperation(
-      "READ" /* operation */,
-      "com.microsoft:eventhub" /* type of operation */,
-      "" /* locales */,
-      message);
+  Azure::Core::Amqp::_internal::ManagementOperationResult result
+      = managementClient.ExecuteOperation(
+          "READ" /* operation */,
+          "com.microsoft:eventhub" /* type of operation */,
+          "" /* locales */,
+          message);
 
   EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
@@ -62,16 +60,16 @@ EventHubProperties GetEventHubProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    Azure::Core::Amqp::Models::AmqpValue body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
     }
-    auto bodyMap = body.AsMap();
+    Azure::Core::Amqp::Models::AmqpMap bodyMap = body.AsMap();
     properties.Name = static_cast<std::string>(bodyMap["name"]);
     properties.CreatedAt = Azure::DateTime(std::chrono::system_clock::from_time_t(
         static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()).count()));
-    auto partitions = bodyMap["partition_ids"].AsArray();
+    Azure::Core::Amqp::Models::AmqpArray partitions = bodyMap["partition_ids"].AsArray();
     for (const auto& partition : partitions)
     {
       properties.PartitionIds.push_back(static_cast<std::string>(partition));
@@ -93,7 +91,7 @@ struct EventHubPartitionProperties final
   bool IsEmpty{};
 };
 
-EventHubPartitionProperties GetPartitionProperties(
+std::tuple<bool, EventHubPartitionProperties> GetPartitionProperties(
     Azure::Core::Amqp::_internal::Session const& session,
     std::string const& eventHubName,
     std::string const& partitionId)
@@ -101,11 +99,11 @@ EventHubPartitionProperties GetPartitionProperties(
 
   // Create a management client off the session.
   // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementOptions managementClientOptions;
+  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::Management managementClient(
-      session, eventHubName, managementClientOptions);
+  Azure::Core::Amqp::_internal::ManagementClient managementClient(
+      session.CreateManagementClient(eventHubName, managementClientOptions));
 
   managementClient.Open();
 
@@ -121,9 +119,11 @@ EventHubPartitionProperties GetPartitionProperties(
       message);
 
   EventHubPartitionProperties properties;
+  bool error{false};
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
+    std::cerr << "Error: " << result.Description;
+    error = true;
   }
   else
   {
@@ -152,7 +152,7 @@ EventHubPartitionProperties GetPartitionProperties(
   }
   managementClient.Close();
 
-  return properties;
+  return std::make_tuple(error, properties);
 }
 
 int main()
@@ -160,51 +160,57 @@ int main()
   // Retrieve the eventhub connection string so we can extract the host name and entity name. We
   // are NOT using the connection string to authenticate with the eventhub, only to retrieve the
   // host name and entity (if present).
-  std::string eventhubConnectionString = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
+  std::string eventhubConnectionString = std::getenv("EVENTHUB_CONNECTION_STRING");
 
   Azure::Core::Amqp::_internal::ConnectionStringParser connectionParser(eventhubConnectionString);
   std::string eventhubsHost = connectionParser.GetHostName();
   std::string eventhubsEntity = connectionParser.GetEntityPath();
   if (eventhubsEntity.empty())
   {
-    eventhubsEntity = GetEnvHelper::GetEnv("EVENTHUB_NAME");
+    eventhubsEntity = std::getenv("EVENTHUB_NAME");
   }
 
   // Establish the connection to the eventhub.
+
+  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
+      std::getenv("SAMPLES_TENANT_ID"),
+      std::getenv("SAMPLES_CLIENT_ID"),
+      std::getenv("SAMPLES_CLIENT_SECRET"))};
+
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";
   connectionOptions.EnableTrace = false;
   connectionOptions.Port = connectionParser.GetPort();
+  connectionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
   Azure::Core::Amqp::_internal::Connection connection(
-      connectionParser.GetHostName(), connectionOptions);
-
-  auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      GetEnvHelper::GetEnv("SAMPLES_TENANT_ID"),
-      GetEnvHelper::GetEnv("SAMPLES_CLIENT_ID"),
-      GetEnvHelper::GetEnv("SAMPLES_CLIENT_SECRET"))};
+      connectionParser.GetHostName(), credential, connectionOptions);
 
   // Establish a session to the eventhub.
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
-  sessionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
-  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection.CreateSession(sessionOptions));
 
   auto eventHubProperties = GetEventHubProperties(session, eventhubsEntity);
   for (const auto& partition : eventHubProperties.PartitionIds)
   {
     std::cout << "Partition: " << partition << std::endl;
     auto partitionProperties = GetPartitionProperties(session, eventhubsEntity, partition);
-    std::cout << "Partition properties: " << std::endl;
-    std::cout << "  Name: " << partitionProperties.Name << std::endl;
-    std::cout << "  PartitionId: " << partitionProperties.PartitionId << std::endl;
-    std::cout << "  BeginningSequenceNumber: " << partitionProperties.BeginningSequenceNumber
-              << std::endl;
-    std::cout << "  LastEnqueuedSequenceNumber: " << partitionProperties.LastEnqueuedSequenceNumber
-              << std::endl;
-    std::cout << "  LastEnqueuedOffset: " << partitionProperties.LastEnqueuedOffset << std::endl;
-    std::cout << "  LastEnqueuedTimeUtc: " << partitionProperties.LastEnqueuedTimeUtc.ToString()
-              << std::endl;
-    std::cout << "  IsEmpty: " << std::boolalpha << partitionProperties.IsEmpty << std::endl;
+    if (!std::get<0>(partitionProperties))
+    {
+      std::cout << "Partition properties: " << std::endl;
+      std::cout << "  Name: " << std::get<1>(partitionProperties).Name << std::endl;
+      std::cout << "  PartitionId: " << std::get<1>(partitionProperties).PartitionId << std::endl;
+      std::cout << "  BeginningSequenceNumber: "
+                << std::get<1>(partitionProperties).BeginningSequenceNumber << std::endl;
+      std::cout << "  LastEnqueuedSequenceNumber: "
+                << std::get<1>(partitionProperties).LastEnqueuedSequenceNumber << std::endl;
+      std::cout << "  LastEnqueuedOffset: " << std::get<1>(partitionProperties).LastEnqueuedOffset
+                << std::endl;
+      std::cout << "  LastEnqueuedTimeUtc: "
+                << std::get<1>(partitionProperties).LastEnqueuedTimeUtc.ToString() << std::endl;
+      std::cout << "  IsEmpty: " << std::boolalpha << std::get<1>(partitionProperties).IsEmpty
+                << std::endl;
+    }
   }
 }

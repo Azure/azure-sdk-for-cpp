@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
-#undef _CRT_SECURE_NO_WARNINGS
-#include <get_env.hpp>
-
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/connection_string_credential.hpp>
 #include <azure/core/amqp/message_sender.hpp>
@@ -21,7 +18,7 @@ int main()
 {
   // Retrieve the eventhub connection string so we can extract the host name and entity name. We are
   // NOT using the connection string to connect to the eventhub.
-  std::string eventhubConnectionString = GetEnvHelper::GetEnv("EVENTHUB_CONNECTION_STRING");
+  std::string eventhubConnectionString = std::getenv("EVENTHUB_CONNECTION_STRING");
   Azure::Core::Amqp::_internal::ConnectionStringParser connectionStringCredential(
       eventhubConnectionString);
   std::string eventhubsHost = connectionStringCredential.GetHostName();
@@ -31,26 +28,26 @@ int main()
   // environment variable.
   if (eventhubsEntity.empty())
   {
-    eventhubsEntity = GetEnvHelper::GetEnv("EVENTHUB_NAME");
+    eventhubsEntity = std::getenv("EVENTHUB_NAME");
   }
 
   // Establish credentials for the eventhub client.
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      GetEnvHelper::GetEnv("SAMPLES_TENANT_ID"),
-      GetEnvHelper::GetEnv("SAMPLES_CLIENT_ID"),
-      GetEnvHelper::GetEnv("SAMPLES_CLIENT_SECRET"))};
+      std::getenv("SAMPLES_TENANT_ID"),
+      std::getenv("SAMPLES_CLIENT_ID"),
+      std::getenv("SAMPLES_CLIENT_SECRET"))};
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "some";
   connectionOptions.EnableTrace = true;
-  Azure::Core::Amqp::_internal::Connection connection(eventhubsHost, connectionOptions);
+  connectionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
+  Azure::Core::Amqp::_internal::Connection connection(eventhubsHost, credential, connectionOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
   sessionOptions.InitialOutgoingWindowSize = std::numeric_limits<uint16_t>::max();
-  sessionOptions.AuthenticationScopes = {EH_AUTHENTICATION_SCOPE};
 
-  Azure::Core::Amqp::_internal::Session session(connection, credential, sessionOptions);
+  Azure::Core::Amqp::_internal::Session session(connection.CreateSession(sessionOptions));
 
   constexpr int maxMessageSendCount = 1000;
 
@@ -64,7 +61,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::MessageSender sender(
-      session, eventhubsEntity, senderOptions, nullptr);
+      session.CreateMessageSender(eventhubsEntity, senderOptions, nullptr));
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
   sender.Open();
@@ -75,6 +72,12 @@ int main()
   while (messageSendCount < maxMessageSendCount)
   {
     auto result = sender.Send(message);
+    if (std::get<0>(result) != Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+    {
+      std::cout << "Failed to send message " << messageSendCount << std::endl;
+      std::cout << "Message error information: " << std::get<1>(result) << std::endl;
+      break;
+    }
     messageSendCount += 1;
   }
 

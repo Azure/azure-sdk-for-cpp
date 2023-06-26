@@ -17,12 +17,11 @@
  *
  */
 
-#include <get_env.hpp>
-
 #include <azure/attestation.hpp>
 #include <azure/identity.hpp>
 
 #include <chrono>
+#include <get_env.hpp>
 #include <iostream>
 #include <memory>
 #include <thread>

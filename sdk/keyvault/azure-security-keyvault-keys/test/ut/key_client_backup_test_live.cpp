@@ -57,7 +57,7 @@ TEST_F(KeyVaultKeyClient, BackupKey)
   {
     // Restore
     std::cout << std::endl << "- Restore key";
-    auto respone = client.RestoreKeyBackup(backUpResponse.Value.BackupKey);
+    auto response = client.RestoreKeyBackup(backUpResponse.Value.BackupKey);
     CheckValidResponse(backUpResponse);
   }
   {

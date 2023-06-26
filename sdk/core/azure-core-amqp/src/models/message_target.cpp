@@ -3,10 +3,10 @@
 
 #include "azure/core/amqp/models/message_target.hpp"
 
+#include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
 #include <azure_uamqp_c/amqp_definitions_terminus_expiry_policy.h>
 
-#include <azure_uamqp_c/amqp_definitions_fields.h>
 #include <azure_uamqp_c/amqp_definitions_filter_set.h>
 #include <azure_uamqp_c/amqp_definitions_node_properties.h>
 #include <azure_uamqp_c/amqp_definitions_seconds.h>

@@ -246,11 +246,6 @@ namespace Azure { namespace Storage {
           std::chrono::milliseconds period,
           Azure::Core::Context& context) override;
 
-      Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
-      {
-        return *m_rawResponse;
-      }
-
       std::shared_ptr<BlobClient> m_blobClient;
       Models::BlobProperties m_pollResult;
 

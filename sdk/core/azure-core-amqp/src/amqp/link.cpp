@@ -303,6 +303,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  void LinkImpl::SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetach)
+  {
+    m_onLinkDetachEvent = std::move(onLinkDetach);
+    m_linkSubscriptionHandle
+        = link_subscribe_on_link_detach_received(m_link, OnLinkDetachEventFn, this);
+  }
+
+  void LinkImpl::UnsubscribeFromDetachEvent()
+  {
+    if (m_linkSubscriptionHandle != nullptr)
+    {
+      link_unsubscribe_on_link_detach_received(m_linkSubscriptionHandle);
+    }
+  }
+  void LinkImpl::OnLinkDetachEventFn(void* context, ERROR_HANDLE error)
+  {
+    LinkImpl* link = static_cast<LinkImpl*>(context);
+    if (link->m_onLinkDetachEvent)
+    {
+      link->m_onLinkDetachEvent(Models::_internal::AmqpErrorFactory::FromUamqp(error));
+    }
+  }
+
   void LinkImpl::Attach()
   {
     if (link_attach(m_link, nullptr, nullptr, nullptr, this))

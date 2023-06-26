@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-Licence-Identifier: MIT
 
+// Enable declaration of strerror_s.
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include "azure/core/amqp/claims_based_security.hpp"
 #include "azure/core/amqp/common/completion_operation.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
@@ -13,6 +16,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/platform.hpp>
 
 #include <azure_uamqp_c/message_sender.h>
 
@@ -28,33 +32,6 @@ void Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::Fr
 }
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
-
-  MessageSender::MessageSender(
-      Session const& session,
-      Models::_internal::MessageTarget const& target,
-      MessageSenderOptions const& options,
-      MessageSenderEvents* events)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          target,
-          options,
-          events)}
-  {
-  }
-  MessageSender::MessageSender(
-      Session const& session,
-      LinkEndpoint& endpoint,
-      Models::_internal::MessageTarget const& target,
-      MessageSenderOptions const& options,
-      MessageSenderEvents* events)
-      : m_impl{std::make_shared<_detail::MessageSenderImpl>(
-          _detail::SessionFactory::GetImpl(session),
-          endpoint,
-          target,
-          options,
-          events)}
-  {
-  }
 
   void MessageSender::Open(Context const& context) { m_impl->Open(context); }
   void MessageSender::Close() { m_impl->Close(); }
@@ -103,8 +80,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   MessageSenderImpl::~MessageSenderImpl() noexcept
   {
-    // Clear the event callback before calling messagesender_destroy to short-circuit any
-    // events firing after the object is destroyed.
+    if (m_link)
+    {
+      // Unsubscribe from any detach events before clearing out the event handler to short-circuit
+      // any events firing after the object is destroyed.
+      m_link->UnsubscribeFromDetachEvent();
+    }
+    // Clear the event callback before calling messagesender_destroy to short-circuit any state
+    // change events firing after the object is destroyed.
     if (m_events)
     {
       m_events = nullptr;
@@ -131,6 +114,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.MessageSource,
         m_target);
     PopulateLinkProperties();
+
+    m_link->SubscribeToDetachEvent([this](Models::_internal::AmqpError const& error) {
+      if (m_events)
+      {
+        m_events->OnMessageSenderDisconnected(error);
+      }
+      // Log that an error occurred.
+      Log::Stream(Logger::Level::Error)
+          << "Message sender link detached: " << error.Condition.ToString() << ": "
+          << error.Description;
+
+      // Cache the error we received in the OnDetach notification so we can return it to the user on
+      // the next send which fails.
+      m_savedMessageError = Models::_internal::AmqpErrorFactory::ToAmqp(error);
+    });
   }
 
   /* Populate link properties from options. */
@@ -190,9 +188,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::Open(Context const& context)
   {
-    // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
-    // it.
-    m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
+    if (m_options.AuthenticationRequired)
+    {
+      // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
+      // it.
+      m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
+    }
 
     if (m_link == nullptr)
     {
@@ -206,11 +207,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (messagesender_open(m_messageSender.get()))
     {
-      auto err = errno; // LCOV_EXCL_LINE
-      throw std::runtime_error( // LCOV_EXCL_LINE
-          "Could not open message sender. errno=" + std::to_string(err) + ", \"" // LCOV_EXCL_LINE
-          + strerror(err) // LCOV_EXCL_LINE
-          + "\"."); // LCOV_EXCL_LINE
+      // LCOV_EXCL_START
+      auto err = errno;
+#if defined(AZ_PLATFORM_WINDOWS)
+      char buf[256];
+      strerror_s(buf, sizeof(buf), err);
+#else
+      std::string buf{strerror(err)};
+#endif
+      throw std::runtime_error(
+          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
+      // LCOV_EXCL_STOP
     }
   }
   void MessageSenderImpl::Close()
@@ -282,8 +289,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     QueueSend(
         message,
-        [&](Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
+        [&sendCompleteQueue, this](
+            Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
             Models::AmqpValue deliveryStatus) {
+          // If the send failed. then we need to return the error. If the send completed because
+          // of an error, it's possible that the deliveryStatus provided is null. In that case,
+          // we use the cached saved error because it is highly likely to be better than
+          // nothing.
+          if (sendResult != _internal::MessageSendStatus::Ok)
+          {
+            if (deliveryStatus.IsNull())
+            {
+              deliveryStatus = m_savedMessageError;
+            }
+          }
+          else
+          {
+            // If we successfully sent the message, then whatever saved error should be cleared,
+            // it's no longer valid.
+            m_savedMessageError = Models::AmqpValue();
+          }
           sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
         },
         context);

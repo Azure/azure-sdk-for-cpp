@@ -202,3 +202,90 @@ TEST(Logger, Message)
     throw;
   }
 }
+
+TEST(Logger, LoggerStream)
+{
+  Logger::Level level = Logger::Level::Error;
+  std::string message;
+
+  Logger::SetListener([&](auto lvl, auto msg) {
+    level = lvl;
+    message = msg;
+  });
+
+  Logger::SetLevel(Logger::Level::Verbose);
+  {
+    Log::Stream(Logger::Level::Verbose) << "Verbose";
+    EXPECT_EQ(message, "Verbose");
+    message.clear();
+
+    Log::Stream(Logger::Level::Informational) << "Informational" << 10;
+    EXPECT_EQ(message, "Informational10");
+    message.clear();
+
+    Log::Stream(Logger::Level::Warning) << "Warning" << std::endl;
+    EXPECT_EQ(message, "Warning\n");
+    message.clear();
+
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
+    message.clear();
+  }
+
+  Logger::SetLevel(Logger::Level::Informational);
+  {
+    Log::Stream(Logger::Level::Verbose) << "Verbose" << std::endl;
+    EXPECT_EQ(message, "");
+    message.clear();
+
+    Log::Stream(Logger::Level::Informational) << "Informational";
+    EXPECT_EQ(message, "Informational");
+    message.clear();
+
+    Log::Stream(Logger::Level::Warning) << "Warning";
+    EXPECT_EQ(message, "Warning");
+    message.clear();
+
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
+    message.clear();
+  }
+
+  Logger::SetLevel(Logger::Level::Warning);
+  {
+    Log::Stream(Logger::Level::Verbose) << "Verbose";
+    EXPECT_EQ(message, "");
+    message.clear();
+
+    Log::Stream(Logger::Level::Informational) << "Informational";
+    EXPECT_EQ(message, "");
+    message.clear();
+
+    Log::Stream(Logger::Level::Warning) << "Warning";
+    EXPECT_EQ(message, "Warning");
+    message.clear();
+
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
+    message.clear();
+  }
+
+  Logger::SetLevel(Logger::Level::Error);
+  {
+    Log::Stream(Logger::Level::Verbose) << "Verbose";
+    EXPECT_EQ(message, "");
+    message.clear();
+
+    Log::Stream(Logger::Level::Informational) << "Informational";
+    EXPECT_EQ(message, "");
+    message.clear();
+
+    Log::Stream(Logger::Level::Warning) << "Warning";
+    EXPECT_EQ(message, "");
+    message.clear();
+
+    Log::Stream(Logger::Level::Error) << "Error";
+    EXPECT_EQ(message, "Error");
+    message.clear();
+  }
+}

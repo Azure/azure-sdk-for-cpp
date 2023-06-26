@@ -53,7 +53,7 @@ namespace Core {
   namespace Amqp {
 
     /**
-     * @Brief AMQP Public model types.
+     * @brief AMQP Public model types.
      */
     namespace Models {
     }
