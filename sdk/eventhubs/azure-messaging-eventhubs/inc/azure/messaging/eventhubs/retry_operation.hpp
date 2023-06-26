@@ -34,7 +34,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     /**
      * @brief Calculate the exponential delay needed for this retry.
      *
-     * @param retryOptions Options controlling the delay algorithm.
      * @param attempt Which attempt is this?
      * @param jitterFactor Test hook removing the randomness from the delay algorithm.
      *
