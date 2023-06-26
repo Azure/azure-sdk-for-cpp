@@ -109,11 +109,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& connectionsString,
         std::string const& eventHub = "",
         std::string const& consumerGroup = "$Default",
-        Models::ConsumerClientOptions const& optionsv = {});
+        Models::ConsumerClientOptions const& options = {});
     /** @brief creates a ConsumerClient from a token credential.
      *
      * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
-     * myeventhub.servicebus.windows.net)
+     * <MYEVENTHUB>.servicebus.windows.net)
      * @param eventHub event hub name
      * @param consumerGroup consumer group name
      * @param credential Token credential

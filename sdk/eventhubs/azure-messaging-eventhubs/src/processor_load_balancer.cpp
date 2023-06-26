@@ -1,9 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 #include "azure/messaging/eventhubs.hpp"
 
-Azure::Messaging::EventHubs::Models::LoadBalancerInfo Azure::Messaging::EventHubs::ProcessorLoadBalancer::
-    GetAvailablePartitions(std::vector<std::string> const& partitionIDs, Azure::Core::Context& ctx)
+// cspell: words lbinfo
+Azure::Messaging::EventHubs::Models::LoadBalancerInfo
+Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
+    std::vector<std::string> const& partitionIDs,
+    Azure::Core::Context& ctx)
 {
 
   std::vector<Ownership> ownerships = m_checkpointStore->ListOwnership(
@@ -203,7 +207,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
       }
       break;
       default:
-        throw std::exception("unknown startegy");
+        throw std::exception("unknown strategy");
         break;
     }
   }

@@ -1,11 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 #pragma once
 #include "models/amqp_message.hpp"
 #include "models/event_data_batch_models.hpp"
 #include <azure/core/amqp.hpp>
 
 #include <mutex>
+
+// cspell: words vbin
+
 namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief EventDataBatch is used to efficiently pack up EventData before sending it to Event Hubs.
    *
