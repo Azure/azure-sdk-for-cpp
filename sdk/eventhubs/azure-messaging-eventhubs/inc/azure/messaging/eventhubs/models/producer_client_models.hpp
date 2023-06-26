@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
+// cspell: words myservicebus
+
 #pragma once
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/management.hpp>
