@@ -45,7 +45,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     ProcessorOptions processorOptions;
     processorOptions.LoadBalancingStrategy = ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::seconds(2);
-    
+
     Processor processor(
         std::make_shared<ConsumerClient>(client),
         std::make_shared<BlobCheckpointStore>(checkpointStore),

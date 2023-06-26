@@ -4,6 +4,7 @@
 #pragma once
 #include "models/amqp_message.hpp"
 #include "models/event_data_batch_models.hpp"
+
 #include <azure/core/amqp.hpp>
 
 #include <mutex>
@@ -44,18 +45,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     EventDataBatch& operator=(EventDataBatch const& other)
     {
-        if (&other == this)
-        {
-		return *this;
-	  }
-	  m_partitionID = other.m_partitionID;
-	  m_partitionKey = other.m_partitionKey;
-	  m_maxBytes = other.m_maxBytes;
-	  m_marshalledMessages = other.m_marshalledMessages;
-	  m_batchEnvelope = other.m_batchEnvelope;
-	  m_currentSize = other.m_currentSize;
-	  return *this;
-	}
+      if (&other == this)
+      {
+        return *this;
+      }
+      m_partitionID = other.m_partitionID;
+      m_partitionKey = other.m_partitionKey;
+      m_maxBytes = other.m_maxBytes;
+      m_marshalledMessages = other.m_marshalledMessages;
+      m_batchEnvelope = other.m_batchEnvelope;
+      m_currentSize = other.m_currentSize;
+      return *this;
+    }
     /** @brief Event Data Batch constructor
      *
      * @param options Options settings for creating the data batch
@@ -134,17 +135,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         throw std::exception("No messages added to the batch.");
       }
 
-     /* if (!m_partitionKey.empty())
-      {
-        m_batchEnvelope.DeliveryAnnotations.emplace(
-            PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-      }*/
+      /* if (!m_partitionKey.empty())
+       {
+         m_batchEnvelope.DeliveryAnnotations.emplace(
+             PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+       }*/
       std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
       for (auto marshalledMessage : m_marshalledMessages)
       {
-          Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
+        Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
         messageList.push_back(data);
-	  }
+      }
 
       m_batchEnvelope.SetBody(messageList);
 

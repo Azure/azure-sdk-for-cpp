@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "models/amqp_message.hpp"
+
 #include <azure/core/amqp.hpp>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {

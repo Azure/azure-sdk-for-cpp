@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-
 #include "test_checkpoint_store.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/test/test_base.hpp>
@@ -29,7 +29,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::DateTime(std::chrono::system_clock::now())};
     }
 
-    Azure::Messaging::EventHubs::Models::ConsumerClientDetails TestConsumerDetails(std::string clientID)
+    Azure::Messaging::EventHubs::Models::ConsumerClientDetails TestConsumerDetails(
+        std::string clientID)
     {
       return ConsumerClientDetails{testEventHubFQDN, testConsumerGroup, testEventHubName, clientID};
     }

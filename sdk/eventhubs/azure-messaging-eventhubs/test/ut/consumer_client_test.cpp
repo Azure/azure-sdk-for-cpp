@@ -66,7 +66,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         + ";EntityPath=eventhub";
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
-    
+
     options.ReceiverOptions.Name = "unit-test";
     options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     options.ReceiverOptions.MessageTarget = "ingress";
@@ -136,4 +136,3 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(result.PartitionId, "0");
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test
-

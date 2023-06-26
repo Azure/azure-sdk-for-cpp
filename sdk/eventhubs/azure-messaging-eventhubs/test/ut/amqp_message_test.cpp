@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
+
 #include <azure/messaging/eventhubs.hpp>
 
 using namespace Azure::Core::Amqp::Models;

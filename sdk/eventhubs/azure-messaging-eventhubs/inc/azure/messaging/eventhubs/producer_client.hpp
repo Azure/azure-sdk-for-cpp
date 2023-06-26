@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "event_data_batch.hpp"
-#include "retry_operation.hpp"
 #include "models/management_models.hpp"
 #include "models/producer_client_models.hpp"
+#include "retry_operation.hpp"
+
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/management.hpp>
 #include <azure/core/context.hpp>
@@ -33,25 +34,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     ProducerClient(ProducerClient const& other)
-        : m_credentials(other.m_credentials), m_producerClientOptions(other.m_producerClientOptions),
-		  m_senders(other.m_senders), m_sessions(other.m_sessions)
+        : m_credentials(other.m_credentials),
+          m_producerClientOptions(other.m_producerClientOptions), m_senders(other.m_senders),
+          m_sessions(other.m_sessions)
     {
-	}
+    }
 
     ProducerClient& operator=(ProducerClient const& other)
     {
-        if (&other == this)
-        {
-		return *this;
-	  }
-	  m_credentials = other.m_credentials;
-	  m_producerClientOptions = other.m_producerClientOptions;
-	  m_senders = other.m_senders;
-	  m_sessions = other.m_sessions;
-	  return *this;
-	}
+      if (&other == this)
+      {
+        return *this;
+      }
+      m_credentials = other.m_credentials;
+      m_producerClientOptions = other.m_producerClientOptions;
+      m_senders = other.m_senders;
+      m_sessions = other.m_sessions;
+      return *this;
+    }
 
-    ProducerClient()= default;
+    ProducerClient() = default;
 
     /**@brief Constructs a new ProducerClient instance
      *
@@ -98,7 +100,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param options Additional options for getting partition properties
      */
-    Models::EventHubProperties GetEventHubProperties(Models::GetEventHubPropertiesOptions options = {});
+    Models::EventHubProperties GetEventHubProperties(
+        Models::GetEventHubPropertiesOptions options = {});
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
      * enqueued to the partition.

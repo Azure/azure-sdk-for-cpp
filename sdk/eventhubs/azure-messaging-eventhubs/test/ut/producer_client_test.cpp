@@ -7,6 +7,7 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
+
 #include <numeric>
 TEST(ProducerClientTest, ConnectionStringNoEntityPath)
 {
@@ -108,7 +109,7 @@ TEST(ProducerClientTest, GetEventHubProperties)
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(
       connStringEntityPath, "eventhub", producerOptions);
-  
+
   auto result = client.GetEventHubProperties();
   EXPECT_EQ(result.Name, "eventhub");
   EXPECT_TRUE(result.PartitionIDs.size() > 0);

@@ -164,8 +164,8 @@ Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
   Azure::Core::Amqp::_internal::ManagementClient managementClient{
-      m_sessions.at(partitionID).CreateManagementClient(
-          m_credentials.EventHub, managementClientOptions)};
+      m_sessions.at(partitionID)
+          .CreateManagementClient(m_credentials.EventHub, managementClientOptions)};
 
   managementClient.Open();
 

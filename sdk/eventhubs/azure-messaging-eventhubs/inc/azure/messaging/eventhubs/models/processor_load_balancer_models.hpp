@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <azure/core/context.hpp>
+
 #include <chrono>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {

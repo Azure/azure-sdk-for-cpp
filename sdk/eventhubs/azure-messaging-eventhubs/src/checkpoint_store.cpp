@@ -79,7 +79,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
     Azure::Storage::Blobs::Models::BlobItem const& blob,
-    Ownership& ownership) 
+    Ownership& ownership)
 {
   std::string temp = blob.Details.Metadata.at("ownerid");
   if (temp.empty())
@@ -109,8 +109,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::NewCheckpointBlobMetadata(
   return metadata;
 }
 
-std::vector<Ownership>
-Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
+std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
     std::vector<Ownership> partitionOwnership,
     Azure::Core::Context ctx,
     ClaimOwnershipOptions const& options)
@@ -147,8 +146,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
   return newOwnerships;
 }
 
-std::vector<Checkpoint>
-Azure::Messaging::EventHubs::BlobCheckpointStore::ListCheckpoints(
+std::vector<Checkpoint> Azure::Messaging::EventHubs::BlobCheckpointStore::ListCheckpoints(
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
     std::string const& consumerGroup,
@@ -181,8 +179,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::ListCheckpoints(
 
 /**@brief  ListOwnership lists all ownerships.
  */
-std::vector<Ownership>
-Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwnership(
+std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwnership(
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
     std::string const& consumerGroup,

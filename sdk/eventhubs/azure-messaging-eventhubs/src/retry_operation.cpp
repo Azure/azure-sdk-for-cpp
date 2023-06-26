@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #include "azure/core/internal/diagnostics/log.hpp"
+
 #include <azure/messaging/eventhubs/retry_operation.hpp>
 
 bool Azure::Messaging::EventHubs::_internal::RetryOperation::Execute(
@@ -53,10 +54,11 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
   using Azure::Core::Diagnostics::_internal::Log;
 
   // Are we out of retry attempts?
-  if (response || WasLastAttempt(attempt) )
+  if (response || WasLastAttempt(attempt))
   {
     Log::Write(
-        Logger::Level::Informational, std::string("Response was true or lase attempt.Operation will not be retried."));
+        Logger::Level::Informational,
+        std::string("Response was true or lase attempt.Operation will not be retried."));
     return false;
   }
   if (response == false)
@@ -70,10 +72,8 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
   return true;
 }
 
-std::chrono::milliseconds
-Azure::Messaging::EventHubs::_internal::RetryOperation::CalculateExponentialDelay(
-    int32_t attempt,
-    double jitterFactor)
+std::chrono::milliseconds Azure::Messaging::EventHubs::_internal::RetryOperation::
+    CalculateExponentialDelay(int32_t attempt, double jitterFactor)
 {
   if (jitterFactor < 0.8 || jitterFactor > 1.3)
   {

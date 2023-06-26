@@ -36,13 +36,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           m_consumerClientDetails(consumerClientDetails)
     {
     }
-    
+
     ProcessorPartitionClient(ProcessorPartitionClient const& other)
         : m_partitionId(other.m_partitionId), m_partitionClient(other.m_partitionClient),
-        m_checkpointStore(other.m_checkpointStore),
-        m_consumerClientDetails(other.m_consumerClientDetails),m_cleanupFunc(other.m_cleanupFunc)
+          m_checkpointStore(other.m_checkpointStore),
+          m_consumerClientDetails(other.m_consumerClientDetails), m_cleanupFunc(other.m_cleanupFunc)
     {
-	}
+    }
 
     ProcessorPartitionClient& operator=(ProcessorPartitionClient const& other)
     {
@@ -54,8 +54,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_consumerClientDetails = other.m_consumerClientDetails;
         m_cleanupFunc = other.m_cleanupFunc;
       }
-	  return *this;
-	}
+      return *this;
+    }
 
     std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
         uint32_t maxBatchSize,

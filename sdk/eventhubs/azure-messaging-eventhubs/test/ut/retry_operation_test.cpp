@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
+
 #include <azure/core/context.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 #include <azure/messaging/eventhubs/retry_operation.hpp>
+
 #include <functional>
 
 namespace LocalTest {
@@ -36,7 +38,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     EXPECT_FALSE(retryOp.ShouldRetry(true, 0, retryAfter));
   }
 
-    TEST(RetryOperationTest, ShouldRetryTrue2)
+  TEST(RetryOperationTest, ShouldRetryTrue2)
   {
     std::chrono::milliseconds retryAfter{};
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);

@@ -67,7 +67,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-    TEST(CheckpointStoreTest, TestOwnerships)
+  TEST(CheckpointStoreTest, TestOwnerships)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
@@ -81,18 +81,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{});
-    EXPECT_EQ(0, ownerships.size());   
+    EXPECT_EQ(0, ownerships.size());
 
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
-        Azure::Messaging::EventHubs::Models::Ownership{
-            "$Default",
-            "event-hub-name",
-            "ns.servicebus.windows.net",
-            "partition-id",
-            "owner-id"}});
-            
-    EXPECT_EQ(1, ownerships.size());   
+            Azure::Messaging::EventHubs::Models::Ownership{
+                "$Default",
+                "event-hub-name",
+                "ns.servicebus.windows.net",
+                "partition-id",
+                "owner-id"}});
+
+    EXPECT_EQ(1, ownerships.size());
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", ownerships[0].FullyQualifiedNamespace);
@@ -105,32 +105,31 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
-            "$Default",
-            "event-hub-name",
-            "ns.servicebus.windows.net",
-            "partition-id",
-            "owner-id",
-            Azure::ETag("randomETAG")}});
+                "$Default",
+                "event-hub-name",
+                "ns.servicebus.windows.net",
+                "partition-id",
+                "owner-id",
+                Azure::ETag("randomETAG")}});
 
-    EXPECT_EQ(0, ownerships.size()); 
+    EXPECT_EQ(0, ownerships.size());
 
-        ownerships = checkpointStore.ClaimOwnership(
+    ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
-            "$Default",
-            "event-hub-name",
-            "ns.servicebus.windows.net",
-            "partition-id",
-            "owner-id",
-            validEtag}});
+                "$Default",
+                "event-hub-name",
+                "ns.servicebus.windows.net",
+                "partition-id",
+                "owner-id",
+                validEtag}});
 
-    EXPECT_EQ(1, ownerships.size()); 
+    EXPECT_EQ(1, ownerships.size());
     EXPECT_NE(validEtag, ownerships[0].ETag.Value());
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", ownerships[0].FullyQualifiedNamespace);
     EXPECT_EQ("partition-id", ownerships[0].PartitionID);
     EXPECT_EQ("owner-id", ownerships[0].OwnerID);
-    
   }
-  }}}} // namespace Azure::Messaging::EventHubs::Test
+}}}} // namespace Azure::Messaging::EventHubs::Test
