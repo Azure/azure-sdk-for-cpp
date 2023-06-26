@@ -93,7 +93,7 @@ add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
    )
-create_per_service_target_build(messaging azure-messaging-eventhubs)
+create_per_service_target_build(eventhubs azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
 target_include_directories(
@@ -106,7 +106,7 @@ target_include_directories(
 target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp Azure::azure-storage-blobs)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(messaging azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
+create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
