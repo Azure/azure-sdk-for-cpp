@@ -39,8 +39,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ProcessorPartitionClient(ProcessorPartitionClient const& other)
         : m_partitionId(other.m_partitionId), m_partitionClient(other.m_partitionClient),
-          m_checkpointStore(other.m_checkpointStore),
-          m_consumerClientDetails(other.m_consumerClientDetails), m_cleanupFunc(other.m_cleanupFunc)
+          m_checkpointStore(other.m_checkpointStore), m_cleanupFunc(other.m_cleanupFunc),
+          m_consumerClientDetails(other.m_consumerClientDetails)
     {
     }
 
@@ -81,7 +81,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-            sequenceNumber = (size_t)pair.second;
+            sequenceNumber = static_cast<size_t>(pair.second);
         }
         if (pair.first == offsetNumberAnnotation)
         {
@@ -89,7 +89,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-            offsetNumber = (size_t)pair.second;
+            offsetNumber = static_cast<size_t>(pair.second);
         }
       }
 

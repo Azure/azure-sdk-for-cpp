@@ -101,7 +101,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(ownerships[0].ETag.HasValue());
     EXPECT_TRUE(ownerships[0].LastModifiedTime.HasValue());
     Azure::ETag validEtag = ownerships[0].ETag.Value();
-    Azure::DateTime lastDatetime = ownerships[0].LastModifiedTime.Value();
+    //    Azure::DateTime lastDatetime = ownerships[0].LastModifiedTime.Value();
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{

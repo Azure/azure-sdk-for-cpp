@@ -9,6 +9,7 @@
 #include <azure/storage/blobs.hpp>
 
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 using namespace Azure::Messaging::EventHubs::Models;
 namespace Azure { namespace Messaging { namespace EventHubs {
@@ -32,7 +33,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       (void)partitionOwnership;
       (void)ctx;
       (void)options;
-      throw std::exception("Not Implemented");
+      throw std::runtime_error("Not Implemented");
     }
 
     /**@brief  ListCheckpoints lists all the available checkpoints.
@@ -49,7 +50,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       (void)eventHubName;
       (void)ctx;
       (void)options;
-      throw std::exception("Not Implemented");
+      throw std::runtime_error("Not Implemented");
     }
 
     /**@brief  ListOwnership lists all ownerships.
@@ -66,7 +67,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       (void)consumerGroup;
       (void)ctx;
       (void)options;
-      throw std::exception("Not Implemented");
+      throw std::runtime_error("Not Implemented");
     }
 
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
@@ -79,7 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       (void)checkpoint;
       (void)ctx;
       (void)options;
-      throw std::exception("Not Implemented");
+      throw std::runtime_error("Not Implemented");
     }
 
     virtual ~CheckpointStore() = default;

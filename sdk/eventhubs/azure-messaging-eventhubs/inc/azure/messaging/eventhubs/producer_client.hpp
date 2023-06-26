@@ -92,7 +92,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param eventDataBatch Batch to send
      * @param ctx Request context
      */
-    bool const SendEventDataBatch(
+    bool SendEventDataBatch(
         EventDataBatch& eventDataBatch,
         Azure::Core::Context ctx = Azure::Core::Context());
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data

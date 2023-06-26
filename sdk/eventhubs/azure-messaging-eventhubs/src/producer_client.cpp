@@ -78,10 +78,10 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   Azure::Core::Amqp::_internal::MessageSender sender
       = session.CreateMessageSender(targetUrl, m_producerClientOptions.SenderOptions, nullptr);
   sender.Open();
-  m_senders.insert_or_assign(partitionId, sender);
+  m_senders.emplace(partitionId, sender);
 }
 
-bool const Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
+bool Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
     EventDataBatch& eventDataBatch,
     Azure::Core::Context ctx)
 {

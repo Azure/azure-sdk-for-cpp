@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "models/amqp_message.hpp"
-
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/models/amqp_message.hpp>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 

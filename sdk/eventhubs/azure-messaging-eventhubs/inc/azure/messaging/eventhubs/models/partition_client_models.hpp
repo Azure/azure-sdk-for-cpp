@@ -66,7 +66,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * value using a [CheckpointStore]. See [example_consuming_with_checkpoints_test.go] for an
      * example.
      */
-    StartPosition StartPosition;
+    Models::StartPosition StartPosition;
 
     /**@brief OwnerLevel is the priority for this partition client, also known as the 'epoch' level.
      * When used, a partition client with a higher OwnerLevel will take ownership of a partition

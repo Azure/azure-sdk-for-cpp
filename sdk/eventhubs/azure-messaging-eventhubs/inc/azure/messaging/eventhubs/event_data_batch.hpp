@@ -8,6 +8,7 @@
 #include <azure/core/amqp.hpp>
 
 #include <mutex>
+#include <stdexcept>
 
 // cspell: words vbin
 
@@ -67,7 +68,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       if (!options.PartitionID.empty() && !options.PartitionKey.empty())
       {
-        throw std::exception("Either PartionID or PartitionKey can be set.");
+        throw std::runtime_error("Either PartionID or PartitionKey can be set.");
       }
 
       if (!options.PartitionID.empty())
@@ -90,7 +91,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     };
 
     void SetPartitionID(std::string partitionID) { m_partitionID = partitionID; }
-    void SetPartitionKey(std::string partitionKey) { m_partitionKey = m_partitionKey; }
+    void SetPartitionKey(std::string partitionKey) { m_partitionKey = partitionKey; }
     void SetMaxBytes(uint64_t maxBytes) { m_maxBytes = maxBytes; }
 
     std::string GetPartitionID() { return m_partitionID; }
@@ -122,7 +123,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Gets the number of messages in the batch
      *
      */
-    const size_t CurrentSize()
+    size_t CurrentSize()
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
       return m_currentSize;
@@ -132,7 +133,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       if (m_marshalledMessages.size() == 0)
       {
-        throw std::exception("No messages added to the batch.");
+        throw std::runtime_error("No messages added to the batch.");
       }
 
       /* if (!m_partitionKey.empty())

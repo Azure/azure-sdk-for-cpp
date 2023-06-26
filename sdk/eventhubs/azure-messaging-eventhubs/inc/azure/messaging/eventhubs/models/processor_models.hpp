@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "checkpoint_store_models.hpp"
-#include "eventhubs.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/messaging/eventhubs.hpp>
@@ -51,7 +50,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * partition, or with an overall default value) if a checkpoint is not found
      * in the CheckpointStore. The default position is Latest.
      */
-    StartPositions StartPositions;
+    Models::StartPositions StartPositions;
 
     /**@brief Prefetch represents the size of the internal prefetch buffer for
      * each ProcessorPartitionClient created by this Processor. When

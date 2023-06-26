@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #include "azure/messaging/eventhubs/checkpoint_store.hpp"
+
+#include <stdexcept>
+
 using namespace Azure::Messaging::EventHubs::Models;
 
 std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipName(
@@ -8,7 +11,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipName(
 {
   if (ownership.PartitionID.empty())
   {
-    throw std::exception("missing ownership fields");
+    throw std::runtime_error("missing ownership fields");
   }
   std::stringstream strstr;
   strstr << GetOwnershipPrefixName(ownership) << ownership.PartitionID;
@@ -21,7 +24,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipPrefix
   if (ownership.FullyQualifiedNamespace.empty() || ownership.EventHubName.empty()
       || ownership.ConsumerGroup.empty())
   {
-    throw std::exception("missing ownership fields");
+    throw std::runtime_error("missing ownership fields");
   }
   std::stringstream strstr;
   strstr << ownership.FullyQualifiedNamespace << "/" << ownership.EventHubName << "/"
@@ -36,7 +39,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobP
   if (checkpoint.FullyQualifiedNamespace.empty() || checkpoint.EventHubName.empty()
       || checkpoint.ConsumerGroup.empty())
   {
-    throw std::exception("missing checkpoint fields");
+    throw std::runtime_error("missing checkpoint fields");
   }
   std::stringstream strstr;
   strstr << checkpoint.FullyQualifiedNamespace << "/" << checkpoint.EventHubName << "/"
@@ -50,7 +53,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobN
 {
   if (checkpoint.PartitionID.empty())
   {
-    throw std::exception("missing checkpoint fields");
+    throw std::runtime_error("missing checkpoint fields");
   }
   std::stringstream strstr;
   strstr << GetCheckpointBlobPrefixName(checkpoint) << checkpoint.PartitionID;
@@ -64,14 +67,14 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
   std::string temp = metadata.at("sequencenumber");
   if (temp.empty())
   {
-    throw std::exception("missing sequence number");
+    throw std::runtime_error("missing sequence number");
   }
   checkpoint.SequenceNumber = std::stol(temp);
 
   temp = metadata.at("offset");
   if (temp.empty())
   {
-    throw std::exception("missing offset number");
+    throw std::runtime_error("missing offset number");
   }
 
   checkpoint.Offset = std::stol(temp);
@@ -84,7 +87,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
   std::string temp = blob.Details.Metadata.at("ownerid");
   if (temp.empty())
   {
-    throw std::exception("missing sequence number");
+    throw std::runtime_error("missing sequence number");
   }
   ownership.OwnerID = temp;
   ownership.LastModifiedTime = blob.Details.LastModified;

@@ -13,8 +13,8 @@
 #include <functional>
 
 namespace LocalTest {
-bool testFunc() { return true; };
-bool testNegative() { return false; };
+bool testFunc() { return true; }
+bool testNegative() { return false; }
 Azure::Core::Http::Policies::RetryOptions retryOptions;
 } // namespace LocalTest
 

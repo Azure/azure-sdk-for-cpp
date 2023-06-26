@@ -81,7 +81,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         : m_checkpointStore(checkpointStore), m_consumerClientDetails(consumerClientDetails),
           m_strategy(strategy), m_duration(duration)
     { // seed the rand generator
-      std::srand((uint32_t)std::time(nullptr));
+      std::srand(static_cast<uint32_t>(std::time(nullptr)));
     };
 
     ProcessorLoadBalancer(ProcessorLoadBalancer const& other)

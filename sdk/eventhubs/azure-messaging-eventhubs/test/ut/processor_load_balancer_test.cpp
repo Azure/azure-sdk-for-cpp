@@ -46,8 +46,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
     void RequireBalanced(std::vector<Ownership> ownerships, int totalPartitions, int numConsumers)
     {
-      int min = totalPartitions / numConsumers;
-      int max = min;
+      size_t min = totalPartitions / numConsumers;
+      size_t max = min;
 
       if (totalPartitions % numConsumers > 0)
       {

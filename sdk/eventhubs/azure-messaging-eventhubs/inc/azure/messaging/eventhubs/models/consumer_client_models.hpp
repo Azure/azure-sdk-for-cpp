@@ -41,11 +41,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     std::string ConsumerGroup;
 
-    std::shared_ptr<Core::Credentials::TokenCredential> Credential;
+    std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
     std::shared_ptr<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>
-        SasCredential;
+        SasCredential{};
 
-    std::string HostUrl;
+    std::string HostUrl{};
   };
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

@@ -65,8 +65,8 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
       connectOptions);
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize
-      = (uint32_t)m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
-          std::numeric_limits<int32_t>::max());
+      = static_cast<uint32_t>(m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
+          std::numeric_limits<int32_t>::max()));
 
   Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
 

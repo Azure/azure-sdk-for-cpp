@@ -3,6 +3,8 @@
 
 #include "azure/messaging/eventhubs.hpp"
 
+#include <stdexcept>
+
 // cspell: words lbinfo
 Azure::Messaging::EventHubs::Models::LoadBalancerInfo
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
@@ -141,6 +143,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GreedyLoadBalancer(
     LoadBalancerInfo const& lbInfo,
     Azure::Core::Context ctx)
 {
+  (void)ctx;
   std::vector<Ownership> ours = lbInfo.Current;
   // try claiming from the completely unowned or expires ownerships _first_
   std::vector<Ownership> randomOwneships
@@ -207,7 +210,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
       }
       break;
       default:
-        throw std::exception("unknown strategy");
+        throw std::runtime_error("unknown strategy");
         break;
     }
   }

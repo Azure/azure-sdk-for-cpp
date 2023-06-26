@@ -82,7 +82,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     void Close()
     {
-      for (int i = 0; i < m_receivers.size(); i++)
+      for (size_t i = 0; i < m_receivers.size(); i++)
       {
         m_receivers[i].Close();
       }

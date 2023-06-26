@@ -46,23 +46,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::string ConsumerGroup;
     std::string EventHubName;
     std::string FullyQualifiedNamespace;
-    std::string PartitionID;
-    std::string OwnerID; // the owner ID of the Processor
+    std::string PartitionID{};
+    std::string OwnerID{}; // the owner ID of the Processor
     Azure::Nullable<Azure::ETag>
-        ETag; // the ETag, used when attempting to claim or update ownership of a partition.
+        ETag{}; // the ETag, used when attempting to claim or update ownership of a partition.
     Azure::Nullable<Azure::DateTime>
-        LastModifiedTime; // used when calculating if ownership has expired
+        LastModifiedTime{}; // used when calculating if ownership has expired
   };
 
   /**@brief Checkpoint tracks the last successfully processed event in a partition.
    */
   struct Checkpoint
   {
-    std::string ConsumerGroup;
-    std::string EventHubName;
-    std::string FullyQualifiedNamespace;
-    std::string PartitionID;
-    Azure::Nullable<int64_t> Offset; // the last successfully processed Offset.
-    Azure::Nullable<int64_t> SequenceNumber; // the last successfully processed SequenceNumber.
+    std::string ConsumerGroup{};
+    std::string EventHubName{};
+    std::string FullyQualifiedNamespace{};
+    std::string PartitionID{};
+    Azure::Nullable<int64_t> Offset{}; // the last successfully processed Offset.
+    Azure::Nullable<int64_t> SequenceNumber{}; // the last successfully processed SequenceNumber.
   };
 }}}} // namespace Azure::Messaging::EventHubs::Models
