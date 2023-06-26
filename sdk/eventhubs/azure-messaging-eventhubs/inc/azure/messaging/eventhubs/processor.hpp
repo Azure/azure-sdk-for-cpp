@@ -110,11 +110,12 @@ public:
     time_t timeNowSeconds = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
-    while (!ctx.IsCancelled())
+    //TODO : this is where we re load balance on the update interval
+    /* while (!ctx.IsCancelled())
     {
       std::this_thread::sleep_for(m_ownershipUpdateInterval);
       Dispatch(eventHubProperties, consumers, ctx);
-    }
+    }*/
   }
 
   void Dispatch(
