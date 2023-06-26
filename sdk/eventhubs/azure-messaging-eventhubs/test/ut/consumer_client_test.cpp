@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+// cspell: words hehe
+
 #include "gtest/gtest.h"
 
 #include <azure/core/context.hpp>
@@ -31,11 +33,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=haha";
+        + ";EntityPath=hehe";
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$DefaultZ");
-    EXPECT_EQ("haha", client.GetEventHubName());
+    EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$DefaultZ", client.GetConsumerGroup());
   }
 
@@ -43,9 +45,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=haha";
+        + ";EntityPath=hehe";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, "eventhub");
-    EXPECT_EQ("haha", client.GetEventHubName());
+    EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 
@@ -53,9 +55,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=haha";
+        + ";EntityPath=hehe";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
-    EXPECT_EQ("haha", client.GetEventHubName());
+    EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 

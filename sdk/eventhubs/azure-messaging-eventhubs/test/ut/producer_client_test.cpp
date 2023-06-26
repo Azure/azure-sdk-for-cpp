@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+// cspell: words gearamaeh1
+
 #include "gtest/gtest.h"
 
 #include <azure/core/context.hpp>
