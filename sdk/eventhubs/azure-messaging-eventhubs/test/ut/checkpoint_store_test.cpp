@@ -1,21 +1,27 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <gtest/gtest.h>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+
+  class CheckpointStoreTest : public EventHubsTestBase {};
+
   std::string GetRandomName()
   {
     std::string name = "checkpoint";
     name.append(Azure::Core::Uuid::CreateUuid().ToString());
     return name;
   }
-  TEST(CheckpointStoreTest, TestCheckpoints)
+
+  TEST_F(CheckpointStoreTest, TestCheckpoints_LIVEONLY)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
@@ -67,7 +73,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-  TEST(CheckpointStoreTest, TestOwnerships)
+  TEST_F(CheckpointStoreTest, TestOwnerships_LIVEONLY)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(

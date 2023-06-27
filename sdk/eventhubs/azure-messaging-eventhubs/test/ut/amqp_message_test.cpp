@@ -1,13 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/messaging/eventhubs.hpp>
 
+#include <gtest/gtest.h>
+
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
-TEST(AmqpMessageTest, EventData1)
+
+class AmqpMessageTest : public EventHubsTestBase {};
+
+TEST_F(AmqpMessageTest, EventData1)
 {
   Azure::Messaging::EventHubs::Models::EventData eventData;
 
@@ -26,7 +31,7 @@ TEST(AmqpMessageTest, EventData1)
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
 }
 
-TEST(AmqpMessageTest, EventDataNew)
+TEST_F(AmqpMessageTest, EventDataNew)
 {
   Azure::Messaging::EventHubs::Models::EventData eventData;
 
@@ -38,7 +43,7 @@ TEST(AmqpMessageTest, EventDataNew)
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
 }
 
-TEST(AmqpMessageTest, AmqpMessage)
+TEST_F(AmqpMessageTest, AmqpMessage)
 {
   Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage msg;
 
@@ -50,7 +55,7 @@ TEST(AmqpMessageTest, AmqpMessage)
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
 }
 
-TEST(AmqpMessageTest, AmqpMessage2)
+TEST_F(AmqpMessageTest, AmqpMessage2)
 {
   Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage msg;
   msg.Body.Value = AmqpValue("3");

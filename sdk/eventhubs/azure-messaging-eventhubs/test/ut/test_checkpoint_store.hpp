@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "gtest/gtest.h"
 
 #include <azure/core/context.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   class TestCheckpointStore : public Azure::Messaging::EventHubs::CheckpointStore {

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -12,6 +12,8 @@
 
 #include <functional>
 
+#include <gtest/gtest.h>
+
 namespace LocalTest {
 bool testFunc() { return true; }
 bool testNegative() { return false; }
@@ -19,40 +21,41 @@ Azure::Core::Http::Policies::RetryOptions retryOptions;
 } // namespace LocalTest
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
-  TEST(RetryOperationTest, ExecuteTrue)
+  class RetryOperationTest : public EventHubsTestBase {};
+  TEST_F(RetryOperationTest, ExecuteTrue)
   {
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
     EXPECT_TRUE(retryOp.Execute(LocalTest::testFunc));
   }
 
-  TEST(RetryOperationTest, ExecuteFalse)
+  TEST_F(RetryOperationTest, ExecuteFalse)
   {
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
     EXPECT_FALSE(retryOp.Execute(LocalTest::testNegative));
   }
 
-  TEST(RetryOperationTest, ShouldRetryTrue1)
+  TEST_F(RetryOperationTest, ShouldRetryTrue1)
   {
     std::chrono::milliseconds retryAfter{};
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
     EXPECT_FALSE(retryOp.ShouldRetry(true, 0, retryAfter));
   }
 
-  TEST(RetryOperationTest, ShouldRetryTrue2)
+  TEST_F(RetryOperationTest, ShouldRetryTrue2)
   {
     std::chrono::milliseconds retryAfter{};
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
     EXPECT_FALSE(retryOp.ShouldRetry(true, LocalTest::retryOptions.MaxRetries, retryAfter));
   }
 
-  TEST(RetryOperationTest, ShouldRetryFalse1)
+  TEST_F(RetryOperationTest, ShouldRetryFalse1)
   {
     std::chrono::milliseconds retryAfter{};
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);
     EXPECT_TRUE(retryOp.ShouldRetry(false, 0, retryAfter));
   }
 
-  TEST(RetryOperationTest, ShouldRetryFalse2)
+  TEST_F(RetryOperationTest, ShouldRetryFalse2)
   {
     std::chrono::milliseconds retryAfter{};
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);

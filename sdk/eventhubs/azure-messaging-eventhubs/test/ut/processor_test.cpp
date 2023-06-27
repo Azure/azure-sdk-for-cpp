@@ -1,15 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <gtest/gtest.h>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+  class ProcessorTest : public EventHubsTestBase {};
   namespace {
 
     std::string GetRandomName()
@@ -20,17 +22,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
   } // namespace
-  TEST(ProcessorTest, LoadBalancing)
+  TEST_F(ProcessorTest, LoadBalancing_LIVEONLY)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
-        Azure::Core::_internal::Environment::GetVariable(
-            "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName);
+        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName);
 
     std::string const connStringNoEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 

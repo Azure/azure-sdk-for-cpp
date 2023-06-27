@@ -3,13 +3,16 @@
 
 // cspell: words hehe
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
+
+#include <gtest/gtest.h>
+
 namespace LocalTest {
+
 int i = 0;
 void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 {
@@ -18,21 +21,22 @@ void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+  class ConsumerClientTest : public EventHubsTestBase {};
 
-  TEST(ConsumerClientTest, ConnectionStringNoEntityPath)
+  TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY)
   {
     std::string const connStringNoEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
+        = GetEnv("EVENTHUB_CONNECTION_STRING");
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$Default");
     EXPECT_EQ("eventhub", client.GetEventHubName());
   }
 
-  TEST(ConsumerClientTest, ConnectionStringEntityPath)
+  TEST_F(ConsumerClientTest, ConnectionStringEntityPath_LIVEONLY)
   {
     std::string const connStringNoEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        = GetEnv("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=hehe";
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
@@ -41,30 +45,30 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("$DefaultZ", client.GetConsumerGroup());
   }
 
-  TEST(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroup)
+  TEST_F(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroup_LIVEONLY)
   {
     std::string const connStringNoEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        = GetEnv("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=hehe";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, "eventhub");
     EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 
-  TEST(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroupNoEventHub)
+  TEST_F(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroupNoEventHub_LIVEONLY)
   {
     std::string const connStringNoEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        = GetEnv("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=hehe";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
     EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 
-  TEST(ConsumerClientTest, ConnectToPartition)
+  TEST_F(ConsumerClientTest, ConnectToPartition_LIVEONLY)
   {
     std::string const connStringNoEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        = GetEnv("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=eventhub";
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
@@ -85,10 +89,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(events.size(), 1);
   }
 
-  TEST(ConsumerClientTest, GetEventHubProperties)
+  TEST_F(ConsumerClientTest, GetEventHubProperties_LIVEONLY)
   {
     std::string const connStringEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+        = GetEnv("EVENTHUB_CONNECTION_STRING")
         + ";EntityPath=eventhub";
 
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
@@ -111,11 +115,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(result.PartitionIDs.size() > 0);
   }
 
-  TEST(ConsumerClientTest, GetPartitionProperties)
+  TEST_F(ConsumerClientTest, GetPartitionProperties_LIVEONLY)
   {
+
     std::string const connStringEntityPath
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
 
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";

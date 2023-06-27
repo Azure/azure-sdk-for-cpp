@@ -3,39 +3,41 @@
 
 // cspell: words gearamaeh1
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
-#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
 #include <numeric>
-TEST(ProducerClientTest, ConnectionStringNoEntityPath)
+
+#include <gtest/gtest.h>
+
+class ProducerClientTest : public EventHubsTestBase {};
+
+TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY)
 {
-  std::string const connStringNoEntityPath
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
+  std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(connStringNoEntityPath, "eventhub");
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
-TEST(ProducerClientTest, ConnectionStringEntityPath)
+TEST_F(ProducerClientTest, ConnectionStringEntityPath_LIVEONLY)
 {
   std::string const connStringEntityPath
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-      + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(connStringEntityPath, "eventhub");
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
-TEST(ProducerClientTest, TokenCredential)
+TEST_F(ProducerClientTest, TokenCredential_LIVEONLY)
 {
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUB_TENANT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_ID"),
-      Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CLIENT_SECRET"))};
+      GetEnv("EVENTHUBS_TENANT_ID"),
+      GetEnv("EVENTHUBS_CLIENT_ID"),
+      GetEnv("EVENTHUBS_CLIENT_SECRET"))};
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.ApplicationID = "appId";
   auto client = Azure::Messaging::EventHubs::ProducerClient(
@@ -43,11 +45,10 @@ TEST(ProducerClientTest, TokenCredential)
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
-TEST(ProducerClientTest, SendMessage)
+TEST_F(ProducerClientTest, SendMessage_LIVEONLY)
 {
   std::string const connStringEntityPath
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-      + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
 
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
@@ -94,11 +95,10 @@ TEST(ProducerClientTest, SendMessage)
   }
 }
 
-TEST(ProducerClientTest, GetEventHubProperties)
+TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY)
 {
   std::string const connStringEntityPath
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-      + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
 
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
@@ -117,11 +117,10 @@ TEST(ProducerClientTest, GetEventHubProperties)
   EXPECT_TRUE(result.PartitionIDs.size() > 0);
 }
 
-TEST(ProducerClientTest, GetPartitionProperties)
+TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY)
 {
   std::string const connStringEntityPath
-      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
-      + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
 
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";

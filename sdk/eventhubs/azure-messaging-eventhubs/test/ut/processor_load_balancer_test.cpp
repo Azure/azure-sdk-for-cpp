@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include "eventhubs_test_base.hpp"
 #include "test_checkpoint_store.hpp"
 
 #include <azure/core/context.hpp>
@@ -9,7 +9,12 @@
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
+
+#include <gtest/gtest.h>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+
+  class ProcessorLoadBalancerTest : public EventHubsTestBase {};
 
   namespace {
     const std::string testEventHubFQDN = "fqdn";
@@ -97,7 +102,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return commons;
     }
   } // namespace
-  TEST(ProcessorLoadBalancerTest, Greedy_EnoughUnownedPartitions)
+  TEST_F(ProcessorLoadBalancerTest, Greedy_EnoughUnownedPartitions)
   {
     Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -120,7 +125,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(finalOwneships.size(), 4);
   }
 
-  TEST(ProcessorLoadBalancerTest, Balanced_UnownedPartitions)
+  TEST_F(ProcessorLoadBalancerTest, Balanced_UnownedPartitions)
   {
     Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -148,7 +153,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         2);
   }
 
-  TEST(ProcessorLoadBalancerTest, Greedy_ForcedToSteal)
+  TEST_F(ProcessorLoadBalancerTest, Greedy_ForcedToSteal)
   {
     Azure::Messaging::EventHubs::Test::TestCheckpointStore checkpointStore;
 
@@ -175,7 +180,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(commons.size(), 0);
   }
 
-  TEST(ProcessorLoadBalancerTest, AnyStrategy_GetExpiredPartition)
+  TEST_F(ProcessorLoadBalancerTest, AnyStrategy_GetExpiredPartition)
   {
     for (auto strategy :
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
@@ -214,7 +219,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
-  TEST(ProcessorLoadBalancerTest, AnyStrategy_FullyBalancedOdd)
+  TEST_F(ProcessorLoadBalancerTest, AnyStrategy_FullyBalancedOdd)
   {
     for (auto strategy :
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
@@ -277,7 +282,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
-  TEST(ProcessorLoadBalancerTest, AnyStrategy_FullyBalancedEven)
+  TEST_F(ProcessorLoadBalancerTest, AnyStrategy_FullyBalancedEven)
   {
     for (auto strategy :
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
@@ -338,7 +343,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
-  TEST(ProcessorLoadBalancerTest, AnyStrategy_GrabExtraPartitionBecauseAboveMax)
+  TEST_F(ProcessorLoadBalancerTest, AnyStrategy_GrabExtraPartitionBecauseAboveMax)
   {
     for (auto strategy :
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
@@ -378,7 +383,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
-  TEST(ProcessorLoadBalancerTest, AnyStrategy_StealsToBalance)
+  TEST_F(ProcessorLoadBalancerTest, AnyStrategy_StealsToBalance)
   {
     for (auto strategy :
          {Azure::Messaging::EventHubs::Models::ProcessorStrategy::ProcessorStrategyBalanced,
