@@ -109,7 +109,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *  SharedAccessKeyName=<key-name>;SharedAccessKey=<key>;EntityPath=<entitypath>;
      */
     ConsumerClient(
-        std::string const& connectionsString,
+        std::string const& connectionString,
         std::string const& eventHub = "",
         std::string const& consumerGroup = "$Default",
         Models::ConsumerClientOptions const& options = {});

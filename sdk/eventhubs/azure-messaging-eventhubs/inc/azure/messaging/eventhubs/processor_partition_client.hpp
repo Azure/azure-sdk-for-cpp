@@ -81,7 +81,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-            sequenceNumber = static_cast<size_t>(pair.second);
+            sequenceNumber = static_cast<int64_t>(pair.second);
         }
         if (pair.first == offsetNumberAnnotation)
         {
@@ -89,7 +89,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-            offsetNumber = static_cast<size_t>(pair.second);
+            offsetNumber = static_cast<int64_t>(pair.second);
         }
       }
 

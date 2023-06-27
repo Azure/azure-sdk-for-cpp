@@ -30,7 +30,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
    */
   struct ProcessorOptions
   {
-    /**@briefLoadBalancingStrategy dictates how concurrent Processor instances distribute
+    /**@brief LoadBalancingStrategy dictates how concurrent Processor instances distribute
      * ownership of partitions between them.
      * The default strategy is ProcessorStrategyBalanced.
      */

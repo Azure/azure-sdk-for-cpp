@@ -95,7 +95,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
   std::vector<Ownership> randomOwnerships;
   std::vector<Ownership> remainingOwnerships = ownerships;
 
-  uint64_t numOwnerships = std::min(ownerships.size(), count);
+  uint64_t numOwnerships = std::min(static_cast<uint64_t>(ownerships.size()), count);
 
   for (uint64_t i = 0; i < numOwnerships; i++)
   {

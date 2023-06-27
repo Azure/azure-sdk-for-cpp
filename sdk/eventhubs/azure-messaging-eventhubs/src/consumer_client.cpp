@@ -116,7 +116,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
   Models::EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
   {
-    std::string ss = "Error: " + result.Message.ApplicationProperties["status-description"];
+    std::string ss = "Error: " + static_cast<std::string>(result.Message.ApplicationProperties["status-description"]);
     Log::Write(Logger::Level::Error, ss);
   }
   else
