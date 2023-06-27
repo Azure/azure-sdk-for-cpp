@@ -21,7 +21,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     return name;
   }
 
-  TEST_F(CheckpointStoreTest, TestCheckpoints_LIVEONLY)
+  TEST_F(CheckpointStoreTest, TestCheckpoints_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
@@ -73,7 +73,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-  TEST_F(CheckpointStoreTest, TestOwnerships_LIVEONLY)
+  TEST_F(CheckpointStoreTest, TestOwnerships_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(

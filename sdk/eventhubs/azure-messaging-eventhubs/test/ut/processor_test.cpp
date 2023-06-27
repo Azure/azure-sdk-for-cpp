@@ -22,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
   } // namespace
-  TEST_F(ProcessorTest, LoadBalancing_LIVEONLY)
+  TEST_F(ProcessorTest, LoadBalancing_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(

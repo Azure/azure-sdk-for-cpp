@@ -15,7 +15,7 @@
 
 class ProducerClientTest : public EventHubsTestBase {};
 
-TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY)
+TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
 {
   std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
 
@@ -23,7 +23,7 @@ TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY)
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
-TEST_F(ProducerClientTest, ConnectionStringEntityPath_LIVEONLY)
+TEST_F(ProducerClientTest, ConnectionStringEntityPath_LIVEONLY_)
 {
   std::string const connStringEntityPath
       = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
@@ -32,7 +32,7 @@ TEST_F(ProducerClientTest, ConnectionStringEntityPath_LIVEONLY)
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
-TEST_F(ProducerClientTest, TokenCredential_LIVEONLY)
+TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
 {
   auto credential{std::make_shared<Azure::Identity::ClientSecretCredential>(
       GetEnv("EVENTHUBS_TENANT_ID"),
@@ -45,7 +45,7 @@ TEST_F(ProducerClientTest, TokenCredential_LIVEONLY)
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
-TEST_F(ProducerClientTest, SendMessage_LIVEONLY)
+TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 {
   std::string const connStringEntityPath
       = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
@@ -95,7 +95,7 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY)
   }
 }
 
-TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY)
+TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 {
   std::string const connStringEntityPath
       = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
@@ -117,7 +117,7 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY)
   EXPECT_TRUE(result.PartitionIDs.size() > 0);
 }
 
-TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY)
+TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
 {
   std::string const connStringEntityPath
       = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
