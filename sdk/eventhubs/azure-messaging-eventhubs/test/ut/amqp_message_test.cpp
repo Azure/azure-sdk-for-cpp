@@ -10,7 +10,8 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class AmqpMessageTest : public EventHubsTestBase {};
+class AmqpMessageTest : public EventHubsTestBase {
+};
 
 TEST_F(AmqpMessageTest, EventData1)
 {

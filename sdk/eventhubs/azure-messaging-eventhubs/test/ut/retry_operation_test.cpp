@@ -21,7 +21,8 @@ Azure::Core::Http::Policies::RetryOptions retryOptions;
 } // namespace LocalTest
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
-  class RetryOperationTest : public EventHubsTestBase {};
+  class RetryOperationTest : public EventHubsTestBase {
+  };
   TEST_F(RetryOperationTest, ExecuteTrue)
   {
     Azure::Messaging::EventHubs::_internal::RetryOperation retryOp(LocalTest::retryOptions);

@@ -10,6 +10,5 @@ class EventHubsTestBase : public Azure::Core::Test::TestBase {
   virtual void SetUp() override
   {
     Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-
   }
 };

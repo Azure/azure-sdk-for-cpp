@@ -14,7 +14,8 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class ProcessorLoadBalancerTest : public EventHubsTestBase {};
+  class ProcessorLoadBalancerTest : public EventHubsTestBase {
+  };
 
   namespace {
     const std::string testEventHubFQDN = "fqdn";

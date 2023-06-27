@@ -19,7 +19,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
-    SetCompileOptions(MESSAGING)
+    SetCompileOptions(EVENTHUBS)
 endif()
 
 include(AzureVersion)

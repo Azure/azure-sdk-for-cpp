@@ -21,12 +21,12 @@ void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {};
+  class ConsumerClientTest : public EventHubsTestBase {
+  };
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
-    std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING");
+    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$Default");
@@ -36,8 +36,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, ConnectionStringEntityPath_LIVEONLY_)
   {
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=hehe";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$DefaultZ");
@@ -48,8 +47,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroup_LIVEONLY_)
   {
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=hehe";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, "eventhub");
     EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
@@ -58,8 +56,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroupNoEventHub_LIVEONLY_)
   {
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=hehe";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
     EXPECT_EQ("hehe", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
@@ -68,8 +65,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, ConnectToPartition_LIVEONLY_)
   {
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
@@ -92,8 +88,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, GetEventHubProperties_LIVEONLY_)
   {
     std::string const connStringEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING")
-        + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
 
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
