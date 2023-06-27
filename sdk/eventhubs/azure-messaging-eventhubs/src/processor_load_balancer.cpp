@@ -90,16 +90,16 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
     std::vector<Ownership> const& ownerships,
-    uint64_t const& count)
+    size_t const count)
 {
   std::vector<Ownership> randomOwnerships;
   std::vector<Ownership> remainingOwnerships = ownerships;
 
-  uint64_t numOwnerships = std::min(static_cast<uint64_t>(ownerships.size()), count);
+  size_t numOwnerships = std::min(ownerships.size(), count);
 
-  for (uint64_t i = 0; i < numOwnerships; i++)
+  for (size_t i = 0; i < numOwnerships; i++)
   {
-    uint64_t randomIndex = std::rand() % remainingOwnerships.size();
+    size_t randomIndex = std::rand() % remainingOwnerships.size();
     randomOwnerships.push_back(remainingOwnerships[randomIndex]);
     remainingOwnerships.erase(remainingOwnerships.begin() + randomIndex);
   }

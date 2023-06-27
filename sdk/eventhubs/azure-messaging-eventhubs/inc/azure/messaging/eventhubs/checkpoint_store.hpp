@@ -114,7 +114,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   public:
     BlobCheckpointStore(BlobCheckpointStore const& other)
-        : m_connectionString(other.m_connectionString), m_containerName(other.m_containerName),
+        : CheckpointStore(), m_connectionString(other.m_connectionString),
+          m_containerName(other.m_containerName),
           m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
               other.m_connectionString,
               other.m_containerName))
@@ -137,7 +138,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     BlobCheckpointStore(std::string const& connectionString, std::string const& containerName)
-        : m_connectionString(connectionString), m_containerName(containerName),
+        : CheckpointStore(), m_connectionString(connectionString), m_containerName(containerName),
           m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
               connectionString,
               containerName))

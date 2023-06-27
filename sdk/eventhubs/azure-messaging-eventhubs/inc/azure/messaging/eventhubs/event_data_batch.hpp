@@ -34,7 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const std::string EnqueuedTimeAnnotation = "x-opt-enqueued-time";
 
     Azure::Core::Amqp::Models::AmqpMessage m_batchEnvelope;
-    uint64_t m_currentSize;
+    size_t m_currentSize;
 
   public:
     EventDataBatch(EventDataBatch const& other)

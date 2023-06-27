@@ -51,7 +51,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     std::vector<Ownership> GetRandomOwnerships(
         std::vector<Ownership> const& ownerships,
-        uint64_t const& count);
+        size_t const count);
 
     Ownership ResetOwnership(Ownership ownership);
 

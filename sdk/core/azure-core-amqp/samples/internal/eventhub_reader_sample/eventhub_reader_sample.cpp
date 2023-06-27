@@ -3,12 +3,12 @@
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <chrono>
 #include <iostream>
 #include <limits>
 #include <string>
-#include <azure/core/internal/environment.hpp>
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()
@@ -23,7 +23,7 @@ int main()
   std::string hostUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
       + "/ConsumerGroups/$Default/Partitions/1";
   */
-    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+  Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "whatever";
   connectionOptions.EnableTrace = false;
   connectionOptions.SaslCredentials
@@ -48,7 +48,7 @@ int main()
   Azure::Core::Amqp::_internal::MessageReceiver receiver(session, hostUrl, receiverOptions);
 
   // Open the connection to the remote.
-  receiver.Open();  
+  receiver.Open();
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 

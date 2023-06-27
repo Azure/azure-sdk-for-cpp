@@ -9,7 +9,6 @@
 #include <iostream>
 #include <limits>
 #include <string>
-#include <azure/core/internal/environment.hpp>
 
 int main()
 {
@@ -39,7 +38,6 @@ int main()
   constexpr int maxMessageSendCount = 1000;
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
-
 
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
   senderOptions.EnableTrace = true;
