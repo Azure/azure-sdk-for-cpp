@@ -6,9 +6,6 @@
       "name": "azure-core-cpp"
     },
     {
-      "name": "azure-core-amqp-cpp"
-    },
-    {
       "name": "azure-storage-blobs-cpp"
     }
   ]
