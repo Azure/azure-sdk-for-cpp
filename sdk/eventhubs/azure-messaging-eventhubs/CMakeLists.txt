@@ -33,7 +33,7 @@ include(AzureBuildTargetForCI)
 include(CreateMapFile)
 
 if(FETCH_SOURCE_DEPS)
-    GetFolderList(KEYS)
+    GetFolderList(EVENTHUBS)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
