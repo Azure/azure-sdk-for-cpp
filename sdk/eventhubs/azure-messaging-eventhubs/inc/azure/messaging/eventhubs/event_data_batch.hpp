@@ -190,10 +190,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_marshalledMessages.push_back(serializedMessage);
     }
 
-    uint64_t CalculateActualSizeForPayload(std::vector<uint8_t> payload)
+    size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
-      const uint64_t vbin8Overhead = 5;
-      const uint64_t vbin32Overhead = 8;
+      const size_t vbin8Overhead = 5;
+      const size_t vbin32Overhead = 8;
 
       if (payload.size() < 256)
       {

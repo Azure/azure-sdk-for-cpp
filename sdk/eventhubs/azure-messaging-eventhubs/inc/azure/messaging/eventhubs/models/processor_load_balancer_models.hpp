@@ -19,25 +19,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   struct LoadBalancerInfo
   {
-    // current are the partitions that _we_ own
+    /// current are the partitions that _we_ own
     std::vector<Ownership> Current;
 
-    // unownedOrExpired partitions either had no claim _ever_ or were once
-    // owned but the ownership claim has expired.
+    /// unownedOrExpired partitions either had no claim _ever_ or were once
+    /// owned but the ownership claim has expired.
     std::vector<Ownership> UnownedOrExpired;
 
-    // aboveMax are ownerships where the specific owner has too many partitions
-    // it contains _all_ the partitions for that particular consumer.
+    /// aboveMax are ownerships where the specific owner has too many partitions
+    /// it contains _all_ the partitions for that particular consumer.
     std::vector<Ownership> AboveMax;
 
-    // maxAllowed is the maximum number of partitions a consumer should have
-    // If partitions do not divide evenly this will be the "theoretical" max
-    // with the assumption that this particular consumer will get an extra
-    // partition.
-    uint64_t MaxAllowed;
+    /// maxAllowed is the maximum number of partitions a consumer should have
+    /// If partitions do not divide evenly this will be the "theoretical" max
+    /// with the assumption that this particular consumer will get an extra
+    /// partition.
+    size_t MaxAllowed;
 
-    // extraPartitionPossible is true if the partitions cannot split up evenly
-    // amongst all the known consumers.
+    /// extraPartitionPossible is true if the partitions cannot split up evenly
+    /// amongst all the known consumers.
     bool ExtraPartitionPossible;
 
     std::vector<Ownership> Raw;

@@ -58,7 +58,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     });
   }
 
-  uint64_t maxAllowed = partitionIDs.size() / groupedByOwner.size();
+  size_t maxAllowed = partitionIDs.size() / groupedByOwner.size();
   bool hasRemainder = (partitionIDs.size() % groupedByOwner.size()) > 0;
   if (hasRemainder)
   {
@@ -123,14 +123,14 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
   std::vector<Ownership> ours;
   if (lbinfo.UnownedOrExpired.size() > 0)
   {
-    uint64_t index = std::rand() % lbinfo.UnownedOrExpired.size();
+    size_t index = std::rand() % lbinfo.UnownedOrExpired.size();
     Ownership ownership = ResetOwnership(lbinfo.UnownedOrExpired[index]);
     ours.push_back(ownership);
   }
 
   if (lbinfo.AboveMax.size() > 0)
   {
-    uint64_t index = std::rand() % lbinfo.AboveMax.size();
+    size_t index = std::rand() % lbinfo.AboveMax.size();
     Ownership ownership = ResetOwnership(lbinfo.AboveMax[index]);
     ours.push_back(ownership);
   }
