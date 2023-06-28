@@ -217,7 +217,7 @@ AccessToken TokenCredentialImpl::ParseToken(
     if (expiresOn.is_string())
     {
       auto const expiresOnAsString = expiresOn.get<std::string>();
-      for (auto const parse : {
+      for (auto const& parse : {
                std::function<DateTime(std::string const&)>([](auto const& s) {
                  // 'expires_on' as RFC3339 date string (absolute timestamp)
                  return DateTime::Parse(s, DateTime::DateFormat::Rfc3339);
