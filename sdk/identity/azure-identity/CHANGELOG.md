@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [#4723]](https://github.com/Azure/azure-sdk-for-cpp/issues/4723) Accept a wider variety of token responses.
+
 ### Other Changes
 
 ## 1.5.0 (2023-05-04)
