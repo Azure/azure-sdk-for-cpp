@@ -198,7 +198,7 @@ std::string TokenAsDiagnosticString(
     }
 
     std::map<std::string, json> otherProperties;
-    for (auto const property : jsonObject.items())
+    for (auto const& property : jsonObject.items())
     {
       if (property.key() != accessTokenPropertyName && property.key() != expiresInPropertyName
           && property.key() != expiresOnPropertyName)
