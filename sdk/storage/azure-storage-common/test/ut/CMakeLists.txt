@@ -16,7 +16,6 @@ SetUpTestProxy("sdk/storage")
 
 add_executable (
   azure-storage-common-test
-    bearer_token_test.cpp
     crypt_functions_test.cpp
     metadata_test.cpp
     storage_credential_test.cpp
