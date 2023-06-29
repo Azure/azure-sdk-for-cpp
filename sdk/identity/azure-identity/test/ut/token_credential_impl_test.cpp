@@ -4,6 +4,9 @@
 #include "credential_test_helper.hpp"
 #include "private/token_credential_impl.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/json/json.hpp>
+
 #include <memory>
 #include <utility>
 
@@ -662,4 +665,314 @@ TEST(TokenCredentialImpl, ExpirationFormats)
   EXPECT_EQ(response41.AccessToken.ExpiresOn, DateTime(3333, 11, 22, 4, 5, 6));
   EXPECT_EQ(response42.AccessToken.ExpiresOn, DateTime(3333, 11, 22, 4, 5, 6));
   EXPECT_EQ(response43.AccessToken.ExpiresOn, DateTime(3333, 11, 22, 4, 5, 6));
+}
+
+TEST(TokenCredentialImpl, Diagnosability)
+{
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Json::_internal::json;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+
+  Logger::SetLevel(Logger::Level::Verbose);
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    EXPECT_THROW(
+        static_cast<void>(TokenCredentialImpl::ParseToken(
+            "ERROR: Please run az login to setup account.",
+            "TokenForAccessing",
+            "TokenExpiresInSeconds",
+            "TokenExpiresAtTime")),
+        json::exception);
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Cannot parse the string 'ERROR: Please run az login to setup account.' as JSON.");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{}", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is NOT present, "
+        "relative expiration property ('TokenExpiresInSeconds') is NOT present, "
+        "absolute expiration property ('TokenExpiresAtTime') is NOT present, "
+        "and there are no other properties.");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":{}}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is NOT a string (value='{}'), "
+        "relative expiration property ('TokenExpiresInSeconds') is NOT present, "
+        "absolute expiration property ('TokenExpiresAtTime') is NOT present, "
+        "and there are no other properties.");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":\"ACCESSTOKEN\"}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenExpiresAtTime' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is string (length=11), "
+        "relative expiration property ('TokenExpiresInSeconds') is NOT present, "
+        "absolute expiration property ('TokenExpiresAtTime') is NOT present, "
+        "and there are no other properties.");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":\"ACCESSTOKEN\","
+          "\"TokenExpiresInSeconds\":\"one\""
+          "}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          {}));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenExpiresInSeconds' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is string (length=11), "
+        "relative expiration property ('TokenExpiresInSeconds') is present (value='\"one\"'), "
+        "absolute expiration property ('') is NOT present, "
+        "and there are no other properties.");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":\"ACCESSTOKEN\","
+          "\"TokenExpiresInSeconds\":1.5,"
+          "\"TokenExpiresAtTime\":null,"
+          "\"token_expires_at_time\":\"Sun, 22 Nov 3333 04:05:06 GMT\""
+          "}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenExpiresAtTime' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is string (length=11), "
+        "relative expiration property ('TokenExpiresInSeconds') is present (value='1.5'), "
+        "absolute expiration property ('TokenExpiresAtTime') is present (value='null'), "
+        "other properties: 'token_expires_at_time' (value='\"Sun, 22 Nov 3333 04:05:06 GMT\"').");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":\"ACCESSTOKEN\","
+          "\"TokenExpiresAtTime\":\"Sunday, November 22nd of 3333 A.D. at 6 seconds past 405 "
+          "Zulu\","
+          "\"token_expires_at_time\":\"Sun, 22 Nov 3333 04:05:06 GMT\","
+          "\"token_expires_in_seconds\":45"
+          "}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenExpiresAtTime' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is string (length=11), "
+        "relative expiration property ('TokenExpiresInSeconds') is NOT present, "
+        "absolute expiration property ('TokenExpiresAtTime') is present "
+        "(value='\"Sunday, November 22nd of 3333 A.D. at 6 seconds past 405 Zulu\"'), "
+        "other properties: 'token_expires_at_time' (value='\"Sun, 22 Nov 3333 04:05:06 GMT\"'), "
+        "'token_expires_in_seconds' (value='45').");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"TokenForAccessing\":\"ACCESSTOKEN\","
+          "\"TokenExpiresInSeconds\":-1,"
+          "\"TokenExpiresAtTime\":true,"
+          "\"tokenexpiresattime\":\"Sun, 22 Nov 3333 04:05:06 GMT\","
+          "\"token_expires_in_seconds\":45,"
+          "\"token_for_accessing\":\"ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN."
+          "ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN\","
+          "\"string_array\":[\"ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN."
+          "ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN.ACCESSTOKEN\"]"
+          "}",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenExpiresAtTime' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Token JSON: Access token property ('TokenForAccessing') is string (length=11), "
+        "relative expiration property ('TokenExpiresInSeconds') is present (value='-1'), "
+        "absolute expiration property ('TokenExpiresAtTime') is present (value='true'), "
+        "other properties: "
+        "'string_array' (value size=147), "
+        "'token_expires_in_seconds' (value='45'), "
+        "'token_for_accessing' (string length=143), "
+        "'tokenexpiresattime' (value='\"Sun, 22 Nov 3333 04:05:06 GMT\"').");
+
+    Logger::SetListener(nullptr);
+  }
+
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    EXPECT_NO_THROW(static_cast<void>(TokenCredentialImpl::ParseToken(
+        "{\"TokenForAccessing\":\"ACCESSTOKEN\","
+        "\"TokenExpiresInSeconds\":3600,"
+        "\"TokenExpiresAtTime\":\"Sun, 22 Nov 3333 04:05:06 GMT\""
+        "}",
+        "TokenForAccessing",
+        "TokenExpiresInSeconds",
+        "TokenExpiresAtTime")));
+
+    EXPECT_EQ(log.size(), 0U);
+
+    Logger::SetListener(nullptr);
+  }
 }

@@ -3,16 +3,20 @@
 
 #include "private/token_credential_impl.hpp"
 
+#include "private/identity_log.hpp"
 #include "private/package_version.hpp"
 
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/url.hpp>
 
 #include <chrono>
+#include <map>
+#include <sstream>
 #include <type_traits>
 
 using Azure::Identity::_detail::TokenCredentialImpl;
 
+using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::PackageVersion;
 
 using Azure::DateTime;
@@ -24,6 +28,7 @@ using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::RawResponse;
+using Azure::Core::Json::_internal::json;
 
 TokenCredentialImpl::TokenCredentialImpl(TokenCredentialOptions const& options)
     : m_httpPipeline(options, "identity", PackageVersion::ToString(), {}, {})
@@ -141,10 +146,127 @@ AccessToken TokenCredentialImpl::GetToken(
 }
 
 namespace {
-[[noreturn]] void ThrowJsonPropertyError(std::string const& propertyName)
+std::string const ParseTokenLogPrefix = "TokenCredentialImpl::ParseToken(): ";
+
+std::string TokenAsDiagnosticString(
+    json const& jsonObject,
+    std::string const& accessTokenPropertyName,
+    std::string const& expiresInPropertyName,
+    std::string const& expiresOnPropertyName)
 {
+  std::stringstream ss;
+  ss << "Token JSON";
+
+  if (!jsonObject.is_object())
+  {
+    ss << " is not an object (value='" << jsonObject.dump() << "')";
+  }
+  else
+  {
+    ss << ": Access token property ('" << accessTokenPropertyName << "') ";
+    if (!jsonObject.contains(accessTokenPropertyName))
+    {
+      ss << "is NOT present";
+    }
+    else
+    {
+      auto const& accessTokenProperty = jsonObject[accessTokenPropertyName];
+      if (!accessTokenProperty.is_string())
+      {
+        ss << "is NOT a string (value='" << accessTokenProperty.dump() << "')";
+      }
+      else
+      {
+        ss << "is string (length=" << accessTokenProperty.get<std::string>().length() << ")";
+      }
+    }
+
+    for (auto const& p : {
+             std::pair<char const*, std::string const*>{"relative", &expiresInPropertyName},
+             std::pair<char const*, std::string const*>{"absolute", &expiresOnPropertyName},
+         })
+    {
+      ss << ", " << p.first << " expiration property ('" << *p.second << "') ";
+      if (!jsonObject.contains(*p.second))
+      {
+        ss << "is NOT present";
+      }
+      else
+      {
+        ss << "is present (value='" << jsonObject[*p.second].dump() << "')";
+      }
+    }
+
+    std::map<std::string, json> otherProperties;
+    for (auto const property : jsonObject.items())
+    {
+      if (property.key() != accessTokenPropertyName && property.key() != expiresInPropertyName
+          && property.key() != expiresOnPropertyName)
+      {
+        otherProperties[property.key()] = property.value();
+      }
+    }
+
+    ss << ", ";
+    if (otherProperties.empty())
+    {
+      ss << "and there are no other properties";
+    }
+    else
+    {
+      ss << "other properties";
+      const char* delimiter = ": ";
+      for (auto const& property : otherProperties)
+      {
+        ss << delimiter << "'" << property.first << "' (";
+        delimiter = ", ";
+
+        auto const dump = property.second.dump();
+        if (dump.size() <= 100)
+        {
+          ss << "value='" << dump << "'";
+        }
+        else
+        {
+          if (property.second.is_string())
+          {
+            ss << "string length=" << property.second.get<std::string>().length();
+          }
+          else
+          {
+            ss << "value size=" << dump.size();
+          }
+        }
+
+        ss << ")";
+      }
+    }
+  }
+
+  ss << ".";
+  return ss.str();
+}
+
+[[noreturn]] void ThrowJsonPropertyError(
+    std::string const& failedPropertyName,
+    json const& jsonObject,
+    std::string const& accessTokenPropertyName,
+    std::string const& expiresInPropertyName,
+    std::string const& expiresOnPropertyName)
+{
+  if (IdentityLog::ShouldWrite(IdentityLog::Level::Verbose))
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Verbose,
+        ParseTokenLogPrefix
+            + TokenAsDiagnosticString(
+                jsonObject, accessTokenPropertyName, expiresInPropertyName, expiresOnPropertyName));
+  }
+
   throw std::runtime_error(
-      std::string("Token JSON object: can't find or parse \'") + propertyName + "\' property.");
+      "Token JSON object: can't find or parse \'" + failedPropertyName
+      + "\' property.\nSee Azure::Core::Diagnostics::Logger for details"
+        " (https://aka.ms/azsdk/cpp/identity/troubleshooting).");
 }
 } // namespace
 
@@ -154,12 +276,29 @@ AccessToken TokenCredentialImpl::ParseToken(
     std::string const& expiresInPropertyName,
     std::string const& expiresOnPropertyName)
 {
-  auto const parsedJson = Azure::Core::Json::_internal::json::parse(jsonString);
+  json parsedJson;
+  try
+  {
+    parsedJson = Azure::Core::Json::_internal::json::parse(jsonString);
+  }
+  catch (json::exception const&)
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Verbose,
+        ParseTokenLogPrefix + "Cannot parse the string '" + jsonString + "' as JSON.");
+
+    throw;
+  }
 
   if (!parsedJson.contains(accessTokenPropertyName)
       || !parsedJson[accessTokenPropertyName].is_string())
   {
-    ThrowJsonPropertyError(accessTokenPropertyName);
+    ThrowJsonPropertyError(
+        accessTokenPropertyName,
+        parsedJson,
+        accessTokenPropertyName,
+        expiresInPropertyName,
+        expiresOnPropertyName);
   }
 
   AccessToken accessToken;
@@ -198,7 +337,12 @@ AccessToken TokenCredentialImpl::ParseToken(
   if (expiresOnPropertyName.empty())
   {
     // 'expires_in' is undefined, 'expires_on' is not expected.
-    ThrowJsonPropertyError(expiresInPropertyName);
+    ThrowJsonPropertyError(
+        expiresInPropertyName,
+        parsedJson,
+        accessTokenPropertyName,
+        expiresInPropertyName,
+        expiresOnPropertyName);
   }
 
   if (parsedJson.contains(expiresOnPropertyName))
@@ -245,5 +389,10 @@ AccessToken TokenCredentialImpl::ParseToken(
     }
   }
 
-  ThrowJsonPropertyError(expiresOnPropertyName);
+  ThrowJsonPropertyError(
+      expiresOnPropertyName,
+      parsedJson,
+      accessTokenPropertyName,
+      expiresInPropertyName,
+      expiresOnPropertyName);
 }

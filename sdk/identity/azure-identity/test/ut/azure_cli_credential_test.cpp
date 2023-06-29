@@ -359,4 +359,54 @@ TEST(AzureCliCredential, StrictIso8601TimeFormat)
       token.ExpiresOn,
       DateTime::Parse("2022-08-24T00:43:08.000000Z", DateTime::DateFormat::Rfc3339));
 }
+
+TEST(AzureCliCredential, Diagnosability)
+{
+  {
+    AzureCliTestCredential const azCliCred(
+        EchoCommand("'az' is not recognized as an internal or external command, "
+                    "operable program or batch file."));
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+    try
+    {
+      static_cast<void>(azCliCred.GetToken(trc, {}));
+    }
+    catch (AuthenticationException const& e)
+    {
+      std::string const expectedMsgStart
+          = "AzureCliCredential didn't get the token: "
+            "\"'az' is not recognized as an internal or external command, "
+            "operable program or batch file.";
+
+      std::string actualMsgStart = e.what();
+      actualMsgStart.resize(expectedMsgStart.length());
+
+      // It is enough to compare StartsWith() and not deal with
+      // the entire string due to '/n' and '/r/n' differences.
+      EXPECT_EQ(actualMsgStart, expectedMsgStart);
+    }
+  }
+
+  {
+    AzureCliTestCredential const azCliCred(EchoCommand("{\"property\":\"value\"}"));
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back("https://storage.azure.com/.default");
+    try
+    {
+      static_cast<void>(azCliCred.GetToken(trc, {}));
+    }
+    catch (AuthenticationException const& e)
+    {
+      EXPECT_EQ(
+          e.what(),
+          std::string("AzureCliCredential didn't get the token: "
+                      "\"Token JSON object: can't find or parse 'accessToken' property.\n"
+                      "See Azure::Core::Diagnostics::Logger for details "
+                      "(https://aka.ms/azsdk/cpp/identity/troubleshooting).\""));
+    }
+  }
+}
 #endif // not UWP
