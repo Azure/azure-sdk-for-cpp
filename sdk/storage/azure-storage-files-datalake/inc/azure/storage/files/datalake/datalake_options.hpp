@@ -110,7 +110,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Nullable<EncryptionKey> CustomerProvidedKey;
 
-    
     /**
      * Enables tenant discovery through the authorization challenge when the client is configured to
      * use a TokenCredential. When enabled, the client will attempt an initial un-authorized request
