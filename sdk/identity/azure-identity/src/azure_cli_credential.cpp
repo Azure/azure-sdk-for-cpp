@@ -171,7 +171,7 @@ AccessToken AzureCliCredential::GetToken(
         // (such as "ERROR: Please run az login to setup account.") instead of producing a JSON
         // object output. In this case, we want the exception to be thrown with the output from the
         // command (which is likely the error message) and not with the details of the exception
-        // that was thrown from ParseToken() (which mist likely will be "Unexpected token ...").
+        // that was thrown from ParseToken() (which most likely will be "Unexpected token ...").
         // So, we limit the az command output (error message) limited to 250 characters so it is not
         // too long, and throw that.
         throw std::runtime_error(azCliResult.substr(0, 250));
