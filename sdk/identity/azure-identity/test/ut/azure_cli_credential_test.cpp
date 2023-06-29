@@ -364,7 +364,7 @@ TEST(AzureCliCredential, Diagnosability)
 {
   {
     AzureCliTestCredential const azCliCred(
-        EchoCommand("'az' is not recognized as an internal or external command, "
+        EchoCommand("az is not recognized as an internal or external command, "
                     "operable program or batch file."));
 
     TokenRequestContext trc;
@@ -377,7 +377,7 @@ TEST(AzureCliCredential, Diagnosability)
     {
       std::string const expectedMsgStart
           = "AzureCliCredential didn't get the token: "
-            "\"'az' is not recognized as an internal or external command, "
+            "\"az is not recognized as an internal or external command, "
             "operable program or batch file.";
 
       std::string actualMsgStart = e.what();
