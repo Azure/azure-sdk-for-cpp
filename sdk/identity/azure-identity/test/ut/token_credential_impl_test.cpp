@@ -2007,4 +2007,415 @@ TEST(TokenCredentialImpl, Diagnosability)
 
     Logger::SetListener(nullptr);
   }
+
+  // Token is not an object, but a string.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"Hello, world!\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (string.length=13).");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but a null.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "null", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (null).");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but a boolean true.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "true", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (true).");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but a boolean false.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "false", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (false).");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but a number.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "-1234.56", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (-1234.56).");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an array.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "[1, 2, 3]", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object ([...]).");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an "null" string.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"nUlL\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (\"nUlL\").");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an "true" string.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"tRuE\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (\"tRuE\").");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an "false" string.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"fAlSe\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (\"fAlSe\").");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an integer string.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"31337\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (\"31337\").");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an RFC3339 datetime.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"3333-11-22T04:05:06.000Z\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (\"3333-11-22T04:05:06Z\").");
+
+    Logger::SetListener(nullptr);
+  }
+
+  // Token is not an object, but an RFC1123 datetime.
+  {
+    LogMsgVec log;
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    auto exceptionThrown = false;
+    try
+    {
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "\"Sun, 22 Nov 3333 04:05:06 GMT\"",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
+    }
+    catch (std::exception const& e)
+    {
+      exceptionThrown = true;
+
+      EXPECT_EQ(
+          e.what(),
+          std::string("Token JSON object: can't find or parse 'TokenForAccessing' property."
+                      "\nSee Azure::Core::Diagnostics::Logger for details"
+                      " (https://aka.ms/azsdk/cpp/identity/troubleshooting)."));
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+    EXPECT_EQ(log.size(), 1U);
+    EXPECT_EQ(log.at(0).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(0).second,
+        "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
+        "Token JSON is not an object (\"Sun, 22 Nov 3333 04:05:06 GMT\").");
+
+    Logger::SetListener(nullptr);
+  }
 }
