@@ -8,6 +8,7 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <chrono>
@@ -56,6 +57,7 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
 
 using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
+using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
 #ifdef WIN32
 CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
@@ -104,6 +106,36 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::s
           wil::out_param_ptr<const void**>(cert)),
       "Failed to open certificate file.");
   return std::make_tuple(GetThumbprint(cert.get()), GetPrivateKey(cert.get()));
+}
+
+std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
+{
+  auto hash = Azure::Core::Cryptography::_internal::Sha256Hash().Final(data, size);
+  BCRYPT_PKCS1_PADDING_INFO paddingInfo;
+  paddingInfo.pszAlgId = BCRYPT_SHA256_ALGORITHM;
+  DWORD signatureSize = 0;
+  auto status = NCryptSignHash(
+      key,
+      &paddingInfo,
+      hash.data(),
+      static_cast<ULONG>(hash.size()),
+      nullptr,
+      0,
+      &signatureSize,
+      BCRYPT_PAD_PKCS1);
+  THROW_HR_IF(status, status != NTE_BUFFER_TOO_SMALL);
+  std::vector<unsigned char> signature(signatureSize);
+  status = NCryptSignHash(
+      key,
+      &paddingInfo,
+      hash.data(),
+      static_cast<ULONG>(hash.size()),
+      signature.data(),
+      static_cast<ULONG>(signature.size()),
+      &signatureSize,
+      BCRYPT_PAD_PKCS1);
+  THROW_HR_IF(status, status != ERROR_SUCCESS);
+  return signature;
 }
 #else
 template <typename> struct UniqueHandleHelper;
@@ -170,6 +202,31 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::s
   }
 
   return std::make_tuple(thumbprint, std::move(pkey));
+}
+
+std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
+{
+  UniqueHandle<EVP_MD_CTX> mdCtx(EVP_MD_CTX_new());
+  if (!mdCtx)
+  {
+    return;
+  }
+  EVP_PKEY_CTX* signCtx = nullptr;
+  if ((EVP_DigestSignInit(mdCtx.get(), &signCtx, EVP_sha256(), nullptr, static_cast<EVP_PKEY*>(key))
+       == 1)
+      && (EVP_PKEY_CTX_set_rsa_padding(signCtx, RSA_PKCS1_PADDING) == 1))
+  {
+    size_t sigLen = 0;
+    if (EVP_DigestSign(mdCtx.get(), nullptr, &sigLen, nullptr, 0) == 1)
+    {
+      std::vector<unsigned char> sigVec(sigLen);
+      if (EVP_DigestSign(mdCtx.get(), sigVec.data(), &sigLen, data, size) == 1)
+      {
+        return sigVec;
+      }
+    }
+  }
+  return {};
 }
 #endif
 } // namespace
@@ -330,41 +387,14 @@ AccessToken ClientCertificateCredential::GetToken(
         }
 
         // Get assertion signature.
-        std::string signature;
-        {
-          UniqueHandle<EVP_MD_CTX> mdCtx(EVP_MD_CTX_new());
-          if (mdCtx)
-          {
-            EVP_PKEY_CTX* signCtx = nullptr;
-            if ((EVP_DigestSignInit(
-                     mdCtx.get(),
-                     &signCtx,
-                     EVP_sha256(),
-                     nullptr,
-                     static_cast<EVP_PKEY*>(m_pkey.get()))
-                 == 1)
-                && (EVP_PKEY_CTX_set_rsa_padding(signCtx, RSA_PKCS1_PADDING) == 1))
-            {
-              size_t sigLen = 0;
-              if (EVP_DigestSign(mdCtx.get(), nullptr, &sigLen, nullptr, 0) == 1)
-              {
-                const auto bufToSign = reinterpret_cast<const unsigned char*>(assertion.data());
-                const auto bufToSignLen = static_cast<size_t>(assertion.size());
-
-                std::vector<unsigned char> sigVec(sigLen);
-                if (EVP_DigestSign(mdCtx.get(), sigVec.data(), &sigLen, bufToSign, bufToSignLen)
-                    == 1)
-                {
-                  signature = Base64Url::Base64UrlEncode(ToUInt8Vector(sigVec));
-                }
-              }
-            }
-          }
-        }
+        std::string signature = Base64Url::Base64UrlEncode(SignPkcs1Sha256(
+            m_pkey.get(),
+            reinterpret_cast<const unsigned char*>(assertion.data()),
+            static_cast<size_t>(assertion.size())));
 
         if (signature.empty())
         {
-          throw Azure::Core::Credentials::AuthenticationException("Failed to sign token request.");
+          throw AuthenticationException("Failed to sign token request.");
         }
 
         // Add signature to the end of assertion
