@@ -15,9 +15,6 @@
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/url.hpp>
-#ifdef WIN32
-#include <wil/resource.h>
-#endif
 
 #include <memory>
 #include <string>
@@ -27,9 +24,26 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
 
-    #ifdef WIN32
-    using UniquePrivateKey = wil::unique_ncrypt_key;
-    #else
+#ifdef WIN32
+    void FreeNcryptKeyImpl(void* ncryptKey);
+
+    template <typename> struct UniqueNcryptKeyHelper;
+    template <> struct UniqueNcryptKeyHelper<void*>
+    {
+      static void FreeNcryptKey(void* ncryptKey) { FreeNcryptKeyImpl(ncryptKey); }
+      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreeNcryptKey>;
+    };
+
+    using UniqueNcryptKeyHandle
+        = Azure::Core::_internal::UniqueHandle<void*, UniqueNcryptKeyHelper>;
+    class UniquePrivateKey : public UniqueNcryptKeyHandle {
+    public:
+      UniquePrivateKey() = default;
+      // NCRYPT_KEY_HANDLE is a uintptr_t; add some helper functions to make it easier to use.
+      UniquePrivateKey(uintptr_t ptr) : UniqueNcryptKeyHandle(reinterpret_cast<void*>(ptr)) {}
+      uintptr_t get() const { return reinterpret_cast<uintptr_t>(UniqueNcryptKeyHandle::get()); }
+    };
+#else
     void FreePkeyImpl(void* pkey);
 
     template <typename> struct UniquePkeyHelper;
@@ -41,7 +55,7 @@ namespace Azure { namespace Identity {
 
     using UniquePkeyHandle = Azure::Core::_internal::UniqueHandle<void*, UniquePkeyHelper>;
     using UniquePrivateKey = UniquePkeyHandle;
-    #endif
+#endif
   } // namespace _detail
 
   /**

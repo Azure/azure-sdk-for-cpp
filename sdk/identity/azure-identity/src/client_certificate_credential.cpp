@@ -17,6 +17,8 @@
 #include <vector>
 
 #ifdef WIN32
+#include <Windows.h>
+#include <wil/resource.h>
 #include <wil/result.h>
 #else
 #include <openssl/bio.h>
@@ -231,7 +233,12 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 #endif
 } // namespace
 
-#ifndef WIN32
+#ifdef WIN32
+void Azure::Identity::_detail::FreeNcryptKeyImpl(void* pkey)
+{
+  NCryptFreeObject(reinterpret_cast<NCRYPT_KEY_HANDLE>(pkey));
+}
+#else
 void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
 {
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
