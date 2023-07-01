@@ -996,7 +996,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 
-  // No log message is emitted when parse is succesful.
+  // No log message is emitted when parse is succesfull.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1230,7 +1230,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 
-  // Not sanitining double.
+  // Not sanitizing double.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1845,7 +1845,7 @@ TEST(TokenCredentialImpl, Diagnosability)
   // as possible to form a valid base-n (where n=base) integer number representation and converts
   // them to an integer value". This means that if we verify that the string can be parsed as long
   // long and then simply print jsonObject.dump() thinking it is safe, we may print any string that
-  // starts with a number. Instead, we only want to print the integet that was parsed as a string.
+  // starts with a number. Instead, we only want to print the integer that was parsed as a string.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1855,8 +1855,8 @@ TEST(TokenCredentialImpl, Diagnosability)
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":\"1337LEAK\","
-          "\"TokenExpiresInSeconds\":\"BYDESIGN\","
-          "\"TokenExpiresAtTime\":\"BYDESIGN\","
+          "\"TokenExpiresInSeconds\":\"3XP3CT3D\","
+          "\"TokenExpiresAtTime\":\"3XP3CT3D\","
           "\"OtherProperty\":\"1337LEAK\""
           "}",
           "TokenForAccessing",
@@ -1881,8 +1881,8 @@ TEST(TokenCredentialImpl, Diagnosability)
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
         "Token JSON: Access token property ('TokenForAccessing'): string.length=8, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"BYDESIGN\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"BYDESIGN\", "
+        "relative expiration property ('TokenExpiresInSeconds'): \"3XP3CT3D\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"3XP3CT3D\", "
         "other properties: 'OtherProperty': ~\"1337\".");
 
     Logger::SetListener(nullptr);
