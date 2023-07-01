@@ -73,13 +73,13 @@ CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
 
 UniquePrivateKey GetPrivateKey(PCCERT_CONTEXT cert)
 {
-  UniquePrivateKey key;
+  NCRYPT_KEY_HANDLE key;
   DWORD size = sizeof(void*);
   THROW_IF_WIN32_BOOL_FALSE_MSG(
       CertGetCertificateContextProperty(
-          cert, CERT_NCRYPT_KEY_HANDLE_PROP_ID, wil::out_param_ptr<void*>(key), &size),
+          cert, CERT_NCRYPT_KEY_HANDLE_PROP_ID, &key, &size),
       "Failed to get certificate private key.");
-  return key;
+  return UniquePrivateKey{key};
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::string& path)
