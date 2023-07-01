@@ -15,12 +15,16 @@
 #include <sstream>
 #include <vector>
 
+#ifdef WIN32
+#include <wil/result.h>
+#else
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/ossl_typ.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
+#endif
 
 using Azure::Identity::ClientCertificateCredential;
 
@@ -50,6 +54,58 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
   return outVec;
 }
 
+using CertificateThumbprint = std::vector<unsigned char>;
+using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
+
+#ifdef WIN32
+CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
+{
+  DWORD size = 0;
+  THROW_IF_WIN32_BOOL_FALSE_MSG(
+      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, nullptr, &size),
+      "Failed to get certificate thumbprint.");
+  std::vector<unsigned char> thumbprint(size);
+  THROW_IF_WIN32_BOOL_FALSE_MSG(
+      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, thumbprint.data(), &size),
+      "Failed to get certificate thumbprint.");
+  return thumbprint;
+}
+
+UniquePrivateKey GetPrivateKey(PCCERT_CONTEXT cert)
+{
+  UniquePrivateKey key;
+  DWORD size = sizeof(void*);
+  THROW_IF_WIN32_BOOL_FALSE_MSG(
+      CertGetCertificateContextProperty(
+          cert, CERT_NCRYPT_KEY_HANDLE_PROP_ID, wil::out_param_ptr<void*>(key), &size),
+      "Failed to get certificate private key.");
+  return key;
+}
+
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::string& path)
+{
+  wil::unique_hcertstore certStore;
+  wil::unique_hcryptmsg certMsg;
+  wil::unique_cert_context cert;
+  std::wstring pathw{path.begin(), path.end()};
+  DWORD encodingType, contentType, formatType;
+  THROW_IF_WIN32_BOOL_FALSE_MSG(
+      CryptQueryObject(
+          CERT_QUERY_OBJECT_FILE,
+          pathw.c_str(),
+          CERT_QUERY_CONTENT_CERT | CERT_QUERY_CONTENT_SERIALIZED_CERT,
+          CERT_QUERY_FORMAT_FLAG_ALL,
+          0,
+          &encodingType,
+          &contentType,
+          &formatType,
+          wil::out_param(certStore),
+          wil::out_param(certMsg),
+          wil::out_param_ptr<const void**>(cert)),
+      "Failed to open certificate file.");
+  return std::make_tuple(GetThumbprint(cert.get()), GetPrivateKey(cert.get()));
+}
+#else
 template <typename> struct UniqueHandleHelper;
 
 template <> struct UniqueHandleHelper<BIO>
@@ -69,12 +125,61 @@ template <> struct UniqueHandleHelper<EVP_MD_CTX>
 
 template <typename T>
 using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
+
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::string& path)
+{
+  // Open certificate file, then get private key and X509:
+  UniqueHandle<BIO> bio(BIO_new_file(path.c_str(), "r"));
+  if (!bio)
+  {
+    throw AuthenticationException("Failed to open certificate file.");
+  }
+
+  UniquePrivateKey pkey{PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr)};
+  if (!pkey)
+  {
+    throw AuthenticationException("Failed to read certificate private key.");
+  }
+
+  UniqueHandle<X509> x509{PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr)};
+  if (!x509)
+  {
+    std::ignore = BIO_seek(bio.get(), 0);
+    x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
+    if (!x509)
+    {
+      throw AuthenticationException("Failed to read X509 section.");
+    }
+  }
+
+  CertificateThumbprint thumbprint(EVP_MAX_MD_SIZE);
+  // Get certificate thumbprint:
+  unsigned int mdLen = 0;
+  const auto digestResult = X509_digest(x509.get(), EVP_sha1(), thumbprint.data(), &mdLen);
+
+  if (!digestResult)
+  {
+    throw AuthenticationException("Failed to get certificate thumbprint.");
+  }
+
+  // Drop unused buffer space:
+  const auto mdLenSz = static_cast<decltype(thumbprint)::size_type>(mdLen);
+  if (thumbprint.size() > mdLenSz)
+  {
+    thumbprint.resize(mdLenSz);
+  }
+
+  return std::make_tuple(thumbprint, std::move(pkey));
+}
+#endif
 } // namespace
 
+#ifndef WIN32
 void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
 {
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
 }
+#endif
 
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
@@ -100,50 +205,19 @@ ClientCertificateCredential::ClientCertificateCredential(
   std::string thumbprintBase64Str;
 
   {
-    std::vector<unsigned char> mdVec(EVP_MAX_MD_SIZE);
+    CertificateThumbprint mdVec;
+    try
     {
-      UniqueHandle<X509> x509;
-      {
-        // Open certificate file, then get private key and X509:
-        UniqueHandle<BIO> bio(BIO_new_file(clientCertificatePath.c_str(), "r"));
-        if (!bio)
-        {
-          throw AuthenticationException("Failed to open certificate file.");
-        }
-
-        m_pkey.reset(PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr));
-        if (!m_pkey)
-        {
-          throw AuthenticationException("Failed to read certificate private key.");
-        }
-
-        x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
-        if (!x509)
-        {
-          static_cast<void>(BIO_seek(bio.get(), 0));
-          x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
-          if (!x509)
-          {
-            throw AuthenticationException("Failed to read X509 section.");
-          }
-        }
-      }
-
-      // Get certificate thumbprint:
-      unsigned int mdLen = 0;
-      const auto digestResult = X509_digest(x509.get(), EVP_sha1(), mdVec.data(), &mdLen);
-
-      if (!digestResult)
-      {
-        throw AuthenticationException("Failed to get certificate thumbprint.");
-      }
-
-      // Drop unused buffer space:
-      const auto mdLenSz = static_cast<decltype(mdVec)::size_type>(mdLen);
-      if (mdVec.size() > mdLenSz)
-      {
-        mdVec.resize(mdLenSz);
-      }
+      std::tie(mdVec, m_pkey) = ReadCertificate(clientCertificatePath);
+    }
+    catch (AuthenticationException&)
+    {
+      throw;
+    }
+    catch (std::exception e)
+    {
+      // WIL does not throw AuthenticationException.
+      throw AuthenticationException(e.what());
     }
 
     // Get thumbprint as hex string:

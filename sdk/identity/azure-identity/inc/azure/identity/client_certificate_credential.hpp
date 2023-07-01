@@ -15,6 +15,9 @@
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/url.hpp>
+#ifdef WIN32
+#include <wil/resource.h>
+#endif
 
 #include <memory>
 #include <string>
@@ -24,6 +27,9 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
 
+    #ifdef WIN32
+    using UniquePrivateKey = wil::unique_ncrypt_key;
+    #else
     void FreePkeyImpl(void* pkey);
 
     template <typename> struct UniquePkeyHelper;
@@ -34,6 +40,8 @@ namespace Azure { namespace Identity {
     };
 
     using UniquePkeyHandle = Azure::Core::_internal::UniqueHandle<void*, UniquePkeyHelper>;
+    using UniquePrivateKey = UniquePkeyHandle;
+    #endif
   } // namespace _detail
 
   /**
@@ -73,7 +81,7 @@ namespace Azure { namespace Identity {
     std::string m_requestBody;
     std::string m_tokenPayloadStaticPart;
     std::string m_tokenHeaderEncoded;
-    _detail::UniquePkeyHandle m_pkey;
+    _detail::UniquePrivateKey m_pkey;
 
     explicit ClientCertificateCredential(
         std::string tenantId,
