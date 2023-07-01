@@ -11,7 +11,6 @@
 #include <azure/core/url.hpp>
 
 #include <chrono>
-#include <limits>
 #include <map>
 
 using Azure::Identity::_detail::TokenCredentialImpl;

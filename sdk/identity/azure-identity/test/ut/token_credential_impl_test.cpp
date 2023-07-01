@@ -996,7 +996,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 
-  // No log message is emitted when parse is succesfull.
+  // No log message is emitted when parse is successful.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1273,7 +1273,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 
-  // Not sanitining double (scientific notation).
+  // Not sanitizing double (scientific notation).
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1855,8 +1855,8 @@ TEST(TokenCredentialImpl, Diagnosability)
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":\"1337LEAK\","
-          "\"TokenExpiresInSeconds\":\"3XP3CT3D\","
-          "\"TokenExpiresAtTime\":\"3XP3CT3D\","
+          "\"TokenExpiresInSeconds\":\"EXPECTED\","
+          "\"TokenExpiresAtTime\":\"EXPECTED\","
           "\"OtherProperty\":\"1337LEAK\""
           "}",
           "TokenForAccessing",
@@ -1881,8 +1881,8 @@ TEST(TokenCredentialImpl, Diagnosability)
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
         "Token JSON: Access token property ('TokenForAccessing'): string.length=8, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"3XP3CT3D\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"3XP3CT3D\", "
+        "relative expiration property ('TokenExpiresInSeconds'): \"EXPECTED\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"EXPECTED\", "
         "other properties: 'OtherProperty': ~\"1337\".");
 
     Logger::SetListener(nullptr);
