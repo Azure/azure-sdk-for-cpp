@@ -667,6 +667,49 @@ TEST(TokenCredentialImpl, ExpirationFormats)
   EXPECT_EQ(response43.AccessToken.ExpiresOn, DateTime(3333, 11, 22, 4, 5, 6));
 }
 
+TEST(TokenCredentialImpl, MaxValues)
+{
+  // 'exp_in' negative
+  EXPECT_THROW(
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"token\": \"x\",\"exp_in\":-1}", "token", "exp_in", "exp_at")),
+      std::exception);
+
+  // 'exp_in' zero
+  EXPECT_NO_THROW(static_cast<void>(TokenCredentialImpl::ParseToken(
+      "{\"token\": \"x\",\"exp_in\":0}", "token", "exp_in", "exp_at")));
+
+  // 'exp_in' == int32 max
+  EXPECT_NO_THROW(static_cast<void>(TokenCredentialImpl::ParseToken(
+      "{\"token\": \"x\",\"exp_in\":2147483647}", "token", "exp_in", "exp_at")));
+
+  // 'exp_in' > int32 max
+  EXPECT_THROW(
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"token\": \"x\",\"exp_in\":2147483648}", "token", "exp_in", "exp_at")),
+      std::exception);
+
+  // 'exp_at' negative
+  EXPECT_THROW(
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"token\": \"x\",\"exp_at\":-1}", "token", "exp_in", "exp_at")),
+      std::exception);
+
+  // 'exp_at' zero
+  EXPECT_NO_THROW(static_cast<void>(TokenCredentialImpl::ParseToken(
+      "{\"token\": \"x\",\"exp_at\":0}", "token", "exp_in", "exp_at")));
+
+  // 'exp_at' == '9999-12-31 23:59:59'
+  EXPECT_NO_THROW(static_cast<void>(TokenCredentialImpl::ParseToken(
+      "{\"token\": \"x\",\"exp_at\":253402300799}", "token", "exp_in", "exp_at")));
+
+  // 'exp_at' > '9999-12-31 23:59:59'
+  EXPECT_THROW(
+      static_cast<void>(TokenCredentialImpl::ParseToken(
+          "{\"token\": \"x\",\"exp_at\":253402300800}", "token", "exp_in", "exp_at")),
+      std::exception);
+}
+
 TEST(TokenCredentialImpl, Diagnosability)
 {
   using Azure::Core::Diagnostics::Logger;
@@ -2357,7 +2400,10 @@ TEST(TokenCredentialImpl, Diagnosability)
     try
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
-          "\"3333-11-22T04:05:06.000Z\"", "TokenForAccessing", "TokenExpiresInSeconds", "TokenExpiresAtTime"));
+          "\"3333-11-22T04:05:06.000Z\"",
+          "TokenForAccessing",
+          "TokenExpiresInSeconds",
+          "TokenExpiresAtTime"));
     }
     catch (std::exception const& e)
     {

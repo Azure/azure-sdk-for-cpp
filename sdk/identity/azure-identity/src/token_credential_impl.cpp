@@ -9,7 +9,6 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/url.hpp>
-#include <azure/core/uuid.hpp>
 
 #include <chrono>
 #include <limits>
@@ -23,7 +22,6 @@ using Azure::Identity::_detail::PackageVersion;
 using Azure::DateTime;
 using Azure::Core::Context;
 using Azure::Core::Url;
-using Azure::Core::Uuid;
 using Azure::Core::_internal::PosixTimeConverter;
 using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Credentials::AccessToken;
@@ -151,8 +149,8 @@ AccessToken TokenCredentialImpl::GetToken(
 namespace {
 std::string const ParseTokenLogPrefix = "TokenCredentialImpl::ParseToken(): ";
 
-constexpr std::int64_t MaxPosixTimestamp = 253402300799; // 9999-12-31T23:59:59
 constexpr std::int64_t MaxExpirationInSeconds = 2147483647; // int32 max (68+ years)
+constexpr std::int64_t MaxPosixTimestamp = 253402300799; // 9999-12-31T23:59:59
 
 std::int64_t ParseNumericExpiration(
     std::string const& numericString,
