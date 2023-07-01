@@ -9,8 +9,10 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/url.hpp>
+#include <azure/core/uuid.hpp>
 
 #include <chrono>
+#include <limits>
 #include <map>
 
 using Azure::Identity::_detail::TokenCredentialImpl;
@@ -21,6 +23,7 @@ using Azure::Identity::_detail::PackageVersion;
 using Azure::DateTime;
 using Azure::Core::Context;
 using Azure::Core::Url;
+using Azure::Core::Uuid;
 using Azure::Core::_internal::PosixTimeConverter;
 using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Credentials::AccessToken;
@@ -148,6 +151,20 @@ AccessToken TokenCredentialImpl::GetToken(
 namespace {
 std::string const ParseTokenLogPrefix = "TokenCredentialImpl::ParseToken(): ";
 
+constexpr std::int64_t MaxPosixTimestamp = 253402300799; // 9999-12-31T23:59:59
+constexpr std::int64_t MaxExpirationInSeconds = 2147483647; // int32 max (68+ years)
+
+std::int64_t ParseNumericExpiration(
+    std::string const& numericString,
+    std::int64_t maxValue,
+    std::int64_t minValue = 0)
+{
+  auto const asNumber = std::stoll(numericString);
+  return (asNumber >= minValue && asNumber <= maxValue && std::to_string(asNumber) == numericString)
+      ? static_cast<std::int64_t>(asNumber)
+      : throw std::exception();
+}
+
 std::string TokenAsDiagnosticString(
     json const& jsonObject,
     std::string const& accessTokenPropertyName,
@@ -218,11 +235,24 @@ AccessToken TokenCredentialImpl::ParseToken(
 
     if (expiresIn.is_number_unsigned())
     {
-      // 'expires_in' as number (seconds until expiration)
-      accessToken.ExpiresOn
-          += std::chrono::seconds(expiresIn.get<std::chrono::seconds::duration::rep>());
+      try
+      {
+        // 'expires_in' as number (seconds until expiration)
+        auto const value = expiresIn.get<std::int64_t>();
+        if (value <= MaxExpirationInSeconds)
+        {
+          static_assert(
+              MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
+              "Can safely cast to int32");
 
-      return accessToken;
+          accessToken.ExpiresOn += std::chrono::seconds(static_cast<std::int32_t>(value));
+          return accessToken;
+        }
+      }
+      catch (std::exception const&)
+      {
+        // expiresIn.get<std::int64_t>() has thrown, we may throw later.
+      }
     }
 
     if (expiresIn.is_string())
@@ -230,13 +260,18 @@ AccessToken TokenCredentialImpl::ParseToken(
       try
       {
         // 'expires_in' as numeric string (seconds until expiration)
-        accessToken.ExpiresOn += std::chrono::seconds(std::stoi(expiresIn.get<std::string>()));
+        static_assert(
+            MaxExpirationInSeconds <= std::numeric_limits<std::int32_t>::max(),
+            "Can safely cast to int32");
+
+        accessToken.ExpiresOn += std::chrono::seconds(static_cast<std::int32_t>(
+            ParseNumericExpiration(expiresIn.get<std::string>(), MaxExpirationInSeconds)));
 
         return accessToken;
       }
       catch (std::exception const&)
       {
-        // stoi() has thrown, we may throw later.
+        // ParseNumericExpiration() has thrown, we may throw later.
       }
     }
   }
@@ -258,11 +293,20 @@ AccessToken TokenCredentialImpl::ParseToken(
 
     if (expiresOn.is_number_unsigned())
     {
-      // 'expires_on' as number (posix time representing an absolute timestamp)
-      accessToken.ExpiresOn
-          = PosixTimeConverter::PosixTimeToDateTime(expiresOn.get<std::int64_t>());
-
-      return accessToken;
+      try
+      {
+        // 'expires_on' as number (posix time representing an absolute timestamp)
+        auto const value = expiresOn.get<std::int64_t>();
+        if (value <= MaxPosixTimestamp)
+        {
+          accessToken.ExpiresOn = PosixTimeConverter::PosixTimeToDateTime(value);
+          return accessToken;
+        }
+      }
+      catch (std::exception const&)
+      {
+        // expiresIn.get<std::int64_t>() has thrown, we may throw later.
+      }
     }
 
     if (expiresOn.is_string())
@@ -275,7 +319,8 @@ AccessToken TokenCredentialImpl::ParseToken(
                }),
                std::function<DateTime(std::string const&)>([](auto const& s) {
                  // 'expires_on' as numeric string (posix time representing an absolute timestamp)
-                 return PosixTimeConverter::PosixTimeToDateTime(std::stoll(s));
+                 return PosixTimeConverter::PosixTimeToDateTime(
+                     ParseNumericExpiration(s, MaxPosixTimestamp));
                }),
                std::function<DateTime(std::string const&)>([](auto const& s) {
                  // 'expires_on' as RFC1123 date string (absolute timestamp)
@@ -316,7 +361,6 @@ std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, i
   if (jsonObject.is_string())
   {
     auto const stringValue = jsonObject.get<std::string>();
-    std::string prefix;
     for (auto const& parse : {
              std::function<std::string()>([&]() -> std::string {
                return (StringExtensions::LocaleInvariantCaseInsensitiveEqual(stringValue, "null")
@@ -330,8 +374,12 @@ std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, i
                return DateTime::Parse(stringValue, DateTime::DateFormat::Rfc3339)
                    .ToString(DateTime::DateFormat::Rfc3339);
              }),
-             std::function<std::string()>(
-                 [&]() -> std::string { return std::to_string(std::stoll(stringValue)); }),
+             std::function<std::string()>([&]() -> std::string {
+               return std::to_string(ParseNumericExpiration(
+                   stringValue,
+                   std::numeric_limits<std::int64_t>::max(),
+                   std::numeric_limits<std::int64_t>::min()));
+             }),
              std::function<std::string()>([&]() -> std::string {
                return DateTime::Parse(stringValue, DateTime::DateFormat::Rfc1123)
                    .ToString(DateTime::DateFormat::Rfc1123);
@@ -343,11 +391,7 @@ std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, i
         auto const parsedValueAsString = parse();
         if (!parsedValueAsString.empty())
         {
-          auto const parsedValueAsLiteral = '\"' + parsedValueAsString + '\"';
-          return StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-                     jsonObject.dump(), parsedValueAsLiteral)
-              ? parsedValueAsLiteral
-              : ("~" + parsedValueAsLiteral);
+          return '"' + parsedValueAsString + '"';
         }
       }
       catch (std::exception const&)
@@ -355,7 +399,7 @@ std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, i
       }
     }
 
-    return prefix + "string.length=" + std::to_string(stringValue.length());
+    return "string.length=" + std::to_string(stringValue.length());
   }
 
   if (jsonObject.is_array())
@@ -393,7 +437,7 @@ std::string TokenAsDiagnosticString(
     std::string const& expiresInPropertyName,
     std::string const& expiresOnPropertyName)
 {
-  std::string result = "Token JSON";
+  std::string result = "Please report an issue with the following details:\nToken JSON";
 
   if (!jsonObject.is_object())
   {

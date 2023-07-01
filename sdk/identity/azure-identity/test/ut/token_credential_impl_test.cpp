@@ -726,6 +726,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): undefined, "
         "relative expiration property ('TokenExpiresInSeconds'): undefined, "
         "absolute expiration property ('TokenExpiresAtTime'): undefined, "
@@ -765,6 +766,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): {}, "
         "relative expiration property ('TokenExpiresInSeconds'): undefined, "
         "absolute expiration property ('TokenExpiresAtTime'): undefined, "
@@ -804,6 +806,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): undefined, "
         "absolute expiration property ('TokenExpiresAtTime'): undefined, "
@@ -845,6 +848,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): \"one\", "
         "absolute expiration property (''): undefined, "
@@ -889,6 +893,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): 1.5, "
         "absolute expiration property ('TokenExpiresAtTime'): null, "
@@ -934,6 +939,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): undefined, "
         "absolute expiration property ('TokenExpiresAtTime'): "
@@ -984,6 +990,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=11, "
         "relative expiration property ('TokenExpiresInSeconds'): -1, "
         "absolute expiration property ('TokenExpiresAtTime'): true, "
@@ -1050,6 +1057,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): null, "
         "relative expiration property ('TokenExpiresInSeconds'): null, "
         "absolute expiration property ('TokenExpiresAtTime'): null, "
@@ -1093,6 +1101,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): true, "
         "relative expiration property ('TokenExpiresInSeconds'): true, "
         "absolute expiration property ('TokenExpiresAtTime'): true, "
@@ -1136,6 +1145,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): false, "
         "relative expiration property ('TokenExpiresInSeconds'): false, "
         "absolute expiration property ('TokenExpiresAtTime'): false, "
@@ -1144,7 +1154,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 
-  // Not sanitizing uint64.
+  // Not sanitizing int64 max.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1153,10 +1163,10 @@ TEST(TokenCredentialImpl, Diagnosability)
     try
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
-          "{\"TokenForAccessing\":9007199254740991,"
-          "\"TokenExpiresInSeconds\":9007199254740991," // would fail to parse as int32
-          "\"TokenExpiresAtTime\":null," // needs to fail for the log message to get printed
-          "\"OtherProperty\":9007199254740991"
+          "{\"TokenForAccessing\":9223372036854775807,"
+          "\"TokenExpiresInSeconds\":9223372036854775807," // > int32 max (68+ years)
+          "\"TokenExpiresAtTime\":9223372036854775807," // > year 9999
+          "\"OtherProperty\":9223372036854775807"
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
@@ -1179,15 +1189,16 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
-        "Token JSON: Access token property ('TokenForAccessing'): 9007199254740991, "
-        "relative expiration property ('TokenExpiresInSeconds'): 9007199254740991, "
-        "absolute expiration property ('TokenExpiresAtTime'): null, "
-        "other properties: 'OtherProperty': 9007199254740991.");
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('TokenForAccessing'): 9223372036854775807, "
+        "relative expiration property ('TokenExpiresInSeconds'): 9223372036854775807, "
+        "absolute expiration property ('TokenExpiresAtTime'): 9223372036854775807, "
+        "other properties: 'OtherProperty': 9223372036854775807.");
 
     Logger::SetListener(nullptr);
   }
 
-  // Not sanitizing int64.
+  // Not sanitizing int64 min.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1196,10 +1207,10 @@ TEST(TokenCredentialImpl, Diagnosability)
     try
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
-          "{\"TokenForAccessing\":-9007199254740991,"
-          "\"TokenExpiresInSeconds\":-9007199254740991," // would fail to parse as unsigned
-          "\"TokenExpiresAtTime\":null," // Needs to fail so that the log message gets printed
-          "\"OtherProperty\":-9007199254740991"
+          "{\"TokenForAccessing\":-9223372036854775808,"
+          "\"TokenExpiresInSeconds\":-9223372036854775808," // would fail to parse as unsigned
+          "\"TokenExpiresAtTime\":-9223372036854775808," // would fail to parse as unsigned
+          "\"OtherProperty\":-9223372036854775808"
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
@@ -1222,10 +1233,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
-        "Token JSON: Access token property ('TokenForAccessing'): -9007199254740991, "
-        "relative expiration property ('TokenExpiresInSeconds'): -9007199254740991, "
-        "absolute expiration property ('TokenExpiresAtTime'): null, "
-        "other properties: 'OtherProperty': -9007199254740991.");
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('TokenForAccessing'): -9223372036854775808, "
+        "relative expiration property ('TokenExpiresInSeconds'): -9223372036854775808, "
+        "absolute expiration property ('TokenExpiresAtTime'): -9223372036854775808, "
+        "other properties: 'OtherProperty': -9223372036854775808.");
 
     Logger::SetListener(nullptr);
   }
@@ -1265,6 +1277,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): -1.25, "
         "relative expiration property ('TokenExpiresInSeconds'): -1.25, "
         "absolute expiration property ('TokenExpiresAtTime'): -1.25, "
@@ -1284,7 +1297,7 @@ TEST(TokenCredentialImpl, Diagnosability)
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":-9.00719925e+15,"
           "\"TokenExpiresInSeconds\":-9.00719925e+15,"
-          "\"TokenExpiresAtTime\":-9.00719925e+15,"
+          "\"TokenExpiresAtTime\":-9.00719925E+15,"
           "\"OtherProperty\":-9.00719925E+15"
           "}",
           "TokenForAccessing",
@@ -1308,6 +1321,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): -9.00719925e+15, "
         "relative expiration property ('TokenExpiresInSeconds'): -9.00719925e+15, "
         "absolute expiration property ('TokenExpiresAtTime'): -9.00719925e+15, "
@@ -1351,6 +1365,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): [...], "
         "relative expiration property ('TokenExpiresInSeconds'): [...], "
         "absolute expiration property ('TokenExpiresAtTime'): [...], "
@@ -1394,6 +1409,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=4, "
         "relative expiration property ('TokenExpiresInSeconds'): \"NULL\", "
         "absolute expiration property ('TokenExpiresAtTime'): \"Null\", "
@@ -1437,6 +1453,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=4, "
         "relative expiration property ('TokenExpiresInSeconds'): \"TRUE\", "
         "absolute expiration property ('TokenExpiresAtTime'): \"True\", "
@@ -1480,6 +1497,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=5, "
         "relative expiration property ('TokenExpiresInSeconds'): \"FALSE\", "
         "absolute expiration property ('TokenExpiresAtTime'): \"False\", "
@@ -1523,6 +1541,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=5, "
         "relative expiration property ('TokenExpiresInSeconds'): \"maybe\", "
         "absolute expiration property ('TokenExpiresAtTime'): \"maybe\", "
@@ -1531,7 +1550,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     Logger::SetListener(nullptr);
   }
 
-  // Not sanitizing strings that represent uint64, except for access token.
+  // Not sanitizing strings that represent int64 max, except for access token.
   {
     LogMsgVec log;
     Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
@@ -1540,10 +1559,10 @@ TEST(TokenCredentialImpl, Diagnosability)
     try
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
-          "{\"TokenForAccessing\":\"9007199254740991\","
-          "\"TokenExpiresInSeconds\":\"9007199254740991\"," // would fail to parse as int32
-          "\"TokenExpiresAtTime\":\"fail9007199254740991\","
-          "\"OtherProperty\":\"9007199254740991\""
+          "{\"TokenForAccessing\":\"9223372036854775807\","
+          "\"TokenExpiresInSeconds\":\"9223372036854775807\"," // > int32 max (68+ years)
+          "\"TokenExpiresAtTime\":\"9223372036854775807\"," // > year 9999
+          "\"OtherProperty\":\"9223372036854775807\""
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
@@ -1566,10 +1585,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
-        "Token JSON: Access token property ('TokenForAccessing'): string.length=16, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"9007199254740991\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"fail9007199254740991\", "
-        "other properties: 'OtherProperty': \"9007199254740991\".");
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('TokenForAccessing'): string.length=19, "
+        "relative expiration property ('TokenExpiresInSeconds'): \"9223372036854775807\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"9223372036854775807\", "
+        "other properties: 'OtherProperty': \"9223372036854775807\".");
 
     Logger::SetListener(nullptr);
   }
@@ -1583,10 +1603,10 @@ TEST(TokenCredentialImpl, Diagnosability)
     try
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
-          "{\"TokenForAccessing\":\"-9007199254740991\","
-          "\"TokenExpiresInSeconds\":\"-9007199254740991\"," // would fail to parse as unsigned
-          "\"TokenExpiresAtTime\":\"fail-9007199254740991\","
-          "\"OtherProperty\":\"-9007199254740991\""
+          "{\"TokenForAccessing\":\"-9223372036854775808\","
+          "\"TokenExpiresInSeconds\":\"-9223372036854775808\"," // would fail to parse as being < 0
+          "\"TokenExpiresAtTime\":\"-9223372036854775808\"," // would fail to parse as being < 0
+          "\"OtherProperty\":\"-9223372036854775808\""
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
@@ -1609,10 +1629,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
-        "Token JSON: Access token property ('TokenForAccessing'): string.length=17, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"-9007199254740991\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"fail-9007199254740991\", "
-        "other properties: 'OtherProperty': \"-9007199254740991\".");
+        "Please report an issue with the following details:\n"
+        "Token JSON: Access token property ('TokenForAccessing'): string.length=20, "
+        "relative expiration property ('TokenExpiresInSeconds'): \"-9223372036854775808\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"-9223372036854775808\", "
+        "other properties: 'OtherProperty': \"-9223372036854775808\".");
 
     Logger::SetListener(nullptr);
   }
@@ -1627,8 +1648,8 @@ TEST(TokenCredentialImpl, Diagnosability)
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":\"-1.25\","
-          "\"TokenExpiresInSeconds\":\"fail-1.25\","
-          "\"TokenExpiresAtTime\":\"fail-1.25\","
+          "\"TokenExpiresInSeconds\":\"-1.25\","
+          "\"TokenExpiresAtTime\":\"-1.25\","
           "\"OtherProperty\":\"-1.25\""
           "}",
           "TokenForAccessing",
@@ -1652,10 +1673,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=5, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"fail-1.25\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"fail-1.25\", "
-        "other properties: 'OtherProperty': ~\"-1\".");
+        "relative expiration property ('TokenExpiresInSeconds'): \"-1.25\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"-1.25\", "
+        "other properties: 'OtherProperty': string.length=5.");
 
     Logger::SetListener(nullptr);
   }
@@ -1670,9 +1692,9 @@ TEST(TokenCredentialImpl, Diagnosability)
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":\"-9.00719925e+15\","
-          "\"TokenExpiresInSeconds\":\"fail-9.00719925e+15\","
-          "\"TokenExpiresAtTime\":\"fail-9.00719925e+15\","
-          "\"OtherProperty\":\"-9.00719925E+15\""
+          "\"TokenExpiresInSeconds\":\"-9.00719925e+15\","
+          "\"TokenExpiresAtTime\":\"-9.00719925E+15\","
+          "\"OtherProperty\":\"-9.00719925e+15\""
           "}",
           "TokenForAccessing",
           "TokenExpiresInSeconds",
@@ -1695,10 +1717,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=15, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"fail-9.00719925e+15\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"fail-9.00719925e+15\", "
-        "other properties: 'OtherProperty': ~\"-9\".");
+        "relative expiration property ('TokenExpiresInSeconds'): \"-9.00719925e+15\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"-9.00719925E+15\", "
+        "other properties: 'OtherProperty': string.length=15.");
 
     Logger::SetListener(nullptr);
   }
@@ -1713,7 +1736,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":\"3333-11-22T04:05:06.000Z\","
-          "\"TokenExpiresInSeconds\":\"fail3333-11-22T04:05:06.000Z\","
+          "\"TokenExpiresInSeconds\":\"3333-11-22T04:05:06.000Z\","
           "\"TokenExpiresAtTime\":\"fail3333-11-22T04:05:06.000Z\","
           "\"OtherProperty\":\"3333-11-22T04:05:06.000Z\""
           "}",
@@ -1738,10 +1761,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=24, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"fail3333-11-22T04:05:06.000Z\", "
+        "relative expiration property ('TokenExpiresInSeconds'): \"3333-11-22T04:05:06.000Z\", "
         "absolute expiration property ('TokenExpiresAtTime'): \"fail3333-11-22T04:05:06.000Z\", "
-        "other properties: 'OtherProperty': ~\"3333-11-22T04:05:06Z\".");
+        "other properties: 'OtherProperty': \"3333-11-22T04:05:06Z\".");
 
     Logger::SetListener(nullptr);
   }
@@ -1781,12 +1805,14 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=29, "
         "relative expiration property ('TokenExpiresInSeconds'): "
         "\"Sun, 22 Nov 3333 04:05:06 GMT\", "
         "absolute expiration property ('TokenExpiresAtTime'): "
         "\"failSun, 22 Nov 3333 04:05:06 GMT\", "
-        "other properties: 'OtherProperty': \"Sun, 22 Nov 3333 04:05:06 GMT\".");
+        "other properties: 'OtherProperty': "
+        "\"Sun, 22 Nov 3333 04:05:06 GMT\".");
 
     Logger::SetListener(nullptr);
   }
@@ -1830,6 +1856,7 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=61, "
         "relative expiration property ('TokenExpiresInSeconds'): "
         "\"Sunday, November 22nd of 3333 A.D. at 6 seconds past 405 Zulu\", "
@@ -1855,8 +1882,8 @@ TEST(TokenCredentialImpl, Diagnosability)
     {
       static_cast<void>(TokenCredentialImpl::ParseToken(
           "{\"TokenForAccessing\":\"1337LEAK\","
-          "\"TokenExpiresInSeconds\":\"EXPECTED\","
-          "\"TokenExpiresAtTime\":\"EXPECTED\","
+          "\"TokenExpiresInSeconds\":\"1337LEAK\","
+          "\"TokenExpiresAtTime\":\"1337LEAK\","
           "\"OtherProperty\":\"1337LEAK\""
           "}",
           "TokenForAccessing",
@@ -1880,10 +1907,11 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): string.length=8, "
-        "relative expiration property ('TokenExpiresInSeconds'): \"EXPECTED\", "
-        "absolute expiration property ('TokenExpiresAtTime'): \"EXPECTED\", "
-        "other properties: 'OtherProperty': ~\"1337\".");
+        "relative expiration property ('TokenExpiresInSeconds'): \"1337LEAK\", "
+        "absolute expiration property ('TokenExpiresAtTime'): \"1337LEAK\", "
+        "other properties: 'OtherProperty': string.length=8.");
 
     Logger::SetListener(nullptr);
   }
@@ -1947,32 +1975,33 @@ TEST(TokenCredentialImpl, Diagnosability)
     EXPECT_EQ(
         log.at(0).second,
         "Identity: TokenCredentialImpl::ParseToken(): "
+        "Please report an issue with the following details:\n"
         "Token JSON: Access token property ('TokenForAccessing'): "
         "{"
         "'a': null, 'b': true, 'c': false, 'd': 1, 'e': string.length=1, 'f': {...}, "
         "'g': \"null\", 'h': \"true\", 'i': \"false\", 'j': \"1\", 'k': [...], "
-        "'l': ~\"3333-11-22T04:05:06Z\", "
+        "'l': \"3333-11-22T04:05:06Z\", "
         "'m': \"Sun, 22 Nov 3333 04:05:06 GMT\""
         "}, "
         "relative expiration property ('TokenExpiresInSeconds'): "
         "{"
         "'a': null, 'b': true, 'c': false, 'd': 1, 'e': string.length=1, 'f': {...}, "
         "'g': \"null\", 'h': \"true\", 'i': \"false\", 'j': \"1\", 'k': [...], "
-        "'l': ~\"3333-11-22T04:05:06Z\", "
+        "'l': \"3333-11-22T04:05:06Z\", "
         "'m': \"Sun, 22 Nov 3333 04:05:06 GMT\""
         "}, "
         "absolute expiration property ('TokenExpiresAtTime'): "
         "{"
         "'a': null, 'b': true, 'c': false, 'd': 1, 'e': string.length=1, 'f': {...}, "
         "'g': \"null\", 'h': \"true\", 'i': \"false\", 'j': \"1\", 'k': [...], "
-        "'l': ~\"3333-11-22T04:05:06Z\", "
+        "'l': \"3333-11-22T04:05:06Z\", "
         "'m': \"Sun, 22 Nov 3333 04:05:06 GMT\""
         "}, "
         "other properties: 'OtherProperty': "
         "{"
         "'a': null, 'b': true, 'c': false, 'd': 1, 'e': string.length=1, 'f': {...}, "
         "'g': \"null\", 'h': \"true\", 'i': \"false\", 'j': \"1\", 'k': [...], "
-        "'l': ~\"3333-11-22T04:05:06Z\", "
+        "'l': \"3333-11-22T04:05:06Z\", "
         "'m': \"Sun, 22 Nov 3333 04:05:06 GMT\""
         "}.");
 
