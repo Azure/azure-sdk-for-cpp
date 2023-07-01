@@ -7,12 +7,12 @@
 #include "private/package_version.hpp"
 
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/url.hpp>
 
 #include <chrono>
+#include <limits>
 #include <map>
-#include <sstream>
-#include <type_traits>
 
 using Azure::Identity::_detail::TokenCredentialImpl;
 
@@ -23,6 +23,7 @@ using Azure::DateTime;
 using Azure::Core::Context;
 using Azure::Core::Url;
 using Azure::Core::_internal::PosixTimeConverter;
+using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
@@ -152,100 +153,7 @@ std::string TokenAsDiagnosticString(
     json const& jsonObject,
     std::string const& accessTokenPropertyName,
     std::string const& expiresInPropertyName,
-    std::string const& expiresOnPropertyName)
-{
-  std::stringstream ss;
-  ss << "Token JSON";
-
-  if (!jsonObject.is_object())
-  {
-    ss << " is not an object (value='" << jsonObject.dump() << "')";
-  }
-  else
-  {
-    ss << ": Access token property ('" << accessTokenPropertyName << "') ";
-    if (!jsonObject.contains(accessTokenPropertyName))
-    {
-      ss << "is NOT present";
-    }
-    else
-    {
-      auto const& accessTokenProperty = jsonObject[accessTokenPropertyName];
-      if (!accessTokenProperty.is_string())
-      {
-        ss << "is NOT a string (value='" << accessTokenProperty.dump() << "')";
-      }
-      else
-      {
-        ss << "is string (length=" << accessTokenProperty.get<std::string>().length() << ")";
-      }
-    }
-
-    for (auto const& p : {
-             std::pair<char const*, std::string const*>{"relative", &expiresInPropertyName},
-             std::pair<char const*, std::string const*>{"absolute", &expiresOnPropertyName},
-         })
-    {
-      ss << ", " << p.first << " expiration property ('" << *p.second << "') ";
-      if (!jsonObject.contains(*p.second))
-      {
-        ss << "is NOT present";
-      }
-      else
-      {
-        ss << "is present (value='" << jsonObject[*p.second].dump() << "')";
-      }
-    }
-
-    std::map<std::string, json> otherProperties;
-    for (auto const& property : jsonObject.items())
-    {
-      if (property.key() != accessTokenPropertyName && property.key() != expiresInPropertyName
-          && property.key() != expiresOnPropertyName)
-      {
-        otherProperties[property.key()] = property.value();
-      }
-    }
-
-    ss << ", ";
-    if (otherProperties.empty())
-    {
-      ss << "and there are no other properties";
-    }
-    else
-    {
-      ss << "other properties";
-      const char* delimiter = ": ";
-      for (auto const& property : otherProperties)
-      {
-        ss << delimiter << "'" << property.first << "' (";
-        delimiter = ", ";
-
-        auto const dump = property.second.dump();
-        if (dump.size() <= 100)
-        {
-          ss << "value='" << dump << "'";
-        }
-        else
-        {
-          if (property.second.is_string())
-          {
-            ss << "string length=" << property.second.get<std::string>().length();
-          }
-          else
-          {
-            ss << "value size=" << dump.size();
-          }
-        }
-
-        ss << ")";
-      }
-    }
-  }
-
-  ss << ".";
-  return ss.str();
-}
+    std::string const& expiresOnPropertyName);
 
 [[noreturn]] void ThrowJsonPropertyError(
     std::string const& failedPropertyName,
@@ -396,3 +304,164 @@ AccessToken TokenCredentialImpl::ParseToken(
       expiresInPropertyName,
       expiresOnPropertyName);
 }
+
+namespace {
+std::string PrintSanitizedJsonObject(json const& jsonObject, bool printString, int depth = 0)
+{
+  if (jsonObject.is_null() || jsonObject.is_boolean() || jsonObject.is_number()
+      || (printString && jsonObject.is_string()))
+  {
+    return jsonObject.dump();
+  }
+
+  if (jsonObject.is_string())
+  {
+    auto const stringValue = jsonObject.get<std::string>();
+    std::string prefix;
+    for (auto const& parse : {
+             std::function<std::string()>([&]() -> std::string {
+               return (StringExtensions::LocaleInvariantCaseInsensitiveEqual(stringValue, "null")
+                       || StringExtensions::LocaleInvariantCaseInsensitiveEqual(stringValue, "true")
+                       || StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                           stringValue, "false"))
+                   ? stringValue
+                   : std::string{};
+             }),
+             std::function<std::string()>([&]() -> std::string {
+               return DateTime::Parse(stringValue, DateTime::DateFormat::Rfc3339)
+                   .ToString(DateTime::DateFormat::Rfc3339);
+             }),
+             std::function<std::string()>(
+                 [&]() -> std::string { return std::to_string(std::stoll(stringValue)); }),
+             std::function<std::string()>([&]() -> std::string {
+               return DateTime::Parse(stringValue, DateTime::DateFormat::Rfc1123)
+                   .ToString(DateTime::DateFormat::Rfc1123);
+             }),
+         })
+    {
+      try
+      {
+        auto const parsedValueAsString = parse();
+        if (!parsedValueAsString.empty())
+        {
+          auto const parsedValueAsLiteral = '\"' + parsedValueAsString + '\"';
+          return StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                     jsonObject.dump(), parsedValueAsLiteral)
+              ? parsedValueAsLiteral
+              : ("~" + parsedValueAsLiteral);
+        }
+      }
+      catch (std::exception const&)
+      {
+      }
+    }
+
+    return prefix + "string.length=" + std::to_string(stringValue.length());
+  }
+
+  if (jsonObject.is_array())
+  {
+    return "[...]";
+  }
+
+  if (jsonObject.is_object())
+  {
+    if (depth == 0)
+    {
+      std::string objectValue{"{"};
+      char const* delimiter = "";
+      for (auto const& property : jsonObject.items())
+      {
+        objectValue += delimiter;
+        objectValue += '\'' + property.key() + "': ";
+        objectValue += PrintSanitizedJsonObject(property.value(), false, depth + 1);
+        delimiter = ", ";
+      }
+      return objectValue + '}';
+    }
+    else
+    {
+      return "{...}";
+    }
+  }
+
+  return "?"; // LCOV_EXCL_LINE
+}
+
+std::string TokenAsDiagnosticString(
+    json const& jsonObject,
+    std::string const& accessTokenPropertyName,
+    std::string const& expiresInPropertyName,
+    std::string const& expiresOnPropertyName)
+{
+  std::string result = "Token JSON";
+
+  if (!jsonObject.is_object())
+  {
+    result += " is not an object (" + PrintSanitizedJsonObject(jsonObject, false) + ")";
+  }
+  else
+  {
+    result += ": Access token property ('" + accessTokenPropertyName + "'): ";
+    if (!jsonObject.contains(accessTokenPropertyName))
+    {
+      result += "undefined";
+    }
+    else
+    {
+      auto const& accessTokenProperty = jsonObject[accessTokenPropertyName];
+      result += accessTokenProperty.is_string()
+          ? ("string.length=" + std::to_string(accessTokenProperty.get<std::string>().length()))
+          : PrintSanitizedJsonObject(accessTokenProperty, false);
+    }
+
+    for (auto const& p : {
+             std::pair<char const*, std::string const*>{"relative", &expiresInPropertyName},
+             std::pair<char const*, std::string const*>{"absolute", &expiresOnPropertyName},
+         })
+    {
+      result += ", ";
+      result += p.first;
+      result += " expiration property ('" + *p.second + "'): ";
+
+      if (!jsonObject.contains(*p.second))
+      {
+        result += "undefined";
+      }
+      else
+      {
+        result += PrintSanitizedJsonObject(jsonObject[*p.second], true);
+      }
+    }
+
+    std::map<std::string, json> otherProperties;
+    for (auto const& property : jsonObject.items())
+    {
+      if (property.key() != accessTokenPropertyName && property.key() != expiresInPropertyName
+          && property.key() != expiresOnPropertyName)
+      {
+        otherProperties[property.key()] = property.value();
+      }
+    }
+
+    result += ", ";
+    if (otherProperties.empty())
+    {
+      result += "and there are no other properties";
+    }
+    else
+    {
+      result += "other properties";
+      const char* delimiter = ": ";
+      for (auto const& property : otherProperties)
+      {
+        result += delimiter;
+        result += "'" + property.first + "': " + PrintSanitizedJsonObject(property.second, false);
+        delimiter = ", ";
+      }
+    }
+  }
+
+  return result + '.';
+}
+} // namespace
