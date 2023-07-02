@@ -211,7 +211,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
   UniqueHandle<EVP_MD_CTX> mdCtx(EVP_MD_CTX_new());
   if (!mdCtx)
   {
-    return;
+    return {};
   }
   EVP_PKEY_CTX* signCtx = nullptr;
   if ((EVP_DigestSignInit(mdCtx.get(), &signCtx, EVP_sha256(), nullptr, static_cast<EVP_PKEY*>(key))
@@ -278,7 +278,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     {
       throw;
     }
-    catch (std::exception e)
+    catch (std::exception& e)
     {
       // WIL does not throw AuthenticationException.
       throw AuthenticationException(e.what());
