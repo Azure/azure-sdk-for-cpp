@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp"
+
 #include "azure/storage/common/internal/constants.hpp"
 
 #include <azure/core/internal/credentials/authorization_challenge_parser.hpp>
