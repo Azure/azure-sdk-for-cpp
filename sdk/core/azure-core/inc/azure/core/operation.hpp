@@ -31,8 +31,7 @@ namespace Azure { namespace Core {
     virtual Response<T> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
         = 0;
 
-    [[deprecated("Do not override GetRawResponseInternal() - it wll be removed in the future "
-                 "versions.")]] virtual Azure::Core::Http::RawResponse const&
+    [[deprecated("Do not override and do not use.")]] virtual Azure::Core::Http::RawResponse const&
     GetRawResponseInternal() const
     {
       return *m_rawResponse;
