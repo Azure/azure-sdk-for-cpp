@@ -61,8 +61,8 @@ TEST_F(EventDataTest, EventDataBodyTest)
   {
     Azure::Messaging::EventHubs::Models::EventData msg;
 
-    // Note that Data is an array of BinaryData values.
-    msg.Body.Data = {{1, 3, 5, 7, 9}};
+    // Note that Data is an AMQP BinaryData value.
+    msg.Body.Data = AmqpBinaryData{1, 3, 5, 7, 9};
 
     auto message
         = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
