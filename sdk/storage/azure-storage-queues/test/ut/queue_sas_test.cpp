@@ -266,24 +266,24 @@ namespace Azure { namespace Storage { namespace Test {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
+    auto queueClient = *m_queueClient;
+
     Sas::QueueSasBuilder queueSasBuilder;
     queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     queueSasBuilder.StartsOn = sasStartsOn;
     queueSasBuilder.ExpiresOn = sasExpiredOn;
     queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::All);
     queueSasBuilder.QueueName = m_queueName;
-    queueSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
 
     auto keyCredential
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
 
-    auto queueClient = *m_queueClient;
-    VerifyQueueSasNonRead(queueClient, sasToken);
-
-    queueSasBuilder.IPRange = "0.0.0.0-255.255.255.255";
-    sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
     VerifyQueueSasRead(queueClient, sasToken);
+
+    queueSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
+    sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyQueueSasNonRead(queueClient, sasToken);
   }
 
   TEST_F(QueueSasTest, QueueSasWithIdentifier)

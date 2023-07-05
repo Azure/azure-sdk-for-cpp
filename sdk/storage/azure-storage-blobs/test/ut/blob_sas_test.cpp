@@ -491,14 +491,13 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
     accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
-    accountSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
 
     auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyBlobSasNonRead(blobClient, sasToken);
-
-    accountSasBuilder.IPRange = "0.0.0.0-255.255.255.255";
-    sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
     VerifyBlobSasRead(blobClient, sasToken);
+
+    accountSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
+    sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyBlobSasNonRead(blobClient, sasToken);
   }
 
   TEST_F(BlobSasTest, ServiceSasWithIP)
@@ -520,14 +519,13 @@ namespace Azure { namespace Storage { namespace Test {
     blobSasBuilder.BlobName = blobName;
     blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
     blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
-    blobSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
 
     auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
-    VerifyBlobSasNonRead(blobClient, sasToken);
-
-    blobSasBuilder.IPRange = "0.0.0.0-255.255.255.255";
-    sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
     VerifyBlobSasRead(blobClient, sasToken);
+
+    blobSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
+    sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyBlobSasNonRead(blobClient, sasToken);
   }
 
   TEST_F(BlobSasTest, AccountSasService)
