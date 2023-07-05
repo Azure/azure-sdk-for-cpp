@@ -436,7 +436,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobSasTest, AccountSasWithoutStarttime)
   {
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
@@ -457,7 +456,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobSasTest, ServiceSasWithoutStartTime)
   {
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
@@ -480,7 +478,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobSasTest, AccountSasWithIP)
   {
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
@@ -535,7 +532,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobSasTest, AccountSasService)
   {
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
@@ -561,7 +557,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobSasTest, AccountSasResourceTypes)
   {
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
@@ -573,7 +568,6 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     accountSasBuilder.ExpiresOn = sasExpiresOn;
     accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
-    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
     accountSasBuilder.ResourceTypes = Sas::AccountSasResource::Service;
 
@@ -660,7 +654,6 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const auto encryptionScope = GetTestEncryptionScope();
 
-    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     auto keyCredential
