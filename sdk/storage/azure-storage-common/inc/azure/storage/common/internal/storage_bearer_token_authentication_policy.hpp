@@ -18,9 +18,9 @@ namespace Azure { namespace Storage { namespace _internal {
      * @param enableTenantDiscovery Enables tenant discovery through the authorization challenge.
      */
     explicit StorageBearerTokenAuthenticationPolicy(
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
         Azure::Core::Credentials::TokenRequestContext tokenRequestContext,
-        bool enableTenantDiscovery = false)
+        bool enableTenantDiscovery)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
           m_Scopes(tokenRequestContext.Scopes), m_TenantId(tokenRequestContext.TenantId),
           m_EnableTenantDiscovery(enableTenantDiscovery)
@@ -31,13 +31,22 @@ namespace Azure { namespace Storage { namespace _internal {
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<StorageBearerTokenAuthenticationPolicy>(*this);
+      return std::unique_ptr<HttpPolicy>(new StorageBearerTokenAuthenticationPolicy(*this));
     }
 
   private:
     std::vector<std::string> m_Scopes;
     mutable std::string m_TenantId;
+    mutable std::mutex m_TenantIdMutex;
     bool m_EnableTenantDiscovery;
+
+    StorageBearerTokenAuthenticationPolicy(StorageBearerTokenAuthenticationPolicy const& other)
+        : BearerTokenAuthenticationPolicy(other), m_Scopes(other.m_Scopes),
+          m_TenantId(other.m_TenantId), m_EnableTenantDiscovery(other.m_EnableTenantDiscovery)
+    {
+    }
+
+    void operator=(StorageBearerTokenAuthenticationPolicy const&) = delete;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> AuthorizeAndSendRequest(
         Azure::Core::Http::Request& request,

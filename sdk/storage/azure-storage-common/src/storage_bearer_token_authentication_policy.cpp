@@ -30,6 +30,8 @@ namespace Azure { namespace Storage { namespace _internal {
       Azure::Core::Http ::Request& request,
       Azure::Core::Context const& context) const
   {
+    std::lock_guard<std::mutex> lock(m_TenantIdMutex);
+
     std::string authorizationUri
         = Azure::Core::Credentials::_internal::AuthorizationChallengeParser::GetChallengeParameter(
             challenge, "Bearer", "authorization_uri");

@@ -3,6 +3,10 @@
 ## 12.1.0-beta.1 (Unreleased)
 
 ### Features Added
+- Bumped up API version to `2019-12-12`.
+- Bumped up SAS token version to `2019-12-12`.
+- TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.
+    - A new property is now available on `QueueClientOptions` called `EnableTenantDiscovery`. If set to true, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
 
 ### Breaking Changes
 
