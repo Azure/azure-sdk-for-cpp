@@ -9,13 +9,104 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(QueueClientTest, QueueSasTest_LIVEONLY_)
+  class QueueSasTest : public QueueClientTest {
+  public:
+    template <class T>
+    T GetSasAuthenticatedClient(const T& queueClient, const std::string& sasToken)
+    {
+      T queueClient1(
+          AppendQueryParameters(Azure::Core::Url(queueClient.GetUrl()), sasToken),
+          InitStorageClientOptions<Queues::QueueClientOptions>());
+      return queueClient1;
+    }
+
+    void VerifyQueueSasRead(const Queues::QueueClient& queueClient, const std::string& sasToken)
+    {
+      auto queueClient1 = GetSasAuthenticatedClient(queueClient, sasToken);
+      EXPECT_NO_THROW(queueClient1.GetProperties());
+    }
+
+    void VerifyQueueSasNonRead(const Queues::QueueClient& queueClient, const std::string& sasToken)
+    {
+      auto queueClient1 = GetSasAuthenticatedClient(queueClient, sasToken);
+      EXPECT_THROW(queueClient1.GetProperties(), StorageException);
+    }
+
+    void VerifyQueueSasAdd(const Queues::QueueClient& queueClient, const std::string& sasToken)
+    {
+      auto queueClient1 = GetSasAuthenticatedClient(queueClient, sasToken);
+      EXPECT_NO_THROW(queueClient1.EnqueueMessage("message1"));
+    }
+
+    void VerifyQueueSasUpdate(const Queues::QueueClient& queueClient, const std::string& sasToken)
+    {
+      auto sendReceipt = queueClient.EnqueueMessage("message0").Value;
+      auto queueClient1 = GetSasAuthenticatedClient(queueClient, sasToken);
+      auto updateReceipt
+          = queueClient1
+                .UpdateMessage(
+                    sendReceipt.MessageId, sendReceipt.PopReceipt, std::chrono::seconds(0))
+                .Value;
+      queueClient.DeleteMessage(sendReceipt.MessageId, updateReceipt.PopReceipt);
+    }
+
+    void VerifyQueueSasProcess(const Queues::QueueClient& queueClient, const std::string& sasToken)
+    {
+      auto sendReceipt = queueClient.EnqueueMessage("message0").Value;
+      auto queueClient1 = GetSasAuthenticatedClient(queueClient, sasToken);
+      // Message deletion requires "p" permission
+      queueClient1.DeleteMessage(sendReceipt.MessageId, sendReceipt.PopReceipt);
+    }
+
+    void VerifyQueueSasWrite(const Queues::QueueClient& queueClient, const std::string& sasToken)
+    {
+      auto queueClient1 = GetSasAuthenticatedClient(queueClient, sasToken);
+      Metadata m;
+      m["key1"] = "meta1";
+      EXPECT_NO_THROW(queueClient1.SetMetadata(m));
+    }
+
+    void VerifyQueueSasList(
+        const Queues::QueueServiceClient& queueServiceClient,
+        const std::string& sasToken)
+    {
+      auto queueServiceClient1 = GetSasAuthenticatedClient(queueServiceClient, sasToken);
+      EXPECT_NO_THROW(queueServiceClient.ListQueues());
+    }
+
+    void VerifyQueueSasCreate(
+        const Queues::QueueServiceClient& queueServiceClient,
+        const std::string& newQueueName,
+        const std::string& sasToken)
+    {
+      auto queueServiceClient1 = GetSasAuthenticatedClient(queueServiceClient, sasToken);
+      EXPECT_NO_THROW(queueServiceClient1.CreateQueue(newQueueName));
+      queueServiceClient.DeleteQueue(newQueueName);
+    }
+
+    void VerifyQueueSasDelete(
+        const Queues::QueueServiceClient& queueServiceClient,
+        const std::string& newQueueName,
+        const std::string& sasToken)
+
+    {
+      queueServiceClient.CreateQueue(newQueueName);
+      auto queueServiceClient1 = GetSasAuthenticatedClient(queueServiceClient, sasToken);
+      EXPECT_NO_THROW(queueServiceClient1.DeleteQueue(newQueueName));
+      try
+      {
+        queueServiceClient.DeleteQueue(newQueueName);
+      }
+      catch (Azure::Storage::StorageException&)
+      {
+      }
+    }
+  };
+
+  TEST_F(QueueSasTest, AccountSasPermissions)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
-    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-
-    std::string queueName = LowercaseRandomString();
 
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
@@ -24,75 +115,11 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.Services = Sas::AccountSasServices::Queue;
     accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
 
-    Sas::QueueSasBuilder queueSasBuilder;
-    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    queueSasBuilder.StartsOn = sasStartsOn;
-    queueSasBuilder.ExpiresOn = sasExpiresOn;
-    queueSasBuilder.QueueName = queueName;
-
     auto keyCredential
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
-    auto queueServiceClient0
-        = Queues::QueueServiceClient::CreateFromConnectionString(StandardStorageConnectionString());
-    auto queueClient0 = queueServiceClient0.GetQueueClient(queueName);
-    queueClient0.Create();
 
-    std::string queueServiceUrl = queueServiceClient0.GetUrl();
-    std::string queueUrl = queueClient0.GetUrl();
-
-    auto verifyQueueRead = [&](const std::string& sas) {
-      auto queueClient = Queues::QueueClient(queueUrl + sas);
-      queueClient.GetProperties();
-    };
-
-    auto verifyQueueAdd = [&](const std::string& sas) {
-      auto queueClient = Queues::QueueClient(queueUrl + sas);
-      queueClient.EnqueueMessage("message1");
-    };
-
-    auto verifyQueueUpdate = [&](const std::string& sas) {
-      auto sendReceipt = queueClient0.EnqueueMessage("message 0").Value;
-      auto queueClient = Queues::QueueClient(queueUrl + sas);
-      auto updateReceipt
-          = queueClient
-                .UpdateMessage(
-                    sendReceipt.MessageId, sendReceipt.PopReceipt, std::chrono::seconds(0))
-                .Value;
-      queueClient0.DeleteMessage(sendReceipt.MessageId, updateReceipt.PopReceipt);
-    };
-
-    auto verifyQueueProcess = [&](const std::string& sas) {
-      auto sendReceipt = queueClient0.EnqueueMessage("message 0").Value;
-      auto queueClient = Queues::QueueClient(queueUrl + sas);
-      queueClient.DeleteMessage(sendReceipt.MessageId, sendReceipt.PopReceipt);
-    };
-
-    auto verifyQueueWrite = [&](const std::string& sas) {
-      auto queueClient = Queues::QueueClient(queueUrl + sas);
-      Metadata m;
-      m["key1"] = RandomString();
-      EXPECT_NO_THROW(queueClient.SetMetadata(m));
-    };
-
-    auto verifyQueueList = [&](const std::string& sas) {
-      auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
-      EXPECT_NO_THROW(queueServiceClient.ListQueues());
-    };
-
-    auto verifyQueueCreate = [&](const std::string& sas) {
-      auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
-      const std::string newQueueName = LowercaseRandomString();
-      EXPECT_NO_THROW(queueServiceClient.CreateQueue(newQueueName));
-      queueServiceClient0.GetQueueClient(newQueueName).Delete();
-    };
-
-    auto verifyQueueDelete = [&](const std::string& sas) {
-      const std::string newQueueName = LowercaseRandomString();
-      queueServiceClient0.CreateQueue(newQueueName);
-      auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
-      EXPECT_NO_THROW(queueServiceClient.DeleteQueue(newQueueName));
-    };
+    auto queueClient = *m_queueClient;
+    auto queueServiceClient = *m_queueServiceClient;
 
     for (auto permissions : {
              Sas::AccountSasPermissions::All,
@@ -111,38 +138,55 @@ namespace Azure { namespace Storage { namespace Test {
 
       if ((permissions & Sas::AccountSasPermissions::Read) == Sas::AccountSasPermissions::Read)
       {
-        verifyQueueRead(sasToken);
+        VerifyQueueSasRead(queueClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Write) == Sas::AccountSasPermissions::Write)
       {
-        verifyQueueWrite(sasToken);
+        VerifyQueueSasWrite(queueClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::List) == Sas::AccountSasPermissions::List)
       {
-        verifyQueueList(sasToken);
+        VerifyQueueSasList(queueServiceClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Create) == Sas::AccountSasPermissions::Create)
       {
-        verifyQueueCreate(sasToken);
+        VerifyQueueSasCreate(queueServiceClient, LowercaseRandomString(), sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Delete) == Sas::AccountSasPermissions::Delete)
       {
-        verifyQueueDelete(sasToken);
+        VerifyQueueSasDelete(queueServiceClient, LowercaseRandomString(), sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Add) == Sas::AccountSasPermissions::Add)
       {
-        verifyQueueAdd(sasToken);
+        VerifyQueueSasAdd(queueClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Process)
           == Sas::AccountSasPermissions::Process)
       {
-        verifyQueueProcess(sasToken);
+        VerifyQueueSasProcess(queueClient, sasToken);
       }
       if ((permissions & Sas::AccountSasPermissions::Update) == Sas::AccountSasPermissions::Update)
       {
-        verifyQueueUpdate(sasToken);
+        VerifyQueueSasUpdate(queueClient, sasToken);
       }
     }
+  }
+
+  TEST_F(QueueSasTest, ServiceSasPermissions)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.StartsOn = sasStartsOn;
+    queueSasBuilder.ExpiresOn = sasExpiresOn;
+    queueSasBuilder.QueueName = m_queueName;
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+    auto queueClient = *m_queueClient;
 
     for (auto permissions :
          {Sas::QueueSasPermissions::Read,
@@ -156,75 +200,121 @@ namespace Azure { namespace Storage { namespace Test {
 
       if ((permissions & Sas::QueueSasPermissions::Read) == Sas::QueueSasPermissions::Read)
       {
-        verifyQueueRead(sasToken);
+        VerifyQueueSasRead(queueClient, sasToken);
       }
       if ((permissions & Sas::QueueSasPermissions::Add) == Sas::QueueSasPermissions::Add)
       {
-        verifyQueueAdd(sasToken);
+        VerifyQueueSasAdd(queueClient, sasToken);
       }
       if ((permissions & Sas::QueueSasPermissions::Update) == Sas::QueueSasPermissions::Update)
       {
-        verifyQueueUpdate(sasToken);
+        VerifyQueueSasUpdate(queueClient, sasToken);
       }
       if ((permissions & Sas::QueueSasPermissions::Process) == Sas::QueueSasPermissions::Process)
       {
-        verifyQueueProcess(sasToken);
+        VerifyQueueSasProcess(queueClient, sasToken);
       }
     }
+  }
 
+  TEST_F(QueueSasTest, QueueSasExpired)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.StartsOn = sasStartsOn;
+    queueSasBuilder.ExpiresOn = sasExpiredOn;
+    queueSasBuilder.QueueName = m_queueName;
     queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::All);
-    // Expires
-    {
-      Sas::QueueSasBuilder builder2 = queueSasBuilder;
-      builder2.StartsOn = sasStartsOn;
-      builder2.ExpiresOn = sasExpiredOn;
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      EXPECT_THROW(verifyQueueRead(sasToken), StorageException);
-    }
 
-    // Without start time
-    {
-      Sas::QueueSasBuilder builder2 = queueSasBuilder;
-      builder2.StartsOn.Reset();
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      EXPECT_NO_THROW(verifyQueueRead(sasToken));
-    }
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
 
-    // IP
-    {
-      Sas::QueueSasBuilder builder2 = queueSasBuilder;
-      builder2.IPRange = "0.0.0.0-0.0.0.1";
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      EXPECT_THROW(verifyQueueRead(sasToken), StorageException);
+    auto queueClient = *m_queueClient;
 
-      // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
-      // builder2.IPRange = "0.0.0.0-255.255.255.255";
-      // sasToken = builder2.GenerateSasToken(*keyCredential);
-      // EXPECT_NO_THROW(verifyQueueRead(sasToken));
-    }
+    auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyQueueSasNonRead(queueClient, sasToken);
 
-    // Identifier
-    {
-      Queues::Models::SignedIdentifier identifier;
-      identifier.Id = RandomString(64);
-      identifier.StartsOn = sasStartsOn;
-      identifier.ExpiresOn = sasExpiresOn;
-      identifier.Permissions = "r";
-      Queues::Models::QueueAccessPolicy accessPolicy;
-      accessPolicy.SignedIdentifiers.push_back(identifier);
-      queueClient0.SetAccessPolicy(accessPolicy);
+    queueSasBuilder.ExpiresOn = sasExpiresOn;
+    sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyQueueSasRead(queueClient, sasToken);
+  }
 
-      Sas::QueueSasBuilder builder2 = queueSasBuilder;
-      builder2.StartsOn.Reset();
-      builder2.ExpiresOn = Azure::DateTime();
-      builder2.SetPermissions(static_cast<Sas::QueueSasPermissions>(0));
-      builder2.Identifier = identifier.Id;
+  TEST_F(QueueSasTest, QueueSasWithoutStartTime)
+  {
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-      auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      // TODO: looks like a server bug, the identifier doesn't work sometimes.
-      // EXPECT_NO_THROW(verifyQueueRead(sasToken));
-    }
-    queueClient0.Delete();
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.ExpiresOn = sasExpiresOn;
+    queueSasBuilder.QueueName = m_queueName;
+    queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::All);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+
+    auto queueClient = *m_queueClient;
+    VerifyQueueSasRead(queueClient, sasToken);
+  }
+
+  TEST_F(QueueSasTest, QueueSasWithIP)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiredOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto queueClient = *m_queueClient;
+
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.StartsOn = sasStartsOn;
+    queueSasBuilder.ExpiresOn = sasExpiredOn;
+    queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::All);
+    queueSasBuilder.QueueName = m_queueName;
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+
+    VerifyQueueSasRead(queueClient, sasToken);
+
+    queueSasBuilder.IPRange = "0.0.0.0-0.0.0.1";
+    sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyQueueSasNonRead(queueClient, sasToken);
+  }
+
+  TEST_F(QueueSasTest, QueueSasWithIdentifier)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto queueClient = *m_queueClient;
+    Queues::Models::SignedIdentifier identifier;
+    identifier.Id = RandomString(64);
+    identifier.StartsOn = sasStartsOn;
+    identifier.ExpiresOn = sasExpiresOn;
+    identifier.Permissions = "r";
+    Queues::Models::QueueAccessPolicy accessPolicy;
+    accessPolicy.SignedIdentifiers.push_back(identifier);
+    queueClient.SetAccessPolicy(accessPolicy);
+
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.ExpiresOn = sasExpiresOn;
+    queueSasBuilder.SetPermissions(static_cast<Sas::QueueSasPermissions>(0));
+    queueSasBuilder.Identifier = identifier.Id;
+    queueSasBuilder.QueueName = m_queueName;
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+
+    TestSleep(std::chrono::seconds(30));
+
+    VerifyQueueSasRead(queueClient, sasToken);
   }
 
 }}} // namespace Azure::Storage::Test
