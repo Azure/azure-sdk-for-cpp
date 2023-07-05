@@ -63,10 +63,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns FQDN client
      */
-    std::string const& GetHostName()
-    {
-      return m_credentials.HostName;
-    }
+    std::string const& GetHostName() { return m_credentials.HostName; }
 
     /** @brief Getter for client id
      *

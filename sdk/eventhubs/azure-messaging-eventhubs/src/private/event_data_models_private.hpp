@@ -6,7 +6,8 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
   class EventDataFactory {
   public:
-    static Azure::Core::Amqp::Models::AmqpMessage EventDataToAmqpMessage(Models::EventData const& message);
+    static Azure::Core::Amqp::Models::AmqpMessage EventDataToAmqpMessage(
+        Models::EventData const& message);
   };
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail

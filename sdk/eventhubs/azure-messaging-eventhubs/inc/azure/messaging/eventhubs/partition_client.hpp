@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "models/partition_client_models.hpp"
 #include "models/event_data.hpp"
+#include "models/partition_client_models.hpp"
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/datetime.hpp>

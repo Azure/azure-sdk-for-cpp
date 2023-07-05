@@ -21,7 +21,8 @@ void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {};
+  class ConsumerClientTest : public EventHubsTestBase {
+  };
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
@@ -74,7 +75,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.EnableTrace = true;
     options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
-    auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, GetEnv("EVENTHUB_NAME"), "$Default", options);
+    auto client = Azure::Messaging::EventHubs::ConsumerClient(
+        connStringNoEntityPath, GetEnv("EVENTHUB_NAME"), "$Default", options);
     Azure::Messaging::EventHubs::Models::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 

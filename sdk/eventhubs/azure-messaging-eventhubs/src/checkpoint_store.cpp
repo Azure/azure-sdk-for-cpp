@@ -42,7 +42,7 @@ std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobP
     throw std::runtime_error("missing checkpoint fields");
   }
   std::stringstream strstr;
-  strstr << checkpoint.EventHubHostName<< "/" << checkpoint.EventHubName << "/"
+  strstr << checkpoint.EventHubHostName << "/" << checkpoint.EventHubName << "/"
          << checkpoint.ConsumerGroup << "/checkpoint/";
 
   return strstr.str();
