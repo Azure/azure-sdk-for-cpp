@@ -15,16 +15,19 @@
 
 struct MESSAGE_INSTANCE_TAG;
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_INSTANCE_TAG>
-{
-  static void FreeAmqpMessage(MESSAGE_INSTANCE_TAG* obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<MESSAGE_INSTANCE_TAG>
+  {
+    static void FreeAmqpMessage(MESSAGE_INSTANCE_TAG* obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
-};
+    using type = BasicUniqueHandle<MESSAGE_INSTANCE_TAG, FreeAmqpMessage>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
   class AmqpMessageFactory;
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
+
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   /**
@@ -44,6 +47,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   constexpr int AmqpDefaultMessageFormatValue
       = 0; // Specifies the message format for an AMQP message.
 
+  /** @brief An AmqpMessage object represents a received AMQP message.
+   * @remark An AMQP message is comprised of a header, properties, application properties, and
+   * body. The body of the message can be one of the following types:
+   * - A single AMQP Value.
+   * - One or more binary data sections.
+   * - One or more sequence sections.
+   *
+   * For more information, see [AMQP Message
+   * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
+   *
+   */
   class AmqpMessage final {
   public:
     /** @brief Construct a new AMQP Message object. */
@@ -68,10 +82,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpMessage& operator=(AmqpMessage&&) = default;
 
+    /** @brief Compare two AmqpMessages for equality. */
     bool operator==(AmqpMessage const& that) const noexcept;
+
+    /** @brief Compare two AmqpMessage values. */
     bool operator!=(AmqpMessage const& that) const noexcept { return !(*this == that); }
 
+    /** @brief Construct an empty AMQP Message. */
     AmqpMessage(std::nullptr_t) : m_hasValue{false} {}
+
+    /** @brief Returns True if the AMQP message has a value, false otherwise.
+     *
+     * @returns true if the AMQP message has a value, false otherwise.
+     */
     operator bool() const noexcept { return m_hasValue; }
 
     /** @brief The message format.

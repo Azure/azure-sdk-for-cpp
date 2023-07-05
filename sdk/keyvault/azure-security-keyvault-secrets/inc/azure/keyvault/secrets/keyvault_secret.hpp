@@ -10,6 +10,12 @@
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+
+  /**
+   * @brief Secret is the resource consisting of name, value and its attributes specified in
+   * SecretProperties. It is managed by Secret Service.
+   *
+   */
   struct KeyVaultSecret
   {
     /**

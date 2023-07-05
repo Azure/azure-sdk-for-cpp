@@ -302,7 +302,6 @@
         "BUILD_SAMPLES": true
       }
     },
-
     {
       "name": "linux-basic-gcc9",
       "displayName": "Linux GCC 9",
@@ -337,10 +336,78 @@
       }
     },
     {
+      "name": "linux-basic-clang-11",
+      "displayName": "Linux clang-11",
+      "description": "Using compilers: C = /usr/bin/clang-11, CXX = /usr/bin/clang++-11",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-11",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-11"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-clang-11-debug",
+      "displayName": "Linux clang 11 Debug",
+      "inherits": "linux-basic-clang-11",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-clang-11-debug-tests",
+      "inherits": "linux-clang-11-debug",
+      "displayName": "Linux clang 11 Debug+Tests",
+      "cacheVariables": {
+        "BUILD_TESTING": "true"
+      }
+    },
+    {
+      "name": "linux-basic-g++",
+      "displayName": "Linux G++",
+      "description": "Using compilers: C = /usr/bin/cc, CXX = /usr/bin/c++",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/cc",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-g++-debug",
+      "displayName": "Linux c++ Debug",
+      "inherits": "linux-basic-g++",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-g++-debug-tests",
+      "inherits": "linux-g++-debug",
+      "displayName": "Linux c++ Debug+Tests",
+      "cacheVariables": {
+        "BUILD_TESTING": "true"
+      }
+    },
+    {
       "name": "generate-doxygen",
       "displayName": "zz-Generate Doxygen",
       "inherits": "x64-static",
-      "cacheVariables": { "BUILD_DOCUMENTATION": true }
+      "cacheVariables": {
+        "BUILD_DOCUMENTATION": true
+      }
     }
   ]
 }

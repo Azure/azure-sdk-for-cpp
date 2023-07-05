@@ -128,16 +128,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
   }
 
-  /**
-   * @brief Gets an authentication token.
-   *
-   * @param tokenRequestContext A context to get the token in.
-   * @param context A context to control the request lifetime.
-   *
-   * @return Authentication token.
-   *
-   * @throw Credentials::AuthenticationException Authentication error occurred.
-   */
   Credentials::AccessToken ServiceBusSasConnectionStringCredential::GetToken(
       Credentials::TokenRequestContext const& tokenRequestContext,
       Context const& context) const

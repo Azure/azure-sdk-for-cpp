@@ -8,6 +8,7 @@
 #include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/platform.hpp>
@@ -47,6 +48,7 @@ using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
+using Azure::Core::Json::_internal::json;
 using Azure::Identity::AzureCliCredentialOptions;
 using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TenantIdResolver;
@@ -108,7 +110,7 @@ AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
 {
 }
 
-AzureCliCredential::AzureCliCredential(TokenCredentialOptions const& options)
+AzureCliCredential::AzureCliCredential(const Core::Credentials::TokenCredentialOptions& options)
     : AzureCliCredential(
         options,
         AzureCliCredentialOptions{}.TenantId,
@@ -160,10 +162,18 @@ AccessToken AzureCliCredential::GetToken(
         return TokenCredentialImpl::ParseToken(
             azCliResult, "accessToken", "expiresIn", "expiresOn");
       }
-      catch (std::exception const&)
+      catch (json::exception const&)
       {
-        // Throw the az command output (error message)
-        // limited to 250 characters (250 has no special meaning).
+        // json::exception gets thrown when a string we provided for parsing is not a json object.
+        // It should not get thrown if the string is a valid JSON, but there are specific problems
+        // with the token JSON object - missing property, failure to parse a specific property etc.
+        // I.e. this means that the az commnd has rather printed some error message
+        // (such as "ERROR: Please run az login to setup account.") instead of producing a JSON
+        // object output. In this case, we want the exception to be thrown with the output from the
+        // command (which is likely the error message) and not with the details of the exception
+        // that was thrown from ParseToken() (which most likely will be "Unexpected token ...").
+        // So, we limit the az command output (error message) limited to 250 characters so it is not
+        // too long, and throw that.
         throw std::runtime_error(azCliResult.substr(0, 250));
       }
     }

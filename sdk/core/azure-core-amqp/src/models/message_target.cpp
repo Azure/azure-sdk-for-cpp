@@ -15,11 +15,12 @@
 
 #include <iostream>
 
-void Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(
-    TARGET_HANDLE value)
-{
-  target_destroy(value);
-}
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<TARGET_INSTANCE_TAG>::FreeMessageTarget(TARGET_HANDLE value)
+  {
+    target_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 

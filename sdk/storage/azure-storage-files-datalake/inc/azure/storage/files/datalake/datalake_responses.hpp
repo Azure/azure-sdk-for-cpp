@@ -549,10 +549,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using CopyStatus = Blobs::Models::CopyStatus;
 
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Query.
+     * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Query.
      */
     struct QueryFileResult final
     {
+      /** The response body stream.
+       */
       std::unique_ptr<Core::IO::BodyStream> BodyStream;
       /**
        * Returns the date and time the container was last modified. Any operation that modifies the
@@ -696,7 +698,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       Azure::Nullable<std::string> EncryptionScope;
 
-      /*
+      /**
        * Encryption context of the file. Encryption context is metadata that is not encrypted when
        * stored on the file. The primary application of this field is to store non-encrypted data
        * that can be used to derive the customer-provided key for a file.

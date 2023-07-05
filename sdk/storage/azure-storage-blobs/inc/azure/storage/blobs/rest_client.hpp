@@ -41,13 +41,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     class EncryptionAlgorithmType final {
     public:
       EncryptionAlgorithmType() = default;
+      /** Construct a new EncryptionAlgorithmType from a string. */
       explicit EncryptionAlgorithmType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const EncryptionAlgorithmType& other) const
       {
         return m_value == other.m_value;
       }
+      /** @brief Compare an encryption algorithm type with another. */
       bool operator!=(const EncryptionAlgorithmType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+
+      /** @brief Aes256 encryption algorithm. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
 
     private:
@@ -59,12 +65,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlockType final {
     public:
       BlockType() = default;
+      /** Construct a new BlockType from a string. */
       explicit BlockType(std::string value) : m_value(std::move(value)) {}
+      /** @brief Compare a block type with another. */
       bool operator==(const BlockType& other) const { return m_value == other.m_value; }
+      /** @brief Compare a block type with another. */
       bool operator!=(const BlockType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Block is committed. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
+      /** @brief Block is uncommitted. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
+      /** @brief Block is latest. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
 
     private:
@@ -191,7 +204,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Nullable<std::string> DefaultIndexDocumentPath;
     };
     /**
-     * @brief Response type for #Azure::Storage::Blobs::ServiceClient::SetProperties.
+     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.
      */
     struct SetServicePropertiesResult final
     {
@@ -238,12 +251,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     class GeoReplicationStatus final {
     public:
       GeoReplicationStatus() = default;
+      /** Construct a new GeoReplicationStatus from a string.*/
       explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Replication Status Live */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
+      /** @brief Replication Status Bootstrapping */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      /** @brief Replication Status Unavailable */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
 
     private:
@@ -281,11 +301,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     class LeaseStatus final {
     public:
       LeaseStatus() = default;
+      /** @brief Construct a new LeaseStatus from a string. */
       explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Locked lease status */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
+      /** @brief Unlocked lease status */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
 
     private:
@@ -297,14 +323,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     class LeaseState final {
     public:
       LeaseState() = default;
+      /** @brief Construct a new LeaseState from a string. */
       explicit LeaseState(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const LeaseState& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Lease available. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
+      /** @brief Lease leased. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Leased;
+      /** @brief Lease expired. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Expired;
+      /** @brief Lease breaking. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
+      /** @brief Lease broken. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
 
     private:
@@ -316,11 +351,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     class LeaseDurationType final {
     public:
       LeaseDurationType() = default;
+      /** Construct a new LeaseDuration from a string.*/
       explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** Lease Duration Infinite. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
+      /** Lease Duration Fixed. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
 
     private:
@@ -333,12 +374,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     class PublicAccessType final {
     public:
       PublicAccessType() = default;
+      /** Construct a new PublicAccessType from a string.*/
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+
+      /** @brief BlobContainer access type. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
+      /** @brief Blob access type. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
+      /** @brief None access type. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
 
     private:
@@ -543,17 +592,29 @@ namespace Azure { namespace Storage { namespace Blobs {
     class SkuName final {
     public:
       SkuName() = default;
+      /** Construct a SkuName from a string */
       explicit SkuName(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const SkuName& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const SkuName& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief StandardLrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
+      /** @brief StandardGrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
+      /** @brief StandardRagrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
+      /** @brief StandardZrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
+      /** @brief PremiumLrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
+      /** @brief PremiumZrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
+      /** @brief StandardGzrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
+      /** @brief StandardRagzrs SKU*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
 
     private:
@@ -565,21 +626,30 @@ namespace Azure { namespace Storage { namespace Blobs {
     class AccountKind final {
     public:
       AccountKind() = default;
+      /** @brief Construct a new AccountKind from a string.*/
       explicit AccountKind(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
+      /** @brief Compare two AccessKinds for equality */
       bool operator!=(const AccountKind& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Storage account kind. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
+      /** @brief BlobStorage account kind. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
+      /** @brief StorageV2 account kind. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
+      /** @brief FileStorage account kind. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
+      /** @brief Block Blob Storage account kind. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
 
     private:
       std::string m_value;
     };
     /**
-     * @brief Response type for #Azure::Storage::Blobs::ServiceClient::GetAccountInfo.
+     * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.
      */
     struct AccountInfo final
     {
@@ -929,13 +999,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     class CopyStatus final {
     public:
       CopyStatus() = default;
+      /** @brief Construct a new CopyStatus from a string. */
       explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
+      /** @brief Compare two AccessTier's for equality */
       bool operator!=(const CopyStatus& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Copy is Pending*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
+      /** @brief Copy Succeeded */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
+      /** @brief Copy was Aborted */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Aborted;
+      /** @brief Copy Failed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Failed;
 
     private:
@@ -947,28 +1025,51 @@ namespace Azure { namespace Storage { namespace Blobs {
     class AccessTier final {
     public:
       AccessTier() = default;
+      /** @brief Construct a new AccessTier from a string value. */
       explicit AccessTier(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
+      /** @brief Compare two AccessTier's for equality */
       bool operator!=(const AccessTier& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief P1 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
+      /** @brief P2 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P2;
+      /** @brief P3 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P3;
+      /** @brief P4 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P4;
+      /** @brief P6 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P6;
+      /** @brief P10 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P10;
+      /** @brief P15 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P15;
+      /** @brief P20 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P20;
+      /** @brief P30 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P30;
+      /** @brief P40 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P40;
+      /** @brief P50 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P50;
+      /** @brief P60 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P60;
+      /** @brief P70 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P70;
+      /** @brief P80 Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P80;
+      /** @brief Hot Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Hot;
+      /** @brief Cool Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
+      /** @brief Archive Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
+      /** @brief Premium Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
+      /** @brief Cold Tier. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
 
     private:
@@ -983,11 +1084,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     class ArchiveStatus final {
     public:
       ArchiveStatus() = default;
+      /** @brief Construct an ArchiveStatus from a string. */
       explicit ArchiveStatus(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const ArchiveStatus& other) const { return m_value == other.m_value; }
+      /** @brief Compare two AccessTier's for equality */
       bool operator!=(const ArchiveStatus& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Rehydrate Pending to Hot */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToHot;
+      /** @brief Rehydrate Pending to Cool */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
 
     private:
@@ -999,11 +1106,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     class RehydratePriority final {
     public:
       RehydratePriority() = default;
+      /** Construct a new RehydratePriority from a string.*/
       explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief High priority */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
+      /** @brief Standard priority */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
 
     private:
@@ -1046,14 +1159,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     class ObjectReplicationStatus final {
     public:
       ObjectReplicationStatus() = default;
+      /** @brief Construct an ObjectReplicationStatus from a string. */
       explicit ObjectReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const ObjectReplicationStatus& other) const
       {
         return m_value == other.m_value;
       }
+      /** Compare two values for inequality. */
       bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Replication Status Complete */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
+      /** @brief Replication Status Failed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
 
     private:
@@ -1075,8 +1194,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
     /**
      * @brief Contains object replication policy ID and the respective list of
-     * #ObjectReplicationRule s. This is used when retrieving the object replication properties on
-     * the source blob.
+     * #Azure::Storage::Blobs::Models::ObjectReplicationRule s. This is used when retrieving the
+     * object replication properties on the source blob.
      */
     struct ObjectReplicationPolicy final
     {
@@ -1095,14 +1214,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlobImmutabilityPolicyMode final {
     public:
       BlobImmutabilityPolicyMode() = default;
+      /** Construct a new BlobImmutabilityPolicyMode from a string. */
       explicit BlobImmutabilityPolicyMode(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const BlobImmutabilityPolicyMode& other) const
       {
         return m_value == other.m_value;
       }
+      /** @brief Compare a blob immutability policy with another. */
       bool operator!=(const BlobImmutabilityPolicyMode& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Unlocked policy mode */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Unlocked;
+      /** @brief Locked policy mode */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Locked;
 
     private:
@@ -1301,12 +1426,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlobType final {
     public:
       BlobType() = default;
+      /** Construct a new BlobType from a string. */
       explicit BlobType(std::string value) : m_value(std::move(value)) {}
+      /** @brief Compare a blob type with another. */
       bool operator==(const BlobType& other) const { return m_value == other.m_value; }
+      /** @brief Compare a blob type with another. */
       bool operator!=(const BlobType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Block blob. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
+      /** @brief Page blob. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
+      /** @brief Append blob. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
 
     private:
@@ -1818,11 +1950,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     class DeleteSnapshotsOption final {
     public:
       DeleteSnapshotsOption() = default;
+      /** @brief Construct a new DeleteSnapshotOption from a string. */
       explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
+      /** @brief Compare a delete snapshots option with another. */
       bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
+      /** @brief Compare a delete snapshots option with another. */
       bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Include Snapshots */
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
+      /** @brief Only Snapshots*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
 
     private:
@@ -1850,23 +1988,31 @@ namespace Azure { namespace Storage { namespace Blobs {
     class ScheduleBlobExpiryOriginType final {
     public:
       ScheduleBlobExpiryOriginType() = default;
+      /** @brief Construct a new ScheduleBlobExpiryOriginType from a string. */
       explicit ScheduleBlobExpiryOriginType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const ScheduleBlobExpiryOriginType& other) const
       {
         return m_value == other.m_value;
       }
+      /** Compare two values for inequality. */
       bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Never Expire*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
+      /** @brief Relative to creation*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
+      /** @brief Relative to now*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
+      /** @brief Absolute*/
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
 
     private:
       std::string m_value;
     };
     /**
-     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetExpiry.
+     * @brief Response type for Azure::Storage::Blobs::BlobClient::SetExpiry.
      */
     struct SetBlobExpiryResult final
     {
@@ -2162,14 +2308,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlobCopySourceTagsMode final {
     public:
       BlobCopySourceTagsMode() = default;
+      /** Construct a new BlobCopySourceTagsMode from a string. */
       explicit BlobCopySourceTagsMode(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const BlobCopySourceTagsMode& other) const
       {
         return m_value == other.m_value;
       }
+      /** Compare a BLobCopySourceTagsMode with another */
       bool operator!=(const BlobCopySourceTagsMode& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Copy Source Mode Replace */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Replace;
+      /** @brief Copy Source Mode Copy */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Copy;
 
     private:
@@ -2224,7 +2376,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
     };
     /**
-     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetTier.
+     * @brief Response type for Azure::Storage::Blobs::BlobClient::SetTier.
      */
     struct SetBlobAccessTierResult final
     {
@@ -2310,18 +2462,28 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlobQueryArrowFieldType final {
     public:
       BlobQueryArrowFieldType() = default;
+      /** Construct a new BlobQueryArrowFieldType from a string. */
       explicit BlobQueryArrowFieldType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const BlobQueryArrowFieldType& other) const
       {
         return m_value == other.m_value;
       }
+      /** Compare two values for inequality. */
       bool operator!=(const BlobQueryArrowFieldType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Field is an int64 value. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Int64;
+      /** @brief Field is an Boolean value. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Bool;
+      /** @brief Field is an time stamp value. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Timestamp;
+      /** @brief Field is a string value. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType String;
+      /** @brief Field is an double value. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Double;
+      /** @brief Field is a Decimal value. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Decimal;
 
     private:
@@ -2336,8 +2498,18 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Type of blob query arrow field.
        */
       BlobQueryArrowFieldType Type;
+
+      /**
+       * Name of the field.
+       */
       Nullable<std::string> Name;
+      /**
+       * Precision of the field.
+       */
       Nullable<int32_t> Precision;
+      /**
+       * Scale of the field.
+       */
       Nullable<int32_t> Scale;
     };
     namespace _detail {
@@ -2405,10 +2577,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
     } // namespace _detail
     /**
-     * @brief Response type for #Azure::Storage::Blobs::BlobClient::Query.
+     * @brief Response type for Azure::Storage::Blobs::BlobClient::Query.
      */
     struct QueryBlobResult final
     {
+      /**
+       * The response body stream.
+       */
       std::unique_ptr<Core::IO::BodyStream> BodyStream;
       /**
        * Returns the date and time the container was last modified. Any operation that modifies the
@@ -2674,12 +2849,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     class SequenceNumberAction final {
     public:
       SequenceNumberAction() = default;
+      /** @brief Construct a SequenceNumberAction from a string. */
       explicit SequenceNumberAction(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const SequenceNumberAction& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const SequenceNumberAction& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Max sequence number. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Max;
+      /** @brief Update the sequence number. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Update;
+      /** @brief Increment the sequence number. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Increment;
 
     private:
@@ -3128,12 +3310,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     class BlockListType final {
     public:
       BlockListType() = default;
+      /** Construct a new BlockTypeList from a string. */
       explicit BlockListType(std::string value) : m_value(std::move(value)) {}
+      /** @brief Compare a blob type with another. */
       bool operator==(const BlockListType& other) const { return m_value == other.m_value; }
+      /** @brief Compare a blob type with another. */
       bool operator!=(const BlockListType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Committed blocks. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Committed;
+      /** @brief Uncommitted blocks. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Uncommitted;
+      /** @brief All blocks. */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
 
     private:

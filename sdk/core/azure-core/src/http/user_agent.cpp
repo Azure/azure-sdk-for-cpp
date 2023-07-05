@@ -3,8 +3,7 @@
 
 /**
  * @file
- * @brief HTTP pipeline is a stack of HTTP policies.
- * @remark See #policy.hpp
+ * @brief Contains the user agent string generator implementation.
  */
 
 #include "azure/core/context.hpp"

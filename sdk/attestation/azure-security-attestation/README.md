@@ -128,8 +128,8 @@ There are four major client types provided in this SDK:
 
 - [SGX and TPM enclave attestation.](#attestation)
 - [MAA Attestation Token signing certificate discovery and validation.](#attestation-token-signing-certificate-discovery-and-validation)  
-- [Attestation Policy management.](#policy-management)
-- [Attestation policy management certificate management](#policy-management-certificate-management) (yes, policy management management).
+- [Isolated Mode policy management.](#isolated-mode-management)
+- [Isolated Mode certificate management](#isolated-mode-certificate-management)
 
 Each attestation instance operates in one of three separate modes of operation:
 

@@ -14,17 +14,17 @@
 #include <memory>
 #include <string>
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
-{
-  static void FreeAmqpConnection(CONNECTION_HANDLE obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
+  {
+    static void FreeAmqpConnection(CONNECTION_HANDLE obj);
 
-  using type
-      = Azure::Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
-};
-
-using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;
+    using type = BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueAmqpConnection = Azure::Core::_internal::UniqueHandle<CONNECTION_INSTANCE_TAG>;
 
   class ClaimsBasedSecurity;
 

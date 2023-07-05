@@ -61,7 +61,7 @@ Request SecretClient::ContinuationTokenRequest(
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> credential,
     SecretClientOptions options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {

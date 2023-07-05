@@ -86,6 +86,12 @@ jobs:
       value: "PLAYBACK"
     - name: AZURE_LOG_LEVEL
       value: "verbose"
+    - name: Codeql.Enabled 
+      value: true
+    - name: Codeql.BuildIdentifier 
+      value: ${{ parameters.ServiceDirectory }}
+    - name: Codeql.SkipTaskAutoInjection
+      value: false
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}

@@ -100,7 +100,7 @@ namespace Azure { namespace Core {
        *
        * @remark The Proxy Information string is composed of a set of elements
        * formatted as follows:
-       * ([<scheme>=][<scheme>"://"]<server>[":"<port>])
+       * (\[\<scheme\>=\]\[\<scheme\>"://"\]\<server\>\[":"\<port\>\])
        *
        * Each element should be separated with semicolons or whitespace.
        */
@@ -171,7 +171,6 @@ namespace Azure { namespace Core {
       /**
        * @brief Constructs `%WinHttpTransport` object based on common Azure HTTP Transport Options
        *
-       * @param options Common Azure Core Transport Options to override the default settings.
        */
       WinHttpTransport(Azure::Core::Http::Policies::TransportOptions const& options);
 
@@ -179,9 +178,6 @@ namespace Azure { namespace Core {
        * @brief Implements the HTTP transport interface to send an HTTP Request and produce an
        * HTTP RawResponse.
        *
-       * @param context A context to control the request lifetime.
-       * @param request an HTTP request to be send.
-       * @return A unique pointer to an HTTP RawResponse.
        */
       virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
 

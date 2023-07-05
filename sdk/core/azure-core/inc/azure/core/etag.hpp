@@ -67,12 +67,13 @@ public:
 
   */
 
-  /*
-   * @brief Indicates whether two #Azure::Core::ETag values are equal.
-   * @param left #Azure::Core::ETag to compare.
-   * @param right #Azure::Core::ETag to compare.
-   * @param comparisonKind Determines what #Azure::Core::ETag::ETagComparison to perform, default
-   * is #Azure::Core::ETag::ETagComparison Strong.
+  /**
+   * @brief Indicates whether two #Azure::ETag values are equal.
+   *
+   * @param left #Azure::ETag to compare.
+   * @param right #Azure::ETag to compare.
+   * @param comparisonKind Determines what #Azure::ETag::ETagComparison to perform, default
+   * is #Azure::ETag::ETagComparison Strong.
    * @return `true` if `%ETag` matches; otherwise, `false`.
    */
   static bool Equals(
@@ -136,7 +137,7 @@ public:
 
   /**
    * @brief Returns the resource metadata represented as a string.
-   * @return #std::string
+   * @return std::string
    */
   const std::string& ToString() const
   {
@@ -161,8 +162,8 @@ public:
   bool operator!=(const ETag& other) const { return !(*this == other); }
 
   /**
-   * @brief Specifies whether the #Azure::Core::ETag is strong or weak.
-   * @return `true` if #Azure::Core::ETag is a weak validator; otherwise, `false`.
+   * @brief Specifies whether the #Azure::ETag is strong or weak.
+   * @return `true` if #Azure::ETag is a weak validator; otherwise, `false`.
    */
   bool IsWeak() const
   {
@@ -179,8 +180,8 @@ public:
   }
 
   /**
-   * @brief #Azure::Core::ETag representing everything.
-   * @note The any #Azure::Core::ETag is *, (unquoted).  It is NOT the same as "*".
+   * @brief #Azure::ETag representing everything.
+   * @note The any #Azure::ETag is *, (unquoted).  It is NOT the same as "*".
    */
   static const ETag& Any();
 };

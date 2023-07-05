@@ -8,16 +8,19 @@
 
 struct CBS_INSTANCE_TAG;
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<CBS_INSTANCE_TAG>
-{
-  static void FreeAmqpCbs(CBS_HANDLE obj);
+namespace Azure { namespace Core { namespace _internal {
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
-};
+  template <> struct UniqueHandleHelper<CBS_INSTANCE_TAG>
+  {
+    static void FreeAmqpCbs(CBS_HANDLE obj);
 
-using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
+    using type = BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueAmqpCbsHandle = Azure::Core::_internal::UniqueHandle<CBS_INSTANCE_TAG>;
+
   class ClaimsBasedSecurityImpl final {
 
   public:

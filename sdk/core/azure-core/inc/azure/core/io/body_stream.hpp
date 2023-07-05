@@ -57,8 +57,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     virtual int64_t Length() const = 0;
 
-    /*
-     * @brief Resets the stream back to the beginning (for retries).
+    /** @brief Resets the stream back to the beginning (for retries).
      * @remark Derived classes that send data in an HTTP request MUST override this and implement
      * it properly.
      */
@@ -157,6 +156,7 @@ namespace Azure { namespace Core { namespace IO {
 
     int64_t Length() const override { return this->m_length; }
 
+    /** @brief Rewind seeks the current stream to the start of the buffer. */
     void Rewind() override { m_offset = 0; }
   };
 
@@ -277,7 +277,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     ~FileBodyStream();
 
-    // Rewind seeks back to 0
+    /** @brief Rewind seeks the current stream to the start of the file. */
     void Rewind() override;
 
     int64_t Length() const override;
@@ -311,6 +311,7 @@ namespace Azure { namespace Core { namespace IO {
         BodyStream& bodyStream,
         std::function<void(int64_t bytesTransferred)> callback);
 
+    /** @brief Rewind seeks the current stream to the beginning. */
     void Rewind() override;
 
     int64_t Length() const override;

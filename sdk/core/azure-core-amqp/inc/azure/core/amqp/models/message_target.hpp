@@ -9,15 +9,17 @@
 
 struct TARGET_INSTANCE_TAG;
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<TARGET_INSTANCE_TAG>
-{
-  static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<TARGET_INSTANCE_TAG>
+  {
+    static void FreeMessageTarget(TARGET_INSTANCE_TAG* obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
-};
-using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
+    using type = BasicUniqueHandle<TARGET_INSTANCE_TAG, FreeMessageTarget>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
+  using UniqueMessageTargetHandle = Azure::Core::_internal::UniqueHandle<TARGET_INSTANCE_TAG>;
 
   struct MessageTargetOptions final
   {
@@ -71,7 +73,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Creates an AMQP value from a message target.
      *
-     * @remarks Creates an AMQP Described value with the descriptor being the message target (0x29).
+     * @remarks Creates an AMQP Described value with the descriptor being the message target
+     * (0x29).
      */
     AmqpValue AsAmqpValue() const;
 

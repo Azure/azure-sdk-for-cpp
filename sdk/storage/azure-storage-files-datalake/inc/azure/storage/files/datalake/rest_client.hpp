@@ -69,15 +69,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::string m_value;
       };
     } // namespace _detail
+
+    /**
+     * @brief The type of public access.
+     */
     class PublicAccessType final {
     public:
       PublicAccessType() = default;
+      /** Construct a new PublicAccessType from a string. */
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** AccessType None. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType None;
+      /** AccessType FileSystem. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType FileSystem;
+      /** AccessType Path. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType Path;
 
     private:
@@ -127,18 +138,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     class PathResourceType final {
     public:
       PathResourceType() = default;
+      /** @brief Construct a new PathResourceType from a string. */
       explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const PathResourceType& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const PathResourceType& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Path Resource Type Directory */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
+      /** @brief Path Resource Type File  */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
 
     private:
       std::string m_value;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::Create.
+     * @brief Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Create.
      */
     struct CreatePathResult final
     {
@@ -171,7 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::Delete.
+     * @brief Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.
      */
     struct DeletePathResult final
     {
@@ -181,7 +198,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool Deleted = true;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::SetAccessControlList.
+     * @brief Response type for
+     * #Azure::Storage::Files::DataLake::DataLakePathClient::SetAccessControlList.
      */
     struct SetPathAccessControlListResult final
     {
@@ -285,20 +303,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     class LeaseAction final {
     public:
       LeaseAction() = default;
+      /**
+       * @brief Initializes a new instance of LeaseAction.
+       *
+       * @param value The string value of the instance.
+       */
       explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
+      /** Compare two values for equality. */
       bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
+      /** Compare two values for inequality. */
       bool operator!=(const LeaseAction& other) const { return !(*this == other); }
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
+      /** @brief Acquire action. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;
+      /** @brief AutoRenew action. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AutoRenew;
+      /** @brief Release action. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Release;
+      /** @brief AcquireRelease action. */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AcquireRelease;
 
     private:
       std::string m_value;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Flush.
+     * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Flush.
      */
     struct FlushFileResult final
     {
@@ -331,7 +361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Nullable<bool> IsLeaseRenewed;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::FileClient::Append.
+     * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Append.
      */
     struct AppendFileResult final
     {
