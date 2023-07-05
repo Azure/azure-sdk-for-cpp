@@ -63,9 +63,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns FQDN client
      */
-    std::string const& GetFullyQualifiedNamespace()
+    std::string const& GetHostName()
     {
-      return m_credentials.FullyQualifiedNamespace;
+      return m_credentials.HostName;
     }
 
     /** @brief Getter for client id
@@ -80,7 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       details.ClientID = GetClientId();
       details.ConsumerGroup = GetConsumerGroup();
       details.EventHubName = GetEventHubName();
-      details.FullyQualifiedNamespace = GetFullyQualifiedNamespace();
+      details.HostName = GetHostName();
       return details;
     }
     /** @brief Getter for retry options

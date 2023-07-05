@@ -35,15 +35,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::string ConnectionString;
 
     // the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
-    std::string FullyQualifiedNamespace;
+    std::string HostName;
 
     std::string EventHub;
 
     std::string ConsumerGroup;
 
     std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
-    std::shared_ptr<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>
-        SasCredential{};
 
     std::string HostUrl{};
   };

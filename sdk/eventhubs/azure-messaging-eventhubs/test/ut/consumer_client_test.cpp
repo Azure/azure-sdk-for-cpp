@@ -21,8 +21,7 @@ void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {
-  };
+  class ConsumerClientTest : public EventHubsTestBase {};
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
@@ -65,7 +64,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ConsumerClientTest, ConnectToPartition_LIVEONLY_)
   {
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
@@ -75,7 +74,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ReceiverOptions.EnableTrace = true;
     options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
-    auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath);
+    auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, GetEnv("EVENTHUB_NAME"), "$Default", options);
     Azure::Messaging::EventHubs::Models::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
 
@@ -83,12 +82,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = client.NewPartitionClient("1", partitionOptions);
     auto events = partitionClient.ReceiveEvents(1);
     EXPECT_EQ(events.size(), 1);
+    GTEST_LOG_(INFO) << "Received message " << events[0].RawAmqpMessage();
+    EXPECT_TRUE(events[0].EnqueuedTime.HasValue());
+    EXPECT_TRUE(events[0].SequenceNumber.HasValue());
+    EXPECT_TRUE(events[0].Offset.HasValue());
   }
 
   TEST_F(ConsumerClientTest, GetEventHubProperties_LIVEONLY_)
   {
     std::string const connStringEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
@@ -114,7 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
 
     std::string const connStringEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
@@ -136,4 +139,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(result.Name, "eventhub");
     EXPECT_EQ(result.PartitionId, "0");
   }
+
 }}}} // namespace Azure::Messaging::EventHubs::Test

@@ -30,7 +30,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName);
 
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
     Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 

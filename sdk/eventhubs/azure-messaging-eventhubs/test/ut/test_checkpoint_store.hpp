@@ -130,11 +130,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       (void)ctx;
       (void)options;
       if (checkpoint.ConsumerGroup.empty() || checkpoint.EventHubName.empty()
-          || checkpoint.FullyQualifiedNamespace.empty() || checkpoint.PartitionID.empty())
+          || checkpoint.EventHubHostName.empty() || checkpoint.PartitionID.empty())
       {
         throw std::runtime_error("Invalid checkpoint");
       }
-      std::string key = checkpoint.FullyQualifiedNamespace + "/" + checkpoint.EventHubName + "/"
+      std::string key = checkpoint.EventHubHostName + "/" + checkpoint.EventHubName + "/"
           + checkpoint.ConsumerGroup + "/" + checkpoint.PartitionID;
       m_checkpoints[key] = checkpoint;
     }

@@ -82,7 +82,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
 }
 
 bool Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
-    EventDataBatch& eventDataBatch,
+    EventDataBatch const& eventDataBatch,
     Azure::Core::Context ctx)
 {
   auto message = eventDataBatch.ToAmqpMessage();

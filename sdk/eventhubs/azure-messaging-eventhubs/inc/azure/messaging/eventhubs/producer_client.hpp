@@ -93,7 +93,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param ctx Request context
      */
     bool SendEventDataBatch(
-        EventDataBatch& eventDataBatch,
+        EventDataBatch const& eventDataBatch,
         Azure::Core::Context ctx = Azure::Core::Context());
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.

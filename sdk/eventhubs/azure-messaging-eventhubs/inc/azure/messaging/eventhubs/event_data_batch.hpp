@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
-#include "models/amqp_message.hpp"
+#include "models/event_data.hpp"
 #include "models/event_data_batch_models.hpp"
 
-#include <azure/core/amqp.hpp>
+#include <azure/core/amqp/models/amqp_message.hpp>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 
 #include <mutex>
 #include <stdexcept>
@@ -32,6 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const std::string SequenceNumberAnnotation = "x-opt-sequence-number";
     const std::string OffsetNumberAnnotation = "x-opt-offset";
     const std::string EnqueuedTimeAnnotation = "x-opt-enqueued-time";
+    const uint32_t BatchedMessageFormat = 0x80013700;
 
     Azure::Core::Amqp::Models::AmqpMessage m_batchEnvelope;
     size_t m_currentSize;
@@ -94,31 +97,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     void SetPartitionKey(std::string partitionKey) { m_partitionKey = partitionKey; }
     void SetMaxBytes(uint64_t maxBytes) { m_maxBytes = maxBytes; }
 
-    std::string GetPartitionID() { return m_partitionID; }
-    std::string GetPartitionKey() { return m_partitionKey; }
-    uint64_t GetMaxBytes() { return m_maxBytes; }
+    std::string GetPartitionID() const { return m_partitionID; }
+    std::string GetPartitionKey() const { return m_partitionKey; }
+    uint64_t GetMaxBytes() const { return m_maxBytes; }
 
     /** @brief Adds a message to the data batch
      *
      * @param message The message to add to the batch
      */
-    void AddMessage(Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage& message)
-    {
-      auto amqpMessage = message.ToAMQPMessage();
-
-      AddAmqpMessage(amqpMessage);
-    }
+    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage& message) { AddAmqpMessage(message); }
 
     /** @brief Adds a message to the data batch
      *
      * @param message The message to add to the batch
      */
-    void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message)
-    {
-      auto amqpMessage = message.ToAMQPMessage();
-
-      AddAmqpMessage(amqpMessage);
-    }
+    void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message);
 
     /** @brief Gets the number of messages in the batch
      *
@@ -129,18 +122,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_currentSize;
     }
 
-    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage()
+    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const
     {
+      Azure::Core::Amqp::Models::AmqpMessage returnValue{m_batchEnvelope};
       if (m_marshalledMessages.size() == 0)
       {
         throw std::runtime_error("No messages added to the batch.");
       }
 
-      /* if (!m_partitionKey.empty())
-       {
-         m_batchEnvelope.DeliveryAnnotations.emplace(
-             PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-       }*/
+      // Make sure that the partition key in the message is the current partition key.
+      if (!m_partitionKey.empty())
+      {
+        returnValue.DeliveryAnnotations.emplace(
+            PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+      }
+
       std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
       for (auto marshalledMessage : m_marshalledMessages)
       {
@@ -148,9 +144,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         messageList.push_back(data);
       }
 
-      m_batchEnvelope.SetBody(messageList);
-
-      return m_batchEnvelope;
+      returnValue.SetBody(messageList);
+      Azure::Core::Diagnostics::_internal::Log::Stream(
+          Azure::Core::Diagnostics::Logger::Level::Informational)
+          << "EventDataBatch::ToAmqpMessage: " << returnValue << std::endl;
+      return returnValue;
     }
 
   private:
@@ -164,18 +162,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());
       }
 
-      /* if (!m_partitionKey.empty())
+      if (!m_partitionKey.empty())
       {
-        message.DeliveryAnnotations.emplace(
+        message.MessageAnnotations.emplace(
             PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-      }*/
+      }
 
       auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
 
       if (m_marshalledMessages.size() == 0)
       {
+        // The first message is special - we use its properties and annotations on the envelope for
+        // the batch message.
         m_batchEnvelope = CreateBatchEnvelope(message);
-        m_currentSize = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message).size();
+        m_currentSize = serializedMessage.size();
       }
       auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
       if (m_currentSize + actualPayloadSize > m_maxBytes)
@@ -205,13 +205,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage CreateBatchEnvelope(
         Azure::Core::Amqp::Models::AmqpMessage const& message)
     {
-      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope;
-      batchEnvelope.Header = message.Header;
-      batchEnvelope.DeliveryAnnotations = message.DeliveryAnnotations;
-      batchEnvelope.MessageAnnotations = message.MessageAnnotations;
-      batchEnvelope.Properties = message.Properties;
-      batchEnvelope.ApplicationProperties = message.ApplicationProperties;
-      batchEnvelope.Footer = message.Footer;
+      // Create the batch envelope from the prototype message. This copies all the attributes
+      // *except* the body attribute to the batch envelope.
+      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope{message};
+      batchEnvelope.BodyType = Azure::Core::Amqp::Models::MessageBodyType::None;
+      batchEnvelope.MessageFormat = BatchedMessageFormat;
       return batchEnvelope;
     }
   };

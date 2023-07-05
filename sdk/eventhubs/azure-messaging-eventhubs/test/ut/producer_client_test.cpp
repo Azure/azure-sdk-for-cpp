@@ -13,8 +13,7 @@
 
 #include <gtest/gtest.h>
 
-class ProducerClientTest : public EventHubsTestBase {
-};
+class ProducerClientTest : public EventHubsTestBase {};
 
 TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
 {
@@ -27,9 +26,10 @@ TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
 TEST_F(ProducerClientTest, ConnectionStringEntityPath_LIVEONLY_)
 {
   std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(connStringEntityPath, "eventhub");
+  auto client
+      = Azure::Messaging::EventHubs::ProducerClient(connStringEntityPath, GetEnv("EVENTHUB_NAME"));
   EXPECT_EQ("eventhub", client.GetEventHubName());
 }
 
@@ -49,7 +49,7 @@ TEST_F(ProducerClientTest, TokenCredential_LIVEONLY_)
 TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 {
   std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
@@ -60,15 +60,14 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   producerOptions.SenderOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   producerOptions.ApplicationID = "some";
 
-  Azure::Messaging::EventHubs::Models::AmqpAnnotatedMessage message2;
+  Azure::Core::Amqp::Models::AmqpMessage message2;
   Azure::Messaging::EventHubs::Models::EventData message1;
-  message2.Body.Value = Azure::Core::Amqp::Models::AmqpValue("Hello5");
+  message2.SetBody(Azure::Core::Amqp::Models::AmqpValue("Hello7"));
 
-  message1.Body.Data.push_back(
-      Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o', '2'});
+  message1.Body.Data = {'H', 'e', 'l', 'l', 'o', '2'};
 
   Azure::Messaging::EventHubs::Models::EventData message3;
-  message2.Body.Sequence = Azure::Core::Amqp::Models::AmqpList{'H', 'e', 'l', 'l', 'o', '3'};
+  message3.Body.Sequence = {'H', 'e', 'l', 'l', 'o', '3'};
 
   Azure::Messaging::EventHubs::Models::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
@@ -99,7 +98,7 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 {
   std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";
@@ -121,7 +120,7 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
 {
   std::string const connStringEntityPath
-      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=eventhub";
+      = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
   Azure::Messaging::EventHubs::Models::ProducerClientOptions producerOptions;
   producerOptions.SenderOptions.Name = "sender-link";

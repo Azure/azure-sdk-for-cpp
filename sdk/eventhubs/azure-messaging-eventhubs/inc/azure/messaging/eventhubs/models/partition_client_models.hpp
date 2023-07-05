@@ -9,7 +9,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   struct ConsumerClientDetails
   {
-    std::string FullyQualifiedNamespace;
+    std::string HostName;
     std::string ConsumerGroup;
     std::string EventHubName;
     std::string ClientID;

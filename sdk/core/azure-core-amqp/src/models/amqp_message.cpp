@@ -230,8 +230,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     UniqueMessageHandle rv(message_create());
 
-    // AMQP 1.0 specifies a message format of 0.
-    if (message_set_message_format(rv.get(), AmqpMessageFormatValue))
+    // AMQP 1.0 specifies a message format of 0, but EventHubs uses other values.
+    if (message_set_message_format(rv.get(), message.MessageFormat))
     {
       throw std::runtime_error("Could not set destination message format.");
     }
@@ -329,7 +329,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  std::vector<AmqpList> AmqpMessage::GetBodyAsAmqpList() const
+  std::vector<AmqpList> const& AmqpMessage::GetBodyAsAmqpList() const
   {
     if (BodyType != MessageBodyType::Sequence)
     {
@@ -364,7 +364,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     m_amqpSequenceBody.push_back(value);
   }
 
-  AmqpValue AmqpMessage::GetBodyAsAmqpValue() const
+  AmqpValue const& AmqpMessage::GetBodyAsAmqpValue() const
   {
     if (BodyType != MessageBodyType::Value)
     {
@@ -372,7 +372,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return m_amqpValueBody;
   }
-  std::vector<AmqpBinaryData> AmqpMessage::GetBodyAsBinary() const
+  std::vector<AmqpBinaryData> const& AmqpMessage::GetBodyAsBinary() const
   {
     if (BodyType != MessageBodyType::Data)
     {
@@ -715,6 +715,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream& os, AmqpMessage const& message)
   {
     os << "Message: " << std::endl;
+    if (message.MessageFormat != AmqpDefaultMessageFormatValue)
+    {
+      os << "    Message Format: " << message.MessageFormat << std::endl;
+    }
     os << "    Header " << message.Header << std::endl;
     os << "    Properties: " << message.Properties << std::endl;
 

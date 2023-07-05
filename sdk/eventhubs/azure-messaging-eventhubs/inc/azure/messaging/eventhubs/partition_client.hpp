@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "models/partition_client_models.hpp"
+#include "models/event_data.hpp"
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/datetime.hpp>
@@ -59,13 +60,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       return *this;
     }
-    std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
+    std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t const& maxMessages,
         Azure::Core::Context ctx = Azure::Core::Context(),
         Models::ReceiveEventsOptions options = {})
     {
       (void)options;
-      std::vector<Azure::Core::Amqp::Models::AmqpMessage> messages;
+      std::vector<Models::ReceivedEventData> messages;
       // bool prefetchDisabled = m_prefetchCount < 0;
 
       while (messages.size() < maxMessages && !ctx.IsCancelled())
@@ -73,10 +74,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         auto message = m_receivers[0].WaitForIncomingMessage(ctx);
         if (message.first.HasValue())
         {
-          messages.push_back(message.first.Value());
+          messages.push_back(Models::ReceivedEventData{message.first.Value()});
         }
       }
-
       return messages;
     }
 

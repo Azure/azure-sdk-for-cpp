@@ -57,13 +57,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return *this;
     }
 
-    std::vector<Azure::Core::Amqp::Models::AmqpMessage> ReceiveEvents(
+    std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t maxBatchSize,
         Azure::Core::Context ctx = {})
     {
       return m_partitionClient.ReceiveEvents(maxBatchSize, ctx);
     }
 
+    void Close()
+    {
+      if (m_cleanupFunc != nullptr)
+      {
+        m_cleanupFunc();
+      }
+      m_partitionClient.Close();
+    }
+
+  private:
     void UpdateCheckpoint(
         Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,
         Azure::Core::Context ctx = {},
@@ -96,7 +106,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Checkpoint checkpoint
           = {m_consumerClientDetails.ConsumerGroup,
              m_consumerClientDetails.EventHubName,
-             m_consumerClientDetails.FullyQualifiedNamespace,
+             m_consumerClientDetails.HostName,
              m_partitionId,
              sequenceNumber,
              offsetNumber};
@@ -106,13 +116,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     std::string GetPartitionId() { return m_partitionId; }
 
-    void Close()
-    {
-      if (m_cleanupFunc != nullptr)
-      {
-        m_cleanupFunc();
-      }
-      m_partitionClient.Close();
-    }
   };
 }}} // namespace Azure::Messaging::EventHubs

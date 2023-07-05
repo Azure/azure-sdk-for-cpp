@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   using UniquePropertiesHandle = Azure::Core::_internal::UniqueHandle<PROPERTIES_INSTANCE_TAG>;
 
-  struct MessageProperties
+  struct MessageProperties final
   {
     MessageProperties() = default;
     ~MessageProperties() = default;

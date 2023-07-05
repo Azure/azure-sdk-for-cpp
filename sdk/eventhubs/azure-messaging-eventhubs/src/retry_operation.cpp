@@ -58,7 +58,7 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
   {
     Log::Write(
         Logger::Level::Informational,
-        std::string("Response was true or lase attempt.Operation will not be retried."));
+        std::string("Response was true or last attempt.Operation will not be retried."));
     return false;
   }
   if (response == false)

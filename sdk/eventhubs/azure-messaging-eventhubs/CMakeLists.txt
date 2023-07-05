@@ -58,37 +58,37 @@ endif()
 set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
     inc/azure/messaging/eventhubs.hpp
-    inc/azure/messaging/eventhubs/dll_import_export.hpp
-    inc/azure/messaging/eventhubs/producer_client.hpp
-    inc/azure/messaging/eventhubs/event_data_batch.hpp
-    inc/azure/messaging/eventhubs/retry_operation.hpp
-    inc/azure/messaging/eventhubs/consumer_client.hpp
-    inc/azure/messaging/eventhubs/partition_client.hpp
-    inc/azure/messaging/eventhubs/processor_load_balancer.hpp
-    inc/azure/messaging/eventhubs/processor_partition_client.hpp
     inc/azure/messaging/eventhubs/checkpoint_store.hpp
-    inc/azure/messaging/eventhubs/rtti.hpp
-    inc/azure/messaging/eventhubs/processor.hpp
-    inc/azure/messaging/eventhubs/models/amqp_message.hpp
-    inc/azure/messaging/eventhubs/models/management_models.hpp
+    inc/azure/messaging/eventhubs/consumer_client.hpp
+    inc/azure/messaging/eventhubs/dll_import_export.hpp
+    inc/azure/messaging/eventhubs/event_data_batch.hpp
     inc/azure/messaging/eventhubs/models/checkpoint_store_models.hpp
     inc/azure/messaging/eventhubs/models/consumer_client_models.hpp
+    inc/azure/messaging/eventhubs/models/event_data.hpp
     inc/azure/messaging/eventhubs/models/event_data_batch_models.hpp
+    inc/azure/messaging/eventhubs/models/management_models.hpp
     inc/azure/messaging/eventhubs/models/partition_client_models.hpp
-    inc/azure/messaging/eventhubs/models/processor_models.hpp
     inc/azure/messaging/eventhubs/models/processor_load_balancer_models.hpp
+    inc/azure/messaging/eventhubs/models/processor_models.hpp
     inc/azure/messaging/eventhubs/models/producer_client_models.hpp
+    inc/azure/messaging/eventhubs/partition_client.hpp
+    inc/azure/messaging/eventhubs/processor.hpp
+    inc/azure/messaging/eventhubs/processor_load_balancer.hpp
+    inc/azure/messaging/eventhubs/processor_partition_client.hpp
+    inc/azure/messaging/eventhubs/producer_client.hpp
+    inc/azure/messaging/eventhubs/retry_operation.hpp
+    inc/azure/messaging/eventhubs/rtti.hpp
 )
 
 set(
   AZURE_MESSAGING_EVENTHUBS_SOURCE
+    src/checkpoint_store.cpp
+    src/consumer_client.cpp
     src/private/package_version.hpp
+    src/processor_load_balancer.cpp
     src/producer_client.cpp
     src/retry_operation.cpp
-    src/consumer_client.cpp
-    src/checkpoint_store.cpp
-    src/processor_load_balancer.cpp
-)
+ "src/event_data.cpp" "src/event_data_batch.cpp")
 add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}

@@ -60,7 +60,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   {
     std::string ConsumerGroup{};
     std::string EventHubName{};
-    std::string FullyQualifiedNamespace{};
+    std::string EventHubHostName{};
     std::string PartitionID{};
     Azure::Nullable<int64_t> Offset{}; // the last successfully processed Offset.
     Azure::Nullable<int64_t> SequenceNumber{}; // the last successfully processed SequenceNumber.

@@ -52,7 +52,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     unownedOrExpired.push_back(Ownership{
         m_consumerClientDetails.ConsumerGroup,
         m_consumerClientDetails.EventHubName,
-        m_consumerClientDetails.FullyQualifiedNamespace,
+        m_consumerClientDetails.HostName,
         partitionID,
         m_consumerClientDetails.ClientID,
     });

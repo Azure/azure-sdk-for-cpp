@@ -19,7 +19,7 @@ add_executable (
   azure-messaging-eventhubs-test
     producer_client_test.cpp
     retry_operation_test.cpp
-    amqp_message_test.cpp
+    "event_data_test.cpp"
     consumer_client_test.cpp    
     checkpoint_store_test.cpp 
     processor_load_balancer_test.cpp

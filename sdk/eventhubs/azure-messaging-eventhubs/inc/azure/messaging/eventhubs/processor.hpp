@@ -172,7 +172,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Models::StartPosition GetStartPosition(
         Models::Ownership const& ownership,
-        std::map<std::string, Models::Checkpoint>& checkpoints)
+        std::map<std::string, Models::Checkpoint> const& checkpoints)
     {
       Models::StartPosition startPosition = m_defaultStartPositions.Default;
 
@@ -206,7 +206,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Models::Checkpoint> GetCheckpointsMap(Azure::Core::Context const& ctx)
     {
       std::vector<Models::Checkpoint> checkpoints = m_checkpointStore->ListCheckpoints(
-          m_consumerClientDetails.FullyQualifiedNamespace,
+          m_consumerClientDetails.HostName,
           m_consumerClientDetails.EventHubName,
           m_consumerClientDetails.ConsumerGroup,
           ctx);
