@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- [[#4662]](https://github.com/Azure/azure-sdk-for-cpp/issues/4662) `Operation<T>::GetRawResponseInternal()` is now deprecated and it does not require an overload. It will be removed in the future versions.
+- [[#4662]](https://github.com/Azure/azure-sdk-for-cpp/issues/4662) `Operation<T>::GetRawResponseInternal()` is now deprecated and no longer requires an overload.
 
 ### Bugs Fixed
 
