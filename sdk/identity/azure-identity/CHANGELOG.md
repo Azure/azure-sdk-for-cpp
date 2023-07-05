@@ -1,16 +1,10 @@
 # Release History
 
-## 1.6.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.5.1 (2023-07-06)
 
 ### Bugs Fixed
 
 - [#4723]](https://github.com/Azure/azure-sdk-for-cpp/issues/4723) Accept a wider variety of token responses.
-
-### Other Changes
 
 ## 1.5.0 (2023-05-04)
 
