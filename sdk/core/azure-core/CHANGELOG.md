@@ -6,11 +6,13 @@
 
 ### Breaking Changes
 
+- [[#4662]](https://github.com/Azure/azure-sdk-for-cpp/issues/4662) `Azure::Core::Operation<T>::GetRawResponseInternal()` is now deprecated and no longer requires an overload.
+
 ### Bugs Fixed
 
 ### Other Changes
 
-Empty diagnostic messages will no longer be generated.
+- Empty diagnostic messages will no longer be generated.
 
 ## 1.10.0 (2023-06-01)
 
