@@ -129,13 +129,14 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param credential The authentication method to use (required for TPM attestation). If the
      * credential parameter is not supplied, the connection will be unauthenticated.
      * @param options The options to customize the client behavior.
+     * @param context The context for cancelling long running operations.
      * @return The newly created client.
      */
     static AttestationClient Create(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationClientOptions const& options = AttestationClientOptions{},
-        Azure::Core::Context const& constext = Azure::Core::Context{});
+        Azure::Core::Context const& context = Azure::Core::Context{});
 
     /** @brief Construct a new anonymous Attestation Client object
      *
@@ -145,6 +146,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param endpoint The URL address where the client will send the requests to.
      * @param options The options to customize the client behavior.
+     * @param context The context for cancelling long running operations.
      * @return The newly created attestation client.
      *
      * @note TPM attestation requires an authenticated attestation client.
@@ -153,7 +155,7 @@ namespace Azure { namespace Security { namespace Attestation {
     static AttestationClient Create(
         std::string const& endpoint,
         AttestationClientOptions options = AttestationClientOptions{},
-        Azure::Core::Context const& constext = Azure::Core::Context{});
+        Azure::Core::Context const& context = Azure::Core::Context{});
 
     /**
      * @brief Destructor.
@@ -167,6 +169,10 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     AttestationClient(AttestationClient const& attestationClient) = default;
 
+    /** @brief Returns the Absolute URL for this attestation client.
+     *
+     * @returns The absolute URL for this attestation client.
+     */
     std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
     /**
@@ -174,7 +180,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * Retrieve the OpenID metadata for this attestation service instance..
      *
-     * @return an \ref Models::AttestationOpenIdMetadata object containing metadata about the
+     * @return an \ref Models::OpenIdMetadata object containing metadata about the
      * specified service instance.
      */
     Response<Models::OpenIdMetadata> GetOpenIdMetadata(

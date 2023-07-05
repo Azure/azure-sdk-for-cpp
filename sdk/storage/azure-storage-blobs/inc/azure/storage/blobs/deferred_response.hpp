@@ -18,8 +18,10 @@ namespace Azure { namespace Storage {
   template <typename T> class DeferredResponse final {
   public:
     DeferredResponse(const DeferredResponse&) = delete;
+    /** @brief Construct a new deferred response, moving from an existing DeferredResponse */
     DeferredResponse(DeferredResponse&&) = default;
     DeferredResponse& operator=(const DeferredResponse&) = delete;
+    /** Move a DeferredResponse to another DeferredResponse object.. */
     DeferredResponse& operator=(DeferredResponse&&) = default;
 
     /**

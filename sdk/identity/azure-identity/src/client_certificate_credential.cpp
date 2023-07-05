@@ -82,7 +82,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& clientCertificatePath,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
-    TokenCredentialOptions const& options)
+    Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ClientCertificateCredential"),
       m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
       m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),
@@ -190,7 +190,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
     std::string const& clientCertificatePath,
-    TokenCredentialOptions const& options)
+    Core::Credentials::TokenCredentialOptions const& options)
     : ClientCertificateCredential(
         tenantId,
         clientId,

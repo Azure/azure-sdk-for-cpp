@@ -11,13 +11,14 @@
 
 #include <tuple>
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
-{
-  static void FreeMessageSender(MESSAGE_SENDER_HANDLE obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
+  {
+    static void FreeMessageSender(MESSAGE_SENDER_HANDLE obj);
 
-  using type
-      = Azure::Core::_internal::BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
-};
+    using type = BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueMessageSender = Azure::Core::_internal::UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;

@@ -23,7 +23,7 @@ ClientSecretCredential::ClientSecretCredential(
     std::string const& clientSecret,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
-    TokenCredentialOptions const& options)
+    Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ClientSecretCredential"),
       m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
       m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),

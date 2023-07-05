@@ -1,20 +1,56 @@
-<!-- HTML header for doxygen 1.9.7-->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="$langISO">
-<head>
-<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=11"/>
-<meta name="generator" content="Doxygen $doxygenversion"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
-<!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
-<link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
-<!--BEGIN DISABLE_INDEX-->
-  <!--BEGIN FULL_SIDEBAR-->
-<script type="text/javascript">var page_layout=1;</script>
-  <!--END FULL_SIDEBAR-->
-<!--END DISABLE_INDEX-->
+# Doxygen Template for C++ API Documentation
 
+When upgrading Doxygen, the following customizations have been made. 
+
+## Export Doxygen Templates
+
+Doxygen templates have several parts:
+
+1. Doxygen Layout file `DoxygenLayout.xml`
+1. Template files:
+    1. `header.html`
+    1. `footer.html`
+    1. `style.css` (renamed from `customdoxygen.css`)
+
+Further documentation on customizing Doxygen can be found here: https://www.doxygen.nl/manual/customize.html
+
+To export the layout file:
+
+```powershell
+cd eng\docs\api\assets
+doxygen -l
+```
+
+To export the HTML/CSS files:
+
+```powershell
+cd eng\docs\api\assets
+doxygen -w html header.html footer.html style.css
+```
+
+## Configure templates
+
+### DoxygenLayout.xml
+
+Around line 6, change:
+
+```xml
+<tab type="pages" visible="yes" title="" intro=""/>
+```
+
+To read:
+
+```xml
+<tab type="pages" visible="yes" title="Concepts and Related Pages" intro=""/>
+```
+
+### header.html
+
+In the `<head>` of the page add the following snippets:
+
+Add Google analytics tag:
+
+```html
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-62780441-44"></script>
 <script>
@@ -24,15 +60,11 @@
 
     gtag('config', 'UA-62780441-44');
 </script>
-<script type="text/javascript" src="$relpath^jquery.js"></script>
-<script type="text/javascript" src="$relpath^dynsections.js"></script>
-$treeview
-$search
-$mathjax
-$darkmode
-<link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
-$extrastylesheet
+```
 
+Add logic that populates and handles interactions with the version dropdown:
+
+```html
 
 <script>
 WINDOW_CONTENTS = window.location.href.split("/");
@@ -124,27 +156,15 @@ function getPackageUrl(language, package, version) {
 }
 
 </script>
+```
 
-</head>
-<body>
-<!--BEGIN DISABLE_INDEX-->
-  <!--BEGIN FULL_SIDEBAR-->
-<div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
-  <!--END FULL_SIDEBAR-->
-<!--END DISABLE_INDEX-->
+For the following look for and replace the sections bounded by
+`<!--BEGIN XXXX-->` and `<!--END XXXX-->` with the following:
 
-<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+In the project name section add the version selection dropdown in the
+PROJECT_NUMBER section:
 
-<!--BEGIN TITLEAREA-->
-<div id="titlearea">
-<table cellspacing="0" cellpadding="0">
- <tbody>
- <tr id="projectrow">
-  <!--BEGIN PROJECT_LOGO-->
-  <td id="projectlogo">
-    <img alt="Logo" src="$relpath^$projectlogo"/>
-  </td>
-  <!--END PROJECT_LOGO-->
+```html
   <!--BEGIN PROJECT_NAME-->
   <td id="projectalign">
    <div id="projectname">
@@ -168,28 +188,63 @@ function getPackageUrl(language, package, version) {
    <!--BEGIN PROJECT_BRIEF--><div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
   </td>
   <!--END PROJECT_NAME-->
-  <!--BEGIN !PROJECT_NAME-->
-   <!--BEGIN PROJECT_BRIEF-->
-    <td>
-    <div id="projectbrief">$projectbrief</div>
-    </td>
-   <!--END PROJECT_BRIEF-->
-  <!--END !PROJECT_NAME-->
-  <!--BEGIN DISABLE_INDEX-->
-   <!--BEGIN SEARCHENGINE-->
-     <!--BEGIN !FULL_SIDEBAR-->
-    <td>$searchbox</td>
-     <!--END !FULL_SIDEBAR-->
-   <!--END SEARCHENGINE-->
-  <!--END DISABLE_INDEX-->
- </tr>
-  <!--BEGIN SEARCHENGINE-->
-   <!--BEGIN FULL_SIDEBAR-->
-   <tr><td colspan="2">$searchbox</td></tr>
-   <!--END FULL_SIDEBAR-->
-  <!--END SEARCHENGINE-->
- </tbody>
-</table>
-</div>
-<!--END TITLEAREA-->
-<!-- end header part -->
+```
+
+### footer.html
+
+No changes
+
+### style.css
+
+Stylesheet changes may require more work to properly incoporate into the layout.
+To be successful here when iterating through changes, make changes in the
+browser's "inspect element" tools and then copy those changes to the stylesheet
+file. Here are the most obvious changes:
+
+Add these variables:
+
+```css
+    --title-foreground-color: white;
+```
+
+Change the title background color:
+
+```css
+    --title-background-color: rgb(0, 113, 197);
+```
+
+Change `#projectlogo`:
+
+```css
+    #projectlogo
+    {
+        text-align: center;
+        vertical-align: bottom;
+        border-collapse: separate;
+        padding-left: 8px;
+    }
+```
+
+Change `#projectname`:
+
+```css
+    #projectname
+    {
+        font-size: 200%;
+        font-family: var(--font-family-title);
+        margin: 0px;
+        padding: 2px 0px;
+        color: var(--title-foreground-color);
+
+        #versionSelector {
+            font-size: 24px;
+        }
+    }
+```
+
+## How it's wired up
+
+See `cmake-modules/AzureDoxygen.cmake` to see how the layout files and and
+templates are incorporated into the doxygen build. The build uses `logo.svg`
+from `eng/common/docgeneration` instead of the repo-specific folder in
+`eng/docs/api/assets`.

@@ -16,7 +16,8 @@ using Azure::Core::Context;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
-DefaultAzureCredential::DefaultAzureCredential(TokenCredentialOptions const& options)
+DefaultAzureCredential::DefaultAzureCredential(
+    Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
 {
   // Initializing m_credential below and not in the member initializer list to have a specific order

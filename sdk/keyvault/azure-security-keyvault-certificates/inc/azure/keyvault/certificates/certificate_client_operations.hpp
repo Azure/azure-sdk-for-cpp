@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
      * @param client A #CertificateClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return CreateCertificateOperation
      */
     static CreateCertificateOperation CreateFromResumeToken(
@@ -90,14 +90,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     /**
      * @brief Cancels the operation.
      *
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      */
     void Cancel(Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
      * @brief Delete operation.
      *
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      */
     void Delete(Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -167,7 +167,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
      * @param client A #CertificateClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return DeleteCertificateOperation
      */
     static DeleteCertificateOperation CreateFromResumeToken(
@@ -236,7 +236,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param resumeToken A previously generated token used to resume the polling of the
      * operation.
      * @param client A #CertificateClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @param context A Azure::Core::Context controlling the request lifetime.
      * @return RecoverDeletedCertificateOperation
      */
     static RecoverDeletedCertificateOperation CreateFromResumeToken(

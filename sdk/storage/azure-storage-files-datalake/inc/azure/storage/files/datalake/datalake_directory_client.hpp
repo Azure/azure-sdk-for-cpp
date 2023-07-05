@@ -18,6 +18,8 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
+  /** @brief DataLake Directory Client.
+   */
   class DataLakeDirectoryClient final : public DataLakePathClient {
   public:
     /**

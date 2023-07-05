@@ -15,11 +15,12 @@
 #include <stdexcept>
 #include <string>
 
-void Azure::Core::_internal::UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(
-    PROPERTIES_HANDLE value)
-{
-  properties_destroy(value);
-}
+namespace Azure { namespace Core { namespace _internal {
+  void UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(PROPERTIES_HANDLE value)
+  {
+    properties_destroy(value);
+  }
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 

@@ -325,9 +325,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetBlobContainerMetadataOptions final
   {
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
     struct : public LeaseAccessConditions
     {
       /**
@@ -335,7 +332,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * modified since the specified time. This timestamp will be truncated to second.
        */
       Azure::Nullable<Azure::DateTime> IfModifiedSince;
-    } AccessConditions;
+    } /**
+       * @brief Optional conditions that must be met to perform this operation.
+       */
+    AccessConditions;
   };
 
   /**
@@ -449,12 +449,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same blob.
      */
     Azure::Nullable<Models::RehydratePriority> RehydratePriority;
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
     struct : public LeaseAccessConditions, public TagAccessConditions
     {
-    } AccessConditions;
+    } /**
+       * @brief Optional conditions that must be met to perform this operation.
+       */
+    AccessConditions;
   };
 
   /**
@@ -481,17 +481,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     BlobAccessConditions AccessConditions;
 
-    /**
-     * @brief Optional conditions that the source must meet to perform this operation.
-     *
-     * @note Lease access condition only works for API versions before 2012-02-12.
-     */
     struct : public Azure::ModifiedConditions,
              public Azure::MatchConditions,
              public LeaseAccessConditions,
              public TagAccessConditions
     {
-    } SourceAccessConditions;
+    } /**
+       * @brief Optional conditions that the source must meet to perform this operation.
+       *
+       * @note Lease access condition only works for API versions before 2012-02-12.
+       */
+    SourceAccessConditions;
 
     /**
      * @brief Specifies the tier to be set on the target blob.
@@ -545,14 +545,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     BlobAccessConditions AccessConditions;
 
-    /**
-     * @brief Optional conditions that the source must meet to perform this operation.
-     *
-     * @note Lease access condition only works for API versions before 2012-02-12.
-     */
     struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
-    } SourceAccessConditions;
+    } /**
+       * @brief Optional conditions that the source must meet to perform this operation.
+       *
+       * @note Lease access condition only works for API versions before 2012-02-12.
+       */
+    SourceAccessConditions;
 
     /**
      * @brief Specifies the tier to be set on the target blob.
@@ -762,12 +762,12 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetBlobTagsOptions final
   {
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
     struct : public LeaseAccessConditions, public TagAccessConditions
     {
-    } AccessConditions;
+    } /**
+       * @brief Optional conditions that must be met to perform this operation.
+       */
+    AccessConditions;
   };
 
   /**
@@ -775,12 +775,12 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetBlobTagsOptions final
   {
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
     struct : public LeaseAccessConditions, public TagAccessConditions
     {
-    } AccessConditions;
+    } /**
+       * @brief Optional conditions that must be met to perform this operation.
+       */
+    AccessConditions;
   };
 
   /**
@@ -890,6 +890,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<bool> HasLegalHold;
   };
 
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::UploadFromUri.
+   */
   struct UploadBlockBlobFromUriOptions final
   {
     /**
@@ -922,16 +925,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     BlobAccessConditions AccessConditions;
 
-    /**
-     * @brief Optional conditions that source must meet to perform this operation.
-     * @remarks Azure storage service doesn't support tags access condition for this operation.
-     * Don't use it.
-     */
     struct : public Azure::ModifiedConditions,
              public Azure::MatchConditions,
              public TagAccessConditions
     {
-    } SourceAccessConditions;
+    } /**
+       * @brief Optional conditions that source must meet to perform this operation.
+       * @remarks Azure storage service doesn't support tags access condition for this operation.
+       * Don't use it.
+       */
+    SourceAccessConditions;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -988,12 +991,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     LeaseAccessConditions AccessConditions;
 
-    /**
-     * @brief Optional conditions that the source must meet to perform this operation.
-     */
     struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
-    } SourceAccessConditions;
+    } /**
+       * @brief Optional conditions that the source must meet to perform this operation.
+       */
+    SourceAccessConditions;
   };
 
   /**
@@ -1048,12 +1051,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Models::BlockListType ListType = Models::BlockListType::Committed;
 
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
     struct : public LeaseAccessConditions, public TagAccessConditions
     {
-    } AccessConditions;
+    } /**
+       * @brief Optional conditions that must be met to perform this operation.
+       */
+    AccessConditions;
   };
 
   /**
@@ -1376,12 +1379,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     PageBlobAccessConditions AccessConditions;
 
-    /**
-     * @brief Optional conditions that the source must meet to perform this operation.
-     */
     struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
-    } SourceAccessConditions;
+    } /**
+       * @brief Optional conditions that the source must meet to perform this operation.
+       */
+    SourceAccessConditions;
   };
 
   /**
@@ -1499,7 +1502,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Blobs::BlobBatchClient::SubmitBatch.
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::SubmitBatch.
    */
   struct SubmitBlobBatchOptions final
   {

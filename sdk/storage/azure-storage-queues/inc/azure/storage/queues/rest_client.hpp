@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Queues {
       int32_t MaxAgeInSeconds = int32_t();
     };
     /**
-     * @brief Response type for #Azure::Storage::Queues::ServiceClient::SetProperties.
+     * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::SetProperties.
      */
     struct SetServicePropertiesResult final
     {
@@ -162,12 +162,19 @@ namespace Azure { namespace Storage { namespace Queues {
     class GeoReplicationStatus final {
     public:
       GeoReplicationStatus() = default;
+      /** @brief Construct from a string */
       explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      /** @brief Compare two values */
       bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
+      /** @brief Compare two values */
       bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
+      /** @brief Convert to string */
       const std::string& ToString() const { return m_value; }
+      /** @brief Replication Status Live */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Live;
+      /** @brief Replication Status Bootstrap  */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      /** @brief Replication Status Unavailable  */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Unavailable;
 
     private:
@@ -286,6 +293,9 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     struct QueueProperties final
     {
+      /**
+       * A set of name-value pairs associated with this queue.
+       */
       Core::CaseInsensitiveMap Metadata;
       /**
        * The approximate number of messages in the queue. This number is not lower than the actual

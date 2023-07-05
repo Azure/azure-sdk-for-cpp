@@ -3,8 +3,7 @@
 
 /**
  * @file
- * @brief HTTP pipeline is a stack of HTTP policies.
- * @remark See #policy.hpp
+ * @brief Declaration of the UserAgentGenerator type.
  */
 
 #pragma once

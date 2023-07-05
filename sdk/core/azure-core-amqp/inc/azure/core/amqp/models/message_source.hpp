@@ -9,12 +9,14 @@
 
 struct SOURCE_INSTANCE_TAG;
 
-template <> struct Azure::Core::_internal::UniqueHandleHelper<SOURCE_INSTANCE_TAG>
-{
-  static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
+namespace Azure { namespace Core { namespace _internal {
+  template <> struct UniqueHandleHelper<SOURCE_INSTANCE_TAG>
+  {
+    static void FreeMessageSource(SOURCE_INSTANCE_TAG* obj);
 
-  using type = Azure::Core::_internal::BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
-};
+    using type = BasicUniqueHandle<SOURCE_INSTANCE_TAG, FreeMessageSource>;
+  };
+}}} // namespace Azure::Core::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
 
@@ -72,7 +74,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     /** @brief Creates an AMQP value from a message source.
      *
-     * @remarks Creates an AMQP Described value with the descriptor being the message source (0x29).
+     * @remarks Creates an AMQP Described value with the descriptor being the message source
+     * (0x29).
      */
     AmqpValue AsAmqpValue() const;
 

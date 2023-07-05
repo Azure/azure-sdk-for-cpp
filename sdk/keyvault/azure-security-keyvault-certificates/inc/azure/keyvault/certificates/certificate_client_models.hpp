@@ -1168,6 +1168,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     ~CertificateOperationProperties() = default;
   };
 
+  /**
+   * @brief Represents a deleted certificate in a KeyVault.
+   *
+   */
   class DeletedCertificate final : public KeyVaultCertificateWithPolicy {
   public:
     /**
@@ -1203,7 +1207,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   {
   };
   /**
-   * @brief The options for calling an operation #GetPropertiesOfCertificates.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Certificates::CertificateClient::GetPropertiesOfCertificates.
    *
    */
   struct GetPropertiesOfCertificatesOptions final
@@ -1221,29 +1226,35 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The options for calling an operation #GetPropertiesOfCertificateVersions.
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Certificates::CertificateClient::GetPropertiesOfCertificateVersions.
    *
    */
   struct GetPropertiesOfCertificateVersionsOptions final
   {
+    /** @brief The token for the next page, if present. */
     Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
-   * @brief The options for calling an operation #GetPropertiesOfIssuers
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Certificates::CertificateClient::GetPropertiesOfIssuers
    *
    */
   struct GetPropertiesOfIssuersOptions final
   {
+    /** @brief The token for the next page, if present. */
     Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
-   * @brief The options for calling an operation #GetDeletedCertificates
+   * @brief The options for calling an operation
+   * #Azure::Security::KeyVault::Certificates::CertificateClient::GetDeletedCertificates.
    *
    */
   struct GetDeletedCertificatesOptions final
   {
+    /** @brief The token for the next page, if present. */
     Azure::Nullable<std::string> NextPageToken;
   };
   /**
@@ -1302,7 +1313,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark The constructor is private and only a certificate client or PagedResponse can init
      * this.
      *
-     * @param certificateProperties A previously created #CertificatePropertiesPageResponse that is
+     * @param certificateProperties A previously created #CertificatePropertiesPagedResponse that is
      * used to init this instance.
      * @param rawResponse The HTTP raw response from where the #CertificatePropertiesPagedResponse
      * was parsed.
@@ -1329,7 +1340,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     CertificatePropertiesPagedResponse() = default;
 
     /**
-     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Certificates::CertificateProperties represent a Key
+     * in the Key Vault.
      *
      */
     std::vector<CertificateProperties> Items;
@@ -1366,7 +1378,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     IssuerPropertiesPagedResponse() = default;
 
     /**
-     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Certificates::CertificateProperties represent a Key
+     * in the Key Vault.
      *
      */
     std::vector<CertificateIssuerItem> Items;
@@ -1403,7 +1416,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     DeletedCertificatesPagedResponse() = default;
 
     /**
-     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     * @brief Each #Azure::Security::KeyVault::Certificates::CertificateProperties represent a Key
+     * in the Key Vault.
      *
      */
     std::vector<DeletedCertificate> Items;
