@@ -96,7 +96,7 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
 {
   auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, certificateName});
 
-  // Send and parse respone
+  // Send and parse response
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
