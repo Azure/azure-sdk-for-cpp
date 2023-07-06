@@ -201,6 +201,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    */
   class MessagePropertiesFactory final {
     MessagePropertiesFactory() = delete;
+
   public:
     static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
     static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
