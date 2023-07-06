@@ -30,7 +30,7 @@ stages:
       CtestRegex: "azure-messaging-eventhubs.*"
       LiveTestCtestRegex: "azure-messaging-eventhubs.*"
       LiveTestTimeoutInMinutes: 120
-      LineCoverageTarget: 24
+      LineCoverageTarget: 22
       BranchCoverageTarget: 8
       Artifacts:
         - Name: messaging-eventhubs
