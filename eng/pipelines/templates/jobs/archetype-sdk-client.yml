@@ -260,7 +260,7 @@ jobs:
 
             - template: /eng/common/pipelines/templates/steps/verify-links.yml
               parameters:
-#                Directory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+                Directory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
                 Url: (Get-Child-Item -Path build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html -Filter *.html -Recurse | Select-Object -First 1).FullName)
                 CheckLinkGuidance: $true
 
