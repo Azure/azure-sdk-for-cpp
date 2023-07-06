@@ -70,34 +70,13 @@ public:
                 options.PartitionExpirationDuration));
   }
 
-  Processor(Processor const& other)
-      : m_ownershipUpdateInterval(other.m_ownershipUpdateInterval),
-        m_defaultStartPositions(other.m_defaultStartPositions),
-        m_checkpointStore(other.m_checkpointStore), m_prefetch(other.m_prefetch),
-        m_ConsumerClient(other.m_ConsumerClient),
-        m_nextPartitionClients(other.m_nextPartitionClients),
-        m_currentPartitionClient(other.m_currentPartitionClient),
-        m_consumerClientDetails(other.m_consumerClientDetails), m_loadBalancer(other.m_loadBalancer)
-  {
-  }
+  /** Construct a Processor from another Processor. */
+  Processor(Processor const& other) = default;
 
-  Processor& operator=(Processor const& other)
-  {
-    if (this != &other)
-    {
-      m_ownershipUpdateInterval = other.m_ownershipUpdateInterval;
-      m_defaultStartPositions = other.m_defaultStartPositions;
-      m_checkpointStore = other.m_checkpointStore;
-      m_prefetch = other.m_prefetch;
-      m_ConsumerClient = other.m_ConsumerClient;
-      m_consumerClientDetails = other.m_consumerClientDetails;
-      m_loadBalancer = other.m_loadBalancer;
-      m_nextPartitionClients = other.m_nextPartitionClients;
-      m_currentPartitionClient = other.m_currentPartitionClient;
-    }
-    return *this;
-  }
+  /** Assign a Processor to another Processor. */
+  Processor& operator=(Processor const& other) = default;
 
+  /** Move to the next partition client */
   std::shared_ptr<ProcessorPartitionClient> NextPartitionClient()
   {
     uint32_t currentPartition = m_currentPartitionClient;
@@ -109,6 +88,10 @@ public:
     return m_nextPartitionClients[currentPartition];
   }
 
+  /** @brief Starts the processor.
+   *
+   * @param ctx The context to control the request lifetime.
+   */
   void Run(Azure::Core::Context const& ctx = {})
   {
     EventHubProperties eventHubProperties = m_ConsumerClient->GetEventHubProperties();
@@ -126,6 +109,12 @@ public:
     }*/
   }
 
+  /** @brief Dispatches events to the appropriate partition clients.
+   *
+   * @param eventHubProperties The properties of the Event Hub.
+   * @param consumers The map of partition id to partition client.
+   * @param ctx The context to control the request lifetime.
+   */
   void Dispatch(
       EventHubProperties const& eventHubProperties,
       ConsumersType& consumers,
@@ -136,7 +125,7 @@ public:
 
     std::map<std::string, Models::Checkpoint> checkpoints = GetCheckpointsMap(ctx);
 
-    for (auto const &ownership : ownerships)
+    for (auto const& ownership : ownerships)
     {
       AddPartitionClient(ownership, checkpoints, consumers);
     }
@@ -148,7 +137,7 @@ public:
    */
   void Close()
   {
-    for (auto &consumer : m_nextPartitionClients)
+    for (auto& consumer : m_nextPartitionClients)
     {
       consumer->Close();
     }
@@ -221,7 +210,7 @@ private:
         ctx);
 
     std::map<std::string, Models::Checkpoint> checkpointsMap;
-    for (auto &checkpoint : checkpoints)
+    for (auto& checkpoint : checkpoints)
     {
       checkpointsMap.emplace(checkpoint.PartitionID, checkpoint);
     }

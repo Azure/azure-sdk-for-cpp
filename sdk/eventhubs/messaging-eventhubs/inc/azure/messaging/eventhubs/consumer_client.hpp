@@ -29,17 +29,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ConsumerClient {
 
   protected:
+    /// @brief The default maximum size for a single receive operation.
     const uint32_t defaultMaxSize = 5000;
+    /// @brief The default consumer group name.
     const std::string defaultConsumerGroup = "$Default";
+
+    /// @brief The message receivers used to receive messages for a given partition.
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
+    /// @brief The AMQP Sessions used to receive messages for a given partition.
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
+
+    /// @brief the credentials used to connect to the event hub.
     Models::ConsumerClientCreds m_credentials;
+
+    /// @brief The options used to configure the consumer client.
     Models::ConsumerClientOptions m_consumerClientOptions;
 
   public:
     /** Create a new ConsumerClient from an existing one. */
     ConsumerClient(ConsumerClient const& other) = default;
 
+    /** Assign a ConsumerClient to an existing one. */
     ConsumerClient& operator=(ConsumerClient const& other) = default;
 
     /** @brief Getter for event hub name
@@ -66,6 +76,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::string const& GetClientId() { return m_consumerClientOptions.ApplicationID; }
 
+/** @brief Getter for client details
+	 *
+	 * @returns Client details for client
+	 */
     Models::ConsumerClientDetails GetDetails()
     {
       Models::ConsumerClientDetails details;
@@ -94,11 +108,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @remark connectionString can be one of two formats - with or without an EntityPath key.
      *  When the connection string does not have an entity path, as shown below, the eventHub
      *  parameter cannot be empty and should contain the name of your event hub.
-     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=<key>
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>
      *  When the connection string DOES have an entity path, as shown below, the eventHub parameter
      *  will be ignored.
-     *  Endpoint=sb://<your-namespace>.servicebus.windows.net/;
-     *  SharedAccessKeyName=<key-name>;SharedAccessKey=<key>;EntityPath=<entitypath>;
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;
+     *  SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>;EntityPath=\<entitypath\>;
      */
     ConsumerClient(
         std::string const& connectionString,

@@ -25,6 +25,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const Azure::Core::Amqp::Models::AmqpValue offsetNumberAnnotation = "x-opt-offset";
 
   public:
+    /// Constructs a new instance of the ProcessorPartitionClient.
+    /// @param partitionId The identifier of the partition to connect the client to.
+    /// @param partitionClient The [PartitionClient] to use for receiving events.
+    /// @param checkpointStore The [CheckpointStore] to use for storing checkpoints.
+    /// @param consumerClientDetails The [ConsumerClientDetails] to use for storing checkpoints.
+    /// @param cleanupFunc The function to call when the ProcessorPartitionClient is closed.
+    ///
     ProcessorPartitionClient(
         std::string partitionId,
         PartitionClient partitionClient,
@@ -37,26 +44,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
     }
 
-    ProcessorPartitionClient(ProcessorPartitionClient const& other)
-        : m_partitionId(other.m_partitionId), m_partitionClient(other.m_partitionClient),
-          m_checkpointStore(other.m_checkpointStore), m_cleanupFunc(other.m_cleanupFunc),
-          m_consumerClientDetails(other.m_consumerClientDetails)
-    {
-    }
+    /// Copy a ProcessorPartitionClient to another ProcessorPartitionClient.
+    ProcessorPartitionClient(ProcessorPartitionClient const& other) = default;
 
-    ProcessorPartitionClient& operator=(ProcessorPartitionClient const& other)
-    {
-      if (this != &other)
-      {
-        m_partitionId = other.m_partitionId;
-        m_partitionClient = other.m_partitionClient;
-        m_checkpointStore = other.m_checkpointStore;
-        m_consumerClientDetails = other.m_consumerClientDetails;
-        m_cleanupFunc = other.m_cleanupFunc;
-      }
-      return *this;
-    }
+    /// Assignment operator.
+    ProcessorPartitionClient& operator=(ProcessorPartitionClient const& other) = default;
 
+    /** Receives Events from the partition.
+     * @param maxBatchSize The maximum number of events to receive in a single call to the service.
+     * @param ctx The context to pass to the update checkpoint operation.
+     */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t maxBatchSize,
         Azure::Core::Context ctx = {})
@@ -85,7 +82,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       Azure::Nullable<int64_t> offsetNumber;
 
-      for (auto const&pair : amqpMessage.MessageAnnotations)
+      for (auto const& pair : amqpMessage.MessageAnnotations)
       {
         if (pair.first == sequenceNumberAnnotation)
         {

@@ -46,6 +46,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// amongst all the known consumers.
     bool ExtraPartitionPossible;
 
+    /// Raw ownerships are the raw ownerships from the checkpoint store.
     std::vector<Ownership> Raw;
   };
 }}}} // namespace Azure::Messaging::EventHubs::Models

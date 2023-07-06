@@ -24,6 +24,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief  Construct a CheckpointStore from another CheckpointStore.
      */
     CheckpointStore(CheckpointStore const& other) = default;
+
+    /** @brief  Construct a CheckpointStore from another CheckpointStore.
+     */
     CheckpointStore& operator=(CheckpointStore const& other) = default;
     /**@brief ClaimOwnership attempts to claim ownership of the partitions in partitionOwnership and
      * returns the actual partitions that    were claimed.
@@ -116,29 +119,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Context const& context = Azure::Core::Context());
 
   public:
-    BlobCheckpointStore(BlobCheckpointStore const& other)
-        : CheckpointStore(), m_connectionString(other.m_connectionString),
-          m_containerName(other.m_containerName),
-          m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-              other.m_connectionString,
-              other.m_containerName))
-    {
-      m_containerClient.CreateIfNotExists();
-    }
+    /** @brief  Construct a BlobCheckpointStore from another BlobCheckpointStore.
+     */
+    BlobCheckpointStore(BlobCheckpointStore const& other) = default;
 
-    BlobCheckpointStore& operator=(BlobCheckpointStore const& other)
-    {
-      if (&other == this)
-      {
-        return *this;
-      }
-      m_connectionString = other.m_connectionString;
-      m_containerName = other.m_containerName;
-      m_containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-          other.m_connectionString, other.m_containerName);
-      m_containerClient.CreateIfNotExists();
-      return *this;
-    }
+    /** @brief  Assign a BlobCheckpointStore to another BlobCheckpointStore.
+     */
+    BlobCheckpointStore& operator=(BlobCheckpointStore const& other) = default;
 
     /**@brief  Construct a BlobCheckpointStore.
      *

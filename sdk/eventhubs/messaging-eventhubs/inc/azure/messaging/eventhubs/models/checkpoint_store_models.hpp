@@ -43,26 +43,39 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
    */
   struct Ownership
   {
+    /// @brief The consumer group name.
     std::string ConsumerGroup;
+    /// @brief The event hub name.
     std::string EventHubName;
+    /// @brief The fully qualified namespace for the event hub.
     std::string FullyQualifiedNamespace;
+    /// @brief The partition ID for the corresponding ownership.
     std::string PartitionID{};
-    std::string OwnerID{}; // the owner ID of the Processor
-    Azure::Nullable<Azure::ETag>
-        ETag{}; // the ETag, used when attempting to claim or update ownership of a partition.
-    Azure::Nullable<Azure::DateTime>
-        LastModifiedTime{}; // used when calculating if ownership has expired
+    /// @brief The owner ID for the corresponding ownership.
+    std::string OwnerID{};
+    /// the ETag, used when attempting to claim or update ownership of a partition.
+    Azure::Nullable<Azure::ETag> ETag{};
+
+    /// @brief The last modified time for the corresponding ownership. Used to calculate if
+    /// ownership has expired.
+    Azure::Nullable<Azure::DateTime> LastModifiedTime{};
   };
 
   /**@brief Checkpoint tracks the last successfully processed event in a partition.
    */
   struct Checkpoint
   {
+    /// @brief The consumer group name.
     std::string ConsumerGroup{};
+    /// @brief The event hub name.
     std::string EventHubName{};
+    /// @brief The fully qualified namespace for the event hub.
     std::string EventHubHostName{};
+    /// @brief The partition ID for the corresponding checkpoint.
     std::string PartitionID{};
-    Azure::Nullable<int64_t> Offset{}; // the last successfully processed Offset.
-    Azure::Nullable<int64_t> SequenceNumber{}; // the last successfully processed SequenceNumber.
+    /// @brief The offset of the last successfully processed event.
+    Azure::Nullable<int64_t> Offset{};
+    /// @brief The sequence number of the last successfully processed event.
+    Azure::Nullable<int64_t> SequenceNumber{};
   };
 }}}} // namespace Azure::Messaging::EventHubs::Models

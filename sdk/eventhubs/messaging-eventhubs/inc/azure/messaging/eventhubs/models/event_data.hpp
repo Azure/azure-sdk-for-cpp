@@ -85,9 +85,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * The identifier is an application-defined value that uniquely identifies the message
      * and its payload. The identifier is a free-form string and can reflect a GUID or an
-     * identifier derived from the application context. If enabled, the
-     * {@link EventHubProducerClientOptions::EnableIdempotentPartitions} option allows
-     * the Event Hubs service to safely retry deduplicated messages.
+     * identifier derived from the application context.
      */
     Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> MessageId;
 
@@ -141,8 +139,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     std::map<std::string, Azure::Core::Amqp::Models::AmqpValue> SystemProperties;
 
+    /** @brief Construct a ReceivedEventData from an AMQP Message.
+     *
+     * This constructor is used internally during the receive operation.
+     */
     ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message);
 
+    /** @brief Get the raw AMQP message.
+     *
+     * Returns the underlying AMQP message that was received from the Event Hubs service.
+     */
     Azure::Core::Amqp::Models::AmqpMessage const& RawAmqpMessage() const { return m_message; }
 
   private:

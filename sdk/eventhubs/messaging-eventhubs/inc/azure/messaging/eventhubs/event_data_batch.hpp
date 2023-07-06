@@ -40,27 +40,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     size_t m_currentSize;
 
   public:
-    EventDataBatch(EventDataBatch const& other)
-        : m_partitionID(other.m_partitionID), m_partitionKey(other.m_partitionKey),
-          m_maxBytes(other.m_maxBytes), m_marshalledMessages(other.m_marshalledMessages),
-          m_batchEnvelope(other.m_batchEnvelope), m_currentSize(other.m_currentSize)
-    {
-    }
+    /** @brief Constructs an EventDataBatch from another EventDataBatch
+     *
+     * @param other The EventDataBatch to copy
+     */
+    EventDataBatch(EventDataBatch const& other) = default;
 
-    EventDataBatch& operator=(EventDataBatch const& other)
-    {
-      if (&other == this)
-      {
-        return *this;
-      }
-      m_partitionID = other.m_partitionID;
-      m_partitionKey = other.m_partitionKey;
-      m_maxBytes = other.m_maxBytes;
-      m_marshalledMessages = other.m_marshalledMessages;
-      m_batchEnvelope = other.m_batchEnvelope;
-      m_currentSize = other.m_currentSize;
-      return *this;
-    }
+    /** Copy an EventDataBatch to another EventDataBatch */
+    EventDataBatch& operator=(EventDataBatch const& other) = default;
+
     /** @brief Event Data Batch constructor
      *
      * @param options Options settings for creating the data batch
@@ -93,12 +81,36 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
     };
 
+    /** @brief Sets the partition ID for the data batch
+     *
+     * @param partitionID The partition ID to set
+     */
     void SetPartitionID(std::string partitionID) { m_partitionID = partitionID; }
+
+    /** @brief Sets the partition key for the data batch
+     *
+     * @param partitionKey The partition key to set
+     */
     void SetPartitionKey(std::string partitionKey) { m_partitionKey = partitionKey; }
+
+    /** @brief Sets the maximum size of the data batch */
     void SetMaxBytes(uint64_t maxBytes) { m_maxBytes = maxBytes; }
 
+    /** @brief Gets the partition ID for the data batch
+     *
+     * @return std::string
+     */
     std::string GetPartitionID() const { return m_partitionID; }
+
+    /** @brief Gets the partition key for the data batch
+     * @return std::string
+     */
     std::string GetPartitionKey() const { return m_partitionKey; }
+
+    /** @brief Gets the maximum size of the data batch
+     *
+     * @return uint64_t
+     */
     uint64_t GetMaxBytes() const { return m_maxBytes; }
 
     /** @brief Adds a message to the data batch
@@ -122,6 +134,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_currentSize;
     }
 
+    /** @brief Serializes the EventDataBatch to a single AmqpMessage to be sent to the EventHubs
+     * service.
+     *
+     * @return Azure::Core::Amqp::Models::AmqpMessage
+     */
     Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const
     {
       Azure::Core::Amqp::Models::AmqpMessage returnValue{m_batchEnvelope};
@@ -138,7 +155,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
 
       std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
-      for (auto marshalledMessage : m_marshalledMessages)
+      for (auto const&marshalledMessage : m_marshalledMessages)
       {
         Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
         messageList.push_back(data);

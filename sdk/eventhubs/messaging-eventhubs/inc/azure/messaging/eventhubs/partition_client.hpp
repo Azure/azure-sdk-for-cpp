@@ -18,48 +18,55 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class PartitionClient {
 
   protected:
+    /// The message receivers used to receive events from the partition.
     std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
+
+    /// The name of the offset to start receiving events from.
     std::string m_offsetExpression;
+
+    /// The level of the ownership.
     uint64_t m_ownerLevel;
+
+    /// The number of events to prefetch at any time.
     int32_t m_prefetchCount;
+
+    /// The options used to create the PartitionClient.
     Models::PartitionClientOptions m_partitionOptions;
+
+    /// The name of the partition.
     std::string m_partitionId;
+
+    /** @brief RetryOptions controls how many times we should retry an operation in
+     * response to being throttled or encountering a transient error.
+     */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /*@brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
+    /** @brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
      * service.
      */
     const uint32_t defaultPrefetchSize = 300;
 
-    /**@brief defaultLinkRxBuffer is the maximum number of transfer frames we can handle
+    /** @brief defaultLinkRxBuffer is the maximum number of transfer frames we can handle
      * on the Receiver. This matches the current default window size that go-amqp
      * uses for sessions.
      */
     const uint32_t defaultMaxCreditSize = 5000;
 
   public:
-    PartitionClient(PartitionClient const& other)
-        : m_receivers(other.m_receivers), m_offsetExpression(other.m_offsetExpression),
-          m_ownerLevel(other.m_ownerLevel), m_prefetchCount(other.m_prefetchCount),
-          m_partitionOptions(other.m_partitionOptions), m_partitionId(other.m_partitionId),
-          RetryOptions(other.RetryOptions)
-    {
-    }
+    /// Create a PartitionClient from another PartitionClient
+    PartitionClient(PartitionClient const& other) = default;
 
-    PartitionClient& operator=(PartitionClient const& other)
-    {
-      if (this != &other)
-      {
-        m_receivers = other.m_receivers;
-        m_offsetExpression = other.m_offsetExpression;
-        m_ownerLevel = other.m_ownerLevel;
-        m_prefetchCount = other.m_prefetchCount;
-        m_partitionOptions = other.m_partitionOptions;
-        m_partitionId = other.m_partitionId;
-        RetryOptions = other.RetryOptions;
-      }
-      return *this;
-    }
+    /// Assign a PartitionClient to another PartitionClient
+    PartitionClient& operator=(PartitionClient const& other) = default;
+
+    /** Receive events from the partition.
+     *
+     * @param maxMessages The maximum number of messages to receive.
+     * @param ctx A context to control the request lifetime.
+     * @param options Optional parameters to control the receive operation.
+     * @return A vector of received events.
+     *
+     */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t const& maxMessages,
         Azure::Core::Context ctx = Azure::Core::Context(),
@@ -89,6 +96,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_receivers[i].Close();
       }
     }
+
+    /** Creates a new PartitionClient
+     *
+     * @param options The options used to create the PartitionClient.
+     * @param retryOptions The retry options used to create the PartitionClient.
+     *
+     */
     PartitionClient(
         Models::PartitionClientOptions options,
         Azure::Core::Http::Policies::RetryOptions retryOptions)
@@ -97,6 +111,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       RetryOptions = retryOptions;
     }
 
+    /// @brief Push the message receiver back to the vector of receivers.
     void PushBackReceiver(Azure::Core::Amqp::_internal::MessageReceiver& receiver)
     {
       m_receivers.push_back(std::move(receiver));

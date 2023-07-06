@@ -26,33 +26,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
   public:
+    /** Get the fully qualified namespace from the connection string */
     std::string const& GetEventHubName() { return m_credentials.EventHub; }
 
+    /** Get Retry options for this ProducerClient */
     Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions()
     {
       return m_producerClientOptions.RetryOptions;
     }
 
-    ProducerClient(ProducerClient const& other)
-        : m_credentials(other.m_credentials),
-          m_producerClientOptions(other.m_producerClientOptions), m_senders(other.m_senders),
-          m_sessions(other.m_sessions)
-    {
-    }
+    /** Create a ProducerClient from another ProducerClient. */
+    ProducerClient(ProducerClient const& other) = default;
 
-    ProducerClient& operator=(ProducerClient const& other)
-    {
-      if (&other == this)
-      {
-        return *this;
-      }
-      m_credentials = other.m_credentials;
-      m_producerClientOptions = other.m_producerClientOptions;
-      m_senders = other.m_senders;
-      m_sessions = other.m_sessions;
-      return *this;
-    }
+    /** Assign a ProducerClient another ProducerClient. */
+    ProducerClient& operator=(ProducerClient const& other) = default;
 
+    /** Default Constructor for a ProducerClient */
     ProducerClient() = default;
 
     /**@brief Constructs a new ProducerClient instance
@@ -70,6 +59,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param fullyQualifiedNamespace Fully qualified namespace name
      * @param eventHub Event hub name
+     * @param credential Credential to use for authentication
      * @param options Additional options for creating the client
      */
     ProducerClient(
@@ -80,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ~ProducerClient()
     {
-      for (auto sender : m_senders)
+      for (auto &sender : m_senders)
       {
         sender.second.Close();
       }
