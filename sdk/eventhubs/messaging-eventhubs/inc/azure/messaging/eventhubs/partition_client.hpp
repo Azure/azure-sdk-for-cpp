@@ -41,41 +41,42 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /** @brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
-     * service.
-     */
-    const uint32_t defaultPrefetchSize = 300;
+    ///** @brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
+    // * service.
+    // */
+    //const uint32_t defaultPrefetchSize = 300;
 
-    /** @brief defaultLinkRxBuffer is the maximum number of transfer frames we can handle
-     * on the Receiver. This matches the current default window size that go-amqp
-     * uses for sessions.
-     */
-    const uint32_t defaultMaxCreditSize = 5000;
+    ///** @brief defaultLinkRxBuffer is the maximum number of transfer frames we can handle
+    // * on the Receiver. This matches the current default window size that go-amqp
+    // * uses for sessions.
+    // */
+    //const uint32_t defaultMaxCreditSize = 5000;
 
   public:
     /// Create a PartitionClient from another PartitionClient
-    PartitionClient(PartitionClient const& other)
-        : m_receivers{other.m_receivers}, m_offsetExpression{other.m_offsetExpression},
-          m_ownerLevel{other.m_ownerLevel}, m_prefetchCount{other.m_prefetchCount},
-          m_partitionOptions{other.m_partitionOptions}, m_partitionId{other.m_partitionId},
-          RetryOptions{other.RetryOptions}
-    {
-    }
+    PartitionClient(PartitionClient const& other) = default;
+    //    : m_receivers{other.m_receivers}, m_offsetExpression{other.m_offsetExpression},
+    //      m_ownerLevel{other.m_ownerLevel}, m_prefetchCount{other.m_prefetchCount},
+    //      m_partitionOptions{other.m_partitionOptions}, m_partitionId{other.m_partitionId},
+    //      RetryOptions{other.RetryOptions}
+    //{
+    //}
 
     /// Assign a PartitionClient to another PartitionClient
-    PartitionClient& operator=(PartitionClient const& other)
-    {
-      if (this != &other)
-      {
-        m_receivers = other.m_receivers;
-        m_offsetExpression = other.m_offsetExpression;
-        m_ownerLevel = other.m_ownerLevel;
-        m_prefetchCount = other.m_prefetchCount;
-        m_partitionOptions = other.m_partitionOptions;
-        m_partitionId = other.m_partitionId;
-        RetryOptions = other.RetryOptions;
-      }
-    }
+    PartitionClient& operator=(PartitionClient const& other) = default;
+    //{
+    //  if (this != &other)
+    //  {
+    //    m_receivers = other.m_receivers;
+    //    m_offsetExpression = other.m_offsetExpression;
+    //    m_ownerLevel = other.m_ownerLevel;
+    //    m_prefetchCount = other.m_prefetchCount;
+    //    m_partitionOptions = other.m_partitionOptions;
+    //    m_partitionId = other.m_partitionId;
+    //    RetryOptions = other.RetryOptions;
+    //  }
+    //  return *this;
+    //}
 
     /** Receive events from the partition.
      *
