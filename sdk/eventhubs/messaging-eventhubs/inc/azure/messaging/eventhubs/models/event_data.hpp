@@ -63,6 +63,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     };
   };
 
+  /** @brief Represents an event sent to the Azure Event Hubs service.
+   */
   struct EventData
   {
     /** @brief The body of the event data.
@@ -98,6 +100,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     EventData() = default;
   };
 
+  /** @brief Represents an event received from the Azure Event Hubs service.
+   *
+   * Events Received from the EventHubs service have additional information associated with them,
+   * specifically the date and time that the event was enqueued, the offset of the event data within
+   * the partition, and the partition key for sending a message to a partition.
+   */
   class ReceivedEventData : public EventData {
   public:
     /** @brief The date and time that the event was enqueued.

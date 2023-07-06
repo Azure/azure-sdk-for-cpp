@@ -80,6 +80,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return messages;
     }
 
+    /** @brief Closes the connection to the Event Hub service.
+     */
     void Close()
     {
       for (size_t i = 0; i < m_receivers.size(); i++)

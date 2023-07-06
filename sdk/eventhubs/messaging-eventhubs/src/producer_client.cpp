@@ -10,14 +10,15 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     Azure::Messaging::EventHubs::Models::ProducerClientOptions options)
     : m_credentials{connectionString, "", eventHub}, m_producerClientOptions(options)
 {
-  m_credentials.SasCredential
+  auto sasCredential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          m_credentials.ConnectionString);
+          connectionString);
+
+  m_credentials.Credential = sasCredential;
+
   m_credentials.EventHub
-      = (m_credentials.SasCredential->GetEntityPath().empty()
-             ? m_credentials.EventHub
-             : m_credentials.SasCredential->GetEntityPath());
-  m_credentials.FullyQualifiedNamespace = m_credentials.SasCredential->GetHostName();
+      = (sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath());
+  m_credentials.FullyQualifiedNamespace = sasCredential->GetHostName();
 }
 
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
@@ -38,7 +39,7 @@ Azure::Core::Amqp::_internal::MessageSender Azure::Messaging::EventHubs::Produce
     CreateSender(partitionId);
   }
 
-  auto sender = m_senders.at(partitionId);
+  auto& sender = m_senders.at(partitionId);
   return sender;
 }
 
@@ -51,13 +52,9 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
   connectOptions.EnableTrace = m_producerClientOptions.SenderOptions.EnableTrace;
   std::string hostName;
-  if (m_credentials.SasCredential != nullptr)
-  {
-    connectOptions.Port = m_credentials.SasCredential->GetPort();
-    hostName = m_credentials.SasCredential->GetHostName();
-  }
+  hostName = m_credentials.FullyQualifiedNamespace;
 
-  auto targetUrl = m_credentials.TargetUrl;
+  std::string targetUrl = m_credentials.TargetUrl;
 
   if (!partitionId.empty())
   {
@@ -65,9 +62,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   }
 
   Azure::Core::Amqp::_internal::Connection connection(
-      hostName,
-      (m_credentials.SasCredential ? m_credentials.SasCredential : m_credentials.Credential),
-      connectOptions);
+      hostName, m_credentials.Credential, connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();
@@ -139,7 +134,7 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    auto const& body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
@@ -206,7 +201,7 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    auto const& body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");

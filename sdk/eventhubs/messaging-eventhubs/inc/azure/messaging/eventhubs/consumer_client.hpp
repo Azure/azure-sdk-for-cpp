@@ -17,6 +17,15 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
 
+  /**
+   * @brief The ConsumerClient class is a high level class used to consume events from an Event Hub.
+   *
+   * @details The ConsumerClient class uses a #Azure::Messaging::EventHubs::PartitionClient to
+   * receive events from a specific partition of an Event Hub. The
+   * #Azure::Messaging::EventHubs::PartitionClient is created by the #ConsumerClient and is
+   * available via the NewPartitionClient method. The ConsumerClient is also responsible for
+   * managing the connection to the Event Hub and will reconnect as necessary.
+   */
   class ConsumerClient {
 
   protected:
@@ -28,25 +37,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::ConsumerClientOptions m_consumerClientOptions;
 
   public:
-    ConsumerClient(ConsumerClient const& other)
-        : m_receivers(other.m_receivers), m_sessions(other.m_sessions),
-          m_credentials(other.m_credentials), m_consumerClientOptions(other.m_consumerClientOptions)
-    {
-    }
+    /** Create a new ConsumerClient from an existing one. */
+    ConsumerClient(ConsumerClient const& other) = default;
 
-    ConsumerClient& operator=(ConsumerClient const& other)
-    {
-      if (&other == this)
-      {
-        return *this;
-      }
+    ConsumerClient& operator=(ConsumerClient const& other) = default;
 
-      m_receivers = other.m_receivers;
-      m_sessions = other.m_sessions;
-      m_credentials = other.m_credentials;
-      m_consumerClientOptions = other.m_consumerClientOptions;
-      return *this;
-    }
     /** @brief Getter for event hub name
      *
      * @returns Event hub name for client
@@ -99,7 +94,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @remark connectionString can be one of two formats - with or without an EntityPath key.
      *  When the connection string does not have an entity path, as shown below, the eventHub
      *  parameter cannot be empty and should contain the name of your event hub.
-     *  Endpoint=sb://<your-namespace>.servicebus.windows.net/;SharedAccessKeyName=<key-name>;SharedAccessKey=<key>
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=<key>
      *  When the connection string DOES have an entity path, as shown below, the eventHub parameter
      *  will be ignored.
      *  Endpoint=sb://<your-namespace>.servicebus.windows.net/;

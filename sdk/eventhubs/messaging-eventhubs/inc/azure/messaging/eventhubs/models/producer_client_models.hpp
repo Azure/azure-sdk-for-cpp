@@ -18,18 +18,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
    */
   struct ProducerClientCreds
   {
+    /// The connection string for the Event Hubs namespace
     std::string ConnectionString;
 
-    // the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
+    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
     std::string FullyQualifiedNamespace;
 
+    /// The name of the Event Hub
     std::string EventHub{};
 
+    /// The URL to the Event Hubs namespace
     std::string TargetUrl{};
 
+    /// Credentials to be used to authenticate the client.
     std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
-    std::shared_ptr<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>
-        SasCredential{};
   };
 
   /**@brief Contains options for the ProducerClient creation

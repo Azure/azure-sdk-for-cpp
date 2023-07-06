@@ -33,12 +33,12 @@ stages:
       LineCoverageTarget: 24
       BranchCoverageTarget: 8
       Artifacts:
-        - Name: azure-messaging-eventhubs
-          Path: azure-messaging-eventhubs
+        - Name: messaging-eventhubs
+          Path: messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
       ArtifactsSource:
-        - Name: azure-messaging-eventhubs
-          Path: azure-messaging-eventhubs
+        - Name: messaging-eventhubs
+          Path: messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
       TestEnv:
         - Name: AZURE_TENANT_ID

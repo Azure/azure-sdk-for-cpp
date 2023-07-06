@@ -64,6 +64,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_partitionClient.ReceiveEvents(maxBatchSize, ctx);
     }
 
+    /** Closes the partition client.
+     */
     void Close()
     {
       if (m_cleanupFunc != nullptr)
@@ -83,7 +85,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       Azure::Nullable<int64_t> offsetNumber;
 
-      for (auto pair : amqpMessage.MessageAnnotations)
+      for (auto const&pair : amqpMessage.MessageAnnotations)
       {
         if (pair.first == sequenceNumberAnnotation)
         {

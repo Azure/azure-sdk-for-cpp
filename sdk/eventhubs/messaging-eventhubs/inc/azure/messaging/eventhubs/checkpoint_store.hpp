@@ -20,6 +20,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class CheckpointStore {
   public:
     CheckpointStore() = default;
+
+    /** @brief  Construct a CheckpointStore from another CheckpointStore.
+     */
     CheckpointStore(CheckpointStore const& other) = default;
     CheckpointStore& operator=(CheckpointStore const& other) = default;
     /**@brief ClaimOwnership attempts to claim ownership of the partitions in partitionOwnership and
@@ -137,6 +140,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return *this;
     }
 
+    /**@brief  Construct a BlobCheckpointStore.
+     *
+     * @param connectionString  The connection string of an Azure Storage account.
+     * @param containerName  The name of the blob container.
+     */
     BlobCheckpointStore(std::string const& connectionString, std::string const& containerName)
         : CheckpointStore(), m_connectionString(connectionString), m_containerName(containerName),
           m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(

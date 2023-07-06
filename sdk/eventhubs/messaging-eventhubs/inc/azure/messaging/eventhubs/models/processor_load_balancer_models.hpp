@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "checkpoint_store_models.hpp"
+
 #include <azure/core/context.hpp>
 
 #include <chrono>
+#include <vector>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   enum ProcessorStrategy
@@ -17,6 +20,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     ProcessorStrategyGreedy
   };
 
+  /**
+   * @brief COnfiguration options for the load balancer.
+   */
   struct LoadBalancerInfo
   {
     /// current are the partitions that _we_ own

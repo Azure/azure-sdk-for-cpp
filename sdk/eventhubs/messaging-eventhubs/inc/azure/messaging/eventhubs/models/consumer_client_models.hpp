@@ -30,19 +30,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     Azure::Core::Amqp::_internal::MessageReceiverOptions ReceiverOptions{};
   };
 
+  /**@brief Contains credentials for the ConsumerClient creation
+   */
   struct ConsumerClientCreds
   {
+    /// The connection string for the Event Hubs namespace
     std::string ConnectionString;
 
-    // the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
+    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
     std::string HostName;
 
+    /// The name of the Event Hub
     std::string EventHub;
 
+    /// The name of the consumer group
     std::string ConsumerGroup;
 
+    /// Credentials to be used to authenticate the client.
     std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
 
+    /// The URL to the Event Hubs namespace
     std::string HostUrl{};
   };
 
