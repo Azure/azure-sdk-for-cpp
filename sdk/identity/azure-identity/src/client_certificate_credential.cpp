@@ -18,6 +18,7 @@
 
 #ifdef AZ_PLATFORM_WINDOWS
 #include <Windows.h>
+
 #include <wil/resource.h>
 #include <wil/result.h>
 #else
@@ -80,8 +81,7 @@ UniquePrivateKey GetPrivateKey(PCCERT_CONTEXT cert)
   NCRYPT_KEY_HANDLE key;
   DWORD size = sizeof(void*);
   THROW_IF_WIN32_BOOL_FALSE_MSG(
-      CertGetCertificateContextProperty(
-          cert, CERT_NCRYPT_KEY_HANDLE_PROP_ID, &key, &size),
+      CertGetCertificateContextProperty(cert, CERT_NCRYPT_KEY_HANDLE_PROP_ID, &key, &size),
       "Failed to get certificate private key.");
   return UniquePrivateKey{key};
 }
@@ -127,7 +127,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
       BCRYPT_PAD_PKCS1);
   if (status != NTE_BUFFER_TOO_SMALL)
   {
-	return {};
+    return {};
   }
   std::vector<unsigned char> signature(signatureSize);
   status = NCryptSignHash(
