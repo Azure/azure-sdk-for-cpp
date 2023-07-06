@@ -8,6 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()
@@ -41,7 +42,7 @@ int main()
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 
-  constexpr int maxMessageReceiveCount = 10000;
+  constexpr int maxMessageReceiveCount = 1000;
 
   int messageReceiveCount = 0;
   while (messageReceiveCount < maxMessageReceiveCount)
