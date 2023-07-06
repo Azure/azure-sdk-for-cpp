@@ -71,10 +71,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::string const& GetClientId() { return m_consumerClientOptions.ApplicationID; }
 
-/** @brief Getter for client details
-	 *
-	 * @returns Client details for client
-	 */
+    /** @brief Getter for client details
+     *
+     * @returns Client details for client
+     */
     Models::ConsumerClientDetails GetDetails()
     {
       Models::ConsumerClientDetails details;

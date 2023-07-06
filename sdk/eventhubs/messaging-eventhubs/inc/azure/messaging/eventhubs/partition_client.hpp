@@ -44,13 +44,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ///** @brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
     // * service.
     // */
-    //const uint32_t defaultPrefetchSize = 300;
+    // const uint32_t defaultPrefetchSize = 300;
 
     ///** @brief defaultLinkRxBuffer is the maximum number of transfer frames we can handle
     // * on the Receiver. This matches the current default window size that go-amqp
     // * uses for sessions.
     // */
-    //const uint32_t defaultMaxCreditSize = 5000;
+    // const uint32_t defaultMaxCreditSize = 5000;
 
   public:
     /// Create a PartitionClient from another PartitionClient
