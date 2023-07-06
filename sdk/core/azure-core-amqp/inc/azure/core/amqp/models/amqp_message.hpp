@@ -44,7 +44,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   };
   using UniqueMessageHandle = Azure::Core::_internal::UniqueHandle<MESSAGE_INSTANCE_TAG>;
 
-  constexpr int AmqpMessageFormatValue = 0; // Specifies the message format for an AMQP message.
+  constexpr int AmqpDefaultMessageFormatValue
+      = 0; // Specifies the message format for an AMQP message.
 
   /** @brief An AmqpMessage object represents a received AMQP message.
    * @remark An AMQP message is comprised of a header, properties, application properties, and
@@ -95,6 +96,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @returns true if the AMQP message has a value, false otherwise.
      */
     operator bool() const noexcept { return m_hasValue; }
+
+    /** @brief The message format.
+     *
+     * By default, AMQP uses 0, however services can override this to
+     * express additional semantics about the message payload.
+     */
+    uint32_t MessageFormat = AmqpDefaultMessageFormatValue;
 
     /** @brief The header for the message.
      *
@@ -246,19 +254,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      * @remarks This API will fail if BodyType is not MessageBodyType::Sequence.
      */
-    std::vector<AmqpList> GetBodyAsAmqpList() const;
+    std::vector<AmqpList> const& GetBodyAsAmqpList() const;
 
     /** @brief Returns an Amqp Value message body.
      *
      * @remarks This API will fail if BodyType is not MessageBodyType::Value.
      */
-    AmqpValue GetBodyAsAmqpValue() const;
+    AmqpValue const& GetBodyAsAmqpValue() const;
 
     /** @brief Returns an Amqp Binary message body.
      *
      * @remarks This API will fail if BodyType is not MessageBodyType::Binary.
      */
-    std::vector<AmqpBinaryData> GetBodyAsBinary() const;
+    std::vector<AmqpBinaryData> const& GetBodyAsBinary() const;
 
     /** @brief Serialize the message into a buffer.
      *
@@ -291,7 +299,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * @remarks This class should not be used directly. It is used by the uAMQP interoperability
    * layer.
    */
-  class AmqpMessageFactory final {
+  class AmqpMessageFactory {
   public:
     static AmqpMessage FromUamqp(UniqueMessageHandle const& properties);
     static AmqpMessage FromUamqp(MESSAGE_INSTANCE_TAG* properties);

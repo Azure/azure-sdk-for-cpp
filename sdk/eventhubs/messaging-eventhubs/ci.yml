@@ -1,0 +1,63 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/eventhubs/messaging-eventhubs
+
+pr:
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/eventhubs
+      - eng/common/testproxy
+
+stages:
+  - template: ../../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: eventhubs
+      CtestRegex: "azure-messaging-eventhubs.*"
+      LiveTestCtestRegex: "azure-messaging-eventhubs.*"
+      LiveTestTimeoutInMinutes: 120
+      LineCoverageTarget: 24
+      BranchCoverageTarget: 8
+      Artifacts:
+        - Name: messaging-eventhubs
+          Path: messaging-eventhubs
+          VcpkgPortName: azure-messaging-eventhubs-cpp
+      ArtifactsSource:
+        - Name: messaging-eventhubs
+          Path: messaging-eventhubs
+          VcpkgPortName: azure-messaging-eventhubs-cpp
+      TestEnv:
+        - Name: AZURE_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AZURE_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AZURE_CLIENT_SECRET
+          Value: "non-real-secret"
+        - Name: AZURE_SUBSCRIPTION_ID
+          Value: "non-real-sub"
+      CMakeTestOptions:
+        - Name: Default
+          Value: ''
+        - Name: Test
+          Value: '-DBUILD_TESTING=ON'
+        - Name: Samples
+          Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
+        - Name: Performance
+          Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
+      CMakeSourceTestOptions:
+        - Name: Source
+          Value: '-DFETCH_SOURCE_DEPS=OFF'

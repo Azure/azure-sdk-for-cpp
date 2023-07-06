@@ -883,7 +883,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::ostream& operator<<(std::ostream& os, AmqpSymbol const& value)
   {
     // Let the AmqpValue specialization handle serialization of the array.
-    AmqpValue arrayValue(value);
+    AmqpValue arrayValue(static_cast<AmqpValue>(value));
     os << arrayValue;
     return os;
   }

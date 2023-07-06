@@ -1,0 +1,19 @@
+{
+  "sourceFilesToProcess": null,
+  "sourceFilesToSkip": [
+  ],
+  "additionalIncludeDirectories": [
+    "../../../core/azure-core/inc",
+    "../../../core/azure-core-amqp/inc"
+  ],
+  "additionalCompilerSwitches": [
+  ],
+  "allowInternal": true,
+  "includeInternal": false,
+  "includeDetail": false,
+  "includePrivate": false,
+  "filterNamespace": "Azure::Messaging",
+  "reviewName": "Azure Messaging EventHubs API Review",
+  "serviceName": null,
+  "packageName": "azure-messaging-eventhubs-cpp"
+}

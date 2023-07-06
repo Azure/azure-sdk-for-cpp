@@ -153,12 +153,16 @@ function getBuildConfiguration {
     return "Debug"
 }
 
-$searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*.a"
-if ($IsWindows) {
-    $searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*/*.lib"
-}
+# It's possible that due to external factors, the build directory doesn't exist.
+if (Test-Path "$BuildDirectory/sdk/$ServiceDirectory") {
 
-$binaries = Get-ChildItem -Path $searchPath
+    $searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*.a"
+    if ($IsWindows) {
+        $searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*/*.lib"
+    }
+
+    $binaries = Get-ChildItem -Path $searchPath
+}
 
 $buildLabels = @{
     TargetOs = getTargetOs;

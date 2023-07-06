@@ -3,16 +3,26 @@
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_receiver.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <chrono>
 #include <iostream>
 #include <limits>
 #include <string>
-
 #define EH_CONNECTION_STRING "<<<Replace with the connection string from your eventhubs instance>>>"
 
 int main()
 {
+  /*
+  * std::string connectionString
+      = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING")
+      + ";EntityPath=eventhub";
+  auto credential
+      = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
+          connectionString);
+  std::string hostUrl = "amqps://" + credential->GetHostName() + "/" + credential->GetEntityPath()
+      + "/ConsumerGroups/$Default/Partitions/1";
+  */
   Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
   connectionOptions.ContainerId = "whatever";
   connectionOptions.EnableTrace = false;
@@ -42,7 +52,7 @@ int main()
 
   auto timeStart = std::chrono::high_resolution_clock::now();
 
-  constexpr int maxMessageReceiveCount = 1000;
+  constexpr int maxMessageReceiveCount = 10000;
 
   int messageReceiveCount = 0;
   while (messageReceiveCount < maxMessageReceiveCount)
