@@ -15,11 +15,12 @@ namespace Azure { namespace Storage { namespace _internal {
       Azure::Core::Http::Policies::NextHttpPolicy& nextPolicy,
       Azure::Core::Context const& context) const
   {
-    if (!m_tenantId.empty() || !m_enableTenantDiscovery)
+    std::string tenantId = m_safeTenantId.Get();
+    if (!tenantId.empty() || !m_enableTenantDiscovery)
     {
       Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
       tokenRequestContext.Scopes = m_scopes;
-      tokenRequestContext.TenantId = m_tenantId;
+      tokenRequestContext.TenantId = tenantId;
       AuthenticateAndAuthorizeRequest(request, tokenRequestContext, context);
     }
     return nextPolicy.Send(request, context);
@@ -30,8 +31,6 @@ namespace Azure { namespace Storage { namespace _internal {
       Azure::Core::Http ::Request& request,
       Azure::Core::Context const& context) const
   {
-    std::lock_guard<std::mutex> lock(m_tenantIdMutex);
-
     std::string authorizationUri
         = Azure::Core::Credentials::_internal::AuthorizationChallengeParser::GetChallengeParameter(
             challenge, "Bearer", "authorization_uri");
@@ -39,11 +38,12 @@ namespace Azure { namespace Storage { namespace _internal {
     // tenantId should be the guid as seen in this example:
     // https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/authorize
     std::string path = Azure::Core::Url(authorizationUri).GetPath();
-    m_tenantId = path.substr(0, path.find('/'));
+    std::string tenantId = path.substr(0, path.find('/'));
+    m_safeTenantId.Set(tenantId);
 
     Azure::Core::Credentials::TokenRequestContext tokenRequestContext;
     tokenRequestContext.Scopes = m_scopes;
-    tokenRequestContext.TenantId = m_tenantId;
+    tokenRequestContext.TenantId = tenantId;
     AuthenticateAndAuthorizeRequest(request, tokenRequestContext, context);
     return true;
   }

@@ -5,6 +5,8 @@
 
 #include <azure/core/http/policies/policy.hpp>
 
+#include <shared_mutex>
+
 namespace Azure { namespace Storage { namespace _internal {
 
   class StorageBearerTokenAuthenticationPolicy final
@@ -22,7 +24,7 @@ namespace Azure { namespace Storage { namespace _internal {
         Azure::Core::Credentials::TokenRequestContext tokenRequestContext,
         bool enableTenantDiscovery)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
-          m_scopes(tokenRequestContext.Scopes), m_tenantId(tokenRequestContext.TenantId),
+          m_scopes(tokenRequestContext.Scopes), m_safeTenantId(tokenRequestContext.TenantId),
           m_enableTenantDiscovery(enableTenantDiscovery)
     {
     }
@@ -35,14 +37,37 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
   private:
+    struct SafeTenantId
+    {
+    public:
+      SafeTenantId(const std::string& tenantId) : m_tenantId(tenantId) {}
+      SafeTenantId(std::string&& tenantId) : m_tenantId(std::move(tenantId)) {}
+
+      std::string Get() const
+      {
+        std::shared_lock<std::shared_timed_mutex> lock(m_tenantIdMutex);
+        return m_tenantId;
+      }
+
+      void Set(const std::string& tenantId)
+      {
+        std::unique_lock<std::shared_timed_mutex> lock(m_tenantIdMutex);
+        m_tenantId = tenantId;
+      }
+
+    private:
+      std::string m_tenantId;
+      mutable std::shared_timed_mutex m_tenantIdMutex;
+    };
+
     std::vector<std::string> m_scopes;
-    mutable std::string m_tenantId;
-    mutable std::mutex m_tenantIdMutex;
+    mutable SafeTenantId m_safeTenantId;
     bool m_enableTenantDiscovery;
 
     StorageBearerTokenAuthenticationPolicy(StorageBearerTokenAuthenticationPolicy const& other)
         : BearerTokenAuthenticationPolicy(other), m_scopes(other.m_scopes),
-          m_tenantId(other.m_tenantId), m_enableTenantDiscovery(other.m_enableTenantDiscovery)
+          m_safeTenantId(other.m_safeTenantId.Get()),
+          m_enableTenantDiscovery(other.m_enableTenantDiscovery)
     {
     }
 
