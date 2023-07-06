@@ -199,7 +199,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * @remarks This class should not be used directly. It is used by the uAMQP interoperability
    * layer.
    */
-  class MessagePropertiesFactory {
+  class MessagePropertiesFactory final {
+    MessagePropertiesFactory() = delete;
   public:
     static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
     static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);

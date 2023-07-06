@@ -19,7 +19,7 @@ add_executable (
   azure-messaging-eventhubs-test
     producer_client_test.cpp
     retry_operation_test.cpp
-    "event_data_test.cpp"
+    event_data_test.cpp
     consumer_client_test.cpp    
     checkpoint_store_test.cpp 
     processor_load_balancer_test.cpp
@@ -37,7 +37,8 @@ target_link_libraries(
     azure-messaging-eventhubs-test
       PRIVATE 
         azure-messaging-eventhubs 
-        azure-identity azure-core-test-fw
+        azure-core-test-fw
+        azure-identity 
         gtest 
         gtest_main 
         gmock

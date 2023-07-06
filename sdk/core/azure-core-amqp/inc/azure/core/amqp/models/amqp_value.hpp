@@ -749,12 +749,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Construct a new AmqpBinaryData from a vector of bytes. */
     AmqpBinaryData(std::vector<std::uint8_t> const& values) : AmqpCollectionBase(values){};
 
-    // AmqpBinaryData& operator=(initializer_type  values)
-    //{
-    //   m_value = values;
-    //   return *this;
-    // };
-
     AmqpBinaryData& operator=(std::vector<std::uint8_t> const& values)
     {
       m_value = values;
