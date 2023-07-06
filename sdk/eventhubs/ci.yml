@@ -9,7 +9,7 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - sdk/eventhubs/messaging-eventhubs
+      - sdk/eventhubs/azure-messaging-eventhubs
 
 pr:
   branches:
@@ -33,12 +33,12 @@ stages:
       LineCoverageTarget: 22
       BranchCoverageTarget: 8
       Artifacts:
-        - Name: messaging-eventhubs
-          Path: messaging-eventhubs
+        - Name: azure-messaging-eventhubs
+          Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
       ArtifactsSource:
-        - Name: messaging-eventhubs
-          Path: messaging-eventhubs
+        - Name: azure-messaging-eventhubs
+          Path: azure-messaging-eventhubs
           VcpkgPortName: azure-messaging-eventhubs-cpp
       TestEnv:
         - Name: AZURE_TENANT_ID

@@ -4,10 +4,10 @@
 #include <azure/core/amqp.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  /** @brief The type of the body of an AMQP Message.
+  /** @brief The type of the body of an EventData Message.
    *
    */
-  struct AmqpMessageBody
+  struct EventDataBody
   {
     /** @brief Value is encoded / decoded as the amqp - value section in the body.
      *
@@ -26,41 +26,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** @brief Data is encoded decoded as multiple data sections in the body.
      */
     Azure::Core::Amqp::Models::AmqpBinaryData Data;
-
-    /** @brief Set the body of the AMQP message.
-     *
-     * Throws an exception if the caller has set more than one of Value, Sequence, or Data.
-     *
-     * @param message The AMQP message to set the body on.
-     */
-    void SetMessageBody(Azure::Core::Amqp::Models::AmqpMessage& message) const
-    {
-      if (!Data.empty())
-      {
-        if (!Sequence.empty() || !Value.IsNull())
-        {
-          throw std::runtime_error("Message body cannot contain both data and value/sequence.");
-        }
-        message.SetBody(Data);
-      }
-      else if (!Sequence.empty())
-      {
-        if (!Value.IsNull() || !Data.empty())
-        {
-          throw std::runtime_error("Message body cannot contain both sequence and data/value.");
-        }
-        message.SetBody(Sequence);
-      }
-      else
-      {
-        if (!Sequence.empty() || !Data.empty())
-        {
-          throw std::runtime_error("Message body cannot contain both value and data/sequence.");
-        }
-
-        message.SetBody(Value);
-      }
-    };
   };
 
   /** @brief Represents an event sent to the Azure Event Hubs service.
@@ -69,7 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   {
     /** @brief The body of the event data.
      */
-    AmqpMessageBody Body;
+    EventDataBody Body;
 
     /** Represents the MIME ContentType of the event data. */
     Azure::Nullable<std::string> ContentType;
