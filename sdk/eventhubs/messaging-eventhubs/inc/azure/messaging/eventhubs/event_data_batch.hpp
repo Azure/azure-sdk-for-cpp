@@ -23,17 +23,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class EventDataBatch {
   private:
-    std::mutex m_rwMutex;
-    std::string m_partitionID;
-    std::string m_partitionKey;
-    uint64_t m_maxBytes;
     const std::string anyPartitionId = "";
-    std::vector<std::vector<uint8_t>> m_marshalledMessages;
-    // Annotation properties
     const std::string PartitionKeyAnnotation = "x-opt-partition-key";
     const std::string SequenceNumberAnnotation = "x-opt-sequence-number";
     const std::string OffsetNumberAnnotation = "x-opt-offset";
     const std::string EnqueuedTimeAnnotation = "x-opt-enqueued-time";
+
+    std::mutex m_rwMutex;
+    std::string m_partitionID;
+    std::string m_partitionKey;
+    uint64_t m_maxBytes;
+    std::vector<std::vector<uint8_t>> m_marshalledMessages;
+    // Annotation properties
     const uint32_t BatchedMessageFormat = 0x80013700;
 
     Azure::Core::Amqp::Models::AmqpMessage m_batchEnvelope;
@@ -44,10 +45,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param other The EventDataBatch to copy
      */
-    EventDataBatch(EventDataBatch const& other) = default;
+    EventDataBatch(EventDataBatch const& other)
+        : m_rwMutex{}, m_partitionID{other.m_partitionID}, m_partitionKey{other.m_partitionKey},
+          m_maxBytes{other.m_maxBytes}, m_marshalledMessages{other.m_marshalledMessages},
+          m_batchEnvelope{other.m_batchEnvelope}, m_currentSize(other.m_currentSize){};
 
     /** Copy an EventDataBatch to another EventDataBatch */
-    EventDataBatch& operator=(EventDataBatch const& other) = default;
+    EventDataBatch& operator=(EventDataBatch const& other)
+    {
+      if (this != &other)
+      {
+        m_partitionID = other.m_partitionID;
+        m_partitionKey = other.m_partitionKey;
+        m_maxBytes = other.m_maxBytes;
+        m_marshalledMessages = other.m_marshalledMessages;
+        m_batchEnvelope = other.m_batchEnvelope;
+        m_currentSize = other.m_currentSize;
+      }
+      return *this;
+    }
 
     /** @brief Event Data Batch constructor
      *
@@ -155,7 +171,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
 
       std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
-      for (auto const&marshalledMessage : m_marshalledMessages)
+      for (auto const& marshalledMessage : m_marshalledMessages)
       {
         Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
         messageList.push_back(data);

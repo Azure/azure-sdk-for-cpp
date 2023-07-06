@@ -54,10 +54,28 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   public:
     /// Create a PartitionClient from another PartitionClient
-    PartitionClient(PartitionClient const& other) = default;
+    PartitionClient(PartitionClient const& other)
+        : m_receivers{other.m_receivers}, m_offsetExpression{other.m_offsetExpression},
+          m_ownerLevel{other.m_ownerLevel}, m_prefetchCount{other.m_prefetchCount},
+          m_partitionOptions{other.m_partitionOptions}, m_partitionId{other.m_partitionId},
+          RetryOptions{other.RetryOptions}
+    {
+    }
 
     /// Assign a PartitionClient to another PartitionClient
-    PartitionClient& operator=(PartitionClient const& other) = default;
+    PartitionClient& operator=(PartitionClient const& other)
+    {
+      if (this != &other)
+      {
+        m_receivers = other.m_receivers;
+        m_offsetExpression = other.m_offsetExpression;
+        m_ownerLevel = other.m_ownerLevel;
+        m_prefetchCount = other.m_prefetchCount;
+        m_partitionOptions = other.m_partitionOptions;
+        m_partitionId = other.m_partitionId;
+        RetryOptions = other.RetryOptions;
+      }
+    }
 
     /** Receive events from the partition.
      *
