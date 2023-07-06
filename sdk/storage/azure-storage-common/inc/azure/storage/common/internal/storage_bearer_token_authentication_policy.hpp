@@ -22,8 +22,8 @@ namespace Azure { namespace Storage { namespace _internal {
         Azure::Core::Credentials::TokenRequestContext tokenRequestContext,
         bool enableTenantDiscovery)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
-          m_Scopes(tokenRequestContext.Scopes), m_TenantId(tokenRequestContext.TenantId),
-          m_EnableTenantDiscovery(enableTenantDiscovery)
+          m_scopes(tokenRequestContext.Scopes), m_tenantId(tokenRequestContext.TenantId),
+          m_enableTenantDiscovery(enableTenantDiscovery)
     {
     }
 
@@ -35,14 +35,14 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
   private:
-    std::vector<std::string> m_Scopes;
-    mutable std::string m_TenantId;
-    mutable std::mutex m_TenantIdMutex;
-    bool m_EnableTenantDiscovery;
+    std::vector<std::string> m_scopes;
+    mutable std::string m_tenantId;
+    mutable std::mutex m_tenantIdMutex;
+    bool m_enableTenantDiscovery;
 
     StorageBearerTokenAuthenticationPolicy(StorageBearerTokenAuthenticationPolicy const& other)
-        : BearerTokenAuthenticationPolicy(other), m_Scopes(other.m_Scopes),
-          m_TenantId(other.m_TenantId), m_EnableTenantDiscovery(other.m_EnableTenantDiscovery)
+        : BearerTokenAuthenticationPolicy(other), m_scopes(other.m_scopes),
+          m_tenantId(other.m_tenantId), m_enableTenantDiscovery(other.m_enableTenantDiscovery)
     {
     }
 
