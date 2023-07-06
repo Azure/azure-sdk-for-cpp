@@ -4,6 +4,11 @@
 
 #include <azure/core/amqp.hpp>
 
+namespace {
+
+const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
+}
+
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     std::string const& connectionString,
     std::string const& eventHub,

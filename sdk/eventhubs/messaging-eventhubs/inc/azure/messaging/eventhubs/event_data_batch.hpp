@@ -46,6 +46,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param other The EventDataBatch to copy
      */
     EventDataBatch(EventDataBatch const& other)
+        // Copy constructor cannot be defaulted because of m_rwMutex.
         : m_rwMutex{}, m_partitionID{other.m_partitionID}, m_partitionKey{other.m_partitionKey},
           m_maxBytes{other.m_maxBytes}, m_marshalledMessages{other.m_marshalledMessages},
           m_batchEnvelope{other.m_batchEnvelope}, m_currentSize(other.m_currentSize){};
@@ -53,6 +54,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Copy an EventDataBatch to another EventDataBatch */
     EventDataBatch& operator=(EventDataBatch const& other)
     {
+      // Assignment operator cannot be defaulted because of m_rwMutex.
       if (this != &other)
       {
         m_partitionID = other.m_partitionID;

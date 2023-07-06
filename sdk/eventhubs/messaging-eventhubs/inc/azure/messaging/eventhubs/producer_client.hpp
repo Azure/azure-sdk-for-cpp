@@ -19,7 +19,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class ProducerClient {
 
-    const std::string m_defaultAuthScope = "https://eventhubs.azure.net/.default";
     Models::ProducerClientCreds m_credentials{};
     Models::ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
@@ -70,7 +69,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ~ProducerClient()
     {
-      for (auto &sender : m_senders)
+      for (auto& sender : m_senders)
       {
         sender.second.Close();
       }

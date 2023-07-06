@@ -92,6 +92,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     virtual ~CheckpointStore() = default;
   };
 
+  /** @brief BlobCheckpointStore is an implementation of a CheckpointStore backed by Azure Blob
+   * Storage.
+   */
   class BlobCheckpointStore : public CheckpointStore {
 
     std::string m_connectionString;
