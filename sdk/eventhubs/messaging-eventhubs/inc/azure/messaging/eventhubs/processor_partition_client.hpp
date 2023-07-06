@@ -3,6 +3,7 @@
 #pragma once
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
+#include "eventhub_constants.hpp"
 
 #include <azure/core/amqp.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
@@ -21,8 +22,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::shared_ptr<CheckpointStore> m_checkpointStore;
     std::function<void()> m_cleanupFunc;
     ConsumerClientDetails m_consumerClientDetails;
-    const Azure::Core::Amqp::Models::AmqpValue sequenceNumberAnnotation = "x-opt-sequence-number";
-    const Azure::Core::Amqp::Models::AmqpValue offsetNumberAnnotation = "x-opt-offset";
 
   public:
     /// Constructs a new instance of the ProcessorPartitionClient.
@@ -84,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       for (auto const& pair : amqpMessage.MessageAnnotations)
       {
-        if (pair.first == sequenceNumberAnnotation)
+        if (pair.first == _detail::SequenceNumberAnnotation)
         {
           if (pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Int
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
@@ -92,7 +91,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
             sequenceNumber = static_cast<int64_t>(pair.second);
         }
-        if (pair.first == offsetNumberAnnotation)
+        if (pair.first == _detail::OffsetNumberAnnotation)
         {
           if (pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Int
               || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint

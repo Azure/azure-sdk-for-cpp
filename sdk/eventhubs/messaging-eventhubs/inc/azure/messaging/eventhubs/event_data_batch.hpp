@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include "eventhub_constants.hpp"
 #include "models/event_data.hpp"
 #include "models/event_data_batch_models.hpp"
 
@@ -24,10 +25,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class EventDataBatch {
   private:
     const std::string anyPartitionId = "";
-    const std::string PartitionKeyAnnotation = "x-opt-partition-key";
-    const std::string SequenceNumberAnnotation = "x-opt-sequence-number";
-    const std::string OffsetNumberAnnotation = "x-opt-offset";
-    const std::string EnqueuedTimeAnnotation = "x-opt-enqueued-time";
 
     std::mutex m_rwMutex;
     std::string m_partitionID;
@@ -169,7 +166,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       if (!m_partitionKey.empty())
       {
         returnValue.DeliveryAnnotations.emplace(
-            PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+            _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
       }
 
       std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
@@ -200,7 +197,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       if (!m_partitionKey.empty())
       {
         message.MessageAnnotations.emplace(
-            PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+            _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
       }
 
       auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);

@@ -29,11 +29,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ConsumerClient {
 
   protected:
-//    /// @brief The default maximum size for a single receive operation.
-//    const uint32_t defaultMaxSize = 5000;
-//    /// @brief The default consumer group name.
-//    const std::string defaultConsumerGroup = "$Default";
-
     /// @brief The message receivers used to receive messages for a given partition.
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
     /// @brief The AMQP Sessions used to receive messages for a given partition.
