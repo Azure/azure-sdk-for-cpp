@@ -9,7 +9,7 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - sdk/eventhubs/azure-messaging-eventhubs
+      - sdk/eventhubs
 
 pr:
   branches:
