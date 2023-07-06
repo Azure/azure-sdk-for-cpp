@@ -151,6 +151,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
       message.SetBody(body.Value);
     }
-  };
+  }
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail

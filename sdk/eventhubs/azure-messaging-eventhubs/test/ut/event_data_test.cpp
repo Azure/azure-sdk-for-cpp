@@ -10,8 +10,7 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {
-};
+class EventDataTest : public EventHubsTestBase {};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
@@ -75,11 +74,55 @@ TEST_F(EventDataTest, EventDataBodyTest)
     Azure::Messaging::EventHubs::Models::EventData msg;
 
     // Note that Sequence is an array of AmqpLists.
-    msg.Body.Sequence = {{3, "Foo", AmqpValue{AmqpBinaryData{1, 3, 5, 7, 9}}}};
+    msg.Body.Sequence = {3, "Foo", AmqpValue{AmqpBinaryData{1, 3, 5, 7, 9}}};
 
     auto message
         = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
     EXPECT_EQ(message.GetBodyAsAmqpList().size(), 1);
     EXPECT_EQ(msg.Body.Sequence, message.GetBodyAsAmqpList()[0]);
+  }
+
+  // Data and Value set - error.
+  {
+    Azure::Messaging::EventHubs::Models::EventData msg;
+
+    msg.Body.Data = AmqpBinaryData{1, 3, 5, 7};
+    msg.Body.Value = 27;
+
+    EXPECT_ANY_THROW(
+        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
+  }
+  // Data and Sequence set - error.
+  {
+    Azure::Messaging::EventHubs::Models::EventData msg;
+
+    msg.Body.Data = AmqpBinaryData{1, 3, 5, 7};
+    msg.Body.Sequence = {27, 3.25};
+
+    EXPECT_ANY_THROW(
+        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
+  }
+
+  // Value and Sequence set - error.
+  {
+    Azure::Messaging::EventHubs::Models::EventData msg;
+
+    msg.Body.Value = "AmqpBinaryData{1, 3, 5, 7}";
+    msg.Body.Sequence = {27, 3.25};
+
+    EXPECT_ANY_THROW(
+        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
+  }
+
+  // Value, Data, and Sequence set - error.
+  {
+    Azure::Messaging::EventHubs::Models::EventData msg;
+
+    msg.Body.Data = AmqpBinaryData{1, 7, 32, 127, 255};
+    msg.Body.Value = "AmqpBinaryData{1, 3, 5, 7}";
+    msg.Body.Sequence = {27, 3.25};
+
+    EXPECT_ANY_THROW(
+        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
   }
 }
