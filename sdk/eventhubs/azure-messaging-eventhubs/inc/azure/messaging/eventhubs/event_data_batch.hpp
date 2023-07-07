@@ -17,7 +17,7 @@
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   /** @brief EventDataBatchOptions contains optional parameters for the
-   * [ProducerClient.NewEventDataBatch] function.
+   * [ProducerClient.CreateEventDataBatch] function.
    *
    * @remark If both PartitionKey and PartitionID are nil, Event Hubs will choose an arbitrary
    * partition for any events in this [EventDataBatch].
@@ -26,7 +26,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
 
     /** @brief MaxBytes overrides the max size (in bytes) for a batch.
-     * By default NewEventDataBatch will use the max message size provided by the service.
+     * By default CreateEventDataBatch will use the max message size provided by the service.
      */
     uint32_t MaxBytes = std::numeric_limits<int32_t>::max();
 
@@ -45,7 +45,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief EventDataBatch is used to efficiently pack up EventData before sending it to Event Hubs.
    *
    * @remark EventDataBatch's are not meant to be created directly. Use
-   * [ProducerClient.NewEventDataBatch], which will create them with the proper size limit for your
+   * [ProducerClient.CreateEventDataBatch], which will create them with the proper size limit for your
    * Event Hub.
    */
   class EventDataBatch {

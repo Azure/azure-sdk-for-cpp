@@ -46,43 +46,4 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     Azure::Nullable<bool> Latest;
   };
 
-  /**brief PartitionClientOptions provides options for the NewPartitionClient function.
-   */
-  struct PartitionClientOptions
-  {
-    /**@brief StartPosition is the position we will start receiving events from,
-     * either an offset (inclusive) with Offset, or receiving events received
-     * after a specific time using EnqueuedTime.
-     *
-     *@remark NOTE: you can also use the [Processor], which will automatically manage the start
-     * value using a [CheckpointStore]. See [example_consuming_with_checkpoints_test.go] for an
-     * example.
-     */
-    Models::StartPosition StartPosition;
-
-    /**@brief OwnerLevel is the priority for this partition client, also known as the 'epoch' level.
-     * When used, a partition client with a higher OwnerLevel will take ownership of a partition
-     * from partition clients with a lower OwnerLevel.
-     * Default is off.
-     */
-    int64_t OwnerLevel;
-
-    /**@brief Prefetch represents the size of the internal prefetch buffer. When set,
-     * this client will attempt to always maintain an internal cache of events of
-     * this size, asynchronously, increasing the odds that ReceiveEvents() will use
-     * a locally stored cache of events, rather than having to wait for events to
-     * arrive from the network.
-     *
-     * Defaults to 300 events if Prefetch == 0.
-     * Disabled if Prefetch < 0.
-     */
-
-    int32_t Prefetch = 300;
-  };
-  /**@brief ReceiveEventsOptions contains optional parameters for the ReceiveEvents function
-   */
-  struct ReceiveEventsOptions
-  {
-    // For future expansion
-  };
 }}}} // namespace Azure::Messaging::EventHubs::Models

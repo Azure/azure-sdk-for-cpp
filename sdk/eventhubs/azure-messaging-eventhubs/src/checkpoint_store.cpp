@@ -95,7 +95,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
 }
 
 Azure::Storage::Metadata
-Azure::Messaging::EventHubs::BlobCheckpointStore::NewCheckpointBlobMetadata(
+Azure::Messaging::EventHubs::BlobCheckpointStore::CreateCheckpointBlobMetadata(
     Checkpoint const& checkpoint)
 {
   Azure::Storage::Metadata metadata;
@@ -220,7 +220,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpoint(
     Azure::Core::Context ctx)
 {
   std::string blobName = GetCheckpointBlobName(checkpoint);
-  SetMetadata(blobName, NewCheckpointBlobMetadata(checkpoint), Azure::ETag(), ctx);
+  SetMetadata(blobName, CreateCheckpointBlobMetadata(checkpoint), Azure::ETag(), ctx);
 }
 
 std::pair<Azure::DateTime, Azure::ETag>

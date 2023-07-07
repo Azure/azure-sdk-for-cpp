@@ -41,9 +41,9 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
 }
 
 Azure::Messaging::EventHubs::PartitionClient
-Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
+Azure::Messaging::EventHubs::ConsumerClient::CreatePartitionClient(
     std::string partitionId,
-    Azure::Messaging::EventHubs::Models::PartitionClientOptions const& options)
+    Azure::Messaging::EventHubs::PartitionClientOptions const& options)
 {
   Azure::Messaging::EventHubs::PartitionClient partitionClient(
       options, m_consumerClientOptions.RetryOptions);
@@ -83,7 +83,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
   std::shared_ptr<PartitionClient> client;
   if (m_sessions.size() == 0 && m_sessions.find("0") == m_sessions.end())
   {
-    client = std::make_shared<PartitionClient>(NewPartitionClient("0"));
+    client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
   }
 
   // Create a management client off the session.
@@ -150,7 +150,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
   (void)options;
   if (m_sessions.find(partitionID) == m_sessions.end())
   {
-    NewPartitionClient(partitionID);
+    CreatePartitionClient(partitionID);
   }
 
   // Create a management client off the session.

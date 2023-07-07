@@ -154,7 +154,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::shared_ptr<ProcessorPartitionClient> processorPartitionClient
           = std::make_shared<ProcessorPartitionClient>(
               ownership.PartitionID,
-              m_ConsumerClient->NewPartitionClient(
+              m_ConsumerClient->CreatePartitionClient(
                   ownership.PartitionID, {startPosition, m_processorOwnerLevel, m_prefetch}),
               m_checkpointStore,
               m_consumerClientDetails,

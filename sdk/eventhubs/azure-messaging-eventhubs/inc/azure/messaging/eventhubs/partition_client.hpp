@@ -9,11 +9,51 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
+  /**brief PartitionClientOptions provides options for the CreatePartitionClient function.
+   */
+  struct PartitionClientOptions
+  {
+    /**@brief StartPosition is the position we will start receiving events from,
+     * either an offset (inclusive) with Offset, or receiving events received
+     * after a specific time using EnqueuedTime.
+     *
+     *@remark NOTE: you can also use the [Processor], which will automatically manage the start
+     * value using a [CheckpointStore]. See [example_consuming_with_checkpoints_test.go] for an
+     * example.
+     */
+    Models::StartPosition StartPosition;
+
+    /**@brief OwnerLevel is the priority for this partition client, also known as the 'epoch' level.
+     * When used, a partition client with a higher OwnerLevel will take ownership of a partition
+     * from partition clients with a lower OwnerLevel.
+     * Default is off.
+     */
+    int64_t OwnerLevel;
+
+    /**@brief Prefetch represents the size of the internal prefetch buffer. When set,
+     * this client will attempt to always maintain an internal cache of events of
+     * this size, asynchronously, increasing the odds that ReceiveEvents() will use
+     * a locally stored cache of events, rather than having to wait for events to
+     * arrive from the network.
+     *
+     * Defaults to 300 events if Prefetch == 0.
+     * Disabled if Prefetch < 0.
+     */
+
+    int32_t Prefetch = 300;
+  };
+
+  /**@brief ReceiveEventsOptions contains optional parameters for the ReceiveEvents function
+   */
+  struct ReceiveEventsOptions
+  {
+    // For future expansion
+  };
 
   /** PartitionClient is used to receive events from an Event Hub partition.
    *
    * This type is instantiated from the [ConsumerClient] type, using
-   * [ConsumerClient.NewPartitionClient].
+   * [ConsumerClient.CreatePartitionClient].
    */
   class PartitionClient {
 
@@ -31,7 +71,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     int32_t m_prefetchCount;
 
     /// The options used to create the PartitionClient.
-    Models::PartitionClientOptions m_partitionOptions;
+    PartitionClientOptions m_partitionOptions;
 
     /// The name of the partition.
     std::string m_partitionId;
@@ -88,7 +128,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t const& maxMessages,
-        Models::ReceiveEventsOptions options = {},
+        ReceiveEventsOptions options = {},
         Azure::Core::Context ctx = Azure::Core::Context())
     {
       (void)options;
@@ -123,7 +163,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     PartitionClient(
-        Models::PartitionClientOptions options,
+        PartitionClientOptions options,
         Azure::Core::Http::Policies::RetryOptions retryOptions)
     {
       m_partitionOptions = options;

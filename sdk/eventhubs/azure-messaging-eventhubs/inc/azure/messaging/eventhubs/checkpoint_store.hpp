@@ -146,7 +146,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Storage::Blobs::Models::BlobItem const& blob,
         Models::Ownership& ownership);
 
-    Azure::Storage::Metadata NewCheckpointBlobMetadata(Models::Checkpoint const& checkpoint);
+    Azure::Storage::Metadata CreateCheckpointBlobMetadata(Models::Checkpoint const& checkpoint);
 
     std::pair<Azure::DateTime, Azure::ETag> SetMetadata(
         std::string const& blobName,
