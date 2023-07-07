@@ -5,6 +5,7 @@
 
 #include <azure/core/http/policies/policy.hpp>
 
+#include <mutex>
 #include <shared_mutex>
 
 namespace Azure { namespace Storage { namespace _internal {
