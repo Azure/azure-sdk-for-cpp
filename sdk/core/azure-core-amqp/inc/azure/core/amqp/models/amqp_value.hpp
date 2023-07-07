@@ -591,7 +591,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const&() const { return m_value; }
+    explicit operator T const &() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     explicit operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
@@ -1038,9 +1038,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     bool operator<(AmqpDescribed const& that) const
     {
-      return m_descriptor < that.m_descriptor ? true
-          : m_descriptor == that.m_descriptor ? m_value < that.m_value
-                                              : false;
+      return m_descriptor < that.m_descriptor
+          ? true
+          : m_descriptor == that.m_descriptor ? m_value < that.m_value : false;
     }
 
   private:
