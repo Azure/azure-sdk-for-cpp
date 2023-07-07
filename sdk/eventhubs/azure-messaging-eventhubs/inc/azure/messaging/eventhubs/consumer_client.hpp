@@ -201,8 +201,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param options Additional options for getting partition properties
      */
-    Models::EventHubProperties GetEventHubProperties(
-        GetEventHubPropertiesOptions options = {});
+    Models::EventHubProperties GetEventHubProperties(GetEventHubPropertiesOptions options = {});
 
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last

@@ -45,8 +45,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief EventDataBatch is used to efficiently pack up EventData before sending it to Event Hubs.
    *
    * @remark EventDataBatch's are not meant to be created directly. Use
-   * [ProducerClient.CreateEventDataBatch], which will create them with the proper size limit for your
-   * Event Hub.
+   * [ProducerClient.CreateEventDataBatch], which will create them with the proper size limit for
+   * your Event Hub.
    */
   class EventDataBatch {
   private:
