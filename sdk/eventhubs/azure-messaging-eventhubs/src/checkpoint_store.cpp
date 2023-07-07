@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 #include "azure/messaging/eventhubs/checkpoint_store.hpp"
 
+#include <azure/core/internal/diagnostics/log.hpp>
+
 #include <stdexcept>
 
 using namespace Azure::Messaging::EventHubs::Models;
@@ -246,11 +248,14 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::SetMetadata(
 
     returnValue = std::make_pair(result.LastModified, result.ETag);
   }
-  catch (std::exception const& ex)
+  catch (Azure::Core::RequestFailedException const& ex)
   {
-    if (std::string(ex.what()).find("412") == std::string::npos)
+    if (ex.StatusCode == Azure::Core::Http::HttpStatusCode::PreconditionFailed)
     {
       // return code 412 meaning condition could not be met;
+      Azure::Core::Diagnostics::_internal::Log::Write(
+          Azure::Core::Diagnostics::Logger::Level::Warning,
+          "Set Metadata failed with PreconditionFailed; Upload blob content");
 
       std::string blobContent = "";
       // throws when blob does not exist , we need to upload the blob in order to create it
@@ -260,6 +265,10 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::SetMetadata(
       Azure::Storage::Blobs::Models::UploadBlockBlobFromResult result
           = blobClient.UploadFrom(buffer.data(), buffer.size(), upOptions, context).Value;
       returnValue = std::make_pair(result.LastModified, result.ETag);
+    }
+    else
+    {
+      throw;
     }
   }
 

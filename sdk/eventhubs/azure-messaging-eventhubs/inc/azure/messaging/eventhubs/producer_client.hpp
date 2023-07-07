@@ -125,12 +125,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     bool SendEventDataBatch(
         EventDataBatch const& eventDataBatch,
         Azure::Core::Context ctx = Azure::Core::Context());
+
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
      *
      * @param context Context for the operation can be used for request cancellation.
      */
-    Models::EventHubProperties GetEventHubProperties(Azure::Core::Context const& constext = {});
+    Models::EventHubProperties GetEventHubProperties(Azure::Core::Context const& context = {});
+
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
      * enqueued to the partition.

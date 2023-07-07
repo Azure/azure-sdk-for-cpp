@@ -12,8 +12,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class CheckpointStoreTest : public EventHubsTestBase {
-  };
+  class CheckpointStoreTest : public EventHubsTestBase {};
 
   std::string GetRandomName()
   {
@@ -99,7 +98,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 "partition-id",
                 "owner-id"}});
 
-    EXPECT_EQ(1, ownerships.size());
+    // Fail the test immediately if there isn't an entry in the ownerships vector.
+    ASSERT_EQ(1, ownerships.size());
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", ownerships[0].FullyQualifiedNamespace);
