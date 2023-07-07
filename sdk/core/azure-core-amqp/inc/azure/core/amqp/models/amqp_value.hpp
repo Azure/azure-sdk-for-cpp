@@ -1038,9 +1038,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     bool operator<(AmqpDescribed const& that) const
     {
-      return m_descriptor < that.m_descriptor
-          ? true
-          : m_descriptor == that.m_descriptor ? m_value < that.m_value : false;
+      return m_descriptor < that.m_descriptor ? true
+          : m_descriptor == that.m_descriptor ? m_value < that.m_value
+                                              : false;
     }
 
   private:
