@@ -130,14 +130,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_containerName;
     Azure::Storage::Blobs::BlobContainerClient m_containerClient;
 
-    std::string GetOwnershipName(Models::Ownership const& ownership);
-
-    std::string GetOwnershipPrefixName(Models::Ownership const& ownership);
-
-    std::string GetCheckpointBlobPrefixName(Models::Checkpoint const& checkpoint);
-
-    std::string GetCheckpointBlobName(Models::Checkpoint const& checkpoint);
-
     void UpdateCheckpointImpl(
         Azure::Storage::Metadata const& metadata,
         Models::Checkpoint& checkpoint);

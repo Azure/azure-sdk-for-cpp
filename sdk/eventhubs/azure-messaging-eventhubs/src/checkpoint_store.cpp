@@ -8,58 +8,48 @@
 
 using namespace Azure::Messaging::EventHubs::Models;
 
-std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipName(
-    Ownership const& ownership)
+std::string Azure::Messaging::EventHubs::Models::Ownership::GetOwnershipName() const
 {
-  if (ownership.PartitionID.empty())
+  if (PartitionID.empty())
   {
     throw std::runtime_error("missing ownership fields");
   }
   std::stringstream strstr;
-  strstr << GetOwnershipPrefixName(ownership) << ownership.PartitionID;
+  strstr << GetOwnershipPrefixName() << PartitionID;
   return strstr.str();
 }
 
-std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetOwnershipPrefixName(
-    Ownership const& ownership)
+std::string Azure::Messaging::EventHubs::Models::Ownership::GetOwnershipPrefixName() const
 {
-  if (ownership.FullyQualifiedNamespace.empty() || ownership.EventHubName.empty()
-      || ownership.ConsumerGroup.empty())
+  if (FullyQualifiedNamespace.empty() || EventHubName.empty() || ConsumerGroup.empty())
   {
     throw std::runtime_error("missing ownership fields");
   }
   std::stringstream strstr;
-  strstr << ownership.FullyQualifiedNamespace << "/" << ownership.EventHubName << "/"
-         << ownership.ConsumerGroup << "/ownership/";
+  strstr << FullyQualifiedNamespace << "/" << EventHubName << "/" << ConsumerGroup << "/ownership/";
 
   return strstr.str();
 }
 
-std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobPrefixName(
-    Checkpoint const& checkpoint)
+std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobPrefixName() const
 {
-  if (checkpoint.EventHubHostName.empty() || checkpoint.EventHubName.empty()
-      || checkpoint.ConsumerGroup.empty())
+  if (EventHubHostName.empty() || EventHubName.empty() || ConsumerGroup.empty())
   {
     throw std::runtime_error("missing checkpoint fields");
   }
   std::stringstream strstr;
-  strstr << checkpoint.EventHubHostName << "/" << checkpoint.EventHubName << "/"
-         << checkpoint.ConsumerGroup << "/checkpoint/";
+  strstr << EventHubHostName << "/" << EventHubName << "/" << ConsumerGroup << "/checkpoint/";
 
   return strstr.str();
 }
 
-std::string Azure::Messaging::EventHubs::BlobCheckpointStore::GetCheckpointBlobName(
-    Checkpoint const& checkpoint)
+std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobName() const
 {
-  if (checkpoint.PartitionID.empty())
+  if (PartitionID.empty())
   {
     throw std::runtime_error("missing checkpoint fields");
   }
-  std::stringstream strstr;
-  strstr << GetCheckpointBlobPrefixName(checkpoint) << checkpoint.PartitionID;
-  return strstr.str();
+  return GetCheckpointBlobPrefixName() + PartitionID;
 }
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
@@ -124,7 +114,7 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOw
 
   for (Ownership ownership : partitionOwnership)
   {
-    std::string blobName = GetOwnershipName(ownership);
+    std::string blobName = ownership.GetOwnershipName();
     Azure::Storage::Metadata metadata;
     metadata["ownerId"] = ownership.OwnerID;
     try
@@ -162,8 +152,8 @@ std::vector<Checkpoint> Azure::Messaging::EventHubs::BlobCheckpointStore::ListCh
 
   std::vector<Checkpoint> checkpoints;
 
-  std::string prefix = GetCheckpointBlobPrefixName(
-      Models::Checkpoint{consumerGroup, eventHubName, fullyQualifiedNamespace});
+  std::string prefix = Models::Checkpoint{consumerGroup, eventHubName, fullyQualifiedNamespace}
+                           .GetCheckpointBlobPrefixName();
   Azure::Storage::Blobs::ListBlobsOptions listOptions;
   listOptions.Prefix = prefix;
   listOptions.Include = Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Metadata;
@@ -194,7 +184,7 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwn
   (void)options;
   std::vector<Ownership> ownerships;
   std::string prefix
-      = GetOwnershipPrefixName(Ownership{consumerGroup, eventHubName, fullyQualifiedNamespace});
+      = Ownership{consumerGroup, eventHubName, fullyQualifiedNamespace}.GetOwnershipPrefixName();
   Azure::Storage::Blobs::ListBlobsOptions listOptions;
   listOptions.Prefix = prefix;
   listOptions.Include = Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Metadata;
@@ -221,7 +211,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpoint(
     UpdateCheckpointOptions,
     Azure::Core::Context ctx)
 {
-  std::string blobName = GetCheckpointBlobName(checkpoint);
+  std::string blobName = checkpoint.GetCheckpointBlobName();
   SetMetadata(blobName, CreateCheckpointBlobMetadata(checkpoint), Azure::ETag(), ctx);
 }
 

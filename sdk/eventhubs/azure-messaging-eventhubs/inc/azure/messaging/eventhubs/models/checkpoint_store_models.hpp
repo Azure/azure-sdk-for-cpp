@@ -13,8 +13,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /**@brief  Ownership tracks which consumer owns a particular partition.
    */
-  struct Ownership
+  class Ownership final
   {
+  public:
     /// @brief The consumer group name.
     std::string ConsumerGroup;
     /// @brief The event hub name.
@@ -31,12 +32,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The last modified time for the corresponding ownership. Used to calculate if
     /// ownership has expired.
     Azure::Nullable<Azure::DateTime> LastModifiedTime{};
+
+    std::string GetOwnershipName() const;
+
+    std::string GetOwnershipPrefixName() const;
   };
 
   /**@brief Checkpoint tracks the last successfully processed event in a partition.
    */
-  struct Checkpoint
-  {
+  class Checkpoint final {
+  public:
     /// @brief The consumer group name.
     std::string ConsumerGroup{};
     /// @brief The event hub name.
@@ -49,5 +54,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     Azure::Nullable<int64_t> Offset{};
     /// @brief The sequence number of the last successfully processed event.
     Azure::Nullable<int64_t> SequenceNumber{};
+
+    std::string GetCheckpointBlobPrefixName() const;
+
+    std::string GetCheckpointBlobName() const;
   };
 }}}} // namespace Azure::Messaging::EventHubs::Models

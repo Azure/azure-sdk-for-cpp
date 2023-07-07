@@ -5,6 +5,7 @@
   "additionalIncludeDirectories": [
     "../../../core/azure-core/inc",
     "../../../core/azure-core-amqp/inc",
+    "../../../storage/azure-storage-common/inc",
     "../../../storage/azure-storage-blobs/inc"
   ],
   "additionalCompilerSwitches": [
