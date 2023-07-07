@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
+// cspell: words myeventhub
+
 #pragma once
 #include "event_data_batch.hpp"
 #include "models/management_models.hpp"
@@ -22,7 +25,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The connection string for the Event Hubs namespace
     std::string ConnectionString;
 
-    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
+    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
     std::string FullyQualifiedNamespace;
 
     /// The name of the Event Hub
