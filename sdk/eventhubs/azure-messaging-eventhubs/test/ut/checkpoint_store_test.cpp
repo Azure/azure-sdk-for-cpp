@@ -33,7 +33,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto checkpoints = checkpointStore.ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
 
-    EXPECT_EQ(0, checkpoints.size());
+    EXPECT_EQ(0ul, checkpoints.size());
 
     checkpointStore.UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         "$Default",

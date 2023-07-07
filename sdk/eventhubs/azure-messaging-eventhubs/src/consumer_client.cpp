@@ -77,7 +77,7 @@ Azure::Messaging::EventHubs::ConsumerClient::NewPartitionClient(
 
 Azure::Messaging::EventHubs::Models::EventHubProperties
 Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
-    Azure::Messaging::EventHubs::Models::GetEventHubPropertiesOptions options)
+    Azure::Messaging::EventHubs::GetEventHubPropertiesOptions options)
 {
   (void)options;
   std::shared_ptr<PartitionClient> client;
@@ -122,7 +122,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto const& body = result.Message.GetBodyAsAmqpValue();
+    auto const&body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
@@ -145,7 +145,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
 Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
 Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
     std::string const& partitionID,
-    Azure::Messaging::EventHubs::Models::GetPartitionPropertiesOptions options)
+    Azure::Messaging::EventHubs::GetPartitionPropertiesOptions options)
 {
   (void)options;
   if (m_sessions.find(partitionID) == m_sessions.end())

@@ -83,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::PartitionClient partitionClient
         = client.NewPartitionClient("1", partitionOptions);
     auto events = partitionClient.ReceiveEvents(1);
-    EXPECT_EQ(events.size(), 1);
+    EXPECT_EQ(events.size(), 1ul);
     GTEST_LOG_(INFO) << "Received message " << events[0].RawAmqpMessage();
     EXPECT_TRUE(events[0].EnqueuedTime.HasValue());
     EXPECT_TRUE(events[0].SequenceNumber.HasValue());

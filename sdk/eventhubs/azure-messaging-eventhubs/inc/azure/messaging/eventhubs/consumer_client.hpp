@@ -57,6 +57,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string HostUrl{};
   };
 
+  /**@brief GetEventHubPropertiesOptions contains optional parameters for the GetEventHubProperties
+   * function
+   */
+  struct GetEventHubPropertiesOptions
+  {
+    // For future expansion
+  };
+
+  /**@brief GetPartitionPropertiesOptions contains optional parameters for the
+   * GetPartitionProperties function
+   */
+  struct GetPartitionPropertiesOptions
+  {
+    // For future expansion
+  };
+
   /**
    * @brief The ConsumerClient class is a high level class used to consume events from an Event Hub.
    *
@@ -186,7 +202,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param options Additional options for getting partition properties
      */
     Models::EventHubProperties GetEventHubProperties(
-        Models::GetEventHubPropertiesOptions options = {});
+        GetEventHubPropertiesOptions options = {});
 
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
@@ -197,6 +213,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,
-        Models::GetPartitionPropertiesOptions options = {});
+        GetPartitionPropertiesOptions options = {});
   };
 }}} // namespace Azure::Messaging::EventHubs

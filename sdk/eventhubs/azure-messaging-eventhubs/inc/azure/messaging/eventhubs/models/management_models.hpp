@@ -49,20 +49,4 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     bool IsEmpty{};
   };
 
-  /**@brief GetEventHubPropertiesOptions contains optional parameters for the GetEventHubProperties
-   * function
-   */
-  struct GetEventHubPropertiesOptions
-  {
-    // For future expansion
-  };
-
-  /**@brief GetPartitionPropertiesOptions contains optional parameters for the
-   * GetPartitionProperties function
-   */
-  struct GetPartitionPropertiesOptions
-  {
-    // For future expansion
-  };
-
 }}}} // namespace Azure::Messaging::EventHubs::Models

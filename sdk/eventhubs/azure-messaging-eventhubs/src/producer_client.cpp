@@ -5,14 +5,13 @@
 #include <azure/core/amqp.hpp>
 
 namespace {
-
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
 }
 
 Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     std::string const& connectionString,
     std::string const& eventHub,
-    Azure::Messaging::EventHubs::Models::ProducerClientOptions options)
+    Azure::Messaging::EventHubs::ProducerClientOptions options)
     : m_credentials{connectionString, "", eventHub}, m_producerClientOptions(options)
 {
   auto sasCredential
@@ -30,7 +29,7 @@ Azure::Messaging::EventHubs::ProducerClient::ProducerClient(
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHub,
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-    Azure::Messaging::EventHubs::Models::ProducerClientOptions options)
+    Azure::Messaging::EventHubs::ProducerClientOptions options)
     : m_credentials{"", fullyQualifiedNamespace, eventHub, "", credential},
       m_producerClientOptions(options)
 {
@@ -97,9 +96,8 @@ bool Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
 
 Azure::Messaging::EventHubs::Models::EventHubProperties
 Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
-    Models::GetEventHubPropertiesOptions options)
+    Azure::Core::Context const& context)
 {
-  (void)options;
   if (m_senders.find("") == m_senders.end())
   {
     CreateSender("");
@@ -124,7 +122,8 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
       "READ" /* operation */,
       "com.microsoft:eventhub" /* type of operation */,
       "" /* locales */,
-      message);
+      message,
+      context);
 
   Models::EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
@@ -162,9 +161,8 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(
 Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
 Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
     std::string const& partitionID,
-    Models::GetPartitionPropertiesOptions options)
+    Azure::Core::Context const& context)
 {
-  (void)options;
   if (m_senders.find(partitionID) == m_senders.end())
   {
     CreateSender(partitionID);
@@ -191,7 +189,8 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
       "READ" /* operation */,
       "com.microsoft:partition" /* type of operation */,
       "" /* locales */,
-      message);
+      message,
+      context);
 
   Models::EventHubPartitionProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)

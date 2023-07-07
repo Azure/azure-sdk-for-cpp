@@ -1,7 +1,7 @@
 {
   "name": "azure-sdk-for-cpp",
-  "version": "1.5.0",
-  "builtin-baseline": "94ce0dab56f4d8ba6bd631ba59ed682b02d45c46",
+  "version": "1.10.0",
+  "builtin-baseline": "243b4c860457d27d93b230c67eebf145bf7af283",
   "dependencies": [
     {
       "name": "curl"

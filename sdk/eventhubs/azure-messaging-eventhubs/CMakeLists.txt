@@ -66,12 +66,10 @@ set(
     inc/azure/messaging/eventhubs/models/checkpoint_store_models.hpp
     inc/azure/messaging/eventhubs/models/consumer_client_models.hpp
     inc/azure/messaging/eventhubs/models/event_data.hpp
-    inc/azure/messaging/eventhubs/models/event_data_batch_models.hpp
     inc/azure/messaging/eventhubs/models/management_models.hpp
     inc/azure/messaging/eventhubs/models/partition_client_models.hpp
     inc/azure/messaging/eventhubs/models/processor_load_balancer_models.hpp
     inc/azure/messaging/eventhubs/models/processor_models.hpp
-    inc/azure/messaging/eventhubs/models/producer_client_models.hpp
     inc/azure/messaging/eventhubs/partition_client.hpp
     inc/azure/messaging/eventhubs/processor.hpp
     inc/azure/messaging/eventhubs/processor_load_balancer.hpp

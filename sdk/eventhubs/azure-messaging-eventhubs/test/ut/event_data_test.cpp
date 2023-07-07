@@ -22,7 +22,7 @@ TEST_F(EventDataTest, EventDataNew)
   auto message
       = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
 
-  EXPECT_EQ(0, message.ApplicationProperties.size());
+  EXPECT_EQ(0ul, message.ApplicationProperties.size());
   EXPECT_FALSE(message.Properties.ContentType.HasValue());
   EXPECT_FALSE(message.Properties.CorrelationId.HasValue());
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
@@ -41,7 +41,7 @@ TEST_F(EventDataTest, EventData1)
   auto message
       = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
 
-  EXPECT_EQ(1, message.ApplicationProperties.size());
+  EXPECT_EQ(1ul, message.ApplicationProperties.size());
   EXPECT_EQ(eventData.Body.Value, message.GetBodyAsAmqpValue());
   EXPECT_EQ("ct", message.Properties.ContentType.Value());
   EXPECT_EQ(AmqpValue("ci"), message.Properties.CorrelationId.Value());

@@ -3,7 +3,6 @@
 #pragma once
 #include "event_data_batch.hpp"
 #include "models/management_models.hpp"
-#include "models/producer_client_models.hpp"
 #include "retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
@@ -15,12 +14,51 @@
 #include <iostream>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+
+  /**@brief Credentials data bag used internally by the producer
+   */
+  struct ProducerClientCreds
+  {
+    /// The connection string for the Event Hubs namespace
+    std::string ConnectionString;
+
+    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
+    std::string FullyQualifiedNamespace;
+
+    /// The name of the Event Hub
+    std::string EventHub{};
+
+    /// The URL to the Event Hubs namespace
+    std::string TargetUrl{};
+
+    /// Credentials to be used to authenticate the client.
+    std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
+  };
+
+  /**@brief Contains options for the ProducerClient creation
+   */
+  struct ProducerClientOptions
+  {
+    /**@brief  Application ID that will be passed to the namespace.
+     */
+    std::string ApplicationID = "";
+
+    /**@brief  RetryOptions controls how often operations are retried from this client and any
+     * Receivers and Senders created from this client.
+     */
+    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+
+    /**@brief  Message sender options.
+     */
+    Azure::Core::Amqp::_internal::MessageSenderOptions SenderOptions{};
+  };
+
   /**@brief  ProducerClient can be used to send events to an Event Hub.
    */
   class ProducerClient {
 
-    Models::ProducerClientCreds m_credentials{};
-    Models::ProducerClientOptions m_producerClientOptions{};
+    ProducerClientCreds m_credentials{};
+    ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
@@ -52,7 +90,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClient(
         std::string const& connectionString,
         std::string const& eventHub,
-        Models::ProducerClientOptions options = {});
+        ProducerClientOptions options = {});
 
     /**@brief Constructs a new ProducerClient instance
      *
@@ -65,7 +103,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHub,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        Models::ProducerClientOptions options = {});
+        ProducerClientOptions options = {});
 
     ~ProducerClient()
     {
@@ -87,20 +125,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
      *
-     * @param options Additional options for getting partition properties
+     * @param context Context for the operation can be used for request cancellation.
      */
-    Models::EventHubProperties GetEventHubProperties(
-        Models::GetEventHubPropertiesOptions options = {});
+    Models::EventHubProperties GetEventHubProperties(Azure::Core::Context const& constext = {});
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
      * enqueued to the partition.
      *
      * @param partitionID partition ID to detail.
-     * @param options Additional options for getting partition properties
+     * @param context Context for the operation can be used for request cancellation.
      */
     Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,
-        Models::GetPartitionPropertiesOptions options = {});
+        Azure::Core::Context const& context = {});
 
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
