@@ -41,7 +41,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The connection string for the Event Hubs namespace
     std::string ConnectionString;
 
-    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
+    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
     std::string HostName;
 
     /// The name of the Event Hub

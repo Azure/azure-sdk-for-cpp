@@ -374,7 +374,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           std::chrono::minutes(2));
 
       auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3", "4"});
-      auto& clientOwned = GroupByOwner(ownerships)[clientB];
+      auto clientOwned = GroupByOwner(ownerships)[clientB];
       std::sort(clientOwned.begin(), clientOwned.end());
       EXPECT_EQ(clientOwned[0], "2");
       EXPECT_EQ(clientOwned[1], "3");
@@ -434,7 +434,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
-        auto const& clientOwned = GroupByOwner(ownerships)[clientB];
+        auto clientOwned = GroupByOwner(ownerships)[clientB];
         EXPECT_EQ(clientOwned.size(), 2);
 
         RequireBalanced(
