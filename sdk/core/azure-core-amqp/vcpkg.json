@@ -5,7 +5,7 @@
   "dependencies": [
     {
       "name": "azure-core-cpp",
-      "default-features": false
+      "default-features": true
     },
     {
       "name": "azure-uamqp-c",
