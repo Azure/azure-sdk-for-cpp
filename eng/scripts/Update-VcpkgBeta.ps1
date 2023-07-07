@@ -39,6 +39,11 @@ try {
 
     Set-Location $VcpkgBetaFolder
 
+    Write-Host "$VcpkgFolder/vcpkg x-update-baseline --vcpkg-root=. --x-scripts-root=$VcpkgFolder/scripts"
+    & $VcpkgFolder/vcpkg x-update-baseline `
+        --vcpkg-root=. `
+        --x-scripts-root=$VcpkgFolder/scripts
+
     Write-Host "$VcpkgFolder/vcpkg format-manifest --all --vcpkg-root=. --x-scripts-root=$VcpkgFolder/scripts"
     & $VcpkgFolder/vcpkg format-manifest `
         --all `
