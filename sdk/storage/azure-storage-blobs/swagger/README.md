@@ -102,8 +102,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2022-11-02"],
-        "description": "The version used for the operations to Azure storage services."
+        "enum": ["2022-11-02"]
       };
   - from: swagger-document
     where: $.parameters
@@ -283,8 +282,7 @@ directive:
         "in": "query",
         "required": false,
         "type": "string",
-        "x-ms-parameter-location": "method",
-        "description": "Include this parameter to specify one or more datasets to include in the response."
+        "x-ms-parameter-location": "method"
       };
       $.DeleteSnapshots["x-ms-enum"]["name"] = "DeleteSnapshotsOption";
       $.DeleteSnapshots["x-ms-enum"]["values"] = [{"value": "include", "name": "IncludeSnapshots"},{"value":"only", "name": "OnlySnapshots"}];
@@ -303,7 +301,6 @@ directive:
       $.LeaseState["x-ms-enum"]["name"] = "LeaseState";
       $.CopyStatus["x-ms-enum"]["name"] = "CopyStatus";
       $.PublicAccessType["x-ms-enum"]["values"] = [{"value": "container", "name": "BlobContainer"}, {"value": "blob", "name": "Blob"}, {"value": "", "name": "None"}];
-      $.PublicAccessType.description = "Specifies whether data in the container may be accessed publicly and the level of access";
       $.AccessTier["x-ms-enum"]["values"] = [
           {"value": "p1", "name": "P1"},
           {"value": "p2", "name": "P2"},
@@ -325,7 +322,6 @@ directive:
           {"value": "Premium", "name": "Premium"},
           {"value": "Cold", "name": "Cold"}
       ];
-      $.AccessTier.description = "The tier of page blob on a premium storage account or tier of block blob on blob storage or general purpose v2 account.";
       $.EncryptionAlgorithm = {
         "type": "string",
         "enum": ["AES256"],
@@ -334,8 +330,7 @@ directive:
           "modelAsString": false,
           "values": [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "AES256", "name": "Aes256"}]
         },
-        "x-ms-export": true,
-        "description": "The algorithm used to produce the encryption key hash. Currently, the only accepted value is \"AES256\". Must be provided if the x-ms-encryption-key header is provided."
+        "x-ms-export": true
       };
       $.BlockType = {
         "type": "string",
@@ -344,8 +339,7 @@ directive:
           "name": "BlockType",
           "modelAsString": false
         },
-        "x-ms-export": true,
-        "description": "Extensible enum used to specify how the service should look for a block ID."
+        "x-ms-export": true
       };
       $.ImmutabilityPolicyMode = {
         "type": "string",
@@ -353,8 +347,7 @@ directive:
         "x-ms-enum": {
           "name": "BlobImmutabilityPolicyMode",
           "modelAsString": false
-        },
-        "description": "Specifies the immutability policy mode set on the blob."
+        }
       }
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
@@ -388,9 +381,6 @@ directive:
         }
         if (h === "x-ms-meta") {
           $[h]["x-ms-format"] = "caseinsensitivemap";
-        }
-        if (h === "x-ms-lease-id" && $[h].description === "Uniquely identifies a blobs' lease") {
-          $[h].description = "Uniquely identifies a blob's lease";
         }
       }
   - from: swagger-document
@@ -431,22 +421,21 @@ directive:
       $.BlobHttpHeaders = {
         "type": "object",
         "properties": {
-          "Content-Type": {"type": "string", "description": "MIME content type of the blob."},
-          "Content-Encoding": {"type": "string", "description": "Specifies which content encodings have been applied to the blob."},
-          "Content-Language": {"type": "string", "description": "Specifies the natural languages used by this blob."},
-          "Content-Hash": {"$ref": "#/definitions/ContentHash", "x-ms-xml": {"name": "."}, "description": "Hash of the blob content."},
-          "Content-Disposition": {"type": "string", "description": "Conveys additional information about how to process the resource payload, and also can be used to attach additional metadata." },
-          "Cache-Control": {"type": "string", "description": "Specifies directives for caching mechanisms." }
-        },
-        "description": "Standard HTTP properties supported by containers and blobs."
+          "Content-Type": {"type": "string"},
+          "Content-Encoding": {"type": "string"},
+          "Content-Language": {"type": "string"},
+          "Content-Hash": {"$ref": "#/definitions/ContentHash", "x-ms-xml": {"name": "."}},
+          "Content-Disposition": {"type": "string"},
+          "Cache-Control": {"type": "string"}
+        }
       };
 
       delete $.BlobTags;
       delete $.BlobTagSet;
       delete $.BlobTag;
-      $.BlobTags = {"type": "object", "x-ms-format": "map", "xml": {"name": "Tags/TagSet"}, "properties": {"Key": {"type": "string", "x-ms-xml": {"name": "Tag/Key"}}, "Value": {"type": "string", "x-ms-xml": {"name": "Tag/Value"}}}, "description": "User-defined tags for this blob."};
+      $.BlobTags = {"type": "object", "x-ms-format": "map", "xml": {"name": "Tags/TagSet"}, "properties": {"Key": {"type": "string", "x-ms-xml": {"name": "Tag/Key"}}, "Value": {"type": "string", "x-ms-xml": {"name": "Tag/Value"}}}};
 
-      $.Metadata = {"type": "object", "x-ms-format": "caseinsensitivemap", properties: {"__placeHolder" : {"type": "integer"}}, "description": "A set of name-value pairs associated with this blob or blob container."};
+      $.Metadata = {"type": "object", "x-ms-format": "caseinsensitivemap", properties: {"__placeHolder" : {"type": "integer"}}};
       $.ContainerMetadata = $.Metadata;
       $.BlobMetadata = $.Metadata;
 
@@ -462,45 +451,35 @@ directive:
         "x-ms-enum": {
           "name": "ObjectReplicationStatus",
           "modelAsString": false
-        },
-        "description": "The replication status of blob with the given policy and rule identifiers."
+        }
       };
 
       $.ObjectReplicationRule = {
         "type": "object",
         "x-ms-xml": {"name": "*", "tag": true},
         "properties": {
-          "RuleId": {"type": "string", "x-ms-xml": {"name": "../*", "tag": true}, "description": "Object replication rule ID."},
-          "ReplicationStatus": {"$ref": "#/definitions/ObjectReplicationStatus", "x-ms-xml": {"name": "../*"}, "description": "Object replication status."}
-        },
-        "description": "Contains the object replication rule ID and replication status of a blob."
+          "RuleId": {"type": "string", "x-ms-xml": {"name": "../*", "tag": true}},
+          "ReplicationStatus": {"$ref": "#/definitions/ObjectReplicationStatus", "x-ms-xml": {"name": "../*"}}
+        }
       };
 
       $.ObjectReplicationPolicy = {
         "type": "object",
         "x-ms-xml": {"name": "*", "tag": true},
         "properties": {
-          "PolicyId": {"type": "string", "x-ms-xml": {"name": "../*", "tag": true}, "description": "Object replication policy ID."},
-          "Rules": {"type": "array", "items": {"$ref": "#/definitions/ObjectReplicationRule"}, "x-ms-xml": {"name": ".."}, "description": "The Rule IDs and respective replication status that are under the policy ID."}
-        },
-        "description": "Contains object replication policy ID and the respective list of #ObjectReplicationRule s. This is used when retrieving the object replication properties on the source blob."
+          "PolicyId": {"type": "string", "x-ms-xml": {"name": "../*", "tag": true}},
+          "Rules": {"type": "array", "items": {"$ref": "#/definitions/ObjectReplicationRule"}, "x-ms-xml": {"name": ".."}}
+        }
       };
       delete $.ObjectReplicationMetadata;
 
       $.BlobImmutabilityPolicy = {
         "type": "object",
         "properties": {
-          "ImmutabilityPolicyUntilDate": {"type": "string", "format": "date-time-rfc1123", "x-ms-client-name": "ExpiresOn", "description": "The date until which the blob can be protected from being modified or deleted."},
+          "ImmutabilityPolicyUntilDate": {"type": "string", "format": "date-time-rfc1123", "x-ms-client-name": "ExpiresOn"},
           "PolicyMode": {"$ref": "#/definitions/ImmutabilityPolicyMode", "x-ms-xml": {"name": "ImmutabilityPolicyMode"}}
-        },
-        "description": "Immutability policy associated with the blob."
+        }
       };
-
-      $.LeaseStatus.description = "The current lease status of the blob.";
-      $.LeaseState.description = "The current lease state of the blob.";
-      $.LeaseDuration.description = "When a blob is leased, specifies whether the lease is of infinite or fixed duration.";
-      $.CopyStatus.description = "Status of the copy operation.";
-      $.ArchiveStatus.description = "For blob storage LRS accounts, valid values are rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is not complete then this value indicates that rehydrate is pending and also tells the destination tier.";
 ```
 
 ### Striped Blob Support
@@ -648,9 +627,6 @@ directive:
       $.ContainerItem.properties["Version"]["x-ms-client-name"] = "VersionId";
       $.ContainerItem.properties["Properties"]["x-ms-client-name"] = "Details";
       $.ContainerItem.required.push("Deleted");
-      $.ContainerItem.properties["Name"].description = "Blob container name.";
-      $.ContainerItem.properties["Deleted"].description = "Indicates whether this container was deleted.";
-      $.ContainerItem.properties["Version"].description = "Version ID of a deleted container.";
 
       $.ContainerProperties.properties["Etag"]["x-ms-client-name"] = "ETag";
       $.ContainerProperties["x-ms-client-name"] = "BlobContainerItemDetails";
@@ -667,14 +643,6 @@ directive:
       $.ContainerProperties.properties["RemainingRetentionDays"]["x-nullable"] = true;
       $.ContainerProperties.properties["DefaultEncryptionScope"]["x-ms-client-default"] = "$account-encryption-key";
       $.ContainerProperties.properties["DenyEncryptionScopeOverride"]["x-ms-client-default"] = "false";
-      $.ContainerProperties.properties["Last-Modified"].description = "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob.";
-      $.ContainerProperties.properties["Etag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
-      $.ContainerProperties.properties["HasImmutabilityPolicy"].description = "Indicates whether the container has an immutability policy set on it.";
-      $.ContainerProperties.properties["HasLegalHold"].description = "Indicates whether the container has a legal hold.";
-      $.ContainerProperties.properties["DefaultEncryptionScope"].description = "The default encryption scope for the container.";
-      $.ContainerProperties.properties["DenyEncryptionScopeOverride"].description = "Indicates whether the container's default encryption scope can be overriden.";
-      $.ContainerProperties.properties["DeletedTime"].description = "Data and time at which this container was deleted. Only valid when this container was deleted.";
-      $.ContainerProperties.properties["RemainingRetentionDays"].description = "Remaining days before this container will be permanantely deleted. Only valid when this container was deleted.";
 ```
 
 ### GetUserDelegationKey
@@ -730,8 +698,6 @@ directive:
       delete $.FilterBlobItem.properties["TagValue"];
       delete $.FilterBlobItem.properties["VersionId"];
       delete $.FilterBlobItem.properties["IsCurrentVersion"];
-      $.FilterBlobItem.properties["Name"].description = "Blob name.";
-      $.FilterBlobItem.properties["ContainerName"].description = "Blob container name.";
       $.FilterBlobItem.properties["Tags"]["x-ms-xml"] = {"name": "Tags/TagSet"};
       $.FilterBlobSegment["x-ms-client-name"] = "FindBlobsByTagsResult";
       $.FilterBlobSegment.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
@@ -751,7 +717,7 @@ directive:
         "x-ms-client-name": "CreateBlobContainerResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the container was successfully created by this operation."}
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -772,7 +738,6 @@ directive:
       $["x-ms-default-encryption-scope"]["x-ms-client-default"] = "$account-encryption-key";
       $["x-ms-deny-encryption-scope-override"]["x-nullable"] = true;
       $["x-ms-deny-encryption-scope-override"]["x-ms-client-default"] = "false";
-      $["x-ms-meta"].description = "A set of name-value pair associated with this blob container.";
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning";
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-default"] = false;
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-nullable"] = true;
@@ -810,7 +775,7 @@ directive:
         "x-ms-client-name": "DeleteBlobContainerResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the container was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -875,14 +840,6 @@ directive:
       delete $.BlobPropertiesInternal.properties["BlobType"];
       $.BlobItemInternal.properties["DeletionId"] = {"type": "string"};
       $.BlobItemInternal.required.push("BlobType", "BlobSize");
-      $.BlobItemInternal.properties["Name"].description = "Blob name.";
-      $.BlobItemInternal.properties["Deleted"].description = "Indicates whether this blob was deleted.";
-      $.BlobItemInternal.properties["Snapshot"].description = "A string value that uniquely identifies a blob snapshot.";
-      $.BlobItemInternal.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
-      $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
-      $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
-      $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
-      $.BlobItemInternal.properties["DeletionId"].description = "The deletion ID associated with the deleted path.";
 
       $.BlobPropertiesInternal.properties["Etag"]["x-ms-client-name"] = "ETag";
       $.BlobPropertiesInternal["x-ms-client-name"] = "BlobItemDetails";
@@ -921,27 +878,6 @@ directive:
       delete $.BlobPropertiesInternal.properties["ImmutabilityPolicyUntilDate"];
       delete $.BlobPropertiesInternal.properties["ImmutabilityPolicyMode"];
       $.BlobPropertiesInternal.required.push("Creation-Time", "LeaseStatus", "LeaseState", "ServerEncrypted", "HttpHeaders", "LegalHold");
-      $.BlobPropertiesInternal.properties["Creation-Time"].description = "The date and time at which the blob was created.";
-      $.BlobPropertiesInternal.properties["Last-Modified"].description = "The date and time the blob was last modified.";
-      $.BlobPropertiesInternal.properties["Etag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
-      $.BlobPropertiesInternal.properties["x-ms-blob-sequence-number"].description = "The current sequence number for a page blob.";
-      $.BlobPropertiesInternal.properties["CopyId"].description = "String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy.";
-      $.BlobPropertiesInternal.properties["CopySource"].description = "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
-      $.BlobPropertiesInternal.properties["CopyProgress"].description = "Contains the number of bytes copied and the total bytes in the source in the last attempted Copy Blob operation where this blob was the destination blob. Can show between 0 and Content-Length bytes copied. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
-      $.BlobPropertiesInternal.properties["CopyCompletionTime"].description = "Conclusion time of the last attempted Copy Blob operation where this blob was the destination blob. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
-      $.BlobPropertiesInternal.properties["CopyStatusDescription"].description = "Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
-      $.BlobPropertiesInternal.properties["ServerEncrypted"].description = "The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted).";
-      $.BlobPropertiesInternal.properties["IncrementalCopy"].description = "Included if the blob is incremental copy blob.";
-      $.BlobPropertiesInternal.properties["DestinationSnapshot"].description = "Included if the blob is incremental copy blob or incremental copy snapshot, if x-ms-copy-status is success. Snapshot time of the last successful incremental copy snapshot for this blob.";
-      $.BlobPropertiesInternal.properties["DeletedTime"].description = "Data and time at which this blob was deleted. Only valid when this blob was deleted.";
-      $.BlobPropertiesInternal.properties["RemainingRetentionDays"].description = "Remaining days before this blob will be permanantely deleted. Only valid when this blob was deleted.";
-      $.BlobPropertiesInternal.properties["AccessTierInferred"].description = "True if the access tier is not explicitly set on the blob.";
-      $.BlobPropertiesInternal.properties["CustomerProvidedKeySha256"].description = "SHA-256 hash of the encryption key.";
-      $.BlobPropertiesInternal.properties["AccessTierChangeTime"].description = "The time the tier was changed on the object. This is only returned if the tier on the block blob was ever set.";
-      $.BlobPropertiesInternal.properties["Expiry-Time"].description = "The time this blob will expire.";
-      $.BlobPropertiesInternal.properties["Sealed"].description = "If this blob has been sealed.";
-      $.BlobPropertiesInternal.properties["LastAccessTime"].description = "UTC date/time value generated by the service that indicates the time at which the blob was last read or written to.";
-      $.BlobPropertiesInternal.properties["LegalHold"].description = "Indicates whether the blob has a legal hold.";
 ```
 
 ### ListBlobsByHierarchy
@@ -979,47 +915,46 @@ directive:
         "type": "object",
         "required": ["ETag", "LastModified", "CreatedOn", "HttpHeaders", "IsServerEncrypted", "HasLegalHold"],
         "properties": {
-          "ETag": {"type": "string", "format": "etag", "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."},
-          "LastModified": {"type": "string", "format": "date-time-rfc1123", "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."},
-          "CreatedOn": {"type": "string", "format": "date-time-rfc1123", "description": "The date and time at which the blob was created."},
-          "ExpiresOn": {"type": "string", "format": "date-time-rfc1123", "description": "The time this blob will expire."},
-          "LastAccessedOn": {"type": "string", "format": "date-time-rfc1123", "description": "UTC date/time value generated by the service that indicates the time at which the blob was last read or written to."},
+          "ETag": {"type": "string", "format": "etag"},
+          "LastModified": {"type": "string", "format": "date-time-rfc1123"},
+          "CreatedOn": {"type": "string", "format": "date-time-rfc1123"},
+          "ExpiresOn": {"type": "string", "format": "date-time-rfc1123"},
+          "LastAccessedOn": {"type": "string", "format": "date-time-rfc1123"},
           "HttpHeaders": {"$ref": "#/definitions/BlobHttpHeaders"},
           "Metadata": {"$ref": "#/definitions/BlobMetadata"},
-          "SequenceNumber": {"type": "integer", "format": "int64", "description": "The current sequence number for a page blob."},
-          "CommittedBlockCount": {"type": "integer", "format": "int32", "description": "The number of committed blocks present in the blob."},
-          "IsSealed": {"type": "boolean", "description": "If the blob has been sealed. This value is null for block blobs or page blobs."},
+          "SequenceNumber": {"type": "integer", "format": "int64"},
+          "CommittedBlockCount": {"type": "integer", "format": "int32"},
+          "IsSealed": {"type": "boolean"},
           "LeaseDuration": {"$ref": "#/definitions/LeaseDuration"},
           "LeaseState": {"$ref": "#/definitions/LeaseState"},
           "LeaseStatus": {"$ref": "#/definitions/LeaseStatus"},
-          "IsServerEncrypted": {"type": "boolean", "description": "True if the blob data and metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted)."},
-          "EncryptionKeySha256": {"type": "string", "format": "byte", "description": "SHA-256 hash of the encryption key used to encrypt the blob data and metadata."},
-          "EncryptionScope": {"type": "string", "description": "Name of the encryption scope used to encrypt the blob data and metadata."},
-          "ObjectReplicationDestinationPolicyId": {"type": "string", "description": "Only valid when Object Replication is enabled and current blob is the destination."},
-          "ObjectReplicationSourceProperties": {"type": "array", "items": {"$ref": "#/definitions/ObjectReplicationPolicy"}, "x-ms-xml": {"name": ""}, "description": "Only valid when Object Replication is enabled and current blob is the source."},
-          "TagCount": {"type": "integer", "format": "int32", "description": "The number of tags associated with the blob."},
-          "CopyId": {"type": "string", "description": " String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy."},
-          "CopySource": {"type": "string", "description": "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List."},
+          "IsServerEncrypted": {"type": "boolean"},
+          "EncryptionKeySha256": {"type": "string", "format": "byte"},
+          "EncryptionScope": {"type": "string"},
+          "ObjectReplicationDestinationPolicyId": {"type": "string"},
+          "ObjectReplicationSourceProperties": {"type": "array", "items": {"$ref": "#/definitions/ObjectReplicationPolicy"}, "x-ms-xml": {"name": ""}},
+          "TagCount": {"type": "integer", "format": "int32"},
+          "CopyId": {"type": "string"},
+          "CopySource": {"type": "string"},
           "CopyStatus": {"$ref": "#/definitions/CopyStatus"},
-          "CopyStatusDescription": {"type": "string", "description": "Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List"},
-          "CopyProgress": {"type": "string", "description": "Contains the number of bytes copied and the total bytes in the source in the last attempted Copy Blob operation where this blob was the destination blob. Can show between 0 and Content-Length bytes copied. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List"},
-          "CopyCompletedOn": {"type": "string", "format": "date-time-rfc1123", "description": "Conclusion time of the last attempted Copy Blob operation where this blob was the destination blob. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List."},
-          "VersionId": {"type": "string", "description": "A string value returned by the service that uniquely identifies the blob version."},
-          "IsCurrentVersion": {"type": "boolean", "description": "Indicates whether version of this blob is the current version."},
+          "CopyStatusDescription": {"type": "string"},
+          "CopyProgress": {"type": "string"},
+          "CopyCompletedOn": {"type": "string", "format": "date-time-rfc1123"},
+          "VersionId": {"type": "string"},
+          "IsCurrentVersion": {"type": "boolean"},
           "ImmutabilityPolicy": {"$ref": "#/definitions/BlobImmutabilityPolicy", "x-nullable": true},
-          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false, "description": "Indicates whether the blob has a legal hold."}
-        },
-        "description": "Detailed information of the downloaded blob."
+          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false}
+        }
       };
       $.DownloadBlobResult = {
         "type": "object",
         "x-ms-sealed": false,
         "properties": {
           "Details": {"$ref": "#/definitions/DownloadBlobDetails", "x-ms-xml": {"name": ""}},
-          "BlobSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}, "description": "Size of the blob in bytes."},
-          "ContentRange": {"$ref": "#/definitions/ContentRange", "x-ms-xml": {"name": ""}, "description": "Indicates the range of bytes returned."},
-          "TransactionalContentHash": {"$ref": "#/definitions/ContentHash", "x-nullable": true, "x-ms-xml": {"name": ""}, "description": "CRC64 or MD5 hash for the downloaded range of data."},
-          "BodyStream": {"type": "object", "format": "file", "description": "Content of the blob or blob range."}
+          "BlobSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}},
+          "ContentRange": {"$ref": "#/definitions/ContentRange", "x-ms-xml": {"name": ""}},
+          "TransactionalContentHash": {"$ref": "#/definitions/ContentHash", "x-nullable": true, "x-ms-xml": {"name": ""}},
+          "BodyStream": {"type": "object", "format": "file"}
         }
       };
   - from: swagger-document
@@ -1062,7 +997,7 @@ directive:
         $[status_code].headers["x-ms-tag-count"]["x-ms-client-path"] = "Details.TagCount";
         $[status_code].headers["x-ms-blob-sealed"]["x-ms-client-path"] = "Details.IsSealed";
         $[status_code].headers["x-ms-last-access-time"]["x-ms-client-path"] = "Details.LastAccessedOn";
-        $[status_code].headers["x-ms-creation-time"] = {"type": "string", "format": "date-time-rfc1123", "description": "Returns the date and time the blob was created.", "x-ms-client-path": "Details.CreatedOn"};
+        $[status_code].headers["x-ms-creation-time"] = {"type": "string", "format": "date-time-rfc1123", "x-ms-client-path": "Details.CreatedOn"};
         $[status_code].headers["x-ms-legal-hold"]["x-ms-client-path"] = "Details.HasLegalHold";
         $[status_code].headers["x-ms-legal-hold"]["x-nullable"] = true;
         $[status_code].headers["x-ms-immutability-policy-until-date"]["x-ms-client-path"] = "Details.ImmutabilityPolicy.ExpiresOn";
@@ -1120,7 +1055,6 @@ directive:
       $["x-ms-lease-state"]["x-nullable"] = true;
       $["x-ms-lease-status"]["x-nullable"] = true;
       $["Content-Length"]["x-ms-client-name"] = "BlobSize";
-      $["Content-Length"].description = "Size of the blob in bytes.";
       $["Content-Type"]["x-ms-client-path"] = "HttpHeaders.ContentType";
       $["Content-Type"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-path"] = "HttpHeaders.ContentHash";
@@ -1167,7 +1101,6 @@ directive:
       $["x-ms-legal-hold"]["x-nullable"] = true;
       delete $["Accept-Ranges"];
       delete $["x-ms-or"];
-      $["x-ms-meta"].description = "A set of name-value pair associated with this blob.";
 ```
 
 ### DeleteBlob
@@ -1186,7 +1119,7 @@ directive:
         "x-ms-client-name": "DeleteBlobResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the blob was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -1221,8 +1154,7 @@ directive:
             "type": "integer",
             "format": "int64",
             "x-nullable": true,
-            "x-ms-xml": {"name": ""},
-            "description": "The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob."
+            "x-ms-xml": {"name": ""}
           }
         }
       };
@@ -1245,14 +1177,12 @@ directive:
             "type": "string",
             "format": "byte",
             "x-nullable": true,
-            "x-ms-xml": {"name": ""},
-            "description": "The field is deprecated and is always null. Use GetProperties() instead to get SHA256 of the encryption key."
+            "x-ms-xml": {"name": ""}
           },
           "EncryptionScope" : {
             "type": "string",
             "x-nullable": true,
-            "x-ms-xml": {"name": ""},
-            "description": "The field is deprecated and is always null. Use GetProperties() instead to check the encryption scope."
+            "x-ms-xml": {"name": ""}
           }
         }
       };
@@ -1312,8 +1242,7 @@ directive:
             {"value": "double", "name": "Double"},
             {"value": "decimal", "name": "Decimal"}
           ]
-        },
-        "description": "Type of blob query arrow field."
+        }
       };
       if ($.ParquetConfiguration) {
         $.ParquetConfiguration.properties = {"__placeHolder" : { "type": "integer"}};
@@ -1330,6 +1259,13 @@ directive:
       $.ArrowField["x-ms-client-name"] = "BlobQueryArrowField";
       $.ArrowField.properties["Type"] = {"$ref": "#/definitions/BlobQueryArrowFieldType"};
       $.DelimitedTextConfiguration.properties["HeadersPresent"]["x-ms-xml"] = $.DelimitedTextConfiguration.properties["HeadersPresent"]["xml"];
+      $.QueryBlobResult = {
+        "type": "object",
+        "x-ms-sealed": false,
+        "properties": {
+          "BodyStream": {"type": "object", "format": "file"}
+        }
+      };
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.parameters
     transform: >
@@ -1337,6 +1273,8 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.responses
     transform: >  
+      $["200"].schema = {"$ref": "#/definitions/QueryBlobResult"};
+      $["206"].schema = {"$ref": "#/definitions/QueryBlobResult"};
       for (const status_code of ["200", "206"]) {
         delete $[status_code].headers["x-ms-meta"];
         delete $[status_code].headers["Content-Length"];
@@ -1402,15 +1340,13 @@ directive:
           "Created": {
             "type": "boolean",
             "x-ms-client-default": true,
-            "x-ms-xml": {"name": ""},
-            "description": "Indicates if the page blob was successfully created by this operation."
+            "x-ms-xml": {"name": ""}
           },
           "SequenceNumber": {
             "type": "integer",
             "format": "int64",
             "x-nullable": true,
-            "x-ms-xml": {"name": ""},
-            "description": "The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob."
+            "x-ms-xml": {"name": ""}
           }
         }
       };
@@ -1480,7 +1416,7 @@ directive:
         "properties": {
           "ETag": {"type": "string", "format": "etag", "x-ms-xml": {"name": ""}},
           "LastModified": {"type": "string", "format": "date-time-rfc1123", "x-ms-xml": {"name": ""}},
-          "BlobSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}, "description": "Size of the blob in bytes."},
+          "BlobSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}},
           "PageRange": {
             "type": "array",
             "x-ms-client-name": "PageRanges",
@@ -1517,7 +1453,7 @@ directive:
         "properties": {
           "ETag": {"type": "string", "format": "etag", "x-ms-xml": {"name": ""}},
           "LastModified": {"type": "string", "format": "date-time-rfc1123", "x-ms-xml": {"name": ""}},
-          "BlobSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}, "description": "Size of the blob in bytes."},
+          "BlobSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}},
           "PageRange": {
             "type": "array",
             "x-ms-client-name": "PageRanges",
@@ -1565,7 +1501,7 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=incrementalcopy"].put.responses["202"].headers
     transform: >
-      $["x-ms-version-id"] = {"x-ms-client-name": "VersionId", "type": "string", "x-nullable": true, "description": "A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob."};
+      $["x-ms-version-id"] = {"x-ms-client-name": "VersionId", "type": "string", "x-nullable": true};
 ```
 
 ### CreateAppendBlob
@@ -1580,7 +1516,7 @@ directive:
         "x-ms-client-name": "CreateAppendBlobResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the append blob was successfully created by this operation."}
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
       $.headers["x-ms-version-id"]["x-nullable"] = true;
@@ -1712,11 +1648,11 @@ directive:
         "xml": {"name": "BlockList"},
         "type": "object",
         "properties": {
-          "ETag": {"type": "string", "format": "etag", "x-ms-xml": {"name": ""}, "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."},
-          "LastModified": {"type": "string", "format": "date-time-rfc1123", "x-ms-xml": {"name": ""}, "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."},
-          "BlobSize": {"type": "integer", "format": "int64", "x-ms-client-default": "0", "x-ms-xml": {"name": ""}, "description": "Size of the blob in bytes."},
-          "CommittedBlocks": {"type": "array", "items": {"$ref": "#/definitions/Block"}, "description": "List of committed blocks."},
-          "UncommittedBlocks": {"type": "array", "items": {"$ref": "#/definitions/Block"}, "description": "List of uncommitted blocks."}
+          "ETag": {"type": "string", "format": "etag", "x-ms-xml": {"name": ""}},
+          "LastModified": {"type": "string", "format": "date-time-rfc1123", "x-ms-xml": {"name": ""}},
+          "BlobSize": {"type": "integer", "format": "int64", "x-ms-client-default": "0", "x-ms-xml": {"name": ""}},
+          "CommittedBlocks": {"type": "array", "items": {"$ref": "#/definitions/Block"}},
+          "UncommittedBlocks": {"type": "array", "items": {"$ref": "#/definitions/Block"}}
         }
       };
 ```
@@ -1796,4 +1732,194 @@ directive:
     where: $["x-ms-paths"]["/{containerName}?restype=container&comp=batch"].post.responses["202"]
     transform: >
       $.schema =  {"$ref": "#/definitions/SubmitBatchResult"};
+```
+
+### Description
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.ApiVersion.description = "The version used for the operations to Azure storage services.";
+      $.PublicAccessType.description = "Specifies whether data in the container may be accessed publicly and the level of access.";
+      $.AccessTier.description = "The tier of page blob on a premium storage account or tier of block blob on blob storage or general purpose v2 account.";
+      $.EncryptionAlgorithm.description = "The algorithm used to produce the encryption key hash. Currently, the only accepted value is \"AES256\". Must be provided if the x-ms-encryption-key header is provided.";
+      $.BlockType.description = "Extensible enum used to specify how the service should look for a block ID.";
+      $.ImmutabilityPolicyMode.description = "Specifies the immutability policy mode set on the blob.";
+      $.BlobHttpHeaders.description = "Standard HTTP properties supported by containers and blobs.";
+      $.BlobHttpHeaders.properties["Content-Type"].description = "MIME content type of the blob.";
+      $.BlobHttpHeaders.properties["Content-Encoding"].description = "Specifies which content encodings have been applied to the blob.";
+      $.BlobHttpHeaders.properties["Content-Language"].description = "Specifies the natural languages used by this blob.";
+      $.BlobHttpHeaders.properties["Content-Hash"].description = "Hash of the blob content.";
+      $.BlobHttpHeaders.properties["Content-Disposition"].description = "Conveys additional information about how to process the resource payload, and also can be used to attach additional metadata.";
+      $.BlobHttpHeaders.properties["Cache-Control"].description = "Specifies directives for caching mechanisms.";
+      $.BlobTags.description = "User-defined tags for this blob.";
+      $.Metadata.description = "A set of name-value pairs associated with this blob or blob container.";
+      $.ObjectReplicationStatus.description  = "The replication status of blob with the given policy and rule identifiers.";
+      $.ObjectReplicationRule.description = "Contains the object replication rule ID and replication status of a blob.";
+      $.ObjectReplicationRule.properties["RuleId"].description = "Object replication rule ID.";
+      $.ObjectReplicationRule.properties["ReplicationStatus"].description = "Object replication status.";
+      $.ObjectReplicationPolicy.description = "Contains object replication policy ID and the respective list of #Azure::Storage::Blobs::Models::ObjectReplicationRule s. This is used when retrieving the object replication properties on the source blob.";
+      $.ObjectReplicationPolicy.properties["PolicyId"].description = "Object replication policy ID.";
+      $.ObjectReplicationPolicy.properties["Rules"].description = "The Rule IDs and respective replication status that are under the policy ID.";
+      $.BlobImmutabilityPolicy.description = "Immutability policy associated with the blob.";
+      $.BlobImmutabilityPolicy.properties["ImmutabilityPolicyUntilDate"].description = "The date until which the blob can be protected from being modified or deleted.";
+      $.LeaseStatus.description = "The current lease status of the blob.";
+      $.LeaseState.description = "The current lease state of the blob.";
+      $.LeaseDuration.description = "When a blob is leased, specifies whether the lease is of infinite or fixed duration.";
+      $.CopyStatus.description = "Status of the copy operation.";
+      $.ArchiveStatus.description = "For blob storage LRS accounts, valid values are rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is not complete then this value indicates that rehydrate is pending and also tells the destination tier.";
+      $.ContainerItem.properties["Name"].description = "Blob container name.";
+      $.ContainerItem.properties["Deleted"].description = "Indicates whether this container was deleted.";
+      $.ContainerItem.properties["Version"].description = "Version ID of a deleted container.";
+      $.ContainerProperties.properties["Last-Modified"].description = "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob.";
+      $.ContainerProperties.properties["Etag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
+      $.ContainerProperties.properties["HasImmutabilityPolicy"].description = "Indicates whether the container has an immutability policy set on it.";
+      $.ContainerProperties.properties["HasLegalHold"].description = "Indicates whether the container has a legal hold.";
+      $.ContainerProperties.properties["DefaultEncryptionScope"].description = "The default encryption scope for the container.";
+      $.ContainerProperties.properties["DenyEncryptionScopeOverride"].description = "Indicates whether the container's default encryption scope can be overriden.";
+      $.ContainerProperties.properties["DeletedTime"].description = "Data and time at which this container was deleted. Only valid when this container was deleted.";
+      $.ContainerProperties.properties["RemainingRetentionDays"].description = "Remaining days before this container will be permanantely deleted. Only valid when this container was deleted.";
+      $.FilterBlobItem.properties["Name"].description = "Blob name.";
+      $.FilterBlobItem.properties["ContainerName"].description = "Blob container name.";
+      $.BlobItemInternal.properties["Name"].description = "Blob name.";
+      $.BlobItemInternal.properties["Deleted"].description = "Indicates whether this blob was deleted.";
+      $.BlobItemInternal.properties["Snapshot"].description = "A string value that uniquely identifies a blob snapshot.";
+      $.BlobItemInternal.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
+      $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
+      $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
+      $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
+      $.BlobItemInternal.properties["DeletionId"].description = "The deletion ID associated with the deleted path.";
+      $.BlobPropertiesInternal.properties["Creation-Time"].description = "The date and time at which the blob was created.";
+      $.BlobPropertiesInternal.properties["Last-Modified"].description = "The date and time the blob was last modified.";
+      $.BlobPropertiesInternal.properties["Etag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
+      $.BlobPropertiesInternal.properties["x-ms-blob-sequence-number"].description = "The current sequence number for a page blob.";
+      $.BlobPropertiesInternal.properties["CopyId"].description = "String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy.";
+      $.BlobPropertiesInternal.properties["CopySource"].description = "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.BlobPropertiesInternal.properties["CopyProgress"].description = "Contains the number of bytes copied and the total bytes in the source in the last attempted Copy Blob operation where this blob was the destination blob. Can show between 0 and Content-Length bytes copied. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.BlobPropertiesInternal.properties["CopyCompletionTime"].description = "Conclusion time of the last attempted Copy Blob operation where this blob was the destination blob. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.BlobPropertiesInternal.properties["CopyStatusDescription"].description = "Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.BlobPropertiesInternal.properties["ServerEncrypted"].description = "The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted).";
+      $.BlobPropertiesInternal.properties["IncrementalCopy"].description = "Included if the blob is incremental copy blob.";
+      $.BlobPropertiesInternal.properties["DestinationSnapshot"].description = "Included if the blob is incremental copy blob or incremental copy snapshot, if x-ms-copy-status is success. Snapshot time of the last successful incremental copy snapshot for this blob.";
+      $.BlobPropertiesInternal.properties["DeletedTime"].description = "Data and time at which this blob was deleted. Only valid when this blob was deleted.";
+      $.BlobPropertiesInternal.properties["RemainingRetentionDays"].description = "Remaining days before this blob will be permanantely deleted. Only valid when this blob was deleted.";
+      $.BlobPropertiesInternal.properties["AccessTierInferred"].description = "True if the access tier is not explicitly set on the blob.";
+      $.BlobPropertiesInternal.properties["CustomerProvidedKeySha256"].description = "SHA-256 hash of the encryption key.";
+      $.BlobPropertiesInternal.properties["AccessTierChangeTime"].description = "The time the tier was changed on the object. This is only returned if the tier on the block blob was ever set.";
+      $.BlobPropertiesInternal.properties["Expiry-Time"].description = "The time this blob will expire.";
+      $.BlobPropertiesInternal.properties["Sealed"].description = "If this blob has been sealed.";
+      $.BlobPropertiesInternal.properties["LastAccessTime"].description = "UTC date/time value generated by the service that indicates the time at which the blob was last read or written to.";
+      $.BlobPropertiesInternal.properties["LegalHold"].description = "Indicates whether the blob has a legal hold.";
+      $.DownloadBlobDetails.properties["ETag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
+      $.DownloadBlobDetails.properties["LastModified"].description = "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob.";
+      $.DownloadBlobDetails.properties["CreatedOn"].description = "The date and time at which the blob was created.";
+      $.DownloadBlobDetails.properties["ExpiresOn"].description = "The time this blob will expire.";
+      $.DownloadBlobDetails.properties["LastAccessedOn"].description = "UTC date/time value generated by the service that indicates the time at which the blob was last read or written to.";
+      $.DownloadBlobDetails.properties["SequenceNumber"].description = "The current sequence number for a page blob.";
+      $.DownloadBlobDetails.properties["CommittedBlockCount"].description = "The number of committed blocks present in the blob.";
+      $.DownloadBlobDetails.properties["IsSealed"].description = "If the blob has been sealed. This value is null for block blobs or page blobs.";
+      $.DownloadBlobDetails.properties["IsServerEncrypted"].description = "True if the blob data and metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted).";
+      $.DownloadBlobDetails.properties["EncryptionKeySha256"].description = "SHA-256 hash of the encryption key used to encrypt the blob data and metadata.";
+      $.DownloadBlobDetails.properties["EncryptionScope"].description = "Name of the encryption scope used to encrypt the blob data and metadata.";
+      $.DownloadBlobDetails.properties["ObjectReplicationDestinationPolicyId"].description = "Only valid when Object Replication is enabled and current blob is the destination.";
+      $.DownloadBlobDetails.properties["ObjectReplicationSourceProperties"].description = "Only valid when Object Replication is enabled and current blob is the source.";
+      $.DownloadBlobDetails.properties["TagCount"].description = "The number of tags associated with the blob.";
+      $.DownloadBlobDetails.properties["CopyId"].description = "String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy.";
+      $.DownloadBlobDetails.properties["CopySource"].description = "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.DownloadBlobDetails.properties["CopyStatusDescription"].description = "Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.DownloadBlobDetails.properties["CopyProgress"].description = "Contains the number of bytes copied and the total bytes in the source in the last attempted Copy Blob operation where this blob was the destination blob. Can show between 0 and Content-Length bytes copied. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.DownloadBlobDetails.properties["CopyCompletedOn"].description = "Conclusion time of the last attempted Copy Blob operation where this blob was the destination blob. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.";
+      $.DownloadBlobDetails.properties["VersionId"].description = "A string value returned by the service that uniquely identifies the blob version.";
+      $.DownloadBlobDetails.properties["IsCurrentVersion"].description = "Indicates whether version of this blob is the current version.";
+      $.DownloadBlobDetails.properties["HasLegalHold"].description = "Indicates whether the blob has a legal hold.";
+      $.DownloadBlobDetails.description = "Detailed information of the downloaded blob.";
+      $.DownloadBlobResult.properties["BlobSize"].description = "Size of the blob in bytes.";
+      $.DownloadBlobResult.properties["ContentRange"].description = "Indicates the range of bytes returned.";
+      $.DownloadBlobResult.properties["TransactionalContentHash"].description = "CRC64 or MD5 hash for the downloaded range of data.";
+      $.DownloadBlobResult.properties["BodyStream"].description = "Content of the blob or blob range.";
+      $.BlobQueryArrowFieldType.description = "Type of blob query arrow field.";
+      $.ArrowField.properties["Name"].description = "Name of the field.";
+      $.ArrowField.properties["Precision"].description = "Precision of the field.";
+      $.ArrowField.properties["Scale"].description = "Scale of the field.";
+      $.QueryBlobResult.properties["BodyStream"].description = "The response body stream.";
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      $.ListBlobsShowOnly.description = "Include this parameter to specify one or more datasets to include in the response.";
+  - from: swagger-document
+    where: $["x-ms-paths"].*.*.responses.*.headers
+    transform: >
+      for (const h in $) {
+        if (h === "x-ms-lease-id" && $[h].description === "Uniquely identifies a blobs' lease") {
+          $[h].description = "Uniquely identifies a blob's lease";
+        }
+      }
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container"].put.responses["201"]
+    transform: >
+      $.schema.properties["Created"].description = "Indicates if the container was successfully created by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container"].get.responses["200"].headers
+    transform: >
+      $["x-ms-meta"].description = "A set of name-value pair associated with this blob container.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container"].delete.responses["202"]
+    transform: >
+      $.schema.properties["Deleted"].description = "Indicates if the container was successfully deleted by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}"].get.responses
+    transform: >
+      $["200"].schema = {"$ref": "#/definitions/DownloadBlobResult"};
+      $["206"].schema = {"$ref": "#/definitions/DownloadBlobResult"};
+      for (const status_code of ["200", "206"]) {
+        $[status_code].headers["x-ms-creation-time"].description = "Returns the date and time the blob was created.";
+      }
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}"].head.responses["200"].headers
+    transform: >
+      $["Content-Length"].description = "Size of the blob in bytes.";
+      $["x-ms-meta"].description = "A set of name-value pair associated with this blob.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}"].delete.responses["202"]
+    transform: >
+      $.schema.properties["Deleted"].description = "Indicates if the blob was successfully deleted by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=metadata"].put.responses["200"]
+    transform: >
+      $.schema.properties["SequenceNumber"].description = "The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=snapshot"].put.responses["201"]
+    transform: >
+      $.schema.properties["EncryptionKeySha256"].description = "The field is deprecated and is always null. Use GetProperties() instead to get SHA256 of the encryption key.";
+      $.schema.properties["EncryptionScope"].description = "The field is deprecated and is always null. Use GetProperties() instead to check the encryption scope.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?PageBlob"].put
+    transform: >
+      $.responses["201"].schema.properties["Created"].description = "Indicates if the page blob was successfully created by this operation.";
+      $.responses["201"].schema.properties["SequenceNumber"].description = "The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=pagelist"].get.responses["200"]
+    transform: >
+      $.schema.properties["BlobSize"].description = "Size of the blob in bytes.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=pagelist&diff"].get.responses["200"]
+    transform: >
+      $.schema.properties["BlobSize"].description = "Size of the blob in bytes.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=incrementalcopy"].put.responses["202"].headers
+    transform: >
+      $["x-ms-version-id"].description = "A DateTime value returned by the service that uniquely identifies the blob. The value of this header indicates the blob version, and may be used in subsequent requests to access this version of the blob.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?AppendBlob"].put.responses["201"]
+    transform: >
+      $.schema.properties["Created"].description = "Indicates if the append blob was successfully created by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=blocklist"].get.responses
+    transform: >
+      $["200"].schema.properties["ETag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
+      $["200"].schema.properties["LastModified"].description = "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob.";
+      $["200"].schema.properties["BlobSize"].description = "Size of the blob in bytes.";
+      $["200"].schema.properties["CommittedBlocks"].description = "List of committed blocks.";
+      $["200"].schema.properties["UncommittedBlocks"].description = "List of uncommitted blocks.";
 ```
