@@ -14,43 +14,24 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /**@brief Contains options for the ConsumerClient creation
    */
-  struct ConsumerClientOptions
+  struct ConsumerClientDetails
   {
-    /**@brief ApplicationID is used as the identifier when setting the User-Agent property.
+    /**@brief The Fully Qualified Namespace that the Event Hub exists in.
      */
-    std::string ApplicationID = "";
-
-    /**@brief  RetryOptions controls how often operations are retried from this client and any
-     * Receivers and Senders created from this client.
-     */
-    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
-
-    /**@brief  Message sender options.
-     */
-    Azure::Core::Amqp::_internal::MessageReceiverOptions ReceiverOptions{};
-  };
-
-  /**@brief Contains credentials for the ConsumerClient creation
-   */
-  struct ConsumerClientCreds
-  {
-    /// The connection string for the Event Hubs namespace
-    std::string ConnectionString;
-
-    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
     std::string HostName;
 
-    /// The name of the Event Hub
-    std::string EventHub;
-
-    /// The name of the consumer group
+    /**@brief The name of the consumer group that this consumer is associated with. Events will be
+     * read only in the context of this group.
+     */
     std::string ConsumerGroup;
 
-    /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
+    /**@brief The name of the Event Hub that the consumer is connected to.
+     */
+    std::string EventHubName;
 
-    /// The URL to the Event Hubs namespace
-    std::string HostUrl{};
+    /**@brief A unique name used to identify this consumer.
+     */
+    std::string ClientID;
   };
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

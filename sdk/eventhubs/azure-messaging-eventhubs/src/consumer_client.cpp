@@ -4,11 +4,13 @@
 #include <azure/messaging/eventhubs.hpp>
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
+using namespace Azure::Messaging::EventHubs::Models;
+
 Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::string const& connectionString,
     std::string const& eventHub,
     std::string const& consumerGroup,
-    Azure::Messaging::EventHubs::Models::ConsumerClientOptions const& options)
+    Azure::Messaging::EventHubs::ConsumerClientOptions const& options)
     : m_credentials{connectionString, "", eventHub, consumerGroup}, m_consumerClientOptions(options)
 {
   auto sasCredential
@@ -30,7 +32,7 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::string const& eventHub,
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
     std::string const& consumerGroup,
-    Azure::Messaging::EventHubs::Models::ConsumerClientOptions const& options)
+    Azure::Messaging::EventHubs::ConsumerClientOptions const& options)
     : m_credentials{"", hostName, eventHub, consumerGroup, credential},
       m_consumerClientOptions(options)
 {
@@ -120,7 +122,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    auto const&body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");
@@ -187,7 +189,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto body = result.Message.GetBodyAsAmqpValue();
+    auto const& body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");

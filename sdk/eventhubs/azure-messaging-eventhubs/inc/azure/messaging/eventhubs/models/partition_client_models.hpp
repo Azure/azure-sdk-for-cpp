@@ -7,28 +7,6 @@
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  /**@brief Contains options for the ConsumerClient creation
-   */
-  struct ConsumerClientDetails
-  {
-    /**@brief The Fully Qualified Namespace that the Event Hub exists in.
-     */
-    std::string HostName;
-
-    /**@brief The name of the consumer group that this consumer is associated with. Events will be
-     * read only in the context of this group.
-     */
-    std::string ConsumerGroup;
-
-    /**@brief The name of the Event Hub that the consumer is connected to.
-     */
-    std::string EventHubName;
-
-    /**@brief A unique name used to identify this consumer.
-     */
-    std::string ClientID;
-  };
-
   /**@brief StartPosition indicates the position to start receiving events within a partition.
    * The default position is Latest.
    *

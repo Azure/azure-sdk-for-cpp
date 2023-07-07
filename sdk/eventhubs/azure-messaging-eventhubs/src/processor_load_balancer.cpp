@@ -6,22 +6,26 @@
 #include <stdexcept>
 
 // cspell: words lbinfo
+
+using namespace Azure::Messaging::EventHubs::Models;
+
 Azure::Messaging::EventHubs::Models::LoadBalancerInfo
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     std::vector<std::string> const& partitionIDs,
     Azure::Core::Context& ctx)
 {
 
-  std::vector<Ownership> ownerships = m_checkpointStore->ListOwnership(
+  std::vector<Models::Ownership> ownerships = m_checkpointStore->ListOwnership(
       m_consumerClientDetails.EventHubName,
       m_consumerClientDetails.ConsumerGroup,
       m_consumerClientDetails.ClientID,
+      {},
       ctx);
 
-  std::vector<Ownership> unownedOrExpired;
+  std::vector<Models::Ownership> unownedOrExpired;
   std::map<std::string, bool> alreadyProcessed;
-  std::map<std::string, std::vector<Ownership>> groupedByOwner;
-  groupedByOwner[m_consumerClientDetails.ClientID] = std::vector<Ownership>();
+  std::map<std::string, std::vector<Models::Ownership>> groupedByOwner;
+  groupedByOwner[m_consumerClientDetails.ClientID] = std::vector<Models::Ownership>();
   for (auto& ownership : ownerships)
   {
     if (alreadyProcessed.find(ownership.PartitionID) != alreadyProcessed.end())
@@ -65,7 +69,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     maxAllowed++;
   }
 
-  std::vector<Ownership> aboveMax;
+  std::vector<Models::Ownership> aboveMax;
 
   for (auto& entry : groupedByOwner)
   {
@@ -78,7 +82,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     }
   }
 
-  return LoadBalancerInfo{
+  return Models::LoadBalancerInfo{
       groupedByOwner[m_consumerClientDetails.ClientID],
       unownedOrExpired,
       aboveMax,
@@ -89,11 +93,11 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
 
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
-    std::vector<Ownership> const& ownerships,
+    std::vector<Models::Ownership> const& ownerships,
     size_t const count)
 {
-  std::vector<Ownership> randomOwnerships;
-  std::vector<Ownership> remainingOwnerships = ownerships;
+  std::vector<Models::Ownership> randomOwnerships;
+  std::vector<Models::Ownership> remainingOwnerships = ownerships;
 
   size_t numOwnerships = std::min(ownerships.size(), count);
 
@@ -108,7 +112,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetRandomOwnerships(
 }
 
 Azure::Messaging::EventHubs::Models::Ownership
-Azure::Messaging::EventHubs::ProcessorLoadBalancer::ResetOwnership(Ownership ownership)
+Azure::Messaging::EventHubs::ProcessorLoadBalancer::ResetOwnership(Models::Ownership ownership)
 {
   ownership.OwnerID = m_consumerClientDetails.ClientID;
   return ownership;
@@ -116,22 +120,22 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::ResetOwnership(Ownership own
 
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
-    LoadBalancerInfo const& lbinfo,
+    Models::LoadBalancerInfo const& lbinfo,
     Azure::Core::Context& ctx)
 {
   (void)ctx;
-  std::vector<Ownership> ours;
+  std::vector<Models::Ownership> ours;
   if (lbinfo.UnownedOrExpired.size() > 0)
   {
     size_t index = std::rand() % lbinfo.UnownedOrExpired.size();
-    Ownership ownership = ResetOwnership(lbinfo.UnownedOrExpired[index]);
+    Models::Ownership ownership = ResetOwnership(lbinfo.UnownedOrExpired[index]);
     ours.push_back(ownership);
   }
 
   if (lbinfo.AboveMax.size() > 0)
   {
     size_t index = std::rand() % lbinfo.AboveMax.size();
-    Ownership ownership = ResetOwnership(lbinfo.AboveMax[index]);
+    Models::Ownership ownership = ResetOwnership(lbinfo.AboveMax[index]);
     ours.push_back(ownership);
   }
 
@@ -140,23 +144,23 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
 
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GreedyLoadBalancer(
-    LoadBalancerInfo const& lbInfo,
+    Models::LoadBalancerInfo const& lbInfo,
     Azure::Core::Context ctx)
 {
   (void)ctx;
-  std::vector<Ownership> ours = lbInfo.Current;
+  std::vector<Models::Ownership> ours = lbInfo.Current;
   // try claiming from the completely unowned or expires ownerships _first_
-  std::vector<Ownership> randomOwneships
+  std::vector<Models::Ownership> randomOwneships
       = GetRandomOwnerships(lbInfo.UnownedOrExpired, lbInfo.MaxAllowed - ours.size());
   ours.insert(ours.end(), randomOwneships.begin(), randomOwneships.end());
 
   if (ours.size() < lbInfo.MaxAllowed)
   { // try claiming from the completely unowned or expires ownerships _first_
-    std::vector<Ownership> randomOwnerships
+    std::vector<Models::Ownership> randomOwnerships
         = GetRandomOwnerships(lbInfo.AboveMax, lbInfo.MaxAllowed - ours.size());
     ours.insert(ours.end(), randomOwnerships.begin(), randomOwnerships.end());
   }
-  for (Ownership& ownership : ours)
+  for (Models::Ownership& ownership : ours)
   {
     ownership = ResetOwnership(ownership);
   }
@@ -169,7 +173,7 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     std::vector<std::string> const& partitionIDs,
     Azure::Core::Context ctx)
 {
-  LoadBalancerInfo lbInfo = GetAvailablePartitions(partitionIDs, ctx);
+  Models::LoadBalancerInfo lbInfo = GetAvailablePartitions(partitionIDs, ctx);
 
   bool claimMore = true;
 
@@ -193,19 +197,19 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     claimMore = lbInfo.UnownedOrExpired.size() > 0 || lbInfo.AboveMax.size() > 0;
   }
 
-  std::vector<Ownership> ownerships = lbInfo.Current;
+  std::vector<Models::Ownership> ownerships = lbInfo.Current;
 
   if (claimMore)
   {
     switch (m_strategy)
     {
-      case ProcessorStrategy::ProcessorStrategyGreedy: {
+      case Models::ProcessorStrategy::ProcessorStrategyGreedy: {
         ownerships = GreedyLoadBalancer(lbInfo, ctx);
       }
       break;
-      case ProcessorStrategy::ProcessorStrategyBalanced: {
+      case Models::ProcessorStrategy::ProcessorStrategyBalanced: {
 
-        std::vector<Ownership> newOwnership = BalancedLoadBalancer(lbInfo, ctx);
+        std::vector<Models::Ownership> newOwnership = BalancedLoadBalancer(lbInfo, ctx);
         ownerships.insert(ownerships.end(), newOwnership.begin(), newOwnership.end());
       }
       break;
@@ -215,6 +219,6 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     }
   }
 
-  std::vector<Ownership> actual = m_checkpointStore->ClaimOwnership(ownerships, ctx);
+  std::vector<Models::Ownership> actual = m_checkpointStore->ClaimOwnership(ownerships, {}, ctx);
   return actual;
 }

@@ -31,7 +31,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
-    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
     options.ReceiverOptions.Name = "unit-test";
@@ -42,8 +42,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$Default", options);
-    ProcessorOptions processorOptions;
-    processorOptions.LoadBalancingStrategy = ProcessorStrategy::ProcessorStrategyBalanced;
+    Models::ProcessorOptions processorOptions;
+    processorOptions.LoadBalancingStrategy = Models::ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 
     Processor processor(

@@ -4,6 +4,7 @@
 // cspell: words lbinfo
 #pragma once
 #include "checkpoint_store.hpp"
+#include "models/consumer_client_models.hpp"
 #include "models/partition_client_models.hpp"
 #include "models/processor_load_balancer_models.hpp"
 
@@ -42,21 +43,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 #endif
     std::shared_ptr<CheckpointStore> m_checkpointStore;
     Models::ConsumerClientDetails m_consumerClientDetails;
-    ProcessorStrategy m_strategy;
+    Models::ProcessorStrategy m_strategy;
     std::chrono::minutes m_duration;
 
     /**@brief  GetAvailablePartitions finds all partitions that are either completely unowned _or_
      * their ownership is stale.
      */
-    LoadBalancerInfo GetAvailablePartitions(
+    Models::LoadBalancerInfo GetAvailablePartitions(
         std::vector<std::string> const& partitionIDs,
         Azure::Core::Context& ctx);
 
-    std::vector<Ownership> GetRandomOwnerships(
-        std::vector<Ownership> const& ownerships,
+    std::vector<Models::Ownership> GetRandomOwnerships(
+        std::vector<Models::Ownership> const& ownerships,
         size_t const count);
 
-    Ownership ResetOwnership(Ownership ownership);
+    Models::Ownership ResetOwnership(Models::Ownership ownership);
 
     /**@brief BalancedLoadBalancer attempts to split the partition load out between the available
      *consumers so each one has an even amount (or even + 1, if the # of consumers and #
@@ -67,12 +68,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *bit until it manages to steal at least one partition since the other consumers don't
      *know it exists until then.
      */
-    std::vector<Ownership> BalancedLoadBalancer(
-        LoadBalancerInfo const& lbinfo,
+    std::vector<Models::Ownership> BalancedLoadBalancer(
+        Models::LoadBalancerInfo const& lbinfo,
         Azure::Core::Context& ctx);
 
-    std::vector<Ownership> GreedyLoadBalancer(
-        LoadBalancerInfo const& lbInfo,
+    std::vector<Models::Ownership> GreedyLoadBalancer(
+        Models::LoadBalancerInfo const& lbInfo,
         Azure::Core::Context ctx);
 
   public:
@@ -89,8 +90,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     ProcessorLoadBalancer(
         std::shared_ptr<CheckpointStore> checkpointStore,
-        ConsumerClientDetails const& consumerClientDetails,
-        ProcessorStrategy const& strategy,
+        Models::ConsumerClientDetails const& consumerClientDetails,
+        Models::ProcessorStrategy const& strategy,
         std::chrono::minutes const& duration)
         : m_checkpointStore(checkpointStore), m_consumerClientDetails(consumerClientDetails),
           m_strategy(strategy), m_duration(duration)
@@ -121,7 +122,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      *@return a list of partitions that the Processor should begin processing.
      */
-    std::vector<Ownership> LoadBalance(
+    std::vector<Models::Ownership> LoadBalance(
         std::vector<std::string> const& partitionIDs,
         Azure::Core::Context ctx = Azure::Core::Context());
   };

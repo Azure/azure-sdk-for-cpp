@@ -25,8 +25,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ListCheckpointsOptions options = ListCheckpointsOptions()) override
+        ListCheckpointsOptions options = ListCheckpointsOptions(),
+        Azure::Core::Context ctx = Azure::Core::Context()) override
     {
       (void)fullyQualifiedNamespace;
       (void)eventHubName;
@@ -45,8 +45,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ListOwnershipOptions options = ListOwnershipOptions()) override
+        ListOwnershipOptions options = ListOwnershipOptions(),
+        Azure::Core::Context ctx = Azure::Core::Context()) override
     {
       (void)fullyQualifiedNamespace;
       (void)eventHubName;
@@ -62,13 +62,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     std::vector<Azure::Messaging::EventHubs::Models::Ownership> ClaimOwnership(
-        std::vector<Ownership> partitionOwnership,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        ClaimOwnershipOptions const& options = ClaimOwnershipOptions()) override
+        std::vector<Models::Ownership> partitionOwnership,
+        ClaimOwnershipOptions const& options = ClaimOwnershipOptions(),
+        Azure::Core::Context ctx = Azure::Core::Context()) override
     {
       (void)ctx;
       (void)options;
-      std::vector<Ownership> owned;
+      std::vector<Models::Ownership> owned;
       for (auto& ownership : partitionOwnership)
       {
         Azure::Messaging::EventHubs::Models::Ownership newOwnership = UpdateOwnership(ownership);
@@ -101,20 +101,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         if (ownership.ETag.Value() != m_ownerships[key].ETag.Value())
         {
-          return Ownership{};
+          return Models::Ownership{};
         }
       }
       Azure::Messaging::EventHubs::Models::Ownership newOwnership = ownership;
       newOwnership.ETag = Azure::ETag(Azure::Core::Uuid::CreateUuid().ToString());
       newOwnership.LastModifiedTime = std::chrono::system_clock::now();
 
-      m_ownerships[key] = Ownership(newOwnership);
+      m_ownerships[key] = Models::Ownership(newOwnership);
       return newOwnership;
     }
 
     void ExpireOwnership(Azure::Messaging::EventHubs::Models::Ownership& o)
     {
-      Ownership temp = o;
+      Models::Ownership temp = o;
       temp.LastModifiedTime
           = temp.LastModifiedTime.ValueOr(std::chrono::system_clock::now()) - std::chrono::hours(6);
       std::string key = temp.FullyQualifiedNamespace + "/" + temp.EventHubName + "/"
@@ -124,8 +124,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     void UpdateCheckpoint(
         Azure::Messaging::EventHubs::Models::Checkpoint const& checkpoint,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        UpdateCheckpointOptions options = UpdateCheckpointOptions()) override
+        UpdateCheckpointOptions options = UpdateCheckpointOptions(),
+        Azure::Core::Context ctx = Azure::Core::Context()) override
     {
       (void)ctx;
       (void)options;

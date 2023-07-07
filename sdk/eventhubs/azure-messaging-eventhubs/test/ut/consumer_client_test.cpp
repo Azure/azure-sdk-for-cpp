@@ -66,7 +66,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
-    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
     options.ReceiverOptions.Name = "unit-test";
@@ -95,7 +95,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
-    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
     options.ReceiverOptions.Name = "unit-test";
@@ -121,7 +121,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
 
-    Azure::Messaging::EventHubs::Models::ConsumerClientOptions options;
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
     options.ReceiverOptions.Name = "unit-test";

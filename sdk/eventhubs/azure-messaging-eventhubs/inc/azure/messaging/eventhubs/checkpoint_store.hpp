@@ -11,8 +11,37 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
-using namespace Azure::Messaging::EventHubs::Models;
+
 namespace Azure { namespace Messaging { namespace EventHubs {
+  /**@brief  ListCheckpointsOptions contains optional parameters for the ListCheckpoints
+   * function
+   */
+  struct ListCheckpointsOptions
+  {
+    // For future expansion
+  };
+
+  /**@brief  ListOwnershipOptions contains optional parameters for the ListOwnership function
+   */
+  struct ListOwnershipOptions
+  {
+    // For future expansion
+  };
+
+  /**@brief  UpdateCheckpointOptions contains optional parameters for the UpdateCheckpoint
+   * function
+   */
+  struct UpdateCheckpointOptions
+  {
+    // For future expansion
+  };
+
+  /**@brief  ClaimOwnershipOptions contains optional parameters for the ClaimOwnership function
+   */
+  struct ClaimOwnershipOptions
+  {
+    // For future expansion
+  };
 
   /**@brief  CheckpointStore is used by multiple consumers to coordinate progress and ownership for
    * partitions.
@@ -31,10 +60,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief ClaimOwnership attempts to claim ownership of the partitions in partitionOwnership and
      * returns the actual partitions that    were claimed.
      */
-    virtual std::vector<Ownership> ClaimOwnership(
-        std::vector<Ownership> partitionOwnership,
-        Azure::Core::Context ctx = {},
-        ClaimOwnershipOptions const& options = {})
+    virtual std::vector<Models::Ownership> ClaimOwnership(
+        std::vector<Models::Ownership> partitionOwnership,
+        ClaimOwnershipOptions const& options = {},
+        Azure::Core::Context ctx = {})
     {
       (void)partitionOwnership;
       (void)ctx;
@@ -44,12 +73,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /**@brief  ListCheckpoints lists all the available checkpoints.
      */
-    virtual std::vector<Checkpoint> ListCheckpoints(
+    virtual std::vector<Models::Checkpoint> ListCheckpoints(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = {},
-        ListCheckpointsOptions options = {})
+        ListCheckpointsOptions options = {},
+        Azure::Core::Context ctx = {})
     {
       (void)fullyQualifiedNamespace;
       (void)consumerGroup;
@@ -61,12 +90,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /**@brief  ListOwnership lists all ownerships.
      */
-    virtual std::vector<Ownership> ListOwnership(
+    virtual std::vector<Models::Ownership> ListOwnership(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = {},
-        ListOwnershipOptions options = {})
+        ListOwnershipOptions options = {},
+        Azure::Core::Context ctx = {})
     {
       (void)fullyQualifiedNamespace;
       (void)eventHubName;
@@ -79,9 +108,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
      */
     virtual void UpdateCheckpoint(
-        Checkpoint const& checkpoint,
-        Azure::Core::Context ctx = {},
-        UpdateCheckpointOptions options = {})
+        Models::Checkpoint const& checkpoint,
+        UpdateCheckpointOptions options = {},
+        Azure::Core::Context ctx = {})
     {
       (void)checkpoint;
       (void)ctx;
@@ -101,19 +130,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_containerName;
     Azure::Storage::Blobs::BlobContainerClient m_containerClient;
 
-    std::string GetOwnershipName(Ownership const& ownership);
+    std::string GetOwnershipName(Models::Ownership const& ownership);
 
-    std::string GetOwnershipPrefixName(Ownership const& ownership);
+    std::string GetOwnershipPrefixName(Models::Ownership const& ownership);
 
-    std::string GetCheckpointBlobPrefixName(Checkpoint const& checkpoint);
+    std::string GetCheckpointBlobPrefixName(Models::Checkpoint const& checkpoint);
 
-    std::string GetCheckpointBlobName(Checkpoint const& checkpoint);
+    std::string GetCheckpointBlobName(Models::Checkpoint const& checkpoint);
 
-    void UpdateCheckpointImpl(Azure::Storage::Metadata const& metadata, Checkpoint& checkpoint);
+    void UpdateCheckpointImpl(
+        Azure::Storage::Metadata const& metadata,
+        Models::Checkpoint& checkpoint);
 
-    void UpdateOwnership(Azure::Storage::Blobs::Models::BlobItem const& blob, Ownership& ownership);
+    void UpdateOwnership(
+        Azure::Storage::Blobs::Models::BlobItem const& blob,
+        Models::Ownership& ownership);
 
-    Azure::Storage::Metadata NewCheckpointBlobMetadata(Checkpoint const& checkpoint);
+    Azure::Storage::Metadata NewCheckpointBlobMetadata(Models::Checkpoint const& checkpoint);
 
     std::pair<Azure::DateTime, Azure::ETag> SetMetadata(
         std::string const& blobName,
@@ -144,32 +177,32 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_containerClient.CreateIfNotExists();
     }
 
-    std::vector<Ownership> ClaimOwnership(
-        std::vector<Ownership> partitionOwnership,
-        Azure::Core::Context ctx = {},
-        ClaimOwnershipOptions const& options = {}) override;
+    std::vector<Models::Ownership> ClaimOwnership(
+        std::vector<Models::Ownership> partitionOwnership,
+        ClaimOwnershipOptions const& options = {},
+        Azure::Core::Context ctx = {}) override;
 
-    std::vector<Checkpoint> ListCheckpoints(
+    std::vector<Models::Checkpoint> ListCheckpoints(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = {},
-        ListCheckpointsOptions options = {}) override;
+        ListCheckpointsOptions options = {},
+        Azure::Core::Context ctx = {}) override;
 
     /**@brief  ListOwnership lists all ownerships.
      */
-    std::vector<Ownership> ListOwnership(
+    std::vector<Models::Ownership> ListOwnership(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        Azure::Core::Context ctx = {},
-        ListOwnershipOptions options = {}) override;
+        ListOwnershipOptions options = {},
+        Azure::Core::Context ctx = {}) override;
 
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
      */
     void UpdateCheckpoint(
-        Checkpoint const& checkpoint,
-        Azure::Core::Context ctx = {},
-        UpdateCheckpointOptions options = {}) override;
+        Models::Checkpoint const& checkpoint,
+        UpdateCheckpointOptions options = {},
+        Azure::Core::Context ctx = {}) override;
   };
 }}} // namespace Azure::Messaging::EventHubs

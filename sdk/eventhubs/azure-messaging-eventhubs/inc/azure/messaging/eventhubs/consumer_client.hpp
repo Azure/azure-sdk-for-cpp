@@ -4,9 +4,9 @@
 // cspell: word myeventhub
 
 #pragma once
+#include "eventhub_constants.hpp"
 #include "models/consumer_client_models.hpp"
 #include "models/management_models.hpp"
-#include "models/partition_client_models.hpp"
 #include "partition_client.hpp"
 
 #include <azure/core/amqp.hpp>
@@ -16,6 +16,46 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
+  /**@brief Contains options for the ConsumerClient creation
+   */
+  struct ConsumerClientOptions
+  {
+    /**@brief ApplicationID is used as the identifier when setting the User-Agent property.
+     */
+    std::string ApplicationID = "";
+
+    /**@brief  RetryOptions controls how often operations are retried from this client and any
+     * Receivers and Senders created from this client.
+     */
+    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+
+    /**@brief  Message sender options.
+     */
+    Azure::Core::Amqp::_internal::MessageReceiverOptions ReceiverOptions{};
+  };
+
+  /**@brief Contains credentials for the ConsumerClient creation
+   */
+  struct ConsumerClientCreds
+  {
+    /// The connection string for the Event Hubs namespace
+    std::string ConnectionString;
+
+    /// the Event Hubs namespace name (ex: myservicebus.servicebus.windows.net)
+    std::string HostName;
+
+    /// The name of the Event Hub
+    std::string EventHub;
+
+    /// The name of the consumer group
+    std::string ConsumerGroup;
+
+    /// Credentials to be used to authenticate the client.
+    std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
+
+    /// The URL to the Event Hubs namespace
+    std::string HostUrl{};
+  };
 
   /**
    * @brief The ConsumerClient class is a high level class used to consume events from an Event Hub.
@@ -35,10 +75,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
     /// @brief the credentials used to connect to the event hub.
-    Models::ConsumerClientCreds m_credentials;
+    ConsumerClientCreds m_credentials;
 
     /// @brief The options used to configure the consumer client.
-    Models::ConsumerClientOptions m_consumerClientOptions;
+    ConsumerClientOptions m_consumerClientOptions;
 
   public:
     /** Create a new ConsumerClient from an existing one. */
@@ -111,9 +151,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     ConsumerClient(
         std::string const& connectionString,
-        std::string const& eventHub = "",
-        std::string const& consumerGroup = "$Default",
-        Models::ConsumerClientOptions const& options = {});
+        std::string const& eventHub = {},
+        std::string const& consumerGroup = _detail::DefaultConsumerGroup,
+        ConsumerClientOptions const& options = {});
     /** @brief creates a ConsumerClient from a token credential.
      *
      * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
@@ -128,8 +168,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHub,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        std::string const& consumerGroup = "$Default",
-        Models::ConsumerClientOptions const& options = {});
+        std::string const& consumerGroup = _detail::DefaultConsumerGroup,
+        ConsumerClientOptions const& options = {});
 
     /** @brief Create new Partition client
      *

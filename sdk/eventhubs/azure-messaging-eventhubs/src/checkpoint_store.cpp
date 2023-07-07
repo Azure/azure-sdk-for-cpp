@@ -114,8 +114,8 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::NewCheckpointBlobMetadata(
 
 std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
     std::vector<Ownership> partitionOwnership,
-    Azure::Core::Context ctx,
-    ClaimOwnershipOptions const& options)
+    ClaimOwnershipOptions const& options,
+    Azure::Core::Context ctx)
 {
   (void)options;
   std::vector<Ownership> newOwnerships;
@@ -153,15 +153,15 @@ std::vector<Checkpoint> Azure::Messaging::EventHubs::BlobCheckpointStore::ListCh
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
     std::string const& consumerGroup,
-    Azure::Core::Context ctx,
-    ListCheckpointsOptions options)
+    ListCheckpointsOptions options,
+    Azure::Core::Context ctx)
 {
   (void)options;
 
   std::vector<Checkpoint> checkpoints;
 
   std::string prefix = GetCheckpointBlobPrefixName(
-      Checkpoint{consumerGroup, eventHubName, fullyQualifiedNamespace});
+      Models::Checkpoint{consumerGroup, eventHubName, fullyQualifiedNamespace});
   Azure::Storage::Blobs::ListBlobsOptions listOptions;
   listOptions.Prefix = prefix;
   listOptions.Include = Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Metadata;
@@ -186,8 +186,8 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwn
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
     std::string const& consumerGroup,
-    Azure::Core::Context ctx,
-    ListOwnershipOptions options)
+    ListOwnershipOptions options,
+    Azure::Core::Context ctx)
 {
   (void)options;
   std::vector<Ownership> ownerships;
@@ -216,10 +216,9 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwn
  */
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpoint(
     Checkpoint const& checkpoint,
-    Azure::Core::Context ctx,
-    UpdateCheckpointOptions options)
+    UpdateCheckpointOptions,
+    Azure::Core::Context ctx)
 {
-  (void)options;
   std::string blobName = GetCheckpointBlobName(checkpoint);
   SetMetadata(blobName, NewCheckpointBlobMetadata(checkpoint), Azure::ETag(), ctx);
 }

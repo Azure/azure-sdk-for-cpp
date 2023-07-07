@@ -21,7 +21,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     PartitionClient m_partitionClient;
     std::shared_ptr<CheckpointStore> m_checkpointStore;
     std::function<void()> m_cleanupFunc;
-    ConsumerClientDetails m_consumerClientDetails;
+    Models::ConsumerClientDetails m_consumerClientDetails;
 
   public:
     /// Constructs a new instance of the ProcessorPartitionClient.
@@ -35,7 +35,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string partitionId,
         PartitionClient partitionClient,
         std::shared_ptr<CheckpointStore> checkpointStore,
-        ConsumerClientDetails consumerClientDetails,
+        Models::ConsumerClientDetails consumerClientDetails,
         std::function<void()> cleanupFunc)
         : m_partitionId(partitionId), m_partitionClient(partitionClient),
           m_checkpointStore(checkpointStore), m_cleanupFunc(cleanupFunc),
@@ -101,7 +101,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         }
       }
 
-      Checkpoint checkpoint
+      Models::Checkpoint checkpoint
           = {m_consumerClientDetails.ConsumerGroup,
              m_consumerClientDetails.EventHubName,
              m_consumerClientDetails.HostName,
@@ -109,7 +109,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
              sequenceNumber,
              offsetNumber};
 
-      m_checkpointStore->UpdateCheckpoint(checkpoint, ctx, options);
+      m_checkpointStore->UpdateCheckpoint(checkpoint, options,ctx);
     }
 
     std::string GetPartitionId() { return m_partitionId; }
