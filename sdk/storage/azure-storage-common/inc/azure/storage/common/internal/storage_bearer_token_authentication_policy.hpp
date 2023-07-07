@@ -40,8 +40,14 @@ namespace Azure { namespace Storage { namespace _internal {
     struct SafeTenantId
     {
     public:
-      SafeTenantId(const std::string& tenantId) : m_tenantId(tenantId) {}
-      SafeTenantId(std::string&& tenantId) : m_tenantId(std::move(tenantId)) {}
+      explicit SafeTenantId(std::string tenantId) : m_tenantId(std::move(tenantId)) {}
+
+      SafeTenantId(const SafeTenantId& other) : m_tenantId(other.Get()) {}
+      SafeTenantId& operator=(const SafeTenantId& other)
+      {
+        this->m_tenantId = other.Get();
+        return *this;
+      }
 
       std::string Get() const
       {
@@ -70,8 +76,6 @@ namespace Azure { namespace Storage { namespace _internal {
           m_enableTenantDiscovery(other.m_enableTenantDiscovery)
     {
     }
-
-    void operator=(StorageBearerTokenAuthenticationPolicy const&) = delete;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> AuthorizeAndSendRequest(
         Azure::Core::Http::Request& request,
