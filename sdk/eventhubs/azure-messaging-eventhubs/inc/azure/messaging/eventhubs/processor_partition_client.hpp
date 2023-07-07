@@ -57,7 +57,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         uint32_t maxBatchSize,
         Azure::Core::Context ctx = {})
     {
-      return m_partitionClient.ReceiveEvents(maxBatchSize, ctx);
+      return m_partitionClient.ReceiveEvents(maxBatchSize, {}, ctx);
     }
 
     /** Closes the partition client.
@@ -74,8 +74,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   private:
     void UpdateCheckpoint(
         Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,
-        Azure::Core::Context ctx = {},
-        UpdateCheckpointOptions options = {})
+        UpdateCheckpointOptions options = {},
+        Azure::Core::Context ctx = {})
     {
       Azure::Nullable<int64_t> sequenceNumber;
 

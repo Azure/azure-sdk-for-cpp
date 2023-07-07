@@ -88,8 +88,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t const& maxMessages,
-        Azure::Core::Context ctx = Azure::Core::Context(),
-        Models::ReceiveEventsOptions options = {})
+        Models::ReceiveEventsOptions options = {},
+        Azure::Core::Context ctx = Azure::Core::Context())
     {
       (void)options;
       std::vector<Models::ReceivedEventData> messages;
