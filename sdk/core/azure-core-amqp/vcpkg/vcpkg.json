@@ -15,11 +15,9 @@
     {
       "name": "azure-core-cpp",
       "default-features": false,
-      "version>=": "1.9.0-beta.1"
+      "version>=": "1.10.1"
     },
-    {
-      "name": "azure-uamqp-c"
-    },
+    "azure-uamqp-c",
     {
       "name": "vcpkg-cmake",
       "host": true
