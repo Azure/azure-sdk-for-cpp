@@ -122,7 +122,7 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
       throw std::runtime_error("Unexpected body type");
     }
 
-    auto const&body = result.Message.GetBodyAsAmqpValue();
+    auto const& body = result.Message.GetBodyAsAmqpValue();
     if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
     {
       throw std::runtime_error("Unexpected body type");

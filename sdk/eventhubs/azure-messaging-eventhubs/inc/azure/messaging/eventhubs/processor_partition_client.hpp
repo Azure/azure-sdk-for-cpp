@@ -109,7 +109,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
              sequenceNumber,
              offsetNumber};
 
-      m_checkpointStore->UpdateCheckpoint(checkpoint, options,ctx);
+      m_checkpointStore->UpdateCheckpoint(checkpoint, options, ctx);
     }
 
     std::string GetPartitionId() { return m_partitionId; }
