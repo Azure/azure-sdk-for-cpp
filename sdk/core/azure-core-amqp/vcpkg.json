@@ -3,10 +3,7 @@
   "version-string": "1.0.0-beta.1",
   "supports": "!uwp",
   "dependencies": [
-    {
-      "name": "azure-core-cpp",
-      "default-features": false
-    },
+    "azure-core-cpp",
     {
       "name": "azure-uamqp-c",
       "platform": "!uwp"
