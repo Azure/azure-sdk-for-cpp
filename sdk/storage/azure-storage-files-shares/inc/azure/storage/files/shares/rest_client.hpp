@@ -324,7 +324,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ShareItemDetails final
     {
-      /** The time the item was last modified. */
+      /**
+       * The date and time the share was last modified.
+       */
       DateTime LastModified;
       /**
        * The ETag contains a value which represents the version of the share, in quotes.
@@ -335,18 +337,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The Quota for the item.
        */
       int64_t Quota = int64_t();
-
-      /** Provisioned Iops */
+      /**
+       * Provisioned Iops.
+       */
       Nullable<int32_t> ProvisionedIops;
-      /** Provisioned Ingress MBps */
+      /**
+       * Provisioned Ingress MBps.
+       */
       Nullable<int32_t> ProvisionedIngressMBps;
-      /** Provisioned Egress MBps */
+      /**
+       * Provisioned Egress MBps.
+       */
       Nullable<int32_t> ProvisionedEgressMBps;
-      /** Provisioned Bandwidth MBps */
+      /**
+       * Provisioned Bandwidth MBps.
+       */
       Nullable<int32_t> ProvisionedBandwidthMBps;
-      /** Next allowed Quota Downgrade Time */
+      /**
+       * Next allowed Quota Downgrade Time.
+       */
       Nullable<DateTime> NextAllowedQuotaDowngradeTime;
-      /** Time the item was deleted. */
+      /**
+       * Time the item was deleted.
+       */
       Nullable<DateTime> DeletedOn;
 
       /**
@@ -395,13 +408,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ShareItem final
     {
-      /** @brief The name of the item */
+      /**
+       * The name of the share.
+       */
       std::string Name;
-      /** @brief The snapshot of the share. */
+      /**
+       * The snapshot of the share.
+       */
       std::string Snapshot;
-      /** @brief True if the item is deleted. */
+      /**
+       * True if the share is deleted.
+       */
       bool Deleted = bool();
-      /** @brief The version of the item. */
+      /**
+       * The version of the share.
+       */
       std::string Version;
       /**
        * A set of name-value pairs associated with the share or file.
@@ -918,26 +939,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         *this = *this ^ other;
         return *this;
       }
-      /** @brief The file is Read Only */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
-      /** @brief The file is Hidden */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
-      /** @brief The file is System */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
-      /** @brief The file has no attributes */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
-      /** @brief The file is a directory */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
-      /** @brief The file is an archive */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
-      /** @brief The file is temporary */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
-      /** @brief The file is offline */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
-      /** @brief The file is not content indexed */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
-      /** @brief The file has no scrub data */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
+    /** @brief The file is Read Only */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
+    /** @brief The file is Hidden */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
+    /** @brief The file is System */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
+    /** @brief The file has no attributes */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
+    /** @brief The file is a directory */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
+    /** @brief The file is an archive */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
+    /** @brief The file is temporary */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
+    /** @brief The file is offline */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
+    /** @brief The file is not content indexed */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
+    /** @brief The file has no scrub data */
+    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
 
     private:
       std::vector<std::string> m_value;
@@ -1096,17 +1117,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryItemDetails final
     {
       /**
-       * The time the file was last accessed.
+       * The time the directory was last accessed.
        */
       Nullable<DateTime> LastAccessedOn;
 
       /**
-       * The date and time the file was last modified.
+       * The date and time the directory was last modified.
        */
       DateTime LastModified;
 
       /**
-       * The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the directory, in quotes.
        */
       ETag Etag;
       /**
@@ -1453,9 +1474,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     private:
       std::string m_value;
     };
-
     /**
-     * @brief Details of a downloaded file.
+     * @brief Detailed information of the downloaded file.
      */
     struct DownloadFileDetails final
     {
@@ -1475,8 +1495,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Core::CaseInsensitiveMap Metadata;
       /**
-       *  String identifier for this copy operation. Use with Get File Properties to check the
-       * status of this copy operation, or pass to Abort Copy File to abort a pending copy.
+       * String identifier for this copy operation. Use with Get File Properties to check the status
+       * of this copy operation, or pass to Abort Copy File to abort a pending copy.
        */
       Nullable<std::string> CopyId;
       /**
@@ -1553,7 +1573,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Core::Http::HttpRange ContentRange;
 
       /**
-       * Indicates the size of the file
+       * Size of the file in bytes.
        */
       int64_t FileSize = int64_t();
       /**
@@ -1566,7 +1586,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileHttpHeaders HttpHeaders;
 
       /**
-       * The downloaded file details.
+       * Detailed information of the downloaded file.
        */
       DownloadFileDetails Details;
     };

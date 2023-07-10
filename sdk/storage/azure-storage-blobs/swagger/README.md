@@ -1735,6 +1735,7 @@ directive:
 ```
 
 ### Description
+
 ```yaml
 directive:
   - from: swagger-document

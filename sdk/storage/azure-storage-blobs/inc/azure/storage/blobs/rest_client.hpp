@@ -1652,8 +1652,8 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<int32_t> TagCount;
       /**
-       *  String identifier for this copy operation. Use with Get Blob Properties to check the
-       * status of this copy operation, or pass to Abort Copy Blob to abort a pending copy.
+       * String identifier for this copy operation. Use with Get Blob Properties to check the status
+       * of this copy operation, or pass to Abort Copy Blob to abort a pending copy.
        */
       Nullable<std::string> CopyId;
       /**

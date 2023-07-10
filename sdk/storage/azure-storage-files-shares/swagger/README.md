@@ -79,8 +79,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2023-01-03"],
-        "description": "The version used for the operations to Azure storage services."
+        "enum": ["2023-01-03"]
       };
   - from: swagger-document
     where: $.parameters
@@ -239,21 +238,19 @@ directive:
         "x-ms-enum": {
           "name": "FileAttributes",
           "modelAsString": false
-        },
-        "description": "Attributes for a file or directory."
+        }
       };
       $.FileSmbProperties = {
         "type": "object",
         "properties": {
-          "PermissionKey": {"type": "string", "x-nullable": true, "description": "Permission key for the directory or file."},
-          "Attributes": {"$ref": "#/definitions/FileAttributes", "description": "Attributes for the file or directory."},
-          "CreatedOn": {"type": "string", "format": "date-time", "x-nullable": true, "description": "Creation time for the file or directory."},
-          "LastWrittenOn": {"type": "string", "format": "date-time", "x-nullable": true, "description": "Last write time for the file or directory."},
-          "ChangedOn": {"type": "string", "format": "date-time", "x-nullable": true, "description": "Changed time for the file or directory."},
-          "FileId": {"type": "string", "description": "The fileId of the file."},
-          "ParentFileId": {"type": "string", "description": "The parentId of the file."}
-        },
-        "description": "The SMB related properties for the file."
+          "PermissionKey": {"type": "string", "x-nullable": true},
+          "Attributes": {"$ref": "#/definitions/FileAttributes"},
+          "CreatedOn": {"type": "string", "format": "date-time", "x-nullable": true},
+          "LastWrittenOn": {"type": "string", "format": "date-time", "x-nullable": true},
+          "ChangedOn": {"type": "string", "format": "date-time", "x-nullable": true},
+          "FileId": {"type": "string"},
+          "ParentFileId": {"type": "string"}
+        }
       };
       $.AccessTier = {
         "type": "string",
@@ -261,18 +258,16 @@ directive:
         "x-ms-enum": {
           "name": "AccessTier",
           "modelAsString": false
-        },
-        "description": "Specifies the access tier of the share."
+        }
       };
-      $.Metadata = {"type": "object", "x-ms-format": "caseinsensitivemap", properties: {"__placeHolder" : {"type": "integer"}}, "description": "A set of name-value pairs associated with the share or file."};
+      $.Metadata = {"type": "object", "x-ms-format": "caseinsensitivemap", properties: {"__placeHolder" : {"type": "integer"}}};
       $.CopyStatus = {
         "type": "string",
         "enum": ["pending", "success", "aborted", "failed"],
         "x-ms-enum": {
           "name": "CopyStatus",
           "modelAsString": false
-        },
-        "description": "Status of a copy operation."
+        }
       };
       $.HashAlgorithm = {
         "type": "string",
@@ -296,14 +291,13 @@ directive:
       $.FileHttpHeaders = {
         "type": "object",
         "properties": {
-          "Content-Type": {"type": "string", "description": "MIME content type of the file."},
-          "Content-Encoding": {"type": "string", "description": "Specifies which content encodings have been applied to the file."},
-          "Content-Language": {"type": "string", "description": "Specifies the natural languages used by this file."},
-          "Content-Hash": {"$ref": "#/definitions/ContentHash", "x-ms-xml": {"name": "."}, "description": "Hash of the file content."},
-          "Content-Disposition": {"type": "string", "description": "Conveys additional information about how to process the resource payload, and also can be used to attach additional metadata." },
-          "Cache-Control": {"type": "string", "description": "Specifies directives for caching mechanisms." }
-        },
-        "description": "Standard HTTP properties supported files."
+          "Content-Type": {"type": "string"},
+          "Content-Encoding": {"type": "string"},
+          "Content-Language": {"type": "string"},
+          "Content-Hash": {"$ref": "#/definitions/ContentHash", "x-ms-xml": {"name": "."}},
+          "Content-Disposition": {"type": "string"},
+          "Cache-Control": {"type": "string"}
+        }
       };
       $.SharePermission["x-namespace"] = "_detail";
       $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
@@ -385,14 +379,12 @@ directive:
       $.headers["Last-Modified"]["x-ms-client-default"] = "";
       $.headers["Last-Modified"]["x-nullable"] = true;
       $.schema = {
-        "description": "Stats for the share.",
         "type": "object",
         "x-ms-sealed": false,
         "x-ms-client-name": "ShareStatistics",
         "xml": {"name": "ShareStats"},
         "properties": {
           "ShareUsageBytes": {
-            "description": "The approximate size of the data stored in bytes. Note that this value may not include all recently created or recently resized files.",
             "type": "integer",
             "format": "int64",
             "x-ms-client-name": "ShareUsageInBytes"
@@ -439,7 +431,7 @@ directive:
         "x-ms-client-name": "CreateShareResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the share was successfully created by this operation."}
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -462,8 +454,6 @@ directive:
       $["x-ms-access-tier-change-time"]["x-nullable"] = true;
       $["x-ms-access-tier-change-time"]["x-ms-client-name"] = "AccessTierChangedOn";
       $["x-ms-access-tier-transition-state"]["x-nullable"] = true;
-      $["x-ms-access-tier-transition-state"].description = "Returns the transition state between access tiers, when present.";
-      $["x-ms-share-provisioned-iops"].description = "Returns the current share provisioned IOPS.";
       $["x-ms-share-provisioned-bandwidth-mibps"]["x-nullable"] = true;
       $["x-ms-share-provisioned-bandwidth-mibps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
       $["x-ms-enabled-protocols"]["x-nullable"] = true;
@@ -523,7 +513,7 @@ directive:
         "x-ms-client-name": "DeleteShareResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the share was successfully deleted by this operation."},
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}},
         }
       };
 ```
@@ -589,7 +579,6 @@ directive:
       delete $.HandleItem.required;
       $.HandleItem.properties["OpenTime"]["x-ms-client-name"] = "OpenedOn";
       $.HandleItem.properties["LastReconnectTime"]["x-ms-client-name"] = "LastReconnectedOn";
-      $.HandleItem.properties["Path"]["description"] = "File or directory name including full path starting from share root.";
       $.HandleItem["x-namespace"] = "_detail";
       delete $.ListHandlesResponse.properties.HandleList["xml"];
       $.ListHandlesResponse.properties.HandleList["x-ms-xml"] = {"name": "Entries", "wrapped": true};
@@ -636,7 +625,7 @@ directive:
         "x-ms-client-name": "CreateDirectoryResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the directory was successfully created by this operation."},
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}},
           "SmbProperties": {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": ""}}
         }
       };
@@ -654,7 +643,7 @@ directive:
         "x-ms-client-name": "DeleteDirectoryResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the directory was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -726,7 +715,7 @@ directive:
         "x-ms-client-name": "CreateFileResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the file was successfully created by this operation."},
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}},
           "SmbProperties": {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": ""}}
         }
       };
@@ -816,16 +805,16 @@ directive:
         "type": "object",
         "required":  ["ETag", "LastModified", "IsServerEncrypted", "SmbProperties"],
         "properties": {
-          "ETag": {"type": "string", "format": "etag", "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."},
-          "LastModified": {"type": "string", "format": "date-time-rfc1123", "description": "Returns the date and time the file was last modified. Any operation that modifies the file, including an update of the file's metadata or properties, changes the last-modified time of the file."},
+          "ETag": {"type": "string", "format": "etag"},
+          "LastModified": {"type": "string", "format": "date-time-rfc1123"},
           "Metadata": {"$ref": "#/definitions/Metadata"},
-          "CopyId": {"type": "string", "description": " String identifier for this copy operation. Use with Get File Properties to check the status of this copy operation, or pass to Abort Copy File to abort a pending copy."},
-          "CopySource": {"type": "string", "description": "URL up to 2 KB in length that specifies the source file or file used in the last attempted Copy File operation where this file was the destination file. This header does not appear if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List."},
+          "CopyId": {"type": "string"},
+          "CopySource": {"type": "string"},
           "CopyStatus": {"$ref": "#/definitions/CopyStatus"},
-          "CopyStatusDescription": {"type": "string", "description": "Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List"},
-          "CopyProgress": {"type": "string", "description": "Contains the number of bytes copied and the total bytes in the source in the last attempted Copy File operation where this file was the destination file. Can show between 0 and Content-Length bytes copied. This header does not appear if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List"},
-          "CopyCompletedOn": {"type": "string", "format": "date-time-rfc1123", "description": "Conclusion time of the last attempted Copy File operation where this file was the destination file. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List."},
-          "IsServerEncrypted": {"type": "boolean", "description": "True if the file data and metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the file is unencrypted, or if only parts of the file/application metadata are encrypted)."},
+          "CopyStatusDescription": {"type": "string"},
+          "CopyProgress": {"type": "string"},
+          "CopyCompletedOn": {"type": "string", "format": "date-time-rfc1123"},
+          "IsServerEncrypted": {"type": "boolean"},
           "SmbProperties": {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": ""}},
           "LeaseDuration": {"$ref": "#/definitions/LeaseDuration"},
           "LeaseState": {"$ref": "#/definitions/LeaseState"},
@@ -836,10 +825,10 @@ directive:
         "type": "object",
         "x-ms-sealed": false,
         "properties": {
-          "BodyStream": {"type": "object", "format": "file", "description": "Content of the file or file range."},
-          "ContentRange": {"$ref": "#/definitions/ContentRange", "x-ms-xml": {"name": ""}, "description": "Indicates the range of bytes returned."},
+          "BodyStream": {"type": "object", "format": "file"},
+          "ContentRange": {"$ref": "#/definitions/ContentRange", "x-ms-xml": {"name": ""}},
           "FileSize": {"type": "integer", "format": "int64", "x-ms-xml": {"name": ""}},
-          "TransactionalContentHash": {"$ref": "#/definitions/ContentHash", "x-nullable": true, "x-ms-xml": {"name": ""}, "description": "MD5 hash for the downloaded range of data."},
+          "TransactionalContentHash": {"$ref": "#/definitions/ContentHash", "x-nullable": true, "x-ms-xml": {"name": ""}},
           "HttpHeaders": {"$ref": "#/definitions/FileHttpHeaders", "x-ms-xml": {"name": ""}},
           "Details": {"$ref": "#/definitions/DownloadFileDetails", "x-ms-xml": {"name": ""}}
         }
@@ -901,7 +890,7 @@ directive:
         "x-ms-client-name": "DeleteFileResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the file was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -1012,4 +1001,105 @@ directive:
       $["x-ms-file-creation-time"].format = "date-time";
       $["x-ms-file-last-write-time"].format = "date-time";
       $["x-ms-file-change-time"].format = "date-time";
+```
+
+### Description
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.ApiVersion.description = "The version used for the operations to Azure storage services.";
+      $.FileAttributes.description = "Attributes for a file or directory.";
+      $.FileSmbProperties.properties["PermissionKey"].description = "Permission key for the directory or file.";
+      $.FileSmbProperties.properties["Attributes"].description = "Attributes for the file or directory.";
+      $.FileSmbProperties.properties["CreatedOn"].description = "Creation time for the file or directory.";
+      $.FileSmbProperties.properties["LastWrittenOn"].description = "Last write time for the file or directory.";
+      $.FileSmbProperties.properties["ChangedOn"].description = "Changed time for the file or directory.";
+      $.FileSmbProperties.properties["FileId"].description = "The fileId of the file.";
+      $.FileSmbProperties.properties["ParentFileId"].description = "The parentId of the file.";
+      $.FileSmbProperties.description = "The SMB related properties for the file.";
+      $.AccessTier.description = "Specifies the access tier of the share.";
+      $.Metadata.description = "A set of name-value pairs associated with the share or file.";
+      $.CopyStatus.description = "Status of a copy operation.";
+      $.FileHttpHeaders.properties["Content-Type"].description = "MIME content type of the file.";
+      $.FileHttpHeaders.properties["Content-Encoding"].description = "Specifies which content encodings have been applied to the file.";
+      $.FileHttpHeaders.properties["Content-Language"].description = "Specifies the natural languages used by this file.";
+      $.FileHttpHeaders.properties["Content-Hash"].description = "Hash of the file content.";
+      $.FileHttpHeaders.properties["Content-Disposition"].description = "Conveys additional information about how to process the resource payload, and also can be used to attach additional metadata.";
+      $.FileHttpHeaders.properties["Cache-Control"].description = "Specifies directives for caching mechanisms.";
+      $.FileHttpHeaders.description = "Standard HTTP properties supported files.";
+      $.HandleItem.properties["Path"]["description"] = "File or directory name including full path starting from share root.";
+      $.DownloadFileDetails.properties["ETag"].description = "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.";
+      $.DownloadFileDetails.properties["LastModified"].description = "Returns the date and time the file was last modified. Any operation that modifies the file, including an update of the file's metadata or properties, changes the last-modified time of the file.";
+      $.DownloadFileDetails.properties["CopyId"].description = "String identifier for this copy operation. Use with Get File Properties to check the status of this copy operation, or pass to Abort Copy File to abort a pending copy.";
+      $.DownloadFileDetails.properties["CopySource"].description = "URL up to 2 KB in length that specifies the source file or file used in the last attempted Copy File operation where this file was the destination file. This header does not appear if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List.";
+      $.DownloadFileDetails.properties["CopyStatusDescription"].description = "Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List.";
+      $.DownloadFileDetails.properties["CopyProgress"].description = "Contains the number of bytes copied and the total bytes in the source in the last attempted Copy File operation where this file was the destination file. Can show between 0 and Content-Length bytes copied. This header does not appear if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List.";
+      $.DownloadFileDetails.properties["CopyCompletedOn"].description = "Conclusion time of the last attempted Copy File operation where this file was the destination file. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this file has never been the destination in a Copy File operation, or if this file has been modified after a concluded Copy File operation using Set File Properties, Put File, or Put Block List.";
+      $.DownloadFileDetails.properties["IsServerEncrypted"].description = "True if the file data and metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the file is unencrypted, or if only parts of the file/application metadata are encrypted).";
+      $.DownloadFileDetails.description = "Detailed information of the downloaded file.";
+      $.DownloadFileResult.properties["BodyStream"].description = "Content of the file or file range.";
+      $.DownloadFileResult.properties["ContentRange"].description = "Indicates the range of bytes returned.";
+      $.DownloadFileResult.properties["TransactionalContentHash"].description = "MD5 hash for the downloaded range of data.";
+      $.DownloadFileResult.properties["FileSize"].description = "Size of the file in bytes.";
+      $.ShareItemDetails.properties["Etag"].description = "The ETag contains a value which represents the version of the share, in quotes.";
+      $.ShareItemDetails.properties["Quota"].description = "The Quota for the item.";
+      $.ShareItemDetails.properties["ProvisionedIops"].description = "Provisioned Iops";
+      $.ShareItemDetails.properties["ProvisionedIngressMBps"].description = "Provisioned Ingress MBps";
+      $.ShareItemDetails.properties["ProvisionedEgressMBps"].description = "Provisioned Egress MBps";
+      $.ShareItemDetails.properties["ProvisionedBandwidthMiBps"].description = "Provisioned Bandwidth MBps";
+      $.ShareItemDetails.properties["NextAllowedQuotaDowngradeTime"].description = "Next allowed Quota Downgrade Time";
+      $.ShareItemDetails.properties["DeletedTime"].description = "Time the item was deleted.";
+      $.ShareItemDetails.properties["RemainingRetentionDays"].description = "Remaining retention days.";
+      $.ShareItemDetails.properties["AccessTierChangeTime"].description = "Indicates the time the access tier was last changed.";
+      $.ShareItemDetails.properties["AccessTierTransitionState"].description = "Indicates the access tier transition state.";
+      $.ShareItemDetails.properties["EnabledProtocols"].description = "The protocols which have been enabled on the share.";
+      $.ShareItemDetails.properties["RootSquash"].description = "Root squash to set on the share.  Only valid for NFS shares.";
+      $.ShareItemDetails.properties["Last-Modified"].description = "The date and time the share was last modified.";
+      $.ShareItemInternal.properties["Name"].description = "The name of the share.";
+      $.ShareItemInternal.properties["Snapshot"].description = "The snapshot of the share.";
+      $.ShareItemInternal.properties["Deleted"].description = "True if the share is deleted.";
+      $.ShareItemInternal.properties["Version"].description = "The version of the share";
+      $.FileItemDetails.properties["LastAccessTime"].description = "The time the file was last accessed.";
+      $.FileItemDetails.properties["Last-Modified"].description = "The date and time the file was last modified.";
+      $.FileItemDetails.properties["Etag"].description = "The ETag contains a value which represents the version of the file, in quotes.";
+      $.DirectoryItemDetails.properties["LastAccessTime"].description = "The time the directory was last accessed.";
+      $.DirectoryItemDetails.properties["Last-Modified"].description = "The date and time the directory was last modified.";
+      $.DirectoryItemDetails.properties["Etag"].description = "The ETag contains a value which represents the version of the directory, in quotes.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=stats"].get.responses["200"]
+    transform: >
+      $.schema.properties["ShareUsageBytes"].description = "The approximate size of the data stored in bytes. Note that this value may not include all recently created or recently resized files.";
+      $.schema.description = "Stats for the share.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share"].put.responses["201"]
+    transform: >
+      $.schema.properties["Created"].description = "Indicates if the share was successfully created by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"].headers
+    transform: >
+      $["x-ms-access-tier-transition-state"].description = "Returns the transition state between access tiers, when present.";
+      $["x-ms-share-provisioned-iops"].description = "Returns the current share provisioned IOPS.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share"].delete.responses["202"]
+    transform: >
+      $.schema.properties["Deleted"].description = "Indicates if the share was successfully deleted by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory"].put.responses["201"]
+    transform: >
+      $.schema.properties["Created"].description = "Indicates if the directory was successfully created by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory"].delete.responses["202"]
+    transform: >
+      $.schema.properties["Deleted"].description = "Indicates if the directory was successfully deleted by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].put.responses["201"]
+    transform: >
+      $.schema.properties["Created"].description = "Indicates if the file was successfully created by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].delete.responses["202"]
+    transform: >
+      $.schema.properties["Deleted"].description = "Indicates if the file was successfully deleted by this operation.";
 ```

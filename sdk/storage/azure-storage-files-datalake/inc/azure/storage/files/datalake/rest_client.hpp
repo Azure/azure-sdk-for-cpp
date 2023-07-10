@@ -69,9 +69,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::string m_value;
       };
     } // namespace _detail
-
     /**
-     * @brief The type of public access.
+     * @brief Specifies whether data in the file system may be accessed publicly and the level of
+     * access.
      */
     class PublicAccessType final {
     public:

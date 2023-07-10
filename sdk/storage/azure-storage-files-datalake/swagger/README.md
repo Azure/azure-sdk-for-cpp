@@ -88,8 +88,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2021-06-08"],
-        "description": "The version used for the operations to Azure storage services."
+        "enum": ["2021-06-08"]
       };
   - from: swagger-document
     where: $.parameters
@@ -268,7 +267,7 @@ directive:
         "x-ms-client-name": "CreatePathResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": "", "description": "Indicates if the file or directory was successfully created by this operation."}
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": ""}
         }
       };
 ```
@@ -301,7 +300,7 @@ directive:
         "x-ms-client-name": "DeletePathResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": "", "description": "Indicates if the file or directory was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": ""}
         }
       };
 ```
@@ -393,11 +392,6 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
-      $.AclFailedEntry.description = "The failed entry when setting the Acl.";
-      $.AclFailedEntry.properties["name"].description = "Name of the failed entry.";
-      $.AclFailedEntry.properties["type"].description = "Type of the entry.";
-      $.AclFailedEntry.properties["errorMessage"].description = "Error message for the failure.";
-
       $.SetAccessControlRecursiveResponse["x-ms-client-name"] = "SetAccessControlListRecursiveResult";
       $.SetAccessControlRecursiveResponse["x-namespace"] = "_detail";
       $.SetAccessControlRecursiveResponse["x-ms-sealed"] = false;
@@ -455,4 +449,27 @@ directive:
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
+```
+
+### Description
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.ApiVersion.description = "The version used for the operations to Azure storage services.";
+      $.AclFailedEntry.description = "The failed entry when setting the Acl.";
+      $.AclFailedEntry.properties["name"].description = "Name of the failed entry.";
+      $.AclFailedEntry.properties["type"].description = "Type of the entry.";
+      $.AclFailedEntry.properties["errorMessage"].description = "Error message for the failure.";
+      $.PublicAccessType.description = "Specifies whether data in the file system may be accessed publicly and the level of access.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}"].put.responses
+    transform: >
+      $["201"].schema.properties["Created"].description = "Indicates if the file or directory was successfully created by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}"].delete.responses
+    transform: >
+      $["200"].schema.properties["Deleted"].description = "Indicates if the file or directory was successfully deleted by this operation.";
 ```
