@@ -8,11 +8,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-common",
   "license": "MIT",
   "dependencies": [
-    {
-      "name": "azure-core-cpp",
-      "default-features": false,
-      "version>=": "1.9.0"
-    },
+    "azure-core-cpp",
     {
       "name": "libxml2",
       "platform": "!windows"
