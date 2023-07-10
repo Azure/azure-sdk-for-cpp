@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
 
 #include <gtest/gtest.h>
 
 using json = Azure::Core::Json::_internal::json;
+
+using namespace Azure::Core::Json::_internal;
 
 // Just a simple test to ensure that Azure Core internal is wrapping nlohmann json
 TEST(Json, create)
@@ -15,6 +18,16 @@ TEST(Json, create)
   std::string expected("{\"pi\":3.141}");
 
   EXPECT_EQ(expected, j.dump());
+}
+
+TEST(Json, customExceptionsDontEscape)
+{
+  json jsonRoot = json::parse(R"({"KeyName": 1, "AnotherObject": {"KeyName": 2}})");
+  Azure::Nullable<std::string> dest;
+
+  // Setting a number field to string results in a type mismatch error.
+  EXPECT_THROW(
+      JsonOptional::SetIfExists(dest, jsonRoot["AnotherObject"], "KeyName"), std::runtime_error);
 }
 
 TEST(Json, duplicateName)

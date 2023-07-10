@@ -37,11 +37,24 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
     static inline void SetIfExists(
         Azure::Nullable<T>& destination,
         Azure::Core::Json::_internal::json const& jsonKey,
-        std::string const& key) noexcept
+        std::string const& key)
     {
       if (jsonKey.contains(key) && !jsonKey[key].is_null()) // In Json and not-Null
       {
-        destination = jsonKey[key].get<T>();
+        try
+        {
+          destination = jsonKey[key].get<T>();
+        }
+        catch (std::exception const& e)
+        {
+          // Catch the Azure::Core::Json::_internal::detail::type_error thrown by the 3rd party
+          // library which we don't want to expose.
+          throw std::runtime_error(
+              std::string(
+                  "Could not find required field '" + key + "' of type '" + typeid(T).name()
+                  + "'. ")
+              + e.what());
+        }
       }
     }
 
