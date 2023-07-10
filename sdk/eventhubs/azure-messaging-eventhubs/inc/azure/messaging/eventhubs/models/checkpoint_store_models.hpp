@@ -13,8 +13,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /**@brief  Ownership tracks which consumer owns a particular partition.
    */
-  class Ownership final
-  {
+  class Ownership final {
   public:
     /// @brief The consumer group name.
     std::string ConsumerGroup;
