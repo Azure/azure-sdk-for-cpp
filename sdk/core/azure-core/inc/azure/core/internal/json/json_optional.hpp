@@ -55,9 +55,8 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
                   + "'. ")
               + e.what());
         }
-        throw std::runtime_error(
-            std::string(
-                "Could not find required field '" + key + "' of type '" + typeid(T).name() + "'. "));
+        throw std::runtime_error(std::string(
+            "Could not find required field '" + key + "' of type '" + typeid(T).name() + "'. "));
       }
     }
 

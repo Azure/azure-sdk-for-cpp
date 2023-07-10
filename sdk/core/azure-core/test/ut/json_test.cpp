@@ -24,7 +24,7 @@ TEST(Json, customExceptionsDontEscape)
 {
   json jsonRoot = json::parse(R"({"KeyName": 1, "AnotherObject": {"KeyName": 2}})");
   Azure::Nullable<std::string> dest;
-
+  JsonOptional::SetIfExists(dest, jsonRoot["AnotherObject"], "KeyName");
   // Setting a number field to string results in a type mismatch error.
   EXPECT_THROW(
       JsonOptional::SetIfExists(dest, jsonRoot["AnotherObject"], "KeyName"), std::runtime_error);
