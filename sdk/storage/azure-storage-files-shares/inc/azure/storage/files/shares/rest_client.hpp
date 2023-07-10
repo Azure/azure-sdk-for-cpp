@@ -939,26 +939,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         *this = *this ^ other;
         return *this;
       }
-    /** @brief The file is Read Only */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
-    /** @brief The file is Hidden */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
-    /** @brief The file is System */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
-    /** @brief The file has no attributes */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
-    /** @brief The file is a directory */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
-    /** @brief The file is an archive */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
-    /** @brief The file is temporary */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
-    /** @brief The file is offline */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
-    /** @brief The file is not content indexed */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
-    /** @brief The file has no scrub data */
-    AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
+      /** @brief The file is Read Only */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
+      /** @brief The file is Hidden */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
+      /** @brief The file is System */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
+      /** @brief The file has no attributes */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
+      /** @brief The file is a directory */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
+      /** @brief The file is an archive */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
+      /** @brief The file is temporary */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
+      /** @brief The file is offline */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
+      /** @brief The file is not content indexed */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
+      /** @brief The file has no scrub data */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
 
     private:
       std::vector<std::string> m_value;
