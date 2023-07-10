@@ -32,8 +32,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// ownership has expired.
     Azure::Nullable<Azure::DateTime> LastModifiedTime{};
 
+    /// @brief The blob storage name for this ownership.
     std::string GetOwnershipName() const;
 
+    /// @brief The blob storage name prefix for this ownership.
     std::string GetOwnershipPrefixName() const;
   };
 
@@ -54,8 +56,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The sequence number of the last successfully processed event.
     Azure::Nullable<int64_t> SequenceNumber{};
 
+    /// @brief Returns the prefix for the name of the blob that stores the checkpoint.
     std::string GetCheckpointBlobPrefixName() const;
 
+    /// @brief Returns the name of the blob that stores the checkpoint.
     std::string GetCheckpointBlobName() const;
   };
 }}}} // namespace Azure::Messaging::EventHubs::Models
