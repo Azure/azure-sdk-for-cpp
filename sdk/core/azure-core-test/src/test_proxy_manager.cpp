@@ -228,7 +228,7 @@ void TestProxyManager::SetProxySanitizer()
     {
       "key": "Location",
       "value": "REDACTED",
-      "regex": "client_secret=(?<clientsecret>[a-zA-Z0-9\\%]+).",
+      "regex": "client_secret=(?<clientsecret>[a-zA-Z0-9\\%]+)",
       "groupForReplace": "clientsecret"
     }
     )json";
