@@ -31,6 +31,10 @@ namespace Azure { namespace Storage { namespace _internal {
       Azure::Core::Http ::Request& request,
       Azure::Core::Context const& context) const
   {
+    if (!m_enableTenantDiscovery)
+    {
+      return false;
+    }
     std::string authorizationUri
         = Azure::Core::Credentials::_internal::AuthorizationChallengeParser::GetChallengeParameter(
             challenge, "Bearer", "authorization_uri");
