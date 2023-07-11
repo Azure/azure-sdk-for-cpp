@@ -386,6 +386,26 @@ directive:
 ```
 
 ### SetAccessControlListRecursive
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.SetPathAccessControlListResult = {
+        "type": "object",
+        "x-ms-client-name": "SetPathAccessControlListResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?action=setAccessControl"].patch.responses["200"]
+    transform: >
+      $.schema = {"$ref": "#/definitions/SetPathAccessControlListResult"};
+```
+
+### SetAccessControlListRecursive
 
 ```yaml
 directive:
@@ -426,6 +446,17 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.AppendFileResult = {
+        "type": "object",
+        "x-ms-client-name": "AppendFileResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}?action=append"].patch.responses["202"].headers
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
@@ -436,6 +467,10 @@ directive:
       $["x-ms-lease-renewed"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
       delete $["ETag"];
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?action=append"].patch.responses["202"]
+    transform: >
+      $.schema = {"$ref": "#/definitions/AppendFileResult"};
 ```
 
 ### FlushFile
@@ -443,12 +478,24 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"].headers
+    where: $.definitions
     transform: >
-      $["Content-Length"]["x-ms-client-name"] = "FileSize";
-      $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
-      $["x-ms-lease-renewed"]["x-nullable"] = true;
-      $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
+      $.FlushFileResult = {
+        "type": "object",
+        "x-ms-client-name": "FlushFileResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"]
+    transform: >
+      $.headers["Content-Length"]["x-ms-client-name"] = "FileSize";
+      $.headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
+      $.headers["x-ms-lease-renewed"]["x-nullable"] = true;
+      $.headers["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
+      $.schema = {"$ref": "#/definitions/FlushFileResult"};
 ```
 
 ### Description
@@ -464,12 +511,17 @@ directive:
       $.AclFailedEntry.properties["type"].description = "Type of the entry.";
       $.AclFailedEntry.properties["errorMessage"].description = "Error message for the failure.";
       $.PublicAccessType.description = "Specifies whether data in the file system may be accessed publicly and the level of access.";
+      $.SetPathAccessControlListResult.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::SetAccessControlList.";
+      $.FlushFileResult.description = "Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Flush.";
+      $.AppendFileResult.description = "Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Append.";
   - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}"].put.responses
     transform: >
       $["201"].schema.properties["Created"].description = "Indicates if the file or directory was successfully created by this operation.";
+      $["201"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Create.";
   - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}"].delete.responses
     transform: >
       $["200"].schema.properties["Deleted"].description = "Indicates if the file or directory was successfully deleted by this operation.";
+      $["200"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.";
 ```

@@ -588,6 +588,27 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/BlobServiceProperties";
 ```
 
+### SetBlobServiceProperties
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.SetServicePropertiesResult = {
+        "type": "object",
+        "x-ms-client-name": "SetServicePropertiesResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/?restype=service&comp=properties"]
+    transform: >
+      $.put.responses["202"].schema = {"$ref": "#/definitions/SetServicePropertiesResult"};
+```
+
 ### GetServiceStatistics 
 
 ```yaml
@@ -662,6 +683,21 @@ directive:
 
 ```yaml
 directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.AccountInfo = {
+        "type": "object",
+        "x-ms-client-name": "AccountInfo",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/?restype=account&comp=properties"].get.responses["200"]
+    transform: >
+        $.schema = {"$ref": "#/definitions/AccountInfo"};
   - from: swagger-document
     where: $["x-ms-paths"]["/?restype=account&comp=properties"].get.responses["200"].headers["x-ms-sku-name"]
     transform: >
@@ -1844,6 +1880,8 @@ directive:
       $.ArrowField.properties["Precision"].description = "Precision of the field.";
       $.ArrowField.properties["Scale"].description = "Scale of the field.";
       $.QueryBlobResult.properties["BodyStream"].description = "The response body stream.";
+      $.SetServicePropertiesResult.description = "Response type for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.";
+      $.AccountInfo.description = "Response type for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.";
   - from: swagger-document
     where: $.parameters
     transform: >

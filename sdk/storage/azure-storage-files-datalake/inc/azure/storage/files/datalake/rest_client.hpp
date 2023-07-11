@@ -33,11 +33,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       class PathRenameMode final {
       public:
         PathRenameMode() = default;
+        /** Construct a new PathRenameMode from a string. */
         explicit PathRenameMode(std::string value) : m_value(std::move(value)) {}
+        /** Compare with another PathRenameMode. */
         bool operator==(const PathRenameMode& other) const { return m_value == other.m_value; }
+        /** Compare with another PathRenameMode. */
         bool operator!=(const PathRenameMode& other) const { return !(*this == other); }
+        /** Convert the value to a string. */
         const std::string& ToString() const { return m_value; }
+        /** Constant value of type PathRenameMode: Legacy */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
+        /** Constant value of type PathRenameMode: Posix */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Posix;
 
       private:
@@ -46,22 +52,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       class PathSetAccessControlListRecursiveMode final {
       public:
         PathSetAccessControlListRecursiveMode() = default;
+        /** Construct a new PathSetAccessControlListRecursiveMode from a string. */
         explicit PathSetAccessControlListRecursiveMode(std::string value)
             : m_value(std::move(value))
         {
         }
+        /** Compare with another PathSetAccessControlListRecursiveMode. */
         bool operator==(const PathSetAccessControlListRecursiveMode& other) const
         {
           return m_value == other.m_value;
         }
+        /** Compare with another PathSetAccessControlListRecursiveMode. */
         bool operator!=(const PathSetAccessControlListRecursiveMode& other) const
         {
           return !(*this == other);
         }
+        /** Convert the value to a string. */
         const std::string& ToString() const { return m_value; }
+        /** Constant value of type PathSetAccessControlListRecursiveMode: Set */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode Set;
+        /** Constant value of type PathSetAccessControlListRecursiveMode: Modify */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
             Modify;
+        /** Constant value of type PathSetAccessControlListRecursiveMode: Remove */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
             Remove;
 
@@ -78,17 +91,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       PublicAccessType() = default;
       /** Construct a new PublicAccessType from a string. */
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
-      /** Compare two values for equality. */
+      /** Compare with another PublicAccessType. */
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
-      /** Compare two values for inequality. */
+      /** Compare with another PublicAccessType. */
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
       /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** AccessType None. */
+      /** Constant value of type PublicAccessType: None */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType None;
-      /** AccessType FileSystem. */
+      /** Constant value of type PublicAccessType: FileSystem */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType FileSystem;
-      /** AccessType Path. */
+      /** Constant value of type PublicAccessType: Path */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType Path;
 
     private:
@@ -138,17 +151,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     class PathResourceType final {
     public:
       PathResourceType() = default;
-      /** @brief Construct a new PathResourceType from a string. */
+      /** Construct a new PathResourceType from a string. */
       explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
-      /** Compare two values for equality. */
+      /** Compare with another PathResourceType. */
       bool operator==(const PathResourceType& other) const { return m_value == other.m_value; }
-      /** Compare two values for inequality. */
+      /** Compare with another PathResourceType. */
       bool operator!=(const PathResourceType& other) const { return !(*this == other); }
       /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Path Resource Type Directory */
+      /** Constant value of type PathResourceType: Directory */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
-      /** @brief Path Resource Type File  */
+      /** Constant value of type PathResourceType: File */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
 
     private:
@@ -303,25 +316,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     class LeaseAction final {
     public:
       LeaseAction() = default;
-      /**
-       * @brief Initializes a new instance of LeaseAction.
-       *
-       * @param value The string value of the instance.
-       */
+      /** Construct a new LeaseAction from a string. */
       explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
-      /** Compare two values for equality. */
+      /** Compare with another LeaseAction. */
       bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
-      /** Compare two values for inequality. */
+      /** Compare with another LeaseAction. */
       bool operator!=(const LeaseAction& other) const { return !(*this == other); }
       /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Acquire action. */
+      /** Constant value of type LeaseAction: Acquire */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;
-      /** @brief AutoRenew action. */
+      /** Constant value of type LeaseAction: AutoRenew */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AutoRenew;
-      /** @brief Release action. */
+      /** Constant value of type LeaseAction: Release */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Release;
-      /** @brief AcquireRelease action. */
+      /** Constant value of type LeaseAction: AcquireRelease */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AcquireRelease;
 
     private:

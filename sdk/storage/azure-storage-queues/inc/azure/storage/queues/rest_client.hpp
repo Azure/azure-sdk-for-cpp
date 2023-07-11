@@ -162,19 +162,19 @@ namespace Azure { namespace Storage { namespace Queues {
     class GeoReplicationStatus final {
     public:
       GeoReplicationStatus() = default;
-      /** @brief Construct from a string */
+      /** Construct a new GeoReplicationStatus from a string. */
       explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values */
+      /** Compare with another GeoReplicationStatus. */
       bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values */
+      /** Compare with another GeoReplicationStatus. */
       bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
-      /** @brief Convert to string */
+      /** Convert the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Replication Status Live */
+      /** Constant value of type GeoReplicationStatus: Live */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Live;
-      /** @brief Replication Status Bootstrap  */
+      /** Constant value of type GeoReplicationStatus: Bootstrap */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
-      /** @brief Replication Status Unavailable  */
+      /** Constant value of type GeoReplicationStatus: Unavailable */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Unavailable;
 
     private:

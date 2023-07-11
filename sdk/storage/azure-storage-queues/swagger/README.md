@@ -177,6 +177,27 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/QueueServiceProperties";
 ```
 
+### SetQueueServiceProperties
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.SetServicePropertiesResult = {
+        "type": "object",
+        "x-ms-client-name": "SetServicePropertiesResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/?restype=service&comp=properties"]
+    transform: >
+      $.put.responses["202"].schema = {"$ref": "#/definitions/SetServicePropertiesResult"};
+```
+
 ### GetServiceStatistics 
 
 ```yaml
@@ -424,6 +445,7 @@ directive:
       $.Metadata.description = "A set of name-value pairs associated with this queue.";
       $.CreateQueueResult.properties["Created"].description = "Indicates if the queue was successfully created by this operation.";
       $.UpdateMessageResult.description = "Response type for #Azure::Storage::Queues::QueueClient::UpdateMessage.";
+      $.SetServicePropertiesResult.description = "Response type for #Azure::Storage::Queues::QueueServiceClient::SetProperties.";
   - from: swagger-document
     where: $["x-ms-paths"]["/{queueName}"].delete.responses["204"]
     transform: >
