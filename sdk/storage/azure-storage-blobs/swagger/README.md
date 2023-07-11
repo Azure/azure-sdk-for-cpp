@@ -150,7 +150,6 @@ directive:
       const operationReturnTypeNames = new Map(Object.entries({
         "Service_GetAccountInfo": "AccountInfo",
         "BlobContainer_GetProperties": "BlobContainerProperties",
-        "Blob_SetTier": "SetBlobAccessTierResult",
         "PageBlob_UploadPages": "UploadPagesResult",
         "PageBlob_ClearPages": "ClearPagesResult",
         "PageBlob_UploadPagesFromUri": "UploadPagesFromUriResult",
@@ -1732,6 +1731,46 @@ directive:
       $.headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "ImmutabilityPolicy.PolicyMode";
 ```
 
+### SetAccessTier
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.SetBlobAccessTierResult = {
+        "type": "object",
+        "x-ms-client-name": "SetBlobAccessTierResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=tier"].put.responses
+    transform: >
+      $["200"].schema = {"$ref": "#/definitions/SetBlobAccessTierResult"};
+      $["202"].schema = {"$ref": "#/definitions/SetBlobAccessTierResult"};
+
+```
+
+### SetExpiry
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=expiry"].put.responses["200"]
+    transform: >
+      $.schema = {
+        "type": "object",
+        "x-ms-client-name": "SetBlobExpiryResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "__placeHolder": {"type": "integer"}
+        }
+      };
+```
+
 ### SetLegalHold
 
 ```yaml
@@ -1880,6 +1919,8 @@ directive:
       $.ArrowField.properties["Precision"].description = "Precision of the field.";
       $.ArrowField.properties["Scale"].description = "Scale of the field.";
       $.QueryBlobResult.properties["BodyStream"].description = "The response body stream.";
+      $.QueryBlobResult.description = "Response type for #Azure::Storage::Blobs::BlockBlobClient::Query.";
+      $.SetBlobAccessTierResult.description = "Response type for #Azure::Storage::Blobs::BlobClient::SetAccessTier.";
       $.SetServicePropertiesResult.description = "Response type for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.";
       $.AccountInfo.description = "Response type for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.";
   - from: swagger-document
@@ -1961,4 +2002,8 @@ directive:
       $["200"].schema.properties["BlobSize"].description = "Size of the blob in bytes.";
       $["200"].schema.properties["CommittedBlocks"].description = "List of committed blocks.";
       $["200"].schema.properties["UncommittedBlocks"].description = "List of uncommitted blocks.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=expiry"].put.responses["200"]
+    transform: >
+      $.schema.description = "Response type for Azure::Storage::Blobs::BlobClient::SetExpiry.";
 ```
