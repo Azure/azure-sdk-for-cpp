@@ -107,6 +107,7 @@ directive:
         "Queue_ClearMessages": "ClearMessagesResult",
         "Queue_UpdateMessage": "UpdateMessageResult",
         "Queue_DeleteMessage": "DeleteMessageResult",
+        "Service_SetProperties": "SetServicePropertiesResult",
       }));
       for (const url in $["x-ms-paths"]) {
         for (const verb in $["x-ms-paths"][url]) {
@@ -175,27 +176,6 @@ directive:
     transform: >
       $.put.parameters[0]["$ref"] = "#/parameters/QueueServiceProperties";
       $.get.responses["200"].schema["$ref"] = "#/definitions/QueueServiceProperties";
-```
-
-### SetQueueServiceProperties
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.SetServicePropertiesResult = {
-        "type": "object",
-        "x-ms-client-name": "SetServicePropertiesResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/?restype=service&comp=properties"]
-    transform: >
-      $.put.responses["202"].schema = {"$ref": "#/definitions/SetServicePropertiesResult"};
 ```
 
 ### GetServiceStatistics 

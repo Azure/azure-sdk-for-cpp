@@ -106,6 +106,12 @@ directive:
     transform: >
       const operationReturnTypeNames = new Map(Object.entries({
         "Directory_ForceCloseHandles": "ForceCloseDirectoryHandlesResult",
+        "Service_SetProperties": "SetServicePropertiesResult",
+        "Directory_SetMetadata": "SetDirectoryMetadataResult",
+        "File_SetMetadata": "SetFileMetadataResult",
+        "File_UploadRange":"UploadFileRangeResult",
+        "File_UploadRangeFromUri":"UploadFileRangeFromUriResult",
+        "File_AbortCopy":"AbortFileCopyResult",
       }));
       for (const url in $["x-ms-paths"]) {
         for (const verb in $["x-ms-paths"][url]) {
@@ -361,27 +367,6 @@ directive:
     transform: >
       $.put.parameters[0]["$ref"] = "#/parameters/ShareServiceProperties";
       $.get.responses["200"].schema["$ref"] = "#/definitions/ShareServiceProperties";
-```
-
-### SetShareServiceProperties
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.SetServicePropertiesResult = {
-        "type": "object",
-        "x-ms-client-name": "SetServicePropertiesResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/?restype=service&comp=properties"]
-    transform: >
-      $.put.responses["202"].schema = {"$ref": "#/definitions/SetServicePropertiesResult"};
 ```
 
 ### GetShareStatistics
@@ -717,23 +702,6 @@ directive:
       };
 ```
 
-### SetDirectoryMetadata
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory&comp=metadata"].put.responses["200"]
-    transform: >
-      $.schema = {
-        "type": "object",
-        "x-ms-client-name": "SetDirectoryMetadataResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-```
-
 ### CreateFile
 
 ```yaml
@@ -828,23 +796,6 @@ directive:
         "x-ms-sealed": false,
         "properties": {
           "SmbProperties": {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": ""}}
-        }
-      };
-```
-
-### SetDirectoryMetadata
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=metadata"].put.responses["200"]
-    transform: >
-      $.schema = {
-        "type": "object",
-        "x-ms-client-name": "SetFileMetadataResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
         }
       };
 ```
@@ -973,14 +924,6 @@ directive:
       $.headers["x-ms-request-server-encrypted"]["x-ms-client-default"] = false;
       $.headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
       delete $.headers["x-ms-file-last-write-time"];
-      $.schema = {
-        "type": "object",
-        "x-ms-client-name": "UploadFileRangeResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
 ```
 
 ### UploadFileRangeFromUri
@@ -996,14 +939,6 @@ directive:
       $.headers["x-ms-request-server-encrypted"]["x-ms-client-default"] = false;
       $.headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
       delete $.headers["x-ms-file-last-write-time"];
-      $.schema = {
-        "type": "object",
-        "x-ms-client-name": "UploadFileRangeFromUriResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
 ```
 
 ### GetFileRangeList
@@ -1032,23 +967,6 @@ directive:
             "x-ms-xml": {"name": "."},
             "items": {"$ref": "#/definitions/ClearRange"}
           }
-        }
-      };
-```
-
-### AbortCopy
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=copy&copyid"].put.responses["204"]
-    transform: >
-      $.schema = {
-        "type": "object",
-        "x-ms-client-name": "AbortFileCopyResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
         }
       };
 ```
@@ -1158,6 +1076,11 @@ directive:
       $.DirectoryItemDetails.properties["Last-Modified"].description = "The date and time the directory was last modified.";
       $.DirectoryItemDetails.properties["Etag"].description = "The ETag contains a value which represents the version of the directory, in quotes.";
       $.SetServicePropertiesResult.description = "Response type for #Azure::Storage::Files::Shares::ShareServiceClient::SetProperties.";
+      $.SetDirectoryMetadataResult.description = "Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::SetMetadata.";
+      $.SetFileMetadataResult.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::SetMetadata.";
+      $.UploadFileRangeResult.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRange.";
+      $.UploadFileRangeFromUriResult.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRangeFromUri.";
+      $.AbortFileCopyResult.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::AbortCopy.";
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share&comp=stats"].get.responses["200"]
     transform: >
@@ -1195,10 +1118,6 @@ directive:
     transform: >
       $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::SetProperties.";
   - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory&comp=metadata"].put.responses["200"]
-    transform: >
-      $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::SetMetadata.";
-  - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].put.responses["201"]
     transform: >
       $.schema.properties["Created"].description = "Indicates if the file was successfully created by this operation.";
@@ -1217,23 +1136,7 @@ directive:
     transform: >
       $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::SetProperties.";
   - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=metadata"].put.responses["200"]
-    transform: >
-      $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::SetMetadata.";
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=range"].put.responses["201"]
-    transform: >
-      $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRange.";
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=range&fromURL"].put.responses["201"]
-    transform: >
-      $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRangeFromUri.";
-  - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=rangelist"].get.responses["200"]
     transform: >
       $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.";
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=copy&copyid"].put.responses["204"]
-    transform: >
-      $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::AbortCopy.";
 ```

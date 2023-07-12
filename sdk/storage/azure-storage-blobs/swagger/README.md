@@ -160,6 +160,9 @@ directive:
         "BlockBlob_StageBlock": "StageBlockResult",
         "BlockBlob_StageBlockFromUri": "StageBlockFromUriResult",
         "BlockBlob_CommitBlockList": "CommitBlockListResult",
+        "Service_SetProperties": "SetServicePropertiesResult",
+        "Blob_SetExpiry": "SetBlobExpiryResult",
+        "Blob_SetTier": "SetBlobAccessTierResult",
       }));
       for (const url in $["x-ms-paths"]) {
         for (const verb in $["x-ms-paths"][url]) {
@@ -587,27 +590,6 @@ directive:
       $.get.responses["200"].schema["$ref"] = "#/definitions/BlobServiceProperties";
 ```
 
-### SetBlobServiceProperties
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.SetServicePropertiesResult = {
-        "type": "object",
-        "x-ms-client-name": "SetServicePropertiesResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/?restype=service&comp=properties"]
-    transform: >
-      $.put.responses["202"].schema = {"$ref": "#/definitions/SetServicePropertiesResult"};
-```
-
 ### GetServiceStatistics 
 
 ```yaml
@@ -682,17 +664,6 @@ directive:
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.AccountInfo = {
-        "type": "object",
-        "x-ms-client-name": "AccountInfo",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
   - from: swagger-document
     where: $["x-ms-paths"]["/?restype=account&comp=properties"].get.responses["200"]
     transform: >
@@ -1731,46 +1702,6 @@ directive:
       $.headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "ImmutabilityPolicy.PolicyMode";
 ```
 
-### SetAccessTier
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.SetBlobAccessTierResult = {
-        "type": "object",
-        "x-ms-client-name": "SetBlobAccessTierResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=tier"].put.responses
-    transform: >
-      $["200"].schema = {"$ref": "#/definitions/SetBlobAccessTierResult"};
-      $["202"].schema = {"$ref": "#/definitions/SetBlobAccessTierResult"};
-
-```
-
-### SetExpiry
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=expiry"].put.responses["200"]
-    transform: >
-      $.schema = {
-        "type": "object",
-        "x-ms-client-name": "SetBlobExpiryResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-```
-
 ### SetLegalHold
 
 ```yaml
@@ -1923,6 +1854,7 @@ directive:
       $.SetBlobAccessTierResult.description = "Response type for #Azure::Storage::Blobs::BlobClient::SetAccessTier.";
       $.SetServicePropertiesResult.description = "Response type for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.";
       $.AccountInfo.description = "Response type for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.";
+      $.SetBlobExpiryResult.description = "Response type for Azure::Storage::Blobs::BlobClient::SetExpiry.";
   - from: swagger-document
     where: $.parameters
     transform: >
@@ -2002,8 +1934,4 @@ directive:
       $["200"].schema.properties["BlobSize"].description = "Size of the blob in bytes.";
       $["200"].schema.properties["CommittedBlocks"].description = "List of committed blocks.";
       $["200"].schema.properties["UncommittedBlocks"].description = "List of uncommitted blocks.";
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=expiry"].put.responses["200"]
-    transform: >
-      $.schema.description = "Response type for Azure::Storage::Blobs::BlobClient::SetExpiry.";
 ```

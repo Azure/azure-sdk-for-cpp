@@ -32,14 +32,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     namespace _detail {
       class PathRenameMode final {
       public:
+        /** Constructs a new PathRenameMode instance */
         PathRenameMode() = default;
-        /** Construct a new PathRenameMode from a string. */
+        /** Constructs a new PathRenameMode from a string. */
         explicit PathRenameMode(std::string value) : m_value(std::move(value)) {}
-        /** Compare with another PathRenameMode. */
+        /** Compares with another PathRenameMode. */
         bool operator==(const PathRenameMode& other) const { return m_value == other.m_value; }
-        /** Compare with another PathRenameMode. */
+        /** Compares with another PathRenameMode. */
         bool operator!=(const PathRenameMode& other) const { return !(*this == other); }
-        /** Convert the value to a string. */
+        /** Converts the value to a string. */
         const std::string& ToString() const { return m_value; }
         /** Constant value of type PathRenameMode: Legacy */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
@@ -51,23 +52,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       };
       class PathSetAccessControlListRecursiveMode final {
       public:
+        /** Constructs a new PathSetAccessControlListRecursiveMode instance */
         PathSetAccessControlListRecursiveMode() = default;
-        /** Construct a new PathSetAccessControlListRecursiveMode from a string. */
+        /** Constructs a new PathSetAccessControlListRecursiveMode from a string. */
         explicit PathSetAccessControlListRecursiveMode(std::string value)
             : m_value(std::move(value))
         {
         }
-        /** Compare with another PathSetAccessControlListRecursiveMode. */
+        /** Compares with another PathSetAccessControlListRecursiveMode. */
         bool operator==(const PathSetAccessControlListRecursiveMode& other) const
         {
           return m_value == other.m_value;
         }
-        /** Compare with another PathSetAccessControlListRecursiveMode. */
+        /** Compares with another PathSetAccessControlListRecursiveMode. */
         bool operator!=(const PathSetAccessControlListRecursiveMode& other) const
         {
           return !(*this == other);
         }
-        /** Convert the value to a string. */
+        /** Converts the value to a string. */
         const std::string& ToString() const { return m_value; }
         /** Constant value of type PathSetAccessControlListRecursiveMode: Set */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode Set;
@@ -88,14 +90,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     class PublicAccessType final {
     public:
+      /** Constructs a new PublicAccessType instance */
       PublicAccessType() = default;
-      /** Construct a new PublicAccessType from a string. */
+      /** Constructs a new PublicAccessType from a string. */
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
-      /** Compare with another PublicAccessType. */
+      /** Compares with another PublicAccessType. */
       bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
-      /** Compare with another PublicAccessType. */
+      /** Compares with another PublicAccessType. */
       bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** Constant value of type PublicAccessType: None */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType None;
@@ -150,14 +153,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     class PathResourceType final {
     public:
+      /** Constructs a new PathResourceType instance */
       PathResourceType() = default;
-      /** Construct a new PathResourceType from a string. */
+      /** Constructs a new PathResourceType from a string. */
       explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
-      /** Compare with another PathResourceType. */
+      /** Compares with another PathResourceType. */
       bool operator==(const PathResourceType& other) const { return m_value == other.m_value; }
-      /** Compare with another PathResourceType. */
+      /** Compares with another PathResourceType. */
       bool operator!=(const PathResourceType& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** Constant value of type PathResourceType: Directory */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
@@ -315,14 +319,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     class LeaseAction final {
     public:
+      /** Constructs a new LeaseAction instance */
       LeaseAction() = default;
-      /** Construct a new LeaseAction from a string. */
+      /** Constructs a new LeaseAction from a string. */
       explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
-      /** Compare with another LeaseAction. */
+      /** Compares with another LeaseAction. */
       bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
-      /** Compare with another LeaseAction. */
+      /** Compares with another LeaseAction. */
       bool operator!=(const LeaseAction& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** Constant value of type LeaseAction: Acquire */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;

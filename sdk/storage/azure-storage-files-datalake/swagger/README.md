@@ -116,6 +116,42 @@ directive:
       }
 ```
 
+### Define names for return types
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $
+    transform: >
+      const operationReturnTypeNames = new Map(Object.entries({
+        "Path_SetAccessControl": "SetPathAccessControlListResult",
+        "Path_AppendData": "AppendFileResult",
+        "Path_FlushData": "FlushFileResult",
+      }));
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          const operation = $["x-ms-paths"][url][verb];
+          if (!operationReturnTypeNames.has(operation.operationId)) {
+            continue;
+          }
+          const returnTypeName = operationReturnTypeNames.get(operation.operationId);
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          const emptySchemaDefinition = {
+            "type": "object",
+            "x-ms-client-name": returnTypeName,
+            "x-ms-sealed": false,
+            "properties": {
+              "__placeHolder": {"type": "integer"}
+            }
+          };
+          $.definitions[returnTypeName] = emptySchemaDefinition;
+          status_codes.map(i => {
+            operation.responses[i].schema = {"$ref": `#/definitions/${returnTypeName}`};
+          });
+        }
+      }
+```
+
 ### Return Type namespace
 
 ```yaml
@@ -386,26 +422,6 @@ directive:
 ```
 
 ### SetAccessControlListRecursive
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.SetPathAccessControlListResult = {
-        "type": "object",
-        "x-ms-client-name": "SetPathAccessControlListResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{filesystem}/{path}?action=setAccessControl"].patch.responses["200"]
-    transform: >
-      $.schema = {"$ref": "#/definitions/SetPathAccessControlListResult"};
-```
-
-### SetAccessControlListRecursive
 
 ```yaml
 directive:
@@ -446,17 +462,6 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.AppendFileResult = {
-        "type": "object",
-        "x-ms-client-name": "AppendFileResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}?action=append"].patch.responses["202"].headers
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
@@ -467,10 +472,6 @@ directive:
       $["x-ms-lease-renewed"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
       delete $["ETag"];
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{filesystem}/{path}?action=append"].patch.responses["202"]
-    transform: >
-      $.schema = {"$ref": "#/definitions/AppendFileResult"};
 ```
 
 ### FlushFile
@@ -478,24 +479,12 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $.definitions
-    transform: >
-      $.FlushFileResult = {
-        "type": "object",
-        "x-ms-client-name": "FlushFileResult",
-        "x-ms-sealed": false,
-        "properties": {
-          "__placeHolder": {"type": "integer"}
-        }
-      };
-  - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"]
     transform: >
       $.headers["Content-Length"]["x-ms-client-name"] = "FileSize";
       $.headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $.headers["x-ms-lease-renewed"]["x-nullable"] = true;
       $.headers["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
-      $.schema = {"$ref": "#/definitions/FlushFileResult"};
 ```
 
 ### Description
