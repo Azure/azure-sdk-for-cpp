@@ -62,6 +62,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     EventData() = default;
     virtual ~EventData() = default;
+
+    EventData(EventData const&) = default;
+    EventData& operator=(EventData const&) = default;
+    EventData(EventData&&) = default;
+    EventData& operator=(EventData&&) = default;
   };
 
   /** @brief Represents an event received from the Azure Event Hubs service.
@@ -116,6 +121,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * Returns the underlying AMQP message that was received from the Event Hubs service.
      */
     Azure::Core::Amqp::Models::AmqpMessage const& RawAmqpMessage() const { return m_message; }
+
+    ReceivedEventData(ReceivedEventData const& that) = default;
+    ReceivedEventData& operator=(ReceivedEventData const&) = default;
 
   private:
     Azure::Core::Amqp::Models::AmqpMessage const m_message;

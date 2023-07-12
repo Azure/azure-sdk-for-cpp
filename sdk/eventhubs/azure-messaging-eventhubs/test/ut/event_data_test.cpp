@@ -10,8 +10,7 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {
-};
+class EventDataTest : public EventHubsTestBase {};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
@@ -26,6 +25,33 @@ TEST_F(EventDataTest, EventDataNew)
   EXPECT_FALSE(message.Properties.ContentType.HasValue());
   EXPECT_FALSE(message.Properties.CorrelationId.HasValue());
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
+
+  EventData newData;
+  newData.ContentType = "application/xml";
+
+  {
+    EventData copyData{newData};
+    EXPECT_EQ(copyData.ContentType.Value(), newData.ContentType.Value());
+  }
+  {
+    EventData moveData{std::move(newData)};
+    // The contents of newData should be moved to moveData. The state of newData is undefined.
+    EXPECT_FALSE(newData.ContentType.HasValue());
+    EXPECT_TRUE(moveData.ContentType.HasValue());
+  }
+
+  newData.ContentType = "application/json";
+  {
+    EventData copyData;
+    copyData = newData;
+    EXPECT_EQ(copyData.ContentType.Value(), newData.ContentType.Value());
+  }
+  {
+    EventData moveData;
+    moveData = std::move(newData);
+    EXPECT_FALSE(newData.ContentType.HasValue());
+    EXPECT_TRUE(moveData.ContentType.HasValue());
+  }
 }
 
 TEST_F(EventDataTest, EventData1)

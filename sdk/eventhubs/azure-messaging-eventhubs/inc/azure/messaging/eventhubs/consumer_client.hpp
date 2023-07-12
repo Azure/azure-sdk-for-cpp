@@ -22,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     /**@brief ApplicationID is used as the identifier when setting the User-Agent property.
      */
-    std::string ApplicationID = "";
+    std::string ApplicationID;
 
     /**@brief  RetryOptions controls how often operations are retried from this client and any
      * Receivers and Senders created from this client.
@@ -57,15 +57,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_consumerGroup;
 
     /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
 
     /// The URL to the Event Hubs namespace
-    std::string m_hostUrl{};
+    std::string m_hostUrl;
 
     /// @brief The message receivers used to receive messages for a given partition.
-    std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
+    std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers;
     /// @brief The AMQP Sessions used to receive messages for a given partition.
-    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
+    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
