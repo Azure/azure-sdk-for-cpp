@@ -75,7 +75,6 @@ set(
     inc/azure/messaging/eventhubs/processor_load_balancer.hpp
     inc/azure/messaging/eventhubs/processor_partition_client.hpp
     inc/azure/messaging/eventhubs/producer_client.hpp
-    inc/azure/messaging/eventhubs/retry_operation.hpp
     inc/azure/messaging/eventhubs/rtti.hpp
 )
 
