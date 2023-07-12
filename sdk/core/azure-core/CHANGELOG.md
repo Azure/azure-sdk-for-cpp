@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- [[#4784]](https://github.com/Azure/azure-sdk-for-cpp/issues/4784) The `WIL::WIL` CMake target is no longer defined with `find_package(azure-core-cpp)`. To use WIL you have to write `find_package(WIL)`.
+
 ### Bugs Fixed
 
 ### Other Changes
