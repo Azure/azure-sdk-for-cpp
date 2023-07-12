@@ -232,12 +232,15 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::SetMetadata(
   }
   catch (Azure::Core::RequestFailedException const& ex)
   {
+    // Ignore HTTP code 412 meaning condition could not be met;
     if (ex.StatusCode == Azure::Core::Http::HttpStatusCode::PreconditionFailed)
     {
-      // return code 412 meaning condition could not be met;
+    }
+    if (ex.StatusCode == Azure::Core::Http::HttpStatusCode::NotFound)
+    {
       Azure::Core::Diagnostics::_internal::Log::Write(
           Azure::Core::Diagnostics::Logger::Level::Warning,
-          "Set Metadata failed with PreconditionFailed; Upload blob content");
+          "Set Metadata failed with PreconditionFailed or NotFound.; Upload blob content");
 
       std::string blobContent = "";
       // throws when blob does not exist , we need to upload the blob in order to create it

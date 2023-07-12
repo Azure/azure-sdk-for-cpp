@@ -12,8 +12,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class CheckpointStoreTest : public EventHubsTestBase {
-  };
+  class CheckpointStoreTest : public EventHubsTestBase {};
 
   std::string GetRandomName()
   {
@@ -110,6 +109,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(ownerships[0].LastModifiedTime.HasValue());
     Azure::ETag validEtag = ownerships[0].ETag.Value();
     //    Azure::DateTime lastDatetime = ownerships[0].LastModifiedTime.Value();
+    //
+    // This ownership should NOT take precedence over the previous ownership, so the set of
+    // ownerships returned should be empty.
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
             Azure::Messaging::EventHubs::Models::Ownership{
@@ -119,7 +121,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 "partition-id",
                 "owner-id",
                 Azure::ETag("randomETAG")}});
-
     EXPECT_EQ(0, ownerships.size());
 
     ownerships = checkpointStore.ClaimOwnership(
