@@ -25,8 +25,10 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, BearerChallengeWorks_LIVEONLY_)
   {
     Blobs::BlobClientOptions clientOptions;
-    clientOptions.EnableTenantDiscovery = true;
     Azure::Identity::ClientSecretCredentialOptions options;
+
+    //With tenantId
+    clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     auto blobClient = Blobs::BlobClient(
         m_blockBlobClient->GetUrl(),
@@ -35,6 +37,45 @@ namespace Azure { namespace Storage { namespace Test {
         clientOptions);
     EXPECT_NO_THROW(blobClient.GetProperties());
     EXPECT_NO_THROW(ReadBodyStream(blobClient.Download().Value.BodyStream));
+
+    //Without tenantId
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {"*"};
+    blobClient = Blobs::BlobClient(
+        m_blockBlobClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(blobClient.GetProperties());
+
+    // With error tenantId
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {"*"};
+    blobClient = Blobs::BlobClient(
+        m_blockBlobClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "test", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_NO_THROW(blobClient.GetProperties());
+
+    // Disable Tenant Discovery and without tenantId
+    clientOptions.EnableTenantDiscovery = false;
+    blobClient = Blobs::BlobClient(
+        m_blockBlobClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_THROW(blobClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
+
+    // Don't allow additional tenants
+    clientOptions.EnableTenantDiscovery = true;
+    options.AdditionallyAllowedTenants = {};
+    blobClient = Blobs::BlobClient(
+        m_blockBlobClient->GetUrl(),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
+            "", AadClientId(), AadClientSecret(), options),
+        clientOptions);
+    EXPECT_THROW(blobClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
   }
 
 }}} // namespace Azure::Storage::Test
