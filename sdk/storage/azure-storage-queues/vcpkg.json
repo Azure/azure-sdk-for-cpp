@@ -8,11 +8,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-queues",
   "license": "MIT",
   "dependencies": [
-    {
-      "name": "azure-storage-common-cpp",
-      "default-features": false,
-      "version>=": "12.2.3"
-    },
+    "azure-storage-common-cpp",
     {
       "name": "vcpkg-cmake",
       "host": true
