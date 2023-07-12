@@ -12,7 +12,8 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class CheckpointStoreTest : public EventHubsTestBase {};
+  class CheckpointStoreTest : public EventHubsTestBase {
+  };
 
   std::string GetRandomName()
   {

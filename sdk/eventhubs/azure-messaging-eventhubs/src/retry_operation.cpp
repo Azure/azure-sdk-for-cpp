@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-#include "azure/core/internal/diagnostics/log.hpp"
-
 #include "private/retry_operation.hpp"
 
-bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
-    std::function<bool()> operation)
+#include "azure/core/internal/diagnostics/log.hpp"
+
+bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function<bool()> operation)
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;

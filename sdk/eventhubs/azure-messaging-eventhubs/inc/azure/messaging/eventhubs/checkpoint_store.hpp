@@ -14,7 +14,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
-    /**@brief  CheckpointStore is used by multiple consumers to coordinate progress and ownership for
+  /**@brief  CheckpointStore is used by multiple consumers to coordinate progress and ownership for
    * partitions.
    */
   class CheckpointStore {
@@ -152,8 +152,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
      */
-    void UpdateCheckpoint(
-        Models::Checkpoint const& checkpoint,
-        Core::Context const& context = {}) override;
+    void UpdateCheckpoint(Models::Checkpoint const& checkpoint, Core::Context const& context = {})
+        override;
   };
 }}} // namespace Azure::Messaging::EventHubs

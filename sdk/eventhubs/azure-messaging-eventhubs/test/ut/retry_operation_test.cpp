@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 #include "eventhubs_test_base.hpp"
+#include "private/retry_operation.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
-#include "private/retry_operation.hpp"
 
 #include <functional>
 

@@ -38,22 +38,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief  ProducerClient can be used to send events to an Event Hub.
    */
   class ProducerClient final {
-      /// The connection string for the Event Hubs namespace
-      std::string m_connectionString;
+    /// The connection string for the Event Hubs namespace
+    std::string m_connectionString;
 
-      /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
-      std::string m_fullyQualifiedNamespace;
+    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
+    std::string m_fullyQualifiedNamespace;
 
-      /// The name of the Event Hub
-      std::string m_eventHub{};
+    /// The name of the Event Hub
+    std::string m_eventHub{};
 
-      /// The URL to the Event Hubs namespace
-      std::string m_targetUrl{};
+    /// The URL to the Event Hubs namespace
+    std::string m_targetUrl{};
 
-      /// Credentials to be used to authenticate the client.
-      std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+    /// Credentials to be used to authenticate the client.
+    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
 
-      ProducerClientOptions m_producerClientOptions{};
+    ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
