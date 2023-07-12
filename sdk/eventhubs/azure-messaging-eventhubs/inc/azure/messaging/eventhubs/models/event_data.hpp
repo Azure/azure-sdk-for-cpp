@@ -133,14 +133,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     Azure::Core::Amqp::Models::AmqpMessage const& RawAmqpMessage() const { return m_message; }
 
-    /** Create a ReceivedEventData from another.
-     */
-    ReceivedEventData(ReceivedEventData const& that) = default;
-
-    /** Copy a ReceivedEventData to another.
-     */
-    ReceivedEventData& operator=(ReceivedEventData const&) = default;
-
   private:
     Azure::Core::Amqp::Models::AmqpMessage const m_message;
   };
