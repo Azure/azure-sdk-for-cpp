@@ -78,7 +78,6 @@ public:
     if (m_hasValue)
     {
       ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value));
-      m_hasValue = false;
     }
   }
 

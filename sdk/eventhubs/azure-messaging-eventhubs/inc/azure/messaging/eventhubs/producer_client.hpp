@@ -112,7 +112,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief Proceeds to send and EventDataBatch
      *
      * @param eventDataBatch Batch to send
-     * @param ctx Request context
+     * @param context Request context
      */
     bool SendEventDataBatch(
         EventDataBatch const& eventDataBatch,

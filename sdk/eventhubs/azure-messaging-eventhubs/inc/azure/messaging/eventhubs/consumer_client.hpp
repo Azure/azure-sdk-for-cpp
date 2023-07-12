@@ -174,7 +174,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
      *
-     * @param options Additional options for getting partition properties
      */
     Models::EventHubProperties GetEventHubProperties(Core::Context const& context = {});
 
@@ -183,7 +182,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * enqueued to the partition.
      *
      * @param partitionID partition ID to detail.
-     * @param options Additional options for getting partition properties
+     * @param context The context for the operation can be used for request cancellation.
      */
     Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,

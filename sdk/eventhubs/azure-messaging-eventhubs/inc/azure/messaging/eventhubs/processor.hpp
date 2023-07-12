@@ -129,7 +129,7 @@ public:
 
   /** @brief Starts the processor.
    *
-   * @param ctx The context to control the request lifetime.
+   * @param context The context to control the request lifetime.
    */
   void Run(Core::Context const& context = {})
   {
@@ -141,7 +141,7 @@ public:
     // const auto current = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
     // TODO : this is where we re load balance on the update interval
-    /* while (!ctx.IsCancelled())
+    /* while (!context.IsCancelled())
     {
       std::this_thread::sleep_for(m_ownershipUpdateInterval);
       Dispatch(eventHubProperties, consumers, context);
@@ -152,7 +152,7 @@ public:
    *
    * @param eventHubProperties The properties of the Event Hub.
    * @param consumers The map of partition id to partition client.
-   * @param ctx The context to control the request lifetime.
+   * @param context The context to control the request lifetime.
    */
   void Dispatch(
       Models::EventHubProperties const& eventHubProperties,

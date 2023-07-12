@@ -74,7 +74,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-
   public:
     /// Create a PartitionClient from another PartitionClient
     PartitionClient(PartitionClient const& other) = default;
@@ -85,8 +84,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Receive events from the partition.
      *
      * @param maxMessages The maximum number of messages to receive.
-     * @param ctx A context to control the request lifetime.
-     * @param options Optional parameters to control the receive operation.
+     * @param context A context to control the request lifetime.
      * @return A vector of received events.
      *
      */

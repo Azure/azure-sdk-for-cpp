@@ -36,8 +36,8 @@ TEST_F(EventDataTest, EventDataNew)
   {
     EventData moveData{std::move(newData)};
     // The contents of newData should be moved to moveData. The state of newData is undefined.
-    EXPECT_FALSE(newData.ContentType.HasValue());
     EXPECT_TRUE(moveData.ContentType.HasValue());
+    EXPECT_EQ(moveData.ContentType.Value(), "application/xml");
   }
 
   newData.ContentType = "application/json";
@@ -49,7 +49,6 @@ TEST_F(EventDataTest, EventDataNew)
   {
     EventData moveData;
     moveData = std::move(newData);
-    EXPECT_FALSE(newData.ContentType.HasValue());
     EXPECT_TRUE(moveData.ContentType.HasValue());
   }
 }

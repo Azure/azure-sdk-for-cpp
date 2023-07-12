@@ -63,9 +63,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     EventData() = default;
     virtual ~EventData() = default;
 
+    /** Copy an EventData to another.
+     */
     EventData(EventData const&) = default;
+
+    /** Assign an EventData to another.
+     */
     EventData& operator=(EventData const&) = default;
+
+    /** Create an EventData moving from another.
+     */
     EventData(EventData&&) = default;
+
+    /** Move an EventData to another.
+     */
     EventData& operator=(EventData&&) = default;
   };
 
@@ -122,7 +133,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     Azure::Core::Amqp::Models::AmqpMessage const& RawAmqpMessage() const { return m_message; }
 
+    /** Create a ReceivedEventData from another.
+     */
     ReceivedEventData(ReceivedEventData const& that) = default;
+
+    /** Copy a ReceivedEventData to another.
+     */
     ReceivedEventData& operator=(ReceivedEventData const&) = default;
 
   private:

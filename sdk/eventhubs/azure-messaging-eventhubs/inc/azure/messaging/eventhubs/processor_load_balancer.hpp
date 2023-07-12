@@ -118,7 +118,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * begin processing.
      *
      *@param partitionIDs the list of all partitions that are available to be owned.
-     *@param ctx the context to pass to the checkpoint store.
+     *@param context the context to pass to the checkpoint store.
      *
      *@return a list of partitions that the Processor should begin processing.
      */

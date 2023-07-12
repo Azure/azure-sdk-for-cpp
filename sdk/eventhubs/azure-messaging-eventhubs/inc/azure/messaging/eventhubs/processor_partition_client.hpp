@@ -51,7 +51,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** Receives Events from the partition.
      * @param maxBatchSize The maximum number of events to receive in a single call to the service.
-     * @param ctx The context to pass to the update checkpoint operation.
+     * @param context The context to pass to the update checkpoint operation.
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t maxBatchSize,
