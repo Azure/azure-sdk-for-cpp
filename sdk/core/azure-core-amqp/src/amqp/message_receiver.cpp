@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // SPDX-Licence-Identifier: MIT
 
 // Enable declaration of strerror_s.

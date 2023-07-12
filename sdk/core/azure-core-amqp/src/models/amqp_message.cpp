@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // SPDX-Licence-Identifier: MIT
 
 #include "azure/core/amqp/models/amqp_message.hpp"
