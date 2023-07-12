@@ -22,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * @remark If both PartitionKey and PartitionID are nil, Event Hubs will choose an arbitrary
    * partition for any events in this [EventDataBatch].
    */
-  struct EventDataBatchOptions
+  struct EventDataBatchOptions final
   {
 
     /** @brief MaxBytes overrides the max size (in bytes) for a batch.
@@ -48,7 +48,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * [ProducerClient.CreateEventDataBatch], which will create them with the proper size limit for
    * your Event Hub.
    */
-  class EventDataBatch {
+  class EventDataBatch final {
   private:
     const std::string anyPartitionId = "";
 

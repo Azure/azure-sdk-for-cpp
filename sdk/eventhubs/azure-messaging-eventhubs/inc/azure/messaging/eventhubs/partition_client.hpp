@@ -11,7 +11,7 @@
 namespace Azure { namespace Messaging { namespace EventHubs {
   /**brief PartitionClientOptions provides options for the CreatePartitionClient function.
    */
-  struct PartitionClientOptions
+  struct PartitionClientOptions final
   {
     /**@brief StartPosition is the position we will start receiving events from,
      * either an offset (inclusive) with Offset, or receiving events received
@@ -43,19 +43,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     int32_t Prefetch = 300;
   };
 
-  /**@brief ReceiveEventsOptions contains optional parameters for the ReceiveEvents function
-   */
-  struct ReceiveEventsOptions
-  {
-    // For future expansion
-  };
-
   /** PartitionClient is used to receive events from an Event Hub partition.
    *
    * This type is instantiated from the [ConsumerClient] type, using
    * [ConsumerClient.CreatePartitionClient].
    */
-  class PartitionClient {
+  class PartitionClient final {
 
   protected:
     /// The message receivers used to receive events from the partition.
@@ -81,42 +74,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    ///** @brief DefaultConsumerGroup is the name of the default consumer group in the Event Hubs
-    // * service.
-    // */
-    // const uint32_t defaultPrefetchSize = 300;
-
-    ///** @brief defaultLinkRxBuffer is the maximum number of transfer frames we can handle
-    // * on the Receiver. This matches the current default window size that go-amqp
-    // * uses for sessions.
-    // */
-    // const uint32_t defaultMaxCreditSize = 5000;
 
   public:
     /// Create a PartitionClient from another PartitionClient
     PartitionClient(PartitionClient const& other) = default;
-    //    : m_receivers{other.m_receivers}, m_offsetExpression{other.m_offsetExpression},
-    //      m_ownerLevel{other.m_ownerLevel}, m_prefetchCount{other.m_prefetchCount},
-    //      m_partitionOptions{other.m_partitionOptions}, m_partitionId{other.m_partitionId},
-    //      RetryOptions{other.RetryOptions}
-    //{
-    //}
 
     /// Assign a PartitionClient to another PartitionClient
     PartitionClient& operator=(PartitionClient const& other) = default;
-    //{
-    //  if (this != &other)
-    //  {
-    //    m_receivers = other.m_receivers;
-    //    m_offsetExpression = other.m_offsetExpression;
-    //    m_ownerLevel = other.m_ownerLevel;
-    //    m_prefetchCount = other.m_prefetchCount;
-    //    m_partitionOptions = other.m_partitionOptions;
-    //    m_partitionId = other.m_partitionId;
-    //    RetryOptions = other.RetryOptions;
-    //  }
-    //  return *this;
-    //}
 
     /** Receive events from the partition.
      *
@@ -128,16 +92,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t const& maxMessages,
-        ReceiveEventsOptions options = {},
-        Azure::Core::Context ctx = Azure::Core::Context())
+        Core::Context const& context = {})
     {
-      (void)options;
       std::vector<Models::ReceivedEventData> messages;
       // bool prefetchDisabled = m_prefetchCount < 0;
 
-      while (messages.size() < maxMessages && !ctx.IsCancelled())
+      while (messages.size() < maxMessages && !context.IsCancelled())
       {
-        auto message = m_receivers[0].WaitForIncomingMessage(ctx);
+        auto message = m_receivers[0].WaitForIncomingMessage(context);
         if (message.first.HasValue())
         {
           messages.push_back(Models::ReceivedEventData{message.first.Value()});

@@ -16,7 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    *@remark If you do NOT want to use dynamic load balancing, and would prefer to track state and
    * ownership manually, use the [ConsumerClient] instead.
    */
-  class ProcessorPartitionClient {
+  class ProcessorPartitionClient final {
     std::string m_partitionId;
     PartitionClient m_partitionClient;
     std::shared_ptr<CheckpointStore> m_checkpointStore;
@@ -24,13 +24,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::ConsumerClientDetails m_consumerClientDetails;
 
   public:
-    /// Constructs a new instance of the ProcessorPartitionClient.
-    /// @param partitionId The identifier of the partition to connect the client to.
-    /// @param partitionClient The [PartitionClient] to use for receiving events.
-    /// @param checkpointStore The [CheckpointStore] to use for storing checkpoints.
-    /// @param consumerClientDetails The [ConsumerClientDetails] to use for storing checkpoints.
-    /// @param cleanupFunc The function to call when the ProcessorPartitionClient is closed.
-    ///
+    /**  Constructs a new instance of the ProcessorPartitionClient.
+     * @param partitionId The identifier of the partition to connect the client to.
+     * @param partitionClient The [PartitionClient] to use for receiving events.
+     * @param checkpointStore The [CheckpointStore] to use for storing checkpoints.
+     * @param consumerClientDetails The [ConsumerClientDetails] to use for storing checkpoints.
+     * @param cleanupFunc The function to call when the ProcessorPartitionClient is closed.
+     */
     ProcessorPartitionClient(
         std::string partitionId,
         PartitionClient partitionClient,
@@ -55,9 +55,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
         uint32_t maxBatchSize,
-        Azure::Core::Context ctx = {})
+        Core::Context const& context = {})
     {
-      return m_partitionClient.ReceiveEvents(maxBatchSize, {}, ctx);
+      return m_partitionClient.ReceiveEvents(maxBatchSize, context);
     }
 
     /** Closes the partition client.
@@ -74,8 +74,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   private:
     void UpdateCheckpoint(
         Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,
-        UpdateCheckpointOptions options = {},
-        Azure::Core::Context ctx = {})
+        Core::Context const& context = {})
     {
       Azure::Nullable<int64_t> sequenceNumber;
 
@@ -109,7 +108,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
              sequenceNumber,
              offsetNumber};
 
-      m_checkpointStore->UpdateCheckpoint(checkpoint, options, ctx);
+      m_checkpointStore->UpdateCheckpoint(checkpoint, context);
     }
 
     std::string GetPartitionId() { return m_partitionId; }

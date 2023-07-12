@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
-  enum ProcessorStrategy
+  enum class ProcessorStrategy
   {
     // ProcessorStrategyBalanced will attempt to claim a single partition at a time, until each
     // active owner has an equal share of partitions. This is the default strategy.
@@ -23,7 +23,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   /**
    * @brief COnfiguration options for the load balancer.
    */
-  struct LoadBalancerInfo
+  struct LoadBalancerInfo final
   {
     /// current are the partitions that _we_ own
     std::vector<Ownership> Current;

@@ -10,9 +10,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   /**@brief StartPosition indicates the position to start receiving events within a partition.
    * The default position is Latest.
    *
-   * @remark You can set this in the options for [ConsumerClient.NewPartitionClient].
+   * @remark You can set this in the options for #ConsumerClient::CreatePartitionClient.
    */
-  struct StartPosition
+  struct StartPosition final
   {
     /**@brief Offset will start the consumer after the specified offset. Can be exclusive
      * or inclusive, based on the Inclusive property.

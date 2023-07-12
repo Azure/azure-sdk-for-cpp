@@ -7,7 +7,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   /** @brief The type of the body of an EventData Message.
    *
    */
-  struct EventDataBody
+  struct EventDataBody final
   {
     /** @brief Value is encoded / decoded as the amqp - value section in the body.
      *
@@ -61,6 +61,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::map<std::string, Azure::Core::Amqp::Models::AmqpValue> Properties;
 
     EventData() = default;
+    virtual ~EventData() = default;
   };
 
   /** @brief Represents an event received from the Azure Event Hubs service.
@@ -69,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
    * specifically the date and time that the event was enqueued, the offset of the event data within
    * the partition, and the partition key for sending a message to a partition.
    */
-  class ReceivedEventData : public EventData {
+  class ReceivedEventData final : public EventData {
   public:
     /** @brief The date and time that the event was enqueued.
      *

@@ -6,7 +6,6 @@
 #pragma once
 #include "event_data_batch.hpp"
 #include "models/management_models.hpp"
-#include "retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/management.hpp>
@@ -18,29 +17,9 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
-  /**@brief Credentials data bag used internally by the producer
-   */
-  struct ProducerClientCreds
-  {
-    /// The connection string for the Event Hubs namespace
-    std::string ConnectionString;
-
-    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
-    std::string FullyQualifiedNamespace;
-
-    /// The name of the Event Hub
-    std::string EventHub{};
-
-    /// The URL to the Event Hubs namespace
-    std::string TargetUrl{};
-
-    /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
-  };
-
   /**@brief Contains options for the ProducerClient creation
    */
-  struct ProducerClientOptions
+  struct ProducerClientOptions final
   {
     /**@brief  Application ID that will be passed to the namespace.
      */
@@ -58,16 +37,29 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   /**@brief  ProducerClient can be used to send events to an Event Hub.
    */
-  class ProducerClient {
+  class ProducerClient final {
+      /// The connection string for the Event Hubs namespace
+      std::string m_connectionString;
 
-    ProducerClientCreds m_credentials{};
-    ProducerClientOptions m_producerClientOptions{};
+      /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
+      std::string m_fullyQualifiedNamespace;
+
+      /// The name of the Event Hub
+      std::string m_eventHub{};
+
+      /// The URL to the Event Hubs namespace
+      std::string m_targetUrl{};
+
+      /// Credentials to be used to authenticate the client.
+      std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+
+      ProducerClientOptions m_producerClientOptions{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
   public:
     /** Get the fully qualified namespace from the connection string */
-    std::string const& GetEventHubName() { return m_credentials.EventHub; }
+    std::string const& GetEventHubName() { return m_eventHub; }
 
     /** Get Retry options for this ProducerClient */
     Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions()
@@ -124,14 +116,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     bool SendEventDataBatch(
         EventDataBatch const& eventDataBatch,
-        Azure::Core::Context ctx = Azure::Core::Context());
+        Core::Context const& context = {});
 
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
      *
      * @param context Context for the operation can be used for request cancellation.
      */
-    Models::EventHubProperties GetEventHubProperties(Azure::Core::Context const& context = {});
+    Models::EventHubProperties GetEventHubProperties(Core::Context const& context = {});
 
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
@@ -142,7 +134,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,
-        Azure::Core::Context const& context = {});
+        Core::Context const& context = {});
 
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");

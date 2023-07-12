@@ -10,8 +10,7 @@
   ],
   "additionalCompilerSwitches": [
   ],
-  "allowInternal": true,
-  "includeInternal": false,
+  "allowInternal": false,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::Messaging",

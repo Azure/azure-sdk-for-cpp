@@ -12,15 +12,14 @@ using namespace Azure::Messaging::EventHubs::Models;
 Azure::Messaging::EventHubs::Models::LoadBalancerInfo
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GetAvailablePartitions(
     std::vector<std::string> const& partitionIDs,
-    Azure::Core::Context& ctx)
+    Core::Context const& context)
 {
 
   std::vector<Models::Ownership> ownerships = m_checkpointStore->ListOwnership(
       m_consumerClientDetails.EventHubName,
       m_consumerClientDetails.ConsumerGroup,
       m_consumerClientDetails.ClientID,
-      {},
-      ctx);
+      context);
 
   std::vector<Models::Ownership> unownedOrExpired;
   std::map<std::string, bool> alreadyProcessed;
@@ -121,9 +120,9 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::ResetOwnership(Models::Owner
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
     Models::LoadBalancerInfo const& lbinfo,
-    Azure::Core::Context& ctx)
+    Core::Context const& context)
 {
-  (void)ctx;
+  (void)context;
   std::vector<Models::Ownership> ours;
   if (lbinfo.UnownedOrExpired.size() > 0)
   {
@@ -145,9 +144,9 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::BalancedLoadBalancer(
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::GreedyLoadBalancer(
     Models::LoadBalancerInfo const& lbInfo,
-    Azure::Core::Context ctx)
+    Core::Context const& context)
 {
-  (void)ctx;
+  (void)context;
   std::vector<Models::Ownership> ours = lbInfo.Current;
   // try claiming from the completely unowned or expires ownerships _first_
   std::vector<Models::Ownership> randomOwneships
@@ -171,9 +170,9 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::GreedyLoadBalancer(
 std::vector<Azure::Messaging::EventHubs::Models::Ownership>
 Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     std::vector<std::string> const& partitionIDs,
-    Azure::Core::Context ctx)
+    Core::Context const& context)
 {
-  Models::LoadBalancerInfo lbInfo = GetAvailablePartitions(partitionIDs, ctx);
+  Models::LoadBalancerInfo lbInfo = GetAvailablePartitions(partitionIDs, context);
 
   bool claimMore = true;
 
@@ -204,12 +203,12 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     switch (m_strategy)
     {
       case Models::ProcessorStrategy::ProcessorStrategyGreedy: {
-        ownerships = GreedyLoadBalancer(lbInfo, ctx);
+        ownerships = GreedyLoadBalancer(lbInfo, context);
       }
       break;
       case Models::ProcessorStrategy::ProcessorStrategyBalanced: {
 
-        std::vector<Models::Ownership> newOwnership = BalancedLoadBalancer(lbInfo, ctx);
+        std::vector<Models::Ownership> newOwnership = BalancedLoadBalancer(lbInfo, context);
         ownerships.insert(ownerships.end(), newOwnership.begin(), newOwnership.end());
       }
       break;
@@ -219,6 +218,6 @@ Azure::Messaging::EventHubs::ProcessorLoadBalancer::LoadBalance(
     }
   }
 
-  std::vector<Models::Ownership> actual = m_checkpointStore->ClaimOwnership(ownerships, {}, ctx);
+  std::vector<Models::Ownership> actual = m_checkpointStore->ClaimOwnership(ownerships, context);
   return actual;
 }

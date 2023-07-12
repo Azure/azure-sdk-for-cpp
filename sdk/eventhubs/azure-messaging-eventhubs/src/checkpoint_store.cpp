@@ -106,10 +106,8 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::CreateCheckpointBlobMetadata(
 
 std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
     std::vector<Ownership> partitionOwnership,
-    ClaimOwnershipOptions const& options,
-    Azure::Core::Context ctx)
+    Core::Context const& context)
 {
-  (void)options;
   std::vector<Ownership> newOwnerships;
 
   for (Ownership ownership : partitionOwnership)
@@ -120,7 +118,7 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOw
     try
     {
       std::pair<Azure::DateTime, Azure::ETag> result
-          = SetMetadata(blobName, metadata, ownership.ETag.ValueOr(Azure::ETag()), ctx);
+          = SetMetadata(blobName, metadata, ownership.ETag.ValueOr(Azure::ETag()), context);
       if (result.second.HasValue())
       {
 
@@ -145,11 +143,8 @@ std::vector<Checkpoint> Azure::Messaging::EventHubs::BlobCheckpointStore::ListCh
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
     std::string const& consumerGroup,
-    ListCheckpointsOptions options,
-    Azure::Core::Context ctx)
+    Core::Context const& context)
 {
-  (void)options;
-
   std::vector<Checkpoint> checkpoints;
 
   std::string prefix = Models::Checkpoint{consumerGroup, eventHubName, fullyQualifiedNamespace}
@@ -157,7 +152,7 @@ std::vector<Checkpoint> Azure::Messaging::EventHubs::BlobCheckpointStore::ListCh
   Azure::Storage::Blobs::ListBlobsOptions listOptions;
   listOptions.Prefix = prefix;
   listOptions.Include = Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Metadata;
-  for (auto page = m_containerClient.ListBlobs(listOptions, ctx); page.HasPage();
+  for (auto page = m_containerClient.ListBlobs(listOptions, context); page.HasPage();
        page.MoveToNextPage())
   {
     for (auto& blob : page.Blobs)
@@ -178,10 +173,8 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwn
     std::string const& fullyQualifiedNamespace,
     std::string const& eventHubName,
     std::string const& consumerGroup,
-    ListOwnershipOptions options,
-    Azure::Core::Context ctx)
+    Core::Context const& context)
 {
-  (void)options;
   std::vector<Ownership> ownerships;
   std::string prefix
       = Ownership{consumerGroup, eventHubName, fullyQualifiedNamespace}.GetOwnershipPrefixName();
@@ -189,7 +182,7 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwn
   listOptions.Prefix = prefix;
   listOptions.Include = Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Metadata;
 
-  for (auto page = m_containerClient.ListBlobs(listOptions, ctx); page.HasPage();
+  for (auto page = m_containerClient.ListBlobs(listOptions, context); page.HasPage();
        page.MoveToNextPage())
   {
     for (auto& blob : page.Blobs)
@@ -208,11 +201,10 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ListOwn
  */
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpoint(
     Checkpoint const& checkpoint,
-    UpdateCheckpointOptions,
-    Azure::Core::Context ctx)
+    Core::Context const& context)
 {
   std::string blobName = checkpoint.GetCheckpointBlobName();
-  SetMetadata(blobName, CreateCheckpointBlobMetadata(checkpoint), Azure::ETag(), ctx);
+  SetMetadata(blobName, CreateCheckpointBlobMetadata(checkpoint), Azure::ETag(), context);
 }
 
 std::pair<Azure::DateTime, Azure::ETag>
@@ -220,7 +212,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::SetMetadata(
     std::string const& blobName,
     Azure::Storage::Metadata const& metadata,
     Azure::ETag const& etag,
-    Azure::Core::Context const& context)
+    Core::Context const& context)
 {
   auto blobClient = m_containerClient.GetBlockBlobClient(blobName);
   std::pair<Azure::DateTime, Azure::ETag> returnValue;

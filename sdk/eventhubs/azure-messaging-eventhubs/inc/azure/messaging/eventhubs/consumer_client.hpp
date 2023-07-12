@@ -18,7 +18,7 @@
 namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief Contains options for the ConsumerClient creation
    */
-  struct ConsumerClientOptions
+  struct ConsumerClientOptions final
   {
     /**@brief ApplicationID is used as the identifier when setting the User-Agent property.
      */
@@ -34,45 +34,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::_internal::MessageReceiverOptions ReceiverOptions{};
   };
 
-  /**@brief Contains credentials for the ConsumerClient creation
-   */
-  struct ConsumerClientCreds
-  {
-    /// The connection string for the Event Hubs namespace
-    std::string ConnectionString;
-
-    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
-    std::string HostName;
-
-    /// The name of the Event Hub
-    std::string EventHub;
-
-    /// The name of the consumer group
-    std::string ConsumerGroup;
-
-    /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> Credential{};
-
-    /// The URL to the Event Hubs namespace
-    std::string HostUrl{};
-  };
-
-  /**@brief GetEventHubPropertiesOptions contains optional parameters for the GetEventHubProperties
-   * function
-   */
-  struct GetEventHubPropertiesOptions
-  {
-    // For future expansion
-  };
-
-  /**@brief GetPartitionPropertiesOptions contains optional parameters for the
-   * GetPartitionProperties function
-   */
-  struct GetPartitionPropertiesOptions
-  {
-    // For future expansion
-  };
-
   /**
    * @brief The ConsumerClient class is a high level class used to consume events from an Event Hub.
    *
@@ -82,16 +43,29 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * available via the NewPartitionClient method. The ConsumerClient is also responsible for
    * managing the connection to the Event Hub and will reconnect as necessary.
    */
-  class ConsumerClient {
+  class ConsumerClient final {
+    /// The connection string for the Event Hubs namespace
+    std::string m_connectionString;
 
-  protected:
+    /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
+    std::string m_hostName;
+
+    /// The name of the Event Hub
+    std::string m_eventHub;
+
+    /// The name of the consumer group
+    std::string m_consumerGroup;
+
+    /// Credentials to be used to authenticate the client.
+    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+
+    /// The URL to the Event Hubs namespace
+    std::string m_hostUrl{};
+
     /// @brief The message receivers used to receive messages for a given partition.
     std::map<std::string, Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
     /// @brief The AMQP Sessions used to receive messages for a given partition.
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
-
-    /// @brief the credentials used to connect to the event hub.
-    ConsumerClientCreds m_credentials;
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
@@ -107,31 +81,31 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @returns Event hub name for client
      */
-    std::string const& GetEventHubName() { return m_credentials.EventHub; }
+    std::string const& GetEventHubName() const { return m_eventHub; }
 
     /** @brief Getter for consumer group name
      *
      * @returns Consumer group name for client
      */
-    std::string const& GetConsumerGroup() { return m_credentials.ConsumerGroup; }
+    std::string const& GetConsumerGroup() const { return m_consumerGroup; }
 
     /** @brief Getter FQDN
      *
      * @returns FQDN client
      */
-    std::string const& GetHostName() { return m_credentials.HostName; }
+    std::string const& GetHostName() const { return m_hostName; }
 
     /** @brief Getter for client id
      *
      * @returns Clientid for client
      */
-    std::string const& GetClientId() { return m_consumerClientOptions.ApplicationID; }
+    std::string const& GetClientId() const { return m_consumerClientOptions.ApplicationID; }
 
     /** @brief Getter for client details
      *
      * @returns Client details for client
      */
-    Models::ConsumerClientDetails GetDetails()
+    Models::ConsumerClientDetails GetDetails() const
     {
       Models::ConsumerClientDetails details;
       details.ClientID = GetClientId();
@@ -170,6 +144,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& eventHub = {},
         std::string const& consumerGroup = _detail::DefaultConsumerGroup,
         ConsumerClientOptions const& options = {});
+
     /** @brief creates a ConsumerClient from a token credential.
      *
      * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
@@ -201,7 +176,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param options Additional options for getting partition properties
      */
-    Models::EventHubProperties GetEventHubProperties(GetEventHubPropertiesOptions options = {});
+    Models::EventHubProperties GetEventHubProperties(Core::Context const& context = {});
 
     /**@brief  GetPartitionProperties gets properties for a specific partition. This includes data
      * like the last enqueued sequence number, the first sequence number and when an event was last
@@ -212,6 +187,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,
-        GetPartitionPropertiesOptions options = {});
+        Core::Context const& context = {});
   };
 }}} // namespace Azure::Messaging::EventHubs

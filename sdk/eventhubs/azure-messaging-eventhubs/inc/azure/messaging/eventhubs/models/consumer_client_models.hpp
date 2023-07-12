@@ -14,7 +14,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /**@brief Contains options for the ConsumerClient creation
    */
-  struct ConsumerClientDetails
+  struct ConsumerClientDetails final
   {
     /**@brief The Fully Qualified Namespace that the Event Hub exists in.
      */

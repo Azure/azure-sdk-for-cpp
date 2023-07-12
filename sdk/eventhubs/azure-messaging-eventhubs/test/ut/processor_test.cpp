@@ -42,7 +42,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$Default", options);
-    Models::ProcessorOptions processorOptions;
+    ProcessorOptions processorOptions;
     processorOptions.LoadBalancingStrategy = Models::ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::seconds(2);
 

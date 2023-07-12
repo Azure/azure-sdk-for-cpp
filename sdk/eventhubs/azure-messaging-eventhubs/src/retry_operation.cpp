@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 #include "azure/core/internal/diagnostics/log.hpp"
 
-#include <azure/messaging/eventhubs/retry_operation.hpp>
+#include "private/retry_operation.hpp"
 
-bool Azure::Messaging::EventHubs::_internal::RetryOperation::Execute(
+bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     std::function<bool()> operation)
 {
   using Azure::Core::Diagnostics::Logger;
@@ -44,7 +44,7 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::Execute(
   return false;
 }
 
-bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
+bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(
     bool response,
     int32_t attempt,
     std::chrono::milliseconds& retryAfter,
@@ -72,7 +72,7 @@ bool Azure::Messaging::EventHubs::_internal::RetryOperation::ShouldRetry(
   return true;
 }
 
-std::chrono::milliseconds Azure::Messaging::EventHubs::_internal::RetryOperation::
+std::chrono::milliseconds Azure::Messaging::EventHubs::_detail::RetryOperation::
     CalculateExponentialDelay(int32_t attempt, double jitterFactor)
 {
   if (jitterFactor < 0.8 || jitterFactor > 1.3)

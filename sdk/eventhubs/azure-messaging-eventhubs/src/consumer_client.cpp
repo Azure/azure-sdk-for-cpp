@@ -11,20 +11,20 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::string const& eventHub,
     std::string const& consumerGroup,
     Azure::Messaging::EventHubs::ConsumerClientOptions const& options)
-    : m_credentials{connectionString, "", eventHub, consumerGroup}, m_consumerClientOptions(options)
+    : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
+      m_consumerClientOptions(options)
 {
   auto sasCredential
       = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          m_credentials.ConnectionString);
+          m_connectionString);
 
-  m_credentials.Credential = sasCredential;
+  m_credential = sasCredential;
   if (!sasCredential->GetEntityPath().empty())
   {
-    m_credentials.EventHub = sasCredential->GetEntityPath();
+    m_eventHub = sasCredential->GetEntityPath();
   }
-  m_credentials.HostName = sasCredential->GetHostName();
-  m_credentials.HostUrl = "amqps://" + m_credentials.HostName + "/" + m_credentials.EventHub
-      + "/ConsumerGroups/" + m_credentials.ConsumerGroup;
+  m_hostName = sasCredential->GetHostName();
+  m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
 }
 
 Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
@@ -33,11 +33,10 @@ Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
     std::string const& consumerGroup,
     Azure::Messaging::EventHubs::ConsumerClientOptions const& options)
-    : m_credentials{"", hostName, eventHub, consumerGroup, credential},
-      m_consumerClientOptions(options)
+    : m_hostName{hostName}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
+      m_credential{credential}, m_consumerClientOptions(options)
 {
-  m_credentials.HostUrl = "amqps://" + m_credentials.HostName + "/" + m_credentials.EventHub
-      + "/ConsumerGroups/" + m_credentials.ConsumerGroup;
+  m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
 }
 
 Azure::Messaging::EventHubs::PartitionClient
@@ -49,14 +48,13 @@ Azure::Messaging::EventHubs::ConsumerClient::CreatePartitionClient(
       options, m_consumerClientOptions.RetryOptions);
 
   std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
-  std::string hostUrl = m_credentials.HostUrl + suffix;
+  std::string hostUrl = m_hostUrl + suffix;
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
   connectOptions.EnableTrace = m_consumerClientOptions.ReceiverOptions.EnableTrace;
 
-  Azure::Core::Amqp::_internal::Connection connection(
-      m_credentials.HostName, m_credentials.Credential, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(m_hostName, m_credential, connectOptions);
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize
       = static_cast<uint32_t>(m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
@@ -76,10 +74,8 @@ Azure::Messaging::EventHubs::ConsumerClient::CreatePartitionClient(
 }
 
 Azure::Messaging::EventHubs::Models::EventHubProperties
-Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
-    Azure::Messaging::EventHubs::GetEventHubPropertiesOptions options)
+Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(Core::Context const& context)
 {
-  (void)options;
   std::shared_ptr<PartitionClient> client;
   if (m_sessions.size() == 0 && m_sessions.find("0") == m_sessions.end())
   {
@@ -92,20 +88,21 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
   Azure::Core::Amqp::_internal::ManagementClient managementClient(
-      m_sessions.at("0").CreateManagementClient(m_credentials.EventHub, managementClientOptions));
+      m_sessions.at("0").CreateManagementClient(m_eventHub, managementClientOptions));
 
   managementClient.Open();
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.ApplicationProperties["name"]
-      = Azure::Core::Amqp::Models::AmqpValue{m_credentials.EventHub};
+      = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
   auto result = managementClient.ExecuteOperation(
       "READ" /* operation */,
       "com.microsoft:eventhub" /* type of operation */,
       "" /* locales */,
-      message);
+      message,
+      context);
 
   Models::EventHubProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
@@ -145,9 +142,8 @@ Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(
 Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
 Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
     std::string const& partitionID,
-    Azure::Messaging::EventHubs::GetPartitionPropertiesOptions options)
+    Core::Context const& context)
 {
-  (void)options;
   if (m_sessions.find(partitionID) == m_sessions.end())
   {
     CreatePartitionClient(partitionID);
@@ -159,22 +155,22 @@ Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
   managementClientOptions.EnableTrace = false;
   managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
   Azure::Core::Amqp::_internal::ManagementClient managementClient{
-      m_sessions.at(partitionID)
-          .CreateManagementClient(m_credentials.EventHub, managementClientOptions)};
+      m_sessions.at(partitionID).CreateManagementClient(m_eventHub, managementClientOptions)};
 
   managementClient.Open();
 
   // Send a message to the management endpoint to retrieve the properties of the eventhub.
   Azure::Core::Amqp::Models::AmqpMessage message;
   message.ApplicationProperties["name"]
-      = Azure::Core::Amqp::Models::AmqpValue{m_credentials.EventHub};
+      = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
   message.ApplicationProperties["partition"] = Azure::Core::Amqp::Models::AmqpValue{partitionID};
   message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
   auto result = managementClient.ExecuteOperation(
       "READ" /* operation */,
       "com.microsoft:partition" /* type of operation */,
       "" /* locales */,
-      message);
+      message,
+      context);
 
   Models::EventHubPartitionProperties properties;
   if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)

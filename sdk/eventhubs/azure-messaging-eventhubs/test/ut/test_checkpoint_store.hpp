@@ -25,14 +25,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        ListCheckpointsOptions options = ListCheckpointsOptions(),
-        Azure::Core::Context ctx = Azure::Core::Context()) override
+        Core::Context const& context = {}) override
     {
       (void)fullyQualifiedNamespace;
       (void)eventHubName;
       (void)consumerGroup;
-      (void)ctx;
-      (void)options;
+      (void)context;
       std::vector<Azure::Messaging::EventHubs::Models::Checkpoint> checkpoints;
       for (auto const& checkpoint : m_checkpoints)
       {
@@ -45,14 +43,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHubName,
         std::string const& consumerGroup,
-        ListOwnershipOptions options = ListOwnershipOptions(),
-        Azure::Core::Context ctx = Azure::Core::Context()) override
+        Core::Context const& context = {}) override
     {
       (void)fullyQualifiedNamespace;
       (void)eventHubName;
       (void)consumerGroup;
-      (void)ctx;
-      (void)options;
+      (void)context;
       std::vector<Azure::Messaging::EventHubs::Models::Ownership> ownerships;
       for (auto const& ownership : m_ownerships)
       {
@@ -63,11 +59,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     std::vector<Azure::Messaging::EventHubs::Models::Ownership> ClaimOwnership(
         std::vector<Models::Ownership> partitionOwnership,
-        ClaimOwnershipOptions const& options = ClaimOwnershipOptions(),
-        Azure::Core::Context ctx = Azure::Core::Context()) override
+        Core::Context const& context = {}) override
     {
-      (void)ctx;
-      (void)options;
+      (void)context;
       std::vector<Models::Ownership> owned;
       for (auto& ownership : partitionOwnership)
       {
@@ -124,11 +118,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     void UpdateCheckpoint(
         Azure::Messaging::EventHubs::Models::Checkpoint const& checkpoint,
-        UpdateCheckpointOptions options = UpdateCheckpointOptions(),
-        Azure::Core::Context ctx = Azure::Core::Context()) override
+        Core::Context const& context = {}) override
     {
-      (void)ctx;
-      (void)options;
+      (void)context;
       if (checkpoint.ConsumerGroup.empty() || checkpoint.EventHubName.empty()
           || checkpoint.EventHubHostName.empty() || checkpoint.PartitionID.empty())
       {

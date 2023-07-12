@@ -15,7 +15,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
   class RetryOperationTest_ShouldRetryFalse2_Test;
 }}}}} // namespace Azure::Messaging::EventHubs::_internal::Test
 #endif
-namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal {
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
   class RetryOperation {
 #if defined(TESTING_BUILD_AMQP)
     // make tests classes friends to validate set Retry

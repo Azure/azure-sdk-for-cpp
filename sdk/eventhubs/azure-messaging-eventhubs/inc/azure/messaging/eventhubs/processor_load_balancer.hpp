@@ -30,7 +30,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /**@brief ProcessorLoadBalancer is used by [Processor] to provide automatic load balancing
    * between multiple Processor instances, even in separate processes or on separate machines.
    */
-  class ProcessorLoadBalancer {
+  class ProcessorLoadBalancer final {
 #ifdef TESTING_BUILD_AMQP
     friend class Test::ProcessorLoadBalancerTest_Greedy_EnoughUnownedPartitions_Test;
     friend class Test::ProcessorLoadBalancerTest_Balanced_UnownedPartitions_Test;
@@ -51,7 +51,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Models::LoadBalancerInfo GetAvailablePartitions(
         std::vector<std::string> const& partitionIDs,
-        Azure::Core::Context& ctx);
+        Core::Context const& context);
 
     std::vector<Models::Ownership> GetRandomOwnerships(
         std::vector<Models::Ownership> const& ownerships,
@@ -70,11 +70,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::vector<Models::Ownership> BalancedLoadBalancer(
         Models::LoadBalancerInfo const& lbinfo,
-        Azure::Core::Context& ctx);
+        Core::Context const& context);
 
     std::vector<Models::Ownership> GreedyLoadBalancer(
         Models::LoadBalancerInfo const& lbInfo,
-        Azure::Core::Context ctx);
+        Core::Context const& context);
 
   public:
     /**@brief ProcessorLoadBalancer is used by [Processor] to provide automatic load balancing
@@ -124,6 +124,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::vector<Models::Ownership> LoadBalance(
         std::vector<std::string> const& partitionIDs,
-        Azure::Core::Context ctx = Azure::Core::Context());
+        Core::Context const& context = {});
   };
 }}} // namespace Azure::Messaging::EventHubs

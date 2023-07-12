@@ -12,7 +12,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   /**@brief EventHubProperties represents properties of the Event Hub, like the number of
    * partitions.
    */
-  struct EventHubProperties
+  struct EventHubProperties final
   {
     /// Time when the Event Hub was created.
     Azure::DateTime CreatedOn;
