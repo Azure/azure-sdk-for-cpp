@@ -24,10 +24,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, BearerChallengeWorks_LIVEONLY_)
   {
-    Blobs::BlobClientOptions clientOptions;
+    Blobs::BlobClientOptions clientOptions
+        = InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
     Azure::Identity::ClientSecretCredentialOptions options;
 
-    //With tenantId
+    // With tenantId
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     auto blobClient = Blobs::BlobClient(
@@ -38,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.GetProperties());
     EXPECT_NO_THROW(ReadBodyStream(blobClient.Download().Value.BodyStream));
 
-    //Without tenantId
+    // Without tenantId
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     blobClient = Blobs::BlobClient(
