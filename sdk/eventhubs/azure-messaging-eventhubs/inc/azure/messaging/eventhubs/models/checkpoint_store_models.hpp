@@ -22,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The fully qualified namespace for the event hub.
     std::string FullyQualifiedNamespace;
     /// @brief The partition ID for the corresponding ownership.
-    std::string PartitionID;
+    std::string PartitionID{};
     /// @brief The owner ID for the corresponding ownership.
     std::string OwnerID{};
     /// the ETag, used when attempting to claim or update ownership of a partition.
