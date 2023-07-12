@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 // Since `getenv()` may generate warnings on MSVC, and is not available on UWP, sample code
 // gets cluttered with insignificant nuances. This file makes it so that `std::getenv()` compiles

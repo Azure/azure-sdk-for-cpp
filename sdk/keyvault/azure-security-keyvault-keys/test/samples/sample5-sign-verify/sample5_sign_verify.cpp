@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 /**
  * @brief This sample demonstrates how to sign data with both a RSA key and an EC key using the

@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 /**
  * @brief Provide string constants used for all the Key Vault services.

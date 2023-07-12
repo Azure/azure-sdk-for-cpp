@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 //
 // This file contains protocol level definitions for the AMQP protocol.

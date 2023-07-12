@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 #include "azure/storage/blobs/blob_container_client.hpp"
 

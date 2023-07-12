@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 #include "azure/identity/client_secret_credential.hpp"
 #include "azure/identity/detail/token_cache.hpp"

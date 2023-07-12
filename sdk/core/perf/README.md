@@ -110,7 +110,7 @@ The main source file defines the list of available tests and calls the performan
 
 ```cpp
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 // The performance framework headers
 #include <azure/perf/options.hpp>
@@ -170,7 +170,7 @@ The next code example illustrates how to define a very simple empty test.
 
 ```cpp
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 /**
  * @file
@@ -211,7 +211,7 @@ A test can define its own options as an addition to the base options from the pe
 
 ```cpp
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 /**
  * @file

@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 #pragma once
 
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
   class OpenTelemetrySpan final : public Azure::Core::Tracing::_internal::Span {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> m_span;
     // Copyright (c) Microsoft Corporation. All rights reserved.
-    // SPDX-License-Identifier: MIT
+    // Licensed under the MIT License.
 
   public:
     OpenTelemetrySpan(opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span);

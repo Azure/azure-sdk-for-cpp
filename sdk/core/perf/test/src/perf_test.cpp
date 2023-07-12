@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 #include "azure/perf/test/delay_test.hpp"
 #include "azure/perf/test/extended_options_test.hpp"

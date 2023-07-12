@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 /**
  * @brief Validates the Azure Storage blobs SDK client with fault responses from server.

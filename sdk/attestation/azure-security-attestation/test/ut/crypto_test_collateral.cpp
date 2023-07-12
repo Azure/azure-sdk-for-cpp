@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 #include "crypto_test_collateral.hpp"
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {

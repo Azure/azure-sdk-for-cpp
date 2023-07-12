@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 #include "azure/core/internal/cryptography/sha_hash.hpp"
 #include "gtest/gtest.h"

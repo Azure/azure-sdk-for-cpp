@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
 
 #include "private/administration_constants.hpp"
 #include "private/keyvault_settings_common_request.hpp"
