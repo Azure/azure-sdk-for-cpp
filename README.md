@@ -8,7 +8,7 @@ This repository is for active development of the Azure SDK for C++. For consumer
 
 For the best development experience, we recommend developers use [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
 
-You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage#azure-storage-client-library-for-c).
+You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage#azure-storage-libraries-for-c).
 
 For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure SDK for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
 
