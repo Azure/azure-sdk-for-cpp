@@ -17,6 +17,15 @@ TEST(Json, create)
   EXPECT_EQ(expected, j.dump());
 }
 
+TEST(Json, utf8BOM)
+{
+  // Verify that the UTF-8 BOM bytes (0xEF, 0xBB, 0xBF) are skipped when parsing JSON using the
+  // library.
+  std::array<uint8_t, 8> v{239, 187, 191, '5'};
+  json jsonRoot = json::parse(v);
+  EXPECT_EQ(jsonRoot.get<int>(), 5);
+}
+
 TEST(Json, duplicateName)
 {
   json jsonRoot = json::parse(R"({"KeyName": 1, "AnotherObject": {"KeyName": 2}})");
