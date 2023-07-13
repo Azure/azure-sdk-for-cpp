@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 #include "private/retry_operation.hpp"
 
 #include "azure/core/internal/diagnostics/log.hpp"
