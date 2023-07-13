@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// SPDX-Licence-Identifier: MIT
+// Licensed under the MIT License.
 
 #include "mock_amqp_server.hpp"
 

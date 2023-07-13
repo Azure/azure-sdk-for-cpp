@@ -1,6 +1,6 @@
 #@# vim: set filetype=dockerfile:
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 FROM ubuntu/squid
 LABEL maintainer "Larry Osterman<github.com/LarryOsterman>"

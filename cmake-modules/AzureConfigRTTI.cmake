@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 # The option is added again just like from the main CMakeList
 # to enable discovering the option directly from each project.

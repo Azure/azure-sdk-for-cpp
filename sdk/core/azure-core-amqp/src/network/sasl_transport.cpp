@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// SPDX-Licence-Identifier: MIT
+// Licensed under the MIT License.
 
 // LCOV_EXCL_START
 #include "azure/core/amqp/network/sasl_transport.hpp"

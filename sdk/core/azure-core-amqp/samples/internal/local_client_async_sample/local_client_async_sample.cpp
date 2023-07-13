@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// SPDX-Licence-Identifier: MIT
+// Licensed under the MIT License.
 
 #include <azure/core/amqp/connection.hpp>
 #include <azure/core/amqp/message_sender.hpp>

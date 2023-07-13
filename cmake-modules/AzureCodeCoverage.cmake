@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 #
 # Defines utility functions to create code coverage targets with gcov.
 # gcov html and xml report.

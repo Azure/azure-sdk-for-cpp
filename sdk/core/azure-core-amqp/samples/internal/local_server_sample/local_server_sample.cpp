@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// SPDX-Licence-Identifier: MIT
+// Licensed under the MIT License.
 
 #include <azure/core/amqp/common/async_operation_queue.hpp>
 #include <azure/core/amqp/connection.hpp>

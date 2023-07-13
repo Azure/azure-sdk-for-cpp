@@ -71,8 +71,8 @@ The main CMake project represents the definition of the main performance test ap
 
 Follow the next template to create the main CMake project
 ```cmake
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)

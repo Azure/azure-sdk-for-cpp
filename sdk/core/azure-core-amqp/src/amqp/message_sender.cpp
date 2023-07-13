@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Corporation.
-// SPDX-Licence-Identifier: MIT
+// Licensed under the MIT License.
 
 // Enable declaration of strerror_s.
 #define __STDC_WANT_LIB_EXT1__ 1

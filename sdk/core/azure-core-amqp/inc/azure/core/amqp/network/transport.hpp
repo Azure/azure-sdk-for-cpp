@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 // Copyright (c) Microsoft Corporation.
-// SPDX-Licence-Identifier: MIT
+// Licensed under the MIT License.
 
 #pragma once
 #include <azure/core/context.hpp>
