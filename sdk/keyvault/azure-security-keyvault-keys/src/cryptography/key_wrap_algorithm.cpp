@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "../private/key_constants.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"

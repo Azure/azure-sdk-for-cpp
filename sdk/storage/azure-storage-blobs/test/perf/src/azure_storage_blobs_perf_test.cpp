@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "azure/storage/blobs/test/download_blob_from_sas.hpp"
 #include "azure/storage/blobs/test/download_blob_pipeline_only.hpp"

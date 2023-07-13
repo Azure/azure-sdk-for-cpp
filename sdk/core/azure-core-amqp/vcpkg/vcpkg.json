@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 {
   "name": "azure-core-amqp-cpp",
@@ -17,9 +17,7 @@
       "default-features": false,
       "version>=": "1.9.0-beta.1"
     },
-    {
-      "name": "azure-uamqp-c"
-    },
+    "azure-uamqp-c",
     {
       "name": "vcpkg-cmake",
       "host": true

@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 {{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.deploy-example") -}}
 {{- define "stress.deploy-example" -}}
 metadata:

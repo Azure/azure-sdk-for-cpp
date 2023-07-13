@@ -71,8 +71,8 @@ The main CMake project represents the definition of the main performance test ap
 
 Follow the next template to create the main CMake project
 ```cmake
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
@@ -109,8 +109,8 @@ set_target_properties(azure-performance-library-name-test PROPERTIES FOLDER "Tes
 The main source file defines the list of available tests and calls the performance framework `Run` function. Take a loop to the next example.
 
 ```cpp
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 // The performance framework headers
 #include <azure/perf/options.hpp>
@@ -169,8 +169,8 @@ In the above code example, the two tests added to the `map` are defined in the p
 The next code example illustrates how to define a very simple empty test.
 
 ```cpp
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 /**
  * @file
@@ -210,8 +210,8 @@ namespace Azure { namespace Perf { namespace Test {
 A test can define its own options as an addition to the base options from the performance framework. See the next example to learn how to do it.
 
 ```cpp
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 /**
  * @file

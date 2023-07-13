@@ -10,6 +10,12 @@
 
 ### Other Changes
 
+## 12.3.3 (2023-07-11)
+
+### Features Added
+
+- Bumped up Account SAS version to `2023-01-03`.
+
 ## 12.3.2 (2023-05-09)
 
 ### Features Added

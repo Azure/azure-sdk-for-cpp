@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 /**
  * @file
@@ -9,9 +9,9 @@
 #pragma once
 
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR 12
-#define AZURE_STORAGE_FILES_DATALAKE_VERSION_MINOR 7
+#define AZURE_STORAGE_FILES_DATALAKE_VERSION_MINOR 8
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_PATCH 0
-#define AZURE_STORAGE_FILES_DATALAKE_VERSION_PRERELEASE "beta.2"
+#define AZURE_STORAGE_FILES_DATALAKE_VERSION_PRERELEASE "beta.1"
 
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA_HELPER(i) #i
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_ITOA(i) \

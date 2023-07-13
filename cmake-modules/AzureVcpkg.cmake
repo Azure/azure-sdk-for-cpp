@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 # We need to know an absolute path to our repo root to do things like referencing ./LICENSE.txt file.
 set(AZ_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
@@ -85,7 +85,7 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
     az_vcpkg_portfile_prep(
       "${targetName}"
       "${vcpkgFile}"
-      "# Copyright (c) Microsoft Corporation. All rights reserved.\n# SPDX-License-Identifier: MIT\n\n"
+      "# Copyright (c) Microsoft Corporation.\n# Licensed under the MIT License.\n\n"
     )
   endforeach()
 

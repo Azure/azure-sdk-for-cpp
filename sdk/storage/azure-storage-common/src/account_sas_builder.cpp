@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "azure/storage/common/account_sas_builder.hpp"
 
@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2022-11-02";
+    constexpr static const char* SasVersion = "2023-01-03";
   }
 
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)

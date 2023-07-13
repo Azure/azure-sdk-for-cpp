@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 #
 # Sets ${AZ_LIBRARY_VERSION} in the parent context with the version value
 # constructed from package_version.hpp. The package_version.hpp must follow

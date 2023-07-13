@@ -1,5 +1,5 @@
-// Copyright(c) Microsoft Corporation.All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "../../src/private/attestation_client_models_private.hpp"
 #include "../../src/private/attestation_client_private.hpp"
