@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 include(AzureVcpkg)

@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "azure/core/internal/tracing/tracing_impl.hpp"
 
@@ -36,8 +36,8 @@ TEST(TracingContextFactory, ServiceTraceEnums)
   std::string tracingAttributeName = TracingAttributes::AzNamespace.ToString();
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>

@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "azure/identity/client_certificate_credential.hpp"
 #include "credential_test_helper.hpp"

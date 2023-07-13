@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 Write-Host 'EnvVar: ' $env:ANONYMOUSCONTAINERIPV4ADDRESS
 Write-Host 'EnvVar: ' $env:AUTHENTICATEDCONTAINERIPV4ADDRESS

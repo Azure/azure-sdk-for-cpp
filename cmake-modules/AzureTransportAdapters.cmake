@@ -1,5 +1,5 @@
-## Copyright (c) Microsoft Corporation. All rights reserved.
-## SPDX-License-Identifier: MIT
+## Copyright (c) Microsoft Corporation.
+## Licensed under the MIT License.
 
 ##############                      TRANSPORT ADAPTER BUILD                     ######################
 #  Default: If no option is explicitly added, libcurl will be used for POSIX and WinHTTP for Windows #

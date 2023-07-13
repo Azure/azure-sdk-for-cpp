@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "../src/private/secret_serializers.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
