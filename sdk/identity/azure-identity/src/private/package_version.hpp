@@ -9,7 +9,7 @@
 #pragma once
 
 #include <cstdint>
-
+// test
 #define AZURE_IDENTITY_VERSION_MAJOR 1
 #define AZURE_IDENTITY_VERSION_MINOR 6
 #define AZURE_IDENTITY_VERSION_PATCH 0
