@@ -4,6 +4,7 @@
 /**
  * Base class for running live and playback tests using the interceptor manager
  */
+#pragma once
 
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"

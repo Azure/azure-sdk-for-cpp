@@ -589,6 +589,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpCollectionBase() {}
 
   public:
+    /** @brief Returns the underlying value.
+     */
+    explicit operator T const &() const { return m_value; }
+
     /** @brief Convert this collection type to an AMQP value.*/
     explicit operator AmqpValue() const { return static_cast<UniqueAmqpValueHandle>(*this).get(); }
 
@@ -602,6 +606,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     void push_back(typename T::value_type&& val) { m_value.push_back(val); }
     typename T::const_iterator begin() const noexcept { return m_value.begin(); }
     typename T::const_iterator end() const noexcept { return m_value.end(); }
+    size_t find(T const& val) noexcept { return m_value.find(val); }
     typename T::value_type* data() noexcept { return m_value.data(); }
     const typename T::value_type* data() const noexcept { return m_value.data(); }
     const typename T::value_type& at(const typename T::size_type pos) const
@@ -743,6 +748,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     AmqpBinaryData(initializer_type const& values) : AmqpCollectionBase(values){};
     /** @brief Construct a new AmqpBinaryData from a vector of bytes. */
     AmqpBinaryData(std::vector<std::uint8_t> const& values) : AmqpCollectionBase(values){};
+
+    /** @brief Assign a vector of bytes to the current AmqpBinaryData. */
+    AmqpBinaryData& operator=(std::vector<std::uint8_t> const& values)
+    {
+      m_value = values;
+      return *this;
+    };
 
     /** @brief Construct a new AmqpBinaryData object from an existing uAMQP AMQP_VALUE item
      *

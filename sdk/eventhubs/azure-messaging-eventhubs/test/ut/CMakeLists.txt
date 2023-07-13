@@ -12,15 +12,21 @@ include(GoogleTest)
 # Export the test folder for recordings access.
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 include(TestProxyPrep)
-SetUpTestProxy("sdk/messaging")
+SetUpTestProxy("sdk/eventhubs")
 
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
-  eventhubs_test.cpp
-)
+    producer_client_test.cpp
+    retry_operation_test.cpp
+    event_data_test.cpp
+    consumer_client_test.cpp    
+    checkpoint_store_test.cpp 
+    processor_load_balancer_test.cpp
+    test_checkpoint_store.hpp
+    processor_test.cpp)
 
-create_per_service_target_build(messaging azure-messaging-eventhubs-test)
+create_per_service_target_build(eventhubs azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
 
 if (MSVC)
@@ -31,8 +37,8 @@ target_link_libraries(
     azure-messaging-eventhubs-test
       PRIVATE 
         azure-messaging-eventhubs 
-        azure-identity azure-core-test-fw  
-        azure-security-attestation
+        azure-core-test-fw
+        azure-identity 
         gtest 
         gtest_main 
         gmock
