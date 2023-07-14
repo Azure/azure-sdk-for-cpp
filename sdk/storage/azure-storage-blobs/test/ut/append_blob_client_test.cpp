@@ -356,7 +356,7 @@ namespace Azure { namespace Storage { namespace Test {
         appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options));
   }
 
-  TEST_F(AppendBlobClientTest, DISABLED_LIVEONLY_HighThroughputAppendBlob)
+  TEST_F(AppendBlobClientTest, HighThroughputAppendBlob_LIVEONLY_)
   {
     auto appendBlobClient = m_blobContainerClient->GetAppendBlobClient(RandomString());
     appendBlobClient.Create();
