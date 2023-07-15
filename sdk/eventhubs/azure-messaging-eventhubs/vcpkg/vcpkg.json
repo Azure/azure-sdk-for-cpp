@@ -8,19 +8,18 @@
     "Microsoft Azure Messaging Event Hubs SDK for C++",
     "This library provides Azure Messaging Event Hubs SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-keys",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs/azure-messaging-eventhubs",
   "license": "MIT",
   "dependencies": [
     {
-      "name": "azure-core-cpp",
-      "default-features": false,
-      "version>=": "1.9.0"
-    },
-    {
       "name": "azure-core-amqp-cpp",
+      "default-features": false,
+      "version>=": "1.0.0-beta.1"
     },
     {
       "name": "azure-storage-blobs-cpp",
+      "default-features": false,
+      "version>=": "12.8.0"
     },
     {
       "name": "vcpkg-cmake",
