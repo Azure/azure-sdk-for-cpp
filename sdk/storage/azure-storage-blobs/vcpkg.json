@@ -8,11 +8,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs",
   "license": "MIT",
   "dependencies": [
-    {
-      "name": "azure-storage-common-cpp",
-      "default-features": false,
-      "version>=": "12.3.1"
-    },
+    "azure-storage-common-cpp",
     {
       "name": "vcpkg-cmake",
       "host": true

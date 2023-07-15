@@ -8,11 +8,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake",
   "license": "MIT",
   "dependencies": [
-    {
-      "name": "azure-storage-blobs-cpp",
-      "default-features": false,
-      "version>=": "12.7.0"
-    },
+    "azure-storage-blobs-cpp",
     {
       "name": "vcpkg-cmake",
       "host": true
