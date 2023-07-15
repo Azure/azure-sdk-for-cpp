@@ -402,8 +402,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(foundMetadata);
   }
 
-  // Test uses StartsOn and ExpiresOn values based on time now() + minutes
-  // Hence, the test can't be recorded and need to run on live mode always.
   TEST_F(BlobContainerClientTest, AccessControlList)
   {
     auto containerClient = *m_blobContainerClient;
