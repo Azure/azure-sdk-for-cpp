@@ -31,7 +31,8 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Test {
-  TEST(SdkWithLibcurl, globalCleanUp)
+  // This test fails intermittently: https://github.com/Azure/azure-sdk-for-cpp/issues/4332
+  TEST(SdkWithLibcurl, DISABLED_globalCleanUp)
   {
     Azure::Core::Http::Request req(
         Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://httpbin.org/get"));
