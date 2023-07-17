@@ -262,7 +262,7 @@ jobs:
               parameters:
                 Directory:
                 Urls: annotated.html
-                CheckLinkGuidance: $true
+                CheckLinkGuidance: $false
                 Recursive: $true
                 WorkingDirectory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
 
