@@ -93,7 +93,7 @@ TEST_F(EventDataTest, EventDataBodyTest)
     auto message
         = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
 
-    EXPECT_EQ(message.GetBodyAsBinary().size(), 1);
+    EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
     EXPECT_EQ(msg.Body.Data, message.GetBodyAsBinary()[0]);
   }
 
@@ -105,7 +105,7 @@ TEST_F(EventDataTest, EventDataBodyTest)
 
     auto message
         = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
-    EXPECT_EQ(message.GetBodyAsAmqpList().size(), 1);
+    EXPECT_EQ(message.GetBodyAsAmqpList().size(), 1ul);
     EXPECT_EQ(msg.Body.Sequence, message.GetBodyAsAmqpList()[0]);
   }
 
