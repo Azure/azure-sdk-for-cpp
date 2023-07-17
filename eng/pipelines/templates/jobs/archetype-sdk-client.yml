@@ -265,7 +265,6 @@ jobs:
                 CheckLinkGuidance: $true
                 Recursive: $true
                 WorkingDirectory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
-              displayName: Verify links in generated documentation.
 
             - task: PowerShell@2
               inputs:
