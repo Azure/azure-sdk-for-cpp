@@ -56,8 +56,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    * For more information, see [AMQP Message
    * Format](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format).
    * 
-   * [Test Link](https://bogus.com/example/test.)
-   *
    */
   class AmqpMessage final {
   public:
