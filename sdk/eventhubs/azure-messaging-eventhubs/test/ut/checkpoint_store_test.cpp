@@ -46,7 +46,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     checkpoints = checkpointStore.ListCheckpoints(
         "ns.servicebus.windows.net", "event-hub-name", "$Default");
-    EXPECT_EQ(checkpoints.size(), 1);
+    EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].EventHubHostName);
