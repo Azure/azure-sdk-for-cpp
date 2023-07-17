@@ -261,7 +261,7 @@ jobs:
             - template: /eng/common/pipelines/templates/steps/verify-links.yml
               parameters:
                 Directory:
-                Url: annotated.html
+                Urls: annotated.html
                 CheckLinkGuidance: $true
                 Recursive: $true
                 WorkingDirectory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
