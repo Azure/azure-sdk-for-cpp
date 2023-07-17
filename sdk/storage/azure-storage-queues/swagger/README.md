@@ -77,8 +77,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2018-03-28"],
-        "description": "The version used for the operations to Azure storage services."
+        "enum": ["2018-03-28"]
       };
 ```
 
@@ -108,6 +107,7 @@ directive:
         "Queue_ClearMessages": "ClearMessagesResult",
         "Queue_UpdateMessage": "UpdateMessageResult",
         "Queue_DeleteMessage": "DeleteMessageResult",
+        "Service_SetProperties": "SetServicePropertiesResult",
       }));
       for (const url in $["x-ms-paths"]) {
         for (const verb in $["x-ms-paths"][url]) {
@@ -191,7 +191,6 @@ directive:
       $.GeoReplication.properties["LastSyncTime"]["x-ms-client-name"] = "LastSyncedOn";
       $.GeoReplication.required = ["Status"];
       $.GeoReplication.properties["Status"]["x-ms-enum"]["name"] = "GeoReplicationStatus";
-      $.GeoReplication.description = "Geo-Replication information for the Secondary Storage Service";
   - from: swagger-document
     where: $["x-ms-paths"]["/?restype=service&comp=stats"]
     transform: >
@@ -209,7 +208,7 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
-      $.Metadata = {"type": "object", "x-ms-format": "caseinsensitivemap", properties: {"__placeHolder" : {"type": "integer"}}, "description": "A set of name-value pairs associated with this queue."};
+      $.Metadata = {"type": "object", "x-ms-format": "caseinsensitivemap", properties: {"__placeHolder" : {"type": "integer"}}};
       $.ListQueuesSegmentResponse["x-ms-client-name"] = "ListQueuesResult";
       $.ListQueuesSegmentResponse["x-namespace"] = "_detail";
       $.ListQueuesSegmentResponse.properties["QueueItems"]["x-ms-client-name"] = "Items";
@@ -230,7 +229,7 @@ directive:
       $.CreateQueueResult = {
         "type": "object",
         "properties": {
-          "Created": {"type": "boolean", "x-ms-xml": {"name": ""}, "description": "Indicates if the queue was successfully created by this operation."}
+          "Created": {"type": "boolean", "x-ms-xml": {"name": ""}}
         }
       };
   - from: swagger-document
@@ -252,7 +251,7 @@ directive:
         "x-ms-client-name": "DeleteQueueResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}, "description": "Indicates if the queue was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
 ```
@@ -412,8 +411,27 @@ directive:
     transform: >
       $.put.operationId = "Queue_UpdateMessageVisibility";
       $.put.parameters.shift();
+```
+
+### Description
+
+```yaml
+directive:
   - from: swagger-document
     where: $.definitions
     transform: >
+      $.ApiVersion.description = "The version used for the operations to Azure storage services.";
+      $.GeoReplication.description = "Geo-Replication information for the Secondary Storage Service";
+      $.Metadata.description = "A set of name-value pairs associated with this queue.";
+      $.CreateQueueResult.properties["Created"].description = "Indicates if the queue was successfully created by this operation.";
       $.UpdateMessageResult.description = "Response type for #Azure::Storage::Queues::QueueClient::UpdateMessage.";
+      $.SetServicePropertiesResult.description = "Response type for #Azure::Storage::Queues::QueueServiceClient::SetProperties.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{queueName}"].delete.responses["204"]
+    transform: >
+      $.schema.properties["Deleted"].description = "Indicates if the queue was successfully deleted by this operation.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{queueName}?comp=metadata"].get.responses["200"].headers
+    transform: >
+      $["x-ms-meta"]["description"] = "A set of name-value pairs associated with this queue.";
 ```

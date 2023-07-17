@@ -171,30 +171,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class AccessTier final {
     public:
+      /** Constructs a new AccessTier instance */
       AccessTier() = default;
-      /** @brief Construct a new AccessTier from a string. */
+      /** Constructs a new AccessTier from a string. */
       explicit AccessTier(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two items for equality */
+      /** Compares with another AccessTier. */
       bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
-      /** @brief Compare two items for inequality */
+      /** Compares with another AccessTier. */
       bool operator!=(const AccessTier& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /**
-       * @brief Specifies the transaction optimized tier.
-       */
+      /** Constant value of type AccessTier: TransactionOptimized */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier TransactionOptimized;
-      /**
-       * @brief Specifies the hot access tier.
-       */
+      /** Constant value of type AccessTier: Hot */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Hot;
-      /**
-       * @brief Specifies the cool access tier.
-       */
+      /** Constant value of type AccessTier: Cool */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Cool;
-      /**
-       * @brief Specifies the premium access tier.
-       */
+      /** Constant value of type AccessTier: Premium */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Premium;
 
     private:
@@ -205,18 +198,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class LeaseStatus final {
     public:
+      /** Constructs a new LeaseStatus instance */
       LeaseStatus() = default;
-      /** @brief Construct a new LeaseSTatus from a string.*/
+      /** Constructs a new LeaseStatus from a string. */
       explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another LeaseStatus. */
       bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another LeaseStatus. */
       bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Lease Status is locked. */
+      /** Constant value of type LeaseStatus: Locked */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Locked;
-      /** @brief Lease Status is unlocked. */
+      /** Constant value of type LeaseStatus: Unlocked */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Unlocked;
 
     private:
@@ -227,24 +221,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class LeaseState final {
     public:
+      /** Constructs a new LeaseState instance */
       LeaseState() = default;
-      /** Construct a new LeaseStatefrom a string. */
+      /** Constructs a new LeaseState from a string. */
       explicit LeaseState(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another LeaseState. */
       bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another LeaseState. */
       bool operator!=(const LeaseState& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Lease is available */
+      /** Constant value of type LeaseState: Available */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Available;
-      /** @brief Lease is leased */
+      /** Constant value of type LeaseState: Leased */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Leased;
-      /** @brief Lease is expired  */
+      /** Constant value of type LeaseState: Expired */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Expired;
-      /** @brief Lease is breaking  */
+      /** Constant value of type LeaseState: Breaking */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Breaking;
-      /** @brief Lease is broken  */
+      /** Constant value of type LeaseState: Broken */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Broken;
 
     private:
@@ -255,18 +250,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class LeaseDurationType final {
     public:
+      /** Constructs a new LeaseDurationType instance */
       LeaseDurationType() = default;
-      /** Construct a new LeaseDurationType from a string. */
+      /** Constructs a new LeaseDurationType from a string. */
       explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another LeaseDurationType. */
       bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another LeaseDurationType. */
       bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** Lease duration is infinite. */
+      /** Constant value of type LeaseDurationType: Infinite */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
-      /** Lease duration is fixed. */
+      /** Constant value of type LeaseDurationType: Fixed */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
 
     private:
@@ -277,18 +273,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class ShareProtocols final {
     public:
+      /** Constructs a new ShareProtocols instance */
       ShareProtocols() = default;
-      /** Construct a new ShareProtocols from a string. */
+      /** Constructs a new ShareProtocols from a string. */
       explicit ShareProtocols(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another ShareProtocols. */
       bool operator==(const ShareProtocols& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another ShareProtocols. */
       bool operator!=(const ShareProtocols& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Smb/CIFS share protocol. */
+      /** Constant value of type ShareProtocols: Smb */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Smb;
-      /** @brief Nfs share protocol. */
+      /** Constant value of type ShareProtocols: Nfs */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Nfs;
 
     private:
@@ -299,21 +296,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class ShareRootSquash final {
     public:
+      /** Constructs a new ShareRootSquash instance */
       ShareRootSquash() = default;
-      /** Construct a new ShareRootSquash from a string. */
+      /** Constructs a new ShareRootSquash from a string. */
       explicit ShareRootSquash(std::string value) : m_value(std::move(value)) {}
-      /** Overwrite the last written time. */
-      /** @brief Compare two values for equality */
+      /** Compares with another ShareRootSquash. */
       bool operator==(const ShareRootSquash& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another ShareRootSquash. */
       bool operator!=(const ShareRootSquash& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Don't squash the root. */
+      /** Constant value of type ShareRootSquash: NoRootSquash */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash NoRootSquash;
-      /** @brief Squash the root. */
+      /** Constant value of type ShareRootSquash: RootSquash */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash RootSquash;
-      /** @brief Squash everything. */
+      /** Constant value of type ShareRootSquash: AllSquash */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash AllSquash;
 
     private:
@@ -324,31 +321,42 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ShareItemDetails final
     {
-      /** The time the item was last modified. */
+      /**
+       * The date and time the share was last modified.
+       */
       DateTime LastModified;
       /**
        * The ETag contains a value which represents the version of the share, in quotes.
        */
       ETag Etag;
-
       /**
        * The Quota for the item.
        */
       int64_t Quota = int64_t();
-
-      /** Provisioned Iops */
+      /**
+       * Provisioned Iops.
+       */
       Nullable<int32_t> ProvisionedIops;
-      /** Provisioned Ingress MBps */
+      /**
+       * Provisioned Ingress MBps.
+       */
       Nullable<int32_t> ProvisionedIngressMBps;
-      /** Provisioned Egress MBps */
+      /**
+       * Provisioned Egress MBps.
+       */
       Nullable<int32_t> ProvisionedEgressMBps;
-      /** Provisioned Bandwidth MBps */
+      /**
+       * Provisioned Bandwidth MBps.
+       */
       Nullable<int32_t> ProvisionedBandwidthMBps;
-      /** Next allowed Quota Downgrade Time */
+      /**
+       * Next allowed Quota Downgrade Time.
+       */
       Nullable<DateTime> NextAllowedQuotaDowngradeTime;
-      /** Time the item was deleted. */
+      /**
+       * Time the item was deleted.
+       */
       Nullable<DateTime> DeletedOn;
-
       /**
        * Remaining retention days.
        */
@@ -357,12 +365,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Specifies the access tier of the share.
        */
       Nullable<Models::AccessTier> AccessTier;
-
       /**
        * Indicates the time the access tier was last changed.
        */
       Nullable<DateTime> AccessTierChangedOn;
-
       /**
        * Indicates the access tier transition state.
        */
@@ -379,12 +385,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * When a share is leased, specifies whether the lease is of infinite or fixed duration.
        */
       LeaseDurationType LeaseDuration;
-
       /**
        * The protocols which have been enabled on the share.
        */
       Nullable<ShareProtocols> EnabledProtocols;
-
       /**
        * Root squash to set on the share.  Only valid for NFS shares.
        */
@@ -395,13 +399,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     struct ShareItem final
     {
-      /** @brief The name of the item */
+      /**
+       * The name of the share.
+       */
       std::string Name;
-      /** @brief The snapshot of the share. */
+      /**
+       * The snapshot of the share.
+       */
       std::string Snapshot;
-      /** @brief True if the item is deleted. */
+      /**
+       * True if the share is deleted.
+       */
       bool Deleted = bool();
-      /** @brief The version of the item. */
+      /**
+       * The version of the share.
+       */
       std::string Version;
       /**
        * A set of name-value pairs associated with the share or file.
@@ -564,19 +576,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class DeleteSnapshotsOption final {
     public:
+      /** Constructs a new DeleteSnapshotsOption instance */
       DeleteSnapshotsOption() = default;
-      /**
-       * @brief Construct DeleteSnapshotsOption from std::string.
-       * @param value The string value to use.
-       */
+      /** Constructs a new DeleteSnapshotsOption from a string. */
       explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another DeleteSnapshotsOption. */
       bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another DeleteSnapshotsOption. */
       bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief DeleteSnapshotOption Include */
+      /** Constant value of type DeleteSnapshotsOption: Include */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOption Include;
 
     private:
@@ -730,16 +740,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class ShareTokenIntent final {
     public:
+      /** Constructs a new ShareTokenIntent instance */
       ShareTokenIntent() = default;
-      /** @brief Construct a ShareTokenIntent from a string. */
+      /** Constructs a new ShareTokenIntent from a string. */
       explicit ShareTokenIntent(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another ShareTokenIntent. */
       bool operator==(const ShareTokenIntent& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another ShareTokenIntent. */
       bool operator!=(const ShareTokenIntent& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Backup */
+      /** Constant value of type ShareTokenIntent: Backup */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
 
     private:
@@ -883,60 +894,62 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class FileAttributes final {
     public:
+      /** Constructs a new FileAttributes instance. */
       FileAttributes() = default;
-      /** @brief Construct a FileAttributes from a string. */
+      /** Constructs a new FileAttributes from a string. */
       explicit FileAttributes(const std::string& value);
-      /** @brief Compare two values for equality */
+      /** Compares with another FileAttributes. */
       bool operator==(const FileAttributes& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another FileAttributes. */
       bool operator!=(const FileAttributes& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts this instance to its string representation. */
       std::string ToString() const;
-      /** @brief Return the values of the FileAttributes as an array. */
+      /** Returns the values as an array.*/
       const std::vector<std::string>& GetValues() const { return m_value; }
-      /** @brief bitwise OR of two values*/
+      /** Bitwise OR of two instances. */
       FileAttributes operator|(const FileAttributes& other) const;
-      /** @brief bitwise AND of two values*/
+      /** Bitwise AND of two instances. */
       FileAttributes operator&(const FileAttributes& other) const;
-      /** @brief bitwise XOR of two values*/
+      /** Bitwise XOR of two instances. */
       FileAttributes operator^(const FileAttributes& other) const;
-      /** @brief bitwise OR and assignment of two values*/
+      /** Bitwise OR and assignment of two instances. */
       FileAttributes& operator|=(const FileAttributes& other)
       {
         *this = *this | other;
         return *this;
       }
-      /** @brief bitwise AND and assignment of two values*/
+      /** Bitwise AND and assignment of two instances. */
       FileAttributes& operator&=(const FileAttributes& other)
       {
         *this = *this & other;
         return *this;
       }
-      /** @brief bitwise XOR and assignment of two values*/
+      /** Bitwise XOR and assignment of two instances. */
       FileAttributes& operator^=(const FileAttributes& other)
       {
         *this = *this ^ other;
         return *this;
       }
-      /** @brief The file is Read Only */
+
+      /** Constant value of type FileAttributes: ReadOnly */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
-      /** @brief The file is Hidden */
+      /** Constant value of type FileAttributes: Hidden */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
-      /** @brief The file is System */
+      /** Constant value of type FileAttributes: System */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
-      /** @brief The file has no attributes */
+      /** Constant value of type FileAttributes: None */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
-      /** @brief The file is a directory */
+      /** Constant value of type FileAttributes: Directory */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
-      /** @brief The file is an archive */
+      /** Constant value of type FileAttributes: Archive */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
-      /** @brief The file is temporary */
+      /** Constant value of type FileAttributes: Temporary */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
-      /** @brief The file is offline */
+      /** Constant value of type FileAttributes: Offline */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
-      /** @brief The file is not content indexed */
+      /** Constant value of type FileAttributes: NotContentIndexed */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
-      /** @brief The file has no scrub data */
+      /** Constant value of type FileAttributes: NoScrubData */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
 
     private:
@@ -1096,17 +1109,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectoryItemDetails final
     {
       /**
-       * The time the file was last accessed.
+       * The time the directory was last accessed.
        */
       Nullable<DateTime> LastAccessedOn;
-
       /**
-       * The date and time the file was last modified.
+       * The date and time the directory was last modified.
        */
       DateTime LastModified;
-
       /**
-       * The ETag contains a value which represents the version of the file, in quotes.
+       * The ETag contains a value which represents the version of the directory, in quotes.
        */
       ETag Etag;
       /**
@@ -1139,17 +1150,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * File Properties.
        */
       int64_t FileSize = int64_t();
-
       /**
        * The time the file was last accessed.
        */
       Nullable<DateTime> LastAccessedOn;
-
       /**
        * The date and time the file was last modified.
        */
       DateTime LastModified;
-
       /**
        * The ETag contains a value which represents the version of the file, in quotes.
        */
@@ -1243,13 +1251,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       class AccessRight final {
       public:
+        /** Constructs a new AccessRight instance */
         AccessRight() = default;
+        /** Constructs a new AccessRight from a string. */
         explicit AccessRight(std::string value) : m_value(std::move(value)) {}
+        /** Compares with another AccessRight. */
         bool operator==(const AccessRight& other) const { return m_value == other.m_value; }
+        /** Compares with another AccessRight. */
         bool operator!=(const AccessRight& other) const { return !(*this == other); }
+        /** Converts the value to a string. */
         const std::string& ToString() const { return m_value; }
+        /** Constant value of type AccessRight: Read */
         AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
+        /** Constant value of type AccessRight: Write */
         AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
+        /** Constant value of type AccessRight: Delete */
         AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
 
       private:
@@ -1432,30 +1448,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class CopyStatus final {
     public:
+      /** Constructs a new CopyStatus instance */
       CopyStatus() = default;
-      /** @brief Create a new CopyStatus from a string. */
+      /** Constructs a new CopyStatus from a string. */
       explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two items for equality */
+      /** Compares with another CopyStatus. */
       bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
-      /** @brief Compare two items for inequality */
+      /** Compares with another CopyStatus. */
       bool operator!=(const CopyStatus& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** @brief Copy is pending */
+      /** Constant value of type CopyStatus: Pending */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Pending;
-      /** @brief Copy succeeded */
+      /** Constant value of type CopyStatus: Success */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Success;
-      /** @brief Copy is aborted */
+      /** Constant value of type CopyStatus: Aborted */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Aborted;
-      /** @brief Copy failed */
+      /** Constant value of type CopyStatus: Failed */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Failed;
 
     private:
       std::string m_value;
     };
-
     /**
-     * @brief Details of a downloaded file.
+     * @brief Detailed information of the downloaded file.
      */
     struct DownloadFileDetails final
     {
@@ -1475,8 +1491,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Core::CaseInsensitiveMap Metadata;
       /**
-       *  String identifier for this copy operation. Use with Get File Properties to check the
-       * status of this copy operation, or pass to Abort Copy File to abort a pending copy.
+       * String identifier for this copy operation. Use with Get File Properties to check the status
+       * of this copy operation, or pass to Abort Copy File to abort a pending copy.
        */
       Nullable<std::string> CopyId;
       /**
@@ -1551,9 +1567,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Indicates the range of bytes returned.
        */
       Core::Http::HttpRange ContentRange;
-
       /**
-       * Indicates the size of the file
+       * Size of the file in bytes.
        */
       int64_t FileSize = int64_t();
       /**
@@ -1564,9 +1579,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Standard HTTP properties supported files.
        */
       FileHttpHeaders HttpHeaders;
-
       /**
-       * The downloaded file details.
+       * Detailed information of the downloaded file.
        */
       DownloadFileDetails Details;
     };
@@ -1785,18 +1799,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class FileLastWrittenMode final {
     public:
+      /** Constructs a new FileLastWrittenMode instance */
       FileLastWrittenMode() = default;
-      /** @brief Construct a FileLastWrittenMode from a string. */
+      /** Constructs a new FileLastWrittenMode from a string. */
       explicit FileLastWrittenMode(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another FileLastWrittenMode. */
       bool operator==(const FileLastWrittenMode& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another FileLastWrittenMode. */
       bool operator!=(const FileLastWrittenMode& other) const { return !(*this == other); }
-      /** @brief Convert the item to a std::string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /** Overwrite the last written time. */
+      /** Constant value of type FileLastWrittenMode: Now */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Now;
-      /** Preserve the last written time. */
+      /** Constant value of type FileLastWrittenMode: Preserve */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Preserve;
 
     private:
@@ -1891,23 +1906,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     class PermissionCopyMode final {
     public:
+      /** Constructs a new PermissionCopyMode instance */
       PermissionCopyMode() = default;
-      /** @brief Construct a PermissionCopyMode from a string. */
+      /** Constructs a new PermissionCopyMode from a string. */
       explicit PermissionCopyMode(std::string value) : m_value(std::move(value)) {}
-      /** @brief Compare two values for equality */
+      /** Compares with another PermissionCopyMode. */
       bool operator==(const PermissionCopyMode& other) const { return m_value == other.m_value; }
-      /** @brief Compare two values for inequality */
+      /** Compares with another PermissionCopyMode. */
       bool operator!=(const PermissionCopyMode& other) const { return !(*this == other); }
-      /** Convert the value to a string. */
+      /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
-      /**
-       * Copy file security descriptor from source file.
-       */
+      /** Constant value of type PermissionCopyMode: Source */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Source;
-      /**
-       * Set file security descriptor using the value which is defined by the header value of
-       * x-ms-file-permission or x-ms-file-permission-key.
-       */
+      /** Constant value of type PermissionCopyMode: Override */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Override;
 
     private:

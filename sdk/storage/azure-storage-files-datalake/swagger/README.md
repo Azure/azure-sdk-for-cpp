@@ -88,8 +88,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2021-06-08"],
-        "description": "The version used for the operations to Azure storage services."
+        "enum": ["2021-06-08"]
       };
   - from: swagger-document
     where: $.parameters
@@ -113,6 +112,42 @@ directive:
           if ($[operation][verb].operationId && $[operation][verb].operationId.startsWith("Container_")) {
             $[operation][verb].operationId = "Blob" + $[operation][verb].operationId;
           }
+        }
+      }
+```
+
+### Define names for return types
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $
+    transform: >
+      const operationReturnTypeNames = new Map(Object.entries({
+        "Path_SetAccessControl": "SetPathAccessControlListResult",
+        "Path_AppendData": "AppendFileResult",
+        "Path_FlushData": "FlushFileResult",
+      }));
+      for (const url in $["x-ms-paths"]) {
+        for (const verb in $["x-ms-paths"][url]) {
+          const operation = $["x-ms-paths"][url][verb];
+          if (!operationReturnTypeNames.has(operation.operationId)) {
+            continue;
+          }
+          const returnTypeName = operationReturnTypeNames.get(operation.operationId);
+          const status_codes = Object.keys(operation.responses).filter(s => s !== "default");
+          const emptySchemaDefinition = {
+            "type": "object",
+            "x-ms-client-name": returnTypeName,
+            "x-ms-sealed": false,
+            "properties": {
+              "__placeHolder": {"type": "integer"}
+            }
+          };
+          $.definitions[returnTypeName] = emptySchemaDefinition;
+          status_codes.map(i => {
+            operation.responses[i].schema = {"$ref": `#/definitions/${returnTypeName}`};
+          });
         }
       }
 ```
@@ -268,7 +303,7 @@ directive:
         "x-ms-client-name": "CreatePathResult",
         "x-ms-sealed": false,
         "properties": {
-          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": "", "description": "Indicates if the file or directory was successfully created by this operation."}
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": ""}
         }
       };
 ```
@@ -301,7 +336,7 @@ directive:
         "x-ms-client-name": "DeletePathResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": "", "description": "Indicates if the file or directory was successfully deleted by this operation."}
+          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": ""}
         }
       };
 ```
@@ -393,11 +428,6 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
-      $.AclFailedEntry.description = "The failed entry when setting the Acl.";
-      $.AclFailedEntry.properties["name"].description = "Name of the failed entry.";
-      $.AclFailedEntry.properties["type"].description = "Type of the entry.";
-      $.AclFailedEntry.properties["errorMessage"].description = "Error message for the failure.";
-
       $.SetAccessControlRecursiveResponse["x-ms-client-name"] = "SetAccessControlListRecursiveResult";
       $.SetAccessControlRecursiveResponse["x-namespace"] = "_detail";
       $.SetAccessControlRecursiveResponse["x-ms-sealed"] = false;
@@ -449,10 +479,38 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"].headers
+    where: $["x-ms-paths"]["/{filesystem}/{path}?action=flush"].patch.responses["200"]
     transform: >
-      $["Content-Length"]["x-ms-client-name"] = "FileSize";
-      $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
-      $["x-ms-lease-renewed"]["x-nullable"] = true;
-      $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
+      $.headers["Content-Length"]["x-ms-client-name"] = "FileSize";
+      $.headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
+      $.headers["x-ms-lease-renewed"]["x-nullable"] = true;
+      $.headers["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
+```
+
+### Description
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.ApiVersion.description = "The version used for the operations to Azure storage services.";
+      $.AclFailedEntry.description = "The failed entry when setting the Acl.";
+      $.AclFailedEntry.properties["name"].description = "Name of the failed entry.";
+      $.AclFailedEntry.properties["type"].description = "Type of the entry.";
+      $.AclFailedEntry.properties["errorMessage"].description = "Error message for the failure.";
+      $.PublicAccessType.description = "Specifies whether data in the file system may be accessed publicly and the level of access.";
+      $.SetPathAccessControlListResult.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::SetAccessControlList.";
+      $.FlushFileResult.description = "Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Flush.";
+      $.AppendFileResult.description = "Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Append.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}"].put.responses
+    transform: >
+      $["201"].schema.properties["Created"].description = "Indicates if the file or directory was successfully created by this operation.";
+      $["201"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Create.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}"].delete.responses
+    transform: >
+      $["200"].schema.properties["Deleted"].description = "Indicates if the file or directory was successfully deleted by this operation.";
+      $["200"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.";
 ```
