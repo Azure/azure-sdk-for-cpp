@@ -258,6 +258,14 @@ jobs:
               workingDirectory: build
               displayName: Generate docs (${{ artifact.Name }}-docs)
 
+            - template: /eng/common/pipelines/templates/steps/verify-links.yml
+              parameters:
+                Directory:
+                Urls: annotated.html
+                CheckLinkGuidance: $false
+                Recursive: $true
+                WorkingDirectory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+
             - task: PowerShell@2
               inputs:
                 targetType: filePath
