@@ -206,7 +206,7 @@
       "displayName": "Windows x86 Debug, static",
       "description": "Windows x86 Debug, static",
       "inherits": [ "x86-static", "debug-build" ],
-      "hidden": true,
+      "hidden": true
     },
     {
       "name": "x86-static-release",
