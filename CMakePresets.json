@@ -121,44 +121,61 @@
       }
     },
     {
-      "name": "x64-debug",
-      "displayName": "x64 Debug",
-      "description": "Windows x64 Debug",
-      "inherits": "x64",
+      "name": "debug-build",
+      "displayName": "Debug Build",
+      "description": "Debug Build",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
+    },
+    {
+      "name": "release-build",
+      "displayName": "Release Build",
+      "description": "Release Build",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "enable-tests",
+      "displayName": "Enable Tests",
+      "architecture": "Enable Tests (hidden)",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "ENABLE_PROXY_TESTS": false,
+        "BUILD_SAMPLES": true
+      }
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
+      "description": "Windows x64 Debug",
+      "inherits": [ "x64", "debug-build" ],
+      "hidden": true
     },
     {
       "name": "x64-release",
       "displayName": "x64 Release",
       "description": "Windows x64 Release",
-      "inherits": "x64",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
+      "inherits": [ "x64", "release-build" ],
+      "hidden": true
     },
     {
       "name": "x86-debug",
       "displayName": "x86 Debug",
       "description": "Windows x86 Debug",
-      "inherits": "x86",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "inherits": [ "x86", "debug-build" ],
+      "hidden": true
     },
     {
       "name": "x86-release",
       "displayName": "x86 Release",
       "description": "Windows x86 Release",
-      "inherits": "x86",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
+      "inherits": [ "x86", "release-build" ],
+      "hidden": true
     },
     {
       "name": "x64-static-debug",
@@ -174,100 +191,62 @@
       "name": "x86-msvc-static-debug",
       "displayName": "Windows x86, msvc static, Debug ",
       "description": "Windows x86, msvc static, Debug",
-      "inherits": "x86-msvc-static",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "inherits": [ "x86-msvc-static", "debug-build" ],
+      "hidden": true
     },
     {
       "name": "x64-static-release",
       "displayName": "Windows x64 Release, static",
       "description": "Windows x64 Release, static",
-      "inherits": "x64-static",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
+      "inherits": [ "x64-static", "release-build" ],
+      "hidden": true
     },
     {
       "name": "x86-static-debug",
       "displayName": "Windows x86 Debug, static",
       "description": "Windows x86 Debug, static",
-      "inherits": "x86-static",
+      "inherits": [ "x86-static", "debug-build" ],
       "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
     },
     {
       "name": "x86-static-release",
       "displayName": "Windows x86 Release, static",
       "description": "Windows x86 Release, static",
-      "inherits": "x86-static",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
+      "inherits": [ "x86-static", "release-build" ],
+      "hidden": true
     },
     {
       "name": "x86-static-debug-tests",
       "displayName": "x86 Debug With Tests, static",
       "description": "Windows x86 Debug build with Tests configured",
-      "inherits": "x86-static-debug",
-      "cacheVariables": {
-        "BUILD_TESTING": true,
-        "ENABLE_PROXY_TESTS": false
-      }
+      "inherits": [ "x86-static-debug", "enable-tests" ]
     },
     {
       "name": "x86-static-release-tests",
       "displayName": "x86 Release With Tests, static, libcurl",
       "description": "Windows x86 Release build with Tests configured",
-      "inherits": "x86-static-release",
+      "inherits": [ "x86-static-release", "enable-tests" ],
       "cacheVariables": {
-        "BUILD_TESTING": true,
-        "ENABLE_PROXY_TESTS": false,
-        "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "RUN_LONG_UNIT_TESTS": true,
-        "BUILD_TRANSPORT_CURL": true
+        "RUN_LONG_UNIT_TESTS": true
       }
     },
     {
       "name": "x64-debug-tests",
       "displayName": "x64 Debug With Tests, winhttp+curl",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": "x64-debug",
-      "cacheVariables": {
-        "BUILD_TESTING": true,
-        "ENABLE_PROXY_TESTS": false,
-        "BUILD_SAMPLES": true,
-        "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_TRANSPORT_CURL": true
-      }
+      "inherits": [ "x64-debug", "enable-tests" ]
     },
     {
       "name": "x64-static-debug-tests",
       "displayName": "x64 Debug With Tests, static",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": "x64-static-debug",
-      "cacheVariables": {
-        "BUILD_TESTING": true,
-        "ENABLE_PROXY_TESTS": false,
-        "BUILD_SAMPLES": true
-      }
+      "inherits": [ "x64-static-debug", "enable-tests" ]
     },
     {
       "name": "x86-msvc-static-debug-tests",
       "displayName": "x86 MSVC Debug With Tests, static",
       "description": "Windows x86 MSVC Debug build with Tests configured",
-      "inherits": "x86-msvc-static-debug",
-      "cacheVariables": {
-        "BUILD_TESTING": true,
-        "ENABLE_PROXY_TESTS": false,
-        "BUILD_SAMPLES": true
-      }
+      "inherits": [ "x86-msvc-static-debug", "enable-tests" ]
     },
     {
       "name": "x64-static-debug-tests-curl",
@@ -308,9 +287,8 @@
     {
       "name": "x86-release-tests",
       "displayName": "x86 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": "x86-release",
+      "inherits": [ "x86-release", "enable-tests" ],
       "cacheVariables": {
-        "BUILD_TESTING": true,
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_CUSTOM": true,
         "BUILD_TRANSPORT_WINHTTP": true
@@ -319,14 +297,11 @@
     {
       "name": "x64-release-tests",
       "displayName": "x64 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": "x64-release",
+      "inherits": [ "x64-release", "enable-tests" ],
       "cacheVariables": {
-        "BUILD_TESTING": true,
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_CUSTOM": true,
-        "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_SAMPLES": true
+        "BUILD_TRANSPORT_WINHTTP": true
       }
     },
     {
@@ -378,18 +353,12 @@
     {
       "name": "linux-gcc9-debug",
       "displayName": "Linux GCC 9 Debug",
-      "inherits": "linux-basic-gcc9",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "inherits": [ "linux-basic-gcc9", "debug-build" ]
     },
     {
       "name": "linux-gcc9-debug-tests",
-      "inherits": "linux-gcc9-debug",
-      "displayName": "Linux GCC 9 Debug+Tests",
-      "cacheVariables": {
-        "BUILD_TESTING": "true"
-      }
+      "inherits": [ "linux-gcc9-debug", "enable-tests" ],
+      "displayName": "Linux GCC 9 Debug+Tests"
     },
     {
       "name": "linux-basic-clang-11",
@@ -411,18 +380,12 @@
     {
       "name": "linux-clang-11-debug",
       "displayName": "Linux clang 11 Debug",
-      "inherits": "linux-basic-clang-11",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "inherits": [ "linux-basic-clang-11", "enable-tests" ]
     },
     {
       "name": "linux-clang-11-debug-tests",
-      "inherits": "linux-clang-11-debug",
-      "displayName": "Linux clang 11 Debug+Tests",
-      "cacheVariables": {
-        "BUILD_TESTING": "true"
-      }
+      "inherits": [ "linux-clang-11-debug", "enable-tests" ],
+      "displayName": "Linux clang 11 Debug+Tests"
     },
     {
       "name": "linux-basic-g++",
@@ -444,18 +407,12 @@
     {
       "name": "linux-g++-debug",
       "displayName": "Linux c++ Debug",
-      "inherits": "linux-basic-g++",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "inherits": [ "linux-basic-g++", "debug-build" ]
     },
     {
       "name": "linux-g++-debug-tests",
-      "inherits": "linux-g++-debug",
-      "displayName": "Linux c++ Debug+Tests",
-      "cacheVariables": {
-        "BUILD_TESTING": "true"
-      }
+      "inherits": [ "linux-g++-debug", "enable-tests" ],
+      "displayName": "Linux c++ Debug+Tests"
     },
     {
       "name": "generate-doxygen",
