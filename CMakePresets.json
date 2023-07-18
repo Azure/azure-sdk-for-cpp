@@ -380,7 +380,7 @@
     {
       "name": "linux-clang-11-debug",
       "displayName": "Linux clang 11 Debug",
-      "inherits": [ "linux-basic-clang-11", "enable-tests" ]
+      "inherits": [ "linux-basic-clang-11", "debug-build" ]
     },
     {
       "name": "linux-clang-11-debug-tests",
