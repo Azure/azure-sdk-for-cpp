@@ -122,7 +122,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         std::chrono::minutes(2));
     auto const& ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
 
-    EXPECT_EQ(ownerships.size(), 2);
+    EXPECT_EQ(ownerships.size(), 2ul);
     EXPECT_TRUE(ownerships[0].PartitionID == "1" || ownerships[0].PartitionID == "2");
     EXPECT_TRUE(ownerships[1].PartitionID == "1" || ownerships[1].PartitionID == "2");
 

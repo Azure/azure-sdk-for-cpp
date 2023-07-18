@@ -84,11 +84,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto ownerships = checkpointStore.ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
-    EXPECT_EQ(0, ownerships.size());
+    EXPECT_EQ(0ul, ownerships.size());
 
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{});
-    EXPECT_EQ(0, ownerships.size());
+    EXPECT_EQ(0ul, ownerships.size());
 
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
