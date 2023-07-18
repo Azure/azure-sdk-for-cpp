@@ -124,9 +124,9 @@ directive:
     where: $
     transform: >
       const operationReturnTypeNames = new Map(Object.entries({
-        "Path_SetAccessControl": "SetPathAccessControlListResult",
-        "Path_AppendData": "AppendFileResult",
-        "Path_FlushData": "FlushFileResult",
+        "Path_SetAccessControlList": "SetPathAccessControlListResult",
+        "File_Append": "AppendFileResult",
+        "File_Flush": "FlushFileResult",
       }));
       for (const url in $["x-ms-paths"]) {
         for (const verb in $["x-ms-paths"][url]) {
