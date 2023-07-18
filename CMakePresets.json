@@ -243,7 +243,6 @@
         "BUILD_TESTING": true,
         "ENABLE_PROXY_TESTS": false,
         "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true,
         "BUILD_TRANSPORT_WINHTTP": true,
         "BUILD_TRANSPORT_CURL": true
       }
@@ -256,8 +255,7 @@
       "cacheVariables": {
         "BUILD_TESTING": true,
         "ENABLE_PROXY_TESTS": false,
-        "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true
+        "BUILD_SAMPLES": true
       }
     },
     {
@@ -268,8 +266,7 @@
       "cacheVariables": {
         "BUILD_TESTING": true,
         "ENABLE_PROXY_TESTS": false,
-        "BUILD_SAMPLES": true,
-        "BUILD_PERFORMANCE_TESTS": true
+        "BUILD_SAMPLES": true
       }
     },
     {
@@ -316,8 +313,7 @@
         "BUILD_TESTING": true,
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_CUSTOM": true,
-        "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_PERFORMANCE_TESTS": true
+        "BUILD_TRANSPORT_WINHTTP": true
       }
     },
     {
@@ -340,8 +336,7 @@
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_SAMPLES": true
+        "BUILD_PERFORMANCE_TESTS": true
       }
     },
     {
@@ -350,8 +345,8 @@
       "inherits": "x86-msvc-static-debug-tests",
       "cacheVariables": {
         "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_SAMPLES": true
+        "BUILD_TRANSPORT_CURL": true,
+        "BUILD_PERFORMANCE_TESTS": true
       }
     },
     {
@@ -359,12 +354,8 @@
       "displayName": "x64 Release With Perf Tests, static",
       "inherits": "x64-static-release",
       "cacheVariables": {
-        "INSTALL_GTEST": false,
-        "BUILD_TESTING": true,
-        "BUILD_TRANSPORT_CURL": true,
-        "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_PERFORMANCE_TESTS": true,
-        "BUILD_SAMPLES": true
+        "BUILD_PERFORMANCE_TESTS": true
+
       }
     },
     {
