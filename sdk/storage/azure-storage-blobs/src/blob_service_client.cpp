@@ -10,6 +10,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
@@ -82,9 +83,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
-      tokenAuthPolicy = std::make_unique<
-          Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-          credential, tokenContext);
+      tokenAuthPolicy = std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
+          credential, tokenContext, options.EnableTenantDiscovery);
       perRetryPolicies.emplace_back(tokenAuthPolicy->Clone());
     }
     perOperationPolicies.emplace_back(
