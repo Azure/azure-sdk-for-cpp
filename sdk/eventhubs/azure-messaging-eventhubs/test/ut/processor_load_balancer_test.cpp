@@ -128,7 +128,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto finalOwneships = loadBalancer.m_checkpointStore->ListOwnership(
         testEventHubFQDN, testEventHubName, testConsumerGroup);
-    EXPECT_EQ(finalOwneships.size(), 4);
+    EXPECT_EQ(finalOwneships.size(), 4ul);
   }
 
   TEST_F(ProcessorLoadBalancerTest, Balanced_UnownedPartitions)
@@ -146,11 +146,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
 
-    EXPECT_EQ(ownerships.size(), 1);
+    EXPECT_EQ(ownerships.size(), 1ul);
 
     ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
 
-    EXPECT_EQ(ownerships.size(), 2);
+    EXPECT_EQ(ownerships.size(), 2ul);
 
     RequireBalanced(
         loadBalancer.m_checkpointStore->ListOwnership(
@@ -183,7 +183,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         testEventHubFQDN, testEventHubName, testConsumerGroup);
     auto ownersMap = GroupByOwner(finalOwneships);
     auto commons = FindCommon(ownersMap);
-    EXPECT_EQ(commons.size(), 0);
+    EXPECT_EQ(commons.size(), 0ul);
   }
 
   TEST_F(ProcessorLoadBalancerTest, AnyStrategy_GetExpiredPartition)
@@ -255,7 +255,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         EXPECT_EQ(GroupByOwner(ownerships)[clientB][0], "3");
         EXPECT_EQ(GroupByOwner(ownerships)[clientB][1], "4");
-        EXPECT_EQ(GroupByOwner(ownerships)[clientB].size(), 2);
+        EXPECT_EQ(GroupByOwner(ownerships)[clientB].size(), 2ul);
 
         RequireBalanced(
             loadBalancer.m_checkpointStore->ListOwnership(
@@ -277,7 +277,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         EXPECT_EQ(GroupByOwner(ownerships)[clientA][0], "0");
         EXPECT_EQ(GroupByOwner(ownerships)[clientA][1], "1");
         EXPECT_EQ(GroupByOwner(ownerships)[clientA][2], "2");
-        EXPECT_EQ(GroupByOwner(ownerships)[clientA].size(), 3);
+        EXPECT_EQ(GroupByOwner(ownerships)[clientA].size(), 3ul);
 
         RequireBalanced(
             loadBalancer.m_checkpointStore->ListOwnership(
@@ -315,9 +315,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
+        EXPECT_EQ(GroupByOwner(ownerships)[clientB].size(), 2ul);
         EXPECT_EQ(GroupByOwner(ownerships)[clientB][0], "2");
         EXPECT_EQ(GroupByOwner(ownerships)[clientB][1], "3");
-        EXPECT_EQ(GroupByOwner(ownerships)[clientB].size(), 2);
 
         RequireBalanced(
             loadBalancer.m_checkpointStore->ListOwnership(
@@ -336,9 +336,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
+        EXPECT_EQ(GroupByOwner(ownerships)[clientA].size(), 2ul);
         EXPECT_EQ(GroupByOwner(ownerships)[clientA][0], "0");
         EXPECT_EQ(GroupByOwner(ownerships)[clientA][1], "1");
-        EXPECT_EQ(GroupByOwner(ownerships)[clientA].size(), 2);
 
         RequireBalanced(
             loadBalancer.m_checkpointStore->ListOwnership(
@@ -376,10 +376,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3", "4"});
       auto clientOwned = GroupByOwner(ownerships)[clientB];
       std::sort(clientOwned.begin(), clientOwned.end());
+      ASSERT_EQ(clientOwned.size(), 3ul);
       EXPECT_EQ(clientOwned[0], "2");
       EXPECT_EQ(clientOwned[1], "3");
       EXPECT_EQ(clientOwned[2], "4");
-      EXPECT_EQ(clientOwned.size(), 3);
 
       RequireBalanced(
           loadBalancer.m_checkpointStore->ListOwnership(
@@ -418,10 +418,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
         auto clientOwned = GroupByOwner(ownerships)[clientA];
         std::sort(clientOwned.begin(), clientOwned.end());
+        ASSERT_EQ(clientOwned.size(), 3ul);
         EXPECT_EQ(clientOwned[0], "0");
         EXPECT_EQ(clientOwned[1], "1");
         EXPECT_EQ(clientOwned[2], "2");
-        EXPECT_EQ(clientOwned.size(), 3);
       }
 
       {
@@ -435,7 +435,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         auto ownerships = loadBalancer.LoadBalance({"0", "1", "2", "3"});
 
         auto clientOwned = GroupByOwner(ownerships)[clientB];
-        EXPECT_EQ(clientOwned.size(), 2);
+        EXPECT_EQ(clientOwned.size(), 2ul);
 
         RequireBalanced(
             loadBalancer.m_checkpointStore->ListOwnership(

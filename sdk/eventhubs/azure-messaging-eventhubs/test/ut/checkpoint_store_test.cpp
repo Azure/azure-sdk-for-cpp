@@ -100,7 +100,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 "owner-id"}});
 
     // Fail the test immediately if there isn't an entry in the ownerships vector.
-    ASSERT_EQ(1, ownerships.size());
+    ASSERT_EQ(1ul, ownerships.size());
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", ownerships[0].FullyQualifiedNamespace);
@@ -122,7 +122,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 "partition-id",
                 "owner-id",
                 Azure::ETag("randomETAG")}});
-    EXPECT_EQ(0, ownerships.size());
+    EXPECT_EQ(0ul, ownerships.size());
 
     ownerships = checkpointStore.ClaimOwnership(
         std::vector<Azure::Messaging::EventHubs::Models::Ownership>{
@@ -134,7 +134,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                 "owner-id",
                 validEtag}});
 
-    EXPECT_EQ(1, ownerships.size());
+    EXPECT_EQ(1ul, ownerships.size());
     EXPECT_NE(validEtag, ownerships[0].ETag.Value());
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
