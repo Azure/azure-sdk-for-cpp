@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2018-03-28";
+    constexpr static const char* ApiVersion = "2019-12-12";
   } // namespace _detail
   namespace Models {
     /**

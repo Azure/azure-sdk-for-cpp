@@ -8,6 +8,7 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
@@ -73,8 +74,8 @@ namespace Azure { namespace Storage { namespace Queues {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(_internal::StorageScope);
       perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
+          std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
+              credential, tokenContext, options.EnableTenantDiscovery));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
