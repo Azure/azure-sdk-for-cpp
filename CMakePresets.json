@@ -354,7 +354,7 @@
     },
     {
       "name": "linux-g++-debug-tests",
-      "inherits": [ "linux-basic-g++", "debug-mode", "enable-tests" ],
+      "inherits": [ "linux-basic-g++", "debug-build", "enable-tests" ],
       "displayName": "Linux c++ Debug+Tests"
     },
     {
