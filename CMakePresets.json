@@ -123,7 +123,7 @@
     {
       "name": "debug-build",
       "displayName": "Debug Build",
-      "description": "Debug Build",
+      "description": "Debug Build (Hidden)",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
@@ -132,7 +132,7 @@
     {
       "name": "release-build",
       "displayName": "Release Build",
-      "description": "Release Build",
+      "description": "Release Build (Hidden)",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
@@ -150,44 +150,6 @@
       }
     },
     {
-      "name": "x64-debug",
-      "displayName": "x64 Debug",
-      "description": "Windows x64 Debug",
-      "inherits": [ "x64", "debug-build" ],
-      "hidden": true
-    },
-    {
-      "name": "x64-release",
-      "displayName": "x64 Release",
-      "description": "Windows x64 Release",
-      "inherits": [ "x64", "release-build" ],
-      "hidden": true
-    },
-    {
-      "name": "x86-debug",
-      "displayName": "x86 Debug",
-      "description": "Windows x86 Debug",
-      "inherits": [ "x86", "debug-build" ],
-      "hidden": true
-    },
-    {
-      "name": "x86-release",
-      "displayName": "x86 Release",
-      "description": "Windows x86 Release",
-      "inherits": [ "x86", "release-build" ],
-      "hidden": true
-    },
-    {
-      "name": "x64-static-debug",
-      "displayName": "Windows x64 Debug",
-      "description": "Windows x64 Debug",
-      "inherits": "x64-static",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
       "name": "x86-msvc-static-debug",
       "displayName": "Windows x86, msvc static, Debug ",
       "description": "Windows x86, msvc static, Debug",
@@ -195,64 +157,37 @@
       "hidden": true
     },
     {
-      "name": "x64-static-release",
-      "displayName": "Windows x64 Release, static",
-      "description": "Windows x64 Release, static",
-      "inherits": [ "x64-static", "release-build" ],
-      "hidden": true
-    },
-    {
-      "name": "x86-static-debug",
-      "displayName": "Windows x86 Debug, static",
-      "description": "Windows x86 Debug, static",
-      "inherits": [ "x86-static", "debug-build" ],
-      "hidden": true
-    },
-    {
-      "name": "x86-static-release",
-      "displayName": "Windows x86 Release, static",
-      "description": "Windows x86 Release, static",
-      "inherits": [ "x86-static", "release-build" ],
-      "hidden": true
-    },
-    {
       "name": "x86-static-debug-tests",
       "displayName": "x86 Debug With Tests, static",
       "description": "Windows x86 Debug build with Tests configured",
-      "inherits": [ "x86-static-debug", "enable-tests" ]
+      "inherits": [ "x86-static", "debug-build", "enable-tests" ]
     },
     {
       "name": "x86-static-release-tests",
       "displayName": "x86 Release With Tests, static, libcurl",
       "description": "Windows x86 Release build with Tests configured",
-      "inherits": [ "x86-static-release", "enable-tests" ],
+      "inherits": [ "x86-static", "release-build", "enable-tests" ],
       "cacheVariables": {
         "RUN_LONG_UNIT_TESTS": true
       }
     },
     {
       "name": "x64-debug-tests",
-      "displayName": "x64 Debug With Tests, winhttp+curl",
+      "displayName": "x64 Debug With Tests",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-debug", "enable-tests" ]
-    },
-    {
-      "name": "x64-static-debug-tests",
-      "displayName": "x64 Debug With Tests, static",
-      "description": "Windows x64 Debug build with Tests configured",
-      "inherits": [ "x64-static-debug", "enable-tests" ]
+      "inherits": [ "x64", "debug-build", "enable-tests" ]
     },
     {
       "name": "x86-msvc-static-debug-tests",
       "displayName": "x86 MSVC Debug With Tests, static",
       "description": "Windows x86 MSVC Debug build with Tests configured",
-      "inherits": [ "x86-msvc-static-debug", "enable-tests" ]
+      "inherits": [ "x86-msvc-static", "debug-build", "enable-tests" ]
     },
     {
       "name": "x64-static-debug-tests-curl",
       "displayName": "x64 Debug With Tests, static, libcurl",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": "x64-static-debug-tests",
+      "inherits": [ "x64-static", "debug-build", "enable-tests" ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true
       }
@@ -261,7 +196,7 @@
       "name": "x64-static-debug-tests-winhttp",
       "displayName": "x64 Debug With Tests, static, winhttp",
       "description": "Windows x64 Debug build with Tests configured",
-      "inherits": "x64-static-debug-tests",
+      "inherits": [ "x64-static", "debug-build", "enable-tests" ],
       "cacheVariables": {
         "BUILD_TRANSPORT_WINHTTP": true
       }
@@ -270,7 +205,7 @@
       "name": "x64-static-debug-tests-OpenSSL111",
       "displayName": "x64 Debug With Tests, static, OpenSSL 1.1.1, libcurl",
       "description": "Windows x64 Debug build with Tests configured on OpenSSL 1.1.1",
-      "inherits": "x64-static-debug-tests",
+      "inherits": [ "x64-static", "debug-build", "enable-tests" ],
       "cacheVariables": {
         "VCPKG_OVERLAY_PORTS": "${sourceDir}\\vcpkg-custom-ports"
       }
@@ -279,7 +214,11 @@
       "name": "x86-static-release-tests-curl",
       "displayName": "x86 Release With Tests, static, libcurl",
       "description": "Windows x86 Release build with Tests configured",
-      "inherits": "x86-static-release-tests",
+      "inherits": [
+        "x86-static",
+        "release-build",
+        "enable-tests"
+      ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true
       }
@@ -287,7 +226,7 @@
     {
       "name": "x86-release-tests",
       "displayName": "x86 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": [ "x86-release", "enable-tests" ],
+      "inherits": [ "x86", "release-build", "enable-tests" ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_CUSTOM": true,
@@ -297,7 +236,7 @@
     {
       "name": "x64-release-tests",
       "displayName": "x64 Release With Tests (Note: Does not link because it sets BUILD_TRANSPORT_CUSTOM)",
-      "inherits": [ "x64-release", "enable-tests" ],
+      "inherits": [ "x64", "release-build", "enable-tests" ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_CUSTOM": true,
@@ -307,7 +246,11 @@
     {
       "name": "x64-static-debug-perftests",
       "displayName": "x64 Debug static With Perf Tests and samples",
-      "inherits": "x64-static-debug-tests",
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests"
+      ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true,
         "BUILD_TRANSPORT_WINHTTP": true,
@@ -327,7 +270,7 @@
     {
       "name": "x64-static-release-perftests",
       "displayName": "x64 Release With Perf Tests, static",
-      "inherits": "x64-static-release",
+      "inherits": [ "x64-static", "release-build" ],
       "cacheVariables": {
         "BUILD_PERFORMANCE_TESTS": true
 
@@ -351,16 +294,6 @@
       }
     },
     {
-      "name": "linux-gcc9-debug",
-      "displayName": "Linux GCC 9 Debug",
-      "inherits": [ "linux-basic-gcc9", "debug-build" ]
-    },
-    {
-      "name": "linux-gcc9-debug-tests",
-      "inherits": [ "linux-gcc9-debug", "enable-tests" ],
-      "displayName": "Linux GCC 9 Debug+Tests"
-    },
-    {
       "name": "linux-basic-clang-11",
       "displayName": "Linux clang-11",
       "description": "Using compilers: C = /usr/bin/clang-11, CXX = /usr/bin/clang++-11",
@@ -376,16 +309,6 @@
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
       }
-    },
-    {
-      "name": "linux-clang-11-debug",
-      "displayName": "Linux clang 11 Debug",
-      "inherits": [ "linux-basic-clang-11", "debug-build" ]
-    },
-    {
-      "name": "linux-clang-11-debug-tests",
-      "inherits": [ "linux-clang-11-debug", "enable-tests" ],
-      "displayName": "Linux clang 11 Debug+Tests"
     },
     {
       "name": "linux-basic-g++",
@@ -405,13 +328,33 @@
       }
     },
     {
+      "name": "linux-gcc9-debug",
+      "displayName": "Linux GCC 9 Debug",
+      "inherits": [ "linux-basic-gcc9", "debug-build" ]
+    },
+    {
+      "name": "linux-gcc9-debug-tests",
+      "inherits": [ "linux-basic-gcc9", "debug-build", "enable-tests" ],
+      "displayName": "Linux GCC 9 Debug+Tests"
+    },
+    {
+      "name": "linux-clang-11-debug",
+      "displayName": "Linux clang 11 Debug",
+      "inherits": [ "linux-basic-clang-11", "debug-build" ]
+    },
+    {
+      "name": "linux-clang-11-debug-tests",
+      "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ],
+      "displayName": "Linux clang 11 Debug+Tests"
+    },
+    {
       "name": "linux-g++-debug",
       "displayName": "Linux c++ Debug",
       "inherits": [ "linux-basic-g++", "debug-build" ]
     },
     {
       "name": "linux-g++-debug-tests",
-      "inherits": [ "linux-g++-debug", "enable-tests" ],
+      "inherits": [ "linux-basic-g++", "debug-mode", "enable-tests" ],
       "displayName": "Linux c++ Debug+Tests"
     },
     {
