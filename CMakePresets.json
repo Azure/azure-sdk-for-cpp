@@ -194,6 +194,13 @@
       "inherits": [ "x86-msvc-static", "debug-build", "enable-tests" ]
     },
     {
+      "name": "x64-static-debug-tests",
+      "displayName": "x64 Debug With Tests, static",
+      "description": "Windows x64 Debug build with Tests configured",
+      "inherits": [ "x64-static", "debug-build", "enable-tests" ]
+
+    },
+    {
       "name": "x64-static-debug-tests-curl",
       "displayName": "x64 Debug With Tests, static, libcurl",
       "description": "Windows x64 Debug build with Tests configured",
@@ -255,7 +262,7 @@
     },
     {
       "name": "x64-static-debug-perftests",
-      "displayName": "x64 Debug static With Perf Tests and samples",
+      "displayName": "x64 Debug static With Perf Tests and samples, libcurl+winhttp",
       "inherits": [
         "x64-static",
         "debug-build",
