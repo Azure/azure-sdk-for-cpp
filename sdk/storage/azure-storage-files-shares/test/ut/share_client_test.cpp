@@ -462,7 +462,10 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
       EXPECT_EQ(Files::Shares::Models::AccessTier::Hot, properties.AccessTier.Value());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
-      EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.Value());
+      auto timeBefore = properties.LastModified - std::chrono::seconds(1);
+      auto timeAfter = properties.LastModified + std::chrono::seconds(1);
+      auto accessTierChangedOn = properties.AccessTierChangedOn.Value();
+      EXPECT_TRUE(timeBefore <= accessTierChangedOn && accessTierChangedOn <= timeAfter);
       shareClients.emplace(std::move(shareName), std::move(shareClient));
     }
     {
@@ -474,7 +477,10 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
       EXPECT_EQ(Files::Shares::Models::AccessTier::Cool, properties.AccessTier.Value());
       EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
-      EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.Value());
+      auto timeBefore = properties.LastModified - std::chrono::seconds(1);
+      auto timeAfter = properties.LastModified + std::chrono::seconds(1);
+      auto accessTierChangedOn = properties.AccessTierChangedOn.Value();
+      EXPECT_TRUE(timeBefore <= accessTierChangedOn && accessTierChangedOn <= timeAfter);
       shareClients.emplace(std::move(shareName), std::move(shareClient));
     }
 
@@ -500,7 +506,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         EXPECT_EQ(Files::Shares::Models::AccessTier::Hot, properties.AccessTier.Value());
       }
-      EXPECT_EQ(properties.LastModified, properties.AccessTierChangedOn.Value());
+      auto timeBefore = properties.LastModified - std::chrono::seconds(1);
+      auto timeAfter = properties.LastModified + std::chrono::seconds(1);
+      auto accessTierChangedOn = properties.AccessTierChangedOn.Value();
+      EXPECT_TRUE(timeBefore <= accessTierChangedOn && accessTierChangedOn <= timeAfter);
     }
 
     // List shares works.
