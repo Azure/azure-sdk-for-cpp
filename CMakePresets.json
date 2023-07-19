@@ -151,7 +151,7 @@
     {
       "name": "enable-samples",
       "displayName": "Enable Samples",
-      "description": "Enable Samples (hidden)",
+      "description": "Enable Samples (Hidden)",
       "hidden": true,
       "cacheVariables": {
         "BUILD_SAMPLES": true
