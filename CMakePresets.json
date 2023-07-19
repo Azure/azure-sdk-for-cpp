@@ -141,7 +141,7 @@
     {
       "name": "enable-tests",
       "displayName": "Enable Tests",
-      "description": "Enable Tests (hidden)",
+      "description": "Enable Tests (Hidden)",
       "hidden": true,
       "cacheVariables": {
         "BUILD_TESTING": true,
