@@ -145,16 +145,26 @@
       "hidden": true,
       "cacheVariables": {
         "BUILD_TESTING": true,
-        "ENABLE_PROXY_TESTS": false,
+        "ENABLE_PROXY_TESTS": false
+      }
+    },
+    {
+      "name": "enable-samples",
+      "displayName": "Enable Samples",
+      "description": "Enable Samples (hidden)",
+      "hidden": true,
+      "cacheVariables": {
         "BUILD_SAMPLES": true
       }
     },
     {
-      "name": "x86-msvc-static-debug",
-      "displayName": "Windows x86, msvc static, Debug ",
-      "description": "Windows x86, msvc static, Debug",
-      "inherits": [ "x86-msvc-static", "debug-build" ],
-      "hidden": true
+      "name": "enable-perf",
+      "displayName": "Enable Perf",
+      "description": "Enable Perf (Hidden)",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_PERFORMANCE_TESTS": true
+      }
     },
     {
       "name": "x86-static-debug-tests",
@@ -249,32 +259,28 @@
       "inherits": [
         "x64-static",
         "debug-build",
-        "enable-tests"
+        "enable-tests",
+        "enable-samples",
+        "enable-perf"
       ],
       "cacheVariables": {
         "BUILD_TRANSPORT_CURL": true,
-        "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_PERFORMANCE_TESTS": true
+        "BUILD_TRANSPORT_WINHTTP": true
       }
     },
     {
       "name": "x86-msvc-static-debug-perftests",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
-      "inherits": "x86-msvc-static-debug-tests",
+      "inherits": [ "x86-msvc-static", "debug-build", "enable-tests", "enable-perf", "enable-samples" ],
       "cacheVariables": {
         "BUILD_TRANSPORT_WINHTTP": true,
-        "BUILD_TRANSPORT_CURL": true,
-        "BUILD_PERFORMANCE_TESTS": true
+        "BUILD_TRANSPORT_CURL": true
       }
     },
     {
       "name": "x64-static-release-perftests",
       "displayName": "x64 Release With Perf Tests, static",
-      "inherits": [ "x64-static", "release-build" ],
-      "cacheVariables": {
-        "BUILD_PERFORMANCE_TESTS": true
-
-      }
+      "inherits": [ "x64-static", "release-build", "enable-perf" ]
     },
     {
       "name": "linux-basic-gcc9",
