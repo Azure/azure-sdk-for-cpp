@@ -20,8 +20,10 @@ namespace Azure { namespace Identity {
   }
 
   /**
-   * @brief Attempts authentication using a managed identity that has been assigned to the deployment environment. This authentication type works in Azure VMs,
-   * App Service and Azure Functions applications, as well as the Azure Cloud Shell. More information about configuring managed identities can be found here:
+   * @brief Attempts authentication using a managed identity that has been assigned to the
+   * deployment environment. This authentication type works in Azure VMs, App Service and Azure
+   * Functions applications, as well as the Azure Cloud Shell. More information about configuring
+   * managed identities can be found here:
    * https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
    */
   class ManagedIdentityCredential final : public Core::Credentials::TokenCredential {
