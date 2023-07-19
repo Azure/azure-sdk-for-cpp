@@ -93,7 +93,7 @@ set(
 add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
-   )
+    )
 create_per_service_target_build(eventhubs azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
@@ -119,7 +119,7 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
   
-  add_subdirectory(test/ut)
+  add_subdirectory(test)
 endif()
 
 az_vcpkg_export(
