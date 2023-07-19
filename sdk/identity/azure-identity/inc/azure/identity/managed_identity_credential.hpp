@@ -20,8 +20,9 @@ namespace Azure { namespace Identity {
   }
 
   /**
-   * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
-   * ID and a client secret.
+   * @brief Attempts authentication using a managed identity that has been assigned to the deployment environment. This authentication type works in Azure VMs,
+   * App Service and Azure Functions applications, as well as the Azure Cloud Shell. More information about configuring managed identities can be found here:
+   * https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
    */
   class ManagedIdentityCredential final : public Core::Credentials::TokenCredential {
   private:
