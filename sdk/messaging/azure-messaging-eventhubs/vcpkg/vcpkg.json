@@ -8,7 +8,7 @@
     "Microsoft Azure Messaging Event Hubs SDK for C++",
     "This library provides Azure Messaging Event Hubs SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs/azure-messaging-eventhubs",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/messaging/azure-messaging-eventhubs",
   "license": "MIT",
   "dependencies": [
     {
