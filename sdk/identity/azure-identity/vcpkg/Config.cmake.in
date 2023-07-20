@@ -4,7 +4,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(azure-core-cpp "1.9.0")
+find_dependency(azure-core-cpp)
 
 find_dependency(OpenSSL)
 

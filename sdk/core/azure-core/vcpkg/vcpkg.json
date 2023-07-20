@@ -40,7 +40,8 @@
           "default-features": false,
           "features": [
             "ssl"
-          ]
+          ],
+          "version>=": "7.44"
         }
       ]
     },
