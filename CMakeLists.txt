@@ -120,7 +120,7 @@ add_subdirectory(sdk/core)
 add_subdirectory(sdk/attestation)
 # AMQP doesn't work for UWP yet, and eventhubs depends on AMQP, so we cannot include eventhubs on UWP.
 if (NOT BUILD_WINDOWS_UWP)
-  add_subdirectory(sdk/messaging)
+  add_subdirectory(sdk/eventhubs)
 endif()
 add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
