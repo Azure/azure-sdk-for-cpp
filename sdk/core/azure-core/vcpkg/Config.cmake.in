@@ -7,7 +7,7 @@ include(CMakeFindDependencyMacro)
 find_dependency(Threads)
 
 if(@BUILD_TRANSPORT_CURL@)
-  find_dependency(CURL @CURL_MIN_REQUIRED_VERSION@)
+  find_dependency(CURL)
 endif()
 
 if(@BUILD_TRANSPORT_WINHTTP@)

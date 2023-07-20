@@ -26,12 +26,9 @@ include(CreateMapFile)
 find_package(Threads REQUIRED)
 
 if(BUILD_TRANSPORT_CURL)
-  # min version for `CURLSSLOPT_NO_REVOKE`
-  # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-  set(CURL_MIN_REQUIRED_VERSION 7.44)
-  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
+  find_package(CURL CONFIG QUIET)
   if(NOT CURL_FOUND)
-    find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+    find_package(CURL REQUIRED)
   endif()
   message("Libcurl version ${CURL_VERSION_STRING}")
 endif()
