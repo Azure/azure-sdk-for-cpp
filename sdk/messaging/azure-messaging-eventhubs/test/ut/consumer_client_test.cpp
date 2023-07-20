@@ -14,7 +14,7 @@
 namespace LocalTest {
 
 int i = 0;
-void ProcesMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
+void ProcessMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 {
   (void)message;
   std::cout << "Message Id: " << i++ << std::endl;
