@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "eventhub_constants.hpp"
 #include "models/event_data.hpp"
 
 #include <azure/core/amqp/models/amqp_message.hpp>
@@ -180,73 +179,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @return Azure::Core::Amqp::Models::AmqpMessage
      */
-    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const
-    {
-      Azure::Core::Amqp::Models::AmqpMessage returnValue{m_batchEnvelope};
-      if (m_marshalledMessages.size() == 0)
-      {
-        throw std::runtime_error("No messages added to the batch.");
-      }
-
-      // Make sure that the partition key in the message is the current partition key.
-      if (!m_partitionKey.empty())
-      {
-        returnValue.DeliveryAnnotations.emplace(
-            _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-      }
-
-      std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
-      for (auto const& marshalledMessage : m_marshalledMessages)
-      {
-        Azure::Core::Amqp::Models::AmqpBinaryData data(marshalledMessage);
-        messageList.push_back(data);
-      }
-
-      returnValue.SetBody(messageList);
-      Azure::Core::Diagnostics::_internal::Log::Stream(
-          Azure::Core::Diagnostics::Logger::Level::Informational)
-          << "EventDataBatch::ToAmqpMessage: " << returnValue << std::endl;
-      return returnValue;
-    }
+    Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
-    {
-      std::lock_guard<std::mutex> lock(m_rwMutex);
-
-      if (!message.Properties.MessageId.HasValue())
-      {
-        message.Properties.MessageId
-            = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());
-      }
-
-      if (!m_partitionKey.empty())
-      {
-        message.MessageAnnotations.emplace(
-            _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
-      }
-
-      auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(message);
-
-      if (m_marshalledMessages.size() == 0)
-      {
-        // The first message is special - we use its properties and annotations on the envelope for
-        // the batch message.
-        m_batchEnvelope = CreateBatchEnvelope(message);
-        m_currentSize = serializedMessage.size();
-      }
-      auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
-      if (m_currentSize + actualPayloadSize > m_maxBytes)
-      {
-        m_currentSize = 0;
-        m_batchEnvelope = nullptr;
-
-        throw std::runtime_error("EventDataBatch size is too large.");
-      }
-
-      m_currentSize += actualPayloadSize;
-      m_marshalledMessages.push_back(serializedMessage);
-    }
+    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {

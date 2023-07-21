@@ -48,5 +48,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** Indicates whether or not the partition is currently empty. */
     bool IsEmpty{};
   };
+  std::ostream& operator<<(std::ostream&, EventHubPartitionProperties const&);
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

@@ -28,7 +28,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * from partition clients with a lower OwnerLevel.
      * Default is off.
      */
-    int64_t OwnerLevel;
+    Azure::Nullable<std::int64_t> OwnerLevel{};
 
     /**@brief Prefetch represents the size of the internal prefetch buffer. When set,
      * this client will attempt to always maintain an internal cache of events of

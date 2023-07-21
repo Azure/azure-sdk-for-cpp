@@ -34,11 +34,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
-    options.ReceiverOptions.Name = "unit-test";
-    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.ReceiverOptions.MessageTarget = "ingress";
-    options.ReceiverOptions.EnableTrace = true;
-    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+    options.Name = "unit-test";
+    options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    options.MessageTarget = "ingress";
+    options.VerboseLogging= true;
+    options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, "eventhub", "$Default", options);

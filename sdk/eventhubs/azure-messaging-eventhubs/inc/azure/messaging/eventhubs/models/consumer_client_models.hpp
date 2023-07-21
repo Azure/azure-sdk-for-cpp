@@ -3,12 +3,7 @@
 #pragma once
 
 // cspell: word myservicebus
-
-#include <azure/core/amqp.hpp>
-#include <azure/core/context.hpp>
-#include <azure/core/credentials/credentials.hpp>
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/messaging/eventhubs.hpp>
+#include <string>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 

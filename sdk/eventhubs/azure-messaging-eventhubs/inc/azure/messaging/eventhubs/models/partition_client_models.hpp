@@ -35,7 +35,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * SequenceNumber or EnqueuedTime will be included (true) or excluded
      * (false).
      */
-    bool Inclusive;
+    bool Inclusive{false};
 
     /**@brief Earliest will start the consumer at the earliest event.
      */
@@ -45,5 +45,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     Azure::Nullable<bool> Latest;
   };
+  std::ostream& operator<<(std::ostream&, StartPosition const&);
+
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

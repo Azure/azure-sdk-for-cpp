@@ -3,8 +3,8 @@
 
 #include "azure/messaging/eventhubs/models/event_data.hpp"
 
-#include "azure/messaging/eventhubs/eventhub_constants.hpp"
 #include "private/event_data_models_private.hpp"
+#include "private/eventhub_constants.hpp"
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 

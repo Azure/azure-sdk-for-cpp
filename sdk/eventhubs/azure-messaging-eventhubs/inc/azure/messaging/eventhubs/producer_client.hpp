@@ -30,9 +30,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
+    bool VerboseLogging{false};
+
+    std::string Name{};
+    Azure::Core::Amqp::Models::_internal::MessageSource MessageSource{};
+    Azure::Core::Amqp::_internal::SenderSettleMode SettleMode{};
+    Azure::Nullable<std::uint64_t> MaxMessageSize{};
+
     /**@brief  Message sender options.
      */
-    Azure::Core::Amqp::_internal::MessageSenderOptions SenderOptions{};
+    //    Azure::Core::Amqp::_internal::MessageSenderOptions SenderOptions{};
   };
 
   /**@brief  ProducerClient can be used to send events to an Event Hub.

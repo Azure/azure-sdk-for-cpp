@@ -17,12 +17,11 @@ int i = 0;
 void ProcessMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message)
 {
   (void)message;
-  std::cout << "Message Id: " << i++ << std::endl;
+  GTEST_LOG_(INFO) << "Message Id: " << i++ << std::endl;
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {
-  };
+  class ConsumerClientTest : public EventHubsTestBase {};
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
@@ -69,16 +68,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
-    options.ReceiverOptions.Name = "unit-test";
-    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.ReceiverOptions.MessageTarget = "ingress";
-    options.ReceiverOptions.EnableTrace = true;
-    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+    options.Name = "unit-test";
+    options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    options.MessageTarget = "ingress";
+    options.VerboseLogging = true;
+    options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, GetEnv("EVENTHUB_NAME"), "$Default", options);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
+    // We want to consume all messages from the earliest.
+    partitionOptions.StartPosition.Earliest = true;
 
     Azure::Messaging::EventHubs::PartitionClient partitionClient
         = client.CreatePartitionClient("1", partitionOptions);
@@ -98,11 +99,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
-    options.ReceiverOptions.Name = "unit-test";
-    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.ReceiverOptions.MessageTarget = "ingress";
-    options.ReceiverOptions.EnableTrace = true;
-    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+    options.Name = "unit-test";
+    options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    options.MessageTarget = "ingress";
+    options.VerboseLogging = true;
+    options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
@@ -124,11 +125,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
-    options.ReceiverOptions.Name = "unit-test";
-    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.ReceiverOptions.MessageTarget = "ingress";
-    options.ReceiverOptions.EnableTrace = true;
-    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+    options.Name = "unit-test";
+    options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    options.MessageTarget = "ingress";
+    options.VerboseLogging= true;
+    options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;

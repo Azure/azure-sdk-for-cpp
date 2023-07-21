@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 #include "azure/messaging/eventhubs/producer_client.hpp"
 
+#include "private/eventhub_utilities.hpp"
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
@@ -54,10 +55,12 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
-  connectOptions.EnableTrace = m_producerClientOptions.SenderOptions.EnableTrace;
-  std::string hostName;
-  hostName = m_fullyQualifiedNamespace;
+  connectOptions.EnableTrace = m_producerClientOptions.VerboseLogging;
 
+  // Set the UserAgent related properties on this message sender.
+  _detail::EventHubUtilities::SetUserAgent(connectOptions, m_producerClientOptions.ApplicationID);
+
+  std::string hostName{m_fullyQualifiedNamespace};
   std::string targetUrl = m_targetUrl;
 
   if (!partitionId.empty())
@@ -73,8 +76,15 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
 
   Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
   m_sessions.emplace(partitionId, session);
+  Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+
+  senderOptions.Name = m_producerClientOptions.Name;
+  senderOptions.EnableTrace = m_producerClientOptions.VerboseLogging;
+  senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
+  senderOptions.SettleMode = m_producerClientOptions.SettleMode;
+
   Azure::Core::Amqp::_internal::MessageSender sender
-      = session.CreateMessageSender(targetUrl, m_producerClientOptions.SenderOptions, nullptr);
+      = session.CreateMessageSender(targetUrl, senderOptions, nullptr);
   sender.Open();
   m_senders.emplace(partitionId, sender);
 }
@@ -130,7 +140,6 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(Core::Context
   }
   else
   {
-    std::cout << "Management endpoint properties message: " << result.Message;
     if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
     {
       throw std::runtime_error("Unexpected body type");
@@ -196,7 +205,6 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
   }
   else
   {
-    std::cout << "Partition properties message: " << result.Message;
     if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
     {
       throw std::runtime_error("Unexpected body type");

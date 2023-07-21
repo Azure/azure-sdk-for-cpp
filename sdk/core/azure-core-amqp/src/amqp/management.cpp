@@ -240,9 +240,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         messageToSend,
         [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
           m_sendCompleted = true;
-          Log::Stream(Logger::Level::Informational)
-              << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
-              << ", DeliveryState: " << deliveryState;
+          if (m_options.EnableTrace)
+          {
+            Log::Stream(Logger::Level::Informational)
+                << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
+                << ", DeliveryState: " << deliveryState;
+          }
           if (sendStatus != _internal::MessageSendStatus::Ok)
           {
             std::string errorDescription = "Send failed.";

@@ -1,208 +1,318 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-#include <azure/core/amqp.hpp>
+#include "private/eventhub_utilities.hpp"
+#include "private/package_version.hpp"
+
+#include <azure/core/amqp/message_receiver.hpp>
+#include <azure/core/platform.hpp>
 #include <azure/messaging/eventhubs.hpp>
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Messaging::EventHubs::Models;
+using namespace Azure::Core::Amqp::_internal;
 
-Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
-    std::string const& connectionString,
-    std::string const& eventHub,
-    std::string const& consumerGroup,
-    Azure::Messaging::EventHubs::ConsumerClientOptions const& options)
-    : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
-      m_consumerClientOptions(options)
-{
-  auto sasCredential
-      = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-          m_connectionString);
-
-  m_credential = sasCredential;
-  if (!sasCredential->GetEntityPath().empty())
+namespace Azure { namespace Messaging { namespace EventHubs {
+  ConsumerClient::ConsumerClient(
+      std::string const& connectionString,
+      std::string const& eventHub,
+      std::string const& consumerGroup,
+      ConsumerClientOptions const& options)
+      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
+        m_consumerClientOptions(options)
   {
-    m_eventHub = sasCredential->GetEntityPath();
-  }
-  m_hostName = sasCredential->GetHostName();
-  m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
-}
+    auto sasCredential
+        = std::make_shared<ServiceBusSasConnectionStringCredential>(m_connectionString);
 
-Azure::Messaging::EventHubs::ConsumerClient::ConsumerClient(
-    std::string const& hostName,
-    std::string const& eventHub,
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-    std::string const& consumerGroup,
-    Azure::Messaging::EventHubs::ConsumerClientOptions const& options)
-    : m_hostName{hostName}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
-      m_credential{credential}, m_consumerClientOptions(options)
-{
-  m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
-}
-
-Azure::Messaging::EventHubs::PartitionClient
-Azure::Messaging::EventHubs::ConsumerClient::CreatePartitionClient(
-    std::string partitionId,
-    Azure::Messaging::EventHubs::PartitionClientOptions const& options)
-{
-  Azure::Messaging::EventHubs::PartitionClient partitionClient(
-      options, m_consumerClientOptions.RetryOptions);
-
-  std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
-  std::string hostUrl = m_hostUrl + suffix;
-
-  Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-  connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
-  connectOptions.EnableTrace = m_consumerClientOptions.ReceiverOptions.EnableTrace;
-
-  Azure::Core::Amqp::_internal::Connection connection(m_hostName, m_credential, connectOptions);
-  Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
-  sessionOptions.InitialIncomingWindowSize
-      = static_cast<uint32_t>(m_consumerClientOptions.ReceiverOptions.MaxMessageSize.ValueOr(
-          std::numeric_limits<int32_t>::max()));
-
-  Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
-
-  Azure::Core::Amqp::_internal::MessageReceiver receiver
-      = session.CreateMessageReceiver(hostUrl, m_consumerClientOptions.ReceiverOptions);
-
-  // Open the connection to the remote.
-  receiver.Open();
-  m_sessions.emplace(partitionId, session);
-  partitionClient.PushBackReceiver(receiver);
-  Log::Write(Logger::Level::Informational, "Created new partition client");
-  return partitionClient;
-}
-
-Azure::Messaging::EventHubs::Models::EventHubProperties
-Azure::Messaging::EventHubs::ConsumerClient::GetEventHubProperties(Core::Context const& context)
-{
-  std::shared_ptr<PartitionClient> client;
-  if (m_sessions.size() == 0 && m_sessions.find("0") == m_sessions.end())
-  {
-    client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
-  }
-
-  // Create a management client off the session.
-  // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-  managementClientOptions.EnableTrace = false;
-  managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::ManagementClient managementClient(
-      m_sessions.at("0").CreateManagementClient(m_eventHub, managementClientOptions));
-
-  managementClient.Open();
-
-  // Send a message to the management endpoint to retrieve the properties of the eventhub.
-  Azure::Core::Amqp::Models::AmqpMessage message;
-  message.ApplicationProperties["name"]
-      = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
-  message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-  auto result = managementClient.ExecuteOperation(
-      "READ" /* operation */,
-      "com.microsoft:eventhub" /* type of operation */,
-      "" /* locales */,
-      message,
-      context);
-
-  Models::EventHubProperties properties;
-  if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
-  {
-    std::string ss = "Error: "
-        + static_cast<std::string>(result.Message.ApplicationProperties["status-description"]);
-    Log::Write(Logger::Level::Error, ss);
-  }
-  else
-  {
-    std::cout << "Management endpoint properties message: " << result.Message;
-    if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+    m_credential = sasCredential;
+    if (!sasCredential->GetEntityPath().empty())
     {
-      throw std::runtime_error("Unexpected body type");
+      m_eventHub = sasCredential->GetEntityPath();
+    }
+    m_hostName = sasCredential->GetHostName();
+    m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
+  }
+
+  ConsumerClient::ConsumerClient(
+      std::string const& hostName,
+      std::string const& eventHub,
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+      std::string const& consumerGroup,
+      ConsumerClientOptions const& options)
+      : m_hostName{hostName}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
+        m_credential{credential}, m_consumerClientOptions(options)
+  {
+    m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
+  }
+
+  namespace {
+    struct FilterDescription
+    {
+      std::string Name;
+      std::uint64_t Code;
+    };
+    void AddFilterElementToSourceOptions(
+        Azure::Core::Amqp::Models::_internal::MessageSourceOptions& sourceOptions,
+        FilterDescription description,
+        Azure::Core::Amqp::Models::AmqpValue const& filterValue)
+    {
+      Azure::Core::Amqp::Models::AmqpDescribed value{description.Code, filterValue};
+      sourceOptions.Filter.emplace(description.Name, value);
     }
 
-    auto const& body = result.Message.GetBodyAsAmqpValue();
-    if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
-    {
-      throw std::runtime_error("Unexpected body type");
-    }
-    auto bodyMap = body.AsMap();
-    properties.Name = static_cast<std::string>(bodyMap["name"]);
-    properties.CreatedOn = Azure::DateTime(std::chrono::system_clock::from_time_t(
-        static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()).count()));
-    auto partitions = bodyMap["partition_ids"].AsArray();
-    for (const auto& partition : partitions)
-    {
-      properties.PartitionIDs.push_back(static_cast<std::string>(partition));
-    }
-  }
-  managementClient.Close();
+    FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};
+  } // namespace
 
-  return properties;
-}
-
-Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
-Azure::Messaging::EventHubs::ConsumerClient::GetPartitionProperties(
-    std::string const& partitionID,
-    Core::Context const& context)
-{
-  if (m_sessions.find(partitionID) == m_sessions.end())
+  PartitionClient ConsumerClient::CreatePartitionClient(
+      std::string partitionId,
+      PartitionClientOptions const& options)
   {
-    CreatePartitionClient(partitionID);
-  }
+    PartitionClient partitionClient(options, m_consumerClientOptions.RetryOptions);
 
-  // Create a management client off the session.
-  // Eventhubs management APIs return a status code in the "status-code" application properties.
-  Azure::Core::Amqp::_internal::ManagementClientOptions managementClientOptions;
-  managementClientOptions.EnableTrace = false;
-  managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-  Azure::Core::Amqp::_internal::ManagementClient managementClient{
-      m_sessions.at(partitionID).CreateManagementClient(m_eventHub, managementClientOptions)};
+    std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
+    std::string hostUrl = m_hostUrl + suffix;
 
-  managementClient.Open();
+    ConnectionOptions connectOptions;
+    connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
+    connectOptions.EnableTrace = m_consumerClientOptions.VerboseLogging;
 
-  // Send a message to the management endpoint to retrieve the properties of the eventhub.
-  Azure::Core::Amqp::Models::AmqpMessage message;
-  message.ApplicationProperties["name"]
-      = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
-  message.ApplicationProperties["partition"] = Azure::Core::Amqp::Models::AmqpValue{partitionID};
-  message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-  auto result = managementClient.ExecuteOperation(
-      "READ" /* operation */,
-      "com.microsoft:partition" /* type of operation */,
-      "" /* locales */,
-      message,
-      context);
+    // Set the user agent related properties in the connectOptions based on the package information
+    // and application ID.
+    _detail::EventHubUtilities::SetUserAgent(connectOptions, m_consumerClientOptions.ApplicationID);
 
-  Models::EventHubPartitionProperties properties;
-  if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
-  {
-    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
-  }
-  else
-  {
-    std::cout << "Partition properties message: " << result.Message;
-    if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+    Connection connection(m_hostName, m_credential, connectOptions);
+    SessionOptions sessionOptions;
+    sessionOptions.InitialIncomingWindowSize = static_cast<uint32_t>(
+        m_consumerClientOptions.MaxMessageSize.ValueOr(std::numeric_limits<int32_t>::max()));
+
+    Session session{connection.CreateSession(sessionOptions)};
+
+    Azure::Core::Amqp::Models::_internal::MessageSourceOptions sourceOptions;
+    sourceOptions.Address = static_cast<Azure::Core::Amqp::Models::AmqpValue>(hostUrl);
+    AddFilterElementToSourceOptions(
+        sourceOptions,
+        SelectorFilter,
+        static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+            GetStartExpression(options.StartPosition)));
+
+    Azure::Core::Amqp::Models::_internal::MessageSource messageSource(sourceOptions);
+    Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
+    if (m_consumerClientOptions.MaxMessageSize)
     {
-      throw std::runtime_error("Unexpected body type");
+      receiverOptions.MaxMessageSize = m_consumerClientOptions.MaxMessageSize.Value();
+    }
+    receiverOptions.EnableTrace = m_consumerClientOptions.VerboseLogging;
+    receiverOptions.MessageTarget = m_consumerClientOptions.MessageTarget;
+    receiverOptions.Name = m_consumerClientOptions.Name;
+    receiverOptions.Properties.emplace("com.microsoft:receiver-name", m_consumerClientOptions.Name);
+    if (options.OwnerLevel.HasValue())
+    {
+      receiverOptions.Properties.emplace("com.microsoft:epoch", options.OwnerLevel.Value());
     }
 
-    auto const& body = result.Message.GetBodyAsAmqpValue();
-    if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
-    {
-      throw std::runtime_error("Unexpected body type");
-    }
-    auto bodyMap = body.AsMap();
-    properties.Name = static_cast<std::string>(bodyMap["name"]);
-    properties.PartitionId = static_cast<std::string>(bodyMap["partition"]);
-    properties.BeginningSequenceNumber = bodyMap["begin_sequence_number"];
-    properties.LastEnqueuedSequenceNumber = bodyMap["last_enqueued_sequence_number"];
-    properties.LastEnqueuedOffset = static_cast<std::string>(bodyMap["last_enqueued_offset"]);
-    properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
-        std::chrono::duration_cast<std::chrono::seconds>(
-            static_cast<std::chrono::milliseconds>(bodyMap["last_enqueued_time_utc"].AsTimestamp()))
-            .count()));
-    properties.IsEmpty = bodyMap["is_partition_empty"];
-  }
-  managementClient.Close();
+    MessageReceiver receiver = session.CreateMessageReceiver(messageSource, receiverOptions);
 
-  return properties;
-}
+    // Open the connection to the remote.
+    receiver.Open();
+    m_sessions.emplace(partitionId, session);
+    partitionClient.PushBackReceiver(receiver);
+    return partitionClient;
+  }
+
+  std::string ConsumerClient::GetStartExpression(Models::StartPosition const& startPosition)
+  {
+    std::string greaterThan = ">";
+
+    if (startPosition.Inclusive)
+    {
+      greaterThan = ">=";
+    }
+
+    constexpr const char* expressionErrorText
+        = "Only a single start point can be set: Earliest, EnqueuedTime, "
+          "Latest, Offset, or SequenceNumber";
+
+    std::string returnValue;
+    if (startPosition.EnqueuedTime.HasValue())
+    {
+      returnValue = "amqp.annotation.x--opt-enqueued-time " + greaterThan + "'"
+          + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
+                               startPosition.EnqueuedTime.Value().time_since_epoch())
+                               .count())
+          + "'";
+    }
+    if (startPosition.Offset.HasValue())
+    {
+      if (!returnValue.empty())
+      {
+        throw std::runtime_error(expressionErrorText);
+      }
+      returnValue = "amqp.annotation.x-opt-offset " + greaterThan + "'"
+          + std::to_string(startPosition.Offset.Value()) + "'";
+    }
+    if (startPosition.SequenceNumber.HasValue())
+    {
+      if (!returnValue.empty())
+      {
+        throw std::runtime_error(expressionErrorText);
+      }
+      returnValue = "amqp.annotation.x-opt-sequence-number " + greaterThan + "'"
+          + std::to_string(startPosition.SequenceNumber.Value()) + "'";
+    }
+    if (startPosition.Latest.HasValue())
+    {
+      if (!returnValue.empty())
+      {
+        throw std::runtime_error(expressionErrorText);
+      }
+      returnValue = "amqp.annotation.x-opt-offset > '@latest'";
+    }
+    if (startPosition.Earliest.HasValue())
+    {
+      if (!returnValue.empty())
+      {
+        throw std::runtime_error(expressionErrorText);
+      }
+      returnValue = "amqp.annotation.x-opt-offset > '-1'";
+    }
+    // If we don't have a filter value, then default to the start.
+    if (returnValue.empty())
+    {
+      return "amqp.annotation.x-opt-offset > '@latest'";
+    }
+    else
+    {
+      return returnValue;
+    }
+  }
+
+  Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
+  {
+    std::shared_ptr<PartitionClient> client;
+    if (m_sessions.size() == 0 && m_sessions.find("0") == m_sessions.end())
+    {
+      client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
+    }
+
+    // Create a management client off the session.
+    // Eventhubs management APIs return a status code in the "status-code" application properties.
+    ManagementClientOptions managementClientOptions;
+    managementClientOptions.EnableTrace = false;
+    managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
+    ManagementClient managementClient(
+        m_sessions.at("0").CreateManagementClient(m_eventHub, managementClientOptions));
+
+    managementClient.Open();
+
+    // Send a message to the management endpoint to retrieve the properties of the eventhub.
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.ApplicationProperties["name"]
+        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
+    message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
+    auto result = managementClient.ExecuteOperation(
+        "READ" /* operation */,
+        "com.microsoft:eventhub" /* type of operation */,
+        "" /* locales */,
+        message,
+        context);
+
+    Models::EventHubProperties properties;
+    if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
+    {
+      std::string ss = "Error: "
+          + static_cast<std::string>(result.Message.ApplicationProperties["status-description"]);
+      Log::Write(Logger::Level::Error, ss);
+    }
+    else
+    {
+      if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+      {
+        throw std::runtime_error("Unexpected body type");
+      }
+
+      auto const& body = result.Message.GetBodyAsAmqpValue();
+      if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
+      {
+        throw std::runtime_error("Unexpected body type");
+      }
+      auto bodyMap = body.AsMap();
+      properties.Name = static_cast<std::string>(bodyMap["name"]);
+      properties.CreatedOn = Azure::DateTime(std::chrono::system_clock::from_time_t(
+          static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()).count()));
+      auto partitions = bodyMap["partition_ids"].AsArray();
+      for (const auto& partition : partitions)
+      {
+        properties.PartitionIDs.push_back(static_cast<std::string>(partition));
+      }
+    }
+    managementClient.Close();
+
+    return properties;
+  }
+
+  Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(
+      std::string const& partitionID,
+      Core::Context const& context)
+  {
+    if (m_sessions.find(partitionID) == m_sessions.end())
+    {
+      CreatePartitionClient(partitionID);
+    }
+
+    // Create a management client off the session.
+    // Eventhubs management APIs return a status code in the "status-code" application properties.
+    ManagementClientOptions managementClientOptions;
+    managementClientOptions.EnableTrace = false;
+    managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
+    ManagementClient managementClient{
+        m_sessions.at(partitionID).CreateManagementClient(m_eventHub, managementClientOptions)};
+
+    managementClient.Open();
+
+    // Send a message to the management endpoint to retrieve the properties of the eventhub.
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.ApplicationProperties["name"]
+        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
+    message.ApplicationProperties["partition"] = Azure::Core::Amqp::Models::AmqpValue{partitionID};
+    message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
+    auto result = managementClient.ExecuteOperation(
+        "READ" /* operation */,
+        "com.microsoft:partition" /* type of operation */,
+        "" /* locales */,
+        message,
+        context);
+
+    Models::EventHubPartitionProperties properties;
+    if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
+    {
+      std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
+    }
+    else
+    {
+      if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
+      {
+        throw std::runtime_error("Unexpected body type");
+      }
+
+      auto const& body = result.Message.GetBodyAsAmqpValue();
+      if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
+      {
+        throw std::runtime_error("Unexpected body type");
+      }
+      auto bodyMap = body.AsMap();
+      properties.Name = static_cast<std::string>(bodyMap["name"]);
+      properties.PartitionId = static_cast<std::string>(bodyMap["partition"]);
+      properties.BeginningSequenceNumber = bodyMap["begin_sequence_number"];
+      properties.LastEnqueuedSequenceNumber = bodyMap["last_enqueued_sequence_number"];
+      properties.LastEnqueuedOffset = static_cast<std::string>(bodyMap["last_enqueued_offset"]);
+      properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
+          std::chrono::duration_cast<std::chrono::seconds>(
+              static_cast<std::chrono::milliseconds>(
+                  bodyMap["last_enqueued_time_utc"].AsTimestamp()))
+              .count()));
+      properties.IsEmpty = bodyMap["is_partition_empty"];
+    }
+    managementClient.Close();
+
+    return properties;
+  }
+}}} // namespace Azure::Messaging::EventHubs

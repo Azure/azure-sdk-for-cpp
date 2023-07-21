@@ -74,6 +74,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief The Maximum message size for the link associated with the message receiver. */
     Nullable<uint64_t> MaxMessageSize;
 
+    /** @brief Attach properties for the link associated with the message receiver. */
+    Models::AmqpMap Properties;
+
     /** @brief If true, the message receiver will generate low level events */
     bool EnableTrace{false};
 

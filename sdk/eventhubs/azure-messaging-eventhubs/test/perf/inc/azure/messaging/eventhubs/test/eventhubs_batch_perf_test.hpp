@@ -1,0 +1,279 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+/**
+ * @file
+ * @brief Test the overhead of getting a key.
+ *
+ */
+
+#pragma once
+
+#include <azure/core/internal/environment.hpp>
+#include <azure/identity.hpp>
+#include <azure/messaging/eventhubs/consumer_client.hpp>
+#include <azure/messaging/eventhubs/models/partition_client_models.hpp>
+#include <azure/messaging/eventhubs/producer_client.hpp>
+#include <azure/perf.hpp>
+
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest { namespace Batch {
+
+  /**
+   * @brief A test to measure getting a key performance.
+   *
+   */
+  class BatchTest : public Azure::Perf::PerfTest {
+  private:
+    std::string m_eventHubName;
+    std::string m_eventHubConnectionString;
+    std::string m_partitionId;
+    std::string m_checkpointStoreConnectionString;
+    std::string m_tenantId;
+    std::string m_clientId;
+    std::string m_secret;
+    uint32_t m_numberToSend;
+    uint32_t m_batchSize;
+    uint32_t m_prefetchCount;
+    uint64_t m_rounds;
+    uint32_t m_paddingBytes;
+    uint32_t m_maxDeadlineExceeded;
+    bool m_enableVerboseLogging;
+
+    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
+    std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;
+
+  public:
+    /**
+     * @brief Get the Ids and secret
+     *
+     */
+    void Setup() override
+    {
+      m_eventHubName = m_options.GetOptionOrDefault<std::string>(
+          "EventHubName", Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME"));
+      m_eventHubConnectionString = m_options.GetOptionOrDefault<std::string>(
+          "EventHubConnectionString",
+          Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING"));
+      m_checkpointStoreConnectionString = m_options.GetOptionOrDefault<std::string>(
+          "CheckpointStoreConnectionString",
+          Azure::Core::_internal::Environment::GetVariable("CHECKPOINT_STORE_CONNECTION_STRING"));
+
+      m_numberToSend = m_options.GetOptionOrDefault<uint32_t>("NumberToSend", 1000);
+      m_batchSize = m_options.GetOptionOrDefault<uint32_t>("BatchSize", 1000);
+      m_prefetchCount = m_options.GetOptionOrDefault<uint32_t>("PrefetchCount", 1000);
+      m_rounds = m_options.GetOptionOrDefault<uint64_t>("Rounds", 100);
+      m_paddingBytes = m_options.GetOptionOrDefault<uint32_t>("PaddingBytes", 1024);
+      m_partitionId = m_options.GetOptionOrDefault<std::string>("PartitionId", "0");
+      m_maxDeadlineExceeded = m_options.GetOptionOrDefault<uint32_t>("MaxTimeouts", 10);
+      m_enableVerboseLogging = m_options.GetOptionOrDefault<bool>("Verbose", false);
+
+      m_tenantId = m_options.GetOptionOrDefault<std::string>(
+          "TenantId", Azure::Core::_internal::Environment::GetVariable("AZURE_TENANT_ID"));
+      m_clientId = m_options.GetOptionOrDefault<std::string>(
+          "ClientId", Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID"));
+      m_secret = m_options.GetOptionOrDefault<std::string>(
+          "Secret", Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET"));
+
+      ProducerClientOptions clientOptions;
+      clientOptions.VerboseLogging = m_enableVerboseLogging;
+
+      if (m_eventHubConnectionString.empty())
+      {
+        m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            m_tenantId, m_clientId, m_secret);
+
+        m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
+            m_eventHubConnectionString, m_eventHubName, m_credential, clientOptions);
+      }
+      else
+      {
+        m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
+            m_eventHubConnectionString, m_eventHubName, clientOptions);
+      }
+    }
+
+    /**
+     * @brief Construct a new GetKey test.
+     *
+     * @param options The test options.
+     */
+    BatchTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
+
+    /**
+     * @brief Define the test
+     *
+     */
+    void Run(Azure::Core::Context const& context) override
+    {
+      try
+      {
+        std::cout << "Starting test with: batch size: " << m_batchSize
+                  << " Prefetch: " << m_prefetchCount << std::endl;
+
+        // Warm up the connection to the remote instance.
+
+        auto properties = m_client->GetEventHubProperties(context);
+
+        std::cout << "Sending messages to partition " << m_partitionId << std::endl;
+        std::tuple<Models::StartPosition, Models::EventHubPartitionProperties> sendResult
+            = SendEventsToPartition(context);
+
+        ConsumerClientOptions clientOptions;
+        clientOptions.ApplicationID = "StressConsumerClient";
+        clientOptions.VerboseLogging = m_enableVerboseLogging;
+
+        ConsumerClient consumerClient(
+            m_eventHubConnectionString, m_eventHubName, DefaultConsumerGroup, clientOptions);
+
+        auto consumerProperties = consumerClient.GetEventHubProperties(context);
+
+        std::cout << "Starting receive tests for partition " << m_partitionId << std::endl;
+        std::cout << "  Start position: " << std::get<0>(sendResult) << std::endl;
+        std::cout << "  Partition properties: " << std::get<1>(sendResult) << std::endl;
+
+        for (auto i = 0ul; i < m_rounds; i += 1)
+        {
+          ConsumeForBatchTester(i, consumerClient, std::get<0>(sendResult), context);
+        }
+      }
+      catch (std::exception const& ex)
+      {
+        std::cerr << "Exception thrown processing batch: " << ex.what() << std::endl;
+      }
+    }
+
+    std::tuple<Models::StartPosition, Models::EventHubPartitionProperties> SendEventsToPartition(
+        Core::Context const& context)
+    {
+      auto beforeSendProps = m_client->GetPartitionProperties(m_partitionId, context);
+      std::vector<uint8_t> bodyData(m_paddingBytes, 'a');
+
+      Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
+      batchOptions.PartitionID = m_partitionId;
+      Azure::Messaging::EventHubs::EventDataBatch batch(batchOptions);
+      for (uint32_t j = 0; j < m_numberToSend; ++j)
+      {
+
+        Azure::Messaging::EventHubs::Models::EventData event;
+        event.Body.Data = bodyData;
+        event.Properties["Number"] = j;
+        event.Properties["PartitionId"]
+            = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_partitionId);
+        AddEndProperty(event, m_numberToSend);
+        batch.AddMessage(event);
+      }
+      m_client->SendEventDataBatch(batch, context);
+
+      auto afterSendProps = m_client->GetPartitionProperties(m_partitionId, context);
+
+      Models::StartPosition startPosition;
+      startPosition.Inclusive = false;
+      startPosition.SequenceNumber = beforeSendProps.LastEnqueuedSequenceNumber;
+      return std::make_tuple(startPosition, afterSendProps);
+    }
+
+    void ConsumeForBatchTester(
+        uint32_t round,
+        ConsumerClient& client,
+        Models::StartPosition const& startPosition,
+        Core::Context const& context)
+    {
+
+      PartitionClientOptions partitionOptions;
+      partitionOptions.StartPosition = startPosition;
+      partitionOptions.Prefetch = m_prefetchCount;
+      PartitionClient partitionClient{
+          client.CreatePartitionClient(m_partitionId, partitionOptions)};
+      std::cout << "[r: " << round << "/" << m_rounds << "p: " << m_partitionId
+                << "] Starting to receive messages from partition" << std::endl;
+
+      size_t total = 0;
+      //      uint32_t numCancels = 0;
+      //      constexpr const uint32_t cancelLimit = 5;
+
+      auto events = partitionClient.ReceiveEvents(m_batchSize, context);
+      total += events.size();
+    }
+
+    void AddEndProperty(
+        Azure::Messaging::EventHubs::Models::EventData& event,
+        uint64_t expectedCount)
+    {
+      event.Properties["End"] = expectedCount;
+    }
+
+    /**
+     * @brief Define the test options for the test.
+     *
+     * @return The list of test options.
+     */
+    std::vector<Azure::Perf::TestOption> GetTestOptions() override
+    {
+      return {
+          {"EventHubName", {"--eventHubName"}, "The EventHub name.", 1, false},
+          {"EventHubConnectionString",
+           {"--eventHubConnectionString"},
+           "The EventHub connection string.",
+           1,
+           false,
+           true},
+          {"CheckpointStoreConnectionString",
+           {"--checkpointStoreConnectionString"},
+           "The checkpoint store connection string.",
+           1,
+           false},
+          {"NumberToSend", {"--numberToSend"}, "The number of events to send.", 1, false},
+          {"BatchSize",
+           {"--batchSize"},
+           "Size to request each time we call ReceiveEvents(). Higher batch sizes will require "
+           "higher amounts of memory for this test.",
+           1,
+           false},
+          {"Timeout", {"--timeout"}, "Time to wait for each batch (ie. 1m, 30s, etc...)", 1, false},
+          {"PrefetchCount",
+           {"--prefetchCount"},
+           "The number of events to set for the prefetch. Negative numbers disable prefetch "
+           "altogether. 0 uses the default for the package.",
+           1,
+           false},
+          {"Rounds",
+           {"--rounds"},
+           "The number of rounds to run with these parameters. -1 means MAX_UINT64.",
+           1,
+           false},
+          {"PaddingBytes",
+           {"--paddingBytes"},
+           "THe number of bytes to send in each message body.",
+           1,
+           false},
+          {"partitionId",
+           {"--partitionId"},
+           "The partition Id to send and receive events to.",
+           1,
+           false},
+          {"MaxTimeouts", {"--maxTimeouts"}, "The max number of timeouts.", 1, false},
+          {"Verbose", {"--verbose"}, "Enable verbose logging.", 1, false},
+          {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, false},
+          {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, false},
+          {"Secret", {"--secret"}, "The secret for authentication.", 1, false, true}};
+    }
+
+    /**
+     * @brief Get the static Test Metadata for the test.
+     *
+     * @return Azure::Perf::TestMetadata describing the test.
+     */
+    static Azure::Perf::TestMetadata GetTestMetadata()
+    {
+      return {"Batch", "Batch Processing", [](Azure::Perf::TestOptions options) {
+                return std::make_unique<Azure::Messaging::EventHubs::PerfTest::Batch::BatchTest>(
+                    options);
+              }};
+    }
+  };
+
+}}}}} // namespace Azure::Messaging::EventHubs::PerfTest::Batch

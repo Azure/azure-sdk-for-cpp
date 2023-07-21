@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_EVENTHUBS_PERF_TEST_HEADER
-  inc/azure/messaging/eventhubs/test/eventhubs_perf_test.hpp
+  inc/azure/messaging/eventhubs/test/eventhubs_batch_perf_test.hpp
 )
 
 set(

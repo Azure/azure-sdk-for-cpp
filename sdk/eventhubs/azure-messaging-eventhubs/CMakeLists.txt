@@ -59,7 +59,6 @@ set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
     inc/azure/messaging/eventhubs.hpp
     inc/azure/messaging/eventhubs/checkpoint_store.hpp
-    inc/azure/messaging/eventhubs/eventhub_constants.hpp
     inc/azure/messaging/eventhubs/consumer_client.hpp
     inc/azure/messaging/eventhubs/dll_import_export.hpp
     inc/azure/messaging/eventhubs/event_data_batch.hpp
@@ -84,11 +83,14 @@ set(
     src/consumer_client.cpp
     src/event_data.cpp 
     src/event_data_batch.cpp
+    src/partition_client_models.cpp
     src/private/package_version.hpp
+    src/private/eventhub_constants.hpp
+    src/private/eventhub_utilities.hpp
     src/processor_load_balancer.cpp
     src/producer_client.cpp
     src/retry_operation.cpp
-)
+ src/eventhubs_utilities.cpp "src/processor_partition_client.cpp")
 
 add_library(
   azure-messaging-eventhubs
