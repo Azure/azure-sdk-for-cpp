@@ -818,7 +818,7 @@ namespace Azure { namespace Storage { namespace Test {
         blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_SetTierCold)
+  TEST_F(BlockBlobClientTest, SetTierCold)
   {
     m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Cold);
     auto properties = m_blockBlobClient->GetProperties().Value;
