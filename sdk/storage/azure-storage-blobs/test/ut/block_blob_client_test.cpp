@@ -76,28 +76,48 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, SoftDelete)
   {
-    const std::string blobName = m_blobName;
-    auto blobClient = *m_blockBlobClient;
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    auto blobContainerClient
+        = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), LowercaseRandomString(), clientOptions);
+    blobContainerClient.CreateIfNotExists();
+    auto blobName = RandomString();
+    auto blobClient = blobContainerClient.GetBlockBlobClient(blobName);
 
-    std::vector<uint8_t> emptyContent;
-    auto blobContent = Azure::Core::IO::MemoryBodyStream(emptyContent.data(), emptyContent.size());
-    blobClient.Upload(blobContent);
+    blobClient.UploadFrom(nullptr, 0);
 
-    auto blobItem = GetBlobItem(blobName);
+    auto getBlobItem = [&]() {
+      Blobs::ListBlobsOptions options;
+      options.Prefix = blobName;
+      options.Include = Blobs::Models::ListBlobsIncludeFlags::Deleted;
+      for (auto page = blobContainerClient.ListBlobs(options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        for (auto& blob : page.Blobs)
+        {
+          if (blob.Name == blobName)
+          {
+            return std::move(blob);
+          }
+        }
+      }
+      std::abort();
+    };
+
+    auto blobItem = getBlobItem();
     EXPECT_FALSE(blobItem.IsDeleted);
     EXPECT_FALSE(blobItem.Details.DeletedOn.HasValue());
     EXPECT_FALSE(blobItem.Details.RemainingRetentionDays.HasValue());
 
     blobClient.Delete();
 
-    /*
-    // Soft delete doesn't work in storage account with versioning enabled.
-    blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Deleted);
+    blobItem = getBlobItem();
     EXPECT_TRUE(blobItem.IsDeleted);
     ASSERT_TRUE(blobItem.Details.DeletedOn.HasValue());
     EXPECT_TRUE(IsValidTime(blobItem.Details.DeletedOn.Value()));
     EXPECT_TRUE(blobItem.Details.RemainingRetentionDays.HasValue());
-    */
+
+    blobContainerClient.Delete();
   }
 
   TEST_F(BlockBlobClientTest, SmallUploadDownload)
