@@ -6,7 +6,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  std::ostream& Azure::Messaging::EventHubs::Models::operator<<(
+  std::ostream& operator<<(
       std::ostream& os,
       StartPosition const& sp)
   {
@@ -36,7 +36,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     return os;
   }
-  std::ostream& Azure::Messaging::EventHubs::Models::operator<<(
+  std::ostream& operator<<(
       std::ostream& os,
       EventHubPartitionProperties const& pp)
   {

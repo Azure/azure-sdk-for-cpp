@@ -11,22 +11,25 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   class EventHubUtilities {
+
   public:
     template <typename T> static void SetUserAgent(T& options, std::string const& applicationId)
     {
-      options.Properties.emplace("product", "Messaging.EventHubs");
-      options.Properties.emplace("version", PackageVersion::ToString());
+      constexpr const char* packageName = "cpp-azure-messaging-eventhubs-cpp";
+
+      options.Properties.emplace("Product", + packageName);
+      options.Properties.emplace("Version", PackageVersion::ToString());
 #if defined(AZ_PLATFORM_WINDOWS)
-      options.Properties.emplace("platform", "Windows");
+      options.Properties.emplace("Platform", "Windows");
 #elif defined(AZ_PLATFORM_LINUX)
-      options.Properties.emplace("platform", "Linux");
+      options.Properties.emplace("Platform", "Linux");
 #elif defined(AZ_PLATFORM_MAC)
-      options.Properties.emplace("platform", "Mac");
+      options.Properties.emplace("Platform", "Mac");
 #endif
       options.Properties.emplace(
-          "user-agent",
+          "User-Agent",
           Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
-              "Messaging.EventHubs", PackageVersion::ToString(), applicationId));
+              packageName, PackageVersion::ToString(), applicationId));
     }
   };
 }}}} // namespace Azure::Messaging::EventHubs::_detail

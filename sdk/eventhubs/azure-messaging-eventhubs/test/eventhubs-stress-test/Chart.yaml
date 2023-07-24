@@ -1,0 +1,16 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+apiVersion: v2
+name: eventhubs-stress-test
+description: C++ Stress Test for Azure EventHubs.
+version: 0.0.2
+appVersion: v0.1
+annotations:
+  stressTest: 'true'  # enable auto-discovery of this test via `find-all-stress-packages.ps1`
+  namespace: 'azuresdkforcpp'
+
+dependencies:
+- name: stress-test-addons
+  version: ~0.2.0
+  repository: https://stresstestcharts.blob.core.windows.net/helm/
