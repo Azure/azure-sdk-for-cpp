@@ -316,7 +316,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param pathUrl The URL of the path represented by this client.
      * @param blobClient The BlobClient needed for blob operations performed on this path.
      * @param pipeline The HTTP pipeline for sending and receiving REST requests and responses.
-     * @param customerProvidedKey Customer provided key to encrypt the data.
+     * @param clientConfiguration Client configurations
      *
      */
     explicit DataLakePathClient(
