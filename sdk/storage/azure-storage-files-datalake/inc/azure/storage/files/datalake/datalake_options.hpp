@@ -86,6 +86,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using SetServicePropertiesOptions = Blobs::SetServicePropertiesOptions;
   using EncryptionKey = Blobs::EncryptionKey;
 
+  namespace _detail {
+    struct DatalakeClientConfiguration
+    {
+
+      /**
+       * API version used by this client.
+       */
+      std::string ApiVerison;
+
+      /**
+       * @brief The token credential used to initialize the client.
+       */
+      std::shared_ptr<Core::Credentials::TokenCredential> TokenCredential;
+
+      /**
+       * @brief Holds the customer provided key used when making requests.
+       */
+      Azure::Nullable<EncryptionKey> CustomerProvidedKey;
+    };
+  } // namespace _detail
+
   /**
    * @brief Client options used to initialize all DataLake clients.
    */

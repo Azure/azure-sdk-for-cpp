@@ -274,6 +274,40 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakePathClientTest, DISABLED_PaginationDelete)
+  {
+    // Need an AAD app that has no RBAC permissions to do the ACL check.
+    const std::string appId = "858bffd2-4640-451e-bd2a-42c8d3c415c0";
+    const std::string appSecret = "oj08Q~rdMpzT3sjnf1Xeh.3_FGap61Bzu1KkgcfN";
+
+    // Create Resource
+    std::string directoryName = RandomString();
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+    directoryClient.Create();
+    for (int i = 0l; i < 6000; ++i)
+    {
+      auto fileClient = directoryClient.GetFileClient(RandomString());
+      fileClient.Create();
+    }
+
+    // Set Acls
+    auto rootDirClient = m_fileSystemClient->GetDirectoryClient("/");
+    auto aclResult = rootDirClient.GetAccessControlList();
+    auto acls = aclResult.Value.Acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Permissions = "rwx";
+    acl.Id = appId;
+    acl.Type = "user";
+    acls.emplace_back(acl);
+    rootDirClient.SetAccessControlListRecursive(acls);
+
+    // Pagination delete
+    Files::DataLake::DataLakePathClient oauthDirectoryClient(
+        Files::DataLake::_detail::GetDfsUrlFromUrl(directoryClient.GetUrl()),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(AadTenantId(), appId, appSecret));
+    EXPECT_NO_THROW(oauthDirectoryClient.Delete());
+  }
+
   TEST_F(DataLakePathClientTest, PathAccessControls)
   {
     {

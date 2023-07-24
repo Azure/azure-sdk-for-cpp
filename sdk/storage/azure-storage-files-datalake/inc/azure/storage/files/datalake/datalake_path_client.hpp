@@ -306,8 +306,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /** @brief Http Pipeline */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    /** @brief Customer provided encryption key. */
-    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+
+    /** @brief Client configurations*/
+    _detail::DatalakeClientConfiguration m_clientConfiguration;
 
     /**
      * @brief Construct a new DataLakePathClient
@@ -324,8 +325,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
         Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>())
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
-          m_pipeline(std::move(pipeline)), m_customerProvidedKey(std::move(customerProvidedKey))
+          m_pipeline(std::move(pipeline))
     {
+      m_clientConfiguration.ApiVerison = _detail::ApiVersion;
+      m_clientConfiguration.CustomerProvidedKey = customerProvidedKey;
     }
 
   private:
