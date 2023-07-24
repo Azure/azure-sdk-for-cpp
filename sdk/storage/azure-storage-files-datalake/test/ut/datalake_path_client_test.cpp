@@ -277,8 +277,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakePathClientTest, DISABLED_PaginationDelete)
   {
     // Need an AAD app that has no RBAC permissions to do the ACL check.
-    const std::string appId = "858bffd2-4640-451e-bd2a-42c8d3c415c0";
-    const std::string appSecret = "oj08Q~rdMpzT3sjnf1Xeh.3_FGap61Bzu1KkgcfN";
+    const std::string appId = "";
+    const std::string appSecret = "";
 
     // Create Resource
     std::string directoryName = RandomString();
