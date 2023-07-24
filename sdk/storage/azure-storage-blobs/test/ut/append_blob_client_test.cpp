@@ -327,18 +327,36 @@ namespace Azure { namespace Storage { namespace Test {
     options2.TransactionalContentHash.Value().Value = contentMd5;
     EXPECT_NO_THROW(
         appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
-    options2.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
-    options2.TransactionalContentHash.Value().Value
-        = Azure::Core::Convert::Base64Decode(DummyCrc64);
-    // EXPECT_THROW(
-    //    appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2),
-    //    StorageException);
-    options2.TransactionalContentHash.Value().Value = contentCrc64;
-    EXPECT_NO_THROW(
-        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
   }
 
-  TEST_F(AppendBlobClientTest, DISABLED_LIVEONLY_HighThroughputAppendBlob)
+  TEST_F(AppendBlobClientTest, DISABLED_AppendBlockFromUriCrc64AccessCondition)
+  {
+    auto appendBlobClient = GetAppendBlobClientForTest(RandomString());
+
+    const std::vector<uint8_t> blobContent = RandomBuffer(10);
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    appendBlobClient.Create();
+    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    appendBlobClient.AppendBlock(contentStream);
+
+    auto appendBlobClient2 = GetAppendBlobClientForTest(RandomString());
+    appendBlobClient2.Create();
+
+    Blobs::AppendBlockFromUriOptions options;
+    options.TransactionalContentHash = ContentHash();
+    options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+    options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
+    EXPECT_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options),
+        StorageException);
+    options.TransactionalContentHash.Value().Value = contentCrc64;
+    EXPECT_NO_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options));
+  }
+
+  TEST_F(AppendBlobClientTest, HighThroughputAppendBlob_LIVEONLY_)
   {
     auto appendBlobClient = m_blobContainerClient->GetAppendBlobClient(RandomString());
     appendBlobClient.Create();
