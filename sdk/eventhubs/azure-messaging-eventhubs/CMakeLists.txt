@@ -88,14 +88,16 @@ set(
     src/private/eventhub_constants.hpp
     src/private/eventhub_utilities.hpp
     src/processor_load_balancer.cpp
+    src/processor_partition_client.cpp
     src/producer_client.cpp
     src/retry_operation.cpp
- src/eventhubs_utilities.cpp "src/processor_partition_client.cpp")
+    src/eventhubs_utilities.cpp
+)
 
 add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
-    )
+)
 create_per_service_target_build(eventhubs azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
@@ -114,15 +116,7 @@ create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhu
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
 
-if(BUILD_TESTING)
-  add_compile_definitions(TESTING_BUILD_AMQP)
-  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
-    include(AddGoogleTest)
-    enable_testing ()
-  endif()
-  
-  add_subdirectory(test)
-endif()
+add_subdirectory(test)
 
 az_vcpkg_export(
     azure-messaging-eventhubs

@@ -37,7 +37,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.Name = "unit-test";
     options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     options.MessageTarget = "ingress";
-    options.VerboseLogging= true;
+    options.VerboseLogging = true;
     options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(

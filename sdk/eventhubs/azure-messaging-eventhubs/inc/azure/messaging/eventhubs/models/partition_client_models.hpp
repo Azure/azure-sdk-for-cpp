@@ -47,5 +47,4 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   };
   std::ostream& operator<<(std::ostream&, StartPosition const&);
 
-
 }}}} // namespace Azure::Messaging::EventHubs::Models

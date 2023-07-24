@@ -6,9 +6,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  std::ostream& operator<<(
-      std::ostream& os,
-      StartPosition const& sp)
+  std::ostream& operator<<(std::ostream& os, StartPosition const& sp)
   {
     os << "StartPosition:[";
     if (sp.Offset.HasValue())
@@ -36,9 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     return os;
   }
-  std::ostream& operator<<(
-      std::ostream& os,
-      EventHubPartitionProperties const& pp)
+  std::ostream& operator<<(std::ostream& os, EventHubPartitionProperties const& pp)
   {
     os << "PartitionProperties:[[" << pp.Name << "]: ";
     os << "Id: " << pp.PartitionId << std::endl;

@@ -43,7 +43,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return returnValue;
   }
 
-      void EventDataBatch::AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
+  void EventDataBatch::AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
   {
     std::lock_guard<std::mutex> lock(m_rwMutex);
 
@@ -80,7 +80,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_currentSize += actualPayloadSize;
     m_marshalledMessages.push_back(serializedMessage);
   }
-
-
 
 }}} // namespace Azure::Messaging::EventHubs
