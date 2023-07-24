@@ -199,9 +199,11 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
       context);
 
   Models::EventHubPartitionProperties properties;
-  if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
+  if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
   {
-    std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
+    throw std::runtime_error(
+        "Could not receive partition properties: "
+        + static_cast<std::string>(result.Message.ApplicationProperties["status-description"]));
   }
   else
   {
