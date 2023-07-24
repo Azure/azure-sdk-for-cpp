@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #include "azure/messaging/eventhubs/models/partition_client_models.hpp"
 
 #include "azure/messaging/eventhubs/models/management_models.hpp"

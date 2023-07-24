@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+
 #include <azure/core/amqp.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /**@brief StartPosition indicates the position to start receiving events within a partition.
