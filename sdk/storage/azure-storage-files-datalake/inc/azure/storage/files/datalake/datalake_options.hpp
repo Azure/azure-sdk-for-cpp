@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * API version used by this client.
        */
-      std::string ApiVerison;
+      std::string ApiVersion;
 
       /**
        * @brief The token credential used to initialize the client.

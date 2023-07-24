@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
           m_pipeline(std::move(pipeline))
     {
-      m_clientConfiguration.ApiVerison = _detail::ApiVersion;
+      m_clientConfiguration.ApiVersion = _detail::ApiVersion;
       m_clientConfiguration.CustomerProvidedKey = customerProvidedKey;
     }
 

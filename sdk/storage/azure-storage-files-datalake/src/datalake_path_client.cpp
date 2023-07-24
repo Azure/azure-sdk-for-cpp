@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                 credential,
                                 _detail::GetBlobClientOptions(options))
   {
-    m_clientConfiguration.ApiVerison
+    m_clientConfiguration.ApiVersion
         = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
     m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
 
@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                 credential,
                                 _detail::GetBlobClientOptions(options))
   {
-    m_clientConfiguration.ApiVerison
+    m_clientConfiguration.ApiVersion
         = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
     m_clientConfiguration.TokenCredential = credential;
     m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_pathUrl(pathUrl),
         m_blobClient(_detail::GetBlobUrlFromUrl(pathUrl), _detail::GetBlobClientOptions(options))
   {
-    m_clientConfiguration.ApiVerison
+    m_clientConfiguration.ApiVersion
         = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
     m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
 
@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeletePathOptions& options,
       const Azure::Core::Context& context) const
   {
-    bool paginated = m_clientConfiguration.ApiVerison >= "2023-08-03"
+    bool paginated = m_clientConfiguration.ApiVersion >= "2023-08-03"
         && m_clientConfiguration.TokenCredential != nullptr;
     std::string continuationToken = "";
     do
