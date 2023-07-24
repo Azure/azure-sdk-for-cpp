@@ -10,6 +10,9 @@
 *.sln.docstates
 *.runsettings
 
+# Helm temporary file created by stress test deploy script.
+generatedValues.yml
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

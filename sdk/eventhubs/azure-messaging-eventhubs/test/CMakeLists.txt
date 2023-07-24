@@ -8,5 +8,8 @@ cmake_minimum_required (VERSION 3.13)
 
 # Include sub-projects.
 add_subdirectory ("ut")
-add_subdirectory ("perf")
+# stress tests are categorized as normal tests.
 add_subdirectory ("eventhubs-stress-test")
+if (BUILD_PERFORMANCE_TESTS) 
+add_subdirectory ("perf")
+endif()

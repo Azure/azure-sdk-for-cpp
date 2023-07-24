@@ -35,5 +35,5 @@ WORKDIR /
 COPY --from=build ./build/sdk/eventhubs/azure-messaging-eventhubs/test/eventhubs-stress-test/azure-messaging-eventhubs-stress-test ./azure-messaging-eventhubs-stress-test
 RUN chmod +x ./azure-messaging-eventhubs-stress-test
 
-CMD ./azure-core-messaging-eventhubs-stress-test
+CMD ./azure-messaging-eventhubs-stress-test
 # this should be run by the scenarios matrix , run valgrind only when needed since it impacts performance and resources. 
