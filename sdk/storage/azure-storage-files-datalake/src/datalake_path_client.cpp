@@ -297,7 +297,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.Recursive = options.Recursive;
       protocolLayerOptions.ContinuationToken = continuationToken;
       protocolLayerOptions.Paginated = paginated;
-      auto response = _detail::PathClient::Delete(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
+      auto response
+          = _detail::PathClient::Delete(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
       continuationToken = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
           response.RawResponse->GetHeaders(), "x-ms-continuation");
       if (continuationToken.empty())
