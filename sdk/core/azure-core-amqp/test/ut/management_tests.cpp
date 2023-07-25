@@ -288,7 +288,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
       EXPECT_EQ(response.StatusCode, 500);
-      EXPECT_EQ(response.Error.Description, "Message Delivery Rejected: Received message statusCode value is not an int.");
+      EXPECT_EQ(
+          response.Error.Description,
+          "Message Delivery Rejected: Received message statusCode value is not an int.");
       management.Close();
 
       mockServer.StopListening();
@@ -339,7 +341,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
       EXPECT_EQ(response.StatusCode, 500);
       EXPECT_EQ(
-          response.Error.Description, "Message Delivery Rejected: Received message does not have a statusCode status code key.");
+          response.Error.Description,
+          "Message Delivery Rejected: Received message does not have a statusCode status code "
+          "key.");
       EXPECT_TRUE(managementEvents.Error);
       management.Close();
 
