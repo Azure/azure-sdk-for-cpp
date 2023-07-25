@@ -35,6 +35,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           ErrorDescription(error.Description)
     {
     }
+    explicit EventHubsException(
+        Azure::Core::Amqp::Models::_internal::AmqpError const& error,
+        std::uint32_t statusCode)
+        : std::runtime_error(error.Description), ErrorCondition(error.Condition.ToString()),
+          ErrorDescription(error.Description), StatusCode(statusCode)
+    {
+    }
 
     /** @brief A symbolic value indicating the error condition.
      *
@@ -53,5 +60,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * Section 2.8.15](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error).
      * 	 */
     std::string ErrorDescription;
+
+    /**
+     * @brief The status code associated with the error, if any.
+     *
+     * If this field has a value, then it will typically be an HTTP status code with additional
+     * information about the failure. This property is only filled in for the GetEventHubProperties
+     * and GetEventHubPartitionProperties operations.
+     *
+     */
+    Azure::Nullable<std::uint32_t> StatusCode;
   };
 }}} // namespace Azure::Messaging::EventHubs

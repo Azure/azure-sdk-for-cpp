@@ -68,9 +68,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Models::EventHubProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
-        throw EventHubsException(result.Error);
-        //        std::cerr << "Error: " <<
-        //        result.Message.ApplicationProperties["status-description"];
+        throw EventHubsException(result.Error, result.StatusCode);
       }
       else
       {
@@ -132,9 +130,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Models::EventHubPartitionProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
-        throw EventHubsException(result.Error);
-        //        std::cerr << "Error: " <<
-        //        result.Message.ApplicationProperties["status-description"];
+        throw EventHubsException(result.Error, result.StatusCode);
       }
       else
       {
