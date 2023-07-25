@@ -78,13 +78,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         Azure::Messaging::EventHubs::Models::Ownership ownership)
     {
       if (ownership.ConsumerGroup.empty() || ownership.EventHubName.empty()
-          || ownership.FullyQualifiedNamespace.empty() || ownership.PartitionID.empty())
+          || ownership.FullyQualifiedNamespace.empty() || ownership.PartitionId.empty())
       {
         throw std::runtime_error("Invalid ownership");
       }
 
       std::string key = ownership.FullyQualifiedNamespace + "/" + ownership.EventHubName + "/"
-          + ownership.ConsumerGroup + "/" + ownership.PartitionID;
+          + ownership.ConsumerGroup + "/" + ownership.PartitionId;
 
       if (m_ownerships.find(key) != m_ownerships.end())
       {
@@ -112,7 +112,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       temp.LastModifiedTime
           = temp.LastModifiedTime.ValueOr(std::chrono::system_clock::now()) - std::chrono::hours(6);
       std::string key = temp.FullyQualifiedNamespace + "/" + temp.EventHubName + "/"
-          + temp.ConsumerGroup + "/" + temp.PartitionID;
+          + temp.ConsumerGroup + "/" + temp.PartitionId;
       m_ownerships[key] = temp;
     }
 
@@ -122,12 +122,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       (void)context;
       if (checkpoint.ConsumerGroup.empty() || checkpoint.EventHubName.empty()
-          || checkpoint.EventHubHostName.empty() || checkpoint.PartitionID.empty())
+          || checkpoint.EventHubHostName.empty() || checkpoint.PartitionId.empty())
       {
         throw std::runtime_error("Invalid checkpoint");
       }
       std::string key = checkpoint.EventHubHostName + "/" + checkpoint.EventHubName + "/"
-          + checkpoint.ConsumerGroup + "/" + checkpoint.PartitionID;
+          + checkpoint.ConsumerGroup + "/" + checkpoint.PartitionId;
       m_checkpoints[key] = checkpoint;
     }
   };

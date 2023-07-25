@@ -6,6 +6,7 @@
 #include <azure/core/amqp/message_receiver.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/messaging/eventhubs.hpp>
+
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Messaging::EventHubs::Models;
@@ -187,132 +188,34 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
   {
+    // We need to capture the partition client here, because we need to keep it alive across the
+    // call to GetEventHubsProperties.
+    //
+    // If we don't keep the PartitionClient alive, the message receiver inside the partition client
+    // will be disconnected AFTER the outgoing ATTACH frame is sent. When the response for the
+    // ATTACH frame is received, it creates a new link_endpoint which is in the half attached state.
+    // This runs into a uAMQP bug where an incoming link detach frame will cause a crash if the
+    // corresponding link_endpoint is in the half attached state.
     std::shared_ptr<PartitionClient> client;
-    if (m_sessions.size() == 0 && m_sessions.find("0") == m_sessions.end())
+    if (m_sessions.find("0") == m_sessions.end())
     {
       client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
     }
 
-    // Create a management client off the session.
-    // Eventhubs management APIs return a status code in the "status-code" application properties.
-    ManagementClientOptions managementClientOptions;
-    managementClientOptions.EnableTrace = false;
-    managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-    ManagementClient managementClient(
-        m_sessions.at("0").CreateManagementClient(m_eventHub, managementClientOptions));
-
-    managementClient.Open();
-
-    // Send a message to the management endpoint to retrieve the properties of the eventhub.
-    Azure::Core::Amqp::Models::AmqpMessage message;
-    message.ApplicationProperties["name"]
-        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
-    message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-    auto result = managementClient.ExecuteOperation(
-        "READ" /* operation */,
-        "com.microsoft:eventhub" /* type of operation */,
-        "" /* locales */,
-        message,
-        context);
-
-    Models::EventHubProperties properties;
-    if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
-    {
-      std::string ss = "Error: "
-          + static_cast<std::string>(result.Message.ApplicationProperties["status-description"]);
-      Log::Write(Logger::Level::Error, ss);
-    }
-    else
-    {
-      if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
-      {
-        throw std::runtime_error("Unexpected body type");
-      }
-
-      auto const& body = result.Message.GetBodyAsAmqpValue();
-      if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
-      {
-        throw std::runtime_error("Unexpected body type");
-      }
-      auto bodyMap = body.AsMap();
-      properties.Name = static_cast<std::string>(bodyMap["name"]);
-      properties.CreatedOn = Azure::DateTime(std::chrono::system_clock::from_time_t(
-          static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()).count()));
-      auto partitions = bodyMap["partition_ids"].AsArray();
-      for (const auto& partition : partitions)
-      {
-        properties.PartitionIDs.push_back(static_cast<std::string>(partition));
-      }
-    }
-    managementClient.Close();
-
-    return properties;
+    return _detail::EventHubUtilities::GetEventHubsProperties(
+        m_sessions.at("0"), m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(
-      std::string const& partitionID,
+      std::string const& partitionId,
       Core::Context const& context)
   {
-    if (m_sessions.find(partitionID) == m_sessions.end())
+    if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      CreatePartitionClient(partitionID);
+      CreatePartitionClient(partitionId);
     }
 
-    // Create a management client off the session.
-    // Eventhubs management APIs return a status code in the "status-code" application properties.
-    ManagementClientOptions managementClientOptions;
-    managementClientOptions.EnableTrace = false;
-    managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
-    ManagementClient managementClient{
-        m_sessions.at(partitionID).CreateManagementClient(m_eventHub, managementClientOptions)};
-
-    managementClient.Open();
-
-    // Send a message to the management endpoint to retrieve the properties of the eventhub.
-    Azure::Core::Amqp::Models::AmqpMessage message;
-    message.ApplicationProperties["name"]
-        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_eventHub);
-    message.ApplicationProperties["partition"] = Azure::Core::Amqp::Models::AmqpValue{partitionID};
-    message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-    auto result = managementClient.ExecuteOperation(
-        "READ" /* operation */,
-        "com.microsoft:partition" /* type of operation */,
-        "" /* locales */,
-        message,
-        context);
-
-    Models::EventHubPartitionProperties properties;
-    if (result.Status == Azure::Core::Amqp::_internal::ManagementOperationStatus::Error)
-    {
-      std::cerr << "Error: " << result.Message.ApplicationProperties["status-description"];
-    }
-    else
-    {
-      if (result.Message.BodyType != Azure::Core::Amqp::Models::MessageBodyType::Value)
-      {
-        throw std::runtime_error("Unexpected body type");
-      }
-
-      auto const& body = result.Message.GetBodyAsAmqpValue();
-      if (body.GetType() != Azure::Core::Amqp::Models::AmqpValueType::Map)
-      {
-        throw std::runtime_error("Unexpected body type");
-      }
-      auto bodyMap = body.AsMap();
-      properties.Name = static_cast<std::string>(bodyMap["name"]);
-      properties.PartitionId = static_cast<std::string>(bodyMap["partition"]);
-      properties.BeginningSequenceNumber = bodyMap["begin_sequence_number"];
-      properties.LastEnqueuedSequenceNumber = bodyMap["last_enqueued_sequence_number"];
-      properties.LastEnqueuedOffset = static_cast<std::string>(bodyMap["last_enqueued_offset"]);
-      properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
-          std::chrono::duration_cast<std::chrono::seconds>(
-              static_cast<std::chrono::milliseconds>(
-                  bodyMap["last_enqueued_time_utc"].AsTimestamp()))
-              .count()));
-      properties.IsEmpty = bodyMap["is_partition_empty"];
-    }
-    managementClient.Close();
-
-    return properties;
+    return _detail::EventHubUtilities::GetEventHubsPartitionProperties(
+        m_sessions.at(partitionId), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

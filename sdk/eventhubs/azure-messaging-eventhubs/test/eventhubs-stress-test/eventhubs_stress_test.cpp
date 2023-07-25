@@ -110,7 +110,7 @@ private:
     std::vector<uint8_t> bodyData(m_messageBodySize, 'a');
 
     Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
-    batchOptions.PartitionID = m_partitionId;
+    batchOptions.PartitionId = m_partitionId;
     Azure::Messaging::EventHubs::EventDataBatch batch(batchOptions);
     for (uint32_t j = 0; j < m_numberToSend; ++j)
     {

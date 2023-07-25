@@ -96,7 +96,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::ConsumerClientDetails GetDetails() const
     {
       Models::ConsumerClientDetails details;
-      details.ClientID = GetClientId();
+      details.ClientId = GetClientId();
       details.ConsumerGroup = GetConsumerGroup();
       details.EventHubName = GetEventHubName();
       details.HostName = GetHostName();

@@ -71,13 +71,13 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
-  edboptions.PartitionID = "1";
+  edboptions.PartitionId = "1";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch(edboptions);
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
   edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
   ;
-  edboptions2.PartitionID = "2";
+  edboptions2.PartitionId = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2(edboptions2);
 
   eventBatch.AddMessage(message1);
@@ -113,7 +113,7 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 
   auto result = client.GetEventHubProperties();
   EXPECT_EQ(result.Name, "eventhub");
-  EXPECT_TRUE(result.PartitionIDs.size() > 0);
+  EXPECT_TRUE(result.PartitionIds.size() > 0);
 }
 
 TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)

@@ -18,7 +18,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /** @brief EventDataBatchOptions contains optional parameters for the
    * [ProducerClient.CreateEventDataBatch] function.
    *
-   * @remark If both PartitionKey and PartitionID are nil, Event Hubs will choose an arbitrary
+   * @remark If both PartitionKey and PartitionId are nil, Event Hubs will choose an arbitrary
    * partition for any events in this [EventDataBatch].
    */
   struct EventDataBatchOptions final
@@ -31,14 +31,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief PartitionKey is hashed to calculate the partition assignment.Messages and message
      * batches with the same PartitionKey are guaranteed to end up in the same partition.
-     * Note that if you use this option then PartitionID cannot be set.
+     * Note that if you use this option then PartitionId cannot be set.
      */
     std::string PartitionKey;
 
-    /** @brief PartitionID is the ID of the partition to send these messages to.
+    /** @brief PartitionId is the ID of the partition to send these messages to.
      * Note that if you use this option then PartitionKey cannot be set.
      */
-    std::string PartitionID;
+    std::string PartitionId;
   };
 
   /**@brief EventDataBatch is used to efficiently pack up EventData before sending it to Event Hubs.
@@ -52,7 +52,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     const std::string anyPartitionId = "";
 
     std::mutex m_rwMutex;
-    std::string m_partitionID;
+    std::string m_partitionId;
     std::string m_partitionKey;
     uint64_t m_maxBytes;
     std::vector<std::vector<uint8_t>> m_marshalledMessages;
@@ -69,7 +69,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     EventDataBatch(EventDataBatch const& other)
         // Copy constructor cannot be defaulted because of m_rwMutex.
-        : m_rwMutex{}, m_partitionID{other.m_partitionID}, m_partitionKey{other.m_partitionKey},
+        : m_rwMutex{}, m_partitionId{other.m_partitionId}, m_partitionKey{other.m_partitionKey},
           m_maxBytes{other.m_maxBytes}, m_marshalledMessages{other.m_marshalledMessages},
           m_batchEnvelope{other.m_batchEnvelope}, m_currentSize(other.m_currentSize){};
 
@@ -79,7 +79,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // Assignment operator cannot be defaulted because of m_rwMutex.
       if (this != &other)
       {
-        m_partitionID = other.m_partitionID;
+        m_partitionId = other.m_partitionId;
         m_partitionKey = other.m_partitionKey;
         m_maxBytes = other.m_maxBytes;
         m_marshalledMessages = other.m_marshalledMessages;
@@ -95,16 +95,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     EventDataBatch(EventDataBatchOptions options = {})
     {
-      SetPartitionID(anyPartitionId);
+      SetPartitionId(anyPartitionId);
 
-      if (!options.PartitionID.empty() && !options.PartitionKey.empty())
+      if (!options.PartitionId.empty() && !options.PartitionKey.empty())
       {
         throw std::runtime_error("Either PartionID or PartitionKey can be set.");
       }
 
-      if (!options.PartitionID.empty())
+      if (!options.PartitionId.empty())
       {
-        SetPartitionID(options.PartitionID);
+        SetPartitionId(options.PartitionId);
       }
       else if (!options.PartitionKey.empty())
       {
@@ -125,7 +125,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param partitionID The partition ID to set
      */
-    void SetPartitionID(std::string partitionID) { m_partitionID = partitionID; }
+    void SetPartitionId(std::string partitionId) { m_partitionId = partitionId; }
 
     /** @brief Sets the partition key for the data batch
      *
@@ -140,7 +140,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @return std::string
      */
-    std::string GetPartitionID() const { return m_partitionID; }
+    std::string GetPartitionId() const { return m_partitionId; }
 
     /** @brief Gets the partition key for the data batch
      * @return std::string

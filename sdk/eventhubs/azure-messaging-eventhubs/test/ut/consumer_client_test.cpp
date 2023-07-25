@@ -114,7 +114,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto result = client.GetEventHubProperties();
     EXPECT_EQ(result.Name, "eventhub");
-    EXPECT_TRUE(result.PartitionIDs.size() > 0);
+    EXPECT_TRUE(result.PartitionIds.size() > 0);
   }
 
   TEST_F(ConsumerClientTest, GetPartitionProperties_LIVEONLY_)

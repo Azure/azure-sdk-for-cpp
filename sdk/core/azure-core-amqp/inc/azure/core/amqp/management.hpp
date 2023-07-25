@@ -109,15 +109,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @brief The status of the operation.
      */
     ManagementOperationStatus Status = ManagementOperationStatus::Invalid;
+
     /**
      * @brief The response message from the operation, if Status is ManagementOperationStatus::Ok.
      */
     Models::AmqpMessage Message;
 
     /**
-     * @brief The description of the operation, if Status is ManagementOperationStatus::Error.
+     * @brief The error code associated with the message, if Status is
+     * ManagementOperationStatus::Error.
      */
-    std::string Description;
+    Models::_internal::AmqpError Error;
 
     /**
      * @brief The HTTP status code of the operation, if Status is ManagementOperationStatus::Error.

@@ -26,7 +26,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     /**@brief A unique name used to identify this consumer.
      */
-    std::string ClientID;
+    std::string ClientId;
   };
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

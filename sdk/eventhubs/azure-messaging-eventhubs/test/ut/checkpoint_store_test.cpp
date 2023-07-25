@@ -50,7 +50,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].EventHubHostName);
-    EXPECT_EQ("partition-id", checkpoints[0].PartitionID);
+    EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
     EXPECT_EQ(202, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(101, checkpoints[0].Offset.Value());
 
@@ -69,7 +69,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].EventHubHostName);
-    EXPECT_EQ("partition-id", checkpoints[0].PartitionID);
+    EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
     EXPECT_EQ(203, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
@@ -104,8 +104,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", ownerships[0].FullyQualifiedNamespace);
-    EXPECT_EQ("partition-id", ownerships[0].PartitionID);
-    EXPECT_EQ("owner-id", ownerships[0].OwnerID);
+    EXPECT_EQ("partition-id", ownerships[0].PartitionId);
+    EXPECT_EQ("owner-id", ownerships[0].OwnerId);
     EXPECT_TRUE(ownerships[0].ETag.HasValue());
     EXPECT_TRUE(ownerships[0].LastModifiedTime.HasValue());
     Azure::ETag validEtag = ownerships[0].ETag.Value();
@@ -139,7 +139,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("$Default", ownerships[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", ownerships[0].EventHubName);
     EXPECT_EQ("ns.servicebus.windows.net", ownerships[0].FullyQualifiedNamespace);
-    EXPECT_EQ("partition-id", ownerships[0].PartitionID);
-    EXPECT_EQ("owner-id", ownerships[0].OwnerID);
+    EXPECT_EQ("partition-id", ownerships[0].PartitionId);
+    EXPECT_EQ("owner-id", ownerships[0].OwnerId);
   }
 }}}} // namespace Azure::Messaging::EventHubs::Test

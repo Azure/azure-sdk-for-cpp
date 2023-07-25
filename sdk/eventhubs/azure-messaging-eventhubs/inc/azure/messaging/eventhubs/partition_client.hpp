@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+#include "eventhubs_exception.hpp"
 #include "models/event_data.hpp"
 #include "models/partition_client_models.hpp"
 
@@ -101,6 +102,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         if (message.first.HasValue())
         {
           messages.push_back(Models::ReceivedEventData{message.first.Value()});
+        }
+        else
+        {
+          throw EventHubsException(message.second);
         }
       }
       return messages;

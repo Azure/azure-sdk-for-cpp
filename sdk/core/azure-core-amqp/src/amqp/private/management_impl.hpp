@@ -125,7 +125,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         _internal::ManagementOperationStatus,
         std::uint32_t,
-        std::string,
+        Models::_internal::AmqpError,
         Models::AmqpMessage>
         m_messageQueue;
 

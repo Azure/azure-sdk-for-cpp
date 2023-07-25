@@ -10,12 +10,12 @@ using namespace Azure::Messaging::EventHubs::Models;
 
 std::string Azure::Messaging::EventHubs::Models::Ownership::GetOwnershipName() const
 {
-  if (PartitionID.empty())
+  if (PartitionId.empty())
   {
     throw std::runtime_error("missing ownership fields");
   }
   std::stringstream strstr;
-  strstr << GetOwnershipPrefixName() << PartitionID;
+  strstr << GetOwnershipPrefixName() << PartitionId;
   return strstr.str();
 }
 
@@ -45,11 +45,11 @@ std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobPr
 
 std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobName() const
 {
-  if (PartitionID.empty())
+  if (PartitionId.empty())
   {
     throw std::runtime_error("missing checkpoint fields");
   }
-  return GetCheckpointBlobPrefixName() + PartitionID;
+  return GetCheckpointBlobPrefixName() + PartitionId;
 }
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
@@ -81,7 +81,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
   {
     throw std::runtime_error("missing sequence number");
   }
-  ownership.OwnerID = temp;
+  ownership.OwnerId = temp;
   ownership.LastModifiedTime = blob.Details.LastModified;
   ownership.ETag = blob.Details.ETag;
 }
@@ -114,7 +114,7 @@ std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOw
   {
     std::string blobName = ownership.GetOwnershipName();
     Azure::Storage::Metadata metadata;
-    metadata["ownerId"] = ownership.OwnerID;
+    metadata["ownerId"] = ownership.OwnerId;
     try
     {
       std::pair<Azure::DateTime, Azure::ETag> result

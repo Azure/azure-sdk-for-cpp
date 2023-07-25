@@ -20,7 +20,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::string Name;
 
     /// A list of the partitions in the Event Hub.
-    std::vector<std::string> PartitionIDs;
+    std::vector<std::string> PartitionIds;
   };
 
   /**@brief EventHubPartitionProperties represents properties of an Event Hub partition

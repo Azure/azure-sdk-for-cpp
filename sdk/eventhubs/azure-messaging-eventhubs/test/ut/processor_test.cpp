@@ -32,9 +32,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connStringNoEntityPath
         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "unit-test";
+    options.ApplicationID = "processor unit test";
 
-    options.Name = "unit-test";
+    options.Name = "processor unittest";
     options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     options.MessageTarget = "ingress";
     options.VerboseLogging = true;

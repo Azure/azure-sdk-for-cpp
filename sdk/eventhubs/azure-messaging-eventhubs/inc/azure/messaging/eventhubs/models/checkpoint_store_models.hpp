@@ -22,9 +22,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The fully qualified namespace for the event hub.
     std::string FullyQualifiedNamespace;
     /// @brief The partition ID for the corresponding ownership.
-    std::string PartitionID{};
+    std::string PartitionId{};
     /// @brief The owner ID for the corresponding ownership.
-    std::string OwnerID{};
+    std::string OwnerId{};
     /// the ETag, used when attempting to claim or update ownership of a partition.
     Azure::Nullable<Azure::ETag> ETag{};
 
@@ -50,7 +50,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The fully qualified namespace for the event hub.
     std::string EventHubHostName;
     /// @brief The partition ID for the corresponding checkpoint.
-    std::string PartitionID{};
+    std::string PartitionId{};
     /// @brief The offset of the last successfully processed event.
     Azure::Nullable<int64_t> Offset{};
     /// @brief The sequence number of the last successfully processed event.
