@@ -121,9 +121,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
     };
 
-    /** @brief Sets the partition ID for the data batch
+    /** @brief Sets the partition id for the data batch
      *
-     * @param partitionID The partition ID to set
+     * @param partitionId The partition id to set
      */
     void SetPartitionId(std::string partitionId) { m_partitionId = partitionId; }
 

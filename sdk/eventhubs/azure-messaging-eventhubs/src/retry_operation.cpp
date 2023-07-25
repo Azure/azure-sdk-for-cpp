@@ -5,6 +5,8 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 
+#include <thread>
+
 namespace {
 // The set of AMQP error conditions that should be treated as fatal conditions.
 constexpr const char* AmqpFatalConditions[] = {"amqp:link:message-size-exceeded"};
