@@ -11,7 +11,6 @@
 #include "models/amqp_error.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
-#include "models/amqp_error.hpp"
 
 #include <azure/core/nullable.hpp>
 
