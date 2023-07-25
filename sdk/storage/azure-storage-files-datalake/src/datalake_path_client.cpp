@@ -283,10 +283,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeletePathOptions& options,
       const Azure::Core::Context& context) const
   {
-    bool paginated = m_clientConfiguration.ApiVersion >= "2023-08-03"
-        && m_clientConfiguration.TokenCredential != nullptr;
-    std::string continuationToken = "";
-    do
+    bool paginated
+        = m_clientConfiguration.ApiVersion >= "2023-08-03" && m_clientConfiguration.TokenCredential;
+    std::string continuationToken;
+    while (true)
     {
       _detail::PathClient::DeletePathOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         return response;
       }
-    } while (true);
+    }
   }
 
   Azure::Response<Models::DeletePathResult> DataLakePathClient::DeleteIfExists(

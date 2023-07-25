@@ -325,7 +325,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
         _detail::DatalakeClientConfiguration clientConfiguration)
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
-          m_pipeline(std::move(pipeline)), m_clientConfiguration(clientConfiguration)
+          m_pipeline(std::move(pipeline)), m_clientConfiguration(std::move(clientConfiguration))
     {
     }
 
