@@ -166,44 +166,26 @@ std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TestProxyManager::GetTe
   return std::make_unique<Azure::Core::Test::TestProxyPolicy>(this);
 }
 
+namespace {
+const char* g_accountRegex = "https://(?<account>[a-zA-Z0-9\\-]+)\\.";
+}
+
 bool TestProxyManager::CheckSanitizers()
 {
   Azure::Core::Url checkRequest(m_proxy);
-
   checkRequest.AppendPath("Info");
   checkRequest.AppendPath("Active");
 
+  Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, checkRequest);
+  Azure::Core::Context ctx;
+  auto response = m_privatePipeline->Send(request, ctx);
+
+  auto rawResponse = response->GetBody();
+  std::string stringBody(rawResponse.begin(), rawResponse.end());
+  if (stringBody.find(g_accountRegex) == std::string::npos)
   {
-    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, checkRequest);
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
-
-    auto rawResponse = response->GetBody();
-    std::string stringBody(rawResponse.begin(), rawResponse.end());
-    std::string regex = "\"https://(?<account>[a-zA-Z0-9\\-]+).\"";
-    std::vector<std::string> stringsInOrder
-        = {"UriRegexSanitizer",
-           regex,
-           "BodyRegexSanitizer",
-           regex,
-           "HeaderRegexSanitizer",
-           regex,
-           "GeneralRegexSanitizer",
-           regex,
-           "CustomDefaultMatcher"};
-
-    size_t position = 0;
-
-    for (auto& part : stringsInOrder)
-    {
-      position = stringBody.find(part, position);
-      if (position == std::string::npos)
-      {
-        return false;
-      }
-    }
+    return false;
   }
-
   return true;
 }
 
@@ -213,25 +195,62 @@ void TestProxyManager::SetProxySanitizer()
   {
     return;
   }
-  Azure::Core::Url sanitizerRequest(m_proxy);
-  sanitizerRequest.AppendPath("Admin");
-  sanitizerRequest.AppendPath("AddSanitizer");
-  const std::string urlAccountRegex = R"json(
+  // we have 3 types of sanitizer,
+  // see
+  // https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#a-note-about-where-sanitizers-apply
+  enum class SanitizerType
+  {
+    Uri,
+    Header,
+    Body,
+    General,
+  };
+  auto addSanitizer = [&](SanitizerType type,
+                          const std::string& regex,
+                          const std::string& groupName,
+                          const std::string& headerName = std::string()) {
+    const std::map<SanitizerType, std::string> abstractionIdentifierValues = {
+        {SanitizerType::Uri, "UriRegexSanitizer"},
+        {SanitizerType::Header, "HeaderRegexSanitizer"},
+        {SanitizerType::Body, "BodyRegexSanitizer"},
+        {SanitizerType::General, "GeneralRegexSanitizer"},
+    };
+
+    Azure::Core::Url sanitizerRequest(m_proxy);
+    sanitizerRequest.AppendPath("Admin");
+    sanitizerRequest.AppendPath("AddSanitizer");
+
+    auto jsonRoot = Json::_internal::json::object();
+    jsonRoot["value"] = "REDACTED";
+    jsonRoot["regex"] = regex;
+    jsonRoot["groupForReplace"] = groupName;
+    if (!headerName.empty())
     {
-      "key": "Location",
-      "value": "REDACTED",
-      "regex": "https://(?<account>[a-zA-Z0-9\\-]+).",
-      "groupForReplace": "account"
+      jsonRoot["key"] = headerName;
     }
-    )json";
-  const std::string bodyClientSecretRegex = R"json(
-    {
-      "key": "Location",
-      "value": "REDACTED",
-      "regex": "client_secret=(?<clientsecret>[a-zA-Z0-9\\%]+)",
-      "groupForReplace": "clientsecret"
-    }
-    )json";
+    auto jsonString = jsonRoot.dump();
+
+    Azure::Core::IO::MemoryBodyStream payloadStream(
+        reinterpret_cast<const uint8_t*>(jsonString.data()), jsonString.size());
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
+    request.SetHeader("x-abstraction-identifier", abstractionIdentifierValues.at(type));
+    Azure::Core::Context ctx;
+    auto response = m_privatePipeline->Send(request, ctx);
+    (void)response;
+  };
+
+  addSanitizer(SanitizerType::General, g_accountRegex, "account");
+  addSanitizer(
+      SanitizerType::Body, "client_secret=(?<clientsecret>[a-zA-Z0-9\\%]+)", "clientsecret");
+  const std::string storageSasSignatureRegex = "\\?.*sig=(?<sassig>[a-zA-Z0-9\\%\\/+=]+)";
+  addSanitizer(SanitizerType::Uri, storageSasSignatureRegex, "sassig");
+  addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-copy-source");
+  addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-rename-source");
+  const std::string storageUserDelegationKeyRegex
+      = "\\u003CValue\\u003E(?<userdelegationkey>[a-zA-Z0-9\\/=+]+).*\\u003C\\/"
+        "UserDelegationKey\\u003E";
+  addSanitizer(SanitizerType::Body, storageUserDelegationKeyRegex, "userdelegationkey");
 
   Azure::Core::Url matcherRequest(m_proxy);
   matcherRequest.AppendPath("Admin");
@@ -279,53 +298,6 @@ void TestProxyManager::SetProxySanitizer()
           return lhs + (lhs.empty() ? "" : ",") + rhs;
         });
     matcherBody = jsonRoot.dump();
-  }
-
-  {
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(urlAccountRegex.data()), urlAccountRegex.size());
-    Azure::Core::Http::Request request(
-        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
-    request.SetHeader("x-abstraction-identifier", "UriRegexSanitizer");
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
-  }
-  {
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(urlAccountRegex.data()), urlAccountRegex.size());
-    Azure::Core::Http::Request request(
-        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
-    request.SetHeader("x-abstraction-identifier", "BodyRegexSanitizer");
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
-  }
-  {
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(bodyClientSecretRegex.data()),
-        bodyClientSecretRegex.size());
-    Azure::Core::Http::Request request(
-        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
-    request.SetHeader("x-abstraction-identifier", "BodyRegexSanitizer");
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
-  }
-  {
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(urlAccountRegex.data()), urlAccountRegex.size());
-    Azure::Core::Http::Request request(
-        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
-    request.SetHeader("x-abstraction-identifier", "HeaderRegexSanitizer");
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
-  }
-  {
-    Azure::Core::IO::MemoryBodyStream payloadStream(
-        reinterpret_cast<const uint8_t*>(urlAccountRegex.data()), urlAccountRegex.size());
-    Azure::Core::Http::Request request(
-        Azure::Core::Http::HttpMethod::Post, sanitizerRequest, &payloadStream);
-    request.SetHeader("x-abstraction-identifier", "GeneralRegexSanitizer");
-    Azure::Core::Context ctx;
-    auto response = m_privatePipeline->Send(request, ctx);
   }
   {
     Azure::Core::IO::MemoryBodyStream payloadStream(
