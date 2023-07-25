@@ -11,6 +11,7 @@
 #include "models/amqp_error.hpp"
 #include "models/amqp_message.hpp"
 #include "models/amqp_value.hpp"
+#include "models/amqp_error.hpp"
 
 #include <azure/core/nullable.hpp>
 
@@ -137,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    std::tuple<MessageSendStatus, Models::AmqpValue> Send(
+    std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context = {});
 

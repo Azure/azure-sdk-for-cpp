@@ -3,7 +3,24 @@
 #include "private/retry_operation.hpp"
 
 #include "azure/core/internal/diagnostics/log.hpp"
+#include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 
+namespace {
+// The set of AMQP error conditions that should be treated as fatal conditions.
+constexpr const char* AmqpFatalConditions[] = {"amqp:link:message-size-exceeded"};
+
+bool IsFatalException(Azure::Messaging::EventHubs::EventHubsException const& ex)
+{
+  for (auto const& condition : AmqpFatalConditions)
+  {
+    if (ex.ErrorCondition == condition)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+} // namespace
 bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function<bool()> operation)
 {
   using Azure::Core::Diagnostics::Logger;
@@ -27,16 +44,38 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function
         return result;
       }
     }
+    catch (EventHubsException const& e)
+    {
+      if (Log::ShouldWrite(Logger::Level::Warning))
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception thrown. " << e.ErrorCondition << " - " << e.ErrorDescription << std::endl;
+      }
+      if (ShouldRetry(IsFatalException(e), retryCount, retryAfter))
+      {
+        retryCount++;
+        std::this_thread::sleep_for(retryAfter);
+      }
+      else
+      {
+        throw;
+      }
+    }
     catch (std::exception const& e)
     {
       if (Log::ShouldWrite(Logger::Level::Warning))
       {
         Log::Write(Logger::Level::Warning, std::string("Exception while trying ") + e.what());
       }
+      // We assume that all exceptions other than EventHubs exceptions might be retriable.
       if (ShouldRetry(false, retryCount, retryAfter))
       {
         retryCount++;
         std::this_thread::sleep_for(retryAfter);
+      }
+      else
+      {
+        throw;
       }
     }
   }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 #include "azure/messaging/eventhubs/producer_client.hpp"
 
+#include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhub_utilities.hpp"
 #include "private/retry_operation.hpp"
 
@@ -99,7 +100,13 @@ bool Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
       m_producerClientOptions.RetryOptions);
   return retryOp.Execute([&]() -> bool {
     auto result = GetSender(eventDataBatch.GetPartitionID()).Send(message, context);
-    return std::get<0>(result) == Azure::Core::Amqp::_internal::MessageSendStatus::Ok;
+    auto sendStatus = std::get<0>(result);
+    if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+    {
+      return true;
+    }
+    // Throw an exception about the error we just received.
+    throw Azure::Messaging::EventHubs::EventHubsException(std::get<1>(result));
   });
 }
 

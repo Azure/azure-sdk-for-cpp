@@ -35,290 +35,305 @@ namespace Azure { namespace Core { namespace _internal {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
-  void MessageSender::Open(Context const& context) { m_impl->Open(context); }
-  void MessageSender::Close() { m_impl->Close(); }
-  std::tuple<MessageSendStatus, Models::AmqpValue> MessageSender::Send(
-      Models::AmqpMessage const& message,
-      Context const& context)
-  {
-    return m_impl->Send(message, context);
-  }
-  void MessageSender::QueueSend(
-      Models::AmqpMessage const& message,
-      MessageSendCompleteCallback onSendComplete,
-      Context const& context)
-  {
-    return m_impl->QueueSend(message, onSendComplete, context);
-  }
+    void MessageSender::Open(Context const& context) { m_impl->Open(context); }
+    void MessageSender::Close() { m_impl->Close(); }
+    std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
+        Models::AmqpMessage const& message,
+        Context const& context)
+    {
+      return m_impl->Send(message, context);
+    }
+    void MessageSender::QueueSend(
+        Models::AmqpMessage const& message,
+        MessageSendCompleteCallback onSendComplete,
+        Context const& context)
+    {
+      return m_impl->QueueSend(message, onSendComplete, context);
+    }
 
-  MessageSender::~MessageSender() noexcept {}
+    MessageSender::~MessageSender() noexcept {}
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  MessageSenderImpl::MessageSenderImpl(
-      std::shared_ptr<_detail::SessionImpl> session,
-      Models::_internal::MessageTarget const& target,
-      _internal::MessageSenderOptions const& options,
-      _internal::MessageSenderEvents* events)
-      : m_events{events}, m_session{session}, m_target{target}, m_options{options}
-  {
-  }
-
-  MessageSenderImpl::MessageSenderImpl(
-      std::shared_ptr<_detail::SessionImpl> session,
-      _internal::LinkEndpoint& endpoint,
-      Models::_internal::MessageTarget const& target,
-      _internal::MessageSenderOptions const& options,
-      _internal::MessageSenderEvents* events)
-      : m_events{events}, m_session{session}, m_target{target}, m_options{options}
-  {
-    CreateLink(endpoint);
-    m_messageSender.reset(
-        messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
-
-    messagesender_set_trace(m_messageSender.get(), m_options.EnableTrace);
-  }
-
-  MessageSenderImpl::~MessageSenderImpl() noexcept
-  {
-    if (m_link)
+    MessageSenderImpl::MessageSenderImpl(
+        std::shared_ptr<_detail::SessionImpl> session,
+        Models::_internal::MessageTarget const& target,
+        _internal::MessageSenderOptions const& options,
+        _internal::MessageSenderEvents* events)
+        : m_events{events}, m_session{session}, m_target{target}, m_options{options}
     {
-      // Unsubscribe from any detach events before clearing out the event handler to short-circuit
-      // any events firing after the object is destroyed.
-      m_link->UnsubscribeFromDetachEvent();
-    }
-    // Clear the event callback before calling messagesender_destroy to short-circuit any state
-    // change events firing after the object is destroyed.
-    if (m_events)
-    {
-      m_events = nullptr;
-    }
-  }
-
-  void MessageSenderImpl::CreateLink(_internal::LinkEndpoint& endpoint)
-  {
-    m_link = std::make_shared<_detail::LinkImpl>(
-        m_session,
-        endpoint,
-        m_options.Name,
-        _internal::SessionRole::Receiver, // This is the role of the link, not the endpoint.
-        m_options.MessageSource,
-        m_target);
-    PopulateLinkProperties();
-  }
-  void MessageSenderImpl::CreateLink()
-  {
-    m_link = std::make_shared<_detail::LinkImpl>(
-        m_session,
-        m_options.Name,
-        _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.
-        m_options.MessageSource,
-        m_target);
-    PopulateLinkProperties();
-
-    m_link->SubscribeToDetachEvent([this](Models::_internal::AmqpError const& error) {
-      if (m_events)
-      {
-        m_events->OnMessageSenderDisconnected(error);
-      }
-      // Log that an error occurred.
-      Log::Stream(Logger::Level::Error)
-          << "Message sender link detached: " << error.Condition.ToString() << ": "
-          << error.Description;
-
-      // Cache the error we received in the OnDetach notification so we can return it to the user
-      // on the next send which fails.
-      m_savedMessageError = Models::_internal::AmqpErrorFactory::ToAmqp(error);
-    });
-  }
-
-  /* Populate link properties from options. */
-  void MessageSenderImpl::PopulateLinkProperties()
-  {
-    // Populate link options from options.
-    if (m_options.InitialDeliveryCount.HasValue())
-    {
-      m_link->SetInitialDeliveryCount(m_options.InitialDeliveryCount.Value());
-    }
-    if (m_options.MaxMessageSize.HasValue())
-    {
-      m_link->SetMaxMessageSize(m_options.MaxMessageSize.Value());
-    }
-    else
-    {
-      m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
-    }
-    m_link->SetSenderSettleMode(m_options.SettleMode);
-  }
-
-  _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
-  {
-    switch (lowLevel)
-    {
-      case MESSAGE_SENDER_STATE_CLOSING:
-        return _internal::MessageSenderState::Closing;
-      case MESSAGE_SENDER_STATE_ERROR: // LCOV_EXCL_LINE
-        return _internal::MessageSenderState::Error; // LCOV_EXCL_LINE
-      case MESSAGE_SENDER_STATE_IDLE:
-        return _internal::MessageSenderState::Idle;
-      case MESSAGE_SENDER_STATE_INVALID: // LCOV_EXCL_LINE
-        return _internal::MessageSenderState::Invalid; // LCOV_EXCL_LINE
-      case MESSAGE_SENDER_STATE_OPEN:
-        return _internal::MessageSenderState::Open;
-      case MESSAGE_SENDER_STATE_OPENING:
-        return _internal::MessageSenderState::Opening;
-      default: // LCOV_EXCL_LINE
-        throw std::logic_error("Unknown message receiver state."); // LCOV_EXCL_LINE
-    }
-  }
-
-  void MessageSenderImpl::OnMessageSenderStateChangedFn(
-      void* context,
-      MESSAGE_SENDER_STATE newState,
-      MESSAGE_SENDER_STATE oldState)
-  {
-    auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
-    if (sender->m_events)
-    {
-      sender->m_events->OnMessageSenderStateChanged(
-          MessageSenderFactory::CreateFromInternal(sender->shared_from_this()),
-          MessageSenderStateFromLowLevel(newState),
-          MessageSenderStateFromLowLevel(oldState));
-    }
-  }
-
-  void MessageSenderImpl::Open(Context const& context)
-  {
-    if (m_options.AuthenticationRequired)
-    {
-      // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
-      // it.
-      m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
     }
 
-    if (m_link == nullptr)
+    MessageSenderImpl::MessageSenderImpl(
+        std::shared_ptr<_detail::SessionImpl> session,
+        _internal::LinkEndpoint& endpoint,
+        Models::_internal::MessageTarget const& target,
+        _internal::MessageSenderOptions const& options,
+        _internal::MessageSenderEvents* events)
+        : m_events{events}, m_session{session}, m_target{target}, m_options{options}
     {
-      CreateLink();
-    }
-
-    if (m_messageSender == nullptr)
-    {
+      CreateLink(endpoint);
       m_messageSender.reset(
           messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
-    }
-    if (messagesender_open(m_messageSender.get()))
-    {
-      // LCOV_EXCL_START
-      auto err = errno;
-#if defined(AZ_PLATFORM_WINDOWS)
-      char buf[256];
-      strerror_s(buf, sizeof(buf), err);
-#else
-      std::string buf{strerror(err)};
-#endif
-      throw std::runtime_error(
-          "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
-      // LCOV_EXCL_STOP
-    }
-  }
-  void MessageSenderImpl::Close()
-  {
-    if (messagesender_close(m_messageSender.get()))
-    {
-      throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
-    }
-  }
 
-  template <typename CompleteFn> struct RewriteSendComplete
-  {
-    static void OnOperation(
-        CompleteFn onComplete,
-        MESSAGE_SEND_RESULT sendResult,
-        AMQP_VALUE disposition)
+      messagesender_set_trace(m_messageSender.get(), m_options.EnableTrace);
+    }
+
+    MessageSenderImpl::~MessageSenderImpl() noexcept
     {
-      _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
-      switch (sendResult)
+      if (m_link)
       {
-        case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
-          result = _internal::MessageSendStatus::Invalid; // LCOV_EXCL_LINE
-          break; // LCOV_EXCL_LINE
-        case MESSAGE_SEND_OK:
-          result = _internal::MessageSendStatus::Ok;
-          break;
-        case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
-          result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
-          break; // LCOV_EXCL_LINE
-        case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
-          result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
-          break; // LCOV_EXCL_LINE
-        case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
-          result = _internal::MessageSendStatus::Timeout; // LCOV_EXCL_LINE
-          break; // LCOV_EXCL_LINE
+        // Unsubscribe from any detach events before clearing out the event handler to short-circuit
+        // any events firing after the object is destroyed.
+        m_link->UnsubscribeFromDetachEvent();
       }
-      onComplete(result, disposition);
+      // Clear the event callback before calling messagesender_destroy to short-circuit any state
+      // change events firing after the object is destroyed.
+      if (m_events)
+      {
+        m_events = nullptr;
+      }
     }
-  };
 
-  void MessageSenderImpl::QueueSend(
-      Models::AmqpMessage const& message,
-      Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
-      Context const& context)
-  {
-    auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
-                       decltype(onSendComplete),
-                       RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
-    auto result = messagesender_send_async(
-        m_messageSender.get(),
-        Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
-        std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
-        operation.release(),
-        0 /*timeout*/);
-    if (result == nullptr)
+    void MessageSenderImpl::CreateLink(_internal::LinkEndpoint& endpoint)
     {
-      throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
+      m_link = std::make_shared<_detail::LinkImpl>(
+          m_session,
+          endpoint,
+          m_options.Name,
+          _internal::SessionRole::Receiver, // This is the role of the link, not the endpoint.
+          m_options.MessageSource,
+          m_target);
+      PopulateLinkProperties();
     }
-    (void)context;
-  }
+    void MessageSenderImpl::CreateLink()
+    {
+      m_link = std::make_shared<_detail::LinkImpl>(
+          m_session,
+          m_options.Name,
+          _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.
+          m_options.MessageSource,
+          m_target);
+      PopulateLinkProperties();
 
-  std::tuple<_internal::MessageSendStatus, Models::AmqpValue> MessageSenderImpl::Send(
-      Models::AmqpMessage const& message,
-      Context const& context)
-  {
-    Azure::Core::Amqp::Common::_internal::
-        AsyncOperationQueue<Azure::Core::Amqp::_internal::MessageSendStatus, Models::AmqpValue>
-            sendCompleteQueue;
+      m_link->SubscribeToDetachEvent([this](Models::_internal::AmqpError const& error) {
+        if (m_events)
+        {
+          m_events->OnMessageSenderDisconnected(error);
+        }
+        // Log that an error occurred.
+        Log::Stream(Logger::Level::Error)
+            << "Message sender link detached: " << error.Condition.ToString() << ": "
+            << error.Description;
 
-    QueueSend(
-        message,
-        [&sendCompleteQueue, this](
-            Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
-            Models::AmqpValue deliveryStatus) {
-          // If the send failed. then we need to return the error. If the send completed because
-          // of an error, it's possible that the deliveryStatus provided is null. In that case,
-          // we use the cached saved error because it is highly likely to be better than
-          // nothing.
-          if (sendResult != _internal::MessageSendStatus::Ok)
-          {
-            if (deliveryStatus.IsNull())
+        // Cache the error we received in the OnDetach notification so we can return it to the user
+        // on the next send which fails.
+        m_savedMessageError = error;
+      });
+    }
+
+    /* Populate link properties from options. */
+    void MessageSenderImpl::PopulateLinkProperties()
+    {
+      // Populate link options from options.
+      if (m_options.InitialDeliveryCount.HasValue())
+      {
+        m_link->SetInitialDeliveryCount(m_options.InitialDeliveryCount.Value());
+      }
+      if (m_options.MaxMessageSize.HasValue())
+      {
+        m_link->SetMaxMessageSize(m_options.MaxMessageSize.Value());
+      }
+      else
+      {
+        m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
+      }
+      m_link->SetSenderSettleMode(m_options.SettleMode);
+    }
+
+    _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
+    {
+      switch (lowLevel)
+      {
+        case MESSAGE_SENDER_STATE_CLOSING:
+          return _internal::MessageSenderState::Closing;
+        case MESSAGE_SENDER_STATE_ERROR: // LCOV_EXCL_LINE
+          return _internal::MessageSenderState::Error; // LCOV_EXCL_LINE
+        case MESSAGE_SENDER_STATE_IDLE:
+          return _internal::MessageSenderState::Idle;
+        case MESSAGE_SENDER_STATE_INVALID: // LCOV_EXCL_LINE
+          return _internal::MessageSenderState::Invalid; // LCOV_EXCL_LINE
+        case MESSAGE_SENDER_STATE_OPEN:
+          return _internal::MessageSenderState::Open;
+        case MESSAGE_SENDER_STATE_OPENING:
+          return _internal::MessageSenderState::Opening;
+        default: // LCOV_EXCL_LINE
+          throw std::logic_error("Unknown message receiver state."); // LCOV_EXCL_LINE
+      }
+    }
+
+    void MessageSenderImpl::OnMessageSenderStateChangedFn(
+        void* context,
+        MESSAGE_SENDER_STATE newState,
+        MESSAGE_SENDER_STATE oldState)
+    {
+      auto sender = static_cast<MessageSenderImpl*>(const_cast<void*>(context));
+      if (sender->m_events)
+      {
+        sender->m_events->OnMessageSenderStateChanged(
+            MessageSenderFactory::CreateFromInternal(sender->shared_from_this()),
+            MessageSenderStateFromLowLevel(newState),
+            MessageSenderStateFromLowLevel(oldState));
+      }
+    }
+
+    void MessageSenderImpl::Open(Context const& context)
+    {
+      if (m_options.AuthenticationRequired)
+      {
+        // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
+        // it.
+        m_session->AuthenticateIfNeeded(static_cast<std::string>(m_target.GetAddress()), context);
+      }
+
+      if (m_link == nullptr)
+      {
+        CreateLink();
+      }
+
+      if (m_messageSender == nullptr)
+      {
+        m_messageSender.reset(
+            messagesender_create(*m_link, MessageSenderImpl::OnMessageSenderStateChangedFn, this));
+      }
+      if (messagesender_open(m_messageSender.get()))
+      {
+        // LCOV_EXCL_START
+        auto err = errno;
+#if defined(AZ_PLATFORM_WINDOWS)
+        char buf[256];
+        strerror_s(buf, sizeof(buf), err);
+#else
+        std::string buf{strerror(err)};
+#endif
+        throw std::runtime_error(
+            "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
+        // LCOV_EXCL_STOP
+      }
+    }
+    void MessageSenderImpl::Close()
+    {
+      if (messagesender_close(m_messageSender.get()))
+      {
+        throw std::runtime_error("Could not close message sender"); // LCOV_EXCL_LINE
+      }
+    }
+
+    template <typename CompleteFn> struct RewriteSendComplete
+    {
+      static void OnOperation(
+          CompleteFn onComplete,
+          MESSAGE_SEND_RESULT sendResult,
+          AMQP_VALUE disposition)
+      {
+        _internal::MessageSendStatus result{_internal::MessageSendStatus::Ok};
+        switch (sendResult)
+        {
+          case MESSAGE_SEND_RESULT_INVALID: // LCOV_EXCL_LINE
+            result = _internal::MessageSendStatus::Invalid; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case MESSAGE_SEND_OK:
+            result = _internal::MessageSendStatus::Ok;
+            break;
+          case MESSAGE_SEND_CANCELLED: // LCOV_EXCL_LINE
+            result = _internal::MessageSendStatus::Cancelled; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case MESSAGE_SEND_ERROR: // LCOV_EXCL_LINE
+            result = _internal::MessageSendStatus::Error; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+          case MESSAGE_SEND_TIMEOUT: // LCOV_EXCL_LINE
+            result = _internal::MessageSendStatus::Timeout; // LCOV_EXCL_LINE
+            break; // LCOV_EXCL_LINE
+        }
+        onComplete(result, disposition);
+      }
+    };
+
+    void MessageSenderImpl::QueueSend(
+        Models::AmqpMessage const& message,
+        Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
+        Context const& context)
+    {
+      auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
+                         decltype(onSendComplete),
+                         RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
+      auto result = messagesender_send_async(
+          m_messageSender.get(),
+          Models::_internal::AmqpMessageFactory::ToUamqp(message).get(),
+          std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
+          operation.release(),
+          0 /*timeout*/);
+      if (result == nullptr)
+      {
+        throw std::runtime_error("Could not send message"); // LCOV_EXCL_LINE
+      }
+      (void)context;
+    }
+
+    std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> MessageSenderImpl::Send(
+        Models::AmqpMessage const& message,
+        Context const& context)
+    {
+      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+          Azure::Core::Amqp::_internal::MessageSendStatus,
+          Models::_internal::AmqpError>
+          sendCompleteQueue;
+
+      QueueSend(
+          message,
+          [&sendCompleteQueue, this](
+              Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
+              Models::AmqpValue deliveryStatus) {
+            Models::_internal::AmqpError error;
+
+            // If the send failed. then we need to return the error. If the send completed because
+            // of an error, it's possible that the deliveryStatus provided is null. In that case,
+            // we use the cached saved error because it is highly likely to be better than
+            // nothing.
+            if (sendResult != _internal::MessageSendStatus::Ok)
             {
-              deliveryStatus = m_savedMessageError;
+              if (deliveryStatus.IsNull())
+              {
+                error = m_savedMessageError;
+              }
+              else
+              {
+                auto deliveryStatusAsList{deliveryStatus.AsList()};
+                Models::AmqpValue firstState{deliveryStatusAsList[0]};
+                ERROR_HANDLE errorHandle;
+                if (!amqpvalue_get_error(firstState, &errorHandle))
+                {
+                  Models::_internal::UniqueAmqpErrorHandle uniqueError{
+                      errorHandle}; // This will free the error handle when it goes out of scope.
+                  error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
+                }
+              }
             }
-          }
-          else
-          {
-            // If we successfully sent the message, then whatever saved error should be cleared,
-            // it's no longer valid.
-            m_savedMessageError = Models::AmqpValue();
-          }
-          sendCompleteQueue.CompleteOperation(sendResult, deliveryStatus);
-        },
-        context);
-    auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
-    if (result)
-    {
-      return std::move(*result);
+            else
+            {
+              // If we successfully sent the message, then whatever saved error should be cleared,
+              // it's no longer valid.
+              m_savedMessageError = Models::_internal::AmqpError();
+            }
+            sendCompleteQueue.CompleteOperation(sendResult, error);
+          },
+          context);
+      auto result = sendCompleteQueue.WaitForPolledResult(context, *m_session->GetConnection());
+      if (result)
+      {
+        return std::move(*result);
+      }
+      throw std::runtime_error("Error sending message"); // LCOV_EXCL_LINE
     }
-    throw std::runtime_error("Error sending message"); // LCOV_EXCL_LINE
-  }
 }}}} // namespace Azure::Core::Amqp::_detail

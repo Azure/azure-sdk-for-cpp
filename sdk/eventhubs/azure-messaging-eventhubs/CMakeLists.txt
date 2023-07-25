@@ -62,6 +62,7 @@ set(
     inc/azure/messaging/eventhubs/consumer_client.hpp
     inc/azure/messaging/eventhubs/dll_import_export.hpp
     inc/azure/messaging/eventhubs/event_data_batch.hpp
+    inc/azure/messaging/eventhubs/eventhubs_exception.hpp
     inc/azure/messaging/eventhubs/models/checkpoint_store_models.hpp
     inc/azure/messaging/eventhubs/models/consumer_client_models.hpp
     inc/azure/messaging/eventhubs/models/event_data.hpp

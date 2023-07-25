@@ -86,7 +86,7 @@ private:
   std::string m_eventHubConnectionString;
   std::string m_checkpointStoreConnectionString;
   std::string m_partitionId{"0"};
-  bool m_verboseClient{false};
+  bool m_verboseClient{true};
 
   std::string m_tenantId;
   std::string m_clientId;
@@ -97,7 +97,7 @@ private:
   uint32_t m_prefetchCount;
   size_t m_messageBodySize;
 
-  size_t m_rounds{10};
+  int m_rounds{10};
 
   std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
@@ -145,6 +145,7 @@ private:
     catch (std::exception const& ex)
     {
       std::cerr << "Exception " << ex.what();
+      throw;
     }
   }
   void ReceiveMessages()
@@ -173,6 +174,7 @@ private:
     catch (std::exception const& ex)
     {
       std::cerr << "Exception " << ex.what();
+      throw;
     }
   }
   void ConsumeForBatchTester(
@@ -200,37 +202,44 @@ private:
 
 int main(int argc, char**)
 {
-  EventHubsStress stressTest;
-  // some param was passed to the program, doesn't matter what it is,
-  // it is meant for the moment to just run a quick iteration to check for sanity of the test.
-  // since prototype TODO: pass in warmup/rounds/requests as params.
-  if (argc != 1)
+  try
   {
-    std::cout << "--------------\tBUILD TEST\t--------------" << std::endl;
-    stressTest.Warmup(1);
-    stressTest.Run(5);
+
+    EventHubsStress stressTest;
+    // some param was passed to the program, doesn't matter what it is,
+    // it is meant for the moment to just run a quick iteration to check for sanity of the test.
+    // since prototype TODO: pass in warmup/rounds/requests as params.
+    if (argc != 1)
+    {
+      std::cout << "--------------\tBUILD TEST\t--------------" << std::endl;
+      stressTest.Warmup(1);
+      stressTest.Run(5);
+      stressTest.Cleanup();
+      std::cout << "--------------\tEND BUILD TEST\t--------------" << std::endl;
+      return 0;
+    }
+
+    std::cout << "--------------\tSTARTING TEST\t--------------" << std::endl;
+    std::cout << "--------------\tPRE WARMUP\t--------------" << std::endl;
+
+    stressTest.Warmup(WARMUP);
+
+    std::cout << "--------------\tPOST WARMUP\t--------------" << std::endl;
+
+    for (int i = 0; i < ROUNDS; i++)
+    {
+      std::cout << "--------------\tTEST ITERATION:" << i << "\t--------------" << std::endl;
+
+      stressTest.Run(REQUESTS);
+
+      std::cout << "--------------\tDONE ITERATION:" << i << "\t--------------" << std::endl;
+    }
+
     stressTest.Cleanup();
-    std::cout << "--------------\tEND BUILD TEST\t--------------" << std::endl;
-    return 0;
   }
-
-  std::cout << "--------------\tSTARTING TEST\t--------------" << std::endl;
-  std::cout << "--------------\tPRE WARMUP\t--------------" << std::endl;
-
-  stressTest.Warmup(WARMUP);
-
-  std::cout << "--------------\tPOST WARMUP\t--------------" << std::endl;
-
-  for (int i = 0; i < ROUNDS; i++)
+  catch (std::exception const& ex)
   {
-    std::cout << "--------------\tTEST ITERATION:" << i << "\t--------------" << std::endl;
-
-    stressTest.Run(REQUESTS);
-
-    std::cout << "--------------\tDONE ITERATION:" << i << "\t--------------" << std::endl;
+    std::cerr << "Test failed due to exception thrown: " << ex.what() << std::endl;
   }
-
-  stressTest.Cleanup();
-
   return 0;
 }
