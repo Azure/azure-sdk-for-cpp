@@ -184,7 +184,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobServiceClient = Blobs::BlobServiceClient(
           m_blobServiceClient->GetUrl(),
           std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret()),
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
           InitStorageClientOptions<Blobs::BlobClientOptions>());
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
     }
@@ -294,7 +294,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobServiceClient = Blobs::BlobServiceClient(
           m_blobServiceClient->GetUrl(),
           std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret()),
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
           InitStorageClientOptions<Blobs::BlobClientOptions>());
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
     }
