@@ -64,8 +64,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ConsumerClientTest, ConnectToPartition_LIVEONLY_)
   {
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
 
@@ -76,7 +77,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
-        connStringNoEntityPath, GetEnv("EVENTHUB_NAME"), "$Default", options);
+        connStringNoEntityPath, eventHubName, "$Default", options);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Inclusive = true;
     // We want to consume all messages from the earliest.

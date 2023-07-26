@@ -75,6 +75,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ConnectionOptions connectOptions;
     connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
     connectOptions.EnableTrace = m_consumerClientOptions.VerboseLogging;
+    connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
     // Set the user agent related properties in the connectOptions based on the package information
     // and application ID.

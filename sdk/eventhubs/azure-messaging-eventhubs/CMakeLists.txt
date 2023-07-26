@@ -119,6 +119,10 @@ generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
 
 add_subdirectory(test)
 
+if (BUILD_SAMPLES)
+  add_subdirectory(samples)
+endif()
+
 az_vcpkg_export(
     azure-messaging-eventhubs
     MESSAGING_EVENTHUBS

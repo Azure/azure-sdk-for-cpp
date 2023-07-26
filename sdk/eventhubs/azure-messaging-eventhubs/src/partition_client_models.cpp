@@ -50,4 +50,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     return os;
   }
+
+  std::ostream& operator<<(std::ostream& os, EventHubProperties const& ep)
+  {
+    os << "Properties:[[" << ep.Name << "]: ";
+    os << "createdOn: " << ep.CreatedOn.ToString();
+    os << " partitionCount: " << ep.PartitionIds.size();
+    os << " partitionIds: [";
+    for (auto const& id : ep.PartitionIds)
+    {
+      os << id << " ";
+    }
+    os << "]]" << std::endl;
+
+    return os;
+  }
+
 }}}} // namespace Azure::Messaging::EventHubs::Models

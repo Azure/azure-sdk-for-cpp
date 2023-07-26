@@ -13,6 +13,8 @@
 #include <azure/core/context.hpp>
 #include <azure/core/internal/http/user_agent.hpp>
 
+#include <chrono>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   class EventHubUtilities {
@@ -85,7 +87,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         auto bodyMap = body.AsMap();
         properties.Name = static_cast<std::string>(bodyMap["name"]);
         properties.CreatedOn = Azure::DateTime(std::chrono::system_clock::from_time_t(
-            static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()).count()));
+            std::chrono::duration_cast<std::chrono::seconds>(
+                static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()))
+                .count()));
         auto partitions = bodyMap["partition_ids"].AsArray();
         for (const auto& partition : partitions)
         {
