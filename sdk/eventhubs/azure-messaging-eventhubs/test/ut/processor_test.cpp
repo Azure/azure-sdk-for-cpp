@@ -11,7 +11,8 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ProcessorTest : public EventHubsTestBase {};
+  class ProcessorTest : public EventHubsTestBase {
+  };
   namespace {
 
     std::string GetRandomName()

@@ -1,3 +1,4 @@
+<!-- cspell:words godoc azeventhubs  -->
 # Azure Event Hubs Client Package for C++
 
 [Azure Event Hubs](https://azure.microsoft.com/services/event-hubs/) is a big data streaming platform and event ingestion service from Microsoft. For more information about Event Hubs see: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-about).
@@ -35,10 +36,12 @@ vcpkg install azure-messaging-eventhubs-cpp
 Event Hub clients are created using an Event Hub a credential from the [Azure Identity package][azure_identity_pkg], like [DefaultAzureCredential][default_azure_credential].
 You can also create a client using a connection string.
 
+<!-- NOTE: GO Links are intentional for now -->
 #### Using a service principal
  - ConsumerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewConsumerClient)
  - ProducerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewProducerClient)
 
+<!-- NOTE: GO Links are intentional for now -->
 #### Using a connection string
  - ConsumerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewConsumerClientFromConnectionString)
  - ProducerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewProducerClientFromConnectionString)

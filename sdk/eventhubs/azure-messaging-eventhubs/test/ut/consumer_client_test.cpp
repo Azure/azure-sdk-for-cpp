@@ -21,7 +21,8 @@ void ProcessMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {};
+  class ConsumerClientTest : public EventHubsTestBase {
+  };
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
