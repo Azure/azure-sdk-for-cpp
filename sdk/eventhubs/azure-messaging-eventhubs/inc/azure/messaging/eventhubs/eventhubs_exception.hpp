@@ -27,14 +27,34 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**
      * @brief Constructs a #EventHubsException with a message.
      *
-     * @param what The explanatory string.
+     * @param what An explanatory string.
      */
-    explicit EventHubsException(const std::string& what) : std::runtime_error(what) {}
+    explicit EventHubsException(const std::string& what)
+        : std::runtime_error(what), ErrorDescription{what}
+    {
+    }
+
+    /**
+     * @brief Constructs a #EventHubsException with an error condition.
+     *
+     * @param error The AMQP Error indicating the error.
+     */
     explicit EventHubsException(Azure::Core::Amqp::Models::_internal::AmqpError const& error)
         : std::runtime_error(error.Description), ErrorCondition(error.Condition.ToString()),
           ErrorDescription(error.Description)
     {
     }
+
+    /**
+     * @brief Constructs a #EventHubsException with a message, an error condition, and an HTTP
+     * status code.
+     *
+     * This constructor is primarily intended for use by the EventHubs Properties events, which
+     * report their status using HTTP status codes.
+     *
+     * @param error The AMQP error indicating the error.
+     * @param statusCode The HTTP status code associated with the error.
+     */
     explicit EventHubsException(
         Azure::Core::Amqp::Models::_internal::AmqpError const& error,
         std::uint32_t statusCode)
@@ -50,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
 
-    std::string ErrorCondition;
+    std::string ErrorCondition{};
 
     /**
      * @brief A description of the error intended for the developer to understand what the error
@@ -69,6 +89,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * and GetEventHubPartitionProperties operations.
      *
      */
-    Azure::Nullable<std::uint32_t> StatusCode;
+    Azure::Nullable<std::uint32_t> StatusCode{};
   };
 }}} // namespace Azure::Messaging::EventHubs
