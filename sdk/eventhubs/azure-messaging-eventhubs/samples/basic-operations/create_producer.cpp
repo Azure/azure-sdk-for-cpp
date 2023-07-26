@@ -13,10 +13,7 @@
 
 #include <azure/messaging/eventhubs.hpp>
 
-#include <chrono>
 #include <iostream>
-#include <limits>
-#include <string>
 
 int main()
 {

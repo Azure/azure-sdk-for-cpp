@@ -19,13 +19,10 @@
 //
 // Both of these should be available from the Azure portal.
 //
- #include <azure/identity/environment_credential.hpp>
+#include <azure/identity/environment_credential.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
-#include <chrono>
 #include <iostream>
-#include <limits>
-#include <string>
 
 int main()
 {
