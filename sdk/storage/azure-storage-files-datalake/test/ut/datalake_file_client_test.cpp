@@ -97,6 +97,20 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
+    {
+      // Delete through OAuth
+      Files::DataLake::DataLakeClientOptions options;
+      InitStorageClientOptions(options);
+      auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret()),
+          options);
+      const std::string oauthFileName = RandomString();
+      auto oauthFileClient = oauthFileSystemClient.GetFileClient(oauthFileName);
+      EXPECT_NO_THROW(oauthFileClient.Create());
+      EXPECT_NO_THROW(oauthFileClient.Delete());
+    }
   }
 
   TEST_F(DataLakeFileClientTest, CreateDeleteIfExistsFiles)

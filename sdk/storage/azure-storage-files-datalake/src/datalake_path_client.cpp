@@ -283,8 +283,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeletePathOptions& options,
       const Azure::Core::Context& context) const
   {
-    bool paginated
-        = m_clientConfiguration.ApiVersion >= "2023-08-03" && m_clientConfiguration.TokenCredential;
+    bool paginated = m_clientConfiguration.ApiVersion >= "2023-08-03"
+        && m_clientConfiguration.TokenCredential && options.Recursive.HasValue()
+        && options.Recursive.Value();
     std::string continuationToken;
     while (true)
     {

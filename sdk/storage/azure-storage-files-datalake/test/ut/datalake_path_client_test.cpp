@@ -6,6 +6,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <algorithm>
+#include <future>
 #include <thread>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -276,22 +277,35 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, DISABLED_PaginationDelete)
   {
-    // Need an AAD app that has no RBAC permissions to do the ACL check.
-    const std::string appId = "";
-    const std::string appSecret = "";
+    // This test should be tested locally becase it needs an AAD app that has no RBAC permissions to
+    // do the ACL check.
+    const std::string tenantId = AadTenantId();
+    const std::string appId = AadClientId();
+    const std::string appSecret = AadClientSecret();
 
-    // Create Resource
+    // Create resource
     std::string directoryName = RandomString();
     auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
     directoryClient.Create();
-    for (int i = 0l; i < 6000; ++i)
+    // Concurrent create 5000+ files
+    std::vector<std::future<void>> futures;
+    for (int i = 0; i < 50; ++i)
     {
-      auto fileClient = directoryClient.GetFileClient(RandomString());
-      fileClient.Create();
+      futures.emplace_back(std::async(std::launch::async, [&]() {
+        for (int i = 0; i < 101; ++i)
+        {
+          directoryClient.GetFileClient(RandomString()).Create();
+        }
+      }));
+    }
+    for (auto& f : futures)
+    {
+      f.get();
     }
 
     // Set Acls
-    auto rootDirClient = m_fileSystemClient->GetDirectoryClient("/");
+    auto rootDirClient = m_fileSystemClient->GetDirectoryClient("");
+    rootDirClient.SetPermissions("rwxrwxrwx");
     auto aclResult = rootDirClient.GetAccessControlList();
     auto acls = aclResult.Value.Acls;
     Files::DataLake::Models::Acl acl;
@@ -304,8 +318,10 @@ namespace Azure { namespace Storage { namespace Test {
     // Pagination delete
     Files::DataLake::DataLakePathClient oauthDirectoryClient(
         Files::DataLake::_detail::GetDfsUrlFromUrl(directoryClient.GetUrl()),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(AadTenantId(), appId, appSecret));
-    EXPECT_NO_THROW(oauthDirectoryClient.Delete());
+        std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, appId, appSecret));
+    Files::DataLake::DeletePathOptions options;
+    options.Recursive = true;
+    EXPECT_NO_THROW(oauthDirectoryClient.Delete(options));
   }
 
   TEST_F(DataLakePathClientTest, PathAccessControls)

@@ -99,6 +99,33 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(rootDirClient.DeleteEmpty(), StorageException);
       EXPECT_NO_THROW(rootDirClient.DeleteRecursive());
     }
+    {
+      // Delete through OAuth
+      Files::DataLake::DataLakeClientOptions options;
+      InitStorageClientOptions(options);
+      auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
+          Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
+          std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret()),
+          options);
+      // Delete empty
+      auto emptyDir = baseName + "OAuthEmptyDir";
+      auto emptyDirClient = oauthFileSystemClient.GetDirectoryClient(emptyDir);
+      EXPECT_NO_THROW(emptyDirClient.Create());
+      EXPECT_NO_THROW(emptyDirClient.DeleteEmpty());
+
+      // Recursive delete
+      auto rootDir = baseName + "OAuthRoot";
+      auto rootDirClient = oauthFileSystemClient.GetDirectoryClient(rootDir);
+      EXPECT_NO_THROW(rootDirClient.Create());
+      for (int32_t i = 0; i < 5; ++i)
+      {
+        auto client = m_fileSystemClient->GetDirectoryClient(rootDir + "/d" + std::to_string(i));
+        EXPECT_NO_THROW(client.Create());
+      }
+      EXPECT_THROW(rootDirClient.DeleteEmpty(), StorageException);
+      EXPECT_NO_THROW(rootDirClient.DeleteRecursive());
+    }
   }
 
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteIfExistsDirectory)
