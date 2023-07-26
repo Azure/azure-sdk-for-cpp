@@ -21,8 +21,7 @@ void ProcessMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {
-  };
+  class ConsumerClientTest : public EventHubsTestBase {};
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
@@ -94,8 +93,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ConsumerClientTest, GetEventHubProperties_LIVEONLY_)
   {
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
     std::string const connStringEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
 
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
@@ -113,15 +113,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = client.CreatePartitionClient("0", partitionOptions);
 
     auto result = client.GetEventHubProperties();
-    EXPECT_EQ(result.Name, "eventhub");
+    EXPECT_EQ(result.Name, eventHubName);
     EXPECT_TRUE(result.PartitionIds.size() > 0);
   }
 
   TEST_F(ConsumerClientTest, GetPartitionProperties_LIVEONLY_)
   {
 
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
     std::string const connStringEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
 
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "unit-test";
@@ -140,7 +141,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = client.CreatePartitionClient("0", partitionOptions);
 
     auto result = client.GetPartitionProperties("0");
-    EXPECT_EQ(result.Name, "eventhub");
+    EXPECT_EQ(result.Name, eventHubName);
     EXPECT_EQ(result.PartitionId, "0");
   }
 

@@ -10,8 +10,7 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {
-};
+class EventDataTest : public EventHubsTestBase {};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
@@ -88,13 +87,13 @@ TEST_F(EventDataTest, EventDataBodyTest)
     Azure::Messaging::EventHubs::Models::EventData msg;
 
     // Note that Data is an AMQP BinaryData value.
-    msg.Body.Data = AmqpBinaryData{1, 3, 5, 7, 9};
+    msg.Body.Data = {1, 3, 5, 7, 9};
 
     auto message
         = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
 
     EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
-    EXPECT_EQ(msg.Body.Data, message.GetBodyAsBinary()[0]);
+    EXPECT_EQ(msg.Body.Data, static_cast<std::vector<uint8_t>>(message.GetBodyAsBinary()[0]));
   }
 
   {
@@ -113,7 +112,7 @@ TEST_F(EventDataTest, EventDataBodyTest)
   {
     Azure::Messaging::EventHubs::Models::EventData msg;
 
-    msg.Body.Data = AmqpBinaryData{1, 3, 5, 7};
+    msg.Body.Data = {1, 3, 5, 7};
     msg.Body.Value = 27;
 
     EXPECT_ANY_THROW(
@@ -123,7 +122,7 @@ TEST_F(EventDataTest, EventDataBodyTest)
   {
     Azure::Messaging::EventHubs::Models::EventData msg;
 
-    msg.Body.Data = AmqpBinaryData{1, 3, 5, 7};
+    msg.Body.Data = {1, 3, 5, 7};
     msg.Body.Sequence = {27, 3.25};
 
     EXPECT_ANY_THROW(
@@ -145,7 +144,7 @@ TEST_F(EventDataTest, EventDataBodyTest)
   {
     Azure::Messaging::EventHubs::Models::EventData msg;
 
-    msg.Body.Data = AmqpBinaryData{1, 7, 32, 127, 255};
+    msg.Body.Data = {1, 7, 32, 127, 255};
     msg.Body.Value = "AmqpBinaryData{1, 3, 5, 7}";
     msg.Body.Sequence = {27, 3.25};
 

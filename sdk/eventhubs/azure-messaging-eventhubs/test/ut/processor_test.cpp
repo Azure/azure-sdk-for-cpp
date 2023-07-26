@@ -11,8 +11,7 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ProcessorTest : public EventHubsTestBase {
-  };
+  class ProcessorTest : public EventHubsTestBase {};
   namespace {
 
     std::string GetRandomName()
@@ -29,8 +28,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
         GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName);
 
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
+
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
     options.ApplicationID = "processor unit test";
 
@@ -41,7 +42,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
-        connStringNoEntityPath, "eventhub", "$Default", options);
+        connStringNoEntityPath, eventHubName, "$Default", options);
     ProcessorOptions processorOptions;
     processorOptions.LoadBalancingStrategy = Models::ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::seconds(2);

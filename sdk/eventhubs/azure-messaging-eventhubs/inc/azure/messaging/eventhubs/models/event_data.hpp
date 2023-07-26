@@ -16,7 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     Azure::Core::Amqp::Models::AmqpValue Value;
 
-    /** @brief  Sequence is encoded/decoded as one or more amqp-sequence sections in the body.
+    /** @brief  Sequence is encoded/decoded as an amqp-sequence sections in the body.
      *
      * The values of the slices are are restricted to AMQP simple types, as listed in the comment
      * for AmqpMessage.
@@ -25,7 +25,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     /** @brief Data is encoded decoded as multiple data sections in the body.
      */
-    Azure::Core::Amqp::Models::AmqpBinaryData Data;
+    std::vector<uint8_t> Data;
   };
 
   /** @brief Represents an event sent to the Azure Event Hubs service.

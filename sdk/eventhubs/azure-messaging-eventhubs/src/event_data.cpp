@@ -38,7 +38,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
         auto binaryData = message.GetBodyAsBinary();
         if (binaryData.size() == 1)
         {
-          Body.Data = binaryData[0];
+          Body.Data = std::vector<uint8_t>(binaryData[0]);
         }
         break;
       }
