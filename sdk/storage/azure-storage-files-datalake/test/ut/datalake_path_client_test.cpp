@@ -277,8 +277,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, DISABLED_PaginationDelete)
   {
-    // This test should be tested locally because it needs an AAD app that has no RBAC permissions to
-    // do the ACL check.
+    // This test should be tested locally because it needs an AAD app that has no RBAC permissions
+    // to do the ACL check.
     const std::string tenantId = AadTenantId();
     const std::string appId = AadClientId();
     const std::string appSecret = AadClientSecret();
