@@ -25,9 +25,11 @@ into the attestation service instance because they use [Azure::Core::Credentials
 
 | Sample | Description |
 |--------|-------------|
-| [EventHub/BasicProducerClient](./basic-operations/create-consumer.cpp) | This sample demonstrates how to create an `EventHubProducerClient` using a connection string. |
-| [EventHub/BasicConsumerClient](./basic-operation/create-producer.cpp) | This sample demonstrates how to create an `EventHubConsumerClient` using a connection string. |
+| basic-operations/create_consumer.cpp | This sample demonstrates how to create an `EventHubProducerClient` using a connection string. |
+| basic-operation/create_producer.cpp | This sample demonstrates how to create an `EventHubConsumerClient` using a connection string. |
+| basic-operations/create_consumer-aad.cpp | This sample demonstrates how to create an `EventHubProducerClient` using an Azure Active Directory account. |
+| basic-operation/create_producer_aad.cpp | This sample demonstrates how to create an `EventHubConsumerClient` using an Azure Active Directory account. |
 | | |
-| [EventHub/EventHubProducerClient](./basic-operations/create-consumer.cpp) | This sample demonstrates how to send events to an Event Hub using the `EventHubProducerClient`. |
-| [EventHub/EventHubConsumerClient](./basic-operation/create-producer.cpp) | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient`. |
+| basic-operations/create-consumer.cpp | This sample demonstrates how to send events to an Event Hub using the `EventHubProducerClient`. |
+| basic-operation/create-producer.cpp | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient`. |
 

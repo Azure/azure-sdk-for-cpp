@@ -8,3 +8,4 @@ if(MSVC)
 endif()
 
 add_subdirectory(basic-operations)
+add_subdirectory(produce-events)
