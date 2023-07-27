@@ -344,16 +344,37 @@ namespace Azure { namespace Storage { namespace Test {
     options2.TransactionalContentHash.Value().Value = contentMd5;
     EXPECT_NO_THROW(pageBlobClient2.UploadPagesFromUri(
         0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2));
-    options2.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
-    options2.TransactionalContentHash.Value().Value
-        = Azure::Core::Convert::Base64Decode(DummyCrc64);
-    // EXPECT_THROW(
-    //    pageBlobClient2.UploadPagesFromUri(
-    //        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2),
-    //    StorageException);
-    options2.TransactionalContentHash.Value().Value = contentCrc64;
+  }
+
+  TEST_F(PageBlobClientTest, DISABLED_UploadPagesFromUriCrc64AccessCondition)
+  {
+    auto pageBlobClient = *m_pageBlobClient;
+
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(4_KB));
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    pageBlobClient.Create(blobContent.size());
+    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    pageBlobClient.UploadPages(0, contentStream);
+
+    auto pageBlobClient2 = GetPageBlobClientTestForTest(RandomString());
+    pageBlobClient2.Create(blobContent.size());
+
+    Blobs::UploadPagesFromUriOptions options;
+    Azure::Core::Http::HttpRange sourceRange;
+    sourceRange.Offset = 0;
+    sourceRange.Length = blobContent.size();
+    options.TransactionalContentHash = ContentHash();
+    options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+    options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
+    EXPECT_THROW(
+        pageBlobClient2.UploadPagesFromUri(
+            0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options),
+        StorageException);
+    options.TransactionalContentHash.Value().Value = contentCrc64;
     EXPECT_NO_THROW(pageBlobClient2.UploadPagesFromUri(
-        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2));
+        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options));
   }
 
   TEST_F(PageBlobClientTest, CreateIfNotExists)

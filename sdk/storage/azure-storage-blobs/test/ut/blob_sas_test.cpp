@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobSasTest, ServiceContainerSasPermissions_LIVEONLY_)
+  TEST_F(BlobSasTest, ServiceContainerSasPermissions)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -184,7 +184,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobServiceClient = Blobs::BlobServiceClient(
           m_blobServiceClient->GetUrl(),
           std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret()));
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          InitStorageClientOptions<Blobs::BlobClientOptions>());
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
     }
 
@@ -279,7 +280,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobSasTest, ServiceBlobSasPermissions_LIVEONLY_)
+  TEST_F(BlobSasTest, ServiceBlobSasPermissions)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -293,7 +294,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobServiceClient = Blobs::BlobServiceClient(
           m_blobServiceClient->GetUrl(),
           std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret()));
+              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          InitStorageClientOptions<Blobs::BlobClientOptions>());
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
     }
 

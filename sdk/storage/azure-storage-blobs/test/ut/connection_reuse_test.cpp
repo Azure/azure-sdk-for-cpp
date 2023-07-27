@@ -7,7 +7,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   // If connection is reused, the requests with the same connection should hit the same sever. So
   // this test verifies whether a series of requests hit the same server.
-  TEST_F(BlockBlobClientTest, IsConnectionReused_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, IsConnectionReused)
   {
     const std::string containerName = LowercaseRandomString();
     const std::string blobName = LowercaseRandomString();
