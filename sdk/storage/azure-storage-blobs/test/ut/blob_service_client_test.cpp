@@ -438,7 +438,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobServiceClientTest, UserDelegationKey_LIVEONLY_)
+  TEST_F(BlobServiceClientTest, UserDelegationKey)
   {
     auto serviceClient = *m_blobServiceClient;
 
@@ -446,7 +446,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
         = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret());
+            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
     Blobs::BlobClientOptions options;
     InitStorageClientOptions(options);
 
