@@ -101,13 +101,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // Delete through OAuth
-      Files::DataLake::DataLakeClientOptions options;
-      InitStorageClientOptions(options);
       auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
           std::make_shared<Azure::Identity::ClientSecretCredential>(
               AadTenantId(), AadClientId(), AadClientSecret()),
-          options);
+          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
       // Delete empty
       auto emptyDir = baseName + "OAuthEmptyDir";
       auto emptyDirClient = oauthFileSystemClient.GetDirectoryClient(emptyDir);
