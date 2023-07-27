@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/nullable.hpp>
 
 #include <string>
@@ -260,4 +262,52 @@ TEST(Nullable, ConstexprAndRvalue)
 
   std::string str(Nullable<std::string>(std::string("hello")).Value());
   EXPECT_EQ(str, "hello");
+}
+
+TEST(Nullable, Assignable)
+{
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_assignable<Nullable<int>>());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_assignable<const Nullable<int>>());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_assignable<Nullable<int>>());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_assignable<const Nullable<int>>());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_nothrow_assignable<Nullable<int>>());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_nothrow_assignable<const Nullable<int>>());
+}
+
+TEST(Nullable, Constructible)
+{
+  EXPECT_TRUE((ClassTraits<Nullable<int>>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<Nullable<int>>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<Nullable<int>>::is_nothrow_constructible()));
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_nothrow_default_constructible());
+}
+
+TEST(Nullable, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_move_constructible());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_nothrow_move_constructible());
+}
+
+TEST(Nullable, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_copy_assignable());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_copy_assignable());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_move_assignable());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_nothrow_move_assignable());
+}
+
+TEST(Nullable, Destructible)
+{
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_destructible());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<Nullable<int>>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<Nullable<int>>::has_virtual_destructor());
 }

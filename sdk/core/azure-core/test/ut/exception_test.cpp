@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 
@@ -97,4 +99,56 @@ TEST(RequestFailedException, EmptyValues)
               static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   Azure::Core::Http::HttpStatusCode::None))),
       std::string::npos);
+}
+
+TEST(RequestFailedException, Constructible)
+{
+  EXPECT_FALSE((ClassTraits<RequestFailedException>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<RequestFailedException>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<RequestFailedException>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_nothrow_default_constructible());
+}
+
+TEST(RequestFailedException, Destructible)
+{
+  EXPECT_TRUE(ClassTraits<RequestFailedException>::is_destructible());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<RequestFailedException>::is_nothrow_destructible());
+  EXPECT_TRUE(ClassTraits<RequestFailedException>::has_virtual_destructor());
+}
+
+TEST(RequestFailedException, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<RequestFailedException>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_trivially_copy_constructible());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<RequestFailedException>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_trivially_move_constructible());
+  EXPECT_TRUE(ClassTraits<RequestFailedException>::is_nothrow_move_constructible());
+}
+
+TEST(RequestFailedException, Assignable)
+{
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_assignable<RequestFailedException>());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_assignable<const RequestFailedException>());
+  EXPECT_FALSE(
+      ClassTraits<RequestFailedException>::is_trivially_assignable<RequestFailedException>());
+  EXPECT_FALSE(
+      ClassTraits<RequestFailedException>::is_trivially_assignable<const RequestFailedException>());
+  EXPECT_FALSE(
+      ClassTraits<RequestFailedException>::is_nothrow_assignable<RequestFailedException>());
+  EXPECT_FALSE(
+      ClassTraits<RequestFailedException>::is_nothrow_assignable<const RequestFailedException>());
+}
+
+TEST(RequestFailedException, CopyAndMoveAssignable)
+{
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_copy_assignable());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_trivially_copy_assignable());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_nothrow_copy_assignable());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_move_assignable());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_trivially_move_assignable());
+  EXPECT_FALSE(ClassTraits<RequestFailedException>::is_nothrow_move_assignable());
 }

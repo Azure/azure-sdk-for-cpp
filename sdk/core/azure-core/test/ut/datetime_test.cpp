@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/datetime.hpp>
 
 #include <chrono>
@@ -901,4 +903,52 @@ TEST(DateTime, Rfc3339Space)
   auto const datetime
       = DateTime::Parse("2022-08-24 00:43:08.0004308Z", DateTime::DateFormat::Rfc3339);
   EXPECT_EQ(datetime.ToString(DateTime::DateFormat::Rfc3339), "2022-08-24T00:43:08.0004308Z");
+}
+
+TEST(DateTime, Constructible)
+{
+  EXPECT_TRUE((ClassTraits<DateTime>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<DateTime>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<DateTime>::is_nothrow_constructible()));
+  EXPECT_TRUE(ClassTraits<DateTime>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<DateTime>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<DateTime>::is_nothrow_default_constructible());
+}
+
+TEST(DateTime, Destructible)
+{
+  EXPECT_TRUE(ClassTraits<DateTime>::is_destructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<DateTime>::has_virtual_destructor());
+}
+
+TEST(DateTime, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<DateTime>::is_copy_constructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_copy_constructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_move_constructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_move_constructible());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_move_constructible());
+}
+
+TEST(DateTime, Assignable)
+{
+  EXPECT_TRUE(ClassTraits<DateTime>::is_assignable<DateTime>());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_assignable<const DateTime>());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_assignable<DateTime>());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_assignable<const DateTime>());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_assignable<DateTime>());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_assignable<const DateTime>());
+}
+
+TEST(DateTime, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<DateTime>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<DateTime>::is_nothrow_move_assignable());
 }

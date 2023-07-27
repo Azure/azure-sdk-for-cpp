@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -239,4 +241,52 @@ TEST(ClientOptions, moveConstruct)
   result = copyOptions.PerRetryPolicies[0]->Send(
       r, NextHttpPolicy(0, {}), Context::ApplicationContext);
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
+}
+
+TEST(ClientOptions, Constructible)
+{
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_nothrow_constructible());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_nothrow_default_constructible());
+}
+
+TEST(ClientOptions, Destructible)
+{
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_destructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_nothrow_destructible());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::has_virtual_destructor());
+}
+
+TEST(ClientOptions, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_copy_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_move_constructible());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_nothrow_move_constructible());
+}
+
+TEST(ClientOptions, Assignable)
+{
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_assignable<ClientOptions>());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_assignable<const ClientOptions>());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_assignable<ClientOptions>());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_assignable<const ClientOptions>());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_nothrow_assignable<ClientOptions>());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_nothrow_assignable<const ClientOptions>());
+}
+
+TEST(ClientOptions, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_copy_assignable());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_copy_assignable());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_move_assignable());
+  EXPECT_FALSE(ClassTraits<ClientOptions>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<ClientOptions>::is_nothrow_move_assignable());
 }

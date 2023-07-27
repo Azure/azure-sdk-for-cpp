@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/internal/environment.hpp>
 
 #include <gtest/gtest.h>
@@ -263,4 +265,58 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWithEmptyString)
   EXPECT_NE(buffer.str().find("INFO  : \n"), std::string::npos);
   EXPECT_EQ(buffer.str().find("INFO  : \n\n"), std::string::npos);
   std::cerr.rdbuf(old);
+}
+
+TEST(EnvironmentLogLevelListener, Constructible)
+{
+  EXPECT_FALSE((ClassTraits<EnvironmentLogLevelListener>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<EnvironmentLogLevelListener>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<EnvironmentLogLevelListener>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_default_constructible());
+}
+
+TEST(EnvironmentLogLevelListener, Destructible)
+{
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_destructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_destructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::has_virtual_destructor());
+}
+
+TEST(EnvironmentLogLevelListener, CopyAndMoveConstructible)
+{
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_copy_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_copy_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_move_constructible());
+  EXPECT_FALSE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_move_constructible());
+}
+
+TEST(EnvironmentLogLevelListener, Assignable)
+{
+  EXPECT_TRUE(
+      ClassTraits<EnvironmentLogLevelListener>::is_assignable<EnvironmentLogLevelListener>());
+  EXPECT_TRUE(
+      ClassTraits<EnvironmentLogLevelListener>::is_assignable<const EnvironmentLogLevelListener>());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_assignable<
+              EnvironmentLogLevelListener>());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_assignable<
+              const EnvironmentLogLevelListener>());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_assignable<
+              EnvironmentLogLevelListener>());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_assignable<
+              const EnvironmentLogLevelListener>());
+}
+
+TEST(EnvironmentLogLevelListener, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<EnvironmentLogLevelListener>::is_nothrow_move_assignable());
 }

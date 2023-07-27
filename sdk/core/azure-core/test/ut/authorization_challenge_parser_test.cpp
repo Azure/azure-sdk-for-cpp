@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/internal/credentials/authorization_challenge_parser.hpp>
 
 #include <gtest/gtest.h>
@@ -204,4 +206,58 @@ TEST(AuthorizationChallengeParser, StorageChallenge)
   EXPECT_EQ(
       GetChallengeParameterFromResponse(response, "Bearer", "resource_id"),
       "https://storage.azure.com");
+}
+
+TEST(AuthorizationChallengeParser, Constructible)
+{
+  EXPECT_FALSE((ClassTraits<AuthorizationChallengeParser>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<AuthorizationChallengeParser>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<AuthorizationChallengeParser>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_default_constructible());
+}
+
+TEST(AuthorizationChallengeParser, Destructible)
+{
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_destructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_trivially_destructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::has_virtual_destructor());
+}
+
+TEST(AuthorizationChallengeParser, CopyAndMoveConstructible)
+{
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_trivially_copy_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_copy_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_trivially_move_constructible());
+  EXPECT_FALSE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_move_constructible());
+}
+
+TEST(AuthorizationChallengeParser, Assignable)
+{
+  EXPECT_TRUE(
+      ClassTraits<AuthorizationChallengeParser>::is_assignable<AuthorizationChallengeParser>());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_assignable<
+              const AuthorizationChallengeParser>());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_trivially_assignable<
+              AuthorizationChallengeParser>());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_trivially_assignable<
+              const AuthorizationChallengeParser>());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_assignable<
+              AuthorizationChallengeParser>());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_assignable<
+              const AuthorizationChallengeParser>());
+}
+
+TEST(AuthorizationChallengeParser, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<AuthorizationChallengeParser>::is_nothrow_move_assignable());
 }

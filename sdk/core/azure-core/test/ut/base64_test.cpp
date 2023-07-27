@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/base64.hpp>
 
 #include <random>
@@ -185,4 +187,52 @@ TEST(Base64, InvalidDecode)
   EXPECT_THROW(Convert::Base64Decode("AD======EF"), std::runtime_error);
 
   // cspell::enable
+}
+
+TEST(Base64, Constructible)
+{
+  EXPECT_FALSE((ClassTraits<Convert>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<Convert>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<Convert>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<Convert>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<Convert>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<Convert>::is_nothrow_default_constructible());
+}
+
+TEST(Base64, Destructible)
+{
+  EXPECT_TRUE(ClassTraits<Convert>::is_destructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<Convert>::has_virtual_destructor());
+}
+
+TEST(Base64, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<Convert>::is_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_move_constructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_move_constructible());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_move_constructible());
+}
+
+TEST(Base64, Assignable)
+{
+  EXPECT_TRUE(ClassTraits<Convert>::is_assignable<Convert>());
+  EXPECT_TRUE(ClassTraits<Convert>::is_assignable<const Convert>());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_assignable<Convert>());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_assignable<const Convert>());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_assignable<Convert>());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_assignable<const Convert>());
+}
+
+TEST(Base64, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<Convert>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Convert>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<Convert>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<Convert>::is_nothrow_move_assignable());
 }

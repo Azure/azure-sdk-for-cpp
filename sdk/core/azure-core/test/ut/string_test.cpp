@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/internal/strings.hpp>
 
 #include <locale>
@@ -130,4 +132,57 @@ TEST(String, toUpper)
   EXPECT_NE(StringExtensions::ToUpper("a"), "");
   EXPECT_NE(StringExtensions::ToUpper("a"), "aA");
   EXPECT_NE(StringExtensions::ToUpper("abc"), "abcd");
+}
+
+TEST(String, Constructible)
+{
+  using Azure::Core::_internal::StringExtensions;
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_default_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_default_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_default_constructible());
+}
+
+TEST(String, Destructible)
+{
+  using Azure::Core::_internal::StringExtensions;
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_destructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<StringExtensions>::has_virtual_destructor());
+}
+
+TEST(String, CopyAndMoveConstructible)
+{
+  using Azure::Core::_internal::StringExtensions;
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_copy_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_copy_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_move_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_move_constructible());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_move_constructible());
+}
+
+TEST(String, Assignable)
+{
+  using Azure::Core::_internal::StringExtensions;
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_assignable<StringExtensions>());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_assignable<const StringExtensions>());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_assignable<StringExtensions>());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_assignable<const StringExtensions>());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_assignable<StringExtensions>());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_assignable<const StringExtensions>());
+}
+
+TEST(String, CopyAndMoveAssignable)
+{
+  using Azure::Core::_internal::StringExtensions;
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<StringExtensions>::is_nothrow_move_assignable());
 }

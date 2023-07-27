@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/uuid.hpp>
 
 #include <set>
@@ -106,4 +108,52 @@ TEST(Uuid, validChars)
       },
       uuidKey,
       4);
+}
+
+TEST(Uuid, Assignable)
+{
+  EXPECT_TRUE(ClassTraits<Uuid>::is_assignable<Uuid>());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_assignable<const Uuid>());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_assignable<Uuid>());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_assignable<const Uuid>());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_assignable<Uuid>());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_assignable<const Uuid>());
+}
+
+TEST(Uuid, Constructible)
+{
+  EXPECT_FALSE((ClassTraits<Uuid, std::array<uint8_t, 16> const&>::is_constructible()));
+  EXPECT_FALSE((ClassTraits<Uuid, std::array<uint8_t, 16> const&>::is_trivially_constructible()));
+  EXPECT_FALSE((ClassTraits<Uuid, std::array<uint8_t, 16> const&>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<Uuid>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<Uuid>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<Uuid>::is_nothrow_default_constructible());
+}
+
+TEST(Uuid, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<Uuid>::is_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_move_constructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_move_constructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_move_constructible());
+}
+
+TEST(Uuid, CopyAndMoveAssignable)
+{
+  EXPECT_TRUE(ClassTraits<Uuid>::is_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_move_assignable());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_move_assignable());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_move_assignable());
+}
+
+TEST(Uuid, Destructible)
+{
+  EXPECT_TRUE(ClassTraits<Uuid>::is_destructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<Uuid>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<Uuid>::has_virtual_destructor());
 }
