@@ -2308,7 +2308,7 @@ CurlConnection::CurlConnection(
     }
   }
 
-#if LIBCURL_VERSION_NUM >= 0x072C00 // 7.44.0
+#if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
   {
     curl_blob rootCertBlob
