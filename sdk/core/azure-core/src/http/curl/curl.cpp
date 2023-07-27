@@ -2308,6 +2308,7 @@ CurlConnection::CurlConnection(
     }
   }
 
+#if LIBCURL_VERSION_NUM >= 0x072C00 // 7.44.0
   if (!options.SslOptions.PemEncodedExpectedRootCertificates.empty())
   {
     curl_blob rootCertBlob
@@ -2323,6 +2324,7 @@ CurlConnection::CurlConnection(
           + std::string(curl_easy_strerror(result)));
     }
   }
+#endif
 
 #if defined(AZ_PLATFORM_WINDOWS)
   long sslOption = 0;
