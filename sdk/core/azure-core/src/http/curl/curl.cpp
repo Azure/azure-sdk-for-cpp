@@ -307,11 +307,13 @@ Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions
   curlOptions.SslOptions.EnableCertificateRevocationListCheck
       = transportOptions.EnableCertificateRevocationListCheck;
 
+#if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   if (!transportOptions.ExpectedTlsRootCertificate.empty())
   {
     curlOptions.SslOptions.PemEncodedExpectedRootCertificates
         = PemEncodeFromBase64(transportOptions.ExpectedTlsRootCertificate, "CERTIFICATE");
   }
+#endif
   curlOptions.SslVerifyPeer = !transportOptions.DisableTlsCertificateValidation;
   return curlOptions;
 }
@@ -1297,10 +1299,14 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(options.SslOptions.AllowFailedCrlRetrieval ? "FC" : "0");
   key.append(",");
+#if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   key.append(
       !options.SslOptions.PemEncodedExpectedRootCertificates.empty() ? std::to_string(
           std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
                                                                      : "0");
+#else
+  key.append("0");
+#endif
   key.append(",");
   // using DefaultConnectionTimeout or 0 result in the same setting
   key.append(

@@ -53,6 +53,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool AllowFailedCrlRetrieval = false;
 
+#if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0 
     /**
      * @brief A set of PEM encoded X.509 certificates and CRLs describing the certificates used to
      * validate the server.
@@ -66,6 +67,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     std::string PemEncodedExpectedRootCertificates;
+#endif
   };
 
   /**
