@@ -59,7 +59,7 @@ Events can be consumed from an event hub using an [event consumer](https://docs.
 - A distributed event consumer, which uses Azure Blobs for checkpointing and coordination. This is implemented in the [Processor](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#Processor). 
 The Processor is useful when you want to have the partition assignment be dynamically chosen, and balanced with other Processor instances.
 
-For more information about Event Hubs features and terminology can be found here: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-features)
+More information about Event Hubs features and terminology can be found here: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-features)
 
 
 # Examples

@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 #include "azure/messaging/eventhubs/processor_partition_client.hpp"
 
 #include "private/eventhubs_constants.hpp"
