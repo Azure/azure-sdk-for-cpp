@@ -9,7 +9,7 @@ variables have been set by the user:
 
 * EVENTHUBS_CONNECTION_STRING - The service connection string for the eventhubs instance.
 * EVENTHUB_NAME - Name of the eventhubs instance to communicate with.
-* EVENTHUB_HOST - Fully qualified domain name for the eventhubs instance.
+* EVENTHUBS_HOST - Fully qualified domain name for the eventhubs instance.
 * AZURE_TENANT_ID - The tenant ID for the user or service principal which has
 been granted access to the eventhubs service instance.
 * AZURE_CLIENT_ID - The client ID for the user or service principal which has been 

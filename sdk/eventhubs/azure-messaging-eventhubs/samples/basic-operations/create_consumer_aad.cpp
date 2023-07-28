@@ -5,7 +5,7 @@
 // obtained from using the Azure Identity library.
 
 // This sample expects that the following environment variables exist:
-// * EVENTHUB_HOST - contains the fully qualified domain name for the eventhub service instance.
+// * EVENTHUBS_HOST - contains the fully qualified domain name for the eventhub service instance.
 // * EVENTHUB_NAME - the name of the Event Hub instance.
 //
 // The following environment variables are required to authenticate the request using
@@ -25,7 +25,7 @@
 
 int main()
 {
-  std::string eventhubHost{std::getenv("EVENTHUB_HOST")};
+  std::string eventhubHost{std::getenv("EVENTHUBS_HOST")};
   std::string eventhubName{std::getenv("EVENTHUB_NAME")};
 
   std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential

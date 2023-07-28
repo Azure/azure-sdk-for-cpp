@@ -37,9 +37,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     returnValue.SetBody(messageList);
-    //      Azure::Core::Diagnostics::_internal::Log::Stream(
-    //          Azure::Core::Diagnostics::Logger::Level::Verbose)
-    //          << "EventDataBatch::ToAmqpMessage: " << returnValue << std::endl;
     return returnValue;
   }
 
