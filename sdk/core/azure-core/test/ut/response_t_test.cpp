@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/http/http.hpp>
 #include <azure/core/response.hpp>
 
@@ -57,3 +59,55 @@ TEST(ResponseT, value)
   // Fetch Value from const Response
   EXPECT_EQ(constFakeT, constResponse.Value);
 }
+
+TEST(ResponseT, Assignable)
+{
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_assignable<RawResponse>());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_assignable<const RawResponse>());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_assignable<RawResponse>());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_assignable<const RawResponse>());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_assignable<RawResponse>());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_assignable<const RawResponse>());
+}
+
+TEST(ResponseT, Constructible)
+{
+  EXPECT_FALSE((ClassTraits<RawResponse, const std::vector<RawResponse>&>::is_constructible()));
+  EXPECT_FALSE(
+      (ClassTraits<RawResponse, const std::vector<RawResponse>&>::is_trivially_constructible()));
+  EXPECT_FALSE(
+      (ClassTraits<RawResponse, const std::vector<RawResponse>&>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_default_constructible());
+}
+
+TEST(ResponseT, CopyAndMoveConstructible)
+{
+  EXPECT_TRUE(ClassTraits<RawResponse>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_copy_constructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<RawResponse>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_move_constructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_move_constructible());
+}
+
+TEST(ResponseT, CopyAndMoveAssignable)
+{
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_copy_assignable());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_copy_assignable());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_copy_assignable());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_move_assignable());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_move_assignable());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_nothrow_move_assignable());
+}
+
+TEST(ResponseT, Destructible)
+{
+
+  EXPECT_TRUE(ClassTraits<RawResponse>::is_destructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<RawResponse>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<RawResponse>::has_virtual_destructor());
+}
+

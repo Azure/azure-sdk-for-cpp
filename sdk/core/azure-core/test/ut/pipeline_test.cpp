@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "test_traits.hpp"
+
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
@@ -145,3 +147,59 @@ TEST(Pipeline, AdditionalPolicies)
   EXPECT_EQ(perRetryPolicyCloneCount, 4);
   EXPECT_EQ(perRetryClientPolicyCloneCount, 5);
 }
+
+TEST(Pipeline, Assignable)
+{
+  using Azure::Core::Http::_internal::HttpPipeline;
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_assignable<HttpPipeline>());
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_assignable<const HttpPipeline>());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_assignable<HttpPipeline>());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_assignable<const HttpPipeline>());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_assignable<HttpPipeline>());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_assignable<const HttpPipeline>());
+}
+
+TEST(Pipeline, Constructible)
+{
+  using Azure::Core::Http::_internal::HttpPipeline;
+  EXPECT_FALSE((ClassTraits<HttpPipeline, const std::vector<HttpPipeline>&>::is_constructible()));
+  EXPECT_FALSE(
+      (ClassTraits<HttpPipeline, const std::vector<HttpPipeline>&>::is_trivially_constructible()));
+  EXPECT_FALSE(
+      (ClassTraits<HttpPipeline, const std::vector<HttpPipeline>&>::is_nothrow_constructible()));
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_default_constructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_default_constructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_default_constructible());
+}
+
+TEST(Pipeline, CopyAndMoveConstructible)
+{
+  using Azure::Core::Http::_internal::HttpPipeline;
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_copy_constructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_copy_constructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_copy_constructible());
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_move_constructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_move_constructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_move_constructible());
+}
+
+TEST(Pipeline, CopyAndMoveAssignable)
+{
+  using Azure::Core::Http::_internal::HttpPipeline;
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_copy_assignable());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_copy_assignable());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_copy_assignable());
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_move_assignable());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_move_assignable());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_nothrow_move_assignable());
+}
+
+TEST(Pipeline, Destructible)
+{
+  using Azure::Core::Http::_internal::HttpPipeline;
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_destructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::is_trivially_destructible());
+  EXPECT_TRUE(ClassTraits<HttpPipeline>::is_nothrow_destructible());
+  EXPECT_FALSE(ClassTraits<HttpPipeline>::has_virtual_destructor());
+}
+
