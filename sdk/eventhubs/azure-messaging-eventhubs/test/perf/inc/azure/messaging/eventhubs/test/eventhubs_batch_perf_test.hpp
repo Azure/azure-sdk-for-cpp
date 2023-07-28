@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Test the overhead of getting a key.
+ * @brief Test batch sends
  *
  */
 
