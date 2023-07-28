@@ -9,7 +9,7 @@ package-name: azure-storage-files-datalake
 namespace: Azure::Storage::Files::DataLake
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2021-06-08/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2023-05-03/DataLakeStorage.json
 ```
 
 ## ModelFour Options
@@ -88,12 +88,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2021-06-08"]
+        "enum": ["2023-08-03"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2021-06-08";
+      $.ApiVersionParameter.enum[0] = "2023-08-03";
 ```
 
 ### Rename Operations
@@ -329,16 +329,18 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}"].delete.responses
     transform: >
-      delete $["200"].headers["x-ms-continuation"];
-      delete $["200"].headers["x-ms-deletion-id"];
-      $["200"].schema = {
+      for (const status_code of ["200", "202"]) {
+        delete $[status_code].headers["x-ms-continuation"];
+        delete $[status_code].headers["x-ms-deletion-id"];
+        $[status_code].schema = {
         "type": "object",
         "x-ms-client-name": "DeletePathResult",
         "x-ms-sealed": false,
         "properties": {
-          "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": ""}
-        }
-      };
+            "Deleted": {"type": "boolean", "x-ms-client-default": true, "x-ms-json": ""}
+          }
+        };
+      }
 ```
 
 ### RenamePath
@@ -513,4 +515,6 @@ directive:
     transform: >
       $["200"].schema.properties["Deleted"].description = "Indicates if the file or directory was successfully deleted by this operation.";
       $["200"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.";
+      $["202"].schema.properties["Deleted"].description = "Indicates if the file or directory was successfully deleted by this operation.";
+      $["202"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.";
 ```

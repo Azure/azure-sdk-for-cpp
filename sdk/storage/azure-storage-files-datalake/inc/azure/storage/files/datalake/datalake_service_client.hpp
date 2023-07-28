@@ -150,6 +150,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Url m_serviceUrl;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+    _detail::DatalakeClientConfiguration m_clientConfiguration;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

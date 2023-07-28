@@ -306,8 +306,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /** @brief Http Pipeline */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    /** @brief Customer provided encryption key. */
-    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
+
+    /** @brief Client configurations*/
+    _detail::DatalakeClientConfiguration m_clientConfiguration;
 
     /**
      * @brief Construct a new DataLakePathClient
@@ -315,16 +316,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param pathUrl The URL of the path represented by this client.
      * @param blobClient The BlobClient needed for blob operations performed on this path.
      * @param pipeline The HTTP pipeline for sending and receiving REST requests and responses.
-     * @param customerProvidedKey Customer provided key to encrypt the data.
+     * @param clientConfiguration Client configurations
      *
      */
     explicit DataLakePathClient(
         Azure::Core::Url pathUrl,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>())
+        _detail::DatalakeClientConfiguration clientConfiguration)
         : m_pathUrl(std::move(pathUrl)), m_blobClient(std::move(blobClient)),
-          m_pipeline(std::move(pipeline)), m_customerProvidedKey(std::move(customerProvidedKey))
+          m_pipeline(std::move(pipeline)), m_clientConfiguration(std::move(clientConfiguration))
     {
     }
 
