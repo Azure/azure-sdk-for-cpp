@@ -66,7 +66,8 @@ More information about Event Hubs features and terminology can be found here: [l
 # Examples
 
 <!-- NOTE: Fix dead links -->
-Examples for various scenarios can be found on [azure.github.io](https://azure.github.io/azure-sdk-for-cpp/storage.html) or in the samples directory in our GitHub repo for [EventHubs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/samples).
+Examples for various scenarios can be found on [azure.github.io](https://azure.github.io/azure-sdk-for-cpp/storage.html) or in the samples directory in our GitHub repo for 
+[EventHubs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs).
 
 ## Send events
 
