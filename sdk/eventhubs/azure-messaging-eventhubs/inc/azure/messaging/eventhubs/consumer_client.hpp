@@ -32,9 +32,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /**@brief If enabled, generate verbose logging traces for this client and related classes.*/
-    bool VerboseLogging{false};
-
     /** @brief Maximum message size for messages being sent. */
     Azure::Nullable<std::uint64_t> MaxMessageSize;
 

@@ -43,21 +43,18 @@ public:
     m_clientId = Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_ID");
     m_secret = Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET");
 
-    ProducerClientOptions clientOptions;
-    clientOptions.VerboseLogging = m_verboseClient;
-
     if (m_eventHubConnectionString.empty())
     {
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           m_tenantId, m_clientId, m_secret);
 
       m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-          m_eventHubConnectionString, m_eventHubName, m_credential, clientOptions);
+          m_eventHubConnectionString, m_eventHubName, m_credential);
     }
     else
     {
       m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-          m_eventHubConnectionString, m_eventHubName, clientOptions);
+          m_eventHubConnectionString, m_eventHubName);
     }
   }
 
@@ -86,7 +83,6 @@ private:
   std::string m_eventHubConnectionString;
   std::string m_checkpointStoreConnectionString;
   std::string m_partitionId{"0"};
-  bool m_verboseClient{true};
 
   std::string m_tenantId;
   std::string m_clientId;
@@ -156,7 +152,6 @@ private:
       Azure::Core::Context context;
       ConsumerClientOptions clientOptions;
       clientOptions.ApplicationID = "StressConsumerClient";
-      clientOptions.VerboseLogging = m_verboseClient;
 
       ConsumerClient consumerClient(
           m_eventHubConnectionString, m_eventHubName, DefaultConsumerGroup, clientOptions);

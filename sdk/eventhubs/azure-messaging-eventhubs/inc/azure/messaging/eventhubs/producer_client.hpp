@@ -30,10 +30,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /** @brief True if verbose logging is enabled.
-     */
-    bool VerboseLogging{false};
-
     /** @brief The name of the producer client link, used in diagnostics.
      */
     std::string Name{};

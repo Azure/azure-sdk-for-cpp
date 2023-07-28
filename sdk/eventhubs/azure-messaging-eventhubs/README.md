@@ -1,4 +1,4 @@
-<!-- cspell:words godoc azeventhubs  -->
+<!-- cspell:words azeventhubs  -->
 # Azure Event Hubs Client Package for C++
 
 [Azure Event Hubs](https://azure.microsoft.com/services/event-hubs/) is a big data streaming platform and event ingestion service from Microsoft. For more information about Event Hubs see: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-about).
@@ -36,15 +36,15 @@ vcpkg install azure-messaging-eventhubs-cpp
 Event Hub clients are created using a credential from the [Azure Identity package][azure_identity_pkg], like [DefaultAzureCredential][default_azure_credential].
 Alternatively, you can create a client using a connection string.
 
-<!-- NOTE: GO Links are intentional for now -->
+<!-- NOTE: Fix dead Links -->
 #### Using a service principal
- - ConsumerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewConsumerClient)
- - ProducerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewProducerClient)
+ - ConsumerClient: [link](https://azure.github.io/azure-sdk-for-cpp/storage.html)
+ - ProducerClient: [link](https://azure.github.io/azure-sdk-for-cpp/storage.html)
 
-<!-- NOTE: GO Links are intentional for now -->
+<!-- NOTE: Fix dead links -->
 #### Using a connection string
- - ConsumerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewConsumerClientFromConnectionString)
- - ProducerClient: [link](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#example-NewProducerClientFromConnectionString)
+ - ConsumerClient: [link](https://azure.github.io/azure-sdk-for-cpp/storage.html)
+ - ProducerClient: [link](https://azure.github.io/azure-sdk-for-cpp/storage.html)
 
 # Key concepts
 
@@ -52,11 +52,12 @@ An Event Hub [**namespace**](https://docs.microsoft.com/azure/event-hubs/event-h
 Each event hub, in turn, contains [**partitions**](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#partitions) which 
 store events.
 
-Events are published to an event hub using an [event publisher](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#event-publishers). In this package, the event publisher is the [ProducerClient](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#ProducerClient)
+<!-- NOTE: Fix dead links -->
+Events are published to an event hub using an [event publisher](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#event-publishers). In this package, the event publisher is the [ProducerClient](https://azure.github.io/azure-sdk-for-cpp/storage.html)
 
 Events can be consumed from an event hub using an [event consumer](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#event-consumers). In this package there are two types for consuming events: 
-- The basic event consumer is the PartitionClient, in the [ConsumerClient](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#ConsumerClient). This consumer is useful if you already known which partitions you want to receive from.
-- A distributed event consumer, which uses Azure Blobs for checkpointing and coordination. This is implemented in the [Processor](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#Processor). 
+- The basic event consumer is the PartitionClient, in the [ConsumerClient](https://azure.github.io/azure-sdk-for-cpp/storage.html). This consumer is useful if you already known which partitions you want to receive from.
+- A distributed event consumer, which uses Azure Blobs for checkpointing and coordination. This is implemented in the [Processor](https://azure.github.io/azure-sdk-for-cpp/storage.html). 
 The Processor is useful when you want to have the partition assignment be dynamically chosen, and balanced with other Processor instances.
 
 More information about Event Hubs features and terminology can be found here: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-features)
@@ -64,8 +65,8 @@ More information about Event Hubs features and terminology can be found here: [l
 
 # Examples
 
-<!-- NOTE: GO Links are intentional for now -->
-Examples for various scenarios can be found on [pkg.go.dev](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#pkg-examples) or in the example*_test.go files in our GitHub repo for [azeventhubs](https://github.com/Azure/azure-sdk-for-go/blob/main/sdk/messaging/azeventhubs).
+<!-- NOTE: Fix dead links -->
+Examples for various scenarios can be found on [azure.github.io](https://azure.github.io/azure-sdk-for-cpp/storage.html) or in the samples directory in our GitHub repo for [EventHubs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/samples).
 
 ## Send events
 
@@ -130,7 +131,6 @@ To enable additional logging, you can enable the `VerboseLogging` client option 
 ```cpp
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
-  producerOptions.VerboseLogging = true;
   producerOptions.MessageSource = "ingress";
   producerOptions.ApplicationID = "My Application Name";
 
@@ -178,6 +178,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs
 [azure_identity_pkg]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html
 [default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html#defaultazurecredential
+<!-- TODO: Fix go links to refer to C++ documentation when it is published.-->
 [cppdoc]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs
 [cppdoc_examples]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#pkg-examples
 

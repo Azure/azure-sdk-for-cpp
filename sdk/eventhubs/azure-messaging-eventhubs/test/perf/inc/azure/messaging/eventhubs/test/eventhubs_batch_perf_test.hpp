@@ -41,7 +41,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     uint64_t m_rounds;
     uint32_t m_paddingBytes;
     uint32_t m_maxDeadlineExceeded;
-    bool m_enableVerboseLogging;
 
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;
@@ -69,7 +68,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
       m_paddingBytes = m_options.GetOptionOrDefault<uint32_t>("PaddingBytes", 1024);
       m_partitionId = m_options.GetOptionOrDefault<std::string>("PartitionId", "0");
       m_maxDeadlineExceeded = m_options.GetOptionOrDefault<uint32_t>("MaxTimeouts", 10);
-      m_enableVerboseLogging = m_options.GetOptionOrDefault<bool>("Verbose", false);
 
       m_tenantId = m_options.GetOptionOrDefault<std::string>(
           "TenantId", Azure::Core::_internal::Environment::GetVariable("AZURE_TENANT_ID"));
@@ -78,21 +76,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
       m_secret = m_options.GetOptionOrDefault<std::string>(
           "Secret", Azure::Core::_internal::Environment::GetVariable("AZURE_CLIENT_SECRET"));
 
-      ProducerClientOptions clientOptions;
-      clientOptions.VerboseLogging = m_enableVerboseLogging;
-
       if (m_eventHubConnectionString.empty())
       {
         m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
             m_tenantId, m_clientId, m_secret);
 
         m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-            m_eventHubConnectionString, m_eventHubName, m_credential, clientOptions);
+            m_eventHubConnectionString, m_eventHubName, m_credential);
       }
       else
       {
         m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-            m_eventHubConnectionString, m_eventHubName, clientOptions);
+            m_eventHubConnectionString, m_eventHubName);
       }
     }
 
@@ -124,7 +119,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
 
         ConsumerClientOptions clientOptions;
         clientOptions.ApplicationID = "StressConsumerClient";
-        clientOptions.VerboseLogging = m_enableVerboseLogging;
 
         ConsumerClient consumerClient(
             m_eventHubConnectionString, m_eventHubName, DefaultConsumerGroup, clientOptions);
@@ -256,7 +250,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
            1,
            false},
           {"MaxTimeouts", {"--maxTimeouts"}, "The max number of timeouts.", 1, false},
-          {"Verbose", {"--verbose"}, "Enable verbose logging.", 1, false},
           {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, false},
           {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, false},
           {"Secret", {"--secret"}, "The secret for authentication.", 1, false, true}};

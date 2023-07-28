@@ -75,7 +75,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ConnectionOptions connectOptions;
     connectOptions.ContainerId = m_consumerClientOptions.ApplicationID;
-    connectOptions.EnableTrace = m_consumerClientOptions.VerboseLogging;
+    connectOptions.EnableTrace = true;
     connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
     // Set the user agent related properties in the connectOptions based on the package information
@@ -103,7 +103,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       receiverOptions.MaxMessageSize = m_consumerClientOptions.MaxMessageSize.Value();
     }
-    receiverOptions.EnableTrace = m_consumerClientOptions.VerboseLogging;
+    receiverOptions.EnableTrace = true;
     receiverOptions.MessageTarget = m_consumerClientOptions.MessageTarget;
     receiverOptions.Name = m_consumerClientOptions.Name;
     receiverOptions.Properties.emplace("com.microsoft:receiver-name", m_consumerClientOptions.Name);

@@ -57,7 +57,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
 
   Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
   connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
-  connectOptions.EnableTrace = m_producerClientOptions.VerboseLogging;
+  connectOptions.EnableTrace = true;
   connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
   // Set the UserAgent related properties on this message sender.
@@ -82,7 +82,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
 
   senderOptions.Name = m_producerClientOptions.Name;
-  senderOptions.EnableTrace = m_producerClientOptions.VerboseLogging;
+  senderOptions.EnableTrace = true;
   senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
   senderOptions.SettleMode = m_producerClientOptions.SettleMode;
 
