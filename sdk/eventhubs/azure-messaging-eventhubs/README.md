@@ -3,7 +3,7 @@
 
 [Azure Event Hubs](https://azure.microsoft.com/services/event-hubs/) is a big data streaming platform and event ingestion service from Microsoft. For more information about Event Hubs see: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-about).
 
-Use the client library `github.com/Azure/azure-sdk-for-cpp/sdk//eventhubs` in your application to:
+Use the client library `github.com/Azure/azure-sdk-for-cpp/sdk/eventhubs` in your application to:
 
 - Send events to an event hub.
 - Consume events from an event hub.
