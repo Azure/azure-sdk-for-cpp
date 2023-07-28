@@ -8,9 +8,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   public:
     static Azure::Core::Amqp::Models::AmqpMessage EventDataToAmqpMessage(
         Models::EventData const& message);
-    static void EventBodyToAmqpMessageBody(
-        Models::EventDataBody const& body,
-        Azure::Core::Amqp::Models::AmqpMessage& messageToUpdate);
 
   private:
     EventDataFactory() = delete;

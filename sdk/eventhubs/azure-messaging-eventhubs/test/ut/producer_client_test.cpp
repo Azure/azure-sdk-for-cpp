@@ -67,10 +67,10 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   Azure::Messaging::EventHubs::Models::EventData message1;
   message2.SetBody(Azure::Core::Amqp::Models::AmqpValue("Hello7"));
 
-  message1.Body.Data = {'H', 'e', 'l', 'l', 'o', '2'};
+  message1.Body = {'H', 'e', 'l', 'l', 'o', '2'};
 
   Azure::Messaging::EventHubs::Models::EventData message3;
-  message3.Body.Sequence = {'H', 'e', 'l', 'l', 'o', '3'};
+  message3.Body = {'H', 'e', 'l', 'l', 'o', '3'};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();

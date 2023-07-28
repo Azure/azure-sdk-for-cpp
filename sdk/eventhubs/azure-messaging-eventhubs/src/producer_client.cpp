@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #include "azure/messaging/eventhubs/producer_client.hpp"
 
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
-#include "private/eventhub_utilities.hpp"
+#include "private/eventhubs_utilities.hpp"
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>

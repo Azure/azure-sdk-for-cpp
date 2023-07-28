@@ -25,7 +25,7 @@ int main()
 
   // Send an event with a simple binary body.
   Azure::Messaging::EventHubs::Models::EventData event;
-  event.Body.Data = {1, 3, 5, 7};
+  event.Body = {1, 3, 5, 7};
   event.MessageId = "test-message-id";
   Azure::Messaging::EventHubs::EventDataBatch batch;
   batch.AddMessage(event);

@@ -116,7 +116,7 @@ private:
     {
 
       Azure::Messaging::EventHubs::Models::EventData event;
-      event.Body.Data = bodyData;
+      event.Body = bodyData;
       event.Properties["Number"] = j;
       event.Properties["PartitionId"]
           = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_partitionId);

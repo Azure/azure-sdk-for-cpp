@@ -239,9 +239,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     auto accessToken = GetConnection()->GetSecurityToken(audience, context);
 
-    //    Log::Stream(Logger::Level::Verbose)
-    //        << "Authenticate with audience: " << audience << ", token: " << accessToken;
-
     m_claimsBasedSecurity->SetTrace(GetConnection()->EnableTrace());
     if (!m_cbsOpen)
     {

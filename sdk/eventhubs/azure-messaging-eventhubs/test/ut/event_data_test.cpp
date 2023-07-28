@@ -58,7 +58,7 @@ TEST_F(EventDataTest, EventData1)
 {
   Azure::Messaging::EventHubs::Models::EventData eventData;
 
-  eventData.Body.Value = Azure::Core::Amqp::Models::AmqpValue(5);
+  eventData.Body = {1, 2};
   eventData.ContentType = "ct";
   eventData.Properties.emplace("abc", AmqpValue(23));
   eventData.CorrelationId = AmqpValue("ci");
@@ -68,7 +68,7 @@ TEST_F(EventDataTest, EventData1)
       = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
 
   EXPECT_EQ(1ul, message.ApplicationProperties.size());
-  EXPECT_EQ(eventData.Body.Value, message.GetBodyAsAmqpValue());
+  EXPECT_EQ(eventData.Body, static_cast<std::vector<uint8_t>>(message.GetBodyAsBinary()[0]));
   EXPECT_EQ("ct", message.Properties.ContentType.Value());
   EXPECT_EQ(AmqpValue("ci"), message.Properties.CorrelationId.Value());
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
@@ -78,78 +78,14 @@ TEST_F(EventDataTest, EventDataBodyTest)
 {
   {
     Azure::Messaging::EventHubs::Models::EventData msg;
-    msg.Body.Value = AmqpValue("3");
-    auto message
-        = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
-
-    EXPECT_EQ(msg.Body.Value, message.GetBodyAsAmqpValue());
-  }
-  {
-    Azure::Messaging::EventHubs::Models::EventData msg;
 
     // Note that Data is an AMQP BinaryData value.
-    msg.Body.Data = {1, 3, 5, 7, 9};
+    msg.Body = {1, 3, 5, 7, 9};
 
     auto message
         = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
 
     EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
-    EXPECT_EQ(msg.Body.Data, static_cast<std::vector<uint8_t>>(message.GetBodyAsBinary()[0]));
-  }
-
-  {
-    Azure::Messaging::EventHubs::Models::EventData msg;
-
-    // Note that Sequence is an array of AmqpLists.
-    msg.Body.Sequence = {3, "Foo", AmqpValue{AmqpBinaryData{1, 3, 5, 7, 9}}};
-
-    auto message
-        = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg);
-    EXPECT_EQ(message.GetBodyAsAmqpList().size(), 1ul);
-    EXPECT_EQ(msg.Body.Sequence, message.GetBodyAsAmqpList()[0]);
-  }
-
-  // Data and Value set - error.
-  {
-    Azure::Messaging::EventHubs::Models::EventData msg;
-
-    msg.Body.Data = {1, 3, 5, 7};
-    msg.Body.Value = 27;
-
-    EXPECT_ANY_THROW(
-        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
-  }
-  // Data and Sequence set - error.
-  {
-    Azure::Messaging::EventHubs::Models::EventData msg;
-
-    msg.Body.Data = {1, 3, 5, 7};
-    msg.Body.Sequence = {27, 3.25};
-
-    EXPECT_ANY_THROW(
-        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
-  }
-
-  // Value and Sequence set - error.
-  {
-    Azure::Messaging::EventHubs::Models::EventData msg;
-
-    msg.Body.Value = "AmqpBinaryData{1, 3, 5, 7}";
-    msg.Body.Sequence = {27, 3.25};
-
-    EXPECT_ANY_THROW(
-        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
-  }
-
-  // Value, Data, and Sequence set - error.
-  {
-    Azure::Messaging::EventHubs::Models::EventData msg;
-
-    msg.Body.Data = {1, 7, 32, 127, 255};
-    msg.Body.Value = "AmqpBinaryData{1, 3, 5, 7}";
-    msg.Body.Sequence = {27, 3.25};
-
-    EXPECT_ANY_THROW(
-        Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(msg));
+    EXPECT_EQ(msg.Body, static_cast<std::vector<uint8_t>>(message.GetBodyAsBinary()[0]));
   }
 }

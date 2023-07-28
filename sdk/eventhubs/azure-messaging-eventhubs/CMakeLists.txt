@@ -86,8 +86,8 @@ set(
     src/event_data_batch.cpp
     src/partition_client_models.cpp
     src/private/package_version.hpp
-    src/private/eventhub_constants.hpp
-    src/private/eventhub_utilities.hpp
+    src/private/eventhubs_constants.hpp
+    src/private/eventhubs_utilities.hpp
     src/processor_load_balancer.cpp
     src/processor_partition_client.cpp
     src/producer_client.cpp

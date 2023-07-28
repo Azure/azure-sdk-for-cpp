@@ -10,15 +10,15 @@ Use the client library `github.com/Azure/azure-sdk-for-cpp/sdk//eventhubs` in yo
 
 Key links:
 - [Source code][source]
-- [API Reference Documentation][godoc]
+- [API Reference Documentation][cppdoc]
 - [Product documentation](https://azure.microsoft.com/services/event-hubs/)
-- [Samples][godoc_examples]
+- [Samples][cppdoc_examples]
 
 ## Getting started
 
 ### Install the package
 
-Install the Azure Event Hubs client module for Go with `go get`:
+Install the Azure Event Hubs client package for C++ with `vcpkg`:
 
 ```bash
 vcpkg install azure-messaging-eventhubs-cpp
@@ -55,8 +55,7 @@ store events.
 Events are published to an event hub using an [event publisher](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#event-publishers). In this package, the event publisher is the [ProducerClient](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#ProducerClient)
 
 Events can be consumed from an event hub using an [event consumer](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#event-consumers). In this package there are two types for consuming events: 
-- The basic event consumer is the PartitionClient, in the
-- [ConsumerClient](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#ConsumerClient). This consumer is useful if you already known which partitions you want to receive from.
+- The basic event consumer is the PartitionClient, in the [ConsumerClient](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#ConsumerClient). This consumer is useful if you already known which partitions you want to receive from.
 - A distributed event consumer, which uses Azure Blobs for checkpointing and coordination. This is implemented in the [Processor](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#Processor). 
 This is useful when you want to have the partition assignment be dynamically chosen, and balanced with other Processor instances.
 
@@ -104,12 +103,8 @@ The following example shows how to receive events from partition 1 on an event h
 std::string connectionString = "<connection_string>";
 std::string eventHubName = "<event_hub_name>";
 
-Azure::Messaging::EventHubs::ConsumerClientOptions consumerOptions;
-consumerOptions.RetryOptions.Mode = Azure::Core::Retry::Mode::Fixed;
-consumerOptions.RetryOptions.MaxRetries = 1;
-
 auto client = Azure::Messaging::EventHubs::ConsumerClient(
-	connectionString, eventHubName, "$Default", consumerOptions);
+	connectionString, eventHubName);
 
 Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
 // We want to consume all messages from the earliest (the default behavior is to consume new events).
@@ -182,8 +177,8 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs
 [azure_identity_pkg]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html
-[default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html#DefaultAzureCredential
-[godoc]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs
-[godoc_examples]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#pkg-examples
+[default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-identity/latest/index.html#defaultazurecredential
+[cppdoc]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs
+[cppdoc_examples]: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#pkg-examples
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Feventhubs%2FREADME.png)

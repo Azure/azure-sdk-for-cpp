@@ -24,5 +24,4 @@ int main()
       eventhubConnectionString, eventhubName);
 
   Azure::Messaging::EventHubs::EventDataBatch batch;
-
 }

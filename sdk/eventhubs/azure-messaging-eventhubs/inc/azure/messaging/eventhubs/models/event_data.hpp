@@ -4,37 +4,13 @@
 #include <azure/core/amqp.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  /** @brief The type of the body of an EventData Message.
-   *
-   */
-  struct EventDataBody final
-  {
-    /** @brief Value is encoded / decoded as the amqp - value section in the body.
-     *
-     * The type of Value can be any of the AMQP simple types, as listed in the comment for
-     * AmqpMessage, as well as slices or maps of AMQP simple types.
-     */
-    Azure::Core::Amqp::Models::AmqpValue Value;
-
-    /** @brief  Sequence is encoded/decoded as an amqp-sequence sections in the body.
-     *
-     * The values of the slices are are restricted to AMQP simple types, as listed in the comment
-     * for AmqpMessage.
-     */
-    Azure::Core::Amqp::Models::AmqpList Sequence;
-
-    /** @brief Data is encoded decoded as multiple data sections in the body.
-     */
-    std::vector<uint8_t> Data;
-  };
-
   /** @brief Represents an event sent to the Azure Event Hubs service.
    */
   struct EventData
   {
     /** @brief The body of the event data.
      */
-    EventDataBody Body;
+    std::vector<uint8_t> Body;
 
     /** Represents the MIME ContentType of the event data. */
     Azure::Nullable<std::string> ContentType;

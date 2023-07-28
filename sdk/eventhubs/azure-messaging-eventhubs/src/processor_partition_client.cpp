@@ -1,7 +1,7 @@
 
 #include "azure/messaging/eventhubs/processor_partition_client.hpp"
 
-#include "private/eventhub_constants.hpp"
+#include "private/eventhubs_constants.hpp"
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 

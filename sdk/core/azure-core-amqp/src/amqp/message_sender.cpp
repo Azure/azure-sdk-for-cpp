@@ -309,7 +309,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             }
             else
             {
+              if (deliveryStatus.GetType() != Models::AmqpValueType::List)
+              {
+                throw std::runtime_error("Delivery status is not a list");
+              }
               auto deliveryStatusAsList{deliveryStatus.AsList()};
+              if (deliveryStatusAsList.size() != 1)
+              {
+                throw std::runtime_error("Delivery Status list is not of size 1");
+              }
               Models::AmqpValue firstState{deliveryStatusAsList[0]};
               ERROR_HANDLE errorHandle;
               if (!amqpvalue_get_error(firstState, &errorHandle))

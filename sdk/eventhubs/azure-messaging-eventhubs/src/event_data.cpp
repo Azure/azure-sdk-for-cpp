@@ -4,7 +4,7 @@
 #include "azure/messaging/eventhubs/models/event_data.hpp"
 
 #include "private/event_data_models_private.hpp"
-#include "private/eventhub_constants.hpp"
+#include "private/eventhubs_constants.hpp"
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
@@ -16,34 +16,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     ContentType = message.Properties.ContentType;
     CorrelationId = message.Properties.CorrelationId;
 
-    // If the message's body type is a single value, capture it in the ReceivedEventData.Body.
-    // Otherwise we can't express the message body as a single value, so we'll leave
-    // ReceivedEventData.Body as null.
-    switch (message.BodyType)
+    // If the message's body type is a single binary value, capture it in the
+    // ReceivedEventData.Body. Otherwise we can't express the message body as a single value, so
+    // we'll leave ReceivedEventData.Body as null.
+    if (message.BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
     {
-      case Azure::Core::Amqp::Models::MessageBodyType::Value:
-        Body.Value = message.GetBodyAsAmqpValue();
-        break;
-      case Azure::Core::Amqp::Models::MessageBodyType::Sequence: {
-
-        auto sequence = message.GetBodyAsAmqpList();
-        if (sequence.size() == 1)
-        {
-          Body.Sequence = sequence[0];
-        }
-        break;
+      auto binaryData = message.GetBodyAsBinary();
+      if (binaryData.size() == 1)
+      {
+        Body = std::vector<uint8_t>(binaryData[0]);
       }
-      case Azure::Core::Amqp::Models::MessageBodyType::Data: {
-
-        auto binaryData = message.GetBodyAsBinary();
-        if (binaryData.size() == 1)
-        {
-          Body.Data = std::vector<uint8_t>(binaryData[0]);
-        }
-        break;
-      }
-      default:
-        break;
     }
 
     // Copy the message annotations into the ReceivedEventData.SystemProperties. There are 3
@@ -112,45 +94,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     rv.Properties.CorrelationId = eventData.CorrelationId;
 
     rv.ApplicationProperties = eventData.Properties;
-    EventBodyToAmqpMessageBody(eventData.Body, rv);
+    if (!eventData.Body.empty())
+    {
+      rv.SetBody(eventData.Body);
+    }
     return rv;
   }
-
-  /** @brief Set the body of the AMQP message.
-   *
-   * Throws an exception if the caller has set more than one of Value, Sequence, or Data.
-   *
-   * @param message The AMQP message to set the body on.
-   */
-  void EventDataFactory::EventBodyToAmqpMessageBody(
-      Models::EventDataBody const& body,
-      Azure::Core::Amqp::Models::AmqpMessage& message)
-  {
-    if (!body.Data.empty())
-    {
-      if (!body.Sequence.empty() || !body.Value.IsNull())
-      {
-        throw std::runtime_error("Message body cannot contain both data and value/sequence.");
-      }
-      message.SetBody(body.Data);
-    }
-    else if (!body.Sequence.empty())
-    {
-      if (!body.Value.IsNull() || !body.Data.empty())
-      {
-        throw std::runtime_error("Message body cannot contain both sequence and data/value.");
-      }
-      message.SetBody(body.Sequence);
-    }
-    else
-    {
-      if (!body.Sequence.empty() || !body.Data.empty())
-      {
-        throw std::runtime_error("Message body cannot contain both value and data/sequence.");
-      }
-
-      message.SetBody(body.Value);
-    }
-  }
-
 }}}} // namespace Azure::Messaging::EventHubs::_detail

@@ -4,7 +4,7 @@
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 
 #include "private/event_data_models_private.hpp"
-#include "private/eventhub_constants.hpp"
+#include "private/eventhubs_constants.hpp"
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 

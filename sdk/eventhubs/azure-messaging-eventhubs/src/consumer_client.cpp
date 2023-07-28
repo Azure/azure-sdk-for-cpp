@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-#include "private/eventhub_utilities.hpp"
+
+#include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
 
 #include <azure/core/amqp/message_receiver.hpp>
