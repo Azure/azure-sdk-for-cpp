@@ -44,9 +44,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
                                       _detail::GetBlobUrlFromUrl(serviceUrl),
                                       credential,
-                                      _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                      _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
@@ -73,9 +76,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
                                       _detail::GetBlobUrlFromUrl(serviceUrl),
                                       credential,
-                                      _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                      _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.TokenCredential = credential;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -103,9 +110,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
       : m_serviceUrl(serviceUrl), m_blobServiceClient(
                                       _detail::GetBlobUrlFromUrl(serviceUrl),
-                                      _detail::GetBlobClientOptions(options)),
-        m_customerProvidedKey(options.CustomerProvidedKey)
+                                      _detail::GetBlobClientOptions(options))
   {
+    m_clientConfiguration.ApiVersion
+        = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -130,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder,
         m_blobServiceClient.GetBlobContainerClient(fileSystemName),
         m_pipeline,
-        m_customerProvidedKey);
+        m_clientConfiguration);
   }
 
   ListFileSystemsPagedResponse DataLakeServiceClient::ListFileSystems(
