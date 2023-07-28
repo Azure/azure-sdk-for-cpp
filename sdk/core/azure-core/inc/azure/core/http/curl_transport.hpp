@@ -62,6 +62,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark More about this option:
      * https://curl.se/libcurl/c/CURLOPT_CAINFO_BLOB.html
      *
+     * @warning Requires libcurl >= 7.44.0
+     *
      */
     std::string PemEncodedExpectedRootCertificates;
   };
