@@ -33,7 +33,7 @@ vcpkg install azure-messaging-eventhubs-cpp
 
 ### Authenticate the client
 
-Event Hub clients are created using an Event Hub a credential from the [Azure Identity package][azure_identity_pkg], like [DefaultAzureCredential][default_azure_credential].
+Event Hub clients are created using a credential from the [Azure Identity package][azure_identity_pkg], like [DefaultAzureCredential][default_azure_credential].
 You can also create a client using a connection string.
 
 <!-- NOTE: GO Links are intentional for now -->
