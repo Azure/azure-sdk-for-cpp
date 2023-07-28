@@ -1,5 +1,5 @@
 # Stress test prototype 
-This is work in progress. It's a prototype of how a stress test would look. This PR is to park the work in progress while being dealing with higher priority issues.
+This is work in progress. It's a prototype of how a stress test would look. 
 ## Components 
 ### Code (https://en.wikipedia.org/wiki/C%2B%2B)
 The cpp file represents the code for the test, it will generate a number of invalid URLs and then issue CURL send commands. The requests are expected to fail. The point was that it exposes memory leaks in handling the error cases, which we fixed since. 
