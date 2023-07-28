@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Test the overhead of getting a key.
+ * @brief Test batch sends
  *
  */
 
@@ -97,7 +97,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     }
 
     /**
-     * @brief Construct a new GetKey test.
+     * @brief Construct a new Event Hubs performance test.
      *
      * @param options The test options.
      */

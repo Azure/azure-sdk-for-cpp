@@ -3,7 +3,7 @@
 
 apiVersion: v2
 name: eventhubs-stress-test
-description: C++ Stress Test for Azure EventHubs.
+description: C++ Stress Test for Azure Event Hubs.
 version: 0.0.2
 appVersion: v0.1
 annotations:
