@@ -57,7 +57,7 @@ Events are published to an event hub using an [event publisher](https://docs.mic
 Events can be consumed from an event hub using an [event consumer](https://docs.microsoft.com/azure/event-hubs/event-hubs-features#event-consumers). In this package there are two types for consuming events: 
 - The basic event consumer is the PartitionClient, in the [ConsumerClient](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#ConsumerClient). This consumer is useful if you already known which partitions you want to receive from.
 - A distributed event consumer, which uses Azure Blobs for checkpointing and coordination. This is implemented in the [Processor](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs#Processor). 
-This is useful when you want to have the partition assignment be dynamically chosen, and balanced with other Processor instances.
+The Processor is useful when you want to have the partition assignment be dynamically chosen, and balanced with other Processor instances.
 
 For more information about Event Hubs features and terminology can be found here: [link](https://docs.microsoft.com/azure/event-hubs/event-hubs-features)
 
