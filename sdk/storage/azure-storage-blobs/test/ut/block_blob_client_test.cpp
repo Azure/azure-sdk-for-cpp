@@ -818,6 +818,27 @@ namespace Azure { namespace Storage { namespace Test {
         blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
   }
 
+  TEST_F(BlockBlobClientTest, RehydrateTierToCold)
+  {
+    m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Archive);
+    m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Cold);
+    auto properties = m_blockBlobClient->GetProperties().Value;
+    ASSERT_TRUE(properties.ArchiveStatus.HasValue());
+    EXPECT_EQ(
+        properties.ArchiveStatus.Value(), Blobs::Models::ArchiveStatus::RehydratePendingToCold);
+    ASSERT_TRUE(properties.RehydratePriority.HasValue());
+    EXPECT_EQ(properties.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
+
+    auto blobItem = GetBlobItem(m_blobName);
+    ASSERT_TRUE(blobItem.Details.ArchiveStatus.HasValue());
+    EXPECT_EQ(
+        blobItem.Details.ArchiveStatus.Value(),
+        Blobs::Models::ArchiveStatus::RehydratePendingToCold);
+    ASSERT_TRUE(blobItem.Details.RehydratePriority.HasValue());
+    EXPECT_EQ(
+        blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
+  }
+
   TEST_F(BlockBlobClientTest, SetTierCold)
   {
     m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Cold);
