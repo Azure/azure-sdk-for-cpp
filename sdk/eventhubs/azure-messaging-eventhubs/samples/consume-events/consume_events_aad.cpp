@@ -1,14 +1,21 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Minimal sample showing how to create an Event Hubs producer using a connection string retrieved
-// from the Azure portal.
+// Minimal sample showing how to create an Event Hubs event consumer using AAD credentials and then
+// consume events from an EventHub partition.
 
 // This sample expects that the following environment variables exist:
 // * EVENTHUBS_HOST - contains the host name of to a specific Event Hubs instance.
 // * EVENTHUB_NAME - the name of the Event Hub instance.
 //
 // Both of these should be available from the Azure portal.
+//
+// In addition, the following environment variables are required to authenticate the request using
+// Azure::Identity::EnvironmentCredential:
+// * AZURE_TENANT_ID - contains the tenant id used to authenticate the request.
+// * AZURE_CLIENT_ID - contains the client id used to authenticate the request.
+// * AZURE_CLIENT_SECRET - contains the client secret used to authenticate the request.
+
 //
 
 #include <azure/identity/environment_credential.hpp>
