@@ -88,8 +88,14 @@ namespace Azure { namespace Storage { namespace Test {
       // List max result
       Files::Shares::ListSharesOptions options;
       options.PageSizeHint = 2;
-      auto response = m_shareServiceClient->ListShares(options);
-      EXPECT_LE(2U, response.Shares.size());
+      int numPages = 0;
+      for (auto page = m_shareServiceClient->ListShares(options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Shares.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
     }
     for (const auto& shareName : shareSet1)
     {
