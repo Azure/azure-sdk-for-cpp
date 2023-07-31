@@ -10,8 +10,7 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {
-};
+class EventDataTest : public EventHubsTestBase {};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
@@ -71,7 +70,21 @@ TEST_F(EventDataTest, EventData1)
   EXPECT_EQ(eventData.Body, static_cast<std::vector<uint8_t>>(message.GetBodyAsBinary()[0]));
   EXPECT_EQ("ct", message.Properties.ContentType.Value());
   EXPECT_EQ(AmqpValue("ci"), message.Properties.CorrelationId.Value());
+  EXPECT_TRUE(message.Properties.MessageId.HasValue());
+}
+
+TEST_F(EventDataTest, EventDataStringBody)
+{
+  Azure::Messaging::EventHubs::Models::EventData eventData{"String Body Message."};
+
+  auto message
+      = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
   EXPECT_FALSE(message.Properties.MessageId.HasValue());
+  EXPECT_EQ(message.BodyType, Azure::Core::Amqp::Models::MessageBodyType::Data);
+  EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
+  EXPECT_EQ(
+      message.GetBodyAsBinary()[0],
+      std::vector<uint8_t>(eventData.Body.begin(), eventData.Body.end()));
 }
 
 TEST_F(EventDataTest, EventDataBodyTest)
@@ -88,4 +101,33 @@ TEST_F(EventDataTest, EventDataBodyTest)
     EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
     EXPECT_EQ(msg.Body, static_cast<std::vector<uint8_t>>(message.GetBodyAsBinary()[0]));
   }
+}
+
+TEST_F(EventDataTest, EventDataArrayBody)
+{
+  Azure::Messaging::EventHubs::Models::EventData eventData{1, 3, 5, 7, 9};
+
+  auto message
+      = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
+  EXPECT_FALSE(message.Properties.MessageId.HasValue());
+  EXPECT_EQ(message.BodyType, Azure::Core::Amqp::Models::MessageBodyType::Data);
+  EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
+  EXPECT_EQ(
+      message.GetBodyAsBinary()[0],
+      std::vector<uint8_t>(eventData.Body.begin(), eventData.Body.end()));
+}
+
+TEST_F(EventDataTest, EventDataVectorBody)
+{
+  std::vector<uint8_t> vector{2, 4, 6, 8, 10};
+  Azure::Messaging::EventHubs::Models::EventData eventData{vector};
+
+  auto message
+      = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
+  EXPECT_FALSE(message.Properties.MessageId.HasValue());
+  EXPECT_EQ(message.BodyType, Azure::Core::Amqp::Models::MessageBodyType::Data);
+  EXPECT_EQ(message.GetBodyAsBinary().size(), 1ul);
+  EXPECT_EQ(
+      message.GetBodyAsBinary()[0],
+      std::vector<uint8_t>(eventData.Body.begin(), eventData.Body.end()));
 }
