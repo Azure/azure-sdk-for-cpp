@@ -125,8 +125,14 @@ namespace Azure { namespace Storage { namespace Test {
       // List max result
       Files::DataLake::ListFileSystemsOptions options;
       options.PageSizeHint = 2;
-      auto response = m_dataLakeServiceClient->ListFileSystems(options);
-      EXPECT_LE(2U, response.FileSystems.size());
+      int numPages = 0;
+      for (auto page = m_dataLakeServiceClient->ListFileSystems(options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.FileSystems.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
     }
     for (const auto& fsName : filesystemSet1)
     {

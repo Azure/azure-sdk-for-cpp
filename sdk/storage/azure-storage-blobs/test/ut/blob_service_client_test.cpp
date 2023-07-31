@@ -100,11 +100,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Azure::Storage::Blobs::ListBlobContainersOptions options;
-    options.PageSizeHint = 4;
+    options.PageSizeHint = 3;
     std::set<std::string> listContainers;
+    int numPages = 0;
     for (auto pageResult = serviceClient.ListBlobContainers(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
+      ++numPages;
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(
@@ -115,6 +117,7 @@ namespace Azure { namespace Storage { namespace Test {
         listContainers.insert(container.Name);
       }
     }
+    EXPECT_GT(numPages, 2);
     EXPECT_TRUE(std::includes(
         listContainers.begin(),
         listContainers.end(),

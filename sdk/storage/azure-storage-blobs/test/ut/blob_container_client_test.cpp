@@ -205,11 +205,13 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Azure::Storage::Blobs::ListBlobsOptions options;
-    options.PageSizeHint = 4;
+    options.PageSizeHint = 3;
     std::set<std::string> listBlobs;
+    int numPages = 0;
     for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
+      ++numPages;
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(
@@ -254,6 +256,7 @@ namespace Azure { namespace Storage { namespace Test {
         listBlobs.insert(blob.Name);
       }
     }
+    EXPECT_GT(numPages, 2);
     EXPECT_TRUE(
         std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
@@ -312,10 +315,13 @@ namespace Azure { namespace Storage { namespace Test {
     for (const auto& p : {prefix1, prefix2})
     {
       options.Prefix = p + delimiter;
+      options.PageSizeHint = 1;
+      int numPages = 0;
       for (auto pageResult = containerClient.ListBlobsByHierarchy(delimiter, options);
            pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
+        ++numPages;
         EXPECT_EQ(pageResult.Delimiter, delimiter);
         EXPECT_EQ(pageResult.Prefix, options.Prefix.Value());
         EXPECT_TRUE(pageResult.BlobPrefixes.empty());
@@ -324,6 +330,7 @@ namespace Azure { namespace Storage { namespace Test {
           items.emplace(i.Name);
         }
       }
+      EXPECT_GT(numPages, 2);
     }
     EXPECT_EQ(items, blobs);
   }

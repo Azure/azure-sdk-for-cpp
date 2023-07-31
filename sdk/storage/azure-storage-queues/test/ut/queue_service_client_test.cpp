@@ -83,6 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Queues::ListQueuesOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listQueues;
+    int numPages = 0;
     for (auto pageResult = m_queueServiceClient->ListQueues(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
@@ -95,7 +96,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         listQueues.insert(q.Name);
       }
+      ++numPages;
     }
+    EXPECT_GT(numPages, 2);
     EXPECT_TRUE(
         std::includes(listQueues.begin(), listQueues.end(), p1p2Queues.begin(), p1p2Queues.end()));
 
