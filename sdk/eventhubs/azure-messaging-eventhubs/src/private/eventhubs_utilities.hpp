@@ -17,7 +17,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
-  class EventHubUtilities {
+  class EventHubsUtilities {
 
   public:
     template <typename T> static void SetUserAgent(T& options, std::string const& applicationId)
@@ -165,6 +165,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
       return properties;
     }
-    ~EventHubUtilities() = delete;
+
+    static void LogRawBuffer(std::ostream& os, std::vector<uint8_t> const& buffer);
+    ~EventHubsUtilities() = delete;
   };
 }}}} // namespace Azure::Messaging::EventHubs::_detail

@@ -5,6 +5,11 @@
 
 #include "private/event_data_models_private.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_utilities.hpp"
+
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
@@ -15,6 +20,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     Properties = message.ApplicationProperties;
     ContentType = message.Properties.ContentType;
     CorrelationId = message.Properties.CorrelationId;
+    MessageId = message.Properties.MessageId;
 
     // If the message's body type is a single binary value, capture it in the
     // ReceivedEventData.Body. Otherwise we can't express the message body as a single value, so
@@ -83,7 +89,99 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       }
     }
   }
+
+  std::ostream& operator<<(std::ostream& os, EventData const& data)
+  {
+    os << "EventData: [" << std::endl;
+    os << "  Body: ";
+    Azure::Messaging::EventHubs::_detail::EventHubsUtilities::LogRawBuffer(os, data.Body);
+    os << std::endl;
+    if (!data.Properties.empty())
+    {
+      os << "  Properties: [";
+      for (auto const& item : data.Properties)
+      {
+        os << "    " << item.first << ": " << item.second << std::endl;
+      }
+      os << "  ]" << std::endl;
+    }
+    if (data.ContentType.HasValue())
+    {
+      os << "  ContentType: " << data.ContentType.Value() << std::endl;
+    }
+    if (data.CorrelationId.HasValue())
+    {
+      os << "  CorrelationId: " << data.CorrelationId.Value() << std::endl;
+    }
+    if (data.MessageId.HasValue())
+    {
+      os << "  MessageId: " << data.MessageId.Value() << std::endl;
+    }
+
+    os << "]" << std::endl;
+
+    return os;
+  }
+  std::ostream& operator<<(std::ostream& os, ReceivedEventData const& data)
+  {
+    os << "EventData: [" << std::endl;
+    os << "  Body: ";
+    Azure::Messaging::EventHubs::_detail::EventHubsUtilities::LogRawBuffer(os, data.Body);
+    os << std::endl;
+    if (!data.Properties.empty())
+    {
+      os << "  Properties: [";
+      for (auto const& item : data.Properties)
+      {
+        os << "    " << item.first << ": " << item.second << std::endl;
+      }
+      os << "  ]" << std::endl;
+    }
+    if (!data.SystemProperties.empty())
+    {
+      os << "  SystemProperties: [" << std::endl;
+      for (auto const& item : data.SystemProperties)
+      {
+        os << "    " << item.first << ": " << item.second << std::endl;
+      }
+      os << "  ]" << std::endl;
+    }
+    if (data.ContentType.HasValue())
+    {
+      os << "  ContentType: " << data.ContentType.Value() << std::endl;
+    }
+    if (data.CorrelationId.HasValue())
+    {
+      os << "  CorrelationId: " << data.CorrelationId.Value() << std::endl;
+    }
+    if (data.PartitionKey.HasValue())
+    {
+      os << "  PartitionKey: " << data.PartitionKey.Value() << std::endl;
+    }
+    if (data.SequenceNumber.HasValue())
+    {
+      os << "  SequenceNumber: " << data.SequenceNumber.Value() << std::endl;
+    }
+    if (data.MessageId.HasValue())
+    {
+      os << "  MessageId: " << data.MessageId.Value() << std::endl;
+    }
+    if (data.Offset.HasValue())
+    {
+      os << "  Offset: " << data.Offset.Value() << std::endl;
+    }
+    if (data.EnqueuedTime.HasValue())
+    {
+      os << "  EnqueuedTime: " << data.EnqueuedTime.Value().ToString() << std::endl;
+    }
+    os << "Raw Message" << data.RawAmqpMessage();
+    os << "]" << std::endl;
+
+    return os;
+  }
+
 }}}} // namespace Azure::Messaging::EventHubs::Models
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   Azure::Core::Amqp::Models::AmqpMessage EventDataFactory::EventDataToAmqpMessage(
@@ -92,6 +190,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     Azure::Core::Amqp::Models::AmqpMessage rv;
     rv.Properties.ContentType = eventData.ContentType;
     rv.Properties.CorrelationId = eventData.CorrelationId;
+    rv.Properties.MessageId = eventData.MessageId;
 
     rv.ApplicationProperties = eventData.Properties;
     if (!eventData.Body.empty())

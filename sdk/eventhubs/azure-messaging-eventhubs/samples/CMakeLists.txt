@@ -9,3 +9,4 @@ endif()
 
 add_subdirectory(basic-operations)
 add_subdirectory(produce-events)
+add_subdirectory(consume-events)

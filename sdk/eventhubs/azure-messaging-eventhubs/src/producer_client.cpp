@@ -61,7 +61,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
 
   // Set the UserAgent related properties on this message sender.
-  _detail::EventHubUtilities::SetUserAgent(connectOptions, m_producerClientOptions.ApplicationID);
+  _detail::EventHubsUtilities::SetUserAgent(connectOptions, m_producerClientOptions.ApplicationID);
 
   std::string hostName{m_fullyQualifiedNamespace};
   std::string targetUrl = m_targetUrl;
@@ -120,7 +120,7 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(Core::Context
     CreateSender("");
   }
 
-  return _detail::EventHubUtilities::GetEventHubsProperties(m_sessions.at(""), m_eventHub, context);
+  return _detail::EventHubsUtilities::GetEventHubsProperties(m_sessions.at(""), m_eventHub, context);
 }
 
 Azure::Messaging::EventHubs::Models::EventHubPartitionProperties
@@ -132,6 +132,6 @@ Azure::Messaging::EventHubs::ProducerClient::GetPartitionProperties(
   {
     CreateSender(partitionId);
   }
-  return _detail::EventHubUtilities::GetEventHubsPartitionProperties(
+  return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
       m_sessions.at(partitionId), m_eventHub, partitionId, context);
 }

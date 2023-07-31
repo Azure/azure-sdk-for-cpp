@@ -37,6 +37,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::map<std::string, Azure::Core::Amqp::Models::AmqpValue> Properties;
 
     EventData() = default;
+
+    /** @brief Construct a new EventData object from an initializer list of integers
+     *
+     * @param body - Body for the newly created EventData.
+     */
+    EventData(std::initializer_list<uint8_t> const& body) : Body(body) {}
+
+    /** @brief Construct a new EventData object from a vector of bytes.
+     *
+     * @param body - Body for the newly created EventData.
+     */
+    EventData(std::vector<uint8_t> const& body) : Body(body) {}
+
+    /** @brief Construct a new EventData object from a string.
+     *
+     * @param body - Body for the newly created EventData.
+     */
+    EventData(std::string const& body) : Body(body.begin(), body.end()) {}
+
     virtual ~EventData() = default;
 
     /** Copy an EventData to another.
@@ -55,6 +74,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      */
     EventData& operator=(EventData&&) = default;
   };
+  std::ostream& operator<<(std::ostream&, EventData const&);
 
   /** @brief Represents an event received from the Azure Event Hubs service.
    *
@@ -112,4 +132,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   private:
     Azure::Core::Amqp::Models::AmqpMessage const m_message;
   };
+  std::ostream& operator<<(std::ostream&, ReceivedEventData const&);
 }}}} // namespace Azure::Messaging::EventHubs::Models

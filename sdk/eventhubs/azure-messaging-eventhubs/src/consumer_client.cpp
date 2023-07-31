@@ -80,7 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     // Set the user agent related properties in the connectOptions based on the package information
     // and application ID.
-    _detail::EventHubUtilities::SetUserAgent(connectOptions, m_consumerClientOptions.ApplicationID);
+    _detail::EventHubsUtilities::SetUserAgent(connectOptions, m_consumerClientOptions.ApplicationID);
 
     Connection connection(m_hostName, m_credential, connectOptions);
     SessionOptions sessionOptions;
@@ -204,7 +204,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       client = std::make_shared<PartitionClient>(CreatePartitionClient("0"));
     }
 
-    return _detail::EventHubUtilities::GetEventHubsProperties(
+    return _detail::EventHubsUtilities::GetEventHubsProperties(
         m_sessions.at("0"), m_eventHub, context);
   }
 
@@ -217,7 +217,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       CreatePartitionClient(partitionId);
     }
 
-    return _detail::EventHubUtilities::GetEventHubsPartitionProperties(
+    return _detail::EventHubsUtilities::GetEventHubsPartitionProperties(
         m_sessions.at(partitionId), m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs
