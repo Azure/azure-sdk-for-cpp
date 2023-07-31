@@ -154,6 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     const AccessTier AccessTier::Cold("Cold");
     const ArchiveStatus ArchiveStatus::RehydratePendingToHot("rehydrate-pending-to-hot");
     const ArchiveStatus ArchiveStatus::RehydratePendingToCool("rehydrate-pending-to-cool");
+    const ArchiveStatus ArchiveStatus::RehydratePendingToCold("rehydrate-pending-to-cold");
     const RehydratePriority RehydratePriority::High("High");
     const RehydratePriority RehydratePriority::Standard("Standard");
     const ObjectReplicationStatus ObjectReplicationStatus::Complete("complete");
