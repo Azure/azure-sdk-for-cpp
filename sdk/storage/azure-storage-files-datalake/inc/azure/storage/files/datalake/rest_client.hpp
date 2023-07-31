@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2021-06-08";
+    constexpr static const char* ApiVersion = "2023-08-03";
   } // namespace _detail
   namespace Models {
     namespace _detail {
@@ -475,6 +475,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ETag IfNoneMatch;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
+        Nullable<bool> Paginated;
       };
       static Response<Models::DeletePathResult> Delete(
           Core::Http::_internal::HttpPipeline& pipeline,

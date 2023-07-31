@@ -82,11 +82,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.Flush = options.Flush;
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.LeaseAction = options.LeaseAction;
     protocolLayerOptions.ProposedLeaseId = options.LeaseId;
@@ -124,11 +126,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.LeaseAction = options.LeaseAction;
     protocolLayerOptions.ProposedLeaseId = options.LeaseId;

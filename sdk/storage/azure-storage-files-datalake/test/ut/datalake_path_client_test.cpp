@@ -6,6 +6,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <algorithm>
+#include <future>
 #include <thread>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -272,6 +273,55 @@ namespace Azure { namespace Storage { namespace Test {
       options2.AccessConditions.IfMatch = response.Value.ETag;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(httpHeaders, options2));
     }
+  }
+
+  TEST_F(DataLakePathClientTest, DISABLED_PaginationDelete)
+  {
+    // This test should be tested locally because it needs an AAD app that has no RBAC permissions
+    // to do the ACL check.
+    const std::string tenantId = AadTenantId();
+    const std::string appId = AadClientId();
+    const std::string appSecret = AadClientSecret();
+
+    // Create resource
+    std::string directoryName = RandomString();
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+    directoryClient.Create();
+    // Concurrent create 5000+ files
+    std::vector<std::future<void>> futures;
+    for (int i = 0; i < 50; ++i)
+    {
+      futures.emplace_back(std::async(std::launch::async, [&]() {
+        for (int i = 0; i < 101; ++i)
+        {
+          directoryClient.GetFileClient(RandomString()).Create();
+        }
+      }));
+    }
+    for (auto& f : futures)
+    {
+      f.get();
+    }
+
+    // Set Acls
+    auto rootDirClient = m_fileSystemClient->GetDirectoryClient("");
+    rootDirClient.SetPermissions("rwxrwxrwx");
+    auto aclResult = rootDirClient.GetAccessControlList();
+    auto acls = aclResult.Value.Acls;
+    Files::DataLake::Models::Acl acl;
+    acl.Permissions = "rwx";
+    acl.Id = appId;
+    acl.Type = "user";
+    acls.emplace_back(acl);
+    rootDirClient.SetAccessControlListRecursive(acls);
+
+    // Pagination delete
+    Files::DataLake::DataLakePathClient oauthDirectoryClient(
+        Files::DataLake::_detail::GetDfsUrlFromUrl(directoryClient.GetUrl()),
+        std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, appId, appSecret));
+    Files::DataLake::DeletePathOptions options;
+    options.Recursive = true;
+    EXPECT_NO_THROW(oauthDirectoryClient.Delete(options));
   }
 
   TEST_F(DataLakePathClientTest, PathAccessControls)

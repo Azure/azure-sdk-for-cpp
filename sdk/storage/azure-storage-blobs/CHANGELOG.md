@@ -4,11 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added `RehydratePendingToCold` value to `ArchiveStatus` enum.
 
 ## 12.8.0 (2023-07-11)
 
