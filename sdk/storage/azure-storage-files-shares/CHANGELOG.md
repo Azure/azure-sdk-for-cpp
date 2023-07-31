@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `ShareDirectoryClient::ListFilesAndDirectories` only returns the first page without ContinuationToken, even if there are more pages.
+
 ### Other Changes
 
 ## 12.6.0 (2023-07-11)

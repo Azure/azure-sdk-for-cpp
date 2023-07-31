@@ -577,6 +577,44 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(smbProperties2.ChangedOn.Value(), smbProperties.ChangedOn.Value());
   }
 
+  TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesMultiPageTest)
+  {
+    auto dirClient = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(RandomString());
+    dirClient.Create();
+    std::set<std::string> nameSet;
+    for (size_t i = 0; i < 5; ++i)
+    {
+      auto dirname = RandomString();
+      auto subdirClient = dirClient.GetSubdirectoryClient(dirname);
+      subdirClient.Create();
+      auto filename = RandomString();
+      auto fileClient = dirClient.GetFileClient(filename);
+      fileClient.Create(1024);
+      nameSet.insert(dirname);
+      nameSet.insert(filename);
+    }
+
+    Files::Shares::ListFilesAndDirectoriesOptions listOptions;
+    listOptions.PageSizeHint = 3;
+    std::set<std::string> listedNameSet;
+    int numPages = 0;
+    for (auto page = dirClient.ListFilesAndDirectories(listOptions); page.HasPage();
+         page.MoveToNextPage())
+    {
+      ++numPages;
+      for (const auto& i : page.Directories)
+      {
+        listedNameSet.insert(i.Name);
+      }
+      for (const auto& i : page.Files)
+      {
+        listedNameSet.insert(i.Name);
+      }
+    }
+    EXPECT_EQ(nameSet, listedNameSet);
+    EXPECT_GT(numPages, 1);
+  }
+
   TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesSinglePageTest)
   {
     // Setup
