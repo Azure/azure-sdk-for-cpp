@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added RehydratePendingToCold value to ArchiveStatus enum.
+- Added `RehydratePendingToCold` value to `ArchiveStatus` enum.
 
 ## 12.8.0 (2023-07-11)
 
