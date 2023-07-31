@@ -120,7 +120,8 @@ Azure::Messaging::EventHubs::ProducerClient::GetEventHubProperties(Core::Context
     CreateSender("");
   }
 
-  return _detail::EventHubsUtilities::GetEventHubsProperties(m_sessions.at(""), m_eventHub, context);
+  return _detail::EventHubsUtilities::GetEventHubsProperties(
+      m_sessions.at(""), m_eventHub, context);
 }
 
 Azure::Messaging::EventHubs::Models::EventHubPartitionProperties

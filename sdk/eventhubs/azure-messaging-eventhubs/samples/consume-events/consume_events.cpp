@@ -20,7 +20,8 @@ int main()
   std::string eventhubConnectionString{std::getenv("EVENTHUB_CONNECTION_STRING")};
   std::string eventhubName{std::getenv("EVENTHUB_NAME")};
 
-  /* Create a sample EventHubs application using a PartitionClient to read all the messages from an EventHubs instance. */
+  /* Create a sample EventHubs application using a PartitionClient to read all the messages from an
+   * EventHubs instance. */
   Azure::Messaging::EventHubs::ConsumerClient consumerClient(
       eventhubConnectionString, eventhubName);
 
@@ -35,11 +36,12 @@ int main()
   Azure::Messaging::EventHubs::PartitionClient partitionClient{
       consumerClient.CreatePartitionClient(eventhubProperties.PartitionIds[0])};
 
-  std::vector<Azure::Messaging::EventHubs::Models::ReceivedEventData> events = partitionClient.ReceiveEvents(4);
+  std::vector<Azure::Messaging::EventHubs::Models::ReceivedEventData> events
+      = partitionClient.ReceiveEvents(4);
 
   // Dump the contents of each event received.
   for (const auto& event : events)
   {
-	std::cout << "Event: " << event << std::endl;
+    std::cout << "Event: " << event << std::endl;
   }
 }

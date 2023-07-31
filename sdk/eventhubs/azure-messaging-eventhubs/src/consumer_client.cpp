@@ -80,7 +80,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     // Set the user agent related properties in the connectOptions based on the package information
     // and application ID.
-    _detail::EventHubsUtilities::SetUserAgent(connectOptions, m_consumerClientOptions.ApplicationID);
+    _detail::EventHubsUtilities::SetUserAgent(
+        connectOptions, m_consumerClientOptions.ApplicationID);
 
     Connection connection(m_hostName, m_credential, connectOptions);
     SessionOptions sessionOptions;
