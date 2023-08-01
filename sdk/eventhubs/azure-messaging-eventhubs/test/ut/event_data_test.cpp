@@ -10,8 +10,7 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {
-};
+class EventDataTest : public EventHubsTestBase {};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
@@ -64,6 +63,8 @@ TEST_F(EventDataTest, EventData1)
   eventData.CorrelationId = AmqpValue("ci");
   eventData.MessageId = AmqpValue("mi");
 
+  GTEST_LOG_(INFO) << "Message: " << eventData;
+
   auto message
       = Azure::Messaging::EventHubs::_detail::EventDataFactory::EventDataToAmqpMessage(eventData);
 
@@ -72,6 +73,26 @@ TEST_F(EventDataTest, EventData1)
   EXPECT_EQ("ct", message.Properties.ContentType.Value());
   EXPECT_EQ(AmqpValue("ci"), message.Properties.CorrelationId.Value());
   EXPECT_TRUE(message.Properties.MessageId.HasValue());
+
+  Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+  EXPECT_EQ(eventData.Body, receivedEventData.Body);
+  EXPECT_EQ(eventData.ContentType.HasValue(), receivedEventData.ContentType.HasValue());
+  if (eventData.ContentType.HasValue())
+  {
+    EXPECT_EQ(eventData.ContentType.Value(), receivedEventData.ContentType.Value());
+  }
+  EXPECT_EQ(eventData.Properties, receivedEventData.Properties);
+  EXPECT_EQ(eventData.CorrelationId.HasValue(), receivedEventData.CorrelationId.HasValue());
+  if (eventData.CorrelationId.HasValue())
+  {
+    EXPECT_EQ(eventData.CorrelationId.Value(), receivedEventData.CorrelationId.Value());
+  }
+  EXPECT_EQ(eventData.MessageId.HasValue(), receivedEventData.MessageId.HasValue());
+  if (eventData.MessageId.HasValue())
+  {
+    EXPECT_EQ(eventData.MessageId.Value(), receivedEventData.MessageId.Value());
+  }
+  GTEST_LOG_(INFO) << "Received message: " << receivedEventData;
 }
 
 TEST_F(EventDataTest, EventDataStringBody)
