@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Minimal sample showing how to create an Event Hubs producer using a connection string retrieved
+// Minimal sample showing how to create an Event Hubs consumer using a connection string retrieved
 // from the Azure portal.
 
 // This sample expects that the following environment variables exist:
