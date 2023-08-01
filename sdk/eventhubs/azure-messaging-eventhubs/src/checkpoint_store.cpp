@@ -105,7 +105,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::CreateCheckpointBlobMetadata(
 }
 
 std::vector<Ownership> Azure::Messaging::EventHubs::BlobCheckpointStore::ClaimOwnership(
-    std::vector<Ownership> partitionOwnership,
+    std::vector<Ownership> const& partitionOwnership,
     Core::Context const& context)
 {
   std::vector<Ownership> newOwnerships;

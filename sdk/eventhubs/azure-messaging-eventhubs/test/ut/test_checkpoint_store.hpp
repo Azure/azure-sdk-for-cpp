@@ -58,12 +58,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     std::vector<Azure::Messaging::EventHubs::Models::Ownership> ClaimOwnership(
-        std::vector<Models::Ownership> partitionOwnership,
+        std::vector<Models::Ownership> const& partitionOwnership,
         Core::Context const& context = {}) override
     {
       (void)context;
       std::vector<Models::Ownership> owned;
-      for (auto& ownership : partitionOwnership)
+      for (auto const& ownership : partitionOwnership)
       {
         Azure::Messaging::EventHubs::Models::Ownership newOwnership = UpdateOwnership(ownership);
         if (newOwnership.ETag.HasValue())
@@ -75,7 +75,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     Azure::Messaging::EventHubs::Models::Ownership UpdateOwnership(
-        Azure::Messaging::EventHubs::Models::Ownership ownership)
+        Azure::Messaging::EventHubs::Models::Ownership const& ownership)
     {
       if (ownership.ConsumerGroup.empty() || ownership.EventHubName.empty()
           || ownership.FullyQualifiedNamespace.empty() || ownership.PartitionId.empty())

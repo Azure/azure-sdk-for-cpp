@@ -17,8 +17,17 @@
 
 int main()
 {
-  std::string eventhubConnectionString{std::getenv("EVENTHUB_CONNECTION_STRING")};
-  std::string eventhubName{std::getenv("EVENTHUB_NAME")};
+  char* const eventhubConnectionString{std::getenv("EVENTHUB_CONNECTION_STRING")};
+  char* const eventhubName{std::getenv("EVENTHUB_NAME")};
+  if (eventhubConnectionString == nullptr)
+  {
+    std::cerr << "Missing environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
+    return 1;
+  }
+  if (eventhubName == nullptr)
+  {
+    std::cerr << "Missing environment variable EVENTHUB_NAME" << std::endl;
+  }
 
   /* Create a sample EventHubs application using a PartitionClient to read all the messages from an
    * EventHubs instance. */

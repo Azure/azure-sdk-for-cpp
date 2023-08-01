@@ -28,17 +28,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief  Construct a CheckpointStore from another CheckpointStore.
      */
     CheckpointStore& operator=(CheckpointStore const& other) = default;
+
     /**@brief ClaimOwnership attempts to claim ownership of the partitions in partitionOwnership and
-     * returns the actual partitions that    were claimed.
+     * returns the actual partitions that were claimed.
      */
     virtual std::vector<Models::Ownership> ClaimOwnership(
-        std::vector<Models::Ownership> partitionOwnership,
+        std::vector<Models::Ownership> const& partitionOwnership,
         Core::Context const& context = {})
-    {
-      (void)partitionOwnership;
-      (void)context;
-      throw std::runtime_error("Not Implemented");
-    }
+        = 0;
 
     /**@brief  ListCheckpoints lists all the available checkpoints.
      */
@@ -47,13 +44,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& eventHubName,
         std::string const& consumerGroup,
         Core::Context const& context = {})
-    {
-      (void)fullyQualifiedNamespace;
-      (void)consumerGroup;
-      (void)eventHubName;
-      (void)context;
-      throw std::runtime_error("Not Implemented");
-    }
+        = 0;
 
     /**@brief  ListOwnership lists all ownerships.
      */
@@ -62,24 +53,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& eventHubName,
         std::string const& consumerGroup,
         Core::Context const& context = {})
-    {
-      (void)fullyQualifiedNamespace;
-      (void)eventHubName;
-      (void)consumerGroup;
-      (void)context;
-      throw std::runtime_error("Not Implemented");
-    }
+        = 0;
 
     /**@brief  UpdateCheckpoint updates a specific checkpoint with a sequence and offset.
      */
     virtual void UpdateCheckpoint(
         Models::Checkpoint const& checkpoint,
         Core::Context const& context = {})
-    {
-      (void)checkpoint;
-      (void)context;
-      throw std::runtime_error("Not Implemented");
-    }
+        = 0;
 
     virtual ~CheckpointStore() = default;
   };
@@ -138,7 +119,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     std::vector<Models::Ownership> ClaimOwnership(
-        std::vector<Models::Ownership> partitionOwnership,
+        std::vector<Models::Ownership> const& partitionOwnership,
         Core::Context const& context = {}) override;
 
     std::vector<Models::Checkpoint> ListCheckpoints(
