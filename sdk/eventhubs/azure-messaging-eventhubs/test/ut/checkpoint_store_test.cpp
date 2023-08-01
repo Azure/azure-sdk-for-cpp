@@ -16,9 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     virtual void SetUp() override
     {
       EventHubsTestBase::SetUp();
-      m_blobClientOptions
-          = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-
+      m_blobClientOptions = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
     }
 
   protected:
@@ -36,11 +34,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return name;
     }
 
-
-	Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
-
+    Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
   };
-
 
   TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
@@ -48,7 +43,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
         Azure::Core::_internal::Environment::GetVariable(
             "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName, m_blobClientOptions);
+        testName,
+        m_blobClientOptions);
 
     auto checkpoints = checkpointStore.ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
@@ -100,7 +96,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
         Azure::Core::_internal::Environment::GetVariable(
             "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName, m_blobClientOptions);
+        testName,
+        m_blobClientOptions);
 
     auto ownerships = checkpointStore.ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");

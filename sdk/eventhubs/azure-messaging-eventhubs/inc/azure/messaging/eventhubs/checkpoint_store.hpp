@@ -127,11 +127,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     BlobCheckpointStore(
         std::string const& connectionString,
         std::string const& containerName,
-        Azure::Storage::Blobs::BlobClientOptions blobClientOptions= {})
+        Azure::Storage::Blobs::BlobClientOptions blobClientOptions = {})
         : CheckpointStore(), m_connectionString(connectionString), m_containerName(containerName),
           m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
               connectionString,
-              containerName, blobClientOptions))
+              containerName,
+              blobClientOptions))
     {
       m_containerClient.CreateIfNotExists();
     }

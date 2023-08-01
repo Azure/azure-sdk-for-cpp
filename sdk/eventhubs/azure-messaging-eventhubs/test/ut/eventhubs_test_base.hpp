@@ -7,10 +7,7 @@
 
 class EventHubsTestBase : public Azure::Core::Test::TestBase {
 public:
-  EventHubsTestBase()
-  {
-    TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR);
-  }
+  EventHubsTestBase() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
   // Create
   virtual void SetUp() override
   {
