@@ -49,6 +49,9 @@ stages:
           Value: "non-real-secret"
         - Name: AZURE_SUBSCRIPTION_ID
           Value: "non-real-sub"
+        - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+
       CMakeTestOptions:
         - Name: Default
           Value: ''
