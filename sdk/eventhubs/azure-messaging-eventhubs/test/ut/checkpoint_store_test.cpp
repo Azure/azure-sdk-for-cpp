@@ -22,16 +22,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
   protected:
+    std::string GetRandomName()
+    {
+      std::string name = "checkpoint";
+      if (m_testContext.IsLiveMode())
+      {
+        name.append(Azure::Core::Uuid::CreateUuid().ToString());
+      }
+      else
+      {
+        name.append("-recording");
+      }
+      return name;
+    }
+
+
 	Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
 
   };
 
-  std::string GetRandomName()
-  {
-    std::string name = "checkpoint";
-    name.append(Azure::Core::Uuid::CreateUuid().ToString());
-    return name;
-  }
 
   TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
