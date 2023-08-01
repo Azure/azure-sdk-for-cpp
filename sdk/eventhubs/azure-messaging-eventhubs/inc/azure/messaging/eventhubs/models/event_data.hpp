@@ -38,7 +38,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     EventData() = default;
 
-    /** @brief Construct a new EventData object from an initializer list of integers
+    /** @brief Construct a new EventData object from an initializer list of bytes
      *
      * @param body - Body for the newly created EventData.
      */

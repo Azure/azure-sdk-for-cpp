@@ -6,9 +6,19 @@
 #include <azure/core/test/test_base.hpp>
 
 class EventHubsTestBase : public Azure::Core::Test::TestBase {
+public:
+  EventHubsTestBase()
+  {
+    TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR);
+  }
   // Create
   virtual void SetUp() override
   {
     Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+  }
+  virtual void TearDown() override
+  {
+    // Make sure you call the base classes TearDown method to ensure recordings are made.
+    TestBase::TearDown();
   }
 };

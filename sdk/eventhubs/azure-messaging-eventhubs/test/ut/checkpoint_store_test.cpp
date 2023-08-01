@@ -13,6 +13,17 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   class CheckpointStoreTest : public EventHubsTestBase {
+    virtual void SetUp() override
+    {
+      EventHubsTestBase::SetUp();
+      m_blobClientOptions
+          = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+
+    }
+
+  protected:
+	Azure::Storage::Blobs::BlobClientOptions m_blobClientOptions;
+
   };
 
   std::string GetRandomName()
@@ -22,13 +33,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     return name;
   }
 
-  TEST_F(CheckpointStoreTest, TestCheckpoints_LIVEONLY_)
+  TEST_F(CheckpointStoreTest, TestCheckpoints)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
         Azure::Core::_internal::Environment::GetVariable(
             "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName);
+        testName, m_blobClientOptions);
 
     auto checkpoints = checkpointStore.ListCheckpoints(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
@@ -74,13 +85,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(102, checkpoints[0].Offset.Value());
   }
 
-  TEST_F(CheckpointStoreTest, TestOwnerships_LIVEONLY_)
+  TEST_F(CheckpointStoreTest, TestOwnerships)
   {
     std::string const testName = GetRandomName();
     Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
         Azure::Core::_internal::Environment::GetVariable(
             "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
-        testName);
+        testName, m_blobClientOptions);
 
     auto ownerships = checkpointStore.ListOwnership(
         "fully-qualified-namespace", "event-hub-name", "consumer-group");
