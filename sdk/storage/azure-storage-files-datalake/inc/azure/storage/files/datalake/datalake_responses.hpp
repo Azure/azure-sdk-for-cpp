@@ -16,6 +16,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakeServiceClient;
   class DataLakeFileSystemClient;
   class DataLakePathClient;
+  class DataLakeDirectoryClient;
 
   namespace Models {
 
@@ -828,8 +829,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   private:
     void OnNextPage(const Azure::Core::Context& context);
 
-    std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)>
-        m_onNextPageFunc;
+    std::shared_ptr<DataLakeFileSystemClient> m_fileSystemClient;
+    std::shared_ptr<DataLakeDirectoryClient> m_directoryClient;
+    bool m_recursive = false;
+    ListPathsOptions m_operationOptions;
 
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
