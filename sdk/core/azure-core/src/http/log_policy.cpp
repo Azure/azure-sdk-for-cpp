@@ -95,9 +95,7 @@ CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders = {
     "x-ms-client-request-id",
     "x-ms-request-id",
     "x-ms-return-client-request-id",
-    "x-recording-id",
-    "x-recording-upstream-base-uri",
-    "x-recording-mode"};
+};
 
 std::unique_ptr<RawResponse> LogPolicy::Send(
     Request& request,
