@@ -171,6 +171,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> rootPaths;
     rootPaths.emplace(dir1);
     rootPaths.emplace(dir2);
+    paths.emplace(dir1);
+    paths.emplace(dir2);
 
     {
       auto dirClient = m_fileSystemClient->GetDirectoryClient(dir1);
@@ -208,10 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
 
-      for (const auto& path : paths)
-      {
-        EXPECT_NE(results.find(path), results.end());
-      }
+      EXPECT_EQ(results, paths);
     }
     {
       // non-recursive
@@ -224,18 +223,20 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
 
-      for (const auto& path : rootPaths)
-      {
-        EXPECT_NE(results.find(path), results.end());
-      }
-      EXPECT_LT(results.size(), paths.size());
+      EXPECT_EQ(results, rootPaths);
     }
     {
       // List max result
       Files::DataLake::ListPathsOptions options;
       options.PageSizeHint = 2;
-      auto response = m_fileSystemClient->ListPaths(true, options);
-      EXPECT_LE(2U, response.Paths.size());
+      int numPages = 0;
+      for (auto page = m_fileSystemClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Paths.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
     }
   }
 
@@ -771,12 +772,15 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListDeletedPathsOptions options;
       options.PageSizeHint = 1;
       std::vector<Files::DataLake::Models::PathDeletedItem> paths;
+      int numPages = 0;
       for (auto pageResult = m_fileSystemClient->ListDeletedPaths(options); pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
+        ++numPages;
         paths.insert(paths.end(), pageResult.DeletedPaths.begin(), pageResult.DeletedPaths.end());
         EXPECT_LE(pageResult.DeletedPaths.size(), 1);
       }
+      EXPECT_GT(numPages, 1);
       EXPECT_EQ(2, paths.size());
     }
     // prefix works

@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `DataLakeDirectoryClient::ListPaths` and `DataLakeFileSystemClient::ListPaths` cannot list the second page and always fail with `std::bad_function_call`.
+- Fixed a bug where `DataLakePathClient::SetAccessControlListRecursive` crashes when operating on the second page.
+
 ### Other Changes
 
 ## 12.7.0 (2023-07-11)

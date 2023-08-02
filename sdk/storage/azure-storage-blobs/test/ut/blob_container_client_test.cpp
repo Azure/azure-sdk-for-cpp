@@ -882,16 +882,22 @@ namespace Azure { namespace Storage { namespace Test {
         = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
     std::vector<std::string> findResults;
     std::vector<std::string> findResults2;
+    int numPages1 = 0;
+    int numPages2 = 0;
     for (int i = 0; i < 30; ++i)
     {
+      numPages1 = 0;
+      numPages2 = 0;
       findResults.clear();
       findResults2.clear();
       Blobs::FindBlobsByTagsOptions findOptions;
       findOptions.PageSizeHint = 2;
 
-      for (auto pageResult = containerClient.FindBlobsByTags(whereExpression); pageResult.HasPage();
+      for (auto pageResult = containerClient.FindBlobsByTags(whereExpression, findOptions);
+           pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
+        ++numPages1;
         EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
         for (auto& item : pageResult.TaggedBlobs)
         {
@@ -901,10 +907,12 @@ namespace Azure { namespace Storage { namespace Test {
           findResults2.emplace_back(item.BlobName);
         }
       }
-      for (auto pageResult = m_blobContainerClient->FindBlobsByTags(whereExpression);
+
+      for (auto pageResult = m_blobServiceClient->FindBlobsByTags(whereExpression, findOptions);
            pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
+        ++numPages2;
         EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
         for (auto& item : pageResult.TaggedBlobs)
         {
@@ -914,7 +922,6 @@ namespace Azure { namespace Storage { namespace Test {
           findResults.emplace_back(item.BlobName);
         }
       }
-
       if (findResults.size() != blobNames.size() || findResults2.size() != blobNames.size())
       {
         TestSleep(1s);
@@ -924,6 +931,8 @@ namespace Azure { namespace Storage { namespace Test {
         break;
       }
     }
+    EXPECT_GT(numPages1, 2);
+    EXPECT_GT(numPages2, 2);
     EXPECT_EQ(findResults.size(), blobNames.size());
     EXPECT_EQ(findResults2.size(), blobNames.size());
     std::sort(blobNames.begin(), blobNames.end());
