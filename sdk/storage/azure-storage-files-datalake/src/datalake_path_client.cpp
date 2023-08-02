@@ -297,7 +297,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
       protocolLayerOptions.Recursive = options.Recursive;
       protocolLayerOptions.ContinuationToken = continuationToken;
-      protocolLayerOptions.Paginated = paginated;
+      if (options.Recursive.HasValue())
+      {
+        protocolLayerOptions.Paginated = paginated;
+      }
       auto response
           = _detail::PathClient::Delete(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
       continuationToken = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(

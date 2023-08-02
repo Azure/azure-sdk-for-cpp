@@ -24,6 +24,17 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileSystemClient->GetDirectoryClient(m_directoryName).Create();
   }
 
+  namespace {
+    bool CompareDirectoryMetadata(const Storage::Metadata& lhs, const Storage::Metadata& rhs)
+    {
+      std::vector<std::pair<std::string, std::string>> symmetricDiff;
+      std::set_symmetric_difference(
+          lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::back_inserter(symmetricDiff));
+      return symmetricDiff.empty()
+          || (symmetricDiff.size() == 1 && symmetricDiff[0].first == "hdi_isfolder");
+    }
+  } // namespace
+
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteDirectory)
   {
     const std::string baseName = RandomString();
@@ -344,10 +355,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
       auto result = m_directoryClient->GetProperties().Value.Metadata;
-      EXPECT_EQ(metadata1, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata1, result));
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
       result = m_directoryClient->GetProperties().Value.Metadata;
-      EXPECT_EQ(metadata2, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata2, result));
     }
 
     {
@@ -363,13 +374,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
       auto result = client1.GetProperties().Value.Metadata;
-      /* cspell:disable-next-line */
-      metadata1["hdi_isfolder"] = "true";
-      /* cspell:disable-next-line */
-      metadata2["hdi_isfolder"] = "true";
-      EXPECT_EQ(metadata1, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata1, result));
       result = client2.GetProperties().Value.Metadata;
-      EXPECT_EQ(metadata2, result);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata2, result));
     }
   }
 
@@ -381,10 +388,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata1));
       auto result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata1, result.Value.Metadata);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata1, result.Value.Metadata));
       EXPECT_NO_THROW(m_directoryClient->SetMetadata(metadata2));
       result = m_directoryClient->GetProperties();
-      EXPECT_EQ(metadata2, result.Value.Metadata);
+      EXPECT_TRUE(CompareDirectoryMetadata(metadata2, result.Value.Metadata));
     }
 
     {

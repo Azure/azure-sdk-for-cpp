@@ -100,7 +100,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       *this = m_directoryClient->ListPaths(m_recursive, m_operationOptions, context);
     }
-    AZURE_UNREACHABLE_CODE();
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
   }
 
   void ListDeletedPathsPagedResponse::OnNextPage(const Azure::Core::Context& context)
