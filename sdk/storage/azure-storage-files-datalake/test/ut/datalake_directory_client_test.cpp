@@ -442,7 +442,8 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursiveMultiPage) {
+  TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursiveMultiPage)
+  {
     auto dirClient = m_fileSystemClient->GetDirectoryClient(RandomString());
     for (int i = 0; i < 5; ++i)
     {
