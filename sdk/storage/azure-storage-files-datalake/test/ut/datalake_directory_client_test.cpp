@@ -442,6 +442,25 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursiveMultiPage) {
+    auto dirClient = m_fileSystemClient->GetDirectoryClient(RandomString());
+    for (int i = 0; i < 5; ++i)
+    {
+      auto fileClient = dirClient.GetFileClient(RandomString());
+      fileClient.Create();
+    }
+    auto acls = GetAclsForTesting();
+    Files::DataLake::SetPathAccessControlListRecursiveOptions options;
+    options.PageSizeHint = 2;
+    int numPages = 0;
+    for (auto page = dirClient.SetAccessControlListRecursive(acls, options); page.HasPage();
+         page.MoveToNextPage())
+    {
+      ++numPages;
+    }
+    EXPECT_GT(numPages, 2);
+  }
+
   TEST_F(DataLakeDirectoryClientTest, DirectoryAccessControlRecursive)
   {
     // Setup directories.

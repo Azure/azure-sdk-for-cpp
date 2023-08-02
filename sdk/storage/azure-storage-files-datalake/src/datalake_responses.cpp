@@ -131,7 +131,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       *this = m_dataLakePathClient->RemoveAccessControlListRecursive(
           m_acls, m_operationOptions, context);
     }
-    AZURE_UNREACHABLE_CODE();
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake
