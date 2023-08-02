@@ -31,7 +31,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_eventHub = sasCredential->GetEntityPath();
     }
     m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace+ "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
+    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/"
+        + m_consumerGroup;
   }
 
   ConsumerClient::ConsumerClient(
@@ -40,10 +41,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
-      : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
-        m_credential{credential}, m_consumerClientOptions(options)
+      : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
+        m_consumerGroup{consumerGroup}, m_credential{credential}, m_consumerClientOptions(options)
   {
-    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
+    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/"
+        + m_consumerGroup;
   }
 
   namespace {

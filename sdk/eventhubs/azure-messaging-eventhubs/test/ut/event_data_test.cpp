@@ -10,7 +10,8 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {};
+class EventDataTest : public EventHubsTestBase {
+};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
@@ -170,7 +171,8 @@ TEST_F(EventDataTest, ReceivedEventData)
   {
     Azure::Core::Amqp::Models::AmqpMessage message;
 
-    Azure::DateTime timeNow{std::chrono::time_point_cast<std::chrono::milliseconds>(Azure::DateTime::clock::now())};
+    Azure::DateTime timeNow{
+        std::chrono::time_point_cast<std::chrono::milliseconds>(Azure::DateTime::clock::now())};
 
     GTEST_LOG_(INFO) << "timeNow: " << timeNow.ToString();
 

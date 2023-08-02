@@ -10,7 +10,8 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
-  /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient function.
+  /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
+   * function.
    */
   struct PartitionClientOptions final
   {
