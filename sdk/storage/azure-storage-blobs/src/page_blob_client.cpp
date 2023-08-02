@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthentication;
+    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     return _detail::PageBlobClient::UploadPagesFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }

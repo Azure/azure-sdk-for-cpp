@@ -591,7 +591,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional. Source authentication used to access the source blob.
      */
-    Azure::Nullable<std::string> SourceAuthentication;
+    Azure::Nullable<std::string> SourceAuthorization;
   };
 
   /**
@@ -962,7 +962,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional. Source authentication used to access the source blob.
      */
-    Azure::Nullable<std::string> SourceAuthentication;
+    Azure::Nullable<std::string> SourceAuthorization;
   };
 
   /**
@@ -1015,7 +1015,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional. Source authentication used to access the source blob.
      */
-    Azure::Nullable<std::string> SourceAuthentication;
+    Azure::Nullable<std::string> SourceAuthorization;
   };
 
   /**
@@ -1305,7 +1305,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional. Source authentication used to access the source blob.
      */
-    Azure::Nullable<std::string> SourceAuthentication;
+    Azure::Nullable<std::string> SourceAuthorization;
   };
 
   /**
@@ -1413,7 +1413,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional. Source authentication used to access the source blob.
      */
-    Azure::Nullable<std::string> SourceAuthentication;
+    Azure::Nullable<std::string> SourceAuthorization;
   };
 
   /**

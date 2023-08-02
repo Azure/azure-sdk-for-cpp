@@ -369,7 +369,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto destBlobClient = GetAppendBlobClientForTest(RandomString());
     EXPECT_NO_THROW(destBlobClient.Create());
     Storage::Blobs::AppendBlockFromUriOptions options;
-    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
     EXPECT_NO_THROW(destBlobClient.AppendBlockFromUri(sourceBlobClient.GetUrl(), options));
     auto properties = destBlobClient.GetProperties().Value;
     EXPECT_EQ(blobContent.size(), properties.BlobSize);

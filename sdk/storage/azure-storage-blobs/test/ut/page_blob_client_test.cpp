@@ -211,7 +211,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::UploadPagesFromUriOptions options;
-    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
     pageBlobClient2.UploadPagesFromUri(
         0, pageBlobClient.GetUrl(), {0, static_cast<int64_t>(m_blobContent.size())}, options);
     EXPECT_EQ(

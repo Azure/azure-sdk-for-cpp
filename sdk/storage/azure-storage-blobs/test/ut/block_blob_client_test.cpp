@@ -412,7 +412,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto destBlobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
 
     Storage::Blobs::CopyBlobFromUriOptions options;
-    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
     auto res = destBlobClient.CopyFromUri(sourceBlobClient.GetUrl(), options);
     EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_TRUE(res.Value.ETag.HasValue());
@@ -753,7 +753,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::StageBlockFromUriOptions options;
-    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
 
     destClient.StageBlockFromUri(blockId1, srcBlobClient.GetUrl() + GetSas());
     Blobs::GetBlockListOptions options2;
@@ -1375,7 +1375,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::UploadBlockBlobFromUriOptions options;
-    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
     auto destBlobClient = GetBlockBlobClientForTest(RandomString() + "dest");
     auto uploadFromUriResult = destBlobClient.UploadFromUri(srcBlobClient.GetUrl(), options);
     EXPECT_TRUE(uploadFromUriResult.Value.ETag.HasValue());

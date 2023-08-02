@@ -1056,7 +1056,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
 
     Files::Shares::UploadFileRangeFromUriOptions options;
-    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
     Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
     EXPECT_NO_THROW(
         uploadResult

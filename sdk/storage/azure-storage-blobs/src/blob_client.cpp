@@ -648,7 +648,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
     protocolLayerOptions.CopySource = sourceUri;
-    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthentication;
+    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     protocolLayerOptions.Tier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;

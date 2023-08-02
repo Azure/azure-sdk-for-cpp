@@ -725,7 +725,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Optional. Source authentication used to access the source file.
      */
-    Azure::Nullable<std::string> SourceAuthentication;
+    Azure::Nullable<std::string> SourceAuthorization;
   };
 
   /**
