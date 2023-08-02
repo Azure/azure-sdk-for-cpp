@@ -14,9 +14,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   EventData::EventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
       : // Promote the specific message properties into ReceivedEventData.
-        Properties{message.ApplicationProperties}, ContentType{message.Properties.ContentType},
+        ContentType{message.Properties.ContentType},
         CorrelationId{message.Properties.CorrelationId}, MessageId{message.Properties.MessageId},
-        m_message{message}
+        Properties{message.ApplicationProperties}, m_message{message}
   {
     // If the message's body type is a single binary value, capture it in the
     // EventData.Body. Otherwise we can't express the message body as a single value, so
