@@ -349,4 +349,30 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(appendBlobClient.Download().Value.BodyStream), blockContent);
   }
 
+  TEST_F(AppendBlobClientTest, OAuthAppendBlockFromUri_LIVEONLY_)
+  {
+    const std::vector<uint8_t> blobContent = RandomBuffer(10);
+    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+
+    auto sourceBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+    sourceBlobClient.Upload(contentStream);
+
+    Azure::Identity::ClientSecretCredential oauthCredential(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        Azure::Identity::ClientSecretCredentialOptions());
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    auto destBlobClient = GetAppendBlobClientForTest(RandomString());
+    EXPECT_NO_THROW(destBlobClient.Create());
+    Storage::Blobs::AppendBlockFromUriOptions options;
+    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    EXPECT_NO_THROW(destBlobClient.AppendBlockFromUri(sourceBlobClient.GetUrl(), options));
+    auto properties = destBlobClient.GetProperties().Value;
+    EXPECT_EQ(blobContent.size(), properties.BlobSize);
+  }
+
 }}} // namespace Azure::Storage::Test
