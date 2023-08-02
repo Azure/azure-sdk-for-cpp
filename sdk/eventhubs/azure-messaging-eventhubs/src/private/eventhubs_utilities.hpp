@@ -16,6 +16,42 @@
 #include <chrono>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+  class EventHubsExceptionFactory {
+  public:
+    /**
+     * @brief Constructs a #EventHubsException with a message, an error condition, and an HTTP
+     * status code.
+     *
+     * This constructor is primarily intended for use by the EventHubs Properties events, which
+     * report their status using HTTP status codes.
+     *
+     * @param error The AMQP error indicating the error.
+     * @param statusCode The HTTP status code associated with the error.
+     */
+    static EventHubsException CreateEventHubsException(
+        Azure::Core::Amqp::Models::_internal::AmqpError const& error,
+        std::uint32_t statusCode)
+    {
+      EventHubsException rv(error.Description);
+      rv.ErrorCondition = error.Condition.ToString();
+      rv.ErrorDescription = error.Description;
+      rv.StatusCode = statusCode;
+      return rv;
+    }
+    /**
+     * @brief Constructs a #EventHubsException with an error condition.
+     *
+     * @param error The AMQP Error indicating the error.
+     */
+    static EventHubsException CreateEventHubsException(
+        Azure::Core::Amqp::Models::_internal::AmqpError const& error)
+    {
+      EventHubsException rv(error.Description);
+      rv.ErrorCondition = error.Condition.ToString();
+      rv.ErrorDescription = error.Description;
+      return rv;
+    }
+  };
 
   class EventHubsUtilities {
 
@@ -70,7 +106,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Models::EventHubProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
-        throw EventHubsException(result.Error, result.StatusCode);
+        throw _detail::EventHubsExceptionFactory::CreateEventHubsException(
+            result.Error, result.StatusCode);
       }
       else
       {
@@ -134,7 +171,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Models::EventHubPartitionProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
-        throw EventHubsException(result.Error, result.StatusCode);
+        throw _detail::EventHubsExceptionFactory::CreateEventHubsException(
+            result.Error, result.StatusCode);
       }
       else
       {
@@ -169,4 +207,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     static void LogRawBuffer(std::ostream& os, std::vector<uint8_t> const& buffer);
     ~EventHubsUtilities() = delete;
   };
+
 }}}} // namespace Azure::Messaging::EventHubs::_detail

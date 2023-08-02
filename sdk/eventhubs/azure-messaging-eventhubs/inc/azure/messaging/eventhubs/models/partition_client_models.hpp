@@ -35,7 +35,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
     /**@brief Inclusive configures whether the events directly at Offset,
      * SequenceNumber or EnqueuedTime will be included (true) or excluded
-     * (false).
+     * (false). The default is false.
      */
     bool Inclusive{false};
 

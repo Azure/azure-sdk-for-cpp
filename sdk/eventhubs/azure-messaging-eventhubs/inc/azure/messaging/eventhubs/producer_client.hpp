@@ -34,14 +34,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::string Name{};
 
-    /**@brief  The source of the message.
-     */
-    Azure::Core::Amqp::Models::_internal::MessageSource MessageSource{};
-
-    /**@brief  The settle mode when sending messages.
-     */
-    Azure::Core::Amqp::_internal::SenderSettleMode SettleMode{};
-
     /**@brief  The maximum size of the message that can be sent.
      */
     Azure::Nullable<std::uint64_t> MaxMessageSize{};

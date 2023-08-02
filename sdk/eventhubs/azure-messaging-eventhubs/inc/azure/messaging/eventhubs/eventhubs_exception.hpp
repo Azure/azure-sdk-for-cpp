@@ -7,23 +7,17 @@
 
 #include <stdexcept>
 #include <string>
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+  class EventHubsExceptionFactory;
+}}}} // namespace Azure::Messaging::EventHubs::_detail
 
 namespace Azure { namespace Messaging { namespace EventHubs {
-
-  enum class EventHubsStatusCode : int32_t
-  {
-    Invalid,
-    Ok,
-    Error,
-    Timeout,
-    Cancelled,
-  };
 
   /**
    * @brief An exception thrown when an EventHubs service operation fails.
    */
-  struct EventHubsException final : std::runtime_error
-  {
+  class EventHubsException final : public std::runtime_error {
+  public:
     /**
      * @brief Constructs a #EventHubsException with a message.
      *
@@ -31,35 +25,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     explicit EventHubsException(const std::string& what)
         : std::runtime_error(what), ErrorDescription{what}
-    {
-    }
-
-    /**
-     * @brief Constructs a #EventHubsException with an error condition.
-     *
-     * @param error The AMQP Error indicating the error.
-     */
-    explicit EventHubsException(Azure::Core::Amqp::Models::_internal::AmqpError const& error)
-        : std::runtime_error(error.Description), ErrorCondition(error.Condition.ToString()),
-          ErrorDescription(error.Description)
-    {
-    }
-
-    /**
-     * @brief Constructs a #EventHubsException with a message, an error condition, and an HTTP
-     * status code.
-     *
-     * This constructor is primarily intended for use by the EventHubs Properties events, which
-     * report their status using HTTP status codes.
-     *
-     * @param error The AMQP error indicating the error.
-     * @param statusCode The HTTP status code associated with the error.
-     */
-    explicit EventHubsException(
-        Azure::Core::Amqp::Models::_internal::AmqpError const& error,
-        std::uint32_t statusCode)
-        : std::runtime_error(error.Description), ErrorCondition(error.Condition.ToString()),
-          ErrorDescription(error.Description), StatusCode(statusCode)
     {
     }
 
@@ -90,5 +55,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     Azure::Nullable<std::uint32_t> StatusCode{};
+    friend _detail::EventHubsExceptionFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs

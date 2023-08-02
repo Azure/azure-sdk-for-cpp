@@ -18,7 +18,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /** @brief EventDataBatchOptions contains optional parameters for the
    * [ProducerClient.CreateEventDataBatch] function.
    *
-   * @remark If both PartitionKey and PartitionId are nil, Event Hubs will choose an arbitrary
+   * @remark If both PartitionKey and PartitionId are empty, Event Hubs will choose an arbitrary
    * partition for any events in this [EventDataBatch].
    */
   struct EventDataBatchOptions final

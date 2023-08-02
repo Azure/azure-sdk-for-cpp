@@ -37,12 +37,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Name of the consumer client. */
     std::string Name{};
-
-    /** @brief Settle mode used for completing transactions. */
-    Azure::Core::Amqp::_internal::ReceiverSettleMode SettleMode;
-
-    /** @brief The link name of this message consumer. */
-    Azure::Core::Amqp::Models::_internal::MessageTarget MessageTarget;
   };
 
   /**

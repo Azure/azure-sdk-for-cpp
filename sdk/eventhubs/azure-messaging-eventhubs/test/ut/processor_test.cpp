@@ -26,8 +26,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ProcessorTest, LoadBalancing_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
-        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName);
+    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        Azure::Core::_internal::Environment::GetVariable(
+            "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
+        testName)};
+    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
 
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};
 
@@ -37,9 +40,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ApplicationID = "processor unit test";
 
     options.Name = "processor unittest";
-    options.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.MessageTarget = "ingress";
-    options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
         connStringNoEntityPath, eventHubName, "$Default", options);

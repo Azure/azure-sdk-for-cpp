@@ -25,11 +25,13 @@ into the Event Hubs service instance because they use [Azure::Core::Credentials:
 
 | Sample | Description |
 |--------|-------------|
-| basic-operations/create_consumer.cpp | This sample demonstrates how to create an `EventHubProducerClient` using a connection string. |
-| basic-operation/create_producer.cpp | This sample demonstrates how to create an `EventHubConsumerClient` using a connection string. |
-| basic-operations/create_consumer-aad.cpp | This sample demonstrates how to create an `EventHubProducerClient` using an Azure Active Directory account. |
-| basic-operation/create_producer_aad.cpp | This sample demonstrates how to create an `EventHubConsumerClient` using an Azure Active Directory account. |
+| basic-operations/create_producer.cpp | This sample demonstrates how to create an `EventHubProducerClient` using a connection string. |
+| basic-operation/create_consumer.cpp | This sample demonstrates how to create an `EventHubConsumerClient` using a connection string. |
+| basic-operations/create_producer-aad.cpp | This sample demonstrates how to create an `EventHubProducerClient` using an Azure Active Directory account. |
+| basic-operation/create_consumer-aad.cpp | This sample demonstrates how to create an `EventHubConsumerClient` using an Azure Active Directory account. |
 | | |
-| basic-operations/create-consumer.cpp | This sample demonstrates how to send events to an Event Hub using the `EventHubProducerClient`. |
-| basic-operation/create-producer.cpp | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient`. |
+| produce-events/produce_events.cpp | This sample demonstrates how to send events to an Event Hub using the `EventHubProducerClient`. |
+| produce-events/produce_events_aad.cpp | This sample demonstrates how to send events to an Event Hub using the `EventHubProducerClient` using an Azure Active Directory account. |
+| consume-events/consume_events.cpp | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient`. |
+| consume-events/consume_events_aad.cpp | This sample demonstrates how to receive events from an Event Hub using the `EventHubConsumerClient` using an Azure Active Directory account. |
 

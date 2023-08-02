@@ -69,9 +69,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * Storage.
    */
   class BlobCheckpointStore final : public CheckpointStore {
-
-    std::string m_connectionString;
-    std::string m_containerName;
     Azure::Storage::Blobs::BlobContainerClient m_containerClient;
 
     void UpdateCheckpointImpl(
@@ -105,15 +102,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param containerName  The name of the blob container.
      * @param blobClientOptions options for the underlying blob client.
      */
-    BlobCheckpointStore(
-        std::string const& connectionString,
-        std::string const& containerName,
-        Azure::Storage::Blobs::BlobClientOptions blobClientOptions = {})
-        : CheckpointStore(), m_connectionString(connectionString), m_containerName(containerName),
-          m_containerClient(Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-              connectionString,
-              containerName,
-              blobClientOptions))
+    BlobCheckpointStore(Azure::Storage::Blobs::BlobContainerClient const& containerClient)
+        : CheckpointStore(), m_containerClient(containerClient)
     {
       m_containerClient.CreateIfNotExists();
     }

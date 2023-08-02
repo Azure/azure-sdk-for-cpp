@@ -90,26 +90,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
-        uint32_t const& maxMessages,
-        Core::Context const& context = {})
-    {
-      std::vector<Models::ReceivedEventData> messages;
-      // bool prefetchDisabled = m_prefetchCount < 0;
-
-      while (messages.size() < maxMessages && !context.IsCancelled())
-      {
-        auto message = m_receivers[0].WaitForIncomingMessage(context);
-        if (message.first.HasValue())
-        {
-          messages.push_back(Models::ReceivedEventData{message.first.Value()});
-        }
-        else
-        {
-          throw EventHubsException(message.second);
-        }
-      }
-      return messages;
-    }
+        uint32_t maxMessages,
+        Core::Context const& context = {});
 
     /** @brief Closes the connection to the Event Hub service.
      */

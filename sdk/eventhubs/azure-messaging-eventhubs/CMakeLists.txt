@@ -93,7 +93,7 @@ set(
     src/producer_client.cpp
     src/retry_operation.cpp
     src/eventhubs_utilities.cpp
-)
+ "src/partition_client.cpp")
 
 add_library(
   azure-messaging-eventhubs

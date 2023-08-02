@@ -84,7 +84,6 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   senderOptions.Name = m_producerClientOptions.Name;
   senderOptions.EnableTrace = true;
   senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
-  senderOptions.SettleMode = m_producerClientOptions.SettleMode;
 
   Azure::Core::Amqp::_internal::MessageSender sender
       = session.CreateMessageSender(targetUrl, senderOptions, nullptr);
@@ -108,7 +107,8 @@ bool Azure::Messaging::EventHubs::ProducerClient::SendEventDataBatch(
       return true;
     }
     // Throw an exception about the error we just received.
-    throw Azure::Messaging::EventHubs::EventHubsException(std::get<1>(result));
+    throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::CreateEventHubsException(
+        std::get<1>(result));
   });
 }
 

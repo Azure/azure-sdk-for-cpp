@@ -57,9 +57,6 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
-  producerOptions.MessageSource = "ingress";
-  producerOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
-  producerOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   producerOptions.ApplicationID = "some";
 
   Azure::Core::Amqp::Models::AmqpMessage message2;
@@ -105,9 +102,6 @@ TEST_F(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
-  producerOptions.MessageSource = "ingress";
-  producerOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
-  producerOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   producerOptions.ApplicationID = "some";
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(
@@ -126,9 +120,6 @@ TEST_F(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
 
   Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
   producerOptions.Name = "sender-link";
-  producerOptions.MessageSource = "ingress";
-  producerOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
-  producerOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
   producerOptions.ApplicationID = "some";
 
   auto client = Azure::Messaging::EventHubs::ProducerClient(

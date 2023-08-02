@@ -108,12 +108,8 @@ std::string eventHubName = "<event_hub_name>";
 auto client = Azure::Messaging::EventHubs::ConsumerClient(
 	connectionString, eventHubName);
 
-Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
-// We want to consume all messages from the earliest (the default behavior is to consume new events).
-partitionOptions.StartPosition.Inclusive = true;
-partitionOptions.StartPosition.Earliest = true;
 Azure::Messaging::EventHubs::PartitionClient partitionClient
-        = client.CreatePartitionClient("1", partitionOptions);
+        = client.CreatePartitionClient("1");
 
 auto events = partitionClient.ReceiveEvents(1);
 ```
@@ -123,21 +119,9 @@ auto events = partitionClient.ReceiveEvents(1);
 
 ## Logging
 
-1. The EventHubs SDK client uses the [Azure SDK log message](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) functionality to 
+The EventHubs SDK client uses the [Azure SDK log message](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) functionality to 
 enable diagnostics.
-1. In addition to the direct traces, the [ProducerClient][producer_client] and [ConsumerClient][consumer_client] classes also support logging of the events that are being sent/received.
 
-To enable additional logging, you can enable the `VerboseLogging` client option field:
-
-```cpp
-  Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
-  producerOptions.Name = "sender-link";
-  producerOptions.MessageSource = "ingress";
-  producerOptions.ApplicationID = "My Application Name";
-
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, "eventhub", producerOptions);
-```
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
