@@ -194,6 +194,31 @@ namespace Azure { namespace Storage { namespace Test {
         pageBlobClient.Download().Value.BodyStream->ReadToEnd());
   }
 
+  TEST_F(PageBlobClientTest, OAuthUploadFromUri_LIVEONLY_)
+  {
+    auto pageBlobClient = *m_pageBlobClient;
+
+    auto pageBlobClient2 = GetPageBlobClientTestForTest(RandomString());
+    pageBlobClient2.Create(m_blobContent.size());
+
+    Azure::Identity::ClientSecretCredential oauthCredential(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        Azure::Identity::ClientSecretCredentialOptions());
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    Storage::Blobs::UploadPagesFromUriOptions options;
+    options.SourceAuthentication = "Bearer " + oauthToken.Token;
+    pageBlobClient2.UploadPagesFromUri(
+        0, pageBlobClient.GetUrl(), {0, static_cast<int64_t>(m_blobContent.size())}, options);
+    EXPECT_EQ(
+        pageBlobClient2.Download().Value.BodyStream->ReadToEnd(),
+        pageBlobClient.Download().Value.BodyStream->ReadToEnd());
+  }
+
   TEST_F(PageBlobClientTest, StartCopyIncremental)
   {
     auto pageBlobClient = *m_pageBlobClient;
