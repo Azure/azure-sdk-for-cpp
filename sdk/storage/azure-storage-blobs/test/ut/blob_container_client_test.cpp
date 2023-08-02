@@ -827,7 +827,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto containerClient = *m_blobContainerClient;
 
-    std::string blobName = "blob" + RandomString() + RandomString();
+    std::string blobName = "blob" + RandomString();
     auto blobClient = containerClient.GetAppendBlobClient(blobName);
     blobClient.Create();
 
