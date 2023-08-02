@@ -3,9 +3,13 @@
 
 #include "private/eventhubs_utilities.hpp"
 
+#include <azure/core/amqp/models/amqp_error.hpp>
+
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+
+using namespace Azure::Core::Amqp::Models::_internal;
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
   namespace {
@@ -78,5 +82,28 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         os << std::endl;
       }
     } while (count);
+  }
+
+  bool EventHubsExceptionFactory::IsErrorTransient(AmqpErrorCondition const& condition)
+  {
+    bool isTransient = false;
+    if ((condition == AmqpErrorCondition::TimeoutError)
+        || (condition == AmqpErrorCondition::ServerBusyError)
+        || (condition == AmqpErrorCondition::InternalError)
+        || (condition == AmqpErrorCondition::LinkDetachForced)
+        || (condition == AmqpErrorCondition::ConnectionForced)
+        || (condition == AmqpErrorCondition::ConnectionFramingError)
+        || (condition == AmqpErrorCondition::ProtonIo))
+    {
+      isTransient = true;
+    }
+    else if (condition == AmqpErrorCondition::NotFound)
+    {
+      // Note: Java has additional processing here, it looks for the regex:
+      // "The messaging entity .* could not be found" in the error discription and if it is
+      // found it treats the error as not transient. For now, just treat NotFound as transient.
+      isTransient = true;
+    }
+    return isTransient;
   }
 }}}} // namespace Azure::Messaging::EventHubs::_detail

@@ -16,6 +16,7 @@
 #include <chrono>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+
   class EventHubsExceptionFactory {
   public:
     /**
@@ -36,6 +37,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       rv.ErrorCondition = error.Condition.ToString();
       rv.ErrorDescription = error.Description;
       rv.StatusCode = statusCode;
+      rv.IsTransient = IsErrorTransient(error.Condition);
       return rv;
     }
     /**
@@ -49,8 +51,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       EventHubsException rv(error.Description);
       rv.ErrorCondition = error.Condition.ToString();
       rv.ErrorDescription = error.Description;
+      rv.IsTransient = IsErrorTransient(error.Condition);
       return rv;
     }
+
+  private:
+    static bool IsErrorTransient(
+        Azure::Core::Amqp::Models::_internal::AmqpErrorCondition const& condition);
   };
 
   class EventHubsUtilities {

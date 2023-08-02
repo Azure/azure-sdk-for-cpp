@@ -55,6 +55,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     Azure::Nullable<std::uint32_t> StatusCode{};
+
+    /**
+     * @brief Indicates whether the error is transient in nature.
+     *
+     * If this field is set to true, then retrying the operation may succeed at a later time.
+     *
+     */
+    bool IsTransient;
+
     friend _detail::EventHubsExceptionFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs

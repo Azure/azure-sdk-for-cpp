@@ -58,11 +58,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The name of the offset to start receiving events from.
     std::string m_offsetExpression;
 
-//    /// The level of the ownership.
-//    uint64_t m_ownerLevel;
+    //    /// The level of the ownership.
+    //    uint64_t m_ownerLevel;
 
-//    /// The number of events to prefetch at any time.
-//    int32_t m_prefetchCount;
+    //    /// The number of events to prefetch at any time.
+    //    int32_t m_prefetchCount;
 
     /// The options used to create the PartitionClient.
     PartitionClientOptions m_partitionOptions;
