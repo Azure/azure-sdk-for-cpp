@@ -27,11 +27,13 @@ namespace Azure { namespace Storage { namespace Test {
   namespace {
     bool CompareDirectoryMetadata(const Storage::Metadata& lhs, const Storage::Metadata& rhs)
     {
+      /* cspell:disable-next-line */
+      const std::string c_hdiIsFolder = "hdi_isfolder";
       std::vector<std::pair<std::string, std::string>> symmetricDiff;
       std::set_symmetric_difference(
           lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::back_inserter(symmetricDiff));
       return symmetricDiff.empty()
-          || (symmetricDiff.size() == 1 && symmetricDiff[0].first == "hdi_isfolder");
+          || (symmetricDiff.size() == 1 && symmetricDiff[0].first == c_hdiIsFolder);
     }
   } // namespace
 
