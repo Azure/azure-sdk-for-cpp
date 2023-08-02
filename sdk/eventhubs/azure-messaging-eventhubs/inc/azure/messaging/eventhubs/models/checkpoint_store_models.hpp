@@ -48,7 +48,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The event hub name.
     std::string EventHubName;
     /// @brief The fully qualified namespace for the event hub.
-    std::string EventHubHostName;
+    std::string FullyQualifiedNamespaceName;
     /// @brief The partition ID for the corresponding checkpoint.
     std::string PartitionId{};
     /// @brief The offset of the last successfully processed event.

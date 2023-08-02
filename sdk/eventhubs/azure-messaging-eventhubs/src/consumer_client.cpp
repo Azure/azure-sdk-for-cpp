@@ -30,20 +30,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       m_eventHub = sasCredential->GetEntityPath();
     }
-    m_hostName = sasCredential->GetHostName();
-    m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
+    m_fullyQualifiedNamespace = sasCredential->GetHostName();
+    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace+ "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
   }
 
   ConsumerClient::ConsumerClient(
-      std::string const& hostName,
+      std::string const& fullyQualifiedNamespace,
       std::string const& eventHub,
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
-      : m_hostName{hostName}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
+      : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
         m_credential{credential}, m_consumerClientOptions(options)
   {
-    m_hostUrl = "amqps://" + m_hostName + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
+    m_hostUrl = "amqps://" + m_fullyQualifiedNamespace + "/" + m_eventHub + "/ConsumerGroups/" + m_consumerGroup;
   }
 
   namespace {
@@ -83,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     _detail::EventHubsUtilities::SetUserAgent(
         connectOptions, m_consumerClientOptions.ApplicationID);
 
-    Connection connection(m_hostName, m_credential, connectOptions);
+    Connection connection(m_fullyQualifiedNamespace, m_credential, connectOptions);
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize = static_cast<uint32_t>(
         m_consumerClientOptions.MaxMessageSize.ValueOr(std::numeric_limits<int32_t>::max()));

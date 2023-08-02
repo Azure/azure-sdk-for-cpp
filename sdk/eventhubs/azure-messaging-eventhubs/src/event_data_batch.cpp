@@ -3,7 +3,6 @@
 
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 
-#include "private/event_data_models_private.hpp"
 #include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 
@@ -17,8 +16,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void EventDataBatch::AddMessage(Azure::Messaging::EventHubs::Models::EventData& message)
   {
-    auto amqpMessage = _detail::EventDataFactory::EventDataToAmqpMessage(message);
-    AddAmqpMessage(amqpMessage);
+    AddAmqpMessage(message.GetRawAmqpMessage());
   }
 
   Azure::Core::Amqp::Models::AmqpMessage EventDataBatch::ToAmqpMessage() const
@@ -50,7 +48,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return returnValue;
   }
 
-  void EventDataBatch::AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message)
+  void EventDataBatch::AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message)
   {
     std::lock_guard<std::mutex> lock(m_rwMutex);
 

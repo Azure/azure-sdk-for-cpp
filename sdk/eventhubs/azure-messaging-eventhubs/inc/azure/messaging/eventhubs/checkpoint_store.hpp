@@ -98,9 +98,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /**@brief  Construct a BlobCheckpointStore.
      *
-     * @param connectionString  The connection string of an Azure Storage account.
-     * @param containerName  The name of the blob container.
-     * @param blobClientOptions options for the underlying blob client.
+     * @param containerClient An Azure Blob ContainerClient used to hold the checkpoints.
      */
     BlobCheckpointStore(Azure::Storage::Blobs::BlobContainerClient const& containerClient)
         : CheckpointStore(), m_containerClient(containerClient)

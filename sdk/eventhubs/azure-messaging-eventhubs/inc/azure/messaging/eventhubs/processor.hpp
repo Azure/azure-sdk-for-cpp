@@ -244,7 +244,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Models::Checkpoint> GetCheckpointsMap(Core::Context const& context)
     {
       std::vector<Models::Checkpoint> checkpoints = m_checkpointStore->ListCheckpoints(
-          m_consumerClientDetails.HostName,
+          m_consumerClientDetails.FullyQualifiedNamespace,
           m_consumerClientDetails.EventHubName,
           m_consumerClientDetails.ConsumerGroup,
           context);

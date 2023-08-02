@@ -33,12 +33,13 @@ std::string Azure::Messaging::EventHubs::Models::Ownership::GetOwnershipPrefixNa
 
 std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobPrefixName() const
 {
-  if (EventHubHostName.empty() || EventHubName.empty() || ConsumerGroup.empty())
+  if (FullyQualifiedNamespaceName.empty() || EventHubName.empty() || ConsumerGroup.empty())
   {
     throw std::runtime_error("missing checkpoint fields");
   }
   std::stringstream strstr;
-  strstr << EventHubHostName << "/" << EventHubName << "/" << ConsumerGroup << "/checkpoint/";
+  strstr << FullyQualifiedNamespaceName << "/" << EventHubName << "/" << ConsumerGroup
+         << "/checkpoint/";
 
   return strstr.str();
 }

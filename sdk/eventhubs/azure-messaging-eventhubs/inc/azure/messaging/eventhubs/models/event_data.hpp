@@ -6,8 +6,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /** @brief Represents an event sent to the Azure Event Hubs service.
    */
-  struct EventData
-  {
+  class EventData {
+  public:
     /** @brief The body of the event data.
      */
     std::vector<uint8_t> Body;
@@ -37,6 +37,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::map<std::string, Azure::Core::Amqp::Models::AmqpValue> Properties;
 
     EventData() = default;
+
+    /** @brief Construct a new EventData object from an AMQP message.
+     *
+     * @param message - AMQP message to construct the EventData from.
+     */
+    EventData(Azure::Core::Amqp::Models::AmqpMessage const& message);
 
     /** @brief Construct a new EventData object from an initializer list of bytes
      *
@@ -73,6 +79,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** Move an EventData to another.
      */
     EventData& operator=(EventData&&) = default;
+
+    /** @brief Get the AMQP message associated with this EventData.
+     *
+     * Returns an underlying AMQP message corresponding to this EventData object.
+     *
+     * @note When this method is called on an EventData object, the returned message is
+     * constructed from the fields of the EventData object and does NOT reflect the value received
+     * from the service.
+     *
+     */
+    virtual Azure::Core::Amqp::Models::AmqpMessage const GetRawAmqpMessage() const;
   };
   std::ostream& operator<<(std::ostream&, EventData const&);
 
@@ -127,7 +144,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *
      * Returns the underlying AMQP message that was received from the Event Hubs service.
      */
-    Azure::Core::Amqp::Models::AmqpMessage const& RawAmqpMessage() const { return m_message; }
+    Azure::Core::Amqp::Models::AmqpMessage const GetRawAmqpMessage() const { return m_message; }
 
   private:
     Azure::Core::Amqp::Models::AmqpMessage const m_message;

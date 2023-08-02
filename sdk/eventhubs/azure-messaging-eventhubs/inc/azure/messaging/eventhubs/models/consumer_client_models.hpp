@@ -13,7 +13,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   {
     /**@brief The Fully Qualified Namespace that the Event Hub exists in.
      */
-    std::string HostName;
+    std::string FullyQualifiedNamespace;
 
     /**@brief The name of the consumer group that this consumer is associated with. Events will be
      * read only in the context of this group.

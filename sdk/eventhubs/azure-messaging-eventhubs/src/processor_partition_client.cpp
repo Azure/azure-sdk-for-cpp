@@ -37,7 +37,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::Checkpoint checkpoint
         = {m_consumerClientDetails.ConsumerGroup,
            m_consumerClientDetails.EventHubName,
-           m_consumerClientDetails.HostName,
+           m_consumerClientDetails.FullyQualifiedNamespace,
            m_partitionId,
            sequenceNumber,
            offsetNumber};

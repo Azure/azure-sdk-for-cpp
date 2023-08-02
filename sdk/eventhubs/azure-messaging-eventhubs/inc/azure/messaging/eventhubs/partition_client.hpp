@@ -10,7 +10,7 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
-  /**brief PartitionClientOptions provides options for the CreatePartitionClient function.
+  /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient function.
    */
   struct PartitionClientOptions final
   {
@@ -51,7 +51,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class PartitionClient final {
 
-  protected:
     /// The message receivers used to receive events from the partition.
     std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
 

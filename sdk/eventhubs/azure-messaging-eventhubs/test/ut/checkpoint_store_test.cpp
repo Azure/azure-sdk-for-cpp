@@ -66,7 +66,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
-    EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].EventHubHostName);
+    EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].FullyQualifiedNamespaceName);
     EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
     EXPECT_EQ(202, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(101, checkpoints[0].Offset.Value());
@@ -85,7 +85,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(checkpoints.size(), 1ul);
     EXPECT_EQ("$Default", checkpoints[0].ConsumerGroup);
     EXPECT_EQ("event-hub-name", checkpoints[0].EventHubName);
-    EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].EventHubHostName);
+    EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].FullyQualifiedNamespaceName);
     EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
     EXPECT_EQ(203, checkpoints[0].SequenceNumber.Value());
     EXPECT_EQ(102, checkpoints[0].Offset.Value());

@@ -63,7 +63,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
   // Set the UserAgent related properties on this message sender.
   _detail::EventHubsUtilities::SetUserAgent(connectOptions, m_producerClientOptions.ApplicationID);
 
-  std::string hostName{m_fullyQualifiedNamespace};
+  std::string fullyQualifiedNamespace{m_fullyQualifiedNamespace};
   std::string targetUrl = m_targetUrl;
 
   if (!partitionId.empty())
@@ -71,7 +71,7 @@ void Azure::Messaging::EventHubs::ProducerClient::CreateSender(std::string const
     targetUrl += "/Partitions/" + partitionId;
   }
 
-  Azure::Core::Amqp::_internal::Connection connection(hostName, m_credential, connectOptions);
+  Azure::Core::Amqp::_internal::Connection connection(fullyQualifiedNamespace, m_credential, connectOptions);
 
   Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
   sessionOptions.InitialIncomingWindowSize = std::numeric_limits<int32_t>::max();

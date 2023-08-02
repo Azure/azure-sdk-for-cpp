@@ -21,8 +21,7 @@ void ProcessMessageSuccess(Azure::Core::Amqp::Models::AmqpMessage const& message
 }
 } // namespace LocalTest
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
-  class ConsumerClientTest : public EventHubsTestBase {
-  };
+  class ConsumerClientTest : public EventHubsTestBase {};
 
   TEST_F(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
   {
@@ -46,10 +45,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroup_LIVEONLY_)
   {
-    std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
+    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringNoEntityPath, "eventhub");
-    EXPECT_EQ("hehe", client.GetEventHubName());
+    EXPECT_EQ("eventhub", client.GetEventHubName());
     EXPECT_EQ("$Default", client.GetConsumerGroup());
   }
 
@@ -83,7 +81,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = client.CreatePartitionClient("1", partitionOptions);
     auto events = partitionClient.ReceiveEvents(1);
     EXPECT_EQ(events.size(), 1ul);
-    GTEST_LOG_(INFO) << "Received message " << events[0].RawAmqpMessage();
+    GTEST_LOG_(INFO) << "Received message " << events[0].GetRawAmqpMessage();
     EXPECT_TRUE(events[0].EnqueuedTime.HasValue());
     EXPECT_TRUE(events[0].SequenceNumber.HasValue());
     EXPECT_TRUE(events[0].Offset.HasValue());

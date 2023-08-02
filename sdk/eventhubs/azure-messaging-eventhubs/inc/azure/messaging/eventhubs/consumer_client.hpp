@@ -68,18 +68,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     std::string const& GetConsumerGroup() const { return m_consumerGroup; }
 
-    /** @brief Getter FQDN
-     *
-     * @returns FQDN client
-     */
-    std::string const& GetHostName() const { return m_hostName; }
-
-    /** @brief Getter for client id
-     *
-     * @returns Clientid for client
-     */
-    std::string const& GetClientId() const { return m_consumerClientOptions.ApplicationID; }
-
     /** @brief Getter for client details
      *
      * @returns Client details for client
@@ -87,10 +75,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::ConsumerClientDetails GetDetails() const
     {
       Models::ConsumerClientDetails details;
-      details.ClientId = GetClientId();
-      details.ConsumerGroup = GetConsumerGroup();
-      details.EventHubName = GetEventHubName();
-      details.HostName = GetHostName();
+      details.ClientId = m_consumerClientOptions.ApplicationID;
+      details.ConsumerGroup = m_consumerGroup;
+      details.EventHubName = m_eventHub;
+      details.FullyQualifiedNamespace = m_fullyQualifiedNamespace;
       return details;
     }
     /** @brief Getter for retry options
@@ -172,7 +160,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_connectionString;
 
     /// the Event Hubs namespace name (ex: myeventhub.servicebus.windows.net)
-    std::string m_hostName;
+    std::string m_fullyQualifiedNamespace;
 
     /// The name of the Event Hub
     std::string m_eventHub;

@@ -3,7 +3,6 @@
 
 #include "azure/messaging/eventhubs/models/event_data.hpp"
 
-#include "private/event_data_models_private.hpp"
 #include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 
@@ -13,27 +12,27 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
-  ReceivedEventData::ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
-      : EventData(), m_message{message}
+  EventData::EventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
+      : // Promote the specific message properties into ReceivedEventData.
+        Properties{message.ApplicationProperties}, ContentType{message.Properties.ContentType},
+        CorrelationId{message.Properties.CorrelationId}, MessageId{message.Properties.MessageId}
   {
-    // Promote the specific message properties into ReceivedEventData.
-    Properties = message.ApplicationProperties;
-    ContentType = message.Properties.ContentType;
-    CorrelationId = message.Properties.CorrelationId;
-    MessageId = message.Properties.MessageId;
-
     // If the message's body type is a single binary value, capture it in the
-    // ReceivedEventData.Body. Otherwise we can't express the message body as a single value, so
-    // we'll leave ReceivedEventData.Body as null.
+    // EventData.Body. Otherwise we can't express the message body as a single value, so
+    // we'll leave EventData.Body as null.
     if (message.BodyType == Azure::Core::Amqp::Models::MessageBodyType::Data)
     {
-      auto binaryData = message.GetBodyAsBinary();
+      auto& binaryData = message.GetBodyAsBinary();
       if (binaryData.size() == 1)
       {
         Body = std::vector<uint8_t>(binaryData[0]);
       }
     }
+  }
 
+  ReceivedEventData::ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
+      : EventData(message), m_message{message}
+  {
     // Copy the message annotations into the ReceivedEventData.SystemProperties. There are 3
     // eventhubs specific annotations which are promoted in the ReceivedEventData, so promote them
     // as well.
@@ -88,6 +87,21 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
         SystemProperties.emplace(static_cast<std::string>(key), item.second);
       }
     }
+  }
+
+  Azure::Core::Amqp::Models::AmqpMessage const EventData::GetRawAmqpMessage() const
+  {
+    Azure::Core::Amqp::Models::AmqpMessage rv;
+    rv.Properties.ContentType = ContentType;
+    rv.Properties.CorrelationId = CorrelationId;
+    rv.Properties.MessageId = MessageId;
+
+    rv.ApplicationProperties = Properties;
+    if (!Body.empty())
+    {
+      rv.SetBody(Body);
+    }
+    return rv;
   }
 
   std::ostream& operator<<(std::ostream& os, EventData const& data)
@@ -174,29 +188,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       os << "  EnqueuedTime: " << data.EnqueuedTime.Value().ToString() << std::endl;
     }
-    os << "Raw Message" << data.RawAmqpMessage();
+    os << "Raw Message" << data.GetRawAmqpMessage();
     os << "]" << std::endl;
 
     return os;
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Models
-
-namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
-
-  Azure::Core::Amqp::Models::AmqpMessage EventDataFactory::EventDataToAmqpMessage(
-      Models::EventData const& eventData)
-  {
-    Azure::Core::Amqp::Models::AmqpMessage rv;
-    rv.Properties.ContentType = eventData.ContentType;
-    rv.Properties.CorrelationId = eventData.CorrelationId;
-    rv.Properties.MessageId = eventData.MessageId;
-
-    rv.ApplicationProperties = eventData.Properties;
-    if (!eventData.Body.empty())
-    {
-      rv.SetBody(eventData.Body);
-    }
-    return rv;
-  }
-}}}} // namespace Azure::Messaging::EventHubs::_detail

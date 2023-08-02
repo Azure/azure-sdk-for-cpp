@@ -84,6 +84,7 @@ set(
     src/consumer_client.cpp
     src/event_data.cpp 
     src/event_data_batch.cpp
+    src/partition_client.cpp
     src/partition_client_models.cpp
     src/private/package_version.hpp
     src/private/eventhubs_constants.hpp
@@ -93,7 +94,7 @@ set(
     src/producer_client.cpp
     src/retry_operation.cpp
     src/eventhubs_utilities.cpp
- "src/partition_client.cpp")
+)
 
 add_library(
   azure-messaging-eventhubs

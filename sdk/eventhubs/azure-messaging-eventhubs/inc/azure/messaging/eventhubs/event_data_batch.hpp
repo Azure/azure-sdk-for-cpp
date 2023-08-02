@@ -94,47 +94,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param options Options settings for creating the data batch
      */
     EventDataBatch(EventDataBatchOptions options = {})
+        : m_partitionId{options.PartitionId}, m_partitionKey{options.PartitionKey},
+          m_maxBytes{options.MaxBytes ? options.MaxBytes : std::numeric_limits<uint16_t>::max()},
+          m_marshalledMessages{}, m_batchEnvelope{}, m_currentSize{0}
     {
-      SetPartitionId(anyPartitionId);
-
       if (!options.PartitionId.empty() && !options.PartitionKey.empty())
       {
         throw std::runtime_error("Either PartionID or PartitionKey can be set, but not both.");
       }
 
-      if (!options.PartitionId.empty())
+      if (options.PartitionId.empty())
       {
-        SetPartitionId(options.PartitionId);
-      }
-      else if (!options.PartitionKey.empty())
-      {
-        SetPartitionKey(options.PartitionKey);
-      }
-
-      if (options.MaxBytes == 0)
-      {
-        SetMaxBytes(std::numeric_limits<uint16_t>::max());
-      }
-      else
-      {
-        SetMaxBytes(options.MaxBytes);
+        m_partitionId = anyPartitionId;
       }
     };
-
-    /** @brief Sets the partition id for the data batch
-     *
-     * @param partitionId The partition id to set
-     */
-    void SetPartitionId(std::string partitionId) { m_partitionId = partitionId; }
-
-    /** @brief Sets the partition key for the data batch
-     *
-     * @param partitionKey The partition key to set
-     */
-    void SetPartitionKey(std::string partitionKey) { m_partitionKey = partitionKey; }
-
-    /** @brief Sets the maximum size of the data batch */
-    void SetMaxBytes(uint64_t maxBytes) { m_maxBytes = maxBytes; }
 
     /** @brief Gets the partition ID for the data batch
      *
@@ -157,7 +130,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param message The message to add to the batch
      */
-    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage& message) { AddAmqpMessage(message); }
+    void AddMessage(Azure::Core::Amqp::Models::AmqpMessage message) { AddAmqpMessage(message); }
 
     /** @brief Adds a message to the data batch
      *
@@ -182,7 +155,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage& message);
+    void AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
