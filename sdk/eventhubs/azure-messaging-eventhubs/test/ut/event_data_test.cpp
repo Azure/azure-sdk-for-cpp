@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../src/private/eventhubs_constants.hpp"
 #include "azure/messaging/eventhubs.hpp"
 #include "eventhubs_test_base.hpp"
 
@@ -149,4 +150,134 @@ TEST_F(EventDataTest, EventDataVectorBody)
   EXPECT_EQ(
       message.GetBodyAsBinary()[0],
       std::vector<uint8_t>(eventData.Body.begin(), eventData.Body.end()));
+}
+
+TEST_F(EventDataTest, ReceivedEventData)
+{
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation})]
+        = "PartitionKey";
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    ASSERT_TRUE(receivedEventData.PartitionKey);
+    EXPECT_EQ(receivedEventData.PartitionKey.Value(), "PartitionKey");
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.Offset);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+
+    Azure::DateTime timeNow{std::chrono::time_point_cast<std::chrono::milliseconds>(Azure::DateTime::clock::now())};
+
+    GTEST_LOG_(INFO) << "timeNow: " << timeNow.ToString();
+
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::EnqueuedTimeAnnotation})]
+        = static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+            Azure::Core::Amqp::Models::AmqpTimestamp{
+                std::chrono::duration_cast<std::chrono::milliseconds>(timeNow.time_since_epoch())});
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    ASSERT_TRUE(receivedEventData.EnqueuedTime.HasValue());
+    GTEST_LOG_(INFO) << "EnqueuedTime: " << receivedEventData.EnqueuedTime.Value().ToString();
+    EXPECT_EQ(receivedEventData.EnqueuedTime.Value(), timeNow);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+    EXPECT_FALSE(receivedEventData.Offset);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+  }
+
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::SequenceNumberAnnotation})]
+        = static_cast<int64_t>(235);
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    ASSERT_TRUE(receivedEventData.SequenceNumber);
+    EXPECT_EQ(receivedEventData.SequenceNumber.Value(), 235);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+    EXPECT_FALSE(receivedEventData.Offset);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+        = 54644;
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    ASSERT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), 54644);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+        = "54644";
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    ASSERT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), 54644);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+        = static_cast<uint32_t>(53);
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    ASSERT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), 53);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+        = static_cast<int32_t>(57);
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    EXPECT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), 57);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+        = static_cast<uint64_t>(661011);
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    EXPECT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), 661011);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+  }
+  {
+    Azure::Core::Amqp::Models::AmqpMessage message;
+    message.MessageAnnotations[static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+        Azure::Core::Amqp::Models::AmqpSymbol{
+            Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation})]
+        = static_cast<int64_t>(1412612);
+    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+    EXPECT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), 1412612);
+    EXPECT_FALSE(receivedEventData.SequenceNumber);
+    EXPECT_FALSE(receivedEventData.EnqueuedTime);
+    EXPECT_FALSE(receivedEventData.PartitionKey);
+  }
 }

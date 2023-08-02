@@ -15,7 +15,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   EventData::EventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
       : // Promote the specific message properties into ReceivedEventData.
         Properties{message.ApplicationProperties}, ContentType{message.Properties.ContentType},
-        CorrelationId{message.Properties.CorrelationId}, MessageId{message.Properties.MessageId}
+        CorrelationId{message.Properties.CorrelationId}, MessageId{message.Properties.MessageId},
+        m_message{message}
   {
     // If the message's body type is a single binary value, capture it in the
     // EventData.Body. Otherwise we can't express the message body as a single value, so
@@ -31,7 +32,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
   }
 
   ReceivedEventData::ReceivedEventData(Azure::Core::Amqp::Models::AmqpMessage const& message)
-      : EventData(message), m_message{message}
+      : EventData(message)
   {
     // Copy the message annotations into the ReceivedEventData.SystemProperties. There are 3
     // eventhubs specific annotations which are promoted in the ReceivedEventData, so promote them
@@ -46,8 +47,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       auto key = item.first.AsSymbol();
       if (key == _detail::EnqueuedTimeAnnotation)
       {
-        EnqueuedTime = Azure::DateTime{std::chrono::system_clock::time_point{
-            static_cast<std::chrono::milliseconds>(item.second.AsTimestamp())}};
+        auto timePoint = static_cast<std::chrono::milliseconds>(item.second.AsTimestamp());
+        auto dateTime = Azure::DateTime{Azure::DateTime::time_point{timePoint}};
+        EnqueuedTime = dateTime;
       }
       else if (key == _detail::OffsetNumberAnnotation)
       {
@@ -91,6 +93,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   Azure::Core::Amqp::Models::AmqpMessage const EventData::GetRawAmqpMessage() const
   {
+    // If the underlying message is already populated, return it. This will typically happen when a
+    // client attempts to send a raw AMQP message.
+    if (m_message)
+    {
+      return m_message;
+    }
     Azure::Core::Amqp::Models::AmqpMessage rv;
     rv.Properties.ContentType = ContentType;
     rv.Properties.CorrelationId = CorrelationId;
