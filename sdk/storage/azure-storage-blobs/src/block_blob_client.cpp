@@ -339,6 +339,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlockBlobClient::UploadBlockBlobFromUriOptions protocolLayerOptions;
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.CopySourceBlobProperties = options.CopySourceBlobProperties;
+    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthentication;
     protocolLayerOptions.BlobContentType = options.HttpHeaders.ContentType;
     protocolLayerOptions.BlobContentEncoding = options.HttpHeaders.ContentEncoding;
     protocolLayerOptions.BlobContentLanguage = options.HttpHeaders.ContentLanguage;
@@ -458,6 +459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthentication;
     return _detail::BlockBlobClient::StageBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }

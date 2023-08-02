@@ -587,6 +587,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * in this option. Default is to replace.
      */
     Models::BlobCopySourceTagsMode CopySourceTagsMode;
+
+    /**
+     * @brief Optional. Source authentication used to access the source blob.
+     */
+    Azure::Nullable<std::string> SourceAuthentication;
   };
 
   /**
@@ -953,6 +958,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * in this option. Default is to replace.
      */
     Models::BlobCopySourceTagsMode CopySourceTagsMode;
+
+    /**
+     * @brief Optional. Source authentication used to access the source blob.
+     */
+    Azure::Nullable<std::string> SourceAuthentication;
   };
 
   /**
@@ -1001,6 +1011,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
     } SourceAccessConditions;
+
+    /**
+     * @brief Optional. Source authentication used to access the source blob.
+     */
+    Azure::Nullable<std::string> SourceAuthentication;
   };
 
   /**
@@ -1286,6 +1301,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     AppendBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Source authentication used to access the source blob.
+     */
+    Azure::Nullable<std::string> SourceAuthentication;
   };
 
   /**
@@ -1389,6 +1409,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct : public Azure::ModifiedConditions, public Azure::MatchConditions
     {
     } SourceAccessConditions;
+
+    /**
+     * @brief Optional. Source authentication used to access the source blob.
+     */
+    Azure::Nullable<std::string> SourceAuthentication;
   };
 
   /**

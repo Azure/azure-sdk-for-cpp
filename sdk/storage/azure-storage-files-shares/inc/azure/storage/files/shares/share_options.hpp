@@ -721,6 +721,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * or the last write time currently associated with the file should be preserved.
      */
     Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
+
+    /**
+     * @brief Optional. Source authentication used to access the source file.
+     */
+    Azure::Nullable<std::string> SourceAuthentication;
   };
 
   /**
