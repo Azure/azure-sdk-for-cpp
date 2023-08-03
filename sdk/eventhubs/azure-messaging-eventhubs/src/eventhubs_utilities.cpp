@@ -100,7 +100,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     else if (condition == AmqpErrorCondition::NotFound)
     {
       // Note: Java has additional processing here, it looks for the regex:
-      // "The messaging entity .* could not be found" in the error discription and if it is
+      // "The messaging entity .* could not be found" in the error description and if it is
       // found it treats the error as not transient. For now, just treat NotFound as transient.
       isTransient = true;
     }
