@@ -143,7 +143,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else if (options.Port == _internal::AmqpTlsPort)
     {
-      Log::Write(Logger::Level::Informational, "Creating TLS socket connection transport.");
       m_transport = Network::_internal::TlsTransportFactory::Create(m_hostName, m_port).GetImpl();
     }
     else

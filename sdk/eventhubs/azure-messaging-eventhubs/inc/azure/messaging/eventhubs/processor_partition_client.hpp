@@ -3,7 +3,6 @@
 #pragma once
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
-#include "eventhub_constants.hpp"
 
 #include <azure/core/amqp.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
@@ -74,43 +73,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   private:
     void UpdateCheckpoint(
         Azure::Core::Amqp::Models::AmqpMessage const& amqpMessage,
-        Core::Context const& context = {})
-    {
-      Azure::Nullable<int64_t> sequenceNumber;
-
-      Azure::Nullable<int64_t> offsetNumber;
-
-      for (auto const& pair : amqpMessage.MessageAnnotations)
-      {
-        if (pair.first == _detail::SequenceNumberAnnotation)
-        {
-          if (pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Int
-              || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
-              || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
-              || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-            sequenceNumber = static_cast<int64_t>(pair.second);
-        }
-        if (pair.first == _detail::OffsetNumberAnnotation)
-        {
-          if (pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Int
-              || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
-              || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
-              || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-            offsetNumber = static_cast<int64_t>(pair.second);
-        }
-      }
-
-      Models::Checkpoint checkpoint
-          = {m_consumerClientDetails.ConsumerGroup,
-             m_consumerClientDetails.EventHubName,
-             m_consumerClientDetails.HostName,
-             m_partitionId,
-             sequenceNumber,
-             offsetNumber};
-
-      m_checkpointStore->UpdateCheckpoint(checkpoint, context);
-    }
-
+        Core::Context const& context = {});
     std::string GetPartitionId() { return m_partitionId; }
   };
 }}} // namespace Azure::Messaging::EventHubs

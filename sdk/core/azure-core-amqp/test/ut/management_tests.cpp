@@ -217,7 +217,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto response = management.ExecuteOperation("Test", "Test", "Test", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Ok);
       EXPECT_EQ(response.StatusCode, 200);
-      EXPECT_EQ(response.Description, "Successful");
+      EXPECT_EQ(response.Error.Description, "Successful");
       management.Close();
 
       mockServer.StopListening();
@@ -252,7 +252,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto response = management.ExecuteOperation("Test", "Test", "Test", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::FailedBadStatus);
       EXPECT_EQ(response.StatusCode, 500);
-      EXPECT_EQ(response.Description, "Bad Things Happened.");
+      EXPECT_EQ(response.Error.Description, "Bad Things Happened.");
       management.Close();
 
       mockServer.StopListening();
@@ -288,7 +288,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
       EXPECT_EQ(response.StatusCode, 500);
-      EXPECT_EQ(response.Description, "Received message statusCode value is not an int.");
+      EXPECT_EQ(
+          response.Error.Description,
+          "Message Delivery Rejected: Received message statusCode value is not an int.");
       management.Close();
 
       mockServer.StopListening();
@@ -339,7 +341,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
       EXPECT_EQ(response.StatusCode, 500);
       EXPECT_EQ(
-          response.Description, "Received message does not have a statusCode status code key.");
+          response.Error.Description,
+          "Message Delivery Rejected: Received message does not have a statusCode status code "
+          "key.");
       EXPECT_TRUE(managementEvents.Error);
       management.Close();
 
@@ -379,7 +383,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto response = management.ExecuteOperation("Test", "Type", "Locales", messageToSend);
       EXPECT_EQ(response.Status, ManagementOperationStatus::Ok);
       EXPECT_EQ(response.StatusCode, 235);
-      EXPECT_EQ(response.Description, "Bad Things Happened..");
+      EXPECT_EQ(response.Error.Description, "Bad Things Happened..");
       management.Close();
 
       mockServer.StopListening();
@@ -419,7 +423,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
               std::chrono::system_clock::now() + std::chrono::seconds(10)));
       EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
       EXPECT_EQ(response.StatusCode, 500);
-      EXPECT_EQ(response.Description, "Unknown Request operation");
+      EXPECT_EQ(response.Error.Description, "Unknown Request operation");
       management.Close();
 
       mockServer.StopListening();

@@ -11,6 +11,7 @@
 #include "azure/messaging/eventhubs/consumer_client.hpp"
 #include "azure/messaging/eventhubs/dll_import_export.hpp"
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
+#include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "azure/messaging/eventhubs/models/checkpoint_store_models.hpp"
 #include "azure/messaging/eventhubs/models/consumer_client_models.hpp"
 #include "azure/messaging/eventhubs/models/event_data.hpp"

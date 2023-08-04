@@ -158,6 +158,161 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      */
     AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition FrameSizeTooSmall;
+
+    /**
+     * The link has been attached elsewhere, causing the existing attachment to be forcibly
+     * closed.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkStolen;
+
+    /**
+     * The peer sent a larger message than is supported on the link.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkPayloadSizeExceeded;
+    /**
+     * An operator intervened to detach for some reason.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkDetachForced;
+
+    /**
+     * An operator intervened to close the connection for some reason. The client could retry at
+     * some later date.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionForced;
+
+    // These are errors that are specific to Azure services.
+    /**
+     * The server is busy.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ServerBusyError;
+    /**
+     * One or more arguments supplied to the method are invalid.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ArgumentError;
+    /**
+     * One or more arguments supplied to the method are invalid.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ArgumentOutOfRangeError;
+    /**
+     * Request for a runtime operation on a disabled entity.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition EntityDisabledError;
+    /**
+     * Partition is not owned.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PartitionNotOwnedError;
+    /**
+     * Lock token associated with the message or session has expired, or the lock token is not
+     * found.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition StoreLockLostError;
+    /**
+     * The TokenProvider object could not acquire a token, the token is invalid, or the token
+     * does not contain the claims required to perform the operation.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PublisherRevokedError;
+    /**
+     * The server did not respond to the requested operation within the specified time. The
+     * server may have completed the requested operation. This can happen due to network or
+     * other infrastructure delays.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TimeoutError;
+    /**
+     * Tracking Id for an exception.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TrackingIdProperty;
+    /**
+     * IO exceptions that occur in proton-j library.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ProtonIo;
+    /**
+     * A connection error occurred. A valid frame header cannot be formed from the incoming byte
+     * stream.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionFramingError;
+    /**
+     * The operation was cancelled.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition OperationCancelled;
+    /**
+     * Error condition when receiver attempts {@code complete}, {@code abandon}, {@code
+     * renewLock}, {@code deadLetter}, or {@code defer} on a peek-locked message whose lock had
+     * already expired.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition MessageLockLost;
+    /**
+     * Error condition when a session receiver performs an operation on a session after its lock
+     * is expired. When a client accepts a session, the session is locked to the receiver for a
+     * duration specified in the entity definition. When the accepted session remains idle for
+     * the duration of lock, that is no operations performed on the session, the lock expires
+     * and the session is made available to other clients.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionLockLost;
+    /**
+     * Error condition when a client attempts to accept a session that is already locked by
+     * another client.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionCannotBeLocked;
+    /**
+     * Error condition when a receiver attempts to receive a message with sequence number and
+     * the message with that sequence number is not available in the queue or subscription.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition MessageNotFound;
+    /**
+     * Error condition when a receiver attempts to receive from a session that does not exist.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionNotFound;
+    /**
+     * Error condition when a subscription client tries to create a rule with the name of an
+     * already existing rule.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition EntityAlreadyExists;
+
+    /**
+     * The container is no longer available on the current connection. The peer SHOULD attempt
+     * reconnection to the container using the details provided in the info map.
+     *
+     * The address provided cannot be resolved to a terminus at the current container. The info
+     * map MAY contain the following information to allow the client to locate the attach to the
+     * terminus.
+     *
+     * hostname:
+     * the hostname of the container. This is the value that SHOULD be supplied in the hostname
+     * field of the open frame, and during the SASL and TLS negotiation (if used).
+     *
+     * network-host:
+     * the DNS hostname or IP address of the machine hosting the container.
+     *
+     * port:
+     * the port number on the machine hosting the container.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionRedirect;
+
+    /**
+     * The address provided cannot be resolved to a terminus at the current container. The info
+     * map MAY contain the following information to allow the client to locate the attach to the
+     * terminus.
+     *
+     * hostname:
+     * the hostname of the container hosting the terminus. This is the value that SHOULD be
+     * supplied in the hostname field of the open frame, and during SASL and TLS negotiation (if
+     * used).
+     *
+     * network-host:
+     * the DNS hostname or IP address of the machine hosting the container.
+     *
+     * port:
+     * the port number on the machine hosting the container.
+     *
+     * address:
+     * the address of the terminus at the container.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkRedirect;
+
+    /**
+     * The peer sent more message transfers than currently allowed on the link.
+     */
+    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TransferLimitExceeded;
   };
 
   struct AmqpError final

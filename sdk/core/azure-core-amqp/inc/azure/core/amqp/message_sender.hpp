@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      * @return A tuple containing the status of the send operation and the send disposition.
      */
-    std::tuple<MessageSendStatus, Models::AmqpValue> Send(
+    std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context = {});
 

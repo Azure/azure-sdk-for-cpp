@@ -240,12 +240,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         messageToSend,
         [&](_internal::MessageSendStatus sendStatus, Models::AmqpValue const& deliveryState) {
           m_sendCompleted = true;
-          Log::Stream(Logger::Level::Informational)
-              << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
-              << ", DeliveryState: " << deliveryState;
+          if (m_options.EnableTrace)
+          {
+            Log::Stream(Logger::Level::Informational)
+                << "Management operation send complete. Status: " << static_cast<int>(sendStatus)
+                << ", DeliveryState: " << deliveryState;
+          }
+          Models::_internal::AmqpError error;
           if (sendStatus != _internal::MessageSendStatus::Ok)
           {
-            std::string errorDescription = "Send failed.";
+            error.Description = "Send failed.";
             auto deliveryStateAsList{deliveryState.AsList()};
             Models::AmqpValue firstState{deliveryStateAsList[0]};
             ERROR_HANDLE errorHandle;
@@ -253,15 +257,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             {
               Models::_internal::UniqueAmqpErrorHandle uniqueError{
                   errorHandle}; // This will free the error handle when it goes out of scope.
-              Models::_internal::AmqpError error{
-                  Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle)};
-              errorDescription = error.Description;
+              error = Models::_internal::AmqpErrorFactory::FromUamqp(errorHandle);
             }
+
             m_messageQueue.CompleteOperation(
-                _internal::ManagementOperationStatus::Error,
-                500,
-                errorDescription,
-                Models::AmqpMessage{});
+                _internal::ManagementOperationStatus::Error, 500, error, Models::AmqpMessage{});
           }
         },
         context);
@@ -271,7 +271,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::ManagementOperationResult rv;
       rv.Status = std::get<0>(*result);
       rv.StatusCode = std::get<1>(*result);
-      rv.Description = std::get<2>(*result);
+      rv.Error = std::get<2>(*result);
       rv.Message = std::get<3>(*result);
       return rv;
     }
@@ -583,20 +583,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& condition,
       std::string const& description)
   {
+    Models::_internal::AmqpError error;
+    error.Condition = Models::_internal::AmqpErrorCondition(condition);
+    error.Description = "Message Delivery Rejected: " + description;
+
     Log::Stream(Logger::Level::Error)
-        << "Indicate Management Error: " << condition << " " << description;
+        << "Indicate Management Error: " << condition << " - " << description;
     if (m_eventHandler)
     {
       // Let external callers know that the error was triggered.
-      Models::_internal::AmqpError error;
-      error.Condition = Models::_internal::AmqpErrorCondition(condition);
-      error.Description = "Message Delivery Rejected: " + description;
       m_eventHandler->OnError(error);
     }
 
     // Complete any outstanding receives with an error.
     m_messageQueue.CompleteOperation(
-        _internal::ManagementOperationStatus::Error, 500, description, Models::AmqpMessage());
+        _internal::ManagementOperationStatus::Error, 500, error, Models::AmqpMessage());
 
     return Models::_internal::Messaging::DeliveryRejected(condition, description);
   }
@@ -668,17 +669,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Stream(Logger::Level::Error) << "Received message before send completed.";
     }
 
+    Models::_internal::AmqpError messageError;
+    messageError.Description = description;
+    messageError.Condition = Models::_internal::AmqpErrorCondition::NotAllowed;
+
     // AMQP management statusCode values are [RFC
     // 2616](https://www.rfc-editor.org/rfc/rfc2616#section-6.1.1) status codes.
     if ((statusCode < 200) || (statusCode > 299))
     {
       m_messageQueue.CompleteOperation(
-          _internal::ManagementOperationStatus::FailedBadStatus, statusCode, description, message);
+          _internal::ManagementOperationStatus::FailedBadStatus, statusCode, messageError, message);
     }
     else
     {
       m_messageQueue.CompleteOperation(
-          _internal::ManagementOperationStatus::Ok, statusCode, description, message);
+          _internal::ManagementOperationStatus::Ok, statusCode, messageError, message);
     }
     return Models::_internal::Messaging::DeliveryAccepted();
   }

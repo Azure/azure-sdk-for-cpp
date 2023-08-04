@@ -1,12 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
-#include "checkpoint_store_models.hpp"
-
-#include <azure/core/context.hpp>
-#include <azure/messaging/eventhubs.hpp>
+#include "partition_client_models.hpp"
 
 #include <chrono>
+#include <string>
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
 
   /**@brief StartPositions are used if there is no checkpoint for a partition in
