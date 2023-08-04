@@ -27,6 +27,7 @@ int main()
   if (eventhubName == nullptr)
   {
     std::cerr << "Missing environment variable EVENTHUB_NAME" << std::endl;
+    return 1;
   }
 
   /* Create a sample EventHubs application using a PartitionClient to read all the messages from an
