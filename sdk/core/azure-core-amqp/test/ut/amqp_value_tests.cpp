@@ -1013,7 +1013,7 @@ TEST_F(TestValueSerialization, SerializeBinary)
     EXPECT_EQ(value.GetType(), AmqpValueType::Binary);
     EXPECT_EQ(value.AsBinary().size(), 16);
     auto binary(value.AsBinary());
-    std::array<uint8_t, 16> valueAsArray;
+    std::array<uint8_t, 16> valueAsArray{};
 
     std::copy_n(binary.begin(), 16, valueAsArray.begin());
     EXPECT_EQ(valueAsArray, testUuid.AsArray());
@@ -1030,7 +1030,7 @@ TEST_F(TestValueSerialization, SerializeBinary)
     EXPECT_EQ(value.GetType(), AmqpValueType::Binary);
     EXPECT_EQ(value.AsBinary().size(), 16);
     auto binary(value.AsBinary());
-    std::array<uint8_t, 16> valueAsArray;
+    std::array<uint8_t, 16> valueAsArray{};
 
     std::copy_n(binary.begin(), 16, valueAsArray.begin());
     EXPECT_EQ(valueAsArray, testUuid.AsArray());
@@ -1434,7 +1434,8 @@ TEST_F(TestValueSerialization, SerializeArray)
     {
       values.push_back(AmqpValue(static_cast<int64_t>(GenerateRandomValue<long long>())));
     }
-    size_t totalSize = 4 + 1; // Include the size of the list count in the size
+    size_t totalSize
+        = (static_cast<size_t>(4) + 1); // Include the size of the list count in the size
     for (auto const& val : values)
     {
       totalSize
@@ -1479,7 +1480,8 @@ TEST_F(TestValueSerialization, SerializeArray)
     {
       values.push_back(AmqpValue(static_cast<int64_t>(GenerateRandomValue<long long>())));
     }
-    size_t totalSize = 4 + 1; // Include the size of the list count in the size
+    size_t totalSize
+        = (static_cast<size_t>(4) + 1); // Include the size of the list count in the size
     for (auto const& val : values)
     {
       totalSize += (AmqpValue::GetSerializedSize(val) - 1);

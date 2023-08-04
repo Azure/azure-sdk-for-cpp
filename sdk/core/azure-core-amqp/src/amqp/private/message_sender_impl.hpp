@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void Open(Context const& context);
     void Close();
-    std::tuple<_internal::MessageSendStatus, Models::AmqpValue> Send(
+    std::tuple<_internal::MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context);
     void QueueSend(
@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
-    Models::AmqpValue m_savedMessageError;
+    Models::_internal::AmqpError m_savedMessageError;
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::AmqpMessage> m_messageQueue;
 

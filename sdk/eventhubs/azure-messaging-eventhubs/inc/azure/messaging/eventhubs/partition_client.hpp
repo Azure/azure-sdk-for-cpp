@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+#include "eventhubs_exception.hpp"
 #include "models/event_data.hpp"
 #include "models/partition_client_models.hpp"
 
@@ -9,7 +10,8 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
-  /**brief PartitionClientOptions provides options for the CreatePartitionClient function.
+  /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
+   * function.
    */
   struct PartitionClientOptions final
   {
@@ -28,7 +30,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * from partition clients with a lower OwnerLevel.
      * Default is off.
      */
-    int64_t OwnerLevel;
+    Azure::Nullable<std::int64_t> OwnerLevel{};
 
     /**@brief Prefetch represents the size of the internal prefetch buffer. When set,
      * this client will attempt to always maintain an internal cache of events of
@@ -50,18 +52,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class PartitionClient final {
 
-  protected:
     /// The message receivers used to receive events from the partition.
     std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
 
     /// The name of the offset to start receiving events from.
     std::string m_offsetExpression;
-
-    /// The level of the ownership.
-    uint64_t m_ownerLevel;
-
-    /// The number of events to prefetch at any time.
-    int32_t m_prefetchCount;
 
     /// The options used to create the PartitionClient.
     PartitionClientOptions m_partitionOptions;
@@ -89,22 +84,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     std::vector<Models::ReceivedEventData> ReceiveEvents(
-        uint32_t const& maxMessages,
-        Core::Context const& context = {})
-    {
-      std::vector<Models::ReceivedEventData> messages;
-      // bool prefetchDisabled = m_prefetchCount < 0;
-
-      while (messages.size() < maxMessages && !context.IsCancelled())
-      {
-        auto message = m_receivers[0].WaitForIncomingMessage(context);
-        if (message.first.HasValue())
-        {
-          messages.push_back(Models::ReceivedEventData{message.first.Value()});
-        }
-      }
-      return messages;
-    }
+        uint32_t maxMessages,
+        Core::Context const& context = {});
 
     /** @brief Closes the connection to the Event Hub service.
      */
