@@ -91,4 +91,41 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   const AmqpErrorCondition AmqpErrorCondition::ResourceLocked(amqp_error_resource_locked);
   const AmqpErrorCondition AmqpErrorCondition::UnauthorizedAccess(amqp_error_unauthorized_access);
 
+  const AmqpErrorCondition AmqpErrorCondition::LinkStolen("amqp:link:stolen");
+  const AmqpErrorCondition AmqpErrorCondition::LinkPayloadSizeExceeded(
+      "amqp:link:message-size-exceeded");
+  const AmqpErrorCondition AmqpErrorCondition::LinkDetachForced("amqp:link:detach-forced");
+  const AmqpErrorCondition AmqpErrorCondition::ConnectionForced("amqp:connection:forced");
+
+  // These are errors that are specific to Azure services.
+  const AmqpErrorCondition AmqpErrorCondition::ServerBusyError("com.microsoft:server-busy");
+  const AmqpErrorCondition AmqpErrorCondition::ArgumentError("com.microsoft:argument-error");
+  const AmqpErrorCondition AmqpErrorCondition::ArgumentOutOfRangeError(
+      "com.microsoft:argument-out-of-range");
+  const AmqpErrorCondition AmqpErrorCondition::EntityDisabledError("com.microsoft:entity-disabled");
+  const AmqpErrorCondition AmqpErrorCondition::PartitionNotOwnedError(
+      "com.microsoft:partition-not-owned");
+  const AmqpErrorCondition AmqpErrorCondition::StoreLockLostError("com.microsoft:store-lock-lost");
+  const AmqpErrorCondition AmqpErrorCondition::PublisherRevokedError(
+      "com.microsoft:publisher-revoked");
+  const AmqpErrorCondition AmqpErrorCondition::TimeoutError("com.microsoft:timeout");
+  const AmqpErrorCondition AmqpErrorCondition::TrackingIdProperty("com.microsoft:tracking-id");
+  const AmqpErrorCondition AmqpErrorCondition::ProtonIo("proton:io");
+  const AmqpErrorCondition AmqpErrorCondition::ConnectionFramingError(
+      "amqp:connection:framing-error");
+  const AmqpErrorCondition AmqpErrorCondition::OperationCancelled(
+      "com.microsoft:operation-cancelled");
+  const AmqpErrorCondition AmqpErrorCondition::MessageLockLost("com.microsoft:message-lock-lost");
+  const AmqpErrorCondition AmqpErrorCondition::SessionLockLost("com.microsoft:session-lock-lost");
+  const AmqpErrorCondition AmqpErrorCondition::SessionCannotBeLocked(
+      "com.microsoft:session-cannot-be-locked");
+  const AmqpErrorCondition AmqpErrorCondition::MessageNotFound("com.microsoft:message-not-found");
+  const AmqpErrorCondition AmqpErrorCondition::SessionNotFound("com.microsoft:session-not-found");
+  const AmqpErrorCondition AmqpErrorCondition::EntityAlreadyExists(
+      "com.microsoft:entity-already-exists");
+  const AmqpErrorCondition AmqpErrorCondition::ConnectionRedirect("amqp:connection:redirect");
+  const AmqpErrorCondition AmqpErrorCondition::LinkRedirect("amqp:link:redirect");
+  const AmqpErrorCondition AmqpErrorCondition::TransferLimitExceeded(
+      "amqp:link:transfer-limit-exceeded");
+
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

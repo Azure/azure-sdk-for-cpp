@@ -1,0 +1,10 @@
+Dockerfile
+.dockerignore
+*.go
+*.bat
+*.txt
+*.ps1
+*.cpp
+*.md
+azure-messaging-eventhubs-stress-test
+[Bb]in/

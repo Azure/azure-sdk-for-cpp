@@ -30,9 +30,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /**@brief  Message sender options.
+    /** @brief The name of the producer client link, used in diagnostics.
      */
-    Azure::Core::Amqp::_internal::MessageSenderOptions SenderOptions{};
+    std::string Name{};
+
+    /**@brief  The maximum size of the message that can be sent.
+     */
+    Azure::Nullable<std::uint64_t> MaxMessageSize{};
   };
 
   /**@brief  ProducerClient can be used to send events to an Event Hub.

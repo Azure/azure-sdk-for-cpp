@@ -26,22 +26,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(ProcessorTest, LoadBalancing_LIVEONLY_)
   {
     std::string const testName = GetRandomName();
-    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(
-        GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName);
+    auto containerClient{Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        Azure::Core::_internal::Environment::GetVariable(
+            "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"),
+        testName)};
+    Azure::Messaging::EventHubs::BlobCheckpointStore checkpointStore(containerClient);
+
+    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
 
     std::string const connStringNoEntityPath
-        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + GetEnv("EVENTHUB_NAME");
+        = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=" + eventHubName;
     Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = "unit-test";
+    options.ApplicationID = "processor unit test";
 
-    options.ReceiverOptions.Name = "unit-test";
-    options.ReceiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    options.ReceiverOptions.MessageTarget = "ingress";
-    options.ReceiverOptions.EnableTrace = true;
-    options.ReceiverOptions.MaxMessageSize = std::numeric_limits<uint16_t>::max();
+    options.Name = "processor unittest";
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(
-        connStringNoEntityPath, "eventhub", "$Default", options);
+        connStringNoEntityPath, eventHubName, "$Default", options);
     ProcessorOptions processorOptions;
     processorOptions.LoadBalancingStrategy = Models::ProcessorStrategy::ProcessorStrategyBalanced;
     processorOptions.UpdateInterval = std::chrono::seconds(2);
