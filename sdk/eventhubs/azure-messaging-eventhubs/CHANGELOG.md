@@ -5,4 +5,8 @@
 ### Features Added
 
 Initial release.
+Supported scenarios: Sending events and receiving events.
+
+For more information, see README.md.
+
 
