@@ -4,5 +4,5 @@
 
 ### Features Added
 
-Initial Release.
+Initial release.
 
