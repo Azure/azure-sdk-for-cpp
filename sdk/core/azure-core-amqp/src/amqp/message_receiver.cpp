@@ -133,6 +133,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
     }
+    m_link->SetAttachProperties(static_cast<Models::AmqpValue>(m_options.Properties));
   }
 
   AMQP_VALUE MessageReceiverImpl::OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message)
@@ -241,10 +242,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      Log::Stream(Logger::Level::Verbose)
-          << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
-          << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState];
-      ;
+      if (receiver->m_options.EnableTrace)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Message receiver changed state. New: " << MESSAGE_RECEIVER_STATEStrings[newState]
+            << " Old: " << MESSAGE_RECEIVER_STATEStrings[oldState];
+      }
     }
 
     // If we are transitioning to the error state, we want to stick a response on the incoming

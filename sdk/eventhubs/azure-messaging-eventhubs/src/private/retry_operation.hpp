@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
-#include <azure/core/amqp.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/messaging/eventhubs/eventhubs_exception.hpp>
 
+#include <chrono>
 #include <functional>
 
 #if defined(TESTING_BUILD_AMQP)
@@ -48,6 +49,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     bool ShouldRetry(
         bool response,
+        int32_t attempt,
+        std::chrono::milliseconds& retryAfter,
+        double jitterFactor = -1);
+
+    bool ShouldRetry(
+        Azure::Messaging::EventHubs::EventHubsException const& exception,
         int32_t attempt,
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1);

@@ -20,8 +20,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     std::string Name;
 
     /// A list of the partitions in the Event Hub.
-    std::vector<std::string> PartitionIDs;
+    std::vector<std::string> PartitionIds;
   };
+  std::ostream& operator<<(std::ostream&, EventHubProperties const&);
 
   /**@brief EventHubPartitionProperties represents properties of an Event Hub partition
    */
@@ -48,5 +49,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** Indicates whether or not the partition is currently empty. */
     bool IsEmpty{};
   };
+  std::ostream& operator<<(std::ostream&, EventHubPartitionProperties const&);
 
 }}}} // namespace Azure::Messaging::EventHubs::Models

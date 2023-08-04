@@ -9,10 +9,13 @@
 - Collection types (`AmqpArray`, `AmqpMap`, `AmqpList`, `AmqpBinaryData`, `AmqpSymbol` and `AmqpComposite`):
   - Added explicit cast operator to underlying collection type.
   - Added `find()`.
+- Rationalized the return code for AMQP MessageSender and MessageReceiver and Management APIs to use AmqpError for error codes.
+- Added additional AMQP Error values.
 
 ### Breaking Changes
 
 - Renamed `Azure::Core::Amqp::Models::AmqpMessageFormatValue` to `AmqpDefaultMessageFormatValue`.
+- Changed the return values for the MessageSender, MessageReceiver and Management APIs.
 
 ## 1.0.0-beta.1 (2023-07-06)
 

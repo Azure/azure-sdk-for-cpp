@@ -10,6 +10,12 @@
 *.sln.docstates
 *.runsettings
 
+# Stress deploy.ps1 script generated files
+generatedValues.yaml
+stress-test-resources.json
+stress-test-addons*.tgz
+Chart.lock
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

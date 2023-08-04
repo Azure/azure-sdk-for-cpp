@@ -16,7 +16,6 @@
     "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
   ],
   "allowInternal": true,
-  "includeInternal": true,
   "includeDetail": false,
   "includePrivate": false,
   "filterNamespace": "Azure::",
