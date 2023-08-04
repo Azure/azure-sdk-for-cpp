@@ -1,16 +1,10 @@
 # Release History
 
-## 1.11.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.10.2 (2023-08-04)
 
 ### Bugs Fixed
 
 - [[#4792]](https://github.com/Azure/azure-sdk-for-cpp/issues/4792) Only support CURL's root cert validation when CURL version is >= 7.77.0.
-
-### Other Changes
 
 ## 1.10.1 (2023-07-06)
 
