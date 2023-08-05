@@ -81,6 +81,8 @@
     "gmock",
     "gtest",
     "Gzrs",
+    "hcertstore",
+    "hcryptmsg",
     "HKEY",
     "HRESULT",
     "IMDS",
@@ -123,6 +125,7 @@
     "opentelemetry",
     "otel",
     "PBYTE",
+    "PCCERT"
     "pdbs",
     "Piotrowski",
     "pscredential",
