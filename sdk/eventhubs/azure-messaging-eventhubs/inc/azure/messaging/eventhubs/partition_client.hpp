@@ -9,6 +9,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
+
 namespace Azure { namespace Messaging { namespace EventHubs {
   /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
    * function.
@@ -50,24 +51,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * This type is instantiated from the [ConsumerClient] type, using
    * [ConsumerClient.CreatePartitionClient].
    */
-  class PartitionClient final {
-
-    /// The message receivers used to receive events from the partition.
-    std::vector<Azure::Core::Amqp::_internal::MessageReceiver> m_receivers{};
-
-    /// The name of the offset to start receiving events from.
-    std::string m_offsetExpression;
-
-    /// The options used to create the PartitionClient.
-    PartitionClientOptions m_partitionOptions;
-
-    /// The name of the partition.
-    std::string m_partitionId;
-
-    /** @brief RetryOptions controls how many times we should retry an operation in
-     * response to being throttled or encountering a transient error.
-     */
-    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+  class PartitionClient final : private Azure::Core::Amqp::_internal::MessageReceiverEvents {
 
   public:
     /// Create a PartitionClient from another PartitionClient
@@ -89,32 +73,54 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Closes the connection to the Event Hub service.
      */
-    void Close()
-    {
-      for (size_t i = 0; i < m_receivers.size(); i++)
-      {
-        m_receivers[i].Close();
-      }
-    }
+    void Close() { m_receiver.Close(); }
+
+  private:
+    friend class ConsumerClient;
+    /// The message receiver used to receive events from the partition.
+    Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
+
+    /// The name of the offset to start receiving events from.
+//    std::string m_offsetExpression;
+
+    /// The options used to create the PartitionClient.
+    PartitionClientOptions m_partitionOptions;
+
+    /// The name of the partition.
+//    std::string m_partitionId;
+
+    /** @brief RetryOptions controls how many times we should retry an operation in
+     * response to being throttled or encountering a transient error.
+     */
+    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+
 
     /** Creates a new PartitionClient
      *
+     * @param session Session on which to create the partition client.
+     * @param partitionUrl URL to the partition.
+     * @param receiverName Name of the receiver.
      * @param options The options used to create the PartitionClient.
      * @param retryOptions The retry options used to create the PartitionClient.
      *
      */
     PartitionClient(
+        Azure::Core::Amqp::_internal::Session const& session,
+        std::string const& partitionUrl,
+        std::string const& receiverName,
         PartitionClientOptions options,
-        Azure::Core::Http::Policies::RetryOptions retryOptions)
-    {
-      m_partitionOptions = options;
-      RetryOptions = retryOptions;
-    }
+        Azure::Core::Http::Policies::RetryOptions retryOptions);
 
-    /// @brief Push the message receiver back to the vector of receivers.
-    void PushBackReceiver(Azure::Core::Amqp::_internal::MessageReceiver& receiver)
-    {
-      m_receivers.push_back(std::move(receiver));
-    }
+    std::string GetStartExpression(Models::StartPosition const& startPosition);
+
+    virtual void OnMessageReceiverStateChanged(
+        Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+        Azure::Core::Amqp::_internal::MessageReceiverState newState,
+        Azure::Core::Amqp::_internal::MessageReceiverState oldState);
+    virtual Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+        Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+        Azure::Core::Amqp::Models::AmqpMessage const& message);
+    virtual void OnMessageReceiverDisconnected(
+        Azure::Core::Amqp::Models::_internal::AmqpError const& error);
   };
 }}} // namespace Azure::Messaging::EventHubs

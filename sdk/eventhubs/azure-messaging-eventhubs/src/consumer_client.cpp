@@ -48,30 +48,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         + m_consumerGroup;
   }
 
-  namespace {
-    struct FilterDescription
-    {
-      std::string Name;
-      std::uint64_t Code;
-    };
-    void AddFilterElementToSourceOptions(
-        Azure::Core::Amqp::Models::_internal::MessageSourceOptions& sourceOptions,
-        FilterDescription description,
-        Azure::Core::Amqp::Models::AmqpValue const& filterValue)
-    {
-      Azure::Core::Amqp::Models::AmqpDescribed value{description.Code, filterValue};
-      sourceOptions.Filter.emplace(description.Name, value);
-    }
-
-    FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};
-  } // namespace
-
   PartitionClient ConsumerClient::CreatePartitionClient(
       std::string partitionId,
       PartitionClientOptions const& options)
   {
-    PartitionClient partitionClient(options, m_consumerClientOptions.RetryOptions);
-
     std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
     std::string hostUrl = m_hostUrl + suffix;
 
@@ -87,108 +67,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Connection connection(m_fullyQualifiedNamespace, m_credential, connectOptions);
     SessionOptions sessionOptions;
-    sessionOptions.InitialIncomingWindowSize = static_cast<uint32_t>(
-        m_consumerClientOptions.MaxMessageSize.ValueOr(std::numeric_limits<int32_t>::max()));
+    sessionOptions.InitialIncomingWindowSize
+        = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
     Session session{connection.CreateSession(sessionOptions)};
-
-    Azure::Core::Amqp::Models::_internal::MessageSourceOptions sourceOptions;
-    sourceOptions.Address = static_cast<Azure::Core::Amqp::Models::AmqpValue>(hostUrl);
-    AddFilterElementToSourceOptions(
-        sourceOptions,
-        SelectorFilter,
-        static_cast<Azure::Core::Amqp::Models::AmqpValue>(
-            GetStartExpression(options.StartPosition)));
-
-    Azure::Core::Amqp::Models::_internal::MessageSource messageSource(sourceOptions);
-    Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
-    if (m_consumerClientOptions.MaxMessageSize)
-    {
-      receiverOptions.MaxMessageSize = m_consumerClientOptions.MaxMessageSize.Value();
-    }
-    receiverOptions.EnableTrace = true;
-    //    receiverOptions.MessageTarget = m_consumerClientOptions.MessageTarget;
-    receiverOptions.Name = m_consumerClientOptions.Name;
-    receiverOptions.Properties.emplace("com.microsoft:receiver-name", m_consumerClientOptions.Name);
-    if (options.OwnerLevel.HasValue())
-    {
-      receiverOptions.Properties.emplace("com.microsoft:epoch", options.OwnerLevel.Value());
-    }
-
-    MessageReceiver receiver = session.CreateMessageReceiver(messageSource, receiverOptions);
-
-    // Open the connection to the remote.
-    receiver.Open();
     m_sessions.emplace(partitionId, session);
-    partitionClient.PushBackReceiver(receiver);
-    return partitionClient;
-  }
 
-  std::string ConsumerClient::GetStartExpression(Models::StartPosition const& startPosition)
-  {
-    std::string greaterThan = ">";
-
-    if (startPosition.Inclusive)
-    {
-      greaterThan = ">=";
-    }
-
-    constexpr const char* expressionErrorText
-        = "Only a single start point can be set: Earliest, EnqueuedTime, "
-          "Latest, Offset, or SequenceNumber";
-
-    std::string returnValue;
-    if (startPosition.EnqueuedTime.HasValue())
-    {
-      returnValue = "amqp.annotation.x--opt-enqueued-time " + greaterThan + "'"
-          + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
-                               startPosition.EnqueuedTime.Value().time_since_epoch())
-                               .count())
-          + "'";
-    }
-    if (startPosition.Offset.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-offset " + greaterThan + "'"
-          + std::to_string(startPosition.Offset.Value()) + "'";
-    }
-    if (startPosition.SequenceNumber.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-sequence-number " + greaterThan + "'"
-          + std::to_string(startPosition.SequenceNumber.Value()) + "'";
-    }
-    if (startPosition.Latest.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-offset > '@latest'";
-    }
-    if (startPosition.Earliest.HasValue())
-    {
-      if (!returnValue.empty())
-      {
-        throw std::runtime_error(expressionErrorText);
-      }
-      returnValue = "amqp.annotation.x-opt-offset > '-1'";
-    }
-    // If we don't have a filter value, then default to the start.
-    if (returnValue.empty())
-    {
-      return "amqp.annotation.x-opt-offset > '@latest'";
-    }
-    else
-    {
-      return returnValue;
-    }
+    return PartitionClient{
+        session,
+        hostUrl,
+        m_consumerClientOptions.Name,
+        options,
+        m_consumerClientOptions.RetryOptions};
   }
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)

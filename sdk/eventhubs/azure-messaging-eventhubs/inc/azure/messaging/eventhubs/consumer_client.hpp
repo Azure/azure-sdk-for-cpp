@@ -32,9 +32,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions RetryOptions{};
 
-    /** @brief Maximum message size for messages being sent. */
-    Azure::Nullable<std::uint64_t> MaxMessageSize;
-
     /** @brief Name of the consumer client. */
     std::string Name{};
   };
@@ -181,7 +178,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
-
-    std::string GetStartExpression(Models::StartPosition const& startPosition);
   };
 }}} // namespace Azure::Messaging::EventHubs

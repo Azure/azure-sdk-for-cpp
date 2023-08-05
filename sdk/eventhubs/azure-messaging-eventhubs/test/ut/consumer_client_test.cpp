@@ -121,7 +121,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.ApplicationID = "unit-test";
 
     options.Name = "unit-test";
-    options.MaxMessageSize = std::numeric_limits<uint16_t>::max();
 
     auto client = Azure::Messaging::EventHubs::ConsumerClient(connStringEntityPath);
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
