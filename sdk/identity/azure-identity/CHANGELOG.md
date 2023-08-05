@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- [#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows.
+- [[#4084]](https://github.com/Azure/azure-sdk-for-cpp/issues/4084) Remove OpenSSL dependency on Windows.
 
 ### Other Changes
 
