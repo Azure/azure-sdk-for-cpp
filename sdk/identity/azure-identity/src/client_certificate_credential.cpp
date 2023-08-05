@@ -91,12 +91,12 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::s
   wil::unique_hcertstore certStore;
   wil::unique_hcryptmsg certMsg;
   wil::unique_cert_context cert;
-  std::wstring pathw{path.begin(), path.end()};
+  std::wstring wpath{path.begin(), path.end()};
   DWORD encodingType, contentType, formatType;
   THROW_IF_WIN32_BOOL_FALSE_MSG(
       CryptQueryObject(
           CERT_QUERY_OBJECT_FILE,
-          pathw.c_str(),
+          wpath.c_str(),
           CERT_QUERY_CONTENT_CERT | CERT_QUERY_CONTENT_SERIALIZED_CERT,
           CERT_QUERY_FORMAT_FLAG_ALL,
           0,
