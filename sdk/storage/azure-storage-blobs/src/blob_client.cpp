@@ -648,7 +648,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
     protocolLayerOptions.CopySource = sourceUri;
-    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     protocolLayerOptions.Tier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -679,6 +678,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LegalHold = options.HasLegalHold;
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     protocolLayerOptions.CopySourceTags = options.CopySourceTagsMode;
+    if (!options.SourceAuthorization.empty())
+    {
+      protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
+    }
 
     return _detail::BlobClient::CopyFromUri(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }

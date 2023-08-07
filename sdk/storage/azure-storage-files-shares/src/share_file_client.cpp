@@ -1268,7 +1268,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         + std::string("-") + std::to_string(sourceRange.Offset + sourceRange.Length.Value() - 1);
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
-    protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
+    if (!options.SourceAuthorization.empty())
+    {
+      protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
+    }
 
     return _detail::FileClient::UploadRangeFromUri(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
