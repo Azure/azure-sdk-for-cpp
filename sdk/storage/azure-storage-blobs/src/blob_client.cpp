@@ -678,6 +678,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LegalHold = options.HasLegalHold;
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     protocolLayerOptions.CopySourceTags = options.CopySourceTagsMode;
+    if (!options.SourceAuthorization.empty())
+    {
+      protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
+    }
 
     return _detail::BlobClient::CopyFromUri(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }

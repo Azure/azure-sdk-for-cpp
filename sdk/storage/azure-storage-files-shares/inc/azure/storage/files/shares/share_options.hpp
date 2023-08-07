@@ -721,6 +721,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * or the last write time currently associated with the file should be preserved.
      */
     Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
+
+    /**
+     * @brief Optional. Source authorization used to access the source file.
+     * The format is: <schema> <signature>
+     * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
+     * source.
+     */
+    std::string SourceAuthorization;
   };
 
   /**

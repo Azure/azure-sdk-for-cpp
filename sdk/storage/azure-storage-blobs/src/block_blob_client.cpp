@@ -379,6 +379,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     protocolLayerOptions.CopySourceTags = options.CopySourceTagsMode;
+    if (!options.SourceAuthorization.empty())
+    {
+      protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
+    }
+
     return _detail::BlockBlobClient::UploadFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
@@ -458,6 +463,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    if (!options.SourceAuthorization.empty())
+    {
+      protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
+    }
+
     return _detail::BlockBlobClient::StageBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }

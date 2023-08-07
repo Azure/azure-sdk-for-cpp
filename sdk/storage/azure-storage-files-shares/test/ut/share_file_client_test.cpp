@@ -1021,6 +1021,64 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, OAuthUploadRangeFromUri_LIVEONLY_)
+  {
+    size_t fileSize = 1 * 1024;
+    std::string containerName = LowercaseRandomString();
+    std::string blobName = RandomString();
+    std::vector<uint8_t> blobContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::IO::MemoryBodyStream(blobContent);
+
+    auto containerClient = Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        containerName,
+        InitStorageClientOptions<Storage::Blobs::BlobClientOptions>());
+    containerClient.Create();
+    auto sourceBlobClient = containerClient.GetBlockBlobClient(blobName);
+    sourceBlobClient.Upload(memBodyStream);
+
+    auto destFileClient
+        = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "f2");
+    destFileClient.Create(fileSize * 4);
+    Azure::Core::Http::HttpRange sourceRange;
+    Azure::Core::Http::HttpRange destRange;
+    sourceRange.Length = fileSize;
+    destRange.Length = fileSize;
+
+    // Get oauth token of source file
+    Azure::Identity::ClientSecretCredential oauthCredential(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        Azure::Identity::ClientSecretCredentialOptions());
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    Files::Shares::UploadFileRangeFromUriOptions options;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
+    Files::Shares::Models::UploadFileRangeFromUriResult uploadResult;
+    EXPECT_NO_THROW(
+        uploadResult
+        = destFileClient
+              .UploadRangeFromUri(destRange.Offset, sourceBlobClient.GetUrl(), sourceRange, options)
+              .Value);
+
+    Files::Shares::Models::DownloadFileResult result;
+    Files::Shares::DownloadFileOptions downloadOptions;
+    downloadOptions.Range = destRange;
+    EXPECT_NO_THROW(result = destFileClient.Download(downloadOptions).Value);
+    auto resultBuffer = result.BodyStream->ReadToEnd(Core::Context());
+    EXPECT_EQ(blobContent, resultBuffer);
+    Files::Shares::Models::GetFileRangeListResult getRangeResult;
+    EXPECT_NO_THROW(getRangeResult = destFileClient.GetRangeList().Value);
+    EXPECT_EQ(1U, getRangeResult.Ranges.size());
+    EXPECT_TRUE(getRangeResult.Ranges[0].Length.HasValue());
+    EXPECT_EQ(static_cast<int64_t>(fileSize), getRangeResult.Ranges[0].Length.Value());
+
+    EXPECT_NO_THROW(containerClient.Delete());
+  }
+
   TEST_F(FileShareFileClientTest, AllowTrailingDot)
   {
     const std::string fileName = RandomString();
