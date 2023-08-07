@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     size_t Depth()
     {
       std::unique_lock<std::mutex> lock(m_operationComplete);
-      return m_operationQueue.size()
+      return m_operationQueue.size();
     }
 
   private:

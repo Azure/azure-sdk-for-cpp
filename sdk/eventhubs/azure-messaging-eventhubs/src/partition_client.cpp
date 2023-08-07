@@ -132,7 +132,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       PartitionClientOptions options,
       Azure::Core::Http::Policies::RetryOptions retryOptions)
       : m_receiver{CreateMessageReceiver(session, partitionUrl, receiverName, options, this)},
-        m_partitionOptions{options}, RetryOptions{retryOptions}
+        m_partitionOptions{options}, m_retryOptions{retryOptions}
 
   {
     // Open the connection to the remote.
@@ -181,11 +181,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::Models::AmqpMessage const& message)
   {
     (void)receiver;
-    // If we don't have roomt to receive the message, let the caller know.
-    if (m_receivedMessageQueue.Depth() >= m_partitionOptions.Prefetch)
-    {
-      return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryReleased();
-    }
     // Queue the incoming message to the received message queue.
     m_receivedMessageQueue.CompleteOperation(message, {});
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();

@@ -81,19 +81,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
     /// The name of the offset to start receiving events from.
-//    std::string m_offsetExpression;
+    //    std::string m_offsetExpression;
 
     /// The options used to create the PartitionClient.
     PartitionClientOptions m_partitionOptions;
 
     /// The name of the partition.
-//    std::string m_partitionId;
+    //    std::string m_partitionId;
 
     /** @brief RetryOptions controls how many times we should retry an operation in
      * response to being throttled or encountering a transient error.
      */
-    Azure::Core::Http::Policies::RetryOptions RetryOptions{};
+    Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
 
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+        Azure::Core::Amqp::Models::AmqpMessage,
+        Azure::Core::Amqp::Models::_internal::AmqpError>
+        m_receivedMessageQueue;
 
     /** Creates a new PartitionClient
      *
