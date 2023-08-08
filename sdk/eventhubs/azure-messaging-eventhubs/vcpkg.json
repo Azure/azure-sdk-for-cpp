@@ -2,10 +2,7 @@
   "name": "azure-messaging-eventhubs",
   "version-string": "1.0.0",
   "dependencies": [
-    {
-      "name": "azure-core-amqp-cpp", 
-      "version>=": "1.0.0-beta.1" 
-    },
+    "name": "azure-core-amqp-cpp",
     "azure-storage-blobs-cpp"
   ]
 }
