@@ -65,7 +65,6 @@
   },
   "variables": {
     "apiVersion": "2017-04-01",
-    "authorizationName": "[concat(parameters('baseName'), '/RootManageSharedAccessKey')]",
     "eventHubName": "eventHub",
     "contributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
     "eventHubsDataOwnerRoleId": "f526a384-b230-433a-b45c-95f59c4a2dec",
@@ -74,7 +73,8 @@
     "storageAccount": "[concat('blb', parameters('baseName'))]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "eventHubsAuthRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventHubsNamespace'), variables('defaultSASKeyName'))]",
-    "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]"
+    "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]",
+    "authorizationName": "[concat(variables('eventHubsNamespace'), '/RootManageSharedAccessKey')]"
   },
   "resources": [
     {
