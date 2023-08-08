@@ -61,8 +61,8 @@ int main()
   partitionClientOptions.StartPosition.Earliest = true;
   partitionClientOptions.StartPosition.Inclusive = true;
 
-  Azure::Messaging::EventHubs::PartitionClient partitionClient{
-      consumerClient.CreatePartitionClient(eventhubProperties.PartitionIds[0], partitionClientOptions)};
+  Azure::Messaging::EventHubs::PartitionClient partitionClient{consumerClient.CreatePartitionClient(
+      eventhubProperties.PartitionIds[0], partitionClientOptions)};
 
   std::vector<Azure::Messaging::EventHubs::Models::ReceivedEventData> events
       = partitionClient.ReceiveEvents(4);

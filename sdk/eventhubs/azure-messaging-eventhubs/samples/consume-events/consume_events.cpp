@@ -44,7 +44,7 @@ int main()
       consumerClient.GetPartitionProperties(eventhubProperties.PartitionIds[0])};
 
   // Create a PartitionClient that we can use to read events from a specific partition.
-  // 
+  //
   // This partition client is configured to read events from the start of the partition, since the
   // default is to read new events only.
   Azure::Messaging::EventHubs::PartitionClientOptions partitionClientOptions;
