@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)
+  TEST_F(BlockBlobClientTest, LastAccessTime)
   {
     auto blobClient = *m_blockBlobClient;
 
