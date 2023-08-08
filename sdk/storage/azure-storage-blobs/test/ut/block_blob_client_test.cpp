@@ -1101,7 +1101,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::this_thread::sleep_for(ImmutabilityMaxLength);
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_LegalHold)
+  TEST_F(BlockBlobClientTest, LegalHold_PLAYBACKONLY_)
   {
     const auto testName = m_blobName;
     auto blobClient = *m_blockBlobClient;
