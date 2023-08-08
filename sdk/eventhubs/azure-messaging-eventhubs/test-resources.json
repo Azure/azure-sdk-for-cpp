@@ -136,6 +136,10 @@
       "type": "string",
       "value": "[variables('eventHubName')]"
     },
+    "EVENTHUBS_HOST": {
+      "type": "string",
+      "value": "[concat(parameters('baseName'), '.servicebus.windows.net')]"
+    },
     "EVENTHUB_CONNECTION_STRING": {
       "type": "string",
       "value": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('namespaceName'), 'RootManageSharedAccessKey'), variables('apiVersion')).primaryConnectionString]"
