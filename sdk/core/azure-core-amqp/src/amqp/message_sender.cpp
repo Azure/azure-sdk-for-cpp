@@ -149,6 +149,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_link->SetMaxMessageSize(std::numeric_limits<uint64_t>::max());
     }
+    if (m_options.MaxLinkCredits != 0)
+    {
+      m_link->SetMaxLinkCredit(m_options.MaxLinkCredits);
+    }
     m_link->SetSenderSettleMode(m_options.SettleMode);
   }
 

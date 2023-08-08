@@ -11,6 +11,7 @@
 #include <azure/core/amqp/management.hpp>
 #include <azure/core/amqp/session.hpp>
 #include <azure/core/context.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/http/user_agent.hpp>
 
 #include <chrono>
@@ -113,6 +114,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Models::EventHubProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Error)
+            << "Management operation failed. StatusCode: " << result.StatusCode
+            << " Error: " << result.Error;
         throw _detail::EventHubsExceptionFactory::CreateEventHubsException(
             result.Error, result.StatusCode);
       }

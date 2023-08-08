@@ -100,7 +100,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& partitionUrl,
         std::string const& receiverName,
         PartitionClientOptions const& options,
-        Azure::Core::Amqp::_internal::MessageReceiverEvents* events)
+        Azure::Core::Amqp::_internal::MessageReceiverEvents* events = nullptr)
     {
       Azure::Core::Amqp::Models::_internal::MessageSourceOptions sourceOptions;
       sourceOptions.Address = static_cast<Azure::Core::Amqp::Models::AmqpValue>(partitionUrl);
@@ -114,7 +114,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
 
       receiverOptions.EnableTrace = true;
-      //    receiverOptions.MessageTarget = m_consumerClientOptions.MessageTarget;
+      // Set the link credit to the prefetch count. If the user has not set a prefetch count, then
+      // we will use the default value.
+      if (options.Prefetch >= 0)
+      {
+        receiverOptions.MaxLinkCredit = options.Prefetch;
+      }
       receiverOptions.Name = receiverName;
       receiverOptions.Properties.emplace("com.microsoft:receiver-name", receiverName);
       if (options.OwnerLevel.HasValue())
@@ -131,7 +136,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& receiverName,
       PartitionClientOptions options,
       Azure::Core::Http::Policies::RetryOptions retryOptions)
-      : m_receiver{CreateMessageReceiver(session, partitionUrl, receiverName, options, this)},
+      : m_receiver{CreateMessageReceiver(session, partitionUrl, receiverName, options)},
         m_partitionOptions{options}, m_retryOptions{retryOptions}
 
   {
@@ -181,16 +186,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::Models::AmqpMessage const& message)
   {
     (void)receiver;
+    (void)message;
     // Queue the incoming message to the received message queue.
-    m_receivedMessageQueue.CompleteOperation(message, {});
+    //    m_receivedMessageQueue.CompleteOperation(message, {});
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
   void PartitionClient::OnMessageReceiverDisconnected(
       Azure::Core::Amqp::Models::_internal::AmqpError const& error)
   {
     // Queue the error to the received message queue along with a null message.
-    m_receivedMessageQueue.CompleteOperation(
-        Azure::Core::Amqp::Models::AmqpMessage{nullptr}, error);
+    //    m_receivedMessageQueue.CompleteOperation(
+    //        Azure::Core::Amqp::Models::AmqpMessage{nullptr}, error);
     (void)error;
   }
 }}} // namespace Azure::Messaging::EventHubs

@@ -94,10 +94,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
 
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::Models::AmqpMessage,
-        Azure::Core::Amqp::Models::_internal::AmqpError>
-        m_receivedMessageQueue;
+    //Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+    //    Azure::Core::Amqp::Models::AmqpMessage,
+    //    Azure::Core::Amqp::Models::_internal::AmqpError>
+    //    m_receivedMessageQueue;
 
     /** Creates a new PartitionClient
      *
