@@ -469,7 +469,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, DISABLED_RenameBlobContainer)
   {
     auto serviceClient = *m_blobServiceClient;
-    const std::string prefix = RandomString();
+    const std::string prefix = LowercaseRandomString();
 
     const std::string srcContainerName = prefix + "src";
     auto srcContainerClient = serviceClient.CreateBlobContainer(srcContainerName).Value;
