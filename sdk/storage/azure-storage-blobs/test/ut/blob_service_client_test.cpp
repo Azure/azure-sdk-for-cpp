@@ -466,10 +466,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
 
-  TEST_F(BlobServiceClientTest, DISABLED_RenameBlobContainer)
+  TEST_F(BlobServiceClientTest, RenameBlobContainer_PLAYBACKONLY_)
   {
     auto serviceClient = *m_blobServiceClient;
-    const std::string prefix = RandomString();
+    const std::string prefix = LowercaseRandomString() + "2";
 
     const std::string srcContainerName = prefix + "src";
     auto srcContainerClient = serviceClient.CreateBlobContainer(srcContainerName).Value;
@@ -481,13 +481,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(srcContainerClient.GetProperties(), StorageException);
     EXPECT_NO_THROW(destContainerClient.GetProperties());
 
-    Blobs::BlobLeaseClient leaseClient(
-        destContainerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+    Blobs::BlobLeaseClient leaseClient(destContainerClient, RandomUUID());
     leaseClient.Acquire(std::chrono::seconds(60));
 
     const std::string destContainerName2 = prefix + "dest2";
     Blobs::RenameBlobContainerOptions renameOptions;
-    renameOptions.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    renameOptions.SourceAccessConditions.LeaseId = RandomUUID();
     EXPECT_THROW(
         serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions),
         StorageException);
