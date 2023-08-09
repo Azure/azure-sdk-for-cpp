@@ -46,7 +46,7 @@ Azure SDK provides a CMake module that you can use for your application. You onl
 
 The AzureVcpkg module supports three scenarios:
 
-1. Getting and setting up Vcpkg automatically (default case). You can set the env var `AZURE_SDK_DISABLE_AUTO_VCPKG` to disable this bahavior.
+1. Getting and setting up Vcpkg automatically (default case). You can set the env var `AZURE_SDK_DISABLE_AUTO_VCPKG` to disable this behavior.
 2. Automatically linking your application to an existing Vcpkg folder. Set the environment variable `VCPKG_ROOT` to the Vcpkg folder you want to link.
 3. Manually setting a toolchain file with cmake command option. `AzureVcpkg.cmake` module will respect the option.
 
