@@ -414,6 +414,53 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
+  TEST_F(BlockBlobClientTest, OAuthSyncCopyFromUri)
+  {
+    auto sourceBlobClient = m_blobContainerClient->GetBlockBlobClient("source" + RandomString());
+    sourceBlobClient.UploadFrom(m_blobContent.data(), m_blobContent.size());
+
+    Azure::Identity::ClientSecretCredential oauthCredential(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    const std::string blobName = "dest" + RandomString();
+    auto destBlobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+
+    Storage::Blobs::CopyBlobFromUriOptions options;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
+    auto res = destBlobClient.CopyFromUri(sourceBlobClient.GetUrl(), options);
+    EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_FALSE(res.Value.CopyId.empty());
+    EXPECT_EQ(res.Value.CopyStatus, Azure::Storage::Blobs::Models::CopyStatus::Success);
+
+    auto downloadResult = destBlobClient.Download();
+    EXPECT_FALSE(downloadResult.Value.Details.CopyId.Value().empty());
+    EXPECT_FALSE(downloadResult.Value.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        downloadResult.Value.Details.CopyStatus.Value()
+        == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult.Value.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(downloadResult.Value.Details.CopyCompletedOn.Value()));
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    EXPECT_FALSE(blobItem.Details.CopyId.Value().empty());
+    EXPECT_FALSE(blobItem.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        blobItem.Details.CopyStatus.Value() == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(blobItem.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(blobItem.Details.CopyCompletedOn.Value()));
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+  }
+
   TEST_F(BlockBlobClientTest, SyncCopyFromUriEncryptionScope)
   {
     Blobs::BlobClientOptions clientOptions;
@@ -706,6 +753,41 @@ namespace Azure { namespace Storage { namespace Test {
     res = blobClient.GetBlockList(options2);
     EXPECT_EQ(
         res.Value.BlobSize, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));
+    EXPECT_TRUE(res.Value.UncommittedBlocks.empty());
+  }
+
+  TEST_F(BlockBlobClientTest, OAuthStageBlockFromUri)
+  {
+    auto srcBlobClient = *m_blockBlobClient;
+
+    auto destClient = GetBlockBlobClientForTest(RandomString());
+    const std::string blockId1 = Base64EncodeText("0");
+
+    Azure::Identity::ClientSecretCredential oauthCredential(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    Storage::Blobs::StageBlockFromUriOptions options;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
+
+    destClient.StageBlockFromUri(blockId1, srcBlobClient.GetUrl() + GetSas());
+    Blobs::GetBlockListOptions options2;
+    options2.ListType = Blobs::Models::BlockListType::All;
+    auto res = destClient.GetBlockList(options2);
+    ASSERT_FALSE(res.Value.UncommittedBlocks.empty());
+    EXPECT_EQ(res.Value.UncommittedBlocks[0].Name, blockId1);
+    EXPECT_EQ(res.Value.UncommittedBlocks[0].Size, static_cast<int64_t>(m_blobContent.size()));
+
+    destClient.CommitBlockList({
+        blockId1,
+    });
+    res = destClient.GetBlockList(options2);
+    EXPECT_EQ(res.Value.BlobSize, static_cast<int64_t>(m_blobContent.size()));
     EXPECT_TRUE(res.Value.UncommittedBlocks.empty());
   }
 
@@ -1311,6 +1393,47 @@ namespace Azure { namespace Storage { namespace Test {
     options.Tags.clear();
     uploadFromUriResult = destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options);
     EXPECT_EQ(destBlobClient.GetTags().Value, srcTags);
+  }
+
+  TEST_F(BlockBlobClientTest, OAuthUploadFromUri)
+  {
+    auto srcBlobClient = *m_blockBlobClient;
+    std::vector<uint8_t> blobContent = RandomBuffer(100);
+    srcBlobClient.UploadFrom(blobContent.data(), blobContent.size());
+
+    const std::vector<uint8_t> blobMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> blobCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    Azure::Identity::ClientSecretCredential oauthCredential(
+        AadTenantId(),
+        AadClientId(),
+        AadClientSecret(),
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+
+    Storage::Blobs::UploadBlockBlobFromUriOptions options;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
+    auto destBlobClient = GetBlockBlobClientForTest(RandomString() + "dest");
+    auto uploadFromUriResult = destBlobClient.UploadFromUri(srcBlobClient.GetUrl(), options);
+    EXPECT_TRUE(uploadFromUriResult.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(uploadFromUriResult.Value.LastModified));
+    EXPECT_TRUE(uploadFromUriResult.Value.VersionId.HasValue());
+    EXPECT_TRUE(uploadFromUriResult.Value.IsServerEncrypted);
+    ASSERT_TRUE(uploadFromUriResult.Value.TransactionalContentHash.HasValue());
+    if (uploadFromUriResult.Value.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+    {
+      EXPECT_EQ(uploadFromUriResult.Value.TransactionalContentHash.Value().Value, blobMd5);
+    }
+    else if (
+        uploadFromUriResult.Value.TransactionalContentHash.Value().Algorithm
+        == HashAlgorithm::Crc64)
+    {
+      EXPECT_EQ(uploadFromUriResult.Value.TransactionalContentHash.Value().Value, blobCrc64);
+    }
   }
 
   TEST_F(BlockBlobClientTest, SetGetTagsWithLeaseId)

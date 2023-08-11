@@ -18,6 +18,7 @@ add_executable (
   azure-storage-blobs-test
     append_blob_client_test.cpp
     append_blob_client_test.hpp
+    bearer_token_test.cpp
     blob_batch_client_test.cpp
     blob_container_client_test.cpp
     blob_container_client_test.hpp
