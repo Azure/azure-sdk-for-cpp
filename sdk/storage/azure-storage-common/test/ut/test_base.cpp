@@ -499,6 +499,11 @@ namespace Azure { namespace Storage { namespace Test {
         "x-ms-file-permission-copy-mode",
         "x-ms-file-rename-ignore-readonly",
         "x-ms-file-rename-replace-if-exists",
+        "x-recording-id",
+        "x-recording-mode",
+        "x-recording-upstream-base-uri",
+        "x-request-mismatch",
+        "x-request-mismatch-error",
     };
     const std::set<std::string> allowedQueryParameters = {
         "comp",
