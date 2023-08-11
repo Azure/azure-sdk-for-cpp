@@ -49,7 +49,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       {
         returnValue = "amqp.annotation.x-opt-enqueued-time " + greaterThan + "'"
             + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
-                                 static_cast<std::chrono::system_clock::time_point>(startPosition.EnqueuedTime.Value()).time_since_epoch())
+                                 static_cast<std::chrono::system_clock::time_point>(
+                                     startPosition.EnqueuedTime.Value())
+                                     .time_since_epoch())
                                  .count())
             + "'";
       }

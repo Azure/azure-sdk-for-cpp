@@ -224,11 +224,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Azure::Core::Diagnostics::_internal::Log::Stream(
             Azure::Core::Diagnostics::Logger::Level::Informational)
             << "last enqueued time utc: "
-            << std::chrono::duration_cast<std::chrono::seconds>(static_cast<std::chrono::milliseconds>(
-                   bodyMap["last_enqueued_time_utc"].AsTimestamp()))
+            << std::chrono::duration_cast<std::chrono::seconds>(
+                   static_cast<std::chrono::milliseconds>(
+                       bodyMap["last_enqueued_time_utc"].AsTimestamp()))
                    .count()
             << " s";
-        
+
         properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
             std::chrono::duration_cast<std::chrono::seconds>(
                 static_cast<std::chrono::milliseconds>(

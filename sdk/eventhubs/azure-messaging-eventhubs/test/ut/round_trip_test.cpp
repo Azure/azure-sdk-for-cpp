@@ -10,7 +10,8 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class RoundTripTests : public EventHubsTestBase {};
+  class RoundTripTests : public EventHubsTestBase {
+  };
 
   // Round trip a message with a string body using a sequence number filter.
   TEST_F(RoundTripTests, SendAndReceiveStringSequenceNumber_LIVEONLY_)
@@ -88,7 +89,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         EXPECT_TRUE(event.SequenceNumber);
       }
 
-
       std::vector<uint8_t> expected{1, 2, 3, 4, 5};
 
       EXPECT_EQ(expected, receivedEvents[0].Body);
@@ -101,7 +101,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::string const connectionString = GetEnv("EVENTHUB_CONNECTION_STRING");
     std::string const eventHubName = GetEnv("EVENTHUB_NAME");
     std::string const consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-
 
     Azure::DateTime startTime;
     {
@@ -139,10 +138,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       for (auto const& event : receivedEvents)
       {
         GTEST_LOG_(INFO) << "Event: " << event;
-		EXPECT_TRUE(event.EnqueuedTime);
-		EXPECT_TRUE(event.Offset);
-		EXPECT_TRUE(event.SequenceNumber);
-	  }
+        EXPECT_TRUE(event.EnqueuedTime);
+        EXPECT_TRUE(event.Offset);
+        EXPECT_TRUE(event.SequenceNumber);
+      }
       std::vector<uint8_t> expected{1, 2, 3, 4, 5, 6, 7};
 
       EXPECT_EQ(expected, receivedEvents[0].Body);
