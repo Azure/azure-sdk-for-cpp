@@ -367,7 +367,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(appendBlobClient.Download().Value.BodyStream), blockContent);
   }
 
-  TEST_F(AppendBlobClientTest, OAuthAppendBlockFromUri_LIVEONLY_)
+  TEST_F(AppendBlobClientTest, OAuthAppendBlockFromUri)
   {
     const std::vector<uint8_t> blobContent = RandomBuffer(10);
     auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Test {
         AadTenantId(),
         AadClientId(),
         AadClientSecret(),
-        Azure::Identity::ClientSecretCredentialOptions());
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());

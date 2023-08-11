@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
         pageBlobClient.Download().Value.BodyStream->ReadToEnd());
   }
 
-  TEST_F(PageBlobClientTest, OAuthUploadFromUri_LIVEONLY_)
+  TEST_F(PageBlobClientTest, OAuthUploadFromUri)
   {
     auto pageBlobClient = *m_pageBlobClient;
 
@@ -230,7 +230,7 @@ namespace Azure { namespace Storage { namespace Test {
         AadTenantId(),
         AadClientId(),
         AadClientSecret(),
-        Azure::Identity::ClientSecretCredentialOptions());
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());

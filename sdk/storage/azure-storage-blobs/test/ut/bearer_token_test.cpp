@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     Blobs::BlobClientOptions clientOptions
         = InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-    Azure::Identity::ClientSecretCredentialOptions options;
+    auto options = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
 
     // With tenantId
     clientOptions.EnableTenantDiscovery = true;

@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
-  TEST_F(BlockBlobClientTest, OAuthSyncCopyFromUri_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, OAuthSyncCopyFromUri)
   {
     auto sourceBlobClient = m_blobContainerClient->GetBlockBlobClient("source" + RandomString());
     sourceBlobClient.UploadFrom(m_blobContent.data(), m_blobContent.size());
@@ -423,7 +423,7 @@ namespace Azure { namespace Storage { namespace Test {
         AadTenantId(),
         AadClientId(),
         AadClientSecret(),
-        Azure::Identity::ClientSecretCredentialOptions());
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
@@ -756,7 +756,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(res.Value.UncommittedBlocks.empty());
   }
 
-  TEST_F(BlockBlobClientTest, OAuthStageBlockFromUri_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, OAuthStageBlockFromUri)
   {
     auto srcBlobClient = *m_blockBlobClient;
 
@@ -767,7 +767,7 @@ namespace Azure { namespace Storage { namespace Test {
         AadTenantId(),
         AadClientId(),
         AadClientSecret(),
-        Azure::Identity::ClientSecretCredentialOptions());
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
@@ -1395,7 +1395,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(destBlobClient.GetTags().Value, srcTags);
   }
 
-  TEST_F(BlockBlobClientTest, OAuthUploadFromUri_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, OAuthUploadFromUri)
   {
     auto srcBlobClient = *m_blockBlobClient;
     std::vector<uint8_t> blobContent = RandomBuffer(100);
@@ -1410,7 +1410,7 @@ namespace Azure { namespace Storage { namespace Test {
         AadTenantId(),
         AadClientId(),
         AadClientSecret(),
-        Azure::Identity::ClientSecretCredentialOptions());
+        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
     auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
