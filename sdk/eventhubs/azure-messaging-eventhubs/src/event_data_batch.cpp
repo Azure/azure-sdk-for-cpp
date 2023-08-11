@@ -14,7 +14,7 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
-  void EventDataBatch::AddMessage(Azure::Messaging::EventHubs::Models::EventData& message)
+  void EventDataBatch::AddMessage(Azure::Messaging::EventHubs::Models::EventData const& message)
   {
     AddAmqpMessage(message.GetRawAmqpMessage());
   }

@@ -180,6 +180,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           message,
           context);
 
+      Azure::Core::Diagnostics::_internal::Log::Stream(
+          Azure::Core::Diagnostics::Logger::Level::Informational)
+          << "Received partition properties: " << result.Message;
+
       Models::EventHubPartitionProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
@@ -203,7 +207,28 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         properties.PartitionId = static_cast<std::string>(bodyMap["partition"]);
         properties.BeginningSequenceNumber = bodyMap["begin_sequence_number"];
         properties.LastEnqueuedSequenceNumber = bodyMap["last_enqueued_sequence_number"];
-        properties.LastEnqueuedOffset = static_cast<std::string>(bodyMap["last_enqueued_offset"]);
+        // For <reasons> the last enqueued offset is returned as a string. Convert to an int64.
+        properties.LastEnqueuedOffset = std::strtoull(
+            static_cast<std::string>(bodyMap["last_enqueued_offset"]).c_str(), nullptr, 10);
+
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Informational)
+            << "last enqueued time utc: " << bodyMap["last_enqueued_time_utc"];
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Informational)
+            << "last enqueued time utc: "
+            << static_cast<std::chrono::milliseconds>(
+                   bodyMap["last_enqueued_time_utc"].AsTimestamp())
+                   .count()
+            << " ms";
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Informational)
+            << "last enqueued time utc: "
+            << std::chrono::duration_cast<std::chrono::seconds>(static_cast<std::chrono::milliseconds>(
+                   bodyMap["last_enqueued_time_utc"].AsTimestamp()))
+                   .count()
+            << " s";
+        
         properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
             std::chrono::duration_cast<std::chrono::seconds>(
                 static_cast<std::chrono::milliseconds>(

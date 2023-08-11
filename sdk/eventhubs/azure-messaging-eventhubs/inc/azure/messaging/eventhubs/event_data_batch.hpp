@@ -136,7 +136,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param message The message to add to the batch
      */
-    void AddMessage(Azure::Messaging::EventHubs::Models::EventData& message);
+    void AddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
 
     /** @brief Gets the number of messages in the batch
      *

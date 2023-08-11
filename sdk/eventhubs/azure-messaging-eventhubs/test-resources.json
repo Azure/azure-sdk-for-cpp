@@ -65,7 +65,8 @@
   },
   "variables": {
     "apiVersion": "2017-04-01",
-    "eventHubName": "eventHub",
+    "eventHubName": "testEventHub",
+    "consumerGroup": "defaultGroup",
     "contributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
     "eventHubsDataOwnerRoleId": "f526a384-b230-433a-b45c-95f59c4a2dec",
     "storageDataOwnerRoleId": "b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
@@ -124,7 +125,7 @@
     {
       "type": "Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups",
       "apiVersion": "[variables('apiVersion')]",
-      "name": "[concat(variables('eventHubsNamespace'), '/', variables('eventHubName'), '/$Default')]",
+      "name": "[concat(variables('eventHubsNamespace'), '/', variables('eventHubName'), '/', variables('consumerGroup'))]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventHubsNamespace'), variables('eventHubName'))]",
@@ -243,6 +244,10 @@
     "EVENTHUB_CONNECTION_STRING": {
       "type": "string",
       "value": "[listkeys(variables('eventHubsAuthRuleResourceId'), '2015-08-01').primaryConnectionString]"
+    },
+    "EVENTHUB_CONSUMER_GROUP": {
+      "type": "string",
+      "value": "[variables('consumerGroup')]"
     },
     "CHECKPOINTSTORE_STORAGE_CONNECTION_STRING": {
       "type": "string",

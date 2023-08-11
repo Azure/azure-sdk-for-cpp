@@ -26,7 +26,9 @@ std::string Azure::Messaging::EventHubs::Models::Ownership::GetOwnershipPrefixNa
     throw std::runtime_error("missing ownership fields");
   }
   std::stringstream strstr;
-  strstr << FullyQualifiedNamespace << "/" << EventHubName << "/" << ConsumerGroup << "/ownership/";
+  strstr << Azure::Core::_internal::StringExtensions::ToLower(FullyQualifiedNamespace) << "/"
+         << Azure::Core::_internal::StringExtensions::ToLower(EventHubName) << "/"
+         << Azure::Core::_internal::StringExtensions::ToLower(ConsumerGroup) << "/ownership/";
 
   return strstr.str();
 }
@@ -38,8 +40,9 @@ std::string Azure::Messaging::EventHubs::Models::Checkpoint::GetCheckpointBlobPr
     throw std::runtime_error("missing checkpoint fields");
   }
   std::stringstream strstr;
-  strstr << FullyQualifiedNamespaceName << "/" << EventHubName << "/" << ConsumerGroup
-         << "/checkpoint/";
+  strstr << Azure::Core::_internal::StringExtensions::ToLower(FullyQualifiedNamespaceName) << "/"
+         << Azure::Core::_internal::StringExtensions::ToLower(EventHubName) << "/"
+         << Azure::Core::_internal::StringExtensions::ToLower(ConsumerGroup) << "/checkpoint/";
 
   return strstr.str();
 }

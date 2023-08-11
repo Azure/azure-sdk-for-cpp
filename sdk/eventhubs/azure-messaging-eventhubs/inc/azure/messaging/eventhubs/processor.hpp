@@ -63,7 +63,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class Processor final {
 #ifdef TESTING_BUILD_AMQP
-
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
 

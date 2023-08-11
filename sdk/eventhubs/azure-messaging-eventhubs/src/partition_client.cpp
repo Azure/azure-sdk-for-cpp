@@ -4,10 +4,14 @@
 #include "azure/messaging/eventhubs/partition_client.hpp"
 
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
+#include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace {
@@ -43,9 +47,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string returnValue;
       if (startPosition.EnqueuedTime.HasValue())
       {
-        returnValue = "amqp.annotation.x--opt-enqueued-time " + greaterThan + "'"
+        returnValue = "amqp.annotation.x-opt-enqueued-time " + greaterThan + "'"
             + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
-                                 startPosition.EnqueuedTime.Value().time_since_epoch())
+                                 static_cast<std::chrono::system_clock::time_point>(startPosition.EnqueuedTime.Value()).time_since_epoch())
                                  .count())
             + "'";
       }
