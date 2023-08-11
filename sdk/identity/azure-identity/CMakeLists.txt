@@ -57,6 +57,7 @@ set(
     inc/azure/identity/environment_credential.hpp
     inc/azure/identity/managed_identity_credential.hpp
     inc/azure/identity/rtti.hpp
+    inc/azure/identity/workload_identity_credential.hpp
     inc/azure/identity.hpp
 )
 
@@ -80,6 +81,7 @@ set(
     src/tenant_id_resolver.cpp
     src/token_cache.cpp
     src/token_credential_impl.cpp
+    src/workload_identity_credential.cpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
