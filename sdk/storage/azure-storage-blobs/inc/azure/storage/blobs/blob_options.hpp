@@ -590,7 +590,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional. Source authorization used to access the source file.
-     * The format is: <schema> <signature>
+     * The format is: \<scheme\> \<signature\>
      * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
      * source.
      */
@@ -967,7 +967,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional. Source authorization used to access the source file.
-     * The format is: <schema> <signature>
+     * The format is: \<scheme\> \<signature\>
      * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
      * source.
      */
@@ -1023,7 +1023,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional. Source authorization used to access the source file.
-     * The format is: <schema> <signature>
+     * The format is: \<scheme\> \<signature\>
      * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
      * source.
      */
@@ -1316,7 +1316,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional. Source authorization used to access the source file.
-     * The format is: <schema> <signature>
+     * The format is: \<scheme\> \<signature\>
      * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
      * source.
      */
@@ -1427,7 +1427,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional. Source authorization used to access the source file.
-     * The format is: <schema> <signature>
+     * The format is: \<scheme\> \<signature\>
      * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
      * source.
      */
