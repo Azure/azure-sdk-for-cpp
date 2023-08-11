@@ -16,7 +16,7 @@
 #include <sstream>
 #include <vector>
 
-#ifdef WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 #include <Windows.h>
 #include <wil/resource.h>
 #include <wil/result.h>
@@ -61,7 +61,7 @@ using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
-#ifdef WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
 {
   DWORD size = 0;
@@ -125,7 +125,10 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
       0,
       &signatureSize,
       BCRYPT_PAD_PKCS1);
-  THROW_HR_IF(status, status != NTE_BUFFER_TOO_SMALL);
+  if (status != NTE_BUFFER_TOO_SMALL)
+  {
+	return {};
+  }
   std::vector<unsigned char> signature(signatureSize);
   status = NCryptSignHash(
       key,
@@ -136,7 +139,10 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
       static_cast<ULONG>(signature.size()),
       &signatureSize,
       BCRYPT_PAD_PKCS1);
-  THROW_HR_IF(status, status != ERROR_SUCCESS);
+  if (status != ERROR_SUCCESS)
+  {
+    return {};
+  }
   return signature;
 }
 #else
@@ -233,7 +239,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 #endif
 } // namespace
 
-#ifdef WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 void Azure::Identity::_detail::FreeNcryptKeyImpl(void* pkey)
 {
   NCryptFreeObject(reinterpret_cast<NCRYPT_KEY_HANDLE>(pkey));

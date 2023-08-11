@@ -14,6 +14,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/unique_handle.hpp>
+#include <azure/core/platform.hpp>
 #include <azure/core/url.hpp>
 
 #include <memory>
@@ -24,7 +25,7 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
 
-#ifdef WIN32
+#ifdef AZ_PLATFORM_WINDOWS
     void FreeNcryptKeyImpl(void* ncryptKey);
 
     template <typename> struct UniqueNcryptKeyHelper;
