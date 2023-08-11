@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.
+    - A new property is now available on `QueueClientOptions` called `EnableTenantDiscovery`. If set to `true`, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
+- Added a new field `SourceAuthorization` in options for copy operations, which can be used to specify authorization for copy source.
+
 ### Breaking Changes
 
 ### Bugs Fixed
