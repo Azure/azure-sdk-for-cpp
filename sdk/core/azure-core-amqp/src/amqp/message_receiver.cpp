@@ -135,8 +135,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (m_options.MaxLinkCredit != 0)
     {
-	  m_link->SetMaxLinkCredit(m_options.MaxLinkCredit);
-	}
+      m_link->SetMaxLinkCredit(m_options.MaxLinkCredit);
+    }
     m_link->SetAttachProperties(static_cast<Models::AmqpValue>(m_options.Properties));
   }
 

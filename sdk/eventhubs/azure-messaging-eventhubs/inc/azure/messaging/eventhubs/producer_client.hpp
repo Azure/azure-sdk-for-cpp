@@ -113,6 +113,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.clear();
     }
 
+    EventDataBatch CreateBatch(
+        EventDataBatchOptions const& options = {},
+        Azure::Core::Context const& context = {});
+
     /**@brief Proceeds to send and EventDataBatch
      *
      * @param eventDataBatch Batch to send
@@ -142,6 +146,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   private:
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId = "");
-    void CreateSender(std::string const& partitionId = "");
+    void CreateSender(
+        std::string const& partitionId = "",
+        Azure::Core::Context const& context = {});
   };
 }}} // namespace Azure::Messaging::EventHubs

@@ -54,7 +54,7 @@ int main()
   // configure this batch processor to send to that partition.
   Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
   batchOptions.PartitionId = eventhubProperties.PartitionIds[0];
-  Azure::Messaging::EventHubs::EventDataBatch batch(batchOptions);
+  Azure::Messaging::EventHubs::EventDataBatch batch{producerClient.CreateBatch(batchOptions)};
 
   // Send an event with a simple binary body.
   {

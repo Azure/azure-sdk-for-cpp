@@ -29,7 +29,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string eventHubName = GetEnv("EVENTHUB_NAME");
 
       Azure::Messaging::EventHubs::ProducerClient producer{connStringNoEntityPath, eventHubName};
-      EventDataBatch batch;
+      EventDataBatch batch{producer.CreateBatch()};
       batch.AddMessage(Models::EventData{"Test"});
       producer.SendEventDataBatch(batch);
     }

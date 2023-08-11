@@ -59,6 +59,9 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   producerOptions.Name = "sender-link";
   producerOptions.ApplicationID = "some";
 
+  auto client = Azure::Messaging::EventHubs::ProducerClient(
+      connStringEntityPath, eventHubName, producerOptions);
+
   Azure::Core::Amqp::Models::AmqpMessage message2;
   Azure::Messaging::EventHubs::Models::EventData message1;
   message2.SetBody(Azure::Core::Amqp::Models::AmqpValue("Hello7"));
@@ -71,13 +74,13 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions;
   edboptions.MaxBytes = std::numeric_limits<uint16_t>::max();
   edboptions.PartitionId = "1";
-  Azure::Messaging::EventHubs::EventDataBatch eventBatch(edboptions);
+  Azure::Messaging::EventHubs::EventDataBatch eventBatch{client.CreateBatch(edboptions)};
 
   Azure::Messaging::EventHubs::EventDataBatchOptions edboptions2;
   edboptions2.MaxBytes = std::numeric_limits<uint16_t>::max();
   ;
   edboptions2.PartitionId = "2";
-  Azure::Messaging::EventHubs::EventDataBatch eventBatch2(edboptions2);
+  Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};
 
   eventBatch.AddMessage(message1);
   eventBatch.AddMessage(message2);
@@ -85,8 +88,6 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   eventBatch2.AddMessage(message3);
   eventBatch2.AddMessage(message2);
 
-  auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connStringEntityPath, eventHubName, producerOptions);
   for (int i = 0; i < 5; i++)
   {
     auto result = client.SendEventDataBatch(eventBatch);

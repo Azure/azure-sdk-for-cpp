@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * least one message has been settled. The sender MAY send as many messages as it likes before
      * receiving a disposition, but it MUST NOT send more messages than the link-credit. The sender
      * MUST NOT send any messages after sending a disposition that indicates an error.
-     * 
+     *
      */
     uint32_t MaxLinkCredits{};
 
@@ -140,6 +140,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
     void Close();
+
+    /** @brief Returns the link negotiated maximum message size
+     *
+     * @return The negotiated maximum message size.
+     */
+    std::uint64_t GetMaxMessageSize() const;
 
     /** @brief Send a message synchronously to the target of the message sender.
      *

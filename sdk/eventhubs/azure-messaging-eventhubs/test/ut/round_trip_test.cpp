@@ -29,7 +29,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
-      Azure::Messaging::EventHubs::EventDataBatch eventBatch(batchOptions);
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
       eventBatch.AddMessage(Azure::Messaging::EventHubs::Models::EventData("Hello world!"));
       producer.SendEventDataBatch(eventBatch);
     }
@@ -65,7 +65,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
-      Azure::Messaging::EventHubs::EventDataBatch eventBatch(batchOptions);
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
       eventBatch.AddMessage(Azure::Messaging::EventHubs::Models::EventData({1, 2, 3, 4, 5}));
       producer.SendEventDataBatch(eventBatch);
     }
@@ -114,7 +114,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
       batchOptions.PartitionId = "1";
-      Azure::Messaging::EventHubs::EventDataBatch eventBatch(batchOptions);
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{producer.CreateBatch(batchOptions)};
       Azure::Messaging::EventHubs::Models::EventData eventData;
       eventData.Body = {1, 2, 3, 4, 5, 6, 7};
       eventData.ContentType = "application/binary";

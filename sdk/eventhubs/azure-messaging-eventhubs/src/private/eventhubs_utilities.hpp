@@ -4,6 +4,7 @@
 // Useful utilities for the Event Hubs Clients.
 #pragma once
 
+#include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "azure/messaging/eventhubs/models/management_models.hpp"
 #include "package_version.hpp"
@@ -59,6 +60,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   private:
     static bool IsErrorTransient(
         Azure::Core::Amqp::Models::_internal::AmqpErrorCondition const& condition);
+  };
+
+  class EventDataBatchFactory final {
+  public:
+    static EventDataBatch CreateEventDataBatch(EventDataBatchOptions const& options);
+    EventDataBatchFactory() = delete;
   };
 
   class EventHubsUtilities {
