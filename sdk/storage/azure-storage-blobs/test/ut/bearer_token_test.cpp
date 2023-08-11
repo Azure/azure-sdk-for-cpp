@@ -5,7 +5,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(BlockBlobClientTest, ClientSecretCredentialWorks_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, ClientSecretCredentialWorks)
   {
     const std::string containerName = LowercaseRandomString();
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.Delete());
   }
 
-  TEST_F(BlockBlobClientTest, BearerChallengeWorks_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, BearerChallengeWorks)
   {
     Blobs::BlobClientOptions clientOptions
         = InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
