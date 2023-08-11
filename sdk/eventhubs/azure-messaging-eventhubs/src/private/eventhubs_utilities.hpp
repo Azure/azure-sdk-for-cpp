@@ -5,6 +5,7 @@
 #pragma once
 
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
+#include "azure/messaging/eventhubs/partition_client.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "azure/messaging/eventhubs/models/management_models.hpp"
 #include "package_version.hpp"
@@ -68,6 +69,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     EventDataBatchFactory() = delete;
   };
 
+  class PartitionClientFactory final {
+  public:
+    static PartitionClient CreatePartitionClient(
+        Azure::Core::Amqp::_internal::Session const& session,
+        std::string const& partitionUrl,
+        std::string const& receiverName,
+        PartitionClientOptions options,
+        Azure::Core::Http::Policies::RetryOptions retryOptions,
+        Azure::Core::Context const& context);
+    PartitionClientFactory() = delete;
+  };
+
   class EventHubsUtilities {
 
   public:
@@ -104,7 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Azure::Core::Amqp::_internal::ManagementClient managementClient{
           session.CreateManagementClient(eventHubName, managementClientOptions)};
 
-      managementClient.Open();
+      managementClient.Open(context);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
       Azure::Core::Amqp::Models::AmqpMessage message;
@@ -171,7 +184,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Azure::Core::Amqp::_internal::ManagementClient managementClient{
           session.CreateManagementClient(eventHubName, managementClientOptions)};
 
-      managementClient.Open();
+      managementClient.Open(context);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
       Azure::Core::Amqp::Models::AmqpMessage message;

@@ -74,12 +74,5 @@ int main()
     batch.AddMessage(event);
   }
 
-  if (!producerClient.SendEventDataBatch(batch))
-  {
-    std::cerr << "Failed to send message to the Event Hub instance." << std::endl;
-  }
-  else
-  {
-    std::cout << "Sent message to the Event Hub instance." << std::endl;
-  }
+  producerClient.Send(batch);
 }

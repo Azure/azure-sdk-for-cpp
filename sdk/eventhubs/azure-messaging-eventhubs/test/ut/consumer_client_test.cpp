@@ -30,8 +30,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       Azure::Messaging::EventHubs::ProducerClient producer{connStringNoEntityPath, eventHubName};
       EventDataBatch batch{producer.CreateBatch()};
-      batch.AddMessage(Models::EventData{"Test"});
-      producer.SendEventDataBatch(batch);
+      EXPECT_TRUE(batch.AddMessage(Models::EventData{"Test"}));
+      EXPECT_NO_THROW(producer.Send(batch));
     }
   };
 

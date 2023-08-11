@@ -136,14 +136,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
   } // namespace
 
-  PartitionClient::PartitionClient(
+  PartitionClient _detail::PartitionClientFactory::CreatePartitionClient(
       Azure::Core::Amqp::_internal::Session const& session,
       std::string const& partitionUrl,
       std::string const& receiverName,
       PartitionClientOptions options,
+      Azure::Core::Http::Policies::RetryOptions retryOptions,
+      Azure::Core::Context const& context)
+  {
+    Azure::Core::Amqp::_internal::MessageReceiver messageReceiver{
+        CreateMessageReceiver(session, partitionUrl, receiverName, options)};
+    messageReceiver.Open(context);
+
+    return PartitionClient(std::move(messageReceiver), std::move(options), std::move(retryOptions));
+  }
+
+  PartitionClient::PartitionClient(
+      Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
+      PartitionClientOptions options,
       Azure::Core::Http::Policies::RetryOptions retryOptions)
-      : m_receiver{CreateMessageReceiver(session, partitionUrl, receiverName, options)},
-        m_partitionOptions{options}, m_retryOptions{retryOptions}
+      : m_receiver{messageReceiver}, m_partitionOptions{options}, m_retryOptions{retryOptions}
 
   {
     // Open the connection to the remote.

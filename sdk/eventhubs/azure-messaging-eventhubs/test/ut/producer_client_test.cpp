@@ -13,8 +13,7 @@
 
 #include <gtest/gtest.h>
 
-class ProducerClientTest : public EventHubsTestBase {
-};
+class ProducerClientTest : public EventHubsTestBase {};
 
 TEST_F(ProducerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
 {
@@ -90,8 +89,7 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
 
   for (int i = 0; i < 5; i++)
   {
-    auto result = client.SendEventDataBatch(eventBatch);
-    EXPECT_TRUE(result);
+    EXPECT_NO_THROW(client.Send(eventBatch));
   }
 }
 

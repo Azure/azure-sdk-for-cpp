@@ -160,7 +160,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
         AddEndProperty(event, m_numberToSend);
         batch.AddMessage(event);
       }
-      m_client->SendEventDataBatch(batch, context);
+      m_client->Send(batch, context);
 
       auto afterSendProps = m_client->GetPartitionProperties(m_partitionId, context);
 

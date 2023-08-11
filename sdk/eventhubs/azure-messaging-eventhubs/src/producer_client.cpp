@@ -117,7 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return _detail::EventDataBatchFactory::CreateEventDataBatch(optionsToUse);
   }
 
-  bool ProducerClient::SendEventDataBatch(
+  void ProducerClient::Send(
       EventDataBatch const& eventDataBatch,
       Core::Context const& context)
   {
@@ -125,7 +125,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
         m_producerClientOptions.RetryOptions);
-    return retryOp.Execute([&]() -> bool {
+    retryOp.Execute([&]() -> bool {
       auto result = GetSender(eventDataBatch.GetPartitionId()).Send(message, context);
       auto sendStatus = std::get<0>(result);
       if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)

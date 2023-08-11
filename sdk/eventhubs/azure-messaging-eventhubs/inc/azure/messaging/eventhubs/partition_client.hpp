@@ -11,6 +11,9 @@
 #include <azure/core/nullable.hpp>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+  namespace _detail {
+    class PartitionClientFactory;
+  }
   /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
    * function.
    */
@@ -76,7 +79,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     void Close() { m_receiver.Close(); }
 
   private:
-    friend class ConsumerClient;
+    friend class _detail::PartitionClientFactory;
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
@@ -109,9 +112,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      */
     PartitionClient(
-        Azure::Core::Amqp::_internal::Session const& session,
-        std::string const& partitionUrl,
-        std::string const& receiverName,
+        Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
         PartitionClientOptions options,
         Azure::Core::Http::Policies::RetryOptions retryOptions);
 

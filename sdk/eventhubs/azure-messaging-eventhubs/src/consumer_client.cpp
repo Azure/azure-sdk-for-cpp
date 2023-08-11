@@ -50,7 +50,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   PartitionClient ConsumerClient::CreatePartitionClient(
       std::string partitionId,
-      PartitionClientOptions const& options)
+      PartitionClientOptions const& options,
+      Azure::Core::Context const& context)
   {
     std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
     std::string hostUrl = m_hostUrl + suffix;
@@ -72,13 +73,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Session session{connection.CreateSession(sessionOptions)};
     m_sessions.emplace(partitionId, session);
+    
 
-    return PartitionClient{
+    return _detail::PartitionClientFactory::CreatePartitionClient(
         session,
         hostUrl,
         m_consumerClientOptions.Name,
         options,
-        m_consumerClientOptions.RetryOptions};
+        m_consumerClientOptions.RetryOptions,
+        context);
   }
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)

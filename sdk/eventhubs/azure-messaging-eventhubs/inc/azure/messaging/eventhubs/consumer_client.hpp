@@ -133,7 +133,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     PartitionClient CreatePartitionClient(
         std::string partitionId,
-        PartitionClientOptions const& options = {});
+        PartitionClientOptions const& options = {},
+        Azure::Core::Context const& context = {});
 
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.

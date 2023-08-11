@@ -122,9 +122,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param eventDataBatch Batch to send
      * @param context Request context
      */
-    bool SendEventDataBatch(
-        EventDataBatch const& eventDataBatch,
-        Core::Context const& context = {});
+    void Send(EventDataBatch const& eventDataBatch, Core::Context const& context = {});
 
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
