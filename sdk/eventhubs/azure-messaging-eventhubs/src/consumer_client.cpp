@@ -73,7 +73,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Session session{connection.CreateSession(sessionOptions)};
     m_sessions.emplace(partitionId, session);
-    
 
     return _detail::PartitionClientFactory::CreatePartitionClient(
         session,

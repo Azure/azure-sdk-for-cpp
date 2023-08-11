@@ -117,9 +117,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return _detail::EventDataBatchFactory::CreateEventDataBatch(optionsToUse);
   }
 
-  void ProducerClient::Send(
-      EventDataBatch const& eventDataBatch,
-      Core::Context const& context)
+  void ProducerClient::Send(EventDataBatch const& eventDataBatch, Core::Context const& context)
   {
     auto message = eventDataBatch.ToAmqpMessage();
 

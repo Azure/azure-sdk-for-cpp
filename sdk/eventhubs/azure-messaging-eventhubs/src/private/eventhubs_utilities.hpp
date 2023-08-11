@@ -5,9 +5,9 @@
 #pragma once
 
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
-#include "azure/messaging/eventhubs/partition_client.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "azure/messaging/eventhubs/models/management_models.hpp"
+#include "azure/messaging/eventhubs/partition_client.hpp"
 #include "package_version.hpp"
 
 #include <azure/core/amqp/management.hpp>
