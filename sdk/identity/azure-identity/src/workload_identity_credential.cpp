@@ -28,7 +28,6 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("WorkloadIdentityCredential"),
       m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
-      m_tokenFilePath(tokenFilePath),
       m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),
       m_requestBody(
           std::string(
@@ -36,7 +35,8 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
               "&client_assertion_type="
               "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id=")
-          + Url::Encode(clientId))
+          + Url::Encode(clientId)),
+      m_tokenFilePath(tokenFilePath)
 {
 }
 
