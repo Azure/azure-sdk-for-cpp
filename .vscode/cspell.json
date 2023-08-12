@@ -84,6 +84,7 @@
     "hcertstore",
     "hcryptmsg",
     "HKEY",
+    "HLOCAL",
     "HRESULT",
     "IMDS",
     "immutability",

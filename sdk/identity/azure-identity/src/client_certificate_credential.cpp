@@ -48,9 +48,6 @@ using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
-template <typename T>
-using unique_hlocal = wil::unique_any<T*, decltype(&::LocalFree), ::LocalFree>;
-
 template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
 {
   const size_t size = in.size();
@@ -172,7 +169,7 @@ wil::unique_bcrypt_algorithm OpenAlgorithm(LPCWSTR algId)
 UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
 {
   DWORD keySize = 0;
-  unique_hlocal<BCRYPT_RSAKEY_BLOB> rsaKeyBlob;
+  wil::unique_hlocal_ptr<BCRYPT_RSAKEY_BLOB> rsaKeyBlob;
   THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
       X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
       CNG_RSA_PRIVATE_KEY_BLOB,
@@ -180,7 +177,7 @@ UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
       size,
       CRYPT_DECODE_ALLOC_FLAG,
       nullptr,
-      rsaKeyBlob.addressof(),
+      wil::out_param(rsaKeyBlob),
       &keySize));
   BCRYPT_KEY_HANDLE key;
   auto alg = OpenAlgorithm(BCRYPT_RSA_ALGORITHM);
@@ -198,7 +195,7 @@ UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
 UniquePrivateKey ImportEccPrivateKey(const BYTE* data, DWORD size)
 {
   DWORD keySize = 0;
-  unique_hlocal<CRYPT_ECC_PRIVATE_KEY_INFO> eccKeyInfo;
+  wil::unique_hlocal_ptr<CRYPT_ECC_PRIVATE_KEY_INFO> eccKeyInfo;
   THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
       X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
       X509_ECC_PRIVATE_KEY,
@@ -206,9 +203,9 @@ UniquePrivateKey ImportEccPrivateKey(const BYTE* data, DWORD size)
       size,
       CRYPT_DECODE_ALLOC_FLAG,
       nullptr,
-      eccKeyInfo.addressof(),
+      wil::out_param(eccKeyInfo),
       &keySize));
-  auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo.get());
+  auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo);
   auto alg = OpenAlgorithm(BCRYPT_ECDSA_ALGORITHM);
   BCRYPT_KEY_HANDLE key;
   THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
@@ -243,7 +240,7 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
     return ImportEccPrivateKey(keyBuffer.data(), static_cast<DWORD>(keyBuffer.size()));
   }
 
-  unique_hlocal<CRYPT_PRIVATE_KEY_INFO> privateKeyInfo;
+  wil::unique_hlocal_ptr<CRYPT_PRIVATE_KEY_INFO> privateKeyInfo;
   DWORD keySize = 0;
   THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
       X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
@@ -252,17 +249,17 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
       static_cast<DWORD>(keyBuffer.size()),
       CRYPT_DECODE_ALLOC_FLAG,
       nullptr,
-      privateKeyInfo.addressof(),
+      wil::out_param(privateKeyInfo),
       &keySize));
-  if (strcmp(privateKeyInfo.get()->Algorithm.pszObjId, szOID_RSA_RSA) == 0)
+  if (strcmp(privateKeyInfo->Algorithm.pszObjId, szOID_RSA_RSA) == 0)
   {
     return ImportRsaPrivateKey(
-        privateKeyInfo.get()->PrivateKey.pbData, privateKeyInfo.get()->PrivateKey.cbData);
+        privateKeyInfo->PrivateKey.pbData, privateKeyInfo->PrivateKey.cbData);
   }
-  if (strcmp(privateKeyInfo.get()->Algorithm.pszObjId, szOID_ECC_PUBLIC_KEY) == 0)
+  if (strcmp(privateKeyInfo->Algorithm.pszObjId, szOID_ECC_PUBLIC_KEY) == 0)
   {
     return ImportEccPrivateKey(
-        privateKeyInfo.get()->PrivateKey.pbData, privateKeyInfo.get()->PrivateKey.cbData);
+        privateKeyInfo->PrivateKey.pbData, privateKeyInfo->PrivateKey.cbData);
   }
   throw AuthenticationException("Invalid private key.");
 }
