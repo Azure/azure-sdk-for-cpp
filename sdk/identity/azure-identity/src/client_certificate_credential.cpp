@@ -9,6 +9,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
+#include <azure/core/io/body_stream.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <chrono>
@@ -42,10 +43,14 @@ using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
+using Azure::Core::IO::FileBodyStream;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 namespace {
+template <typename T>
+using unique_hlocal = wil::unique_any<T*, decltype(&::LocalFree), ::LocalFree>;
+
 template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
 {
   const size_t size = in.size();
@@ -76,38 +81,163 @@ CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
   return thumbprint;
 }
 
-UniquePrivateKey GetPrivateKey(PCCERT_CONTEXT cert)
+wil::unique_cert_context ImportPemCertificate(std::string const& pem)
 {
-  NCRYPT_KEY_HANDLE key;
-  DWORD size = sizeof(void*);
-  THROW_IF_WIN32_BOOL_FALSE_MSG(
-      CertGetCertificateContextProperty(cert, CERT_NCRYPT_KEY_HANDLE_PROP_ID, &key, &size),
-      "Failed to get certificate private key.");
-  return UniquePrivateKey{key};
+  auto headerStart = pem.find("-----BEGIN CERTIFICATE-----");
+  if (headerStart == std::string::npos)
+  {
+    throw AuthenticationException("PEM file does not contain certificate.");
+  }
+  ULONG keySize = 0;
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      pem.c_str() + headerStart,
+      static_cast<DWORD>(pem.size() - headerStart),
+      CRYPT_STRING_BASE64HEADER,
+      nullptr,
+      &keySize,
+      nullptr,
+      nullptr));
+  std::vector<uint8_t> keyBuffer(keySize);
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      pem.c_str() + headerStart,
+      static_cast<DWORD>(pem.size() - headerStart),
+      CRYPT_STRING_BASE64HEADER,
+      keyBuffer.data(),
+      &keySize,
+      nullptr,
+      nullptr));
+  auto cert = CertCreateCertificateContext(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      keyBuffer.data(),
+      static_cast<DWORD>(keyBuffer.size()));
+  THROW_LAST_ERROR_IF_NULL(cert);
+  return wil::unique_cert_context{cert};
 }
 
-std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::string& path)
+std::vector<uint8_t> GetBcryptEccKeyBlob(CRYPT_ECC_PRIVATE_KEY_INFO const& keyBlob)
 {
-  wil::unique_hcertstore certStore;
-  wil::unique_hcryptmsg certMsg;
-  wil::unique_cert_context cert;
-  std::wstring wpath{path.begin(), path.end()};
-  DWORD encodingType, contentType, formatType;
-  THROW_IF_WIN32_BOOL_FALSE_MSG(
-      CryptQueryObject(
-          CERT_QUERY_OBJECT_FILE,
-          wpath.c_str(),
-          CERT_QUERY_CONTENT_CERT | CERT_QUERY_CONTENT_SERIALIZED_CERT,
-          CERT_QUERY_FORMAT_FLAG_ALL,
-          0,
-          &encodingType,
-          &contentType,
-          &formatType,
-          wil::out_param(certStore),
-          wil::out_param(certMsg),
-          wil::out_param_ptr<const void**>(cert)),
-      "Failed to open certificate file.");
-  return std::make_tuple(GetThumbprint(cert.get()), GetPrivateKey(cert.get()));
+  ULONG keyMagic;
+  if (strcmp(keyBlob.szCurveOid, szOID_ECC_CURVE_P256))
+  {
+    keyMagic = BCRYPT_ECDSA_PRIVATE_P256_MAGIC;
+  }
+  else if (strcmp(keyBlob.szCurveOid, szOID_ECC_CURVE_P384))
+  {
+    keyMagic = BCRYPT_ECDSA_PRIVATE_P384_MAGIC;
+  }
+  else if (strcmp(keyBlob.szCurveOid, szOID_ECC_CURVE_P521))
+  {
+    keyMagic = BCRYPT_ECDSA_PRIVATE_P521_MAGIC;
+  }
+  else
+  {
+    throw AuthenticationException("Invalid ECC curve.");
+  }
+  std::vector<uint8_t> blob(
+      sizeof(BCRYPT_ECCKEY_BLOB) + keyBlob.PublicKey.cbData + keyBlob.PrivateKey.cbData);
+  *reinterpret_cast<BCRYPT_ECCKEY_BLOB*>(blob.data()) = {keyMagic, keyBlob.PrivateKey.cbData};
+  memcpy(
+      blob.data() + sizeof(BCRYPT_ECCKEY_BLOB), keyBlob.PublicKey.pbData, keyBlob.PublicKey.cbData);
+  memcpy(
+      blob.data() + sizeof(BCRYPT_ECCKEY_BLOB) + keyBlob.PublicKey.cbData,
+      keyBlob.PrivateKey.pbData,
+      keyBlob.PrivateKey.cbData);
+  return blob;
+}
+
+UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
+{
+  auto headerStart = pem.find("-----BEGIN PRIVATE KEY-----");
+  if (headerStart == std::string::npos)
+  {
+    throw AuthenticationException("PEM file does not contain private key.");
+  }
+  ULONG keySize = 0;
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      pem.c_str() + headerStart,
+      static_cast<DWORD>(pem.size() - headerStart),
+      CRYPT_STRING_BASE64HEADER,
+      nullptr,
+      &keySize,
+      nullptr,
+      nullptr));
+  std::vector<uint8_t> keyBuffer(keySize);
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      pem.c_str() + headerStart,
+      static_cast<DWORD>(pem.size() - headerStart),
+      CRYPT_STRING_BASE64HEADER,
+      keyBuffer.data(),
+      &keySize,
+      nullptr,
+      nullptr));
+  unique_hlocal<CRYPT_PRIVATE_KEY_INFO> privateKeyInfo;
+  THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      PKCS_PRIVATE_KEY_INFO,
+      keyBuffer.data(),
+      static_cast<DWORD>(keyBuffer.size()),
+      CRYPT_DECODE_ALLOC_FLAG,
+      nullptr,
+      privateKeyInfo.addressof(),
+      &keySize));
+  if (strcmp(privateKeyInfo.get()->Algorithm.pszObjId, szOID_RSA_RSA) == 0)
+  {
+    unique_hlocal<BCRYPT_RSAKEY_BLOB> rsaKeyBlob;
+    THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+        X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+        CNG_RSA_PRIVATE_KEY_BLOB,
+        privateKeyInfo.get()->PrivateKey.pbData,
+        privateKeyInfo.get()->PrivateKey.cbData,
+        CRYPT_DECODE_ALLOC_FLAG,
+        nullptr,
+        rsaKeyBlob.addressof(),
+        &keySize));
+    BCRYPT_KEY_HANDLE key;
+    THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
+        BCRYPT_RSA_ALG_HANDLE,
+        nullptr,
+        BCRYPT_RSAPRIVATE_BLOB,
+        &key,
+        reinterpret_cast<uint8_t*>(rsaKeyBlob.get()),
+        keySize,
+        0));
+    return UniquePrivateKey{key};
+  }
+  if (strcmp(privateKeyInfo.get()->Algorithm.pszObjId, szOID_ECC_PUBLIC_KEY) == 0)
+  {
+    unique_hlocal<CRYPT_ECC_PRIVATE_KEY_INFO> eccKeyInfo;
+    THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+        X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+        X509_ECC_PRIVATE_KEY,
+        privateKeyInfo.get()->PrivateKey.pbData,
+        privateKeyInfo.get()->PrivateKey.cbData,
+        CRYPT_DECODE_ALLOC_FLAG,
+        nullptr,
+        eccKeyInfo.addressof(),
+        &keySize));
+    auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo.get());
+    BCRYPT_KEY_HANDLE key;
+    THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
+        BCRYPT_ECDSA_ALG_HANDLE,
+        nullptr,
+        BCRYPT_ECCPRIVATE_BLOB,
+        &key,
+        convertedKey.data(),
+        keySize,
+        0));
+    return UniquePrivateKey{key};
+  }
+  throw AuthenticationException("Invalid private key.");
+}
+
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(std::string const& path)
+{
+  auto pemContent{FileBodyStream(path).ReadToEnd()};
+  std::string pem{pemContent.begin(), pemContent.end()};
+  pemContent = {};
+
+  auto certContext = ImportPemCertificate(pem);
+  return std::make_tuple(GetThumbprint(certContext.get()), ImportPemPrivateKey(pem));
 }
 
 std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
@@ -166,7 +296,7 @@ template <> struct UniqueHandleHelper<EVP_MD_CTX>
 template <typename T>
 using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
 
-std::tuple<CertificateThumbprint, UniquePrivateKey> ReadCertificate(const std::string& path)
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std::string& path)
 {
   // Open certificate file, then get private key and X509:
   UniqueHandle<BIO> bio(BIO_new_file(path.c_str(), "r"));
@@ -278,7 +408,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     CertificateThumbprint mdVec;
     try
     {
-      std::tie(mdVec, m_pkey) = ReadCertificate(clientCertificatePath);
+      std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);
     }
     catch (AuthenticationException&)
     {
