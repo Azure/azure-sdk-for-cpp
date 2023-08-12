@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for `WorkloadIdentityCredential`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

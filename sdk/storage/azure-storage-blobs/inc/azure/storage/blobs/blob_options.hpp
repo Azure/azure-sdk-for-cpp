@@ -158,6 +158,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * API version used by this client.
      */
     std::string ApiVersion;
+
+    /**
+     * Enables tenant discovery through the authorization challenge when the client is configured to
+     * use a TokenCredential. When enabled, the client will attempt an initial un-authorized request
+     * to prompt a challenge in order to discover the correct tenant for the resource.
+     */
+    bool EnableTenantDiscovery = false;
   };
 
   /**
@@ -580,6 +587,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * in this option. Default is to replace.
      */
     Models::BlobCopySourceTagsMode CopySourceTagsMode;
+
+    /**
+     * @brief Optional. Source authorization used to access the source file.
+     * The format is: \<scheme\> \<signature\>
+     * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
+     * source.
+     */
+    std::string SourceAuthorization;
   };
 
   /**
@@ -949,6 +964,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * in this option. Default is to replace.
      */
     Models::BlobCopySourceTagsMode CopySourceTagsMode;
+
+    /**
+     * @brief Optional. Source authorization used to access the source file.
+     * The format is: \<scheme\> \<signature\>
+     * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
+     * source.
+     */
+    std::string SourceAuthorization;
   };
 
   /**
@@ -997,6 +1020,14 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Optional conditions that the source must meet to perform this operation.
        */
     SourceAccessConditions;
+
+    /**
+     * @brief Optional. Source authorization used to access the source file.
+     * The format is: \<scheme\> \<signature\>
+     * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
+     * source.
+     */
+    std::string SourceAuthorization;
   };
 
   /**
@@ -1282,6 +1313,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     AppendBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Source authorization used to access the source file.
+     * The format is: \<scheme\> \<signature\>
+     * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
+     * source.
+     */
+    std::string SourceAuthorization;
   };
 
   /**
@@ -1385,6 +1424,14 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Optional conditions that the source must meet to perform this operation.
        */
     SourceAccessConditions;
+
+    /**
+     * @brief Optional. Source authorization used to access the source file.
+     * The format is: \<scheme\> \<signature\>
+     * Only Bearer type is supported. Credentials should be a valid OAuth access token to copy
+     * source.
+     */
+    std::string SourceAuthorization;
   };
 
   /**

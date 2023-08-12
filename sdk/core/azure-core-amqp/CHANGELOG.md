@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
+## 1.0.0-beta.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0-beta.2 (2023-08-04)
 
 ### Features Added
 
@@ -16,10 +26,6 @@
 
 - Renamed `Azure::Core::Amqp::Models::AmqpMessageFormatValue` to `AmqpDefaultMessageFormatValue`.
 - Changed the return values for the MessageSender, MessageReceiver and Management APIs.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0-beta.1 (2023-07-06)
 

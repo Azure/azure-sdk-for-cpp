@@ -14,6 +14,7 @@
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
+#include <cctype>
 #include <chrono>
 #include <cstdint>
 #include <limits>
@@ -55,17 +56,22 @@ namespace Azure { namespace Storage {
        */
       std::string GetIdentifier() const
       {
-        size_t MaxLength = 63;
-        std::string name = m_testContext.GetTestSuiteName() + m_testContext.GetTestName();
-        if (name[0] == '-')
+        const size_t MaxLength = 63;
+        const std::string name = m_testContext.GetTestSuiteName() + m_testContext.GetTestName();
+        std::string formattedName;
+        for (const auto c : name)
         {
-          name = name.substr(1);
+          if (std::isalnum(c))
+          {
+            formattedName += c;
+          }
+          if (formattedName.length() >= MaxLength)
+          {
+            break;
+          }
         }
-        if (name.length() > MaxLength)
-        {
-          name.resize(MaxLength);
-        }
-        return name;
+
+        return formattedName;
       }
 
       /**
@@ -173,6 +179,8 @@ namespace Azure { namespace Storage {
 
     private:
       std::mt19937_64 m_randomGenerator;
+
+      constexpr static const char* PlaybackOnlyToken = "_PLAYBACKONLY_";
     };
 
     constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }

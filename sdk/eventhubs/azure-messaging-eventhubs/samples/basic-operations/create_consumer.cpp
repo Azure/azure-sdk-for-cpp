@@ -26,6 +26,7 @@ int main()
   if (eventhubName == nullptr)
   {
     std::cerr << "Missing environment variable EVENTHUB_NAME" << std::endl;
+    return 1;
   }
 
   Azure::Messaging::EventHubs::ConsumerClient consumerClient(

@@ -1,17 +1,29 @@
 # Release History
 
-## 12.8.0-beta.1 (Unreleased)
+## 12.8.0-beta.2 (Unreleased)
 
 ### Features Added
+
+- TenantId can now be discovered through the service challenge response, when using a TokenCredential for authorization.
+    - A new property is now available on `DataLakeClientOptions` called `EnableTenantDiscovery`. If set to `true`, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 12.8.0-beta.1 (2023-08-08)
+
+### Features Added
+
+- Bumped up API version to `2023-08-03`.
+- Added support for paginated directory delete when using AAD authentication.
+
+### Bugs Fixed
+
 - Fixed a bug where `DataLakeDirectoryClient::ListPaths` and `DataLakeFileSystemClient::ListPaths` cannot list the second page and always fail with `std::bad_function_call`.
 - Fixed a bug where `DataLakePathClient::SetAccessControlListRecursive` crashes when operating on the second page.
-
-### Other Changes
 
 ## 12.7.0 (2023-07-11)
 

@@ -27,6 +27,7 @@ int main()
   if (eventhubName == nullptr)
   {
     std::cerr << "Missing environment variable EVENTHUB_NAME" << std::endl;
+    return 1;
   }
 
   /* Create a sample EventHubs application using a PartitionClient to read all the messages from an
@@ -42,8 +43,15 @@ int main()
   auto partitionProperties{
       consumerClient.GetPartitionProperties(eventhubProperties.PartitionIds[0])};
 
-  Azure::Messaging::EventHubs::PartitionClient partitionClient{
-      consumerClient.CreatePartitionClient(eventhubProperties.PartitionIds[0])};
+  // Create a PartitionClient that we can use to read events from a specific partition.
+  //
+  // This partition client is configured to read events from the start of the partition, since the
+  // default is to read new events only.
+  Azure::Messaging::EventHubs::PartitionClientOptions partitionClientOptions;
+  partitionClientOptions.StartPosition.Earliest = true;
+  partitionClientOptions.StartPosition.Inclusive = true;
+  Azure::Messaging::EventHubs::PartitionClient partitionClient{consumerClient.CreatePartitionClient(
+      eventhubProperties.PartitionIds[0], partitionClientOptions)};
 
   std::vector<Azure::Messaging::EventHubs::Models::ReceivedEventData> events
       = partitionClient.ReceiveEvents(4);

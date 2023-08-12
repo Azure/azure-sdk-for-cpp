@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief The base class for the common bahavior of the transport adapter tests.
+ * @brief The base class for the common behavior of the transport adapter tests.
  *
  * @brief Any HTTP transport adapter can be used for this tests.
  *

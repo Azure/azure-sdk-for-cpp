@@ -31,6 +31,7 @@ add_executable (
     token_cache_test.cpp
     token_credential_impl_test.cpp
     token_credential_test.cpp
+    workload_identity_credential_test.cpp
     )
   
 create_per_service_target_build(identity azure-identity-test)

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Define the base bahavior of the tests using a blobs client.
+ * @brief Define the base behavior of the tests using a blobs client.
  *
  */
 

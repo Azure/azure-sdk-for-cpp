@@ -57,6 +57,16 @@ namespace Azure { namespace Storage { namespace Test {
       std::seed_seq seedSeq(seedStr.begin(), seedStr.end());
       m_randomGenerator.seed(seedSeq);
     }
+    const std::string playbackOnlyToken = PlaybackOnlyToken;
+    const std::string testName = m_testContext.GetTestName();
+    if (testName.length() >= playbackOnlyToken.length()
+        && testName.substr(testName.length() - playbackOnlyToken.length()) == playbackOnlyToken)
+    {
+      if (m_testContext.IsLiveMode())
+      {
+        SkipTest();
+      }
+    }
   }
 
   void StorageTest::TearDown()
