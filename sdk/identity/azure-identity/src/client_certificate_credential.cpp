@@ -162,6 +162,13 @@ size_t FindPemPrivateKeyHeader(std::string const& pem, PrivateKeyType& keyType)
   return pem.find("-----BEGIN PRIVATE KEY-----");
 }
 
+wil::unique_bcrypt_algorithm OpenAlgorithm(LPCWSTR algId)
+{
+  wil::unique_bcrypt_algorithm alg;
+  THROW_IF_NTSTATUS_FAILED(BCryptOpenAlgorithmProvider(wil::out_param(alg), algId, nullptr, 0));
+  return alg;
+}
+
 UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
 {
   DWORD keySize = 0;
@@ -176,8 +183,9 @@ UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
       rsaKeyBlob.addressof(),
       &keySize));
   BCRYPT_KEY_HANDLE key;
+  auto alg = OpenAlgorithm(BCRYPT_RSA_ALGORITHM);
   THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
-      BCRYPT_RSA_ALG_HANDLE,
+      alg.get(),
       nullptr,
       BCRYPT_RSAPRIVATE_BLOB,
       &key,
@@ -201,9 +209,10 @@ UniquePrivateKey ImportEccPrivateKey(const BYTE* data, DWORD size)
       eccKeyInfo.addressof(),
       &keySize));
   auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo.get());
+  auto alg = OpenAlgorithm(BCRYPT_ECDSA_ALGORITHM);
   BCRYPT_KEY_HANDLE key;
   THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
-      BCRYPT_ECDSA_ALG_HANDLE,
+      alg.get(),
       nullptr,
       BCRYPT_ECCPRIVATE_BLOB,
       &key,
