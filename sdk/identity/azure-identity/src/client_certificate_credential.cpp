@@ -82,13 +82,11 @@ std::vector<uint8_t> PemToBinary(LPCSTR str, DWORD count)
 CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
 {
   DWORD size = 0;
-  THROW_IF_WIN32_BOOL_FALSE_MSG(
-      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, nullptr, &size),
-      "Failed to get certificate thumbprint.");
+  THROW_IF_WIN32_BOOL_FALSE(
+      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, nullptr, &size));
   std::vector<unsigned char> thumbprint(size);
-  THROW_IF_WIN32_BOOL_FALSE_MSG(
-      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, thumbprint.data(), &size),
-      "Failed to get certificate thumbprint.");
+  THROW_IF_WIN32_BOOL_FALSE(
+      CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, thumbprint.data(), &size));
   return thumbprint;
 }
 
