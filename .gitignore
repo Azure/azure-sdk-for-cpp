@@ -353,3 +353,5 @@ build/
 
 # Default Assets restore directory
 .assets
+
+CMakeUserPresets.json
