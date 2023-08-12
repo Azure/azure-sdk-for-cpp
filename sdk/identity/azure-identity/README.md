@@ -127,6 +127,7 @@ Configuration is attempted in the above order. For example, if values for a clie
 |`ChainedTokenCredential`|Allows users to define custom authentication flows composing multiple credentials.
 |`ManagedIdentityCredential`|Authenticates the managed identity of an Azure resource.
 |`EnvironmentCredential`|Authenticates a service principal or user via credential information specified in environment variables.
+|`WorkloadIdentityCredential`|Authenticate a workload identity on Kubernetes.
 
 ### Authenticate service principals
 |Credential | Usage
