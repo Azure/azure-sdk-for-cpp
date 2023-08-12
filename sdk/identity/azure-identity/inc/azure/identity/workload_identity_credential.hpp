@@ -28,14 +28,33 @@ namespace Azure { namespace Identity {
   struct WorkloadIdentityCredentialOptions final : public Core::Credentials::TokenCredentialOptions
   {
     /**
+     * @brief The TenantID of the service principal. Defaults to the value of the environment
+     * variable AZURE_TENANT_ID.
+     */
+    std::string TenantId;
+
+    /**
+     * @brief The ClientID of the service principal. Defaults to the value of the environment
+     * variable AZURE_CLIENT_ID.
+     */
+    std::string ClientId;
+
+    /**
      * @brief Authentication authority URL.
-     * @note Default value is Azure AD global authority (https://login.microsoftonline.com/).
+     * @note Defaults to the value of the environment variable AZURE_AUTHORITY_HOST. If that's not
+     * set, the default value is Azure AD global authority (https://login.microsoftonline.com/).
      *
      * @note Example of an authority host string: "https://login.microsoftonline.us/". See national
      * clouds' Azure AD authentication endpoints:
      * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
-    std::string AuthorityHost = _detail::ClientCredentialCore::AadGlobalAuthority;
+    std::string AuthorityHost;
+
+    /**
+     * @brief The path of a file containing a Kubernetes service account token. Defaults to the
+     * value of the environment variable AZURE_FEDERATED_TOKEN_FILE.
+     */
+    std::string TokenFilePath;
 
     /**
      * @brief For multi-tenant applications, specifies additional tenants for which the credential
@@ -61,10 +80,10 @@ namespace Azure { namespace Identity {
     std::string m_tokenFilePath;
 
     explicit WorkloadIdentityCredential(
-        std::string tenantId,
-        std::string const& clientId,
-        std::string const& tokenFilePath,
-        std::string const& authorityHost,
+        std::string const& tenantIdOptions,
+        std::string const& clientIdOptions,
+        std::string const& authorityHostOptions,
+        std::string const& tokenFilePathOptions,
         std::vector<std::string> additionallyAllowedTenants,
         Core::Credentials::TokenCredentialOptions const& options);
 
@@ -72,31 +91,18 @@ namespace Azure { namespace Identity {
     /**
      * @brief Constructs a Workload Identity Credential.
      *
-     * @param tenantId Tenant ID.
-     * @param clientId Client ID.
-     * @param tokenFilePath Path of a file containing a Kubernetes service account token.
      * @param options Options for token retrieval.
      */
     explicit WorkloadIdentityCredential(
-        std::string tenantId,
-        std::string const& clientId,
-        std::string const& tokenFilePath,
         Core::Credentials::TokenCredentialOptions const& options
         = Core::Credentials::TokenCredentialOptions());
 
     /**
      * @brief Constructs a Workload Identity Credential.
      *
-     * @param tenantId Tenant ID.
-     * @param clientId Client ID.
-     * @param tokenFilePath Path of a file containing a Kubernetes service account token.
      * @param options Options for token retrieval.
      */
-    explicit WorkloadIdentityCredential(
-        std::string tenantId,
-        std::string const& clientId,
-        std::string const& tokenFilePath,
-        WorkloadIdentityCredentialOptions const& options);
+    explicit WorkloadIdentityCredential(WorkloadIdentityCredentialOptions const& options);
 
     /**
      * @brief Destructs `%WorkloadIdentityCredential`.
