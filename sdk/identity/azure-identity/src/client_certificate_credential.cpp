@@ -68,6 +68,17 @@ using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
 #ifdef AZ_PLATFORM_WINDOWS
+std::vector<uint8_t> PemToBinary(LPCSTR str, DWORD count)
+{
+  DWORD size = 0;
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      str, count, CRYPT_STRING_BASE64HEADER, nullptr, &size, nullptr, nullptr));
+  std::vector<uint8_t> buffer(size);
+  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
+      str, count, CRYPT_STRING_BASE64HEADER, buffer.data(), &size, nullptr, nullptr));
+  return buffer;
+}
+
 CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
 {
   DWORD size = 0;
@@ -88,28 +99,12 @@ wil::unique_cert_context ImportPemCertificate(std::string const& pem)
   {
     throw AuthenticationException("PEM file does not contain certificate.");
   }
-  ULONG keySize = 0;
-  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
-      pem.c_str() + headerStart,
-      static_cast<DWORD>(pem.size() - headerStart),
-      CRYPT_STRING_BASE64HEADER,
-      nullptr,
-      &keySize,
-      nullptr,
-      nullptr));
-  std::vector<uint8_t> keyBuffer(keySize);
-  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
-      pem.c_str() + headerStart,
-      static_cast<DWORD>(pem.size() - headerStart),
-      CRYPT_STRING_BASE64HEADER,
-      keyBuffer.data(),
-      &keySize,
-      nullptr,
-      nullptr));
+  auto certBuffer
+      = PemToBinary(pem.c_str() + headerStart, static_cast<DWORD>(pem.size() - headerStart));
   auto cert = CertCreateCertificateContext(
       X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
-      keyBuffer.data(),
-      static_cast<DWORD>(keyBuffer.size()));
+      certBuffer.data(),
+      static_cast<DWORD>(certBuffer.size()));
   THROW_LAST_ERROR_IF_NULL(cert);
   return wil::unique_cert_context{cert};
 }
@@ -152,25 +147,10 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
   {
     throw AuthenticationException("PEM file does not contain private key.");
   }
-  ULONG keySize = 0;
-  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
-      pem.c_str() + headerStart,
-      static_cast<DWORD>(pem.size() - headerStart),
-      CRYPT_STRING_BASE64HEADER,
-      nullptr,
-      &keySize,
-      nullptr,
-      nullptr));
-  std::vector<uint8_t> keyBuffer(keySize);
-  THROW_IF_WIN32_BOOL_FALSE(CryptStringToBinaryA(
-      pem.c_str() + headerStart,
-      static_cast<DWORD>(pem.size() - headerStart),
-      CRYPT_STRING_BASE64HEADER,
-      keyBuffer.data(),
-      &keySize,
-      nullptr,
-      nullptr));
+  auto keyBuffer{
+      PemToBinary(pem.c_str() + headerStart, static_cast<DWORD>(pem.size() - headerStart))};
   unique_hlocal<CRYPT_PRIVATE_KEY_INFO> privateKeyInfo;
+  DWORD keySize = 0;
   THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
       X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
       PKCS_PRIVATE_KEY_INFO,
