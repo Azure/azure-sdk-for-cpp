@@ -1,16 +1,10 @@
 # Release History
 
-## 1.6.0-beta.1 (Unreleased)
+## 1.6.0-beta.1 (2023-08-11)
 
 ### Features Added
 
 - Added support for `WorkloadIdentityCredential`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.5.1 (2023-07-06)
 
