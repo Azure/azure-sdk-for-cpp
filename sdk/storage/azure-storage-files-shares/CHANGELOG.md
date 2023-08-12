@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.0-beta.1 (Unreleased)
+## 12.7.0-beta.1 (2023-08-12)
 
 ### Features Added
 
@@ -8,12 +8,6 @@
     - A new property is now available on `ShareClientOptions` called `EnableTenantDiscovery`. If set to `true`, the client will attempt an initial unauthorized request to the service to prompt a challenge containing the tenantId hint.
 - Added a new field `SourceAuthorization` in options for copy operations, which can be used to specify authorization for copy source.
 - Added a new field `ContentType` in `RenameFileOptions`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.6.1 (2023-08-08)
 
