@@ -20,8 +20,7 @@ namespace {
 enum CertFormat
 {
   RsaPkcs,
-  RsaRaw,
-  EccRaw
+  RsaRaw
 };
 
 enum TestType
@@ -106,20 +105,9 @@ public:
   }
 
   std::string GetHeader()
-  {
-    switch (GetCertFormat())
-    {
-      case CertFormat::RsaPkcs:
-      case CertFormat::RsaRaw: // cspell:disable
-        return "{\"x5t\":\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\",\"kid\":"
-               "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
-        // cspell:enable
-      case CertFormat::EccRaw: // cspell:disable
-        return "{\"x5t\":\"JiRsi5rm8NQt8WPL8I6pC2fez2c\",\"kid\":"
-               "\"26246C8B9AE6F0D42DF163CBF08EA90B67DECF67\",\"alg\":\"ES256\",\"typ\":\"JWT\"}";
-        // cspell:enable
-    }
-    AZURE_UNREACHABLE_CODE();
+  { // cspell:disable
+    return "{\"x5t\":\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\",\"kid\":"
+           "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
   }
 
   std::string GetPayloadStart()
@@ -144,18 +132,7 @@ public:
     AZURE_UNREACHABLE_CODE();
   }
 
-  size_t GetSignatureSize()
-  {
-    switch (GetCertFormat())
-    {
-      case CertFormat::RsaPkcs:
-      case CertFormat::RsaRaw:
-        return 256;
-      case CertFormat::EccRaw:
-        return 64;
-    }
-    AZURE_UNREACHABLE_CODE();
-  }
+  size_t GetSignatureSize() { return 256; }
 
 private:
   TempCertFile m_certFile{GetCertFormat()};
@@ -288,14 +265,14 @@ TEST_P(GetToken, )
 INSTANTIATE_TEST_SUITE_P(
     ClientCertificateCredential,
     GetCredentialName,
-    testing::Values(RsaPkcs, RsaRaw, EccRaw));
+    testing::Values(RsaPkcs, RsaRaw));
 
 INSTANTIATE_TEST_SUITE_P(
     ClientCertificateCredential,
     GetToken,
     testing::Combine(
         testing::Values(Regular, AzureStack, Authority),
-        testing::Values(RsaPkcs, RsaRaw, EccRaw)));
+        testing::Values(RsaPkcs, RsaRaw)));
 
 namespace {
 const char* const TempCertFile::Path = "azure-identity-test.pem";
@@ -420,25 +397,6 @@ TempCertFile::TempCertFile(CertFormat format)
         "Jg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/c5yJYk\n"
         "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
         "RrCsEpJsnJXkx/6O\n"
-        "-----END CERTIFICATE-----";
-  // cspell:enable
-  else if (format == EccRaw)
-    cert << // cspell:disable
-        "-----BEGIN EC PRIVATE KEY-----\n"
-        "MGgCAQEEHIq0M9qBRK/R14Zoa+cKgHTfStr1f97ENBQTpIqgBwYFK4EEACGhPAM6\n"
-        "AATowSs6oVenn7TNovIYGdVqAofC/w+2Od5FxsW3mBQ3y78BBxrFAMkUgrO3pEYt\n"
-        "V25dpkVjjCGQLQ==\n"
-        "-----END EC PRIVATE KEY-----\n"
-        "-----BEGIN CERTIFICATE-----\n"
-        "MIIBkTCCAT+gAwIBAgIIOg73JewxJ34wCgYIKoZIzj0EAwIwHjEcMBoGA1UEAxMT\n"
-        "YXp1cmUtaWRlbnRpdHktdGVzdDAgFw0yMjA0MjIxNTA2MDBaGA8yMjIyMDEwMTA3\n"
-        "MDAwMFowHjEcMBoGA1UEAxMTYXp1cmUtaWRlbnRpdHktdGVzdDBOMBAGByqGSM49\n"
-        "AgEGBSuBBAAhAzoABOjBKzqhV6eftM2i8hgZ1WoCh8L/D7Y53kXGxbeYFDfLvwEH\n"
-        "GsUAyRSCs7ekRi1Xbl2mRWOMIZAto3AwbjAdBgNVHQ4EFgQU3Zls0h3LPu4XRWj0\n"
-        "mUSZhDE7u9QwDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggr\n"
-        "BgEFBQcDAjAeBgNVHREEFzAVghNhenVyZS1pZGVudGl0eS10ZXN0MAoGCCqGSM49\n"
-        "BAMCA0AAMD0CHQDCwsTmnZdZnYugg2xy6h11AAHb1pE/KCvtBM9DAhwsfSlYsKxp\n"
-        "ofAWh9o/OhZn1w58WgfFmwq8bOnY\n"
         "-----END CERTIFICATE-----";
   // cspell:enable
 }

@@ -111,36 +111,6 @@ wil::unique_cert_context ImportPemCertificate(std::string const& pem)
   return wil::unique_cert_context{cert};
 }
 
-std::vector<uint8_t> GetBcryptEccKeyBlob(CRYPT_ECC_PRIVATE_KEY_INFO const& keyBlob)
-{
-  ULONG keyMagic;
-  if (strcmp(keyBlob.szCurveOid, szOID_ECC_CURVE_P256))
-  {
-    keyMagic = BCRYPT_ECDSA_PRIVATE_P256_MAGIC;
-  }
-  else if (strcmp(keyBlob.szCurveOid, szOID_ECC_CURVE_P384))
-  {
-    keyMagic = BCRYPT_ECDSA_PRIVATE_P384_MAGIC;
-  }
-  else if (strcmp(keyBlob.szCurveOid, szOID_ECC_CURVE_P521))
-  {
-    keyMagic = BCRYPT_ECDSA_PRIVATE_P521_MAGIC;
-  }
-  else
-  {
-    throw AuthenticationException("Invalid ECC curve.");
-  }
-  auto pubSize = keyBlob.PublicKey.cbData - 1;
-  auto privSize = keyBlob.PrivateKey.cbData;
-  std::vector<uint8_t> blob(sizeof(BCRYPT_ECCKEY_BLOB) + pubSize + privSize);
-  auto blobPtr = reinterpret_cast<BCRYPT_ECCKEY_BLOB*>(blob.data());
-  blobPtr->dwMagic = keyMagic;
-  blobPtr->cbKey = privSize;
-  memcpy(reinterpret_cast<uint8_t*>(blobPtr + 1), keyBlob.PublicKey.pbData, pubSize);
-  memcpy(reinterpret_cast<uint8_t*>(blobPtr + 1) + pubSize, keyBlob.PrivateKey.pbData, privSize);
-  return blob;
-}
-
 size_t FindPemPrivateKeyHeader(std::string const& pem, PrivateKeyType& keyType)
 {
   auto headerStart = pem.find("-----BEGIN RSA PRIVATE KEY-----");
@@ -192,31 +162,9 @@ UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
   return UniquePrivateKey{key};
 }
 
-UniquePrivateKey ImportEccPrivateKey(const BYTE* data, DWORD size)
+UniquePrivateKey ImportEccPrivateKey(const BYTE*, DWORD)
 {
-  DWORD keySize = 0;
-  wil::unique_hlocal_ptr<CRYPT_ECC_PRIVATE_KEY_INFO> eccKeyInfo;
-  THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
-      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
-      X509_ECC_PRIVATE_KEY,
-      data,
-      size,
-      CRYPT_DECODE_ALLOC_FLAG,
-      nullptr,
-      wil::out_param(eccKeyInfo),
-      &keySize));
-  auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo);
-  auto alg = OpenAlgorithm(BCRYPT_ECDSA_ALGORITHM);
-  BCRYPT_KEY_HANDLE key;
-  THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
-      alg.get(),
-      nullptr,
-      BCRYPT_ECCPRIVATE_BLOB,
-      &key,
-      convertedKey.data(),
-      static_cast<DWORD>(convertedKey.size()),
-      0));
-  return UniquePrivateKey{key};
+  throw AuthenticationException("ECDSA private keys are not supported.");
 }
 
 UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
