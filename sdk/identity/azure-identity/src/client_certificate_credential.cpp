@@ -403,17 +403,14 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 #endif
 } // namespace
 
-#ifdef AZ_PLATFORM_WINDOWS
-void Azure::Identity::_detail::FreeBcryptKeyImpl(void* bcryptKey)
-{
-  BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(bcryptKey));
-}
-#else
 void Azure::Identity::_detail::FreePkeyImpl(void* pkey)
 {
+#ifdef AZ_PLATFORM_WINDOWS
+  BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(pkey));
+#else
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));
-}
 #endif
+}
 
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,

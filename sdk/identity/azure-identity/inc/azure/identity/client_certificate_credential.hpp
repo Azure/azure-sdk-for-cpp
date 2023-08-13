@@ -25,18 +25,6 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class TokenCredentialImpl;
 
-#ifdef AZ_PLATFORM_WINDOWS
-    void FreeBcryptKeyImpl(void* bcryptKey);
-
-    template <typename> struct UniqueBcryptKeyHelper;
-    template <> struct UniqueBcryptKeyHelper<void*>
-    {
-      static void FreeBcryptKey(void* bcryptKey) { FreeBcryptKeyImpl(bcryptKey); }
-      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreeBcryptKey>;
-    };
-
-    using UniquePrivateKey = Azure::Core::_internal::UniqueHandle<void*, UniqueBcryptKeyHelper>;
-#else
     void FreePkeyImpl(void* pkey);
 
     template <typename> struct UniquePkeyHelper;
@@ -48,7 +36,6 @@ namespace Azure { namespace Identity {
 
     using UniquePkeyHandle = Azure::Core::_internal::UniqueHandle<void*, UniquePkeyHelper>;
     using UniquePrivateKey = UniquePkeyHandle;
-#endif
   } // namespace _detail
 
   /**
