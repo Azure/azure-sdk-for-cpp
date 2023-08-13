@@ -116,7 +116,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
   BCRYPT_PKCS1_PADDING_INFO paddingInfo;
   paddingInfo.pszAlgId = BCRYPT_SHA256_ALGORITHM;
   DWORD signatureSize = 0;
-  auto status = NCryptSignHash(
+  auto status = BCryptSignHash(
       key,
       &paddingInfo,
       hash.data(),
@@ -130,7 +130,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
     return {};
   }
   std::vector<unsigned char> signature(signatureSize);
-  status = NCryptSignHash(
+  status = BCryptSignHash(
       key,
       &paddingInfo,
       hash.data(),
@@ -240,9 +240,9 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 } // namespace
 
 #ifdef AZ_PLATFORM_WINDOWS
-void Azure::Identity::_detail::FreeNcryptKeyImpl(void* pkey)
+void Azure::Identity::_detail::FreeBcryptKeyImpl(void* bcryptKey)
 {
-  NCryptFreeObject(reinterpret_cast<NCRYPT_KEY_HANDLE>(pkey));
+  BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(bcryptKey));
 }
 #else
 void Azure::Identity::_detail::FreePkeyImpl(void* pkey)

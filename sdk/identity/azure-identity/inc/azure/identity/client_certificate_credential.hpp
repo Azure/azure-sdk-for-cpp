@@ -26,24 +26,16 @@ namespace Azure { namespace Identity {
     class TokenCredentialImpl;
 
 #ifdef AZ_PLATFORM_WINDOWS
-    void FreeNcryptKeyImpl(void* ncryptKey);
+    void FreeBcryptKeyImpl(void* bcryptKey);
 
-    template <typename> struct UniqueNcryptKeyHelper;
-    template <> struct UniqueNcryptKeyHelper<void*>
+    template <typename> struct UniqueBcryptKeyHelper;
+    template <> struct UniqueBcryptKeyHelper<void*>
     {
-      static void FreeNcryptKey(void* ncryptKey) { FreeNcryptKeyImpl(ncryptKey); }
-      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreeNcryptKey>;
+      static void FreeBcryptKey(void* bcryptKey) { FreeBcryptKeyImpl(bcryptKey); }
+      using type = Azure::Core::_internal::BasicUniqueHandle<void, FreeBcryptKey>;
     };
 
-    using UniqueNcryptKeyHandle
-        = Azure::Core::_internal::UniqueHandle<void*, UniqueNcryptKeyHelper>;
-    class UniquePrivateKey : public UniqueNcryptKeyHandle {
-    public:
-      UniquePrivateKey() = default;
-      // NCRYPT_KEY_HANDLE is a uintptr_t; add some helper functions to make it easier to use.
-      UniquePrivateKey(uintptr_t ptr) : UniqueNcryptKeyHandle(reinterpret_cast<void*>(ptr)) {}
-      uintptr_t get() const { return reinterpret_cast<uintptr_t>(UniqueNcryptKeyHandle::get()); }
-    };
+    using UniquePrivateKey = Azure::Core::_internal::UniqueHandle<void*, UniqueBcryptKeyHelper>;
 #else
     void FreePkeyImpl(void* pkey);
 
