@@ -289,7 +289,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
       0,
       &signatureSize,
       BCRYPT_PAD_PKCS1);
-  if (status != NTE_BUFFER_TOO_SMALL)
+  if (status != ERROR_SUCCESS)
   {
     return {};
   }
