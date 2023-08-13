@@ -68,6 +68,13 @@ using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
 #ifdef AZ_PLATFORM_WINDOWS
+enum PrivateKeyType
+{
+  Rsa,
+  Ecdsa,
+  Pkcs
+};
+
 std::vector<uint8_t> PemToBinary(LPCSTR str, DWORD count)
 {
   DWORD size = 0;
@@ -126,27 +133,107 @@ std::vector<uint8_t> GetBcryptEccKeyBlob(CRYPT_ECC_PRIVATE_KEY_INFO const& keyBl
   {
     throw AuthenticationException("Invalid ECC curve.");
   }
-  std::vector<uint8_t> blob(
-      sizeof(BCRYPT_ECCKEY_BLOB) + keyBlob.PublicKey.cbData + keyBlob.PrivateKey.cbData);
-  *reinterpret_cast<BCRYPT_ECCKEY_BLOB*>(blob.data()) = {keyMagic, keyBlob.PrivateKey.cbData};
-  memcpy(
-      blob.data() + sizeof(BCRYPT_ECCKEY_BLOB), keyBlob.PublicKey.pbData, keyBlob.PublicKey.cbData);
-  memcpy(
-      blob.data() + sizeof(BCRYPT_ECCKEY_BLOB) + keyBlob.PublicKey.cbData,
-      keyBlob.PrivateKey.pbData,
-      keyBlob.PrivateKey.cbData);
+  auto pubSize = keyBlob.PublicKey.cbData - 1;
+  auto privSize = keyBlob.PrivateKey.cbData;
+  std::vector<uint8_t> blob(sizeof(BCRYPT_ECCKEY_BLOB) + pubSize + privSize);
+  auto blobPtr = reinterpret_cast<BCRYPT_ECCKEY_BLOB*>(blob.data());
+  blobPtr->dwMagic = keyMagic;
+  blobPtr->cbKey = privSize;
+  memcpy(reinterpret_cast<uint8_t*>(blobPtr + 1), keyBlob.PublicKey.pbData, pubSize);
+  memcpy(reinterpret_cast<uint8_t*>(blobPtr + 1) + pubSize, keyBlob.PrivateKey.pbData, privSize);
   return blob;
+}
+
+size_t FindPemPrivateKeyHeader(std::string const& pem, PrivateKeyType& keyType)
+{
+  auto headerStart = pem.find("-----BEGIN RSA PRIVATE KEY-----");
+  if (headerStart != std::string::npos)
+  {
+    keyType = PrivateKeyType::Rsa;
+    return headerStart;
+  }
+  headerStart = pem.find("-----BEGIN EC PRIVATE KEY-----");
+  if (headerStart != std::string::npos)
+  {
+    keyType = PrivateKeyType::Ecdsa;
+    return headerStart;
+  }
+  keyType = PrivateKeyType::Pkcs;
+  return pem.find("-----BEGIN PRIVATE KEY-----");
+}
+
+UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
+{
+  DWORD keySize = 0;
+  unique_hlocal<BCRYPT_RSAKEY_BLOB> rsaKeyBlob;
+  THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      CNG_RSA_PRIVATE_KEY_BLOB,
+      data,
+      size,
+      CRYPT_DECODE_ALLOC_FLAG,
+      nullptr,
+      rsaKeyBlob.addressof(),
+      &keySize));
+  BCRYPT_KEY_HANDLE key;
+  THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
+      BCRYPT_RSA_ALG_HANDLE,
+      nullptr,
+      BCRYPT_RSAPRIVATE_BLOB,
+      &key,
+      reinterpret_cast<uint8_t*>(rsaKeyBlob.get()),
+      keySize,
+      0));
+  return UniquePrivateKey{key};
+}
+
+UniquePrivateKey ImportEccPrivateKey(const BYTE* data, DWORD size)
+{
+  DWORD keySize = 0;
+  unique_hlocal<CRYPT_ECC_PRIVATE_KEY_INFO> eccKeyInfo;
+  THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      X509_ECC_PRIVATE_KEY,
+      data,
+      size,
+      CRYPT_DECODE_ALLOC_FLAG,
+      nullptr,
+      eccKeyInfo.addressof(),
+      &keySize));
+  auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo.get());
+  BCRYPT_KEY_HANDLE key;
+  THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
+      BCRYPT_ECDSA_ALG_HANDLE,
+      nullptr,
+      BCRYPT_ECCPRIVATE_BLOB,
+      &key,
+      convertedKey.data(),
+      static_cast<DWORD>(convertedKey.size()),
+      0));
+  return UniquePrivateKey{key};
 }
 
 UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
 {
-  auto headerStart = pem.find("-----BEGIN PRIVATE KEY-----");
+  PrivateKeyType keyType{};
+  auto headerStart = FindPemPrivateKeyHeader(pem, keyType);
   if (headerStart == std::string::npos)
   {
     throw AuthenticationException("PEM file does not contain private key.");
   }
   auto keyBuffer{
       PemToBinary(pem.c_str() + headerStart, static_cast<DWORD>(pem.size() - headerStart))};
+
+  if (keyType == PrivateKeyType::Rsa)
+  {
+    return ImportRsaPrivateKey(keyBuffer.data(), static_cast<DWORD>(keyBuffer.size()));
+  }
+
+  if (keyType == PrivateKeyType::Ecdsa)
+  {
+    return ImportEccPrivateKey(keyBuffer.data(), static_cast<DWORD>(keyBuffer.size()));
+  }
+
   unique_hlocal<CRYPT_PRIVATE_KEY_INFO> privateKeyInfo;
   DWORD keySize = 0;
   THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
@@ -160,50 +247,13 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
       &keySize));
   if (strcmp(privateKeyInfo.get()->Algorithm.pszObjId, szOID_RSA_RSA) == 0)
   {
-    unique_hlocal<BCRYPT_RSAKEY_BLOB> rsaKeyBlob;
-    THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
-        X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
-        CNG_RSA_PRIVATE_KEY_BLOB,
-        privateKeyInfo.get()->PrivateKey.pbData,
-        privateKeyInfo.get()->PrivateKey.cbData,
-        CRYPT_DECODE_ALLOC_FLAG,
-        nullptr,
-        rsaKeyBlob.addressof(),
-        &keySize));
-    BCRYPT_KEY_HANDLE key;
-    THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
-        BCRYPT_RSA_ALG_HANDLE,
-        nullptr,
-        BCRYPT_RSAPRIVATE_BLOB,
-        &key,
-        reinterpret_cast<uint8_t*>(rsaKeyBlob.get()),
-        keySize,
-        0));
-    return UniquePrivateKey{key};
+    return ImportRsaPrivateKey(
+        privateKeyInfo.get()->PrivateKey.pbData, privateKeyInfo.get()->PrivateKey.cbData);
   }
   if (strcmp(privateKeyInfo.get()->Algorithm.pszObjId, szOID_ECC_PUBLIC_KEY) == 0)
   {
-    unique_hlocal<CRYPT_ECC_PRIVATE_KEY_INFO> eccKeyInfo;
-    THROW_IF_WIN32_BOOL_FALSE(CryptDecodeObjectEx(
-        X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
-        X509_ECC_PRIVATE_KEY,
-        privateKeyInfo.get()->PrivateKey.pbData,
-        privateKeyInfo.get()->PrivateKey.cbData,
-        CRYPT_DECODE_ALLOC_FLAG,
-        nullptr,
-        eccKeyInfo.addressof(),
-        &keySize));
-    auto convertedKey = GetBcryptEccKeyBlob(*eccKeyInfo.get());
-    BCRYPT_KEY_HANDLE key;
-    THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
-        BCRYPT_ECDSA_ALG_HANDLE,
-        nullptr,
-        BCRYPT_ECCPRIVATE_BLOB,
-        &key,
-        convertedKey.data(),
-        keySize,
-        0));
-    return UniquePrivateKey{key};
+    return ImportEccPrivateKey(
+        privateKeyInfo.get()->PrivateKey.pbData, privateKeyInfo.get()->PrivateKey.cbData);
   }
   throw AuthenticationException("Invalid private key.");
 }
