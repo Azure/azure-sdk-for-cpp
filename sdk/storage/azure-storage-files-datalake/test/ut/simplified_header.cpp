@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST(SimplifiedHeader, StorageDataLake)
+  TEST(SimplifiedHeader, StorageFilesDataLake)
   {
     Azure::Storage::Files::DataLake::DataLakeServiceClient serviceClient(
         "https://account.blob.core.windows.net");
