@@ -52,7 +52,7 @@ stages:
         - Name: EVENTHUB_CONSUMER_GROUP
           Value: "non-real-consumer-group"
         - Name: EVENTHUB_CONNECTION_STRING
-          Value: "Endpoint=sb://notReal.servicebus.windows.net/;SharedAccessKeyName=notReal
+          Value: "Endpoint=sb://notReal.servicebus.windows.net/;SharedAccessKeyName=notReal"
         - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
 
