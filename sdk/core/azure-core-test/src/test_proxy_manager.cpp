@@ -248,6 +248,8 @@ void TestProxyManager::SetProxySanitizer()
   addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-copy-source");
   addSanitizer(SanitizerType::Header, storageSasSignatureRegex, "sassig", "x-ms-rename-source");
   addSanitizer(SanitizerType::Header, "(?<auth>.+)", "auth", "x-ms-copy-source-authorization");
+  addSanitizer(SanitizerType::Header, "(?<cookie>.+)", "cookie", "Cookie");
+  addSanitizer(SanitizerType::Header, "(?<cookie>.+)", "cookie", "Set-Cookie");
   const std::string storageUserDelegationKeyRegex
       = "\\u003CValue\\u003E(?<userdelegationkey>[a-zA-Z0-9\\/=+]+).*\\u003C\\/"
         "UserDelegationKey\\u003E";
