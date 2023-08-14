@@ -82,11 +82,11 @@ TEST_F(ProducerClientTest, SendMessage_LIVEONLY_)
   edboptions2.PartitionId = "2";
   Azure::Messaging::EventHubs::EventDataBatch eventBatch2{client.CreateBatch(edboptions2)};
 
-  eventBatch.AddMessage(message1);
-  eventBatch.AddMessage(message2);
+  eventBatch.TryAddMessage(message1);
+  eventBatch.TryAddMessage(message2);
 
-  eventBatch2.AddMessage(message3);
-  eventBatch2.AddMessage(message2);
+  eventBatch2.TryAddMessage(message3);
+  eventBatch2.TryAddMessage(message2);
 
   for (int i = 0; i < 5; i++)
   {

@@ -14,9 +14,9 @@ using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
-  bool EventDataBatch::AddMessage(Azure::Messaging::EventHubs::Models::EventData const& message)
+  bool EventDataBatch::TryAddMessage(Azure::Messaging::EventHubs::Models::EventData const& message)
   {
-    return AddAmqpMessage(message.GetRawAmqpMessage());
+    return TryAddAmqpMessage(message.GetRawAmqpMessage());
   }
 
   Azure::Core::Amqp::Models::AmqpMessage EventDataBatch::ToAmqpMessage() const
@@ -48,7 +48,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return returnValue;
   }
 
-  bool EventDataBatch::AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message)
+  bool EventDataBatch::TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message)
   {
     std::lock_guard<std::mutex> lock(m_rwMutex);
 

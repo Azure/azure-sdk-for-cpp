@@ -110,24 +110,24 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     uint64_t GetMaxBytes() const { return m_maxBytes.Value(); }
 
-    /** @brief Adds a raw AMQP message to the data batch
+    /** @brief Attempts to add a raw AMQP message to the data batch
      *
      * @param message The AMQP message to add to the batch
      * 
      * @returns true if the message was added to the batch, false otherwise.
      */
-    bool AddMessage(Azure::Core::Amqp::Models::AmqpMessage message)
+    bool TryAddMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
     {
-      return AddAmqpMessage(message);
+      return TryAddAmqpMessage(message);
     }
 
-    /** @brief Adds a message to the data batch
+    /** @brief Attempts to add a message to the data batch
      *
      * @param message The message to add to the batch
      * 
      * @returns true if the message was added to the batch, false otherwise.
      */
-    bool AddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
+    bool TryAddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
 
     /** @brief Gets the number of messages in the batch
      *
@@ -146,7 +146,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage ToAmqpMessage() const;
 
   private:
-    bool AddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
+    bool TryAddAmqpMessage(Azure::Core::Amqp::Models::AmqpMessage message);
 
     size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
@@ -190,6 +190,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
     };
 
-    friend _detail::EventDataBatchFactory;
+    friend class _detail::EventDataBatchFactory;
   };
 }}} // namespace Azure::Messaging::EventHubs

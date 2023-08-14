@@ -61,23 +61,23 @@ int main()
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = {1, 3, 5, 7};
     event.MessageId = "test-message-id";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
   {
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = {2, 4, 6, 8, 10};
     event.MessageId = "test-message-id-2";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
   {
     Azure::Messaging::EventHubs::Models::EventData event{1, 1, 2, 3, 5, 8};
     event.MessageId = "test-message-id5";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
   {
     Azure::Messaging::EventHubs::Models::EventData event{"Hello Eventhubs via AAD!"};
     event.MessageId = "test-message-id4";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
 
   producerClient.Send(batch);

@@ -158,7 +158,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
         event.Properties["PartitionId"]
             = static_cast<Azure::Core::Amqp::Models::AmqpValue>(m_partitionId);
         AddEndProperty(event, m_numberToSend);
-        batch.AddMessage(event);
+        batch.TryAddMessage(event);
       }
       m_client->Send(batch, context);
 

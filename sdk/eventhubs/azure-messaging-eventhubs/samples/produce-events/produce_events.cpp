@@ -51,27 +51,27 @@ int main()
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = {1, 3, 5, 7};
     event.MessageId = "test-message-id";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
 
   {
     Azure::Messaging::EventHubs::Models::EventData event;
     event.Body = {2, 4, 6, 8, 10};
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
 
   // Send an event with a body initialized at EventData constructor time.
   {
     Azure::Messaging::EventHubs::Models::EventData event{1, 1, 2, 3, 5, 8};
     event.MessageId = "test-message-id-fibonacci";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
 
   // Send an event with a UTF-8 encoded string body.
   {
     Azure::Messaging::EventHubs::Models::EventData event{"Hello Eventhubs!"};
     event.MessageId = "test-message-id-hellowworld";
-    batch.AddMessage(event);
+    batch.TryAddMessage(event);
   }
 
   producerClient.Send(batch);
