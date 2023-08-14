@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- Storage names used for checkpoint store have been normalized to match behavior of other eventhubs clients.
+- Storage names used for checkpoint store have been normalized to match behavior of other Azure SDK eventhubs packages.
 - `EventDataBatch` object can no longer be directly created but instead must be created via `ProducerClient::CreateEventDataBatch`.
 - `EventDataBatch::AddMessage` method has been renamed to `EventDataBatch::TryAdd` and it now returns false if the message will not fit.
 - `SendEventDataBatch` method has been renamed to `Send` and it now returns a void.

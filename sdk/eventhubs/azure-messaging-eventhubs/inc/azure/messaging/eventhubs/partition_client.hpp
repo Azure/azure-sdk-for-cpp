@@ -104,12 +104,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** Creates a new PartitionClient
      *
-     * @param session Session on which to create the partition client.
-     * @param partitionUrl URL to the partition.
-     * @param receiverName Name of the receiver.
-     * @param options The options used to create the PartitionClient.
-     * @param retryOptions The retry options used to create the PartitionClient.
-     *
+     * @param messageReceiver Message Receiver for the partition client.
+     * @param options options used to create the PartitionClient.
+     * @param retryOptions controls how many times we should retry an operation in response to being
+     * throttled or encountering a transient error.
      */
     PartitionClient(
         Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,

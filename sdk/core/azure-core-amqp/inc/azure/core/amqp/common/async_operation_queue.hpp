@@ -71,13 +71,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       std::unique_lock<std::mutex> lock(m_operationComplete);
       m_operationQueue.clear();
     }
-    /** Returns the current number of elements in the queue.
-     */
-    size_t Depth()
-    {
-      std::unique_lock<std::mutex> lock(m_operationComplete);
-      return m_operationQueue.size();
-    }
 
   private:
     std::mutex m_operationComplete;

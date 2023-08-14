@@ -110,9 +110,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     uint64_t GetMaxBytes() const { return m_maxBytes.Value(); }
 
-    /** @brief Adds a message to the data batch
+    /** @brief Adds a raw AMQP message to the data batch
      *
-     * @param message The message to add to the batch
+     * @param message The AMQP message to add to the batch
+     * 
+     * @returns true if the message was added to the batch, false otherwise.
      */
     bool AddMessage(Azure::Core::Amqp::Models::AmqpMessage message)
     {
@@ -122,6 +124,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Adds a message to the data batch
      *
      * @param message The message to add to the batch
+     * 
+     * @returns true if the message was added to the batch, false otherwise.
      */
     bool AddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
 

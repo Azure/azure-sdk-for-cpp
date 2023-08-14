@@ -174,7 +174,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Core::Context const& context)
   {
     std::vector<Models::ReceivedEventData> messages;
-    // bool prefetchDisabled = m_prefetchCount < 0;
 
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
@@ -205,16 +204,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     (void)receiver;
     (void)message;
-    // Queue the incoming message to the received message queue.
-    //    m_receivedMessageQueue.CompleteOperation(message, {});
     return Azure::Core::Amqp::Models::_internal::Messaging::DeliveryAccepted();
   }
   void PartitionClient::OnMessageReceiverDisconnected(
       Azure::Core::Amqp::Models::_internal::AmqpError const& error)
   {
-    // Queue the error to the received message queue along with a null message.
-    //    m_receivedMessageQueue.CompleteOperation(
-    //        Azure::Core::Amqp::Models::AmqpMessage{nullptr}, error);
     (void)error;
   }
 }}} // namespace Azure::Messaging::EventHubs

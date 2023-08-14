@@ -113,6 +113,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.clear();
     }
 
+    /** @brief Create a new EventDataBatch to be sent to the Event Hub.
+     *
+     * @param options Optional batch options
+     * @param context Context for the operation can be used for request cancellation.
+     *
+     * @return newly created EventDataBatch object.
+     */
     EventDataBatch CreateBatch(
         EventDataBatchOptions const& options = {},
         Azure::Core::Context const& context = {});

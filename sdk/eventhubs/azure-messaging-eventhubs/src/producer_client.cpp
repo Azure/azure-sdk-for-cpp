@@ -138,6 +138,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Models::EventHubProperties ProducerClient::GetEventHubProperties(Core::Context const& context)
   {
+    // EventHub properties are not associated with a particular partition, so create a message
+    // sender on the empty partition.
     if (m_senders.find("") == m_senders.end())
     {
       CreateSender("");
