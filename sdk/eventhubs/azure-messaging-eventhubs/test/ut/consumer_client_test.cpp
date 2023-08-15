@@ -25,13 +25,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     void SetUp() override
     {
       EventHubsTestBase::SetUp();
-      std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
-      std::string eventHubName = GetEnv("EVENTHUB_NAME");
+      if (m_testContext.IsLiveMode())
+      {
+        std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
+        std::string eventHubName = GetEnv("EVENTHUB_NAME");
 
-      Azure::Messaging::EventHubs::ProducerClient producer{connStringNoEntityPath, eventHubName};
-      EventDataBatch batch{producer.CreateBatch()};
-      EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
-      EXPECT_NO_THROW(producer.Send(batch));
+        Azure::Messaging::EventHubs::ProducerClient producer{connStringNoEntityPath, eventHubName};
+        EventDataBatch batch{producer.CreateBatch()};
+        EXPECT_TRUE(batch.TryAddMessage(Models::EventData{"Test"}));
+        EXPECT_NO_THROW(producer.Send(batch));
+      }
     }
   };
 

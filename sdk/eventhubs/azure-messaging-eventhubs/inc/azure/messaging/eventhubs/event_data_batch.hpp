@@ -113,7 +113,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Attempts to add a raw AMQP message to the data batch
      *
      * @param message The AMQP message to add to the batch
-     * 
+     *
      * @returns true if the message was added to the batch, false otherwise.
      */
     bool TryAddMessage(Azure::Core::Amqp::Models::AmqpMessage const& message)
@@ -124,7 +124,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Attempts to add a message to the data batch
      *
      * @param message The message to add to the batch
-     * 
+     *
      * @returns true if the message was added to the batch, false otherwise.
      */
     bool TryAddMessage(Azure::Messaging::EventHubs::Models::EventData const& message);
