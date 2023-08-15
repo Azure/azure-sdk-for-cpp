@@ -43,7 +43,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       auto receiver = consumer.CreatePartitionClient("1", partitionOptions);
 
       auto receivedEvents = receiver.ReceiveEvents(1);
-      ASSERT_EQ(1, receivedEvents.size());
+      ASSERT_EQ(1ul, receivedEvents.size());
       std::vector<uint8_t> expected{'H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!'};
 
       EXPECT_EQ(expected, receivedEvents[0].Body);

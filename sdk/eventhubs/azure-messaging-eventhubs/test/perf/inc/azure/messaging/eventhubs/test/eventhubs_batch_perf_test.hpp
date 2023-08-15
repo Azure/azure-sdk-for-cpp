@@ -39,8 +39,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     uint32_t m_batchSize;
     uint32_t m_prefetchCount;
     uint64_t m_rounds;
-    uint32_t m_paddingBytes;
-    uint32_t m_maxDeadlineExceeded;
+    uint32_t m_paddingBytes{};
+    uint32_t m_maxDeadlineExceeded{};
 
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;

@@ -124,12 +124,32 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         EventDataBatchOptions const& options = {},
         Azure::Core::Context const& context = {});
 
-    /**@brief Proceeds to send and EventDataBatch
+    /**@brief Send an EventDataBatch to the remote Event Hub.
      *
      * @param eventDataBatch Batch to send
      * @param context Request context
      */
     void Send(EventDataBatch const& eventDataBatch, Core::Context const& context = {});
+
+    /**@brief Send an EventData to the remote Event Hub.
+     *
+     * @remark This method will create a new EventDataBatch and add the event to it. If the event
+     * exceeds the maximum size allowed by the Event Hubs service, an exception will be thrown.
+     *
+     * @param eventData event to send
+     * @param context Request context
+     */
+    void Send(Models::EventData const& eventData, Core::Context const& context = {});
+
+    /**@brief Send a vector of EventData items to the remote Event Hub.
+     *
+     * @remark This method will create a new EventDataBatch and add the events to it. If the events
+     * exceeds the maximum size allowed by the Event Hubs service, an exception will be thrown.
+     *
+     * @param eventData events to send
+     * @param context Request context
+     */
+    void Send(std::vector<Models::EventData> const& eventData, Core::Context const& context = {});
 
     /**@brief  GetEventHubProperties gets properties of an eventHub. This includes data
      * like name, and partitions.
