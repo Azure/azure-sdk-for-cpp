@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeServiceClientTest, DISABLED_ListSystemFileSystems)
+  TEST_F(DataLakeServiceClientTest, ListSystemFileSystemsr_PLAYBACKONLY_)
   {
     // Disabled temporarily because the test account on the pipeline hasn't system fileSystems.
     // List system type FileSystems

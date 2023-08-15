@@ -652,8 +652,8 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.FileSystemName = m_fileSystemName;
     fileSasBuilder.Path = fileName;
     fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
-    fileSasBuilder.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().ToString();
-    fileSasBuilder.CorrelationId = Azure::Core::Uuid::CreateUuid().ToString();
+    fileSasBuilder.PreauthorizedAgentObjectId = RandomUUID();
+    fileSasBuilder.CorrelationId = RandomUUID();
     auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
