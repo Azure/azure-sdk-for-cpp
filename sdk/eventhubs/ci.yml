@@ -50,7 +50,7 @@ stages:
         - Name: AZURE_SUBSCRIPTION_ID
           Value: "non-real-sub"
         - Name: EVENTHUB_CONSUMER_GROUP
-          Value: "non-real-consumer-group"
+          Value: "defaultgroup"
         - Name: EVENTHUB_NAME
           Value: "non-real-eventhub-name"
         - Name: EVENTHUB_CONNECTION_STRING
